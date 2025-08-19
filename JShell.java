@@ -2,6 +2,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Map;
 
 // JShell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
 public class JShell {
@@ -184,6 +185,101 @@ final class ConstantStatement implements Evaluable {
   @Override public String toString() { return "Constant(" + value + ")"; }
 }
 
+// Accesses a variable, supports traversing
+// e.g. `x` or `x.y`
+final class AccessStatement implements Evaluable {
+  final String[] path;
+
+  AccessStatement(String[] path) {
+    if (path.length == 0) throw new IllegalArgumentException("Access path cannot be empty.");
+    this.path = path;
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public Object evaluate(Environment env) {
+    Object current = env.get(path[0]);
+
+    if (path.length == 1 && current == null) {
+      throw new JShellException("Variable '" + path[0] + "' not found.");
+    }
+
+    for (int i = 1; i < path.length; i++) {
+      if (current == null) {
+        throw new JShellException("Cannot access property '" + path[i] + "' on a null value.");
+      }
+
+      String propertyName = path[i];
+
+      if (current instanceof Map) {
+        current = ((Map<String, Object>) current).get(propertyName);
+      } else {
+        throw new JShellException("Cannot access property '" + propertyName + "' on " + current.toString());
+      }
+    }
+
+    return current;
+  }
+
+  @Override public String toString() { return "Access(" + String.join(".", path) + ")"; }
+}
+
+// Represents an assignment statement, supports traversing
+// e.g. `x = 0;` or `x.y = 0;`
+final class AssignmentStatement implements Evaluable {
+  final AccessStatement left;
+  final Evaluable right;
+  
+  AssignmentStatement(AccessStatement left, Evaluable right) {
+    this.left = left;
+    this.right = right;
+  }
+  
+  @Override
+  @SuppressWarnings("unchecked")
+  public Object evaluate(Environment env) {
+    Object valueToAssign = right.evaluate(env);
+    String[] path = left.path;
+
+    if (path.length == 1) {
+      env.put(path[0], valueToAssign);
+      return valueToAssign;
+    }
+
+    Object container = env.get(path[0]);
+    if (container == null) {
+      throw new JShellException("Variable '" + path[0] + "' not found.");
+    }
+
+    if (!(container instanceof Map)) {
+      throw new JShellException("Cannot assign to property '" + path[path.length - 1] + "' on a non-map container.");
+    }
+    Map<String, Object> mapContainer = (Map<String, Object>) container;
+
+    // Traverse the path up to the second-to-last element to find the container.
+    for (int i = 1; i < path.length - 1; i++) {
+      String propertyName = path[i];
+
+      final Object nextContainer = mapContainer.get(propertyName);
+      if (nextContainer == null) {
+        throw new JShellException("Cannot access property '" + propertyName + "' on a null value.");
+      }
+
+      if (nextContainer instanceof Map) {
+        mapContainer = (Map<String, Object>) nextContainer;
+      } else {
+        throw new JShellException("Cannot access property '" + propertyName + "' on " + nextContainer.toString());
+      }
+    }
+
+    mapContainer.put(path[path.length - 1], valueToAssign);
+    
+    return valueToAssign;
+  }
+
+  @Override public String toString() { return "Assignment(" + left + " = " + right + ")"; }
+}
+
 // Represents a class resolution statement
 // e.g. `.java.lang.String`
 final class ClassResolutionStatement implements Evaluable {
@@ -216,7 +312,6 @@ final class FunctionCallStatement implements Evaluable {
 
   @Override
   public Object evaluate(Environment env) {
-    final Object trueCaller = caller.evaluate(env);
     // TODO: Implement
     return null;
   }
