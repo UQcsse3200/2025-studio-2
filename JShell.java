@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 
 // JShell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
@@ -50,10 +51,14 @@ public class JShell {
 
       try {
         final Object result = eval(source);
-        if (result != null) {
+        if (result != Void.VOID) {
           console.print(result);
           console.print("\n");
         }
+      } catch (JShellException e) {
+        console.print("Error: ");
+        console.print(e.getMessage());
+        console.print("\n");
       } catch (Exception e) {
         console.print("Runtime Error: ");
         console.print(e.getClass().getSimpleName());
@@ -75,5 +80,52 @@ public class JShell {
 }
 
 // A simple typedef
-class Environment extends HashMap<String, Object> {}
+class JShellMap extends HashMap<String, Object> {}
+
+// This is an object that represents the state of our shell envoirnment
+class Environment {
+  final public JShellMap global = new JShellMap ();
+  public ArrayList<JShellMap> frames = new ArrayList<JShellMap>();
+  
+  public Environment() {}
+
+  public JShellMap pushFrame() {
+    final JShellMap frame = new JShellMap();
+    frames.add(frame);
+    return frame;
+  }
+  
+  public JShellMap popFrame() {
+    return frames.removeLast();
+  }
+
+  public Object get(String name) {
+    if (!frames.isEmpty()) { // Only need to check the last frame
+      final Object retval = frames.get(frames.size() - 1).get(name);
+      if (retval != null) return retval;
+    }
+    return global.get(name);
+  }
+
+  public void put(String name, Object value) {
+    if (!frames.isEmpty()) {
+      frames.get(frames.size() - 1).put(name, value);
+    } else {
+      global.put(name, value);
+    }
+  }
+}
+
+// Exception Class for JShell
+final class JShellException extends RuntimeException {
+  public JShellException(String message) {
+    super(message);
+  }
+}
+
+// Special void class to represent absence of value
+final class Void {
+  private Void() {}
+  public static final Object VOID = new Void();
+}
 
