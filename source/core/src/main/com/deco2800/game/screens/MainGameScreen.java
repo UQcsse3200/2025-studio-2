@@ -1,6 +1,7 @@
 package com.deco2800.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.deco2800.game.GdxGame;
@@ -13,6 +14,8 @@ import com.deco2800.game.entities.factories.RenderFactory;
 import com.deco2800.game.input.InputComponent;
 import com.deco2800.game.input.InputDecorator;
 import com.deco2800.game.input.InputService;
+import com.deco2800.game.lighting.LightingEngine;
+import com.deco2800.game.lighting.LightingService;
 import com.deco2800.game.physics.PhysicsEngine;
 import com.deco2800.game.physics.PhysicsService;
 import com.deco2800.game.rendering.RenderService;
@@ -26,6 +29,7 @@ import com.deco2800.game.components.maingame.MainGameExitDisplay;
 import com.deco2800.game.components.gamearea.PerformanceDisplay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import box2dLight.PointLight;
 
 /**
  * The game screen containing the main game.
@@ -40,6 +44,7 @@ public class MainGameScreen extends ScreenAdapter {
   private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
+  private final LightingEngine lightingEngine;
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -61,6 +66,18 @@ public class MainGameScreen extends ScreenAdapter {
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
     renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
 
+    LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
+    ServiceLocator.registerLightingService(lightingService);
+    lightingEngine = lightingService.getEngine();
+
+    PointLight test = new PointLight(
+            ServiceLocator.getLightingService().getEngine().getRayHandler(),
+            128,
+            Color.YELLOW,
+            8f,
+            5f, 5f
+    );
+
     loadAssets();
     createUI();
 
@@ -74,7 +91,7 @@ public class MainGameScreen extends ScreenAdapter {
   public void render(float delta) {
     physicsEngine.update();
     ServiceLocator.getEntityService().update();
-    renderer.render();
+    renderer.render(lightingEngine);
   }
 
   @Override
@@ -98,6 +115,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Disposing main game screen");
 
     renderer.dispose();
+    lightingEngine.dispose();
     unloadAssets();
 
     ServiceLocator.getEntityService().dispose();

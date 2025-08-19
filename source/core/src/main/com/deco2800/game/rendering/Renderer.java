@@ -6,8 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.deco2800.game.components.CameraComponent;
+import com.deco2800.game.lighting.LightingEngine;
 import com.deco2800.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,6 +97,7 @@ public class Renderer implements Disposable {
   public void render() {
     Matrix4 projMatrix = camera.getProjectionMatrix();
     batch.setProjectionMatrix(projMatrix);
+    Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     batch.begin();
@@ -105,6 +109,44 @@ public class Renderer implements Disposable {
     stage.draw();
   }
 
+  public void render(LightingEngine lightingEngine) {
+    Matrix4 projMatrix = camera.getProjectionMatrix();
+
+    batch.setProjectionMatrix(projMatrix);
+    Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
+    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+    batch.begin();
+    renderService.render(batch);
+    batch.end();
+
+    //renderLightingHelper(lightingEngine);
+    lightingEngine.render();
+
+    debugRenderer.render(projMatrix);
+
+    stage.act();
+    stage.draw();
+  }
+
+  private void renderLightingHelper(LightingEngine lightingEngine) {
+    float TARGET_ASPECT = 4f / 3f;
+    int screenW = Gdx.graphics.getBackBufferWidth();
+    int screenH = Gdx.graphics.getBackBufferHeight();
+
+    float screenAspect = (float) screenW / screenH;
+    int x = 0, y = 0, w = screenW, h = screenH;
+    if (screenAspect > TARGET_ASPECT) {
+      w = Math.round(screenH * TARGET_ASPECT);
+      x = (screenW - w) / 2;
+    } else if (screenAspect < TARGET_ASPECT) {
+      h = Math.round(screenW / TARGET_ASPECT);
+      y = (screenH - h) / 2;
+    }
+
+    lightingEngine.renderClipped(x, y, w, h);
+  }
+
   /**
    * Resize the renderer to a new screen size.
    *
@@ -114,6 +156,7 @@ public class Renderer implements Disposable {
   public void resize(int width, int height) {
     resizeCamera(width, height);
     resizeStage(width, height);
+
     logger.debug("Resizing to ({}x{})", width, height);
   }
 
