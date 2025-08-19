@@ -151,3 +151,76 @@ final class Void {
   public String toString() { return "VOID"; }
 }
 
+// Represents a return value from a function
+final class ReturnValue {
+  public final Object value;
+
+  ReturnValue(Object value) {
+    this.value = value;
+  }
+
+  @Override public String toString() { return "ReturnValue(" + value + ")"; }
+}
+
+// This represents an evaluable fragment
+interface Evaluable {
+  public Object evaluate(Environment env);
+}
+
+// Just a thin wrapper that returns the stored value
+// used for constant definitions
+final class ConstantStatement implements Evaluable {
+  final Object value;
+  
+  ConstantStatement(Object value) {
+    this.value = value;
+  }
+  
+  @Override
+  public Object evaluate(Environment env) {
+    return value;
+  }
+
+  @Override public String toString() { return "Constant(" + value + ")"; }
+}
+
+// Represents a class resolution statement
+// e.g. `.java.lang.String`
+final class ClassResolutionStatement implements Evaluable {
+  final String name;
+  
+  ClassResolutionStatement(String name) {
+    this.name = name;
+  }
+  
+  @Override
+  public Object evaluate(Environment env) {
+    // TODO: Implement
+    return null;
+  }
+
+  @Override public String toString() { return "ClassResolution(" + name + ")"; }
+}
+
+// Represents a function call statement
+// e.g. `x(0, 1, 2);`
+// NOTE: calling a class creates a new instance of that class
+final class FunctionCallStatement implements Evaluable {
+  final Evaluable caller;
+  final ArrayList<Evaluable> arguments;
+
+  FunctionCallStatement(Evaluable caller, ArrayList<Evaluable> arguments) {
+    this.caller = caller;
+    this.arguments = arguments;
+  }
+
+  @Override
+  public Object evaluate(Environment env) {
+    final Object trueCaller = caller.evaluate(env);
+    // TODO: Implement
+    return null;
+  }
+
+  @Override public String toString() { return "FunctionCall(" + caller + ", " + arguments + ")"; }
+}
+
