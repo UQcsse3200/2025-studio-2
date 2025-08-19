@@ -70,14 +70,6 @@ public class MainGameScreen extends ScreenAdapter {
     ServiceLocator.registerLightingService(lightingService);
     lightingEngine = lightingService.getEngine();
 
-    PointLight test = new PointLight(
-            ServiceLocator.getLightingService().getEngine().getRayHandler(),
-            128,
-            Color.YELLOW,
-            8f,
-            5f, 5f
-    );
-
     loadAssets();
     createUI();
 

@@ -1,11 +1,13 @@
 package com.deco2800.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.deco2800.game.areas.terrain.TerrainFactory;
 import com.deco2800.game.areas.terrain.TerrainFactory.TerrainType;
 import com.deco2800.game.entities.Entity;
+import com.deco2800.game.entities.factories.LightFactory;
 import com.deco2800.game.entities.factories.NPCFactory;
 import com.deco2800.game.entities.factories.ObstacleFactory;
 import com.deco2800.game.entities.factories.PlayerFactory;
@@ -72,6 +74,7 @@ public class ForestGameArea extends GameArea {
     player = spawnPlayer();
     spawnGhosts();
     spawnGhostKing();
+    spawnLights();
 
     playMusic();
   }
@@ -147,6 +150,27 @@ public class ForestGameArea extends GameArea {
     GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
     Entity ghostKing = NPCFactory.createGhostKing(player);
     spawnEntityAt(ghostKing, randomPos, true, true);
+  }
+
+  private void spawnLights() {
+    Entity light = LightFactory.createConeLight(
+            128,
+            Color.WHITE,
+            10f,
+            0f,
+            35f
+    );
+    spawnEntityAt(light, new GridPoint2(5, 5), true, true);
+
+//    Entity sweep = LightFactory.createRotatingConeLight(
+//            128,
+//            Color.YELLOW,
+//            8f,
+//            0f,
+//            30f,
+//            45f
+//    );
+//    spawnEntityAt(sweep, new GridPoint2(10, 10), true, true);
   }
 
   private void playMusic() {
