@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 // JShell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
 public class JShell {
@@ -168,6 +171,11 @@ interface Evaluable {
   public Object evaluate(Environment env);
 }
 
+// This represents an callable fragment
+interface EvaluableFunction {
+  public Object evaluate(Environment env, ArrayList<Object> parameters);
+}
+
 // Just a thin wrapper that returns the stored value
 // used for constant definitions
 final class ConstantStatement implements Evaluable {
@@ -213,15 +221,90 @@ final class AccessStatement implements Evaluable {
 
       if (current instanceof Map) {
         current = ((Map<String, Object>) current).get(propertyName);
-      } else {
-        throw new JShellException("Cannot access property '" + propertyName + "' on " + current.toString());
+        continue;
       }
+
+      Class<?> targetClass = (current instanceof Class) ? (Class<?>) current : current.getClass();
+      Object instance = (current instanceof Class) ? null : current;
+
+      // Try to access as a field (instance or static)
+      try {
+        Field field = targetClass.getField(propertyName);
+        if (instance == null && !Modifier.isStatic(field.getModifiers())) {
+          throw new JShellException("Cannot access instance field '" + propertyName + "' from a static context on class " + targetClass.getSimpleName());
+        }
+        current = field.get(instance);
+        continue;
+      } catch (NoSuchFieldException e) {
+        //  might be a method
+      } catch (Exception e) {
+        throw new JShellException("Error accessing field '" + propertyName + "': " + e.getMessage());
+      }
+
+      // Try a method (instance or static)
+      if (i != path.length - 1) throw new JShellException("Cannot access '" + propertyName + "' on " + current.toString());
+
+      try {
+        Method method = targetClass.getMethod(propertyName); // Finds public method with no parameters
+
+        if (Modifier.isStatic(method.getModifiers())) {
+          return new StaticMethodStatement(method);
+        } else {
+          return new InstanceMethodStatement(method, instance);
+        }
+
+      } catch (NoSuchMethodException e) {
+        // Not a field or a method.
+      } catch (JShellException e) {
+        throw e;
+      } catch (Exception e) {
+        throw new JShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
+      }
+
+      // If neither a field nor method was found
+      throw new JShellException("Cannot access property '" + propertyName + "' on " + current.toString());
     }
 
     return current;
   }
 
   @Override public String toString() { return "Access(" + String.join(".", path) + ")"; }
+}
+
+final class StaticMethodStatement implements EvaluableFunction {
+  Method method;
+
+  StaticMethodStatement(Method method) {
+    this.method = method;
+  }
+
+  @Override
+  public Object evaluate(Environment env, ArrayList<Object> parameters) {
+    try {
+      return method.invoke(null, parameters.toArray());
+    } catch (Exception e) {
+      throw new JShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
+    }
+  }
+}
+
+final class InstanceMethodStatement implements EvaluableFunction {
+  Method method;
+  Object instance;
+
+  InstanceMethodStatement(Method method, Object instance) {
+    this.method = method;
+    this.instance = instance;
+  }
+
+  @Override
+  public Object evaluate(Environment env, ArrayList<Object> parameters) {
+    try {
+      return method.invoke(instance, parameters.toArray());
+    } catch (Exception e) {
+      throw new JShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
+    }
+  }
 }
 
 // Represents an assignment statement, supports traversing
@@ -251,28 +334,48 @@ final class AssignmentStatement implements Evaluable {
       throw new JShellException("Variable '" + path[0] + "' not found.");
     }
 
-    if (!(container instanceof Map)) {
-      throw new JShellException("Cannot assign to property '" + path[path.length - 1] + "' on a non-map container.");
-    }
-    Map<String, Object> mapContainer = (Map<String, Object>) container;
-
     // Traverse the path up to the second-to-last element to find the container.
     for (int i = 1; i < path.length - 1; i++) {
-      String propertyName = path[i];
-
-      final Object nextContainer = mapContainer.get(propertyName);
-      if (nextContainer == null) {
-        throw new JShellException("Cannot access property '" + propertyName + "' on a null value.");
+      if (container == null) {
+        throw new JShellException("Cannot access property '" + path[i] + "' on a null value.");
       }
 
-      if (nextContainer instanceof Map) {
-        mapContainer = (Map<String, Object>) nextContainer;
+      String propertyName = path[i];
+
+      if (container instanceof Map) {
+        container = ((Map<String, Object>) container).get(propertyName);
       } else {
-        throw new JShellException("Cannot access property '" + propertyName + "' on " + nextContainer.toString());
+        try {
+          Field field = container.getClass().getField(propertyName);
+          container = field.get(container);
+        } catch (NoSuchFieldException e) {
+          throw new JShellException("Public field '" + propertyName + "' not found in object of type " + container.getClass().getSimpleName());
+        } catch (Exception e) {
+          throw new JShellException("Error accessing field '" + propertyName + "' during assignment: " + e.getMessage());
+        }
       }
     }
 
-    mapContainer.put(path[path.length - 1], valueToAssign);
+    if (container == null) {
+      throw new JShellException("Cannot assign to property '" + path[path.length - 1] + "' on a null container.");
+    }
+
+    String propertyToSet = path[path.length - 1];
+
+    if (container instanceof Map) {
+      ((Map<String, Object>) container).put(propertyToSet, valueToAssign);
+    } else {
+      try {
+        Field field = container.getClass().getField(propertyToSet);
+        field.set(container, valueToAssign);
+      } catch (NoSuchFieldException e) {
+        throw new JShellException("Public field '" + propertyToSet + "' not found in object of type " + container.getClass().getSimpleName());
+      } catch (IllegalAccessException e) {
+        throw new JShellException("Cannot access or modify field '" + propertyToSet + "'.");
+      } catch (Exception e) {
+        throw new JShellException("Error assigning to field '" + propertyToSet + "': " + e.getMessage());
+      }
+    }
     
     return valueToAssign;
   }
