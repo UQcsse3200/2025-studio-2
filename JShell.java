@@ -1,5 +1,7 @@
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 // JShell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
 public class JShell {
@@ -77,6 +79,20 @@ public class JShell {
     // TODO: Implement
     return null;
   }
+
+  public static void main(String[] args) {
+    new JShell(new Console() {
+      final Scanner scanner = new Scanner(System.in);
+      final PrintStream out = System.out;
+
+      @Override public void print(Object obj) { out.print(obj); }
+      @Override public String nextLine() { return scanner.nextLine(); }
+      @Override public boolean hasNextLine() { return scanner.hasNextLine(); }
+      @Override public void close() { scanner.close(); }
+    }).run();
+  }
+
+  @Override public String toString() { return "JShell{\n.env = " + env + "}"; }
 }
 
 // A simple typedef
@@ -114,6 +130,10 @@ class Environment {
       global.put(name, value);
     }
   }
+
+  @Override public String toString() {
+    return "Environment{\n.global = " + global + "\n.frames = " + frames + "}";
+  }
 }
 
 // Exception Class for JShell
@@ -127,5 +147,7 @@ final class JShellException extends RuntimeException {
 final class Void {
   private Void() {}
   public static final Object VOID = new Void();
+
+  public String toString() { return "VOID"; }
 }
 
