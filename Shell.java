@@ -40,6 +40,7 @@ public class Shell {
   public Shell(Console console, Environment env) {
     this.console = console;
     this.env = env;
+    this.env.put("globalThis", this);
   }
 
   public void run() {
@@ -112,7 +113,7 @@ public class Shell {
     }).run();
   }
 
-  @Override public String toString() { return "Shell{\n.env = " + env + "}"; }
+  @Override public String toString() { return "Shell{.env = " + env + "}"; }
 
   public static Object and(Object o1, Object o2) { return isTruthy(o1) && isTruthy(o2); }
   public static Object or(Object o1, Object o2) { return isTruthy(o1) || isTruthy(o2); }
@@ -202,6 +203,7 @@ class ShellMap extends HashMap<String, Object> {}
 class Environment {
   final public ShellMap global = new ShellMap ();
   public ArrayList<ShellMap> frames = new ArrayList<ShellMap>();
+  private boolean inToStringCall = false;
   
   public Environment() {}
 
@@ -232,7 +234,11 @@ class Environment {
   }
 
   @Override public String toString() {
-    return "Environment{\n.global = " + global + "\n.frames = " + frames + "}";
+    if (inToStringCall) return "...";
+    inToStringCall = true;
+    final String retval = "Environment{.global = " + global + ".frames = " + frames + "}";
+    inToStringCall = false;
+    return retval;
   }
 }
 
@@ -248,7 +254,7 @@ final class Void {
   private Void() {}
   public static final Object VOID = new Void();
 
-  public String toString() { return "VOID"; }
+  @Override public String toString() { return "VOID"; }
 }
 
 // Represents a return value from a function
