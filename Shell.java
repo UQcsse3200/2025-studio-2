@@ -4,9 +4,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Collection;
+import java.lang.reflect.Array;
 
 // Shell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
 public class Shell {
@@ -109,6 +113,86 @@ public class Shell {
   }
 
   @Override public String toString() { return "Shell{\n.env = " + env + "}"; }
+
+  public static Object and(Object o1, Object o2) { return isTruthy(o1) && isTruthy(o2); }
+  public static Object or(Object o1, Object o2) { return isTruthy(o1) || isTruthy(o2); }
+  public static Object not(Object o) { return !isTruthy(o); }
+
+  public static boolean isTruthy(Object obj) {
+    if (obj == null) return false;
+    if (obj instanceof Boolean) return (Boolean) obj;
+    if (obj instanceof Number) return ((Number) obj).doubleValue() != 0.0;
+    if (obj instanceof String) return !((String) obj).isEmpty();
+    if (obj instanceof Character) return (Character) obj != '\0';
+    if (obj instanceof Collection) return !((Collection<?>) obj).isEmpty();
+    if (obj instanceof Map) return !((Map<?, ?>) obj).isEmpty();
+    if (obj.getClass().isArray()) return Array.getLength(obj) != 0;
+    return true;
+  }
+
+  public Object ifThen(Object condition, EvaluableFunction function) {
+    if (isTruthy(condition)) {
+      return function.evaluate(env, new ArrayList<>());
+    }
+    return Void.VOID;
+  }
+
+  public Object ifElse(Object condition, EvaluableFunction ifFunction, EvaluableFunction elseFunction) {
+    if (isTruthy(condition)) {
+      return ifFunction.evaluate(env, new ArrayList<>());
+    }
+    return elseFunction.evaluate(env, new ArrayList<>());
+  }
+
+  public class Range implements Iterator<Long> {
+    private long start;
+    private final long end;
+    private final long step;
+
+    public Range(long start, long end) {
+      this(start, end, 1);
+    }
+
+    public Range(long start, long end, long step) {
+      this.start = start;
+      this.end = end;
+      this.step = step;
+    }
+
+    public boolean hasNext() { return start <= end; }
+    public Long next() { return start += step; }
+  }
+
+  public Object forEach(Object iterable, EvaluableFunction function) {
+    if (iterable instanceof Iterator) {
+      while (((Iterator<?>) iterable).hasNext()) {
+        function.evaluate(env, new ArrayList<>(List.of(((Iterator<?>) iterable).next())));
+      }
+      return Void.VOID;
+    } else if (iterable instanceof Collection) {
+      for (Object item : (Collection<?>) iterable) {
+        function.evaluate(env, new ArrayList<>(List.of(item)));
+      }
+    } else if (iterable.getClass().isArray()) {
+      for (int i = 0; i < Array.getLength(iterable); i++) {
+        function.evaluate(env, new ArrayList<>(List.of(Array.get(iterable, i))));
+      }
+    } else if (iterable instanceof Map) {
+      for (Object key : ((Map<?, ?>) iterable).keySet()) {
+        function.evaluate(env, new ArrayList<>(List.of(key, ((Map<?, ?>) iterable).get(key))));
+      }
+    }
+
+    throw new ShellException("Cannot iterate over " + iterable.getClass().getSimpleName());
+  }
+
+  public Object whileLoop(Evaluable condition, EvaluableFunction function) {
+    Object result = Void.VOID;
+    while (isTruthy(condition.evaluate(env))) {
+      result = function.evaluate(env, new ArrayList<>());
+    }
+    return result;
+  }
 }
 
 // A simple typedef
@@ -257,25 +341,6 @@ final class AccessStatement implements Evaluable {
       if (i != path.length - 1) throw new ShellException("Cannot access '" + propertyName + "' on " + current.toString());
 
       return new MaybeMethodStatement(instance, propertyName);
-
-      // try {
-      //   Method method = targetClass.getMethod(propertyName); // Finds public method with no parameters
-      //
-      //   if (Modifier.isStatic(method.getModifiers())) {
-      //     return new StaticMethodStatement(method);
-      //   } else {
-      //     return new InstanceMethodStatement(method, instance);
-      //   }
-      //
-      // } catch (NoSuchMethodException e) {
-      //   // Not a field or a method.
-      // } catch (ShellException e) {
-      //   throw e;
-      // } catch (Exception e) {
-      //   throw new ShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
-      // }
-
-      // If neither a field nor method was found
     }
 
     return current;
@@ -360,6 +425,8 @@ final class AssignmentStatement implements Evaluable {
   @Override public String toString() { return "Assignment(" + left + " = " + right + ")"; }
 }
 
+// represents what could be a method statement.
+// This is used to determine which onverride to use for method call.
 final class MaybeMethodStatement implements EvaluableFunction {
   Object instance;
   String methodName;
@@ -371,12 +438,6 @@ final class MaybeMethodStatement implements EvaluableFunction {
 
   @Override
   public Object evaluate(Environment env, ArrayList<Object> parameters) {
-    // try {
-    //   return method.invoke(null, parameters.toArray());
-    // } catch (Exception e) {
-    //   throw new ShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
-    // }
-
     Object targetInstance = (instance instanceof Class) ? null : instance;
     Class<?> targetClass = (instance instanceof Class) ? (Class<?>) instance : instance.getClass();
     Object[] args = parameters.toArray();
