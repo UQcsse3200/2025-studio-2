@@ -1,11 +1,12 @@
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Map;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 // JShell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
 public class JShell {
@@ -244,67 +245,32 @@ final class AccessStatement implements Evaluable {
       // Try a method (instance or static)
       if (i != path.length - 1) throw new JShellException("Cannot access '" + propertyName + "' on " + current.toString());
 
-      try {
-        Method method = targetClass.getMethod(propertyName); // Finds public method with no parameters
+      return new MaybeMethodStatement(instance, propertyName);
 
-        if (Modifier.isStatic(method.getModifiers())) {
-          return new StaticMethodStatement(method);
-        } else {
-          return new InstanceMethodStatement(method, instance);
-        }
-
-      } catch (NoSuchMethodException e) {
-        // Not a field or a method.
-      } catch (JShellException e) {
-        throw e;
-      } catch (Exception e) {
-        throw new JShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
-      }
+      // try {
+      //   Method method = targetClass.getMethod(propertyName); // Finds public method with no parameters
+      //
+      //   if (Modifier.isStatic(method.getModifiers())) {
+      //     return new StaticMethodStatement(method);
+      //   } else {
+      //     return new InstanceMethodStatement(method, instance);
+      //   }
+      //
+      // } catch (NoSuchMethodException e) {
+      //   // Not a field or a method.
+      // } catch (JShellException e) {
+      //   throw e;
+      // } catch (Exception e) {
+      //   throw new JShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
+      // }
 
       // If neither a field nor method was found
-      throw new JShellException("Cannot access property '" + propertyName + "' on " + current.toString());
     }
 
     return current;
   }
 
   @Override public String toString() { return "Access(" + String.join(".", path) + ")"; }
-}
-
-final class StaticMethodStatement implements EvaluableFunction {
-  Method method;
-
-  StaticMethodStatement(Method method) {
-    this.method = method;
-  }
-
-  @Override
-  public Object evaluate(Environment env, ArrayList<Object> parameters) {
-    try {
-      return method.invoke(null, parameters.toArray());
-    } catch (Exception e) {
-      throw new JShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
-    }
-  }
-}
-
-final class InstanceMethodStatement implements EvaluableFunction {
-  Method method;
-  Object instance;
-
-  InstanceMethodStatement(Method method, Object instance) {
-    this.method = method;
-    this.instance = instance;
-  }
-
-  @Override
-  public Object evaluate(Environment env, ArrayList<Object> parameters) {
-    try {
-      return method.invoke(instance, parameters.toArray());
-    } catch (Exception e) {
-      throw new JShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
-    }
-  }
 }
 
 // Represents an assignment statement, supports traversing
@@ -383,6 +349,147 @@ final class AssignmentStatement implements Evaluable {
   @Override public String toString() { return "Assignment(" + left + " = " + right + ")"; }
 }
 
+final class MaybeMethodStatement implements EvaluableFunction {
+  Object instance;
+  String methodName;
+
+  MaybeMethodStatement(Object object, String methodName) {
+    this.instance = object;
+    this.methodName = methodName;
+  }
+
+  @Override
+  public Object evaluate(Environment env, ArrayList<Object> parameters) {
+    // try {
+    //   return method.invoke(null, parameters.toArray());
+    // } catch (Exception e) {
+    //   throw new JShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
+    // }
+
+    Object targetInstance = (instance instanceof Class) ? null : instance;
+    Class<?> targetClass = (instance instanceof Class) ? (Class<?>) instance : instance.getClass();
+    Object[] args = parameters.toArray();
+
+    for (Method method: targetClass.getMethods()) {
+      if (!method.getName().equals(methodName) || method.getParameterCount() != args.length) continue;
+
+      boolean isStatic = Modifier.isStatic(method.getModifiers());
+      if (!isStatic && targetInstance == null) continue;
+
+      Class<?>[] paramTypes = method.getParameterTypes();
+      boolean typesMatch = true;
+      for (int i = 0; i < args.length; i++) {
+        if (args[i] == null) {
+          if (paramTypes[i].isPrimitive()) {
+            typesMatch = false;
+            break;
+          }
+        } else if (!isAssignable(paramTypes[i], args[i].getClass())) {
+          typesMatch = false;
+          break;
+        }
+      }
+
+      if (typesMatch) {
+        try {
+          return method.invoke(targetInstance, args);
+        } catch (Exception e) {
+          throw new JShellException("Error invoking method '" + methodName + "': " + e.getCause().getMessage());
+        }
+      }
+    }
+    throw new JShellException("No matching method '" + methodName + "' found for the given arguments in " + targetClass.getSimpleName());
+  }
+
+  static final Map<Class<?>, Class<?>> WRAPPER_TYPES = Map.of(
+      boolean.class, Boolean.class, byte.class, Byte.class, char.class, Character.class,
+      double.class, Double.class, float.class, Float.class, int.class, Integer.class,
+      long.class, Long.class, short.class, Short.class);
+  private boolean isAssignable(Class<?> targetType, Class<?> sourceType) {
+    if (targetType.isAssignableFrom(sourceType)) return true;
+    if (targetType.isPrimitive()) {
+      return WRAPPER_TYPES.get(targetType).equals(sourceType);
+    }
+    return false;
+  }
+}
+
+// Represents a function definition
+// e.g. `(x, y, z) { return(x + y + z); }`
+final class FunctionStatement implements EvaluableFunction {
+  final Evaluable[] instructions;
+
+  final String[] parameter_names;
+  final int variadicIndex;
+
+  FunctionStatement(Evaluable[] instructions, String[] parameter_names, int variadicIndex) {
+    this.instructions = instructions;
+    this.parameter_names = parameter_names;
+    this.variadicIndex = variadicIndex;
+  }
+
+  @Override
+  public Object evaluate(Environment env, ArrayList<Object> parameters) {
+    final JShellMap frame = env.pushFrame();
+
+    if (variadicIndex == -1) {
+      if (parameter_names.length != parameters.size()) {
+        throw new JShellException("Expected " + parameter_names.length + " arguments, got " + parameters.size());
+      }
+    }
+
+    for (int i = 0; i < (variadicIndex == -1 ? parameter_names.length : parameter_names.length - 1); i++) {
+      frame.put(parameter_names[i], parameters.get(i));
+    }
+
+    if (variadicIndex != -1) {
+      frame.put(parameter_names[parameter_names.length - 1], parameters.subList(parameter_names.length - 1, parameters.size()));
+    }
+
+    for (Evaluable instruction : instructions) {
+      final Object result = instruction.evaluate(env);
+      if (result instanceof ReturnValue) {
+        env.popFrame();
+        return ((ReturnValue) result).value;
+      }
+    }
+
+    env.popFrame();
+    return Void.VOID;
+  }
+
+  @Override public String toString() { return "Function(" + instructions + ")"; }
+}
+
+// Represents a resolved class that can be called like a function for instantiation
+final class ClassResultStatement implements EvaluableFunction {
+  final Class<?> c;
+
+  ClassResultStatement(Class<?> c) {
+    this.c = c;
+  }
+
+  @Override
+  public Object evaluate(Environment env, ArrayList<Object> parameters) {
+    Object[] args = parameters.toArray();
+
+    // Find a matching constructor and attempt to instantiate using it.
+    for (Constructor<?> constructor : c.getConstructors()) {
+      if (constructor.getParameterCount() == args.length) {
+        try {
+          // This will throw IllegalArgumentException if the types are incorrect,
+          return constructor.newInstance(args);
+        } catch (IllegalArgumentException e) {
+          continue; // Argument types don't match, so we continue
+        } catch (Exception e) {
+          throw new JShellException("Error instantiating class '" + c.getSimpleName() + "': " + e.getMessage());
+        }
+      }
+    }
+    throw new JShellException("No matching public constructor found for class '" + c.getSimpleName() + "' with " + args.length + " arguments.");
+  }
+}
+
 // Represents a class resolution statement
 // e.g. `.java.lang.String`
 final class ClassResolutionStatement implements Evaluable {
@@ -394,8 +501,11 @@ final class ClassResolutionStatement implements Evaluable {
   
   @Override
   public Object evaluate(Environment env) {
-    // TODO: Implement
-    return null;
+    try {
+      return new ClassResultStatement(Class.forName(name));
+    } catch (ClassNotFoundException e) {
+      throw new JShellException("Class not found: " + name);
+    }
   }
 
   @Override public String toString() { return "ClassResolution(" + name + ")"; }
@@ -415,8 +525,15 @@ final class FunctionCallStatement implements Evaluable {
 
   @Override
   public Object evaluate(Environment env) {
-    // TODO: Implement
-    return null;
+    final Object trueCaller = caller.evaluate(env);
+    if (!(trueCaller instanceof EvaluableFunction)) {
+      throw new JShellException("Cannot call non-function value '" + trueCaller + "'.");
+    }
+    final EvaluableFunction function = (EvaluableFunction) trueCaller;
+
+    ArrayList<Object> parameters = new ArrayList<>();
+    for (Evaluable arg : arguments) parameters.add(arg.evaluate(env));
+    return function.evaluate(env, parameters);
   }
 
   @Override public String toString() { return "FunctionCall(" + caller + ", " + arguments + ")"; }
