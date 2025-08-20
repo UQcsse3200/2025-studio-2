@@ -5,11 +5,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-// JShell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
-public class JShell {
+// Shell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
+public class Shell {
   // A read / write iinterface implementation
   static public interface Console {
     // Prints any generic object
@@ -29,11 +30,11 @@ public class JShell {
   final private Console console;
   public Environment env;
 
-  public JShell(Console console) {
+  public Shell(Console console) {
     this(console, new Environment());
   }
 
-  public JShell(Console console, Environment env) {
+  public Shell(Console console, Environment env) {
     this.console = console;
     this.env = env;
   }
@@ -62,7 +63,7 @@ public class JShell {
           console.print(result);
           console.print("\n");
         }
-      } catch (JShellException e) {
+      } catch (ShellException e) {
         console.print("Error: ");
         console.print(e.getMessage());
         console.print("\n");
@@ -81,12 +82,23 @@ public class JShell {
   }
 
   Object eval(String source) {
-    // TODO: Implement
-    return null;
+    if (source.trim().isEmpty()) return Void.VOID;
+
+    Parser parser = new Parser(source);
+    ArrayList<Evaluable> statements = new ArrayList<>();
+    
+    // Parse all statements
+    while (!parser.isAtEnd()) statements.add(parser.parseStatement());
+
+    Object lastResult = Void.VOID;
+    // Execute all statements
+    for (Evaluable s : statements) lastResult = s.evaluate(env);
+
+    return lastResult;
   }
 
   public static void main(String[] args) {
-    new JShell(new Console() {
+    new Shell(new Console() {
       final Scanner scanner = new Scanner(System.in);
       final PrintStream out = System.out;
 
@@ -97,26 +109,26 @@ public class JShell {
     }).run();
   }
 
-  @Override public String toString() { return "JShell{\n.env = " + env + "}"; }
+  @Override public String toString() { return "Shell{\n.env = " + env + "}"; }
 }
 
 // A simple typedef
-class JShellMap extends HashMap<String, Object> {}
+class ShellMap extends HashMap<String, Object> {}
 
 // This is an object that represents the state of our shell envoirnment
 class Environment {
-  final public JShellMap global = new JShellMap ();
-  public ArrayList<JShellMap> frames = new ArrayList<JShellMap>();
+  final public ShellMap global = new ShellMap ();
+  public ArrayList<ShellMap> frames = new ArrayList<ShellMap>();
   
   public Environment() {}
 
-  public JShellMap pushFrame() {
-    final JShellMap frame = new JShellMap();
+  public ShellMap pushFrame() {
+    final ShellMap frame = new ShellMap();
     frames.add(frame);
     return frame;
   }
   
-  public JShellMap popFrame() {
+  public ShellMap popFrame() {
     return frames.removeLast();
   }
 
@@ -141,9 +153,9 @@ class Environment {
   }
 }
 
-// Exception Class for JShell
-final class JShellException extends RuntimeException {
-  public JShellException(String message) {
+// Exception Class for Shell
+final class ShellException extends RuntimeException {
+  public ShellException(String message) {
     super(message);
   }
 }
@@ -210,12 +222,12 @@ final class AccessStatement implements Evaluable {
     Object current = env.get(path[0]);
 
     if (path.length == 1 && current == null) {
-      throw new JShellException("Variable '" + path[0] + "' not found.");
+      throw new ShellException("Variable '" + path[0] + "' not found.");
     }
 
     for (int i = 1; i < path.length; i++) {
       if (current == null) {
-        throw new JShellException("Cannot access property '" + path[i] + "' on a null value.");
+        throw new ShellException("Cannot access property '" + path[i] + "' on a null value.");
       }
 
       String propertyName = path[i];
@@ -232,18 +244,18 @@ final class AccessStatement implements Evaluable {
       try {
         Field field = targetClass.getField(propertyName);
         if (instance == null && !Modifier.isStatic(field.getModifiers())) {
-          throw new JShellException("Cannot access instance field '" + propertyName + "' from a static context on class " + targetClass.getSimpleName());
+          throw new ShellException("Cannot access instance field '" + propertyName + "' from a static context on class " + targetClass.getSimpleName());
         }
         current = field.get(instance);
         continue;
       } catch (NoSuchFieldException e) {
         //  might be a method
       } catch (Exception e) {
-        throw new JShellException("Error accessing field '" + propertyName + "': " + e.getMessage());
+        throw new ShellException("Error accessing field '" + propertyName + "': " + e.getMessage());
       }
 
       // Try a method (instance or static)
-      if (i != path.length - 1) throw new JShellException("Cannot access '" + propertyName + "' on " + current.toString());
+      if (i != path.length - 1) throw new ShellException("Cannot access '" + propertyName + "' on " + current.toString());
 
       return new MaybeMethodStatement(instance, propertyName);
 
@@ -258,10 +270,10 @@ final class AccessStatement implements Evaluable {
       //
       // } catch (NoSuchMethodException e) {
       //   // Not a field or a method.
-      // } catch (JShellException e) {
+      // } catch (ShellException e) {
       //   throw e;
       // } catch (Exception e) {
-      //   throw new JShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
+      //   throw new ShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
       // }
 
       // If neither a field nor method was found
@@ -297,13 +309,13 @@ final class AssignmentStatement implements Evaluable {
 
     Object container = env.get(path[0]);
     if (container == null) {
-      throw new JShellException("Variable '" + path[0] + "' not found.");
+      throw new ShellException("Variable '" + path[0] + "' not found.");
     }
 
     // Traverse the path up to the second-to-last element to find the container.
     for (int i = 1; i < path.length - 1; i++) {
       if (container == null) {
-        throw new JShellException("Cannot access property '" + path[i] + "' on a null value.");
+        throw new ShellException("Cannot access property '" + path[i] + "' on a null value.");
       }
 
       String propertyName = path[i];
@@ -315,15 +327,15 @@ final class AssignmentStatement implements Evaluable {
           Field field = container.getClass().getField(propertyName);
           container = field.get(container);
         } catch (NoSuchFieldException e) {
-          throw new JShellException("Public field '" + propertyName + "' not found in object of type " + container.getClass().getSimpleName());
+          throw new ShellException("Public field '" + propertyName + "' not found in object of type " + container.getClass().getSimpleName());
         } catch (Exception e) {
-          throw new JShellException("Error accessing field '" + propertyName + "' during assignment: " + e.getMessage());
+          throw new ShellException("Error accessing field '" + propertyName + "' during assignment: " + e.getMessage());
         }
       }
     }
 
     if (container == null) {
-      throw new JShellException("Cannot assign to property '" + path[path.length - 1] + "' on a null container.");
+      throw new ShellException("Cannot assign to property '" + path[path.length - 1] + "' on a null container.");
     }
 
     String propertyToSet = path[path.length - 1];
@@ -335,11 +347,11 @@ final class AssignmentStatement implements Evaluable {
         Field field = container.getClass().getField(propertyToSet);
         field.set(container, valueToAssign);
       } catch (NoSuchFieldException e) {
-        throw new JShellException("Public field '" + propertyToSet + "' not found in object of type " + container.getClass().getSimpleName());
+        throw new ShellException("Public field '" + propertyToSet + "' not found in object of type " + container.getClass().getSimpleName());
       } catch (IllegalAccessException e) {
-        throw new JShellException("Cannot access or modify field '" + propertyToSet + "'.");
+        throw new ShellException("Cannot access or modify field '" + propertyToSet + "'.");
       } catch (Exception e) {
-        throw new JShellException("Error assigning to field '" + propertyToSet + "': " + e.getMessage());
+        throw new ShellException("Error assigning to field '" + propertyToSet + "': " + e.getMessage());
       }
     }
     
@@ -363,7 +375,7 @@ final class MaybeMethodStatement implements EvaluableFunction {
     // try {
     //   return method.invoke(null, parameters.toArray());
     // } catch (Exception e) {
-    //   throw new JShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
+    //   throw new ShellException("Error invoking method " + method.getName() + ": " + e.getMessage());
     // }
 
     Object targetInstance = (instance instanceof Class) ? null : instance;
@@ -394,17 +406,18 @@ final class MaybeMethodStatement implements EvaluableFunction {
         try {
           return method.invoke(targetInstance, args);
         } catch (Exception e) {
-          throw new JShellException("Error invoking method '" + methodName + "': " + e.getCause().getMessage());
+          throw new ShellException("Error invoking method '" + methodName + "': " + e.getCause().getMessage());
         }
       }
     }
-    throw new JShellException("No matching method '" + methodName + "' found for the given arguments in " + targetClass.getSimpleName());
+    throw new ShellException("No matching method '" + methodName + "' found for the given arguments in " + targetClass.getSimpleName());
   }
 
   static final Map<Class<?>, Class<?>> WRAPPER_TYPES = Map.of(
       boolean.class, Boolean.class, byte.class, Byte.class, char.class, Character.class,
       double.class, Double.class, float.class, Float.class, int.class, Integer.class,
       long.class, Long.class, short.class, Short.class);
+
   private boolean isAssignable(Class<?> targetType, Class<?> sourceType) {
     if (targetType.isAssignableFrom(sourceType)) return true;
     if (targetType.isPrimitive()) {
@@ -430,11 +443,11 @@ final class FunctionStatement implements EvaluableFunction {
 
   @Override
   public Object evaluate(Environment env, ArrayList<Object> parameters) {
-    final JShellMap frame = env.pushFrame();
+    final ShellMap frame = env.pushFrame();
 
     if (variadicIndex == -1) {
       if (parameter_names.length != parameters.size()) {
-        throw new JShellException("Expected " + parameter_names.length + " arguments, got " + parameters.size());
+        throw new ShellException("Expected " + parameter_names.length + " arguments, got " + parameters.size());
       }
     }
 
@@ -482,11 +495,11 @@ final class ClassResultStatement implements EvaluableFunction {
         } catch (IllegalArgumentException e) {
           continue; // Argument types don't match, so we continue
         } catch (Exception e) {
-          throw new JShellException("Error instantiating class '" + c.getSimpleName() + "': " + e.getMessage());
+          throw new ShellException("Error instantiating class '" + c.getSimpleName() + "': " + e.getMessage());
         }
       }
     }
-    throw new JShellException("No matching public constructor found for class '" + c.getSimpleName() + "' with " + args.length + " arguments.");
+    throw new ShellException("No matching public constructor found for class '" + c.getSimpleName() + "' with " + args.length + " arguments.");
   }
 }
 
@@ -504,7 +517,7 @@ final class ClassResolutionStatement implements Evaluable {
     try {
       return new ClassResultStatement(Class.forName(name));
     } catch (ClassNotFoundException e) {
-      throw new JShellException("Class not found: " + name);
+      throw new ShellException("Class not found: " + name);
     }
   }
 
@@ -527,7 +540,7 @@ final class FunctionCallStatement implements Evaluable {
   public Object evaluate(Environment env) {
     final Object trueCaller = caller.evaluate(env);
     if (!(trueCaller instanceof EvaluableFunction)) {
-      throw new JShellException("Cannot call non-function value '" + trueCaller + "'.");
+      throw new ShellException("Cannot call non-function value '" + trueCaller + "'.");
     }
     final EvaluableFunction function = (EvaluableFunction) trueCaller;
 
@@ -537,5 +550,185 @@ final class FunctionCallStatement implements Evaluable {
   }
 
   @Override public String toString() { return "FunctionCall(" + caller + ", " + arguments + ")"; }
+}
+
+// Parser implementation, this is what converts texts to 'Evaluable / EvaluableFunction' objects
+class Parser {
+  private final String source;
+  private int pos = 0;
+
+  Parser(String source) {
+    this.source = source;
+  }
+
+  public boolean isAtEnd() {
+    skipWhitespace();
+    return pos >= source.length();
+  }
+
+  private char peek() {
+    if (pos >= source.length()) return '\0';
+    return source.charAt(pos);
+  }
+
+  private char advance() {
+    return source.charAt(pos++);
+  }
+
+  private boolean match(char expected) {
+    if (isAtEnd() || peek() != expected) return false;
+    pos++;
+    return true;
+  }
+
+  private void consume(char expected, String message) {
+    skipWhitespace();
+    if (!match(expected)) {
+      throw new ShellException(message);
+    }
+  }
+
+  private void skipWhitespace() {
+    while (pos < source.length() && Character.isWhitespace(source.charAt(pos))) {
+      pos++;
+    }
+  }
+
+  public Evaluable parseStatement() {
+    Evaluable expr = parseExpression();
+    consume(';', "Expected ';' after statement.");
+    return expr;
+  }
+
+  private Evaluable parseExpression() {
+    Evaluable expr = parsePrimary();
+
+    skipWhitespace();
+    if (match('=')) { // Assignment
+      if (!(expr instanceof AccessStatement)) {
+        throw new ShellException("Invalid assignment target.");
+      }
+      Evaluable value = parseExpression();
+      expr = new AssignmentStatement((AccessStatement) expr, value);
+    } else if (match('(')) { // Function Call
+      ArrayList<Evaluable> args = new ArrayList<>();
+      if (peek() != ')') {
+        do {
+          args.add(parseExpression());
+        } while (match(','));
+      }
+      consume(')', "Expected ')' after arguments.");
+      expr = new FunctionCallStatement(expr, args);
+    }
+
+    return expr;
+  }
+
+  private Evaluable parsePrimary() {
+    skipWhitespace();
+    char c = peek();
+
+    if (Character.isDigit(c)) return parseNumber();
+    if (c == '"' || c == '\'') return parseStringOrChar();
+    if (c == '.') return parseClassResolution();
+    if (c == '(') return parseFunctionDef();
+    if (Character.isLetter(c) || c == '_') return parseAccess();
+
+    throw new ShellException("Unexpected character: " + c);
+  }
+
+  private ConstantStatement parseNumber() {
+    int start = pos;
+    while (!isAtEnd() && Character.isDigit(peek())) advance();
+    if (peek() == '.') {
+      advance();
+      while (!isAtEnd() && Character.isDigit(peek())) advance();
+    }
+
+    char suffix = Character.toLowerCase(peek());
+    String numberStr = source.substring(start, pos);
+
+    if (suffix == 'l') { advance(); return new ConstantStatement(Long.parseLong(numberStr)); }
+    if (suffix == 'd') { advance(); return new ConstantStatement(Double.parseDouble(numberStr)); }
+
+    if (numberStr.contains(".")) return new ConstantStatement(Float.parseFloat(numberStr));
+    return new ConstantStatement(Integer.parseInt(numberStr));
+  }
+
+  private ConstantStatement parseStringOrChar() {
+    char quote = advance(); // Consume opening quote
+    int start = pos;
+    while (!isAtEnd() && peek() != quote) {
+      advance();
+    }
+    String value = source.substring(start, pos);
+    consume(quote, "Unterminated string or char literal.");
+
+    if (quote == '\'') {
+      if (value.length() != 1) throw new ShellException("Character literal must be a single character.");
+      return new ConstantStatement(value.charAt(0));
+    }
+    return new ConstantStatement(value);
+  }
+
+  private Evaluable parseClassResolution() {
+    consume('.', "Expected '.' for class resolution.");
+    return new ClassResolutionStatement(readIdentifierWithDots());
+  }
+
+  // Check for function definition: `(params) { ... }`
+  private Evaluable parseFunctionDef() {
+    consume('(', "Expected '(' for group or function definition.");
+    skipWhitespace();
+
+    ArrayList<String> params = new ArrayList<>();
+    int variadicIndex = -1;
+
+    if (peek() != ')') {
+      do {
+        skipWhitespace();
+
+        final int at = pos;
+        if (variadicIndex == -1 && match('.') && match('.') && match('.')) variadicIndex = params.size();
+        if (at != pos && variadicIndex == -1) throw new ShellException("Unexpected token" + peek() + " encountered when expecting `...`");
+
+        params.add(readIdentifier());
+      } while (match(','));
+    }
+    consume(')', "Expected ')' after function parameters.");
+    skipWhitespace();
+    if (peek() == '{') {
+      return new ConstantStatement(parseFunctionBody(params.toArray(new String[0]), variadicIndex));
+    } else {
+      throw new ShellException("Unexpected token " + peek() + ". Function body `{ ... }` expected.");
+    }
+  }
+
+  private FunctionStatement parseFunctionBody(String[] params, int variadicIndex) {
+    consume('{', "Expected '{' to start function body.");
+    List<Evaluable> body = new ArrayList<>();
+    while (!isAtEnd() && peek() != '}') body.add(parseStatement());
+    consume('}', "Expected '}' to end function body.");
+    return new FunctionStatement(body.toArray(new Evaluable[0]), params, variadicIndex);
+  }
+
+  private Evaluable parseAccess() {
+    ArrayList<String> path = new ArrayList<>();
+    path.add(readIdentifier());
+    while(match('.')) path.add(readIdentifier());
+    return new AccessStatement(path.toArray(new String[0]));
+  }
+
+  private String readIdentifier() {
+    int start = pos;
+    while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) advance();
+    return source.substring(start, pos).trim();
+  }
+
+  private String readIdentifierWithDots() {
+    int start = pos;
+    while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_' || peek() == '.')) advance();
+    return source.substring(start, pos);
+  }
 }
 
