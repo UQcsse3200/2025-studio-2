@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -706,7 +705,7 @@ class Parser {
 
   private FunctionStatement parseFunctionBody(String[] params, int variadicIndex) {
     consume('{', "Expected '{' to start function body.");
-    List<Evaluable> body = new ArrayList<>();
+    ArrayList<Evaluable> body = new ArrayList<>();
     while (!isAtEnd() && peek() != '}') body.add(parseStatement());
     consume('}', "Expected '}' to end function body.");
     return new FunctionStatement(body.toArray(new Evaluable[0]), params, variadicIndex);
