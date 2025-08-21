@@ -23,11 +23,12 @@ public class Shell {
   static public interface Console {
     // Prints any generic object
     // NOTE: It is assumed that calls to the print method are cheap,
-    //     Therefore, this should probably be buffered
+    //   Therefore, this should probably be buffered
     void print(Object obj);
 
     // Reads a line from the console
     String nextLine();
+
     // Checks if there is a next line to be read
     boolean hasNextLine();
 
@@ -95,7 +96,7 @@ public class Shell {
 
     Parser parser = new Parser(source);
     ArrayList<Evaluable> statements = new ArrayList<>();
-    
+
     // Parse all statements
     while (!parser.isAtEnd()) statements.add(parser.parseStatement());
 
@@ -111,18 +112,44 @@ public class Shell {
       final Scanner scanner = new Scanner(System.in);
       final PrintStream out = System.out;
 
-      @Override public void print(Object obj) { out.print(obj); }
-      @Override public String nextLine() { return scanner.nextLine(); }
-      @Override public boolean hasNextLine() { return scanner.hasNextLine(); }
-      @Override public void close() { scanner.close(); }
+      @Override
+      public void print(Object obj) {
+        out.print(obj);
+      }
+
+      @Override
+      public String nextLine() {
+        return scanner.nextLine();
+      }
+
+      @Override
+      public boolean hasNextLine() {
+        return scanner.hasNextLine();
+      }
+
+      @Override
+      public void close() {
+        scanner.close();
+      }
     }).run();
   }
 
-  @Override public String toString() { return "Shell{.env = " + env + "}"; }
+  @Override
+  public String toString() {
+    return "Shell{.env = " + env + "}";
+  }
 
-  public static Object and(Object o1, Object o2) { return isTruthy(o1) && isTruthy(o2); }
-  public static Object or(Object o1, Object o2) { return isTruthy(o1) || isTruthy(o2); }
-  public static Object not(Object o) { return !isTruthy(o); }
+  public static Object and(Object o1, Object o2) {
+    return isTruthy(o1) && isTruthy(o2);
+  }
+
+  public static Object or(Object o1, Object o2) {
+    return isTruthy(o1) || isTruthy(o2);
+  }
+
+  public static Object not(Object o) {
+    return !isTruthy(o);
+  }
 
   public static boolean isTruthy(Object obj) {
     if (obj == null) return false;
@@ -165,8 +192,13 @@ public class Shell {
       this.step = step;
     }
 
-    public boolean hasNext() { return start <= end; }
-    public Long next() { return start += step; }
+    public boolean hasNext() {
+      return start <= end;
+    }
+
+    public Long next() {
+      return start += step;
+    }
   }
 
   public Object forEach(Object iterable, EvaluableFunction function) {
@@ -220,7 +252,20 @@ public class Shell {
 
 // A simple typedef
 class ShellMap extends HashMap<String, Object> {
-  public static Map<String, Object> getMap(ShellMap self) { return self; }
+  public static Map<String, Object> getMap(ShellMap self) {
+    return self;
+  }
+
+  private boolean inToStringCall = false;
+
+  @Override
+  public String toString() {
+    if (inToStringCall) return "...";
+    inToStringCall = true;
+    final String retval = getMap(this).toString();
+    inToStringCall = false;
+    return retval;
+  }
 }
 
 // This is an object that represents the state of our shell envoirnment
@@ -228,15 +273,16 @@ class Environment {
   final public ShellMap global = new ShellMap();
   public ArrayList<ShellMap> frames = new ArrayList<ShellMap>();
   private boolean inToStringCall = false;
-  
-  public Environment() {}
+
+  public Environment() {
+  }
 
   public ShellMap pushFrame() {
     final ShellMap frame = new ShellMap();
     frames.add(frame);
     return frame;
   }
-  
+
   public ShellMap popFrame() {
     return frames.removeLast();
   }
@@ -257,7 +303,8 @@ class Environment {
     }
   }
 
-  @Override public String toString() {
+  @Override
+  public String toString() {
     if (inToStringCall) return "...";
     inToStringCall = true;
     final String retval = "Environment{.global = " + global + ".frames = " + frames + "}";
@@ -275,10 +322,15 @@ final class ShellException extends RuntimeException {
 
 // Special void class to represent absence of value
 final class Void {
-  private Void() {}
+  private Void() {
+  }
+
   public static final Object VOID = new Void();
 
-  @Override public String toString() { return "VOID"; }
+  @Override
+  public String toString() {
+    return "VOID";
+  }
 }
 
 // Represents a return value from a function
@@ -289,7 +341,10 @@ final class ReturnValue {
     this.value = value;
   }
 
-  @Override public String toString() { return "ReturnValue(" + value + ")"; }
+  @Override
+  public String toString() {
+    return "ReturnValue(" + value + ")";
+  }
 }
 
 // This represents an evaluable fragment
@@ -306,23 +361,26 @@ interface EvaluableFunction {
 // used for constant definitions
 final class ConstantStatement implements Evaluable {
   final Object value;
-  
+
   ConstantStatement(Object value) {
     this.value = value;
   }
-  
+
   @Override
   public Object evaluate(Environment env) {
     return value;
   }
 
-  @Override public String toString() { return "Constant(" + value + ")"; }
+  @Override
+  public String toString() {
+    return "Constant(" + value + ")";
+  }
 }
 
 // A utility class for accessing properties on objects / maps / etc
 final class Accessor {
   public static Object access(Environment env, List<String> path, boolean accessMethods) {
-    assert(path.size() >= 1);
+    assert (path.size() >= 1);
 
     Object current = env.get(path.get(0));
 
@@ -431,7 +489,10 @@ final class AccessStatement implements Evaluable {
     return current;
   }
 
-  @Override public String toString() { return "Access(" + String.join(".", path) + ")"; }
+  @Override
+  public String toString() {
+    return "Access(" + String.join(".", path) + ")";
+  }
 }
 
 // Represents an assignment statement, supports traversing
@@ -439,12 +500,12 @@ final class AccessStatement implements Evaluable {
 final class AssignmentStatement implements Evaluable {
   final AccessStatement left;
   final Evaluable right;
-  
+
   AssignmentStatement(AccessStatement left, Evaluable right) {
     this.left = left;
     this.right = right;
   }
-  
+
   @Override
   public Object evaluate(Environment env) {
     Object valueToAssign = right.evaluate(env);
@@ -455,7 +516,7 @@ final class AssignmentStatement implements Evaluable {
       return valueToAssign;
     }
 
-    Object toSet = Accessor.access(env, Arrays.asList(path).subList(0, path.length-1), false);
+    Object toSet = Accessor.access(env, Arrays.asList(path).subList(0, path.length - 1), false);
 
     if (toSet == null) {
       throw new ShellException("Cannot access property '" + path[path.length - 1] + "' on a null container.");
@@ -483,7 +544,10 @@ final class AssignmentStatement implements Evaluable {
     throw new ShellException("Cannot set field '" + path[path.length - 1] + "' on " + targetClass.getSimpleName());
   }
 
-  @Override public String toString() { return "Assignment(" + left + " = " + right + ")"; }
+  @Override
+  public String toString() {
+    return "Assignment(" + left + " = " + right + ")";
+  }
 }
 
 // represents what could be a method statement.
@@ -506,22 +570,22 @@ final class MaybeMethodStatement implements EvaluableFunction {
     ArrayList<Method> candidates = new ArrayList<>();
 
     targetClass.getMethods();
-    for (Method method: targetClass.getMethods()) {
+    for (Method method : targetClass.getMethods()) {
       if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
         candidates.add(method);
       }
     }
 
     for (Class<?> c : targetClass.getDeclaredClasses()) {
-      for (Method method: c.getDeclaredMethods()) {
+      for (Method method : c.getDeclaredMethods()) {
         if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
           candidates.add(method);
         }
       }
     }
 
-    for (Method method: candidates) {
-      assert(method.getName().equals(methodName));
+    for (Method method : candidates) {
+      assert (method.getName().equals(methodName));
       if (method.getParameterCount() != args.length) continue;
 
       boolean isStatic = Modifier.isStatic(method.getModifiers());
@@ -610,7 +674,10 @@ final class FunctionStatement implements EvaluableFunction {
     return Void.VOID;
   }
 
-  @Override public String toString() { return "Function(" + instructions + ")"; }
+  @Override
+  public String toString() {
+    return "Function(" + instructions + ")";
+  }
 }
 
 // Represents a resolved class that can be called like a function for instantiation
@@ -646,11 +713,11 @@ final class ClassResultStatement implements EvaluableFunction {
 // e.g. `.java.lang.String`
 final class ClassResolutionStatement implements Evaluable {
   final String name;
-  
+
   ClassResolutionStatement(String name) {
     this.name = name;
   }
-  
+
   @Override
   public Object evaluate(Environment env) {
     try {
@@ -660,7 +727,10 @@ final class ClassResolutionStatement implements Evaluable {
     }
   }
 
-  @Override public String toString() { return "ClassResolution(" + name + ")"; }
+  @Override
+  public String toString() {
+    return "ClassResolution(" + name + ")";
+  }
 }
 
 // Represents a function call statement
@@ -688,7 +758,10 @@ final class FunctionCallStatement implements Evaluable {
     return function.evaluate(env, parameters);
   }
 
-  @Override public String toString() { return "FunctionCall(" + caller + ", " + arguments + ")"; }
+  @Override
+  public String toString() {
+    return "FunctionCall(" + caller + ", " + arguments + ")";
+  }
 }
 
 // Parser implementation, this is what converts texts to 'Evaluable / EvaluableFunction' objects
@@ -787,8 +860,14 @@ class Parser {
     char suffix = Character.toLowerCase(peek());
     String numberStr = source.substring(start, pos);
 
-    if (suffix == 'l') { advance(); return new ConstantStatement(Long.parseLong(numberStr)); }
-    if (suffix == 'd') { advance(); return new ConstantStatement(Double.parseDouble(numberStr)); }
+    if (suffix == 'l') {
+      advance();
+      return new ConstantStatement(Long.parseLong(numberStr));
+    }
+    if (suffix == 'd') {
+      advance();
+      return new ConstantStatement(Double.parseDouble(numberStr));
+    }
 
     if (numberStr.contains(".")) return new ConstantStatement(Float.parseFloat(numberStr));
     return new ConstantStatement(Integer.parseInt(numberStr));
@@ -829,7 +908,8 @@ class Parser {
 
         final int at = pos;
         if (variadicIndex == -1 && match('.') && match('.') && match('.')) variadicIndex = params.size();
-        if (at != pos && variadicIndex == -1) throw new ShellException("Unexpected token" + peek() + " encountered when expecting `...`");
+        if (at != pos && variadicIndex == -1)
+          throw new ShellException("Unexpected token" + peek() + " encountered when expecting `...`");
 
         params.add(readIdentifier());
       } while (match(','));
@@ -854,7 +934,7 @@ class Parser {
   private Evaluable parseAccess() {
     ArrayList<String> path = new ArrayList<>();
     path.add(readIdentifier());
-    while(match('.')) path.add(readIdentifier());
+    while (match('.')) path.add(readIdentifier());
     return new AccessStatement(path.toArray(new String[0]));
   }
 
