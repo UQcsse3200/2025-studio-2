@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.KeyboardLightingInputTestComponent;
 import com.csse3200.game.entities.Entity;
@@ -38,6 +39,22 @@ public class LightFactory {
                                                  float angularVelDeg) {
         Entity e = createConeLight(rays, color, distance, directionDeg, coneDeg);
         e.getComponent(ConeLightComponent.class).setAngularVelocityDeg(angularVelDeg);
+        return e;
+    }
+
+    public static Entity createSecurityLight(Entity player,
+                                             short occluderMask,
+                                             int rays,
+                                             Color color,
+                                             float distance,
+                                             float directionDeg,
+                                             float coneDeg) {
+        Entity e = createConeLight(rays, color, distance, directionDeg, coneDeg);
+        e.addComponent(new ConeDetectorComponent(player, occluderMask).setDebug(true));
+        e.getEvents().addListener("targetDetected", (Entity p) ->
+                e.getComponent(ConeLightComponent.class).setColor(Color.RED));
+        e.getEvents().addListener("targetLost", (Entity p) ->
+                e.getComponent(ConeLightComponent.class).setColor(Color.GREEN));
         return e;
     }
 

@@ -11,6 +11,7 @@ import com.csse3200.game.entities.factories.LightFactory;
 import com.csse3200.game.entities.factories.NPCFactory;
 import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -153,24 +154,25 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnLights() {
-    Entity light = LightFactory.createConeLight(
-            128,
-            Color.WHITE,
-            10f,
-            0f,
-            35f
-    );
-    spawnEntityAt(light, new GridPoint2(5, 5), true, true);
-
-//    Entity sweep = LightFactory.createRotatingConeLight(
+//    Entity light = LightFactory.createConeLight(
 //            128,
-//            Color.YELLOW,
-//            8f,
+//            Color.WHITE,
+//            10f,
 //            0f,
-//            30f,
-//            45f
+//            35f
 //    );
-//    spawnEntityAt(sweep, new GridPoint2(10, 10), true, true);
+//    spawnEntityAt(light, new GridPoint2(5, 5), true, true);
+
+      Entity securityLight = LightFactory.createSecurityLight(
+              player,
+              PhysicsLayer.OBSTACLE,
+              128,
+              Color.WHITE,
+              10f,
+              0f,
+              35f
+      );
+      spawnEntityAt(securityLight, new GridPoint2(5, 5), true, true);
   }
 
   private void playMusic() {
