@@ -1,8 +1,7 @@
-package com.deco2800.game.lighting;
+package com.csse3200.game.lighting;
 
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.physics.box2d.World;
-import com.deco2800.game.components.CameraComponent;
+import com.csse3200.game.components.CameraComponent;
 
 public class LightingService {
     private final LightingEngine engine;

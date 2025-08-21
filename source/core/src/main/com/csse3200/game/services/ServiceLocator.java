@@ -1,4 +1,4 @@
-package com.deco2800.game.services;
+package com.csse3200.game.services;
 
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.input.InputService;

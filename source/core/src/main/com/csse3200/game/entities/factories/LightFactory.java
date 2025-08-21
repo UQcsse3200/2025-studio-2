@@ -1,13 +1,13 @@
-package com.deco2800.game.entities.factories;
+package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.deco2800.game.components.lighting.ConeLightComponent;
-import com.deco2800.game.components.lighting.KeyboardLightingInputTestComponent;
-import com.deco2800.game.entities.Entity;
-import com.deco2800.game.lighting.LightingService;
-import com.deco2800.game.services.ServiceLocator;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.lighting.KeyboardLightingInputTestComponent;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.services.ServiceLocator;
 
 public class LightFactory {
 

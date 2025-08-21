@@ -1,11 +1,11 @@
-package com.deco2800.game.components.lighting;
+package com.csse3200.game.components.lighting;
 
+import box2dLight.ConeLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.deco2800.game.components.Component;
-import box2dLight.RayHandler;
-import box2dLight.ConeLight;
-import com.deco2800.game.services.ServiceLocator;
+import com.csse3200.game.components.Component;
+import com.csse3200.game.services.ServiceLocator;
 
 public class ConeLightComponent extends Component {
     private final RayHandler rayHandler;

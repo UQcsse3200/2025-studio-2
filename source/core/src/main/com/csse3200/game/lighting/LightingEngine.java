@@ -1,11 +1,11 @@
-package com.deco2800.game.lighting;
+package com.csse3200.game.lighting;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
-import box2dLight.RayHandler;
-import com.deco2800.game.components.CameraComponent;
+import com.csse3200.game.components.CameraComponent;
 
 public class LightingEngine implements Disposable {
     private final RayHandler rayHandler;
