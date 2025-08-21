@@ -400,8 +400,9 @@ final class Accessor {
       Object instance = (current instanceof Class) ? null : current;
 
       try {
-        Field field = targetClass.getDeclaredField(propertyName);
+        Field field = targetClass.getField(propertyName);
         current = field.get(instance);
+        continue;
       } catch (NoSuchFieldException e) {
         // Maybe a private field / method!
       } catch (Exception e) {
@@ -409,13 +410,10 @@ final class Accessor {
       }
 
       if (i == path.size() - 1 && accessMethods) {
-        try {
-          targetClass.getMethod(propertyName);
-          return new MaybeMethodStatement(instance, propertyName);
-        } catch (NoSuchMethodException e) {
-          // Maybe private field / method!
-        } catch (Exception e) {
-          throw new ShellException("Cannot access method '" + propertyName + "' on " + targetClass.getSimpleName());
+        for (Method method : targetClass.getMethods()) {
+          if (method.getName().equals(propertyName)) {
+            return new MaybeMethodStatement(instance, propertyName);
+          }
         }
       }
 
@@ -446,13 +444,10 @@ final class Accessor {
         }
 
         if (i == path.size() - 1 && accessMethods) {
-          try {
-            currentClass.getDeclaredMethod(propertyName);
-            return new MaybeMethodStatement(instance, propertyName);
-          } catch (NoSuchMethodException e) {
-            // Maybe Subclass has such a thing!
-          } catch (Exception e) {
-            throw new ShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
+          for (Method method : currentClass.getDeclaredMethods()) {
+            if (method.getName().equals(propertyName)) {
+              return new MaybeMethodStatement(instance, propertyName);
+            }
           }
         }
       }
