@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +15,10 @@ import java.lang.reflect.Array;
 
 // Shell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
 public class Shell {
+  final public static Class<?> RangeClass = Range.class;
+  final public static Class<?> ShellMapClass = ShellMap.class;
+  final public static Class<?> ReturnValueClass = ReturnValue.class;
+
   // A read / write iinterface implementation
   static public interface Console {
     // Prints any generic object
@@ -194,14 +199,33 @@ public class Shell {
     }
     return result;
   }
+
+  public Object tryCatch(EvaluableFunction tryBlock, EvaluableFunction catchBlock) {
+    try {
+      return tryBlock.evaluate(env, new ArrayList<>());
+    } catch (ShellException e) {
+      return catchBlock.evaluate(env, new ArrayList<>(List.of(e)));
+    }
+  }
+
+  public Object setGlobal(String name, Object value) {
+    env.global.put(name, value);
+    return value;
+  }
+
+  public Object getGlobal(String name) {
+    return env.global.get(name);
+  }
 }
 
 // A simple typedef
-class ShellMap extends HashMap<String, Object> {}
+class ShellMap extends HashMap<String, Object> {
+  public static Map<String, Object> getMap(ShellMap self) { return self; }
+}
 
 // This is an object that represents the state of our shell envoirnment
 class Environment {
-  final public ShellMap global = new ShellMap ();
+  final public ShellMap global = new ShellMap();
   public ArrayList<ShellMap> frames = new ArrayList<ShellMap>();
   private boolean inToStringCall = false;
   
@@ -295,6 +319,93 @@ final class ConstantStatement implements Evaluable {
   @Override public String toString() { return "Constant(" + value + ")"; }
 }
 
+// A utility class for accessing properties on objects / maps / etc
+final class Accessor {
+  public static Object access(Environment env, List<String> path, boolean accessMethods) {
+    assert(path.size() >= 1);
+
+    Object current = env.get(path.get(0));
+
+    for (int i = 1; i < path.size(); i++) {
+      if (current == null) {
+        throw new ShellException("Cannot access property '" + path.get(i) + "' on a null value.");
+      }
+
+      String propertyName = path.get(i);
+
+      if (current instanceof ShellMap) {
+        current = ((ShellMap) current).get(propertyName);
+        continue;
+      }
+
+      Class<?> targetClass = (current instanceof Class) ? (Class<?>) current : current.getClass();
+      Object instance = (current instanceof Class) ? null : current;
+
+      try {
+        Field field = targetClass.getDeclaredField(propertyName);
+        current = field.get(instance);
+      } catch (NoSuchFieldException e) {
+        // Maybe a private field / method!
+      } catch (Exception e) {
+        throw new ShellException("Cannot access field '" + propertyName + "' on " + targetClass.getSimpleName());
+      }
+
+      if (i == path.size() - 1 && accessMethods) {
+        try {
+          targetClass.getMethod(propertyName);
+          return new MaybeMethodStatement(instance, propertyName);
+        } catch (NoSuchMethodException e) {
+          // Maybe private field / method!
+        } catch (Exception e) {
+          throw new ShellException("Cannot access method '" + propertyName + "' on " + targetClass.getSimpleName());
+        }
+      }
+
+      for (Class<?> currentClass = targetClass; currentClass != null; currentClass = currentClass.getSuperclass()) {
+        try {
+          for (Class<?> c : currentClass.getDeclaredClasses()) {
+            if (c.getSimpleName().equals(propertyName)) {
+              current = c;
+              continue;
+            }
+          }
+        } catch (Exception e) {
+          throw new ShellException("Error accessing class '" + propertyName + "': " + e.getMessage());
+        }
+
+        try {
+          Field field = currentClass.getDeclaredField(propertyName);
+          if (instance == null && !Modifier.isStatic(field.getModifiers())) {
+            throw new ShellException("Cannot access instance field '" + propertyName + "' from a static context on class " + targetClass.getSimpleName());
+          }
+          field.setAccessible(true);
+          current = field.get(instance);
+          continue;
+        } catch (NoSuchFieldException e) {
+          //  might be a method
+        } catch (Exception e) {
+          throw new ShellException("Error accessing field '" + propertyName + "': " + e.getMessage());
+        }
+
+        if (i == path.size() - 1 && accessMethods) {
+          try {
+            currentClass.getDeclaredMethod(propertyName);
+            return new MaybeMethodStatement(instance, propertyName);
+          } catch (NoSuchMethodException e) {
+            // Maybe Subclass has such a thing!
+          } catch (Exception e) {
+            throw new ShellException("Error accessing method '" + propertyName + "': " + e.getMessage());
+          }
+        }
+      }
+
+      throw new ShellException("Cannot access '" + propertyName + "' on " + current.toString());
+    }
+
+    return current;
+  }
+}
+
 // Accesses a variable, supports traversing
 // e.g. `x` or `x.y`
 final class AccessStatement implements Evaluable {
@@ -306,49 +417,17 @@ final class AccessStatement implements Evaluable {
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public Object evaluate(Environment env) {
-    Object current = env.get(path[0]);
 
-    if (path.length == 1 && current == null) {
-      throw new ShellException("Variable '" + path[0] + "' not found.");
-    }
-
-    for (int i = 1; i < path.length; i++) {
+    if (path.length == 1) {
+      Object current = env.get(path[0]);
       if (current == null) {
-        throw new ShellException("Cannot access property '" + path[i] + "' on a null value.");
+        throw new ShellException("Variable '" + path[0] + "' not found.");
       }
-
-      String propertyName = path[i];
-
-      if (current instanceof Map) {
-        current = ((Map<String, Object>) current).get(propertyName);
-        continue;
-      }
-
-      Class<?> targetClass = (current instanceof Class) ? (Class<?>) current : current.getClass();
-      Object instance = (current instanceof Class) ? null : current;
-
-      // Try to access as a field (instance or static)
-      try {
-        Field field = targetClass.getField(propertyName);
-        if (instance == null && !Modifier.isStatic(field.getModifiers())) {
-          throw new ShellException("Cannot access instance field '" + propertyName + "' from a static context on class " + targetClass.getSimpleName());
-        }
-        current = field.get(instance);
-        continue;
-      } catch (NoSuchFieldException e) {
-        //  might be a method
-      } catch (Exception e) {
-        throw new ShellException("Error accessing field '" + propertyName + "': " + e.getMessage());
-      }
-
-      // Try a method (instance or static)
-      if (i != path.length - 1) throw new ShellException("Cannot access '" + propertyName + "' on " + current.toString());
-
-      return new MaybeMethodStatement(instance, propertyName);
+      return current;
     }
 
+    Object current = Accessor.access(env, Arrays.asList(path), true);
     return current;
   }
 
@@ -367,7 +446,6 @@ final class AssignmentStatement implements Evaluable {
   }
   
   @Override
-  @SuppressWarnings("unchecked")
   public Object evaluate(Environment env) {
     Object valueToAssign = right.evaluate(env);
     String[] path = left.path;
@@ -377,55 +455,32 @@ final class AssignmentStatement implements Evaluable {
       return valueToAssign;
     }
 
-    Object container = env.get(path[0]);
-    if (container == null) {
-      throw new ShellException("Variable '" + path[0] + "' not found.");
+    Object toSet = Accessor.access(env, Arrays.asList(path).subList(0, path.length-1), false);
+
+    if (toSet == null) {
+      throw new ShellException("Cannot access property '" + path[path.length - 1] + "' on a null container.");
+    } else if (toSet instanceof ShellMap) {
+      ((ShellMap) toSet).put(path[path.length - 1], valueToAssign);
+      return valueToAssign;
+    } else if (toSet instanceof Environment) {
+      ((Environment) toSet).put(path[path.length - 1], valueToAssign);
+      return valueToAssign;
     }
 
-    // Traverse the path up to the second-to-last element to find the container.
-    for (int i = 1; i < path.length - 1; i++) {
-      if (container == null) {
-        throw new ShellException("Cannot access property '" + path[i] + "' on a null value.");
-      }
-
-      String propertyName = path[i];
-
-      if (container instanceof Map) {
-        container = ((Map<String, Object>) container).get(propertyName);
-      } else {
-        try {
-          Field field = container.getClass().getField(propertyName);
-          container = field.get(container);
-        } catch (NoSuchFieldException e) {
-          throw new ShellException("Public field '" + propertyName + "' not found in object of type " + container.getClass().getSimpleName());
-        } catch (Exception e) {
-          throw new ShellException("Error accessing field '" + propertyName + "' during assignment: " + e.getMessage());
-        }
-      }
-    }
-
-    if (container == null) {
-      throw new ShellException("Cannot assign to property '" + path[path.length - 1] + "' on a null container.");
-    }
-
-    String propertyToSet = path[path.length - 1];
-
-    if (container instanceof Map) {
-      ((Map<String, Object>) container).put(propertyToSet, valueToAssign);
-    } else {
+    Class<?> targetClass = (toSet instanceof Class) ? (Class<?>) toSet : toSet.getClass();
+    for (Class<?> c : targetClass.getDeclaredClasses()) {
       try {
-        Field field = container.getClass().getField(propertyToSet);
-        field.set(container, valueToAssign);
+        Field field = c.getDeclaredField(path[path.length - 1]);
+        field.setAccessible(true);
+        field.set(toSet, valueToAssign);
+        return valueToAssign;
       } catch (NoSuchFieldException e) {
-        throw new ShellException("Public field '" + propertyToSet + "' not found in object of type " + container.getClass().getSimpleName());
-      } catch (IllegalAccessException e) {
-        throw new ShellException("Cannot access or modify field '" + propertyToSet + "'.");
       } catch (Exception e) {
-        throw new ShellException("Error assigning to field '" + propertyToSet + "': " + e.getMessage());
+        throw new ShellException("Error setting field '" + path[path.length - 1] + "': " + e.getMessage());
       }
     }
-    
-    return valueToAssign;
+
+    throw new ShellException("Cannot set field '" + path[path.length - 1] + "' on " + targetClass.getSimpleName());
   }
 
   @Override public String toString() { return "Assignment(" + left + " = " + right + ")"; }
@@ -448,8 +503,26 @@ final class MaybeMethodStatement implements EvaluableFunction {
     Class<?> targetClass = (instance instanceof Class) ? (Class<?>) instance : instance.getClass();
     Object[] args = parameters.toArray();
 
+    ArrayList<Method> candidates = new ArrayList<>();
+
+    targetClass.getMethods();
     for (Method method: targetClass.getMethods()) {
-      if (!method.getName().equals(methodName) || method.getParameterCount() != args.length) continue;
+      if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
+        candidates.add(method);
+      }
+    }
+
+    for (Class<?> c : targetClass.getDeclaredClasses()) {
+      for (Method method: c.getDeclaredMethods()) {
+        if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
+          candidates.add(method);
+        }
+      }
+    }
+
+    for (Method method: candidates) {
+      assert(method.getName().equals(methodName));
+      if (method.getParameterCount() != args.length) continue;
 
       boolean isStatic = Modifier.isStatic(method.getModifiers());
       if (!isStatic && targetInstance == null) continue;
