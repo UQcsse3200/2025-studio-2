@@ -25,7 +25,7 @@ init = () {
   "`() { discard = (v) {}; discard(return(0)); } ()` will return nothing";
   setGlobal("return", Shell.ReturnValueClass);
 
-  "--- Functions ---";
+  "--- Conditionals ---";
 
   "`if` is a function that executes the second function argument if the first argument evaluates to true";
   setGlobal("if", globalThis.ifThen);
@@ -42,6 +42,11 @@ init = () {
 
   "`tryCatch` executes the first function argument and calls the second if an exception is thrown";
   setGlobal("tryCatch", globalThis.tryCatch);
+
+  "airthematic";
+  setGlobal("and", globalThis.and);
+  setGlobal("or", globalThis.or);
+  setGlobal("not", globalThis.not);
 }
 
 init();

@@ -139,16 +139,16 @@ public class Shell {
     return "Shell{.env = " + env + "}";
   }
 
-  public static Object and(Object o1, Object o2) {
-    return isTruthy(o1) && isTruthy(o2);
+  public static Object and(Object l, Object r) {
+    return isTruthy(l) && isTruthy(r);
   }
 
-  public static Object or(Object o1, Object o2) {
-    return isTruthy(o1) || isTruthy(o2);
+  public static Object or(Object l, Object r) {
+    return isTruthy(r) || isTruthy(r);
   }
 
-  public static Object not(Object o) {
-    return !isTruthy(o);
+  public static Object not(Object x) {
+    return !isTruthy(x);
   }
 
   public static boolean isTruthy(Object obj) {
