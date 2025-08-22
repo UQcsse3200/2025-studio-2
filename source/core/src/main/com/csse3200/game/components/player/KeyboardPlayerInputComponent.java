@@ -32,6 +32,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
 
       case Keys.SPACE:
+        walkDirection.add(Vector2Utils.UP);
 
         return true;
       case Keys.A:
@@ -86,6 +87,17 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("walkStop");
     } else {
       entity.getEvents().trigger("walk", walkDirection);
+    }
+  }
+
+  /**
+   * Use this to start a jump event
+   */
+  private void triggerJumpEvent() {
+    if (walkDirection.epsilonEquals(Vector2.Zero)) {
+      entity.getEvents().trigger("walkStop");
+    } else {
+      entity.getEvents().trigger() //put jump here
     }
   }
 }
