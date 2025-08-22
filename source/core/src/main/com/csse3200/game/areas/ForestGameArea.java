@@ -7,10 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.LightFactory;
-import com.csse3200.game.entities.factories.NPCFactory;
-import com.csse3200.game.entities.factories.ObstacleFactory;
-import com.csse3200.game.entities.factories.PlayerFactory;
+import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
@@ -67,16 +64,17 @@ public class ForestGameArea extends GameArea {
   @Override
   public void create() {
     loadAssets();
-
     displayUI();
-
     spawnTerrain();
     spawnTrees();
+
     player = spawnPlayer();
     spawnGhosts();
     spawnGhostKing();
-    spawnLights();
 
+    spawnBoxes();
+
+    spawnLights();
     playMusic();
   }
 
@@ -151,6 +149,14 @@ public class ForestGameArea extends GameArea {
     GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
     Entity ghostKing = NPCFactory.createGhostKing(player);
     spawnEntityAt(ghostKing, randomPos, true, true);
+  }
+
+  private void spawnBoxes() {
+      // Static box
+      Entity staticBox = BoxFactory.createStaticBox();
+      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+
+      // Add other types of boxes here
   }
 
   private void spawnLights() {
