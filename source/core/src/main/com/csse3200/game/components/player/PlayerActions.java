@@ -21,6 +21,7 @@ public class PlayerActions extends Component {
   private boolean moving = false;
 
   private boolean isJumping = false;
+  private boolean isDoubleJump = false;
 
   @Override
   public void create() {
@@ -68,7 +69,10 @@ public class PlayerActions extends Component {
   }
 
   void jump() {
-    if (isJumping) return;
+
+    if(isJumping) isDoubleJump = true;
+
+    if (isJumping && isDoubleJump) return;
 
     Body body = physicsComponent.getBody();
 
@@ -85,6 +89,7 @@ public class PlayerActions extends Component {
 
   void onLand() {
     isJumping = false;
+    isDoubleJump = false;
   }
 
   /**
