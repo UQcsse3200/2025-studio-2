@@ -16,7 +16,11 @@ public class PlayerActions extends Component {
 
   private PhysicsComponent physicsComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
+
+  private Vector2 jumpDirection = Vector2.Zero.cpy();
   private boolean moving = false;
+
+  private boolean isJumping = false;
 
   @Override
   public void create() {
@@ -24,7 +28,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
     entity.getEvents().addListener("attack", this::attack);
-    entity.getEvents().addListener("jump", this::); //TO BE FILLED IN
+    entity.getEvents().addListener("jump", this::jump); //TO BE FILLED IN
   }
 
   @Override
@@ -60,6 +64,24 @@ public class PlayerActions extends Component {
     this.walkDirection = Vector2.Zero.cpy();
     updateSpeed();
     moving = false;
+  }
+
+  void jump() {
+    Body body = physicsComponent.getBody();
+
+    if (isJumping) {
+      return;
+    }
+
+    float jumpForce = body.getMass() * 7f;
+    Vector2 impulse = new Vector2(0, jumpForce);
+
+    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+    isJumping = true;
+  }
+
+  public void onLand() {
+    isJumping = false;
   }
 
   /**
