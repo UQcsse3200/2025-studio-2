@@ -27,8 +27,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyDown(int keycode) {
     switch (keycode) {
       case Keys.W:
-        walkDirection.add(Vector2Utils.UP);
-        triggerWalkEvent();
+        /*walkDirection.add(Vector2Utils.UP);
+        triggerWalkEvent();*/
+        return true;
+
+      case Keys.SPACE:
+
         return true;
       case Keys.A:
         walkDirection.add(Vector2Utils.LEFT);
@@ -41,9 +45,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       case Keys.D:
         walkDirection.add(Vector2Utils.RIGHT);
         triggerWalkEvent();
-        return true;
-      case Keys.SPACE:
-        entity.getEvents().trigger("attack");
         return true;
       default:
         return false;
