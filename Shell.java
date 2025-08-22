@@ -52,18 +52,19 @@ public class Shell {
   public void run() {
     StringBuilder inputBuffer = new StringBuilder();
     while (true) {
-      console.print(inputBuffer.length() == 0 ? "> " : "... ");
-      if (!console.hasNextLine()) return; // Exit if no more input
+      if (inputBuffer.length() == 0) console.print("> ");
+      if (!console.hasNextLine()) return;
 
       final String line = console.nextLine();
       inputBuffer.append(line);
 
-      if (!line.trim().endsWith(";") && !line.trim().isEmpty()) {
-        inputBuffer.append(" ");
+      if (!line.trim().endsWith("!")) {
+        inputBuffer.append("\n");
         continue;
       }
 
-      final String source = inputBuffer.toString().trim();
+      String source = inputBuffer.toString().trim();
+      source = source.substring(0, source.length() - 1);
       inputBuffer.setLength(0);
       if (source.isEmpty()) continue;
 
@@ -419,12 +420,15 @@ final class Accessor {
 
       for (Class<?> currentClass = targetClass; currentClass != null; currentClass = currentClass.getSuperclass()) {
         try {
+          boolean found = false;
           for (Class<?> c : currentClass.getDeclaredClasses()) {
             if (c.getSimpleName().equals(propertyName)) {
               current = c;
-              continue;
+              found = true;
+              break;
             }
           }
+          if (found) break;
         } catch (Exception e) {
           throw new ShellException("Error accessing class '" + propertyName + "': " + e.getMessage());
         }
@@ -436,7 +440,7 @@ final class Accessor {
           }
           field.setAccessible(true);
           current = field.get(instance);
-          continue;
+          break;
         } catch (NoSuchFieldException e) {
           //  might be a method
         } catch (Exception e) {
@@ -451,8 +455,6 @@ final class Accessor {
           }
         }
       }
-
-      throw new ShellException("Cannot access '" + propertyName + "' on " + current.toString());
     }
 
     return current;
