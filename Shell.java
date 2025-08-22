@@ -70,7 +70,7 @@ public class Shell {
 
       try {
         final Object result = eval(source);
-        if (result != Void.VOID) {
+        if (result != null) {
           console.print(result);
           console.print("\n");
         }
@@ -93,7 +93,7 @@ public class Shell {
   }
 
   Object eval(String source) {
-    if (source.trim().isEmpty()) return Void.VOID;
+    if (source.trim().isEmpty()) return null;
 
     Parser parser = new Parser(source);
     ArrayList<Evaluable> statements = new ArrayList<>();
@@ -101,7 +101,7 @@ public class Shell {
     // Parse all statements
     while (!parser.isAtEnd()) statements.add(parser.parseStatement());
 
-    Object lastResult = Void.VOID;
+    Object lastResult = null;
     // Execute all statements
     for (Evaluable s : statements) lastResult = s.evaluate(env);
 
@@ -168,7 +168,7 @@ public class Shell {
     if (isTruthy(condition)) {
       return function.evaluate(env, new ArrayList<>());
     }
-    return Void.VOID;
+    return null;
   }
 
   public Object ifElse(Object condition, EvaluableFunction ifFunction, EvaluableFunction elseFunction) {
@@ -207,7 +207,7 @@ public class Shell {
       while (((Iterator<?>) iterable).hasNext()) {
         function.evaluate(env, new ArrayList<>(List.of(((Iterator<?>) iterable).next())));
       }
-      return Void.VOID;
+      return null;
     } else if (iterable instanceof Collection) {
       for (Object item : (Collection<?>) iterable) {
         function.evaluate(env, new ArrayList<>(List.of(item)));
@@ -226,7 +226,7 @@ public class Shell {
   }
 
   public Object whileLoop(Evaluable condition, EvaluableFunction function) {
-    Object result = Void.VOID;
+    Object result = null;
     while (isTruthy(condition.evaluate(env))) {
       result = function.evaluate(env, new ArrayList<>());
     }
@@ -318,19 +318,6 @@ class Environment {
 final class ShellException extends RuntimeException {
   public ShellException(String message) {
     super(message);
-  }
-}
-
-// Special void class to represent absence of value
-final class Void {
-  private Void() {
-  }
-
-  public static final Object VOID = new Void();
-
-  @Override
-  public String toString() {
-    return "VOID";
   }
 }
 
@@ -668,7 +655,7 @@ final class FunctionStatement implements EvaluableFunction {
     }
 
     env.popFrame();
-    return Void.VOID;
+    return null;
   }
 
   @Override
