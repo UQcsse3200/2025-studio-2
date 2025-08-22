@@ -6,6 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.utils.math.Vector2Utils;
 
+/**
+ * This class was lazily copied from the player input handler (as you can probably tell) just to test the
+ * dynamic movement and rotation of the lights.
+ */
 public class KeyboardLightingInputTestComponent  extends InputComponent {
     private final Vector2 walkDirection = Vector2.Zero.cpy();
 
@@ -42,7 +46,7 @@ public class KeyboardLightingInputTestComponent  extends InputComponent {
     }
 
     /**
-     * Triggers player events on specific keycodes.
+     * Triggers events on specific keycodes.
      *
      * @return whether the input was processed
      * @see InputProcessor#keyUp(int)

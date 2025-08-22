@@ -7,12 +7,17 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.services.ServiceLocator;
 
+/**
+ * Cone light component used to store the ConeLight object and all of its parameters.
+ * This can be added to an entity to make it product light.
+ */
 public class ConeLightComponent extends Component {
     private final RayHandler rayHandler;
     private ConeLight coneLight;
 
-    private int rays;
-    private Color color;
+    // cone light properties
+    private final int rays;
+    private final Color color;
     private float distance;
     private float directionDeg;
     private float coneDegree;
@@ -22,6 +27,10 @@ public class ConeLightComponent extends Component {
     private float angularVelocityDeg = 0f;
     private boolean followEntity = true;
 
+    /**
+     * The ConeLight must be registered to the same rayHandler that is being rendered.
+     * All light objects must be attached to the rayHandler.
+     */
     public ConeLightComponent(RayHandler rayHandler,
                               int rays,
                               Color color,
@@ -43,6 +52,8 @@ public class ConeLightComponent extends Component {
         coneLight = new ConeLight(rayHandler, rays, color, distance, p.x, p.y, directionDeg, coneDegree);
         coneLight.setSoftnessLength(1f);
         coneLight.setXray(false);
+
+        // only here for testing
         entity.getEvents().addListener("walk", this::setVelocity);
         entity.getEvents().addListener("walkStop", this::setVelocityZero);
         entity.getEvents().addListener("rotate", this::setAngularVelocityDeg);
@@ -50,12 +61,15 @@ public class ConeLightComponent extends Component {
 
     @Override
     public void update() {
+        // get the amount of time passed
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
         if (dt <= 0f) dt = 0f;
 
         // rotation
         if (angularVelocityDeg != 0f) {
+            // apply angular velocity to the direction degree (d = v * t)
             directionDeg += angularVelocityDeg * dt;
+            // sets the new direction
             if (coneLight != null) {
                 coneLight.setDirection(directionDeg);
             }
@@ -63,7 +77,9 @@ public class ConeLightComponent extends Component {
 
         // kinematic motion
         if (velocity.len2() > 0f) {
+            // gets the position vector of the entity
             Vector2 pos = entity.getPosition();
+            // applies velocity to the entity
             pos.mulAdd(velocity, dt);
             entity.setPosition(pos);
         }

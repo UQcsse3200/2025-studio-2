@@ -110,6 +110,10 @@ public class Renderer implements Disposable {
     stage.draw();
   }
 
+  /** Render everything to the render service (using the lighting engine render flow)
+   *
+   * @param lightingEngine The lighting engine used for rendering
+   * */
   public void render(LightingEngine lightingEngine) {
     Matrix4 projMatrix = camera.getProjectionMatrix();
 
@@ -122,7 +126,9 @@ public class Renderer implements Disposable {
     batch.end();
 
     //renderLightingHelper(lightingEngine);
-    lightingEngine.render();
+    if (lightingEngine != null) {
+      lightingEngine.render();
+    }
 
     debugRenderer.render(projMatrix);
 

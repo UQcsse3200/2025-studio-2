@@ -65,6 +65,7 @@ public class MainGameScreen extends ScreenAdapter {
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
     renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
 
+    // Registering the new lighting service with the service manager
     LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
     ServiceLocator.registerLightingService(lightingService);
     lightingEngine = lightingService.getEngine();
@@ -82,7 +83,7 @@ public class MainGameScreen extends ScreenAdapter {
   public void render(float delta) {
     physicsEngine.update();
     ServiceLocator.getEntityService().update();
-    renderer.render(lightingEngine);
+    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   @Override
