@@ -29,6 +29,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("walkStop", this::stopWalking);
     entity.getEvents().addListener("attack", this::attack);
     entity.getEvents().addListener("jump", this::jump); //TO BE FILLED IN
+    entity.getEvents().addListener("landed", this::onLand);
   }
 
   @Override
@@ -67,20 +68,22 @@ public class PlayerActions extends Component {
   }
 
   void jump() {
+    if (isJumping) return;
+
     Body body = physicsComponent.getBody();
 
-    if (isJumping) {
-      return;
+    Vector2 vel = body.getLinearVelocity();
+    if (vel.y < 0f) {
+      body.setLinearVelocity(vel.x, 0f);
     }
 
-    float jumpForce = body.getMass() * 7f;
-    Vector2 impulse = new Vector2(0, jumpForce);
+    float impulseY = body.getMass() * 7f;
+    body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
 
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
     isJumping = true;
   }
 
-  public void onLand() {
+  void onLand() {
     isJumping = false;
   }
 
