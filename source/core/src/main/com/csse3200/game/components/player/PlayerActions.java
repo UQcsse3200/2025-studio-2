@@ -45,7 +45,8 @@ public class PlayerActions extends Component {
     Vector2 velocity = body.getLinearVelocity();
     Vector2 desiredVelocity = walkDirection.cpy().scl(MAX_SPEED);
     // impulse = (desiredVel - currentVel) * mass
-    Vector2 impulse = desiredVelocity.sub(velocity).scl(body.getMass());
+    //only update the horizontal impulse
+    Vector2 impulse = new Vector2(desiredVelocity.x - velocity.x, 0).scl(body.getMass());
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
   }
 
@@ -76,17 +77,15 @@ public class PlayerActions extends Component {
 
     Body body = physicsComponent.getBody();
 
-    /*Vector2 vel = body.getLinearVelocity();
-    if (vel.y < 0f) {
-      body.setLinearVelocity(vel.x, 0f);
-    }*/
-
     Vector2 vel = body.getLinearVelocity();
-
+    if (vel.y != 0) {
+      body.setLinearVelocity(vel.x, 0f);
+    }
 
     float impulseY = body.getMass() * 7f;
 
     body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
+    /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
 
     isJumping = true;
   }
