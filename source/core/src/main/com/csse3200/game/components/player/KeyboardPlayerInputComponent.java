@@ -40,11 +40,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
       case Keys.S:
-        walkDirection.add(Vector2Utils.DOWN);
-        triggerWalkEvent();
+        /*walkDirection.add(Vector2Utils.DOWN);
+        triggerWalkEvent();*/
         return true;
       case Keys.D:
-
+        walkDirection.add(Vector2Utils.RIGHT);
+        triggerWalkEvent();
         return true;
       default:
         return false;
@@ -68,12 +69,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
       case Keys.S:
-        walkDirection.sub(Vector2Utils.DOWN);
-        triggerWalkEvent();
+        /*walkDirection.sub(Vector2Utils.DOWN);
+        triggerWalkEvent();*/
         return true;
       case Keys.D:
-
-
+        walkDirection.sub(Vector2Utils.RIGHT);
+        triggerWalkEvent();
         return true;
       default:
         return false;
