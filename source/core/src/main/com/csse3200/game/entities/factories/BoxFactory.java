@@ -14,7 +14,7 @@ public class BoxFactory {
     /**
      * Creates a static (immovable) box entity.
      * <p>
-     * The box currently displays as a light grey square, scaled to half a game unit.
+     * The box currently displays as a white square, scaled to half a game unit.
      * Its texture is currently a placeholder and can be replaced with a pixel image.
      * <p>
      * Its static body type makes it immovable.  Other physical game objects can collide with it,
@@ -22,9 +22,9 @@ public class BoxFactory {
      * @return A new static box Entity
      */
     public static Entity createStaticBox() {
-        // Placeholder texture (light grey) rendered via Pixmap (8 bits each per RGBA)
+        // Placeholder texture (white) rendered via Pixmap (8 bits each per RGBA)
         Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.valueOf("D3D3D3"));
+        pixmap.setColor(Color.valueOf("FFFFFF"));
         pixmap.fill();
 
         // Convert Pixmap box to Texture
@@ -33,11 +33,45 @@ public class BoxFactory {
 
         Entity staticBox = new Entity()
                 .addComponent(new TextureRenderComponent(texture))
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new PhysicsComponent()
+                        .setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent());
 
         // Scaled to half a world unit
         staticBox.setScale(0.5f, 0.5f);
         return staticBox;
+    }
+
+    /**
+     * Creates a dynamic (moveable) box entity.
+     * <p>
+     * The box currently displays as a blue square, scaled to half a game unit.
+     * Its texture is currently a placeholder and can be replaced with a pixel image.
+     * <p>
+     * Its dynamic body type makes it moveable.
+     * [Not finished:  The player can push (implemented), pull, pick up, and throw the box.
+     * The box will fall if pushed or thrown through platform gaps.  When thrown, the box can
+     * be used to damage enemies.  It can also be destroyed.]
+     * @return A new moveable box Entity
+     */
+    public static Entity createMoveableBox() {
+        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.valueOf("#4682B4"));
+        pixmap.fill();
+
+        Texture texture = new Texture(pixmap);
+        pixmap.dispose();
+
+        Entity moveableBox = new Entity()
+                .addComponent(new TextureRenderComponent(texture))
+                .addComponent(new PhysicsComponent()
+                        .setBodyType(BodyDef.BodyType.DynamicBody))
+                .addComponent(new ColliderComponent()
+                        .setDensity(1f)
+                        .setRestitution(0.1f)
+                        .setFriction(0.8f));
+
+        moveableBox.setScale(0.5f, 0.5f);
+        return moveableBox;
     }
 }

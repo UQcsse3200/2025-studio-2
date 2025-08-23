@@ -152,9 +152,14 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnBoxes() {
+
       // Static box
       Entity staticBox = BoxFactory.createStaticBox();
       spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+
+      // Moveable box
+      Entity moveableBox = BoxFactory.createMoveableBox();
+      spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
       // Add other types of boxes here
   }

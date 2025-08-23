@@ -34,21 +34,40 @@ public class BoxFactoryTest {
 
     @Test
     void createStaticBox_hasAllComponents() {
-        Entity box = BoxFactory.createStaticBox();
-        assertNotNull(box.getComponent(TextureRenderComponent.class),
-                "Box should have a TextureRendererComponent");
-        assertNotNull(box.getComponent(PhysicsComponent.class),
-                "Box should have a PhysicsComponent");
-        assertNotNull(box.getComponent(ColliderComponent.class),
-                "Box should have a ColliderComponent");
+        Entity staticBox = BoxFactory.createStaticBox();
+        assertNotNull(staticBox.getComponent(TextureRenderComponent.class),
+                "Static Box should have a TextureRendererComponent");
+        assertNotNull(staticBox.getComponent(PhysicsComponent.class),
+                "Static Box should have a PhysicsComponent");
+        assertNotNull(staticBox.getComponent(ColliderComponent.class),
+                "Static Box should have a ColliderComponent");
     }
 
     @Test
     void createStaticBox_isStatic() {
-        Entity box = BoxFactory.createStaticBox();
+        Entity staticBox = BoxFactory.createStaticBox();
 
-        PhysicsComponent physics = box.getComponent(PhysicsComponent.class);
+        PhysicsComponent physics = staticBox.getComponent(PhysicsComponent.class);
         assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
-                "Box PhysicsComponent should have a static BodyType");
+                "Static Box PhysicsComponent should have a static body type");
+    }
+
+    @Test
+    void createMoveableBox_hasAllComponents() {
+        Entity moveableBox = BoxFactory.createMoveableBox();
+        assertNotNull(moveableBox.getComponent(TextureRenderComponent.class),
+                "Moveable Box should have a TextureRendererComponent");
+        assertNotNull(moveableBox.getComponent(PhysicsComponent.class),
+                "Moveable Box should have a PhysicsComponent");
+        assertNotNull(moveableBox.getComponent(ColliderComponent.class),
+                "Moveable Box should have a ColliderComponent");
+    }
+
+    @Test
+    void createMoveableBox_isMoveable() {
+        Entity moveableBox = BoxFactory.createMoveableBox();
+        PhysicsComponent physics = moveableBox.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.DynamicBody, physics.getBody().getType(),
+                "Moveable Box PhysicsComponent should have a dynamic body type");
     }
 }
