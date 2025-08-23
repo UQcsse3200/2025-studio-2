@@ -44,8 +44,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
       case Keys.D:
-        walkDirection.add(Vector2Utils.RIGHT);
-        triggerWalkEvent();
+
         return true;
       default:
         return false;
@@ -73,8 +72,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
       case Keys.D:
-        walkDirection.sub(Vector2Utils.RIGHT);
-        triggerWalkEvent();
+
+
         return true;
       default:
         return false;
@@ -98,6 +97,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerLandedEvent() {
+    // WRITE SO IF COLLISION WITH GROUND HAPPENS THIS TRIGGERS
     entity.getEvents().trigger("landed");
   }
 }
