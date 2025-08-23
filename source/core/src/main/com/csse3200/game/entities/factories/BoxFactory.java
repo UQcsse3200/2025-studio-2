@@ -11,26 +11,33 @@ import com.csse3200.game.rendering.TextureRenderComponent;
 
 public class BoxFactory {
 
+    /**
+     * Creates a static (immovable) box entity.
+     * <p>
+     * The box currently displays as a light grey square, scaled to half a game unit.
+     * Its texture is currently a placeholder and can be replaced with a pixel image.
+     * <p>
+     * Its static body type makes it immovable.  Other physical game objects can collide with it,
+     * but it does not move, react to collisions and cannot be destroyed.
+     * @return A new static box Entity
+     */
     public static Entity createStaticBox() {
-
-        // Placeholder grey box rendered via Pixmap
-        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);  // 8 bits per RGBA inputs
-        pixmap.setColor(Color.valueOf("D3D3D3"));  // light grey in hex, converted to LibGDX Color float
+        // Placeholder texture (light grey) rendered via Pixmap (8 bits each per RGBA)
+        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+        pixmap.setColor(Color.valueOf("D3D3D3"));
         pixmap.fill();
 
         // Convert Pixmap box to Texture
-        Texture texture = new Texture(pixmap);  // Replace with new Texture("path/filename.png") for 2d pixel art
+        Texture texture = new Texture(pixmap);
         pixmap.dispose();
 
-        // Static physics component
-        PhysicsComponent staticBody = new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody);
-
-        Entity box = new Entity()
-                .addComponent(new TextureRenderComponent(texture))  // swap out when implementing pixel art
-                .addComponent(staticBody)
+        Entity staticBox = new Entity()
+                .addComponent(new TextureRenderComponent(texture))
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent());
 
-        box.setScale(0.5f, 0.5f);
-        return box;
+        // Scaled to half a world unit
+        staticBox.setScale(0.5f, 0.5f);
+        return staticBox;
     }
 }
