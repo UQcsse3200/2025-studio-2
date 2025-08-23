@@ -55,7 +55,7 @@ public class PlayerActions extends Component {
    * @param direction direction to move in
    */
   void walk(Vector2 direction) {
-    this.walkDirection = direction;
+    this.walkDirection.x = direction.x;
     moving = true;
   }
 
@@ -76,18 +76,23 @@ public class PlayerActions extends Component {
 
     Body body = physicsComponent.getBody();
 
-    Vector2 vel = body.getLinearVelocity();
+    /*Vector2 vel = body.getLinearVelocity();
     if (vel.y < 0f) {
       body.setLinearVelocity(vel.x, 0f);
-    }
+    }*/
+
+    Vector2 vel = body.getLinearVelocity();
+
 
     float impulseY = body.getMass() * 7f;
+
     body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
 
     isJumping = true;
   }
 
   void onLand() {
+    Body body = physicsComponent.getBody();
     isJumping = false;
     isDoubleJump = false;
   }
