@@ -30,7 +30,7 @@ public class BoxFactory {
                 .addComponent(staticBody)
                 .addComponent(new ColliderComponent());
 
-        box.setScale(0.5f, 0.5f);  // 0.5 x 0.5 in game world units
+        box.setScale(0.5f, 0.5f);
         return box;
     }
 }
