@@ -71,9 +71,9 @@ public class PlayerActions extends Component {
 
   void jump() {
 
-    if(isJumping) isDoubleJump = true;
-
     if (isJumping && isDoubleJump) return;
+
+    if(isJumping) isDoubleJump = true;
 
     Body body = physicsComponent.getBody();
 
@@ -92,6 +92,7 @@ public class PlayerActions extends Component {
 
   void onLand() {
     Body body = physicsComponent.getBody();
+    //SORT OUT COLLISION WITH GROUND STUFF HERE
     isJumping = false;
     isDoubleJump = false;
   }
