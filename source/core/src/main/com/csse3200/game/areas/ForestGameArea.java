@@ -175,7 +175,7 @@ public class ForestGameArea extends GameArea {
 
   private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false);
-    spawnEntityAt(button, new GridPoint2(15,15), true,  true);
+    spawnEntityAt(button, new GridPoint2(25,15), true,  true);
   }
 
   private void spawnLights() {

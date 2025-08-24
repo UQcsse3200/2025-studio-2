@@ -29,7 +29,7 @@ public class ButtonFactory {
         ButtonComponent buttonComponent = new ButtonComponent();
         button.addComponent(buttonComponent);
 
-        button.setScale(1f, 1f);
+        button.setScale(0.5f, 0.5f);
 
         return button;
     }

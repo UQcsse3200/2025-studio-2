@@ -3,7 +3,6 @@ package com.csse3200.game.components;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.ButtonFactory;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -34,14 +33,20 @@ public class ButtonComponent extends Component {
             Entity otherEntity = ((ColliderComponent) other).getEntity();
 
             if (otherEntity.getComponent(PlayerActions.class) != null) {
-                toggleButton();
-                cooldown = 1f;
+                Vector2 playerPos = otherEntity.getPosition();
+                Vector2 buttonPos = entity.getPosition();
+
+                if(playerPos.x < buttonPos.x - 0.5f) {
+                    toggleButton();
+                    cooldown = 0.5f;
+                }
             }
         }
     }
 
     private void toggleButton() {
         isPushed = !isPushed;
+        entity.getEvents().trigger("buttonToggled", isPushed);
 
         String texture = isPushed ? "images/button_pushed.png" : "images/button.png";
 
