@@ -10,6 +10,7 @@ import com.csse3200.game.services.ServiceLocator;
 
 public class ButtonComponent extends Component {
     private boolean isPushed = false;
+    private float cooldown = 0f;
 
     @Override
     public void create() {
@@ -18,12 +19,23 @@ public class ButtonComponent extends Component {
 
     }
 
+    @Override
+    public void update() {
+        if(cooldown > 0) {
+            cooldown -= ServiceLocator.getTimeSource().getDeltaTime();
+        }
+    }
+
     private void onPush(Object other) {
+        if(cooldown > 0) {
+            return;
+        }
         if (other instanceof ColliderComponent) {
             Entity otherEntity = ((ColliderComponent) other).getEntity();
 
             if (otherEntity.getComponent(PlayerActions.class) != null) {
                 toggleButton();
+                cooldown = 1f;
             }
         }
     }
@@ -31,12 +43,12 @@ public class ButtonComponent extends Component {
     private void toggleButton() {
         isPushed = !isPushed;
 
-        Vector2 pos = entity.getPosition().cpy();
+        String texture = isPushed ? "images/button_pushed.png" : "images/button.png";
 
-        entity.dispose();
-        Entity newButton = ButtonFactory.createButton(isPushed);
-        newButton.setPosition(pos);
-        ServiceLocator.getEntityService().register(newButton);
+        TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+        if (render != null) {
+            render.setTexture(texture);
+        }
     }
 
 

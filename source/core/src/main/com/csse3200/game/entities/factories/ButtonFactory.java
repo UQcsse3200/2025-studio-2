@@ -27,7 +27,6 @@ public class ButtonFactory {
         button.addComponent(collider);
 
         ButtonComponent buttonComponent = new ButtonComponent();
-        buttonComponent.setPushed(isPressed);
         button.addComponent(buttonComponent);
 
         button.setScale(1f, 1f);

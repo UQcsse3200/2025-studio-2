@@ -9,6 +9,8 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ButtonContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
@@ -66,6 +68,8 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    engine.getWorld().setContactListener(new ButtonContactListener());
     loadAssets();
 
     displayUI();
