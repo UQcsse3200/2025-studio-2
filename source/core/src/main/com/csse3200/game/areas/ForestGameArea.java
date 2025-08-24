@@ -2,6 +2,7 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
@@ -37,7 +38,9 @@ public class ForestGameArea extends GameArea {
     "images/hex_grass_3.png",
     "images/iso_grass_1.png",
     "images/iso_grass_2.png",
-    "images/iso_grass_3.png"
+    "images/iso_grass_3.png",
+    "images/button.png",
+    "images/button_pushed.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -64,6 +67,7 @@ public class ForestGameArea extends GameArea {
   @Override
   public void create() {
     loadAssets();
+
     displayUI();
     spawnTerrain();
     spawnTrees();
@@ -73,6 +77,7 @@ public class ForestGameArea extends GameArea {
     spawnGhostKing();
 
     spawnBoxes();
+    spawnButtons();
 
     spawnLights();
     playMusic();
@@ -162,6 +167,11 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
       // Add other types of boxes here
+  }
+
+  private void spawnButtons() {
+    Entity button = ButtonFactory.createButton(false);
+    spawnEntityAt(button, new GridPoint2(15,15), true,  true);
   }
 
   private void spawnLights() {
