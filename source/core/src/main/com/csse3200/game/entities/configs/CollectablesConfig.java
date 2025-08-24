@@ -1,6 +1,6 @@
 package com.csse3200.game.entities.configs;
 
-public class ItemConfig {
+public class CollectablesConfig {
     public String id;
     public String name;
     public String type;
