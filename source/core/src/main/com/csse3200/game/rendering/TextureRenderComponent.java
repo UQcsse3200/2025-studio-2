@@ -20,7 +20,7 @@ public class TextureRenderComponent extends RenderComponent {
   public void setTexture(String texture) {
     this.texture = ServiceLocator.getResourceService().getAsset(texture, Texture.class);
   }
-//...
+
   /** @param texture Static texture to render. Will be scaled to the entity's scale. */
   public TextureRenderComponent(Texture texture) {
     this.texture = texture;

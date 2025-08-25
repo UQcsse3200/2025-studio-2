@@ -11,22 +11,31 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 public class ButtonFactory {
-    public static Entity createButton(boolean isPressed) {
+    public static Entity createButton(boolean isPressed, String type) {
 
         Entity button = new Entity();
 
-        String texture = isPressed ? "images/button_pushed.png" : "images/button.png";
+        if(type.equals("platform")) {
+            String texture = isPressed ? "images/blue_button_pushed.png" : "images/blue_button.png";
+            button.addComponent(new TextureRenderComponent(texture));
+        }else if(type.equals("door")) {
+            String texture = isPressed ? "images/red_button_pushed.png" : "images/red_button.png";
+            button.addComponent(new TextureRenderComponent(texture));
+        }else {
+            String texture = isPressed ? "images/button_pushed.png" : "images/button.png";
+            button.addComponent(new TextureRenderComponent(texture));
+        }
 
 
-        button.addComponent(new TextureRenderComponent(texture));
         button.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
 
         ColliderComponent collider = new ColliderComponent();
-        collider.setLayer(PhysicsLayer.BUTTON);
+        collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(false);
         button.addComponent(collider);
 
         ButtonComponent buttonComponent = new ButtonComponent();
+        buttonComponent.setType(type);
         button.addComponent(buttonComponent);
 
         button.setScale(0.5f, 0.5f);

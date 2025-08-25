@@ -42,7 +42,12 @@ public class ForestGameArea extends GameArea {
     "images/iso_grass_2.png",
     "images/iso_grass_3.png",
     "images/button.png",
-    "images/button_pushed.png"
+    "images/button_pushed.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png"
+
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -174,8 +179,14 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnButtons() {
-    Entity button = ButtonFactory.createButton(false);
+    Entity button = ButtonFactory.createButton(false, "platform");
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
+
+    Entity button2 = ButtonFactory.createButton(false, "door");
+    spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
+
+    Entity button3 = ButtonFactory.createButton(false, "nothing");
+    spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
   }
 
   private void spawnLights() {

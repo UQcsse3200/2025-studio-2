@@ -10,6 +10,7 @@ import com.csse3200.game.services.ServiceLocator;
 public class ButtonComponent extends Component {
     private boolean isPushed = false;
     private float cooldown = 0f;
+    private String type;
 
     @Override
     public void create() {
@@ -23,6 +24,10 @@ public class ButtonComponent extends Component {
         if(cooldown > 0) {
             cooldown -= ServiceLocator.getTimeSource().getDeltaTime();
         }
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     private void onPush(Object other) {
@@ -48,11 +53,24 @@ public class ButtonComponent extends Component {
         isPushed = !isPushed;
         entity.getEvents().trigger("buttonToggled", isPushed);
 
-        String texture = isPushed ? "images/button_pushed.png" : "images/button.png";
-
-        TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
-        if (render != null) {
-            render.setTexture(texture);
+        if("platform".equals(type)) {
+            String texture = isPushed ? "images/blue_button_pushed.png" : "images/blue_button.png";
+            TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+            if (render != null) {
+                render.setTexture(texture);
+            }
+        }else if("door".equals(type)) {
+            String texture = isPushed ? "images/red_button_pushed.png" : "images/red_button.png";
+            TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+            if (render != null) {
+                render.setTexture(texture);
+            }
+        }else {
+            String texture = isPushed ? "images/button_pushed.png" : "images/button.png";
+            TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+            if (render != null) {
+                render.setTexture(texture);
+            }
         }
     }
 
