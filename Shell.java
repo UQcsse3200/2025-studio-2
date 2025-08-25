@@ -145,7 +145,7 @@ public class Shell {
   }
 
   public static Object or(Object l, Object r) {
-    return isTruthy(r) || isTruthy(r);
+    return isTruthy(l) || isTruthy(r);
   }
 
   public static Object not(Object x) {
@@ -198,7 +198,9 @@ public class Shell {
     }
 
     public Long next() {
-      return start += step;
+      long currentValue = start;
+      start += step;
+      return currentValue;
     }
   }
 
