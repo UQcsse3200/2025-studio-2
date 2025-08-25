@@ -164,6 +164,11 @@ public class ForestGameArea extends GameArea {
       // Add other types of boxes here
   }
 
+  public void spawnKey() {
+      Entity key = CollectableFactory.createKey("door");
+      spawnEntityAt(key, new GridPoint2(17,17), true, true);
+  }
+
   private void spawnLights() {
 //    Entity light = LightFactory.createConeLight(
 //            128,
