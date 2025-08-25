@@ -10,32 +10,39 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 @ExtendWith(GameExtension.class)
 class InventoryComponentTest {
   @Test
-  void shouldSetGetGold() {
-    InventoryComponent inventory = new InventoryComponent(100);
-    assertEquals(100, inventory.getGold());
+  void addItem_addsNewItemInstance() {
+      InventoryComponent inv = new InventoryComponent();
+      assertFalse(inv.hasItem("key:door"));
+      assertEquals(0, inv.getItemCount("key:door"));
+      assertFalse(inv.hasItem("key:door"));
 
-    inventory.setGold(150);
-    assertEquals(150, inventory.getGold());
+      inv.addItem("key:door");
+      assertTrue(inv.hasItem("key:door"));
+      assertEquals(1, inv.getItemCount("key:door"));
 
-    inventory.setGold(-50);
-    assertEquals(0, inventory.getGold());
+      inv.addItem("key:door");
+      assertTrue(inv.hasItem("key:door"));
+      assertEquals(2, inv.getItemCount("key:door"));
   }
-
   @Test
-  void shouldCheckHasGold() {
-    InventoryComponent inventory = new InventoryComponent(150);
-    assertTrue(inventory.hasGold(100));
-    assertFalse(inventory.hasGold(200));
+  void removeItem_removesAllItemOfKey() {
+      InventoryComponent inv = new InventoryComponent();
+      inv.addItem("key:door");
+      inv.removeItem("key:door");
+      assertFalse(inv.hasItem("key:door"));
   }
-
   @Test
-  void shouldAddGold() {
-    InventoryComponent inventory = new InventoryComponent(100);
-    inventory.addGold(-500);
-    assertEquals(0, inventory.getGold());
+  void useItem_decrementsItemCount () {
+      InventoryComponent inv = new InventoryComponent();
+      inv.useItem("key:door");
+      assertFalse(inv.hasItem("key:door"));
 
-    inventory.addGold(100);
-    inventory.addGold(-20);
-    assertEquals(80, inventory.getGold());
+      inv.addItems("key:door", 4);
+      assertTrue(inv.hasItem("key:door"));
+      assertEquals(4, inv.getItemCount("key:door"));
+
+      inv.useItem("key:door");
+      assertEquals(3, inv.getItemCount("key:door"));
   }
+
 }
