@@ -86,7 +86,7 @@ public class ForestGameArea extends GameArea {
     spawnGhostKing();
 
     //spawnBoxes();  // uncomment this method when you want to play with boxes
-    spawnButtons(); //uncomment this method to see and interact with boxes
+    //spawnButtons(); //uncomment this method to see and interact with boxes
 
     spawnLights();
     playMusic();
