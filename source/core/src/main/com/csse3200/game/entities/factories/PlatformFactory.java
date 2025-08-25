@@ -20,5 +20,8 @@ public class PlatformFactory {
         platform.getComponent(TextureRenderComponent.class).scaleEntity();
         return platform;
     }
+    private PlatformFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 }
 ;
