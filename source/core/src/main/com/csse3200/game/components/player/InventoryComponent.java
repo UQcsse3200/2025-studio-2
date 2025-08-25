@@ -1,56 +1,45 @@
 package com.csse3200.game.components.player;
 
 import com.csse3200.game.components.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
- * A component intended to be used by the player to track their inventory.
- *
- * Currently only stores the gold amount but can be extended for more advanced functionality such as storing items.
- * Can also be used as a more generic component for other entities.
+ * A component to track and manage a player's inventory, including stacking items.
  */
 public class InventoryComponent extends Component {
-  private static final Logger logger = LoggerFactory.getLogger(InventoryComponent.class);
-  private int gold;
+    private final Map<String, Integer> inventory;
 
-  public InventoryComponent(int gold) {
-    setGold(gold);
-  }
+    public InventoryComponent() {
+        this.inventory = new HashMap<>();
+    }
 
-  /**
-   * Returns the player's gold.
-   *
-   * @return entity's health
-   */
-  public int getGold() {
-    return this.gold;
-  }
+    public void addItem(String itemId) {
+        inventory.put(itemId, inventory.getOrDefault(itemId, 0) + 1);
+    }
 
-  /**
-   * Returns if the player has a certain amount of gold.
-   * @param gold required amount of gold
-   * @return player has greater than or equal to the required amount of gold
-   */
-  public Boolean hasGold(int gold) {
-    return this.gold >= gold;
-  }
+    public void addItems(String itemId, int amount) {
+        inventory.put(itemId, inventory.getOrDefault(itemId, 0) + amount);
+    }
 
-  /**
-   * Sets the player's gold. Gold has a minimum bound of 0.
-   *
-   * @param gold gold
-   */
-  public void setGold(int gold) {
-    this.gold = Math.max(gold, 0);
-    logger.debug("Setting gold to {}", this.gold);
-  }
+    public boolean hasItem(String itemId) {
+        return getItemCount(itemId) > 0;
+    }
 
-  /**
-   * Adds to the player's gold. The amount added can be negative.
-   * @param gold gold to add
-   */
-  public void addGold(int gold) {
-    setGold(this.gold + gold);
-  }
+    public int getItemCount(String itemId) {
+        return inventory.getOrDefault(itemId, 0);
+    }
+
+    public void removeItem(String itemId) {
+        inventory.remove(itemId);
+    }
+
+    public void useItem(String itemId) {
+        if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
+            inventory.put(itemId, inventory.get(itemId) - 1);
+        } else {
+            System.err.println("You have no " + itemId + " in your inventory");
+        }
+    }
 }
