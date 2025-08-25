@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -35,7 +36,7 @@ public class BoxFactory {
                 .addComponent(new TextureRenderComponent(texture))
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent());
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
 
         // Scaled to half a world unit
         staticBox.setScale(0.5f, 0.5f);
@@ -67,6 +68,7 @@ public class BoxFactory {
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.DynamicBody))
                 .addComponent(new ColliderComponent()
+                        .setLayer(PhysicsLayer.OBSTACLE)
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f));
