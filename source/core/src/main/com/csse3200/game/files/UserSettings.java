@@ -49,14 +49,15 @@ public class UserSettings {
     Gdx.graphics.setForegroundFPS(settings.fps);
     Gdx.graphics.setVSync(settings.vsync);
 
-    if (settings.fullscreen) {
-      DisplayMode displayMode = findMatching(settings.displayMode);
-      if (displayMode == null) {
+    DisplayMode displayMode = findMatching(settings.displayMode);
+    if (displayMode == null) {
         displayMode = Gdx.graphics.getDisplayMode();
-      }
+    }
+
+    if (settings.fullscreen) {
       Gdx.graphics.setFullscreenMode(displayMode);
     } else {
-      Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+      Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
     }
   }
 
