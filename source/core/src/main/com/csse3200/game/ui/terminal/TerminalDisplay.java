@@ -1,51 +1,126 @@
 package com.csse3200.game.ui.terminal;
 
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.*;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.csse3200.game.services.GameTime;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A ui component for displaying the debug terminal. The terminal is positioned at the bottom of the
- * screen.
+ * A UI component for displaying the global debug terminal.
+ * This class handles the visual representation of the terminal, including its
+ * background, text history, and input line with a blinking cursor.
  */
 public class TerminalDisplay extends UIComponent {
-  private static final float Z_INDEX = 10f;
+  private static final Logger logger = LoggerFactory.getLogger(TerminalDisplay.class);
   private Terminal terminal;
-  private Label label;
+  private Table rootTable;
+  private TextArea historyArea;
+  private TextArea inputField;
+  private ScrollPane scrollPane;
+
+  private float timeSinceCursorBlink = 0f;
 
   @Override
   public void create() {
     super.create();
-    addActors();
     terminal = entity.getComponent(Terminal.class);
+    createActors();
   }
 
-  private void addActors() {
-    String message = "";
-    label = new Label("> " + message, skin);
-    label.setPosition(5f, 0);
-    stage.addActor(label);
+  /**
+   * Creates the UI actors for the terminal display.
+   * This sets up the visual elements but does not add them to the stage,
+   * allowing the TerminalService to manage which stage it's on.
+   */
+  private void createActors() {
+    // Create a semi-transparent background drawable
+    Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+    pixmap.setColor(new Color(0, 0, 0, 0.5f)); // Black with 60% opacity
+    pixmap.fill();
+    Texture backgroundTexture = new Texture(pixmap);
+    pixmap.dispose();
+    Image background = new Image(backgroundTexture);
+
+    TextField.TextFieldStyle defaultStyle = skin.get(TextField.TextFieldStyle.class);
+    TextField.TextFieldStyle transparentStyle = new TextField.TextFieldStyle(defaultStyle);
+    transparentStyle.background = null;
+
+    // Create labels for history and current input
+    historyArea = new TextArea("", transparentStyle);
+    historyArea.setPrefRows(1);
+    historyArea.setBlinkTime(Float.POSITIVE_INFINITY);
+    for (int i = 0; i < 50; i += 1) {
+      historyArea.appendText("\n");
+    }
+    inputField = new TextArea("", transparentStyle);
+    clearInput();
+
+    Table inputTable = new Table();
+    inputTable.add(new Label("> ", skin, "default")).top();
+    inputTable.add(inputField).expandX().fillX().height(100);
+
+    // Main layout table
+    Table contentTable = new Table();
+    contentTable.add(historyArea).expand().fill().padLeft(2f).padRight(2f);
+    contentTable.row();
+    contentTable.add(inputTable).padLeft(2f).padRight(2f).expandX().fillX().height(100);
+
+    // Stack the background and content table
+    rootTable = new Table();
+    rootTable.setFillParent(true);
+    Stack stack = new Stack();
+    stack.add(background);
+    stack.add(contentTable);
+    rootTable.add(stack).expand().fill();
   }
 
+  /**
+   * Gets the root actor of the terminal display, which can be added to a stage.
+   * @return The root actor.
+   */
+  public Actor getRoot() {
+    return rootTable;
+  }
+
+  public String getInput() {
+    return inputField.getText();
+  }
+
+  public TextField getInputField() {
+    return inputField;
+  }
+
+  public TextArea getHistoryArea() {
+    return historyArea;
+  }
+
+  public void clearInput() {
+    inputField.setText("");
+  }
+
+  /**
+   * Draws the terminal, setting its visibility based on the terminal's state.
+   * The actual drawing is handled by the stage.
+   * @param batch Batch to render to.
+   */
   @Override
   public void draw(SpriteBatch batch) {
-    if (terminal.isOpen()) {
-      label.setVisible(true);
-      String message = terminal.getEnteredMessage();
-      label.setText("> " + message);
-    } else {
-      label.setVisible(false);
-    }
-  }
-
-  @Override
-  public float getZIndex() {
-    return Z_INDEX;
+    rootTable.setVisible(terminal.isOpen());
   }
 
   @Override
   public void dispose() {
     super.dispose();
-    label.remove();
+    if (rootTable != null) {
+      rootTable.remove();
+    }
   }
 }
