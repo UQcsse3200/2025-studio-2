@@ -1,0 +1,68 @@
+drone.png
+size: 418, 292
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+default
+  rotate: false
+  xy: 0, 50
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 0
+angry_float
+  rotate: false
+  xy: 0, 0
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 0
+angry_float
+  rotate: false
+  xy: 50, 0
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 1
+angry_float
+  rotate: false
+  xy: 100, 0
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 2
+angry_float
+  rotate: false
+  xy: 150, 0
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 3
+float
+  rotate: false
+  xy: 0, 50
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 0
+float
+  rotate: false
+  xy: 50, 50
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 1
+float
+  rotate: false
+  xy: 100, 50
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 2
+float
+  rotate: false
+  xy: 150, 50
+  size: 47, 50
+  orig: 50, 50
+  offset: 0, 0
+  index: 3

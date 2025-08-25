@@ -1,4 +1,4 @@
-package com.csse3200.game.desktop;
+package com.deco3200.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;

@@ -63,6 +63,26 @@ public class NPCFactory {
     return ghost;
   }
 
+  public static Entity createDrone(Entity target) {
+      Entity drone = createBaseNPC(target);
+      BaseEntityConfig config = configs.drone;
+
+      AnimationRenderComponent animator =
+              new AnimationRenderComponent(
+                      ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+      animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
+      animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+
+      drone
+              .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+              .addComponent(animator)
+              .addComponent(new GhostAnimationController());
+
+      drone.getComponent(AnimationRenderComponent.class).scaleEntity();
+
+      return drone;
+  }
+
   /**
    * Creates a ghost king entity.
    *

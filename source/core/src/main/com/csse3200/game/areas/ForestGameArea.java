@@ -40,7 +40,7 @@ public class ForestGameArea extends GameArea {
     "images/iso_grass_3.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
+    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg"};
   private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
@@ -70,6 +70,7 @@ public class ForestGameArea extends GameArea {
     spawnTerrain();
     spawnTrees();
     player = spawnPlayer();
+    spawnDrone();
     spawnGhosts();
     spawnGhostKing();
 
@@ -139,6 +140,15 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(ghost, randomPos, true, true);
     }
   }
+
+  private void spawnDrone() {
+    GridPoint2 minPos = new GridPoint2(0, 0);
+    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
+
+    GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
+    Entity drone = NPCFactory.createDrone(player);
+    spawnEntityAt(drone, randomPos, true, true);
+ }
 
   private void spawnGhostKing() {
     GridPoint2 minPos = new GridPoint2(0, 0);
