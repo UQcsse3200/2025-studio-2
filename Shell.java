@@ -93,11 +93,8 @@ public class Shell {
    */
   public void run() {
     while (true) {
-      if (!console.hasNext()) return;
-      final String chunk = console.next();
-
       try {
-        final Object result = eval(chunk);
+        final Object result = eval(console.next());
         if (result != null) {
           console.print(result);
           console.print("\n");
@@ -161,17 +158,16 @@ public class Shell {
 
       @Override
       public String next() {
+        out.print("> ");
         StringBuilder inputBuffer = new StringBuilder();
 
         while (true) {
-          if (scanner.hasNextLine()) {
-            final String line = scanner.nextLine();
-            inputBuffer.append(line);
-
-            if (!line.trim().endsWith("!")) {
-              inputBuffer.append("\n");
-              continue;
-            }
+          final String line = scanner.nextLine();
+          inputBuffer.append(line);
+          if (!line.trim().endsWith("!") && scanner.hasNextLine()) {
+            inputBuffer.append("\n");
+            out.println("  ");
+            continue;
           }
 
           String source = inputBuffer.toString().trim();
@@ -619,7 +615,7 @@ final class ConstantStatement implements Evaluable {
  */
 final class Accessor {
   /**
-   * Accesses a property on an object through a given path.
+   * Accesses a property on the environment.
    *
    * @param env The environment for the initial variable lookup.
    * @param path The path of properties to access (e.g., ["myObject", "myField"]).
@@ -629,10 +625,21 @@ final class Accessor {
    */
   public static Object access(Environment env, List<String> path, boolean accessMethods) {
     assert (path.size() >= 1);
-
     Object current = env.get(path.get(0));
+    return accessObj(current, path.subList(1, path.size() + 1), accessMethods);
+  }
 
-    for (int i = 1; i < path.size(); i++) {
+  /**
+   * Accesses a property on an object through a given path.
+   *
+   * @param current The object on which the lookup will be done.
+   * @param path The path of properties to access (e.g., ["myObject", "myField"]).
+   * @param accessMethods True if method resolution should be attempted for the last element.
+   * @return The final value or a MaybeMethodStatement if a method was found.
+   * @throws ShellException if access is invalid (e.g., property on null).
+   */
+  public static Object accessObj(Object current, List<String> path, boolean accessMethods) {
+    for (int i = 0; i < path.size(); i++) {
       if (current == null) {
         throw new ShellException("Cannot access property '" + path.get(i) + "' on a null value.");
       }
@@ -660,7 +667,7 @@ final class Accessor {
       if (i == path.size() - 1 && accessMethods) {
         for (Method method : targetClass.getMethods()) {
           if (method.getName().equals(propertyName)) {
-            return new MaybeMethodStatement(instance, propertyName);
+            return new MaybeMethodStatement(current, propertyName);
           }
         }
       }
@@ -697,11 +704,13 @@ final class Accessor {
         if (i == path.size() - 1 && accessMethods) {
           for (Method method : currentClass.getDeclaredMethods()) {
             if (method.getName().equals(propertyName)) {
-              return new MaybeMethodStatement(instance, propertyName);
+              return new MaybeMethodStatement(current, propertyName);
             }
           }
         }
       }
+
+      throw new ShellException("Cannot access property '" + path.get(i) + "' on " + targetClass.getSimpleName());
     }
 
     return current;
@@ -1009,6 +1018,7 @@ final class ClassResultStatement implements EvaluableFunction {
         }
       }
     }
+
     throw new ShellException("No matching public constructor found for class '" + c.getSimpleName() + "' with " + args.length + " arguments.");
   }
 }
@@ -1018,31 +1028,51 @@ final class ClassResultStatement implements EvaluableFunction {
  * (e.g., `.java.lang.String`).
  */
 final class ClassResolutionStatement implements Evaluable {
-  final String name;
+  Class<?> resolvedClass;
+  public List<String> subPath;
 
-  ClassResolutionStatement(String name) {
-    this.name = name;
+  ClassResolutionStatement(String originalName) {
+    String name = originalName;
+    this.subPath = new ArrayList<String>();
+
+    while (true) {
+      final int lastDot = name.lastIndexOf(".");
+      try {
+        this.resolvedClass = Class.forName(name);
+        this.subPath = this.subPath.reversed();
+        return;
+      } catch (ClassNotFoundException e) {
+        // ... maybe field / method access on class
+      }
+      if (lastDot == -1) break;
+      subPath.add(name.substring(lastDot + 1));
+      name = name.substring(0, lastDot);
+    }
+
+    throw new ShellException("Class not found: " + originalName);
   }
 
   /**
    * Resolves the class name into a Class object using Reflection.
    *
    * @param env The environment (unused).
-   * @return A ClassResultStatement wrapping the resolved Class object.
+   * @return A ClassResultStatement wrapping the resolved Class object if no subPath, or the resolved object.
    * @throws ShellException if the class cannot be found.
    */
   @Override
   public Object evaluate(Environment env) {
-    try {
-      return new ClassResultStatement(Class.forName(name));
-    } catch (ClassNotFoundException e) {
-      throw new ShellException("Class not found: " + name);
+    if (subPath.size() == 0) {
+      return resolvedClass;
+    } else {
+      return Accessor.accessObj(resolvedClass, subPath, true);
     }
   }
 
   @Override
   public String toString() {
-    return "ClassResolution(" + name + ")";
+    final String retval = "ClassResolution(" + resolvedClass.getSimpleName() + ")";
+    if (subPath.size() == 0) return retval;
+    return retval + "." + String.join(".", subPath);
   }
 }
 
@@ -1069,10 +1099,13 @@ final class FunctionCallStatement implements Evaluable {
    */
   @Override
   public Object evaluate(Environment env) {
-    final Object trueCaller = caller.evaluate(env);
-    if (!(trueCaller instanceof EvaluableFunction)) {
+    Object trueCaller = caller.evaluate(env);
+    if (trueCaller instanceof Class<?>) {
+      trueCaller = new ClassResultStatement((Class<?>) trueCaller);
+    } else if (!(trueCaller instanceof EvaluableFunction)) {
       throw new ShellException("Cannot call non-function value '" + trueCaller + "'.");
     }
+
     final EvaluableFunction function = (EvaluableFunction) trueCaller;
 
     ArrayList<Object> parameters = new ArrayList<>();
