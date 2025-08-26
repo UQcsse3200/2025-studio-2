@@ -54,8 +54,7 @@ public class ButtonComponent extends Component {
         //adds player to event if not already
         if(!addToPlayer) {
             Entity player = playerCollider.getEntity();
-            // to be added when interact event is created
-            //player.getEvents().addListener("interact", this::onPlayerInteract);
+            player.getEvents().addListener("interact", this::onPlayerInteract);
             addToPlayer = true;
         }
 
