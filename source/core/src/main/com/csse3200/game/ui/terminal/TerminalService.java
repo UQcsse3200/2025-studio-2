@@ -1,6 +1,5 @@
 package com.csse3200.game.services;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.ui.terminal.GlobalTerminalInputComponent;
@@ -11,29 +10,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A singleton service that manages the game's global debug terminal.
+ * A Static class that manages the game's global debug terminal.
  */
-public class TerminalService implements Shell.Console {
+public class TerminalService {
   private static final Logger logger = LoggerFactory.getLogger(TerminalService.class);
-  private final Terminal terminalComponent = new Terminal();
-  private final TerminalDisplay terminalDisplay = new TerminalDisplay();
-  private Stage stage;
-  private final Shell shell;
-
-  /**
-   * Called on construction by the ServiceLocator.
-   */
-  public TerminalService() {
-    shell = new Shell(this);
-  }
+  private static final Terminal terminalComponent = new Terminal();
+  private static final TerminalDisplay terminalDisplay = new TerminalDisplay();
+  private static Stage stage;
+  private static final Shell shell = new Shell(new Shell.Console() {
+    @Override public void print(Object obj) { TerminalService.print(obj); }
+    @Override public String next() { return null; }
+    @Override public boolean hasNext() { return false; }
+    @Override public void close() {}
+  });
 
   /**
    * Called by the RenderService when a new Stage is set.
    * This allows the terminal to attach its UI to the current screen's stage.
-   * @param stage The newly active Stage.
+   *
+   * @param stageValue The newly active Stage.
    */
-  public void setStage(Stage stage) {
-    this.stage = stage;
+  static public void setStage(Stage stageValue) {
+    stage = stageValue;
 
     logger.debug("Creating global terminal UI entity");
     Entity terminalEntity = new Entity()
@@ -46,17 +44,24 @@ public class TerminalService implements Shell.Console {
     // Attach the UI to the new stage. This also works when switching screens.
     if (stage != null) {
       logger.debug("Attaching terminal display to new stage");
-      // Remove from old parent in case it's still attached
-      terminalDisplay.getRoot().remove();
+      terminalDisplay.getRoot().remove(); // Remove from old parent
       stage.addActor(terminalDisplay.getRoot());
     }
   }
 
-  public TerminalDisplay getTerminalDisplay() {
+  /**
+   * Returns the current terminal display object
+   *
+   * @return TerminalDisplay
+   */
+  static public TerminalDisplay getTerminalDisplay() {
     return terminalDisplay;
   }
 
-  public void toggle() {
+  /**
+   * Toggle the terminal display on or off
+   */
+  static public void toggle() {
     terminalComponent.toggleIsOpen();
     terminalDisplay.getRoot().toFront();
     focusTerminalInput();
@@ -73,7 +78,10 @@ public class TerminalService implements Shell.Console {
     }
   }
 
-  public void focusTerminalInput() {
+  /**
+   * Focus the terminal input (the bottom pane where text is entered)
+   */
+  static public void focusTerminalInput() {
     if (stage != null) {
       if (terminalComponent.isOpen()) {
         stage.setKeyboardFocus(terminalDisplay.getInputField());
@@ -83,6 +91,9 @@ public class TerminalService implements Shell.Console {
     }
   }
 
+  /**
+   * Execute the given command in the terminal
+   */
   public void executeCurrentCommand() {
     final String command = terminalDisplay.getInput();
     print("> " + String.join("  \n", command.split("\n")) + "\n");
@@ -99,15 +110,15 @@ public class TerminalService implements Shell.Console {
     terminalDisplay.clearInput();
   }
 
-  // --- Shell.Console Implementation ---
-  @Override
-  public void print(Object obj) {
+  /**
+   * Print string representation of the give object to the terminal.
+   * Nothing is printed if the object is null.
+   *
+   * @param obj the object to be printed
+   */
+  public static void print(Object obj) {
     if (obj != null) {
       terminalDisplay.getHistoryArea().appendText(obj.toString());
     }
   }
-
-  @Override public String next() { return null; }
-  @Override public boolean hasNext() { return false; }
-  @Override public void close() {}
 }
