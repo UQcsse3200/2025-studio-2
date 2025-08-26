@@ -4,6 +4,7 @@ import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
+import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,13 +24,6 @@ public class ServiceLocator {
   private static GameTime timeSource;
   private static InputService inputService;
   private static ResourceService resourceService;
-
-  // The debugging terminal is supposed to exist forever
-  private static final TerminalService terminalService = new TerminalService();
-
-  public static TerminalService getTerminalService() {
-    return terminalService;
-  }
 
   public static EntityService getEntityService() {
     return entityService;

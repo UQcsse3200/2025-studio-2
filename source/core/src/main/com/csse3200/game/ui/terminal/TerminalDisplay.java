@@ -1,17 +1,12 @@
 package com.csse3200.game.ui.terminal;
 
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.csse3200.game.services.GameTime;
-import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A UI component for displaying the global debug terminal.
@@ -19,14 +14,10 @@ import org.slf4j.LoggerFactory;
  * background, text history, and input line with a blinking cursor.
  */
 public class TerminalDisplay extends UIComponent {
-  private static final Logger logger = LoggerFactory.getLogger(TerminalDisplay.class);
   private Terminal terminal;
   private Table rootTable;
   private TextArea historyArea;
   private TextArea inputField;
-  private ScrollPane scrollPane;
-
-  private float timeSinceCursorBlink = 0f;
 
   @Override
   public void create() {
@@ -83,7 +74,8 @@ public class TerminalDisplay extends UIComponent {
   }
 
   /**
-   * Gets the root actor of the terminal display, which can be added to a stage.
+   * Gets the root actor of the terminal display.
+   *
    * @return The root actor.
    */
   public Actor getRoot() {
@@ -109,6 +101,7 @@ public class TerminalDisplay extends UIComponent {
   /**
    * Draws the terminal, setting its visibility based on the terminal's state.
    * The actual drawing is handled by the stage.
+   *
    * @param batch Batch to render to.
    */
   @Override
@@ -116,6 +109,9 @@ public class TerminalDisplay extends UIComponent {
     rootTable.setVisible(terminal.isOpen());
   }
 
+  /**
+   * Disposes the current root table to free up resources.
+   */
   @Override
   public void dispose() {
     super.dispose();

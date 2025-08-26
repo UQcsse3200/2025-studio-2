@@ -1,7 +1,6 @@
 package com.csse3200.game.ui.terminal;
 
 import com.csse3200.game.components.Component;
-import net.dermetfan.utils.Pair;
 
 import java.util.ArrayList;
 
@@ -21,9 +20,6 @@ public class Terminal extends Component {
 
   public void toggleIsOpen() {
     isOpen = !isOpen;
-  }
-
-  public void getReadbackBuffer() {
   }
 
   public void addCommandToHistory(String command) {

@@ -1,11 +1,9 @@
-package com.csse3200.game.services;
+package com.csse3200.game.ui.terminal;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.ui.terminal.GlobalTerminalInputComponent;
-import com.csse3200.game.ui.terminal.Shell;
-import com.csse3200.game.ui.terminal.Terminal;
-import com.csse3200.game.ui.terminal.TerminalDisplay;
+import com.csse3200.game.services.GameTime;
+import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +92,7 @@ public class TerminalService {
   /**
    * Execute the given command in the terminal
    */
-  public void executeCurrentCommand() {
+  static public void executeCurrentCommand() {
     final String command = terminalDisplay.getInput();
     print("> " + String.join("  \n", command.split("\n")) + "\n");
     try {
@@ -116,7 +114,7 @@ public class TerminalService {
    *
    * @param obj the object to be printed
    */
-  public static void print(Object obj) {
+  static public void print(Object obj) {
     if (obj != null) {
       terminalDisplay.getHistoryArea().appendText(obj.toString());
     }
