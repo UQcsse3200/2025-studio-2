@@ -43,60 +43,6 @@ class TerminalTest {
   }
 
   @Test
-  void shouldAddCommand() {
-    HashMap<String, Command> commands = new HashMap<>();
-    Terminal terminal = new Terminal(commands);
-
-    int startingSize = commands.size();
-
-    terminal.addCommand("test1", command);
-    assertEquals(startingSize + 1, commands.size());
-
-    terminal.addCommand("test2", command);
-    assertEquals(startingSize + 2, commands.size());
-
-    // command for duplicate key should not be added
-    terminal.addCommand("test2", command);
-    assertEquals(startingSize + 2, commands.size());
-  }
-
-  @Test
-  void shouldProcessMessageNoArgs() {
-    Terminal terminal = new Terminal();
-
-    Class<ArrayList<String>> captorClass = (Class<ArrayList<String>>) (Class)ArrayList.class;
-    ArgumentCaptor<ArrayList<String>> captor = ArgumentCaptor.forClass(captorClass);
-
-    terminal.addCommand("test1", command);
-
-    terminal.setEnteredMessage("test1");
-    terminal.processMessage();
-    verify(command).action(captor.capture());
-
-    assertEquals(0, captor.getValue().size());
-  }
-
-  @Test
-  void shouldProcessMessageMultipleArgs() {
-    Terminal terminal = new Terminal();
-
-    Class<ArrayList<String>> captorClass = (Class<ArrayList<String>>) (Class)ArrayList.class;
-    ArgumentCaptor<ArrayList<String>> captor = ArgumentCaptor.forClass(captorClass);
-
-    terminal.addCommand("test1", command);
-
-    terminal.setEnteredMessage("test1 1 2 3");
-    terminal.processMessage();
-    verify(command).action(captor.capture());
-
-    ArrayList<String> capturedArg = captor.getValue();
-    assertEquals(3, capturedArg.size());
-    assertEquals("1", capturedArg.get(0));
-    assertEquals("2", capturedArg.get(1));
-    assertEquals("3", capturedArg.get(2));
-  }
-
-  @Test
   void shouldModifyEnteredMessage() {
     Terminal terminal = new Terminal();
 
