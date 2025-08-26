@@ -2,12 +2,15 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ButtonContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
@@ -37,7 +40,14 @@ public class ForestGameArea extends GameArea {
     "images/hex_grass_3.png",
     "images/iso_grass_1.png",
     "images/iso_grass_2.png",
-    "images/iso_grass_3.png"
+    "images/iso_grass_3.png",
+    "images/button.png",
+    "images/button_pushed.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png"
+
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -63,7 +73,10 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    engine.getWorld().setContactListener(new ButtonContactListener());
     loadAssets();
+
     displayUI();
     spawnTerrain();
     spawnTrees();
@@ -72,7 +85,8 @@ public class ForestGameArea extends GameArea {
     spawnGhosts();
     spawnGhostKing();
 
-    spawnBoxes();
+    //spawnBoxes();  // uncomment this method when you want to play with boxes
+    //spawnButtons(); //uncomment this method to see and interact with boxes
 
     // uncomment to spawn in lights
     // spawnLights();
@@ -163,6 +177,17 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
       // Add other types of boxes here
+  }
+
+  private void spawnButtons() {
+    Entity button = ButtonFactory.createButton(false, "platform");
+    spawnEntityAt(button, new GridPoint2(25,15), true,  true);
+
+    Entity button2 = ButtonFactory.createButton(false, "door");
+    spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
+
+    Entity button3 = ButtonFactory.createButton(false, "nothing");
+    spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
   }
 
   private void spawnLights() {

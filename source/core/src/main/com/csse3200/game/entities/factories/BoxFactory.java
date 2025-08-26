@@ -68,6 +68,7 @@ public class BoxFactory {
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.DynamicBody))
                 .addComponent(new ColliderComponent()
+                        .setLayer(PhysicsLayer.OBSTACLE)
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f));
