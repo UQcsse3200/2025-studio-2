@@ -33,9 +33,8 @@ public class Shell {
   static public interface Console {
     /**
      * Prints any generic object to the output.
-     * 
-     * @param obj The object to print.
      *
+     * @param obj The object to print.
      * NOTE: It is assumed that calls to the print method are cheap,
      *   Therefore, this should probably be buffered
      */
@@ -43,14 +42,14 @@ public class Shell {
 
     /**
      * Reads a line / block to be Interpreter from the input.
-     * 
+     *
      * @return The line read from the input source.
      */
     String next();
 
     /**
      * Checks if there is another chunk to be read.
-     * 
+     *
      * @return true if there is a next line, false otherwise.
      */
     boolean hasNext();
@@ -68,7 +67,7 @@ public class Shell {
 
   /**
    * Constructs a new Shell with a given console and a new default environment.
-   * 
+   *
    * @param console The console interface for I/O.
    */
   public Shell(Console console) {
@@ -78,7 +77,7 @@ public class Shell {
   /**
    * Constructs a new Shell with a specified console and a pre-existing
    * environment.
-   * 
+   *
    * @param console The console interface for I/O.
    * @param env     The execution environment to use.
    */
@@ -92,7 +91,7 @@ public class Shell {
    * Runs the shell's read-evaluation loop.
    */
   public void run() {
-    while (true) {
+    while (console.hasNext()) {
       try {
         final Object result = eval(console.next());
         if (result != null) {
@@ -122,11 +121,11 @@ public class Shell {
 
   /**
    * Evaluates a given string of source code.
-   * 
+   *
    * @param source The source code to evaluate.
    * @return The result of the last evaluated statement.
    */
-  Object eval(String source) {
+  public Object eval(String source) {
     if (source.trim().isEmpty()) return null;
 
     Parser parser = new Parser(source);
@@ -192,7 +191,7 @@ public class Shell {
   /**
    * Provides a string representation of the Shell instance, including its
    * environment.
-   * 
+   *
    * @return A string representation of the shell.
    */
   @Override
@@ -202,7 +201,7 @@ public class Shell {
 
   /**
    * Performs a logical AND operation.
-   * 
+   *
    * @param l The left-hand side operand.
    * @param r The right-hand side operand.
    * @return The result of the logical AND.
@@ -213,7 +212,7 @@ public class Shell {
 
   /**
    * Performs a logical OR operation.
-   * 
+   *
    * @param l The left-hand side operand.
    * @param r The right-hand side operand.
    * @return The result of the logical OR.
@@ -224,7 +223,7 @@ public class Shell {
 
   /**
    * Performs a logical NOT operation.
-   * 
+   *
    * @param x The operand.
    * @return The result of the logical NOT.
    */
@@ -235,19 +234,37 @@ public class Shell {
   /**
    * Determines the "truthiness" of an object, similar to languages like
    * JavaScript or Python. Used to coerce objects to booleans.
-   * 
+   *
    * @param obj The object to evaluate.
    * @return false if the object is null, a zero number, an empty string/collection,
    *         or Boolean false. Returns true otherwise.
    */
   public static boolean isTruthy(Object obj) {
-    if (obj == null) return false;
-    if (obj instanceof Boolean) return (Boolean) obj;
-    if (obj instanceof Number) return ((Number) obj).doubleValue() != 0.0;
-    if (obj instanceof String) return !((String) obj).isEmpty();
-    if (obj instanceof Character) return (Character) obj != '\0';
-    if (obj instanceof Collection) return !((Collection<?>) obj).isEmpty();
-    if (obj instanceof Map) return !((Map<?, ?>) obj).isEmpty();
+    switch (obj) {
+      case null -> {
+        return false;
+      }
+      case Boolean b -> {
+        return b;
+      }
+      case Number number -> {
+        return number.doubleValue() != 0.0;
+      }
+      case String s -> {
+        return !s.isEmpty();
+      }
+      case Character c -> {
+        return c != '\0';
+      }
+      case Collection<?> collection -> {
+        return !collection.isEmpty();
+      }
+      case Map<?, ?> map -> {
+        return !map.isEmpty();
+      }
+      default -> {
+      }
+    }
     if (obj.getClass().isArray()) return Array.getLength(obj) != 0;
     return true;
   }
@@ -255,7 +272,7 @@ public class Shell {
   /**
    * Implements an if-then construct. Executes the function if the condition is
    * truthy.
-   * 
+   *
    * @param condition The condition to check.
    * @param function The function to execute if the condition is true.
    * @return The result of the function, or null if the condition was false.
@@ -269,7 +286,7 @@ public class Shell {
 
   /**
    * Implements an if-else construct.
-   * 
+   *
    * @param condition The condition to check.
    * @param ifFunction The function to execute if the condition is true.
    * @param elseFunction The function to execute if the condition is false.
@@ -286,7 +303,7 @@ public class Shell {
    * Represents a numerical range that can be iterated over.
    * This is intended for shell use only
    */
-  public class Range implements Iterator<Long> {
+  public static class Range implements Iterator<Long> {
     private long start;
     private final long end;
     private final long step;
@@ -422,7 +439,6 @@ public class Shell {
 
 /**
  * A specialized HashMap used for environment frames in the shell.
- *
  * It provides a safe toString() implementation to prevent infinite recursion
  * when printing environments that reference themselves.
  */
@@ -462,7 +478,7 @@ class ShellMap extends HashMap<String, Object> {
  */
 class Environment {
   /** The global scope, accessible from anywhere. */
-  final public ShellMap global = new ShellMap();
+  public final ShellMap global = new ShellMap();
   /** The stack of function frames */
   public ArrayList<ShellMap> frames = new ArrayList<ShellMap>();
 
@@ -487,36 +503,34 @@ class Environment {
 
   /**
    * Pops the current frame from the stack when a scope is exited.
-   *
-   * @return The frame that was removed.
    */
-  public ShellMap popFrame() {
-    return frames.removeLast();
+  public void popFrame() {
+    frames.removeLast();
   }
 
   /**
    * Retrieves a variable by name, searches from the innermost frame and the global scope.
-   * 
+   *
    * @param name The name of the variable to look up.
    * @return The value of the variable, or null if not found.
    */
   public Object get(String name) {
     if (!frames.isEmpty()) { // Only need to check the last frame
-      final Object retval = frames.get(frames.size() - 1).get(name);
+      final Object retval = frames.getLast().get(name);
       if (retval != null) return retval;
     }
     return global.get(name);
   }
 
-  /** 
+  /**
    * Puts a variable in the current scope (function or global scope).
-   * 
+   *
    * @param name  The name of the variable.
    * @param value The value to assign.
    */
   public void put(String name, Object value) {
     if (!frames.isEmpty()) {
-      frames.get(frames.size() - 1).put(name, value);
+      frames.getLast().put(name, value);
     } else {
       global.put(name, value);
     }
@@ -593,12 +607,7 @@ interface EvaluableFunction {
 /**
  * Represents a constant literal value in the code, such as a number or a string.
  */
-final class ConstantStatement implements Evaluable {
-  final Object value;
-
-  ConstantStatement(Object value) {
-    this.value = value;
-  }
+record ConstantStatement(Object value) implements Evaluable {
 
   /**
    * Returns the held constant value.
@@ -632,8 +641,8 @@ final class Accessor {
    * @throws ShellException if access is invalid (e.g., property on null).
    */
   public static Object access(Environment env, List<String> path, boolean accessMethods) {
-    assert (path.size() >= 1);
-    Object current = env.get(path.get(0));
+    assert (!path.isEmpty());
+    Object current = env.get(path.getFirst());
     return accessObj(current, path.subList(1, path.size()), accessMethods);
   }
 
@@ -733,12 +742,9 @@ final class Accessor {
  * or a chain of property accesses.
  * e.g. `x` or `x.y`
  */
-final class AccessStatement implements Evaluable {
-  final String[] path;
-
-  AccessStatement(String[] path) {
+record AccessStatement(String[] path) implements Evaluable {
+  AccessStatement {
     if (path.length == 0) throw new IllegalArgumentException("Access path cannot be empty.");
-    this.path = path;
   }
 
   /**
@@ -759,8 +765,7 @@ final class AccessStatement implements Evaluable {
       return current;
     }
 
-    Object current = Accessor.access(env, Arrays.asList(path), true);
-    return current;
+    return Accessor.access(env, Arrays.asList(path), true);
   }
 
   @Override
@@ -773,14 +778,7 @@ final class AccessStatement implements Evaluable {
  * Represents an assignment statement, supports traversing
  * e.g. `x = 0;` or `x.y = 0;`
  */
-final class AssignmentStatement implements Evaluable {
-  final AccessStatement left;
-  final Evaluable right;
-
-  AssignmentStatement(AccessStatement left, Evaluable right) {
-    this.left = left;
-    this.right = right;
-  }
+record AssignmentStatement(AccessStatement left, Evaluable right) implements Evaluable {
 
   /**
    * Evaluates the right-hand side and assigns the result to the left-hand side.
@@ -792,7 +790,7 @@ final class AssignmentStatement implements Evaluable {
   @Override
   public Object evaluate(Environment env) {
     Object valueToAssign = right.evaluate(env);
-    String[] path = left.path;
+    String[] path = left.path();
 
     if (path.length == 1) {
       env.put(path[0], valueToAssign);
@@ -801,14 +799,19 @@ final class AssignmentStatement implements Evaluable {
 
     Object toSet = Accessor.access(env, Arrays.asList(path).subList(0, path.length - 1), false);
 
-    if (toSet == null) {
-      throw new ShellException("Cannot access property '" + path[path.length - 1] + "' on a null container.");
-    } else if (toSet instanceof ShellMap) {
-      ((ShellMap) toSet).put(path[path.length - 1], valueToAssign);
-      return valueToAssign;
-    } else if (toSet instanceof Environment) {
-      ((Environment) toSet).put(path[path.length - 1], valueToAssign);
-      return valueToAssign;
+    switch (toSet) {
+      case null ->
+          throw new ShellException("Cannot access property '" + path[path.length - 1] + "' on a null container.");
+      case ShellMap shellMap -> {
+        shellMap.put(path[path.length - 1], valueToAssign);
+        return valueToAssign;
+      }
+      case Environment environment -> {
+        environment.put(path[path.length - 1], valueToAssign);
+        return valueToAssign;
+      }
+      default -> {
+      }
     }
 
     Class<?> targetClass = (toSet instanceof Class) ? (Class<?>) toSet : toSet.getClass();
@@ -818,7 +821,7 @@ final class AssignmentStatement implements Evaluable {
         field.setAccessible(true);
         field.set(toSet, valueToAssign);
         return valueToAssign;
-      } catch (NoSuchFieldException e) {
+      } catch (NoSuchFieldException ignored) {
       } catch (Exception e) {
         throw new ShellException("Error setting field '" + path[path.length - 1] + "': " + e.getMessage());
       }
@@ -863,7 +866,6 @@ final class MaybeMethodStatement implements EvaluableFunction {
 
     ArrayList<Method> candidates = new ArrayList<>();
 
-    targetClass.getMethods();
     for (Method method : targetClass.getMethods()) {
       if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
         candidates.add(method);
@@ -935,7 +937,7 @@ final class MaybeMethodStatement implements EvaluableFunction {
 
 /**
  * Represents a user-defined function in the shell script.
-// e.g. `(x, y) { return(.java.lang.Math.pow(x, y)); }`
+ // e.g. `(x, y) { return(.java.lang.Math.pow(x, y)); }`
  */
 final class FunctionStatement implements EvaluableFunction {
   final Evaluable[] instructions;
@@ -989,25 +991,20 @@ final class FunctionStatement implements EvaluableFunction {
 
   @Override
   public String toString() {
-    return "Function(" + instructions + ")";
+    return "Function(" + Arrays.toString(instructions) + ")";
   }
 }
 
 /**
  * Represents a resolved class that can be "called" like a function for instantiation.
  */
-final class ClassResultStatement implements EvaluableFunction {
-  final Class<?> c;
-
-  ClassResultStatement(Class<?> c) {
-    this.c = c;
-  }
+record ClassResultStatement(Class<?> c) implements EvaluableFunction {
 
   /**
    * Acts as a constructor call. It finds a matching public constructor based
    * on the arguments and creates a new instance.
    *
-   * @param env The environment (unused).
+   * @param env        The environment (unused).
    * @param parameters The arguments for the constructor.
    * @return The newly created class instance coerced to an Object.
    * @throws ShellException if no matching constructor is found or instantiation fails.
@@ -1044,7 +1041,7 @@ final class ClassResolutionStatement implements Evaluable {
 
   ClassResolutionStatement(String originalName) {
     String name = originalName;
-    this.subPath = new ArrayList<String>();
+    this.subPath = new ArrayList<>();
 
     while (true) {
       final int lastDot = name.lastIndexOf(".");
@@ -1072,7 +1069,7 @@ final class ClassResolutionStatement implements Evaluable {
    */
   @Override
   public Object evaluate(Environment env) {
-    if (subPath.size() == 0) {
+    if (subPath.isEmpty()) {
       return resolvedClass;
     } else {
       return Accessor.accessObj(resolvedClass, subPath, true);
@@ -1082,7 +1079,7 @@ final class ClassResolutionStatement implements Evaluable {
   @Override
   public String toString() {
     final String retval = "ClassResolution(" + resolvedClass.getSimpleName() + ")";
-    if (subPath.size() == 0) return retval;
+    if (subPath.isEmpty()) return retval;
     return retval + "." + String.join(".", subPath);
   }
 }
@@ -1092,14 +1089,7 @@ final class ClassResolutionStatement implements Evaluable {
  * e.g. `x(0, 1, 2);`
  * NOTE: calling a class creates a new instance of that class
  */
-final class FunctionCallStatement implements Evaluable {
-  final Evaluable caller;
-  final ArrayList<Evaluable> arguments;
-
-  FunctionCallStatement(Evaluable caller, ArrayList<Evaluable> arguments) {
-    this.caller = caller;
-    this.arguments = arguments;
-  }
+record FunctionCallStatement(Evaluable caller, ArrayList<Evaluable> arguments) implements Evaluable {
 
   /**
    * Evaluates the caller and the arguments, then invokes the caller with the resolved arguments.
