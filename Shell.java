@@ -13,63 +13,91 @@ import java.util.Scanner;
 import java.util.Collection;
 import java.lang.reflect.Array;
 
-// Shell: A simple, single-file, dependency-free scripting language interpreter written in vanilla Java.
+/**
+ * Shell: A simple, single-file, dependency-free scripting language interpreter
+ * written in vanilla Java.
+ */
 public class Shell {
+  /** A reference to the Range class for internal use. */
   final public static Class<?> RangeClass = Range.class;
+  /** A reference to the ShellMap class */
   final public static Class<?> ShellMapClass = ShellMap.class;
+  /** A reference to the ReturnValue class for internal use. */
   final public static Class<?> ReturnValueClass = ReturnValue.class;
 
-  // A read / write iinterface implementation
+  /**
+   * An interface for abstracting read/write operations, allowing the Shell to
+   * work with different input/output sources, such as a standard console or a
+   * network socket.
+   */
   static public interface Console {
-    // Prints any generic object
-    // NOTE: It is assumed that calls to the print method are cheap,
-    //   Therefore, this should probably be buffered
+    /**
+     * Prints any generic object to the output.
+     * 
+     * @param obj The object to print.
+     *
+     * NOTE: It is assumed that calls to the print method are cheap,
+     *   Therefore, this should probably be buffered
+     */
     void print(Object obj);
 
-    // Reads a line from the console
-    String nextLine();
+    /**
+     * Reads a line / block to be Interpreter from the input.
+     * 
+     * @return The line read from the input source.
+     */
+    String next();
 
-    // Checks if there is a next line to be read
-    boolean hasNextLine();
+    /**
+     * Checks if there is another chunk to be read.
+     * 
+     * @return true if there is a next line, false otherwise.
+     */
+    boolean hasNext();
 
-    // Closes the console, this is just forwarded by the shell implementation
+    /**
+     * Closes the console's underlying resources.
+     */
     void close();
   }
 
+  /** The console used for input and output operations. */
   final private Console console;
+  /** The execution environment, holding global variables and the call stack. */
   public Environment env;
 
+  /**
+   * Constructs a new Shell with a given console and a new default environment.
+   * 
+   * @param console The console interface for I/O.
+   */
   public Shell(Console console) {
     this(console, new Environment());
   }
 
+  /**
+   * Constructs a new Shell with a specified console and a pre-existing
+   * environment.
+   * 
+   * @param console The console interface for I/O.
+   * @param env     The execution environment to use.
+   */
   public Shell(Console console, Environment env) {
     this.console = console;
     this.env = env;
     this.env.put("globalThis", this);
   }
 
+  /**
+   * Runs the shell's read-evaluation loop.
+   */
   public void run() {
-    StringBuilder inputBuffer = new StringBuilder();
     while (true) {
-      if (inputBuffer.length() == 0) console.print("> ");
-      if (!console.hasNextLine()) return;
-
-      final String line = console.nextLine();
-      inputBuffer.append(line);
-
-      if (!line.trim().endsWith("!")) {
-        inputBuffer.append("\n");
-        continue;
-      }
-
-      String source = inputBuffer.toString().trim();
-      source = source.substring(0, source.length() - 1);
-      inputBuffer.setLength(0);
-      if (source.isEmpty()) continue;
+      if (!console.hasNext()) return;
+      final String chunk = console.next();
 
       try {
-        final Object result = eval(source);
+        final Object result = eval(chunk);
         if (result != null) {
           console.print(result);
           console.print("\n");
@@ -88,10 +116,19 @@ public class Shell {
     }
   }
 
+  /**
+   * Cleanup the resources used by the shell.
+   */
   public void close() {
     console.close();
   }
 
+  /**
+   * Evaluates a given string of source code.
+   * 
+   * @param source The source code to evaluate.
+   * @return The result of the last evaluated statement.
+   */
   Object eval(String source) {
     if (source.trim().isEmpty()) return null;
 
@@ -108,6 +145,10 @@ public class Shell {
     return lastResult;
   }
 
+  /**
+   * The main function.
+   * This is for testing purposes only.
+   */
   public static void main(String[] args) {
     new Shell(new Console() {
       final Scanner scanner = new Scanner(System.in);
@@ -119,12 +160,30 @@ public class Shell {
       }
 
       @Override
-      public String nextLine() {
-        return scanner.nextLine();
+      public String next() {
+        StringBuilder inputBuffer = new StringBuilder();
+
+        while (true) {
+          if (scanner.hasNextLine()) {
+            final String line = scanner.nextLine();
+            inputBuffer.append(line);
+
+            if (!line.trim().endsWith("!")) {
+              inputBuffer.append("\n");
+              continue;
+            }
+          }
+
+          String source = inputBuffer.toString().trim();
+          source = source.substring(0, source.length() - 1);
+          inputBuffer.setLength(0);
+
+          return source;
+        }
       }
 
       @Override
-      public boolean hasNextLine() {
+      public boolean hasNext() {
         return scanner.hasNextLine();
       }
 
@@ -135,23 +194,57 @@ public class Shell {
     }).run();
   }
 
+  /**
+   * Provides a string representation of the Shell instance, including its
+   * environment.
+   * 
+   * @return A string representation of the shell.
+   */
   @Override
   public String toString() {
     return "Shell{.env = " + env + "}";
   }
 
+  /**
+   * Performs a logical AND operation.
+   * 
+   * @param l The left-hand side operand.
+   * @param r The right-hand side operand.
+   * @return The result of the logical AND.
+   */
   public static Object and(Object l, Object r) {
     return isTruthy(l) && isTruthy(r);
   }
 
+  /**
+   * Performs a logical OR operation.
+   * 
+   * @param l The left-hand side operand.
+   * @param r The right-hand side operand.
+   * @return The result of the logical OR.
+   */
   public static Object or(Object l, Object r) {
     return isTruthy(l) || isTruthy(r);
   }
 
+  /**
+   * Performs a logical NOT operation.
+   * 
+   * @param x The operand.
+   * @return The result of the logical NOT.
+   */
   public static Object not(Object x) {
     return !isTruthy(x);
   }
 
+  /**
+   * Determines the "truthiness" of an object, similar to languages like
+   * JavaScript or Python. Used to coerce objects to booleans.
+   * 
+   * @param obj The object to evaluate.
+   * @return false if the object is null, a zero number, an empty string/collection,
+   *         or Boolean false. Returns true otherwise.
+   */
   public static boolean isTruthy(Object obj) {
     if (obj == null) return false;
     if (obj instanceof Boolean) return (Boolean) obj;
@@ -164,6 +257,14 @@ public class Shell {
     return true;
   }
 
+  /**
+   * Implements an if-then construct. Executes the function if the condition is
+   * truthy.
+   * 
+   * @param condition The condition to check.
+   * @param function The function to execute if the condition is true.
+   * @return The result of the function, or null if the condition was false.
+   */
   public Object ifThen(Object condition, EvaluableFunction function) {
     if (isTruthy(condition)) {
       return function.evaluate(env, new ArrayList<>());
@@ -171,6 +272,14 @@ public class Shell {
     return null;
   }
 
+  /**
+   * Implements an if-else construct.
+   * 
+   * @param condition The condition to check.
+   * @param ifFunction The function to execute if the condition is true.
+   * @param elseFunction The function to execute if the condition is false.
+   * @return The result of the executed function.
+   */
   public Object ifElse(Object condition, EvaluableFunction ifFunction, EvaluableFunction elseFunction) {
     if (isTruthy(condition)) {
       return ifFunction.evaluate(env, new ArrayList<>());
@@ -178,25 +287,48 @@ public class Shell {
     return elseFunction.evaluate(env, new ArrayList<>());
   }
 
+  /**
+   * Represents a numerical range that can be iterated over.
+   * This is intended for shell use only
+   */
   public class Range implements Iterator<Long> {
     private long start;
     private final long end;
     private final long step;
 
+    /**
+     * Creates a range with a step of 1.
+     * @param start The starting value (inclusive).
+     * @param end The ending value (inclusive).
+     */
     public Range(long start, long end) {
       this(start, end, 1);
     }
 
+    /**
+     * Creates a range with a specified step.
+     * @param start The starting value (inclusive).
+     * @param end The ending value (inclusive).
+     * @param step The increment value.
+     */
     public Range(long start, long end, long step) {
       this.start = start;
       this.end = end;
       this.step = step;
     }
 
+    /**
+     * Checks if the iteration has more elements.
+     * @return true if the current value is less than or equal to the end.
+     */
     public boolean hasNext() {
       return start <= end;
     }
 
+    /**
+     * Returns the next element in the iteration.
+     * @return The next long value in the range.
+     */
     public Long next() {
       long currentValue = start;
       start += step;
@@ -204,12 +336,18 @@ public class Shell {
     }
   }
 
+  /**
+   * Implements a for-each loop construct that iterates over various iterable types.
+   * @param iterable The object to iterate over (can be an Iterator, Collection, Array, or Map).
+   * @param function The function to execute for each item.
+   * @return null after the loop completes.
+   * @throws ShellException if the object is not iterable.
+   */
   public Object forEach(Object iterable, EvaluableFunction function) {
     if (iterable instanceof Iterator) {
       while (((Iterator<?>) iterable).hasNext()) {
         function.evaluate(env, new ArrayList<>(List.of(((Iterator<?>) iterable).next())));
       }
-      return null;
     } else if (iterable instanceof Collection) {
       for (Object item : (Collection<?>) iterable) {
         function.evaluate(env, new ArrayList<>(List.of(item)));
@@ -222,11 +360,19 @@ public class Shell {
       for (Object key : ((Map<?, ?>) iterable).keySet()) {
         function.evaluate(env, new ArrayList<>(List.of(key, ((Map<?, ?>) iterable).get(key))));
       }
+    } else {
+      throw new ShellException("Cannot iterate over " + iterable.getClass().getSimpleName());
     }
 
-    throw new ShellException("Cannot iterate over " + iterable.getClass().getSimpleName());
+    return null;
   }
 
+  /**
+   * Implements a while loop construct.
+   * @param condition The condition to evaluate before each iteration.
+   * @param function The function to execute in the loop body.
+   * @return The result of the last executed statement in the loop.
+   */
   public Object whileLoop(Evaluable condition, EvaluableFunction function) {
     Object result = null;
     while (isTruthy(condition.evaluate(env))) {
@@ -235,6 +381,12 @@ public class Shell {
     return result;
   }
 
+  /**
+   * Implements a try-catch construct for error handling.
+   * @param tryBlock The function containing code that might throw an exception.
+   * @param catchBlock The function to execute if a ShellException is caught.
+   * @return The result of the try block, or the result of the catch block if an exception occurred.
+   */
   public Object tryCatch(EvaluableFunction tryBlock, EvaluableFunction catchBlock) {
     try {
       return tryBlock.evaluate(env, new ArrayList<>());
@@ -243,24 +395,54 @@ public class Shell {
     }
   }
 
+  /**
+   * Sets a value in the global environment scope.
+   * @param name The name of the global variable.
+   * @param value The value to set.
+   * @return The value that was set.
+   */
   public Object setGlobal(String name, Object value) {
     env.global.put(name, value);
     return value;
   }
 
+  /**
+   * Gets a value from the global environment scope.
+   * @param name The name of the global variable.
+   * @return The value of the global variable.
+   */
   public Object getGlobal(String name) {
     return env.global.get(name);
   }
 }
 
-// A simple typedef
+/**
+ * A specialized HashMap used for environment frames in the shell.
+ *
+ * It provides a safe toString() implementation to prevent infinite recursion
+ * when printing environments that reference themselves.
+ */
 class ShellMap extends HashMap<String, Object> {
+  /**
+   * A static accessor for the underlying map.
+   *
+   * @param self The ShellMap instance.
+   * @return The map itself.
+   */
   public static Map<String, Object> getMap(ShellMap self) {
     return self;
   }
 
+  /**
+   * Thread unsafe recursion guard.
+   */
   private boolean inToStringCall = false;
 
+  /**
+   * Provides a string representation of the map, with a guard against recursive calls.
+   *
+   * @return A string representation of the map, or "..." if a recursive call is detected.
+   */
   @Override
   public String toString() {
     if (inToStringCall) return "...";
@@ -271,25 +453,49 @@ class ShellMap extends HashMap<String, Object> {
   }
 }
 
-// This is an object that represents the state of our shell envoirnment
+/**
+ * Represents the state of our shell envoirnment, including global variables and a stackframes
+ */
 class Environment {
+  /** The global scope, accessible from anywhere. */
   final public ShellMap global = new ShellMap();
+  /** The stack of function frames */
   public ArrayList<ShellMap> frames = new ArrayList<ShellMap>();
+
+  /**
+   * Thread unsafe recursion guard.
+   */
   private boolean inToStringCall = false;
 
   public Environment() {
   }
 
+  /**
+   * Pushes a new frame onto the stack for a new local scope.
+   *
+   * @return The newly created frame.
+   */
   public ShellMap pushFrame() {
     final ShellMap frame = new ShellMap();
     frames.add(frame);
     return frame;
   }
 
+  /**
+   * Pops the current frame from the stack when a scope is exited.
+   *
+   * @return The frame that was removed.
+   */
   public ShellMap popFrame() {
     return frames.removeLast();
   }
 
+  /**
+   * Retrieves a variable by name, searches from the innermost frame and the global scope.
+   * 
+   * @param name The name of the variable to look up.
+   * @return The value of the variable, or null if not found.
+   */
   public Object get(String name) {
     if (!frames.isEmpty()) { // Only need to check the last frame
       final Object retval = frames.get(frames.size() - 1).get(name);
@@ -298,6 +504,12 @@ class Environment {
     return global.get(name);
   }
 
+  /** 
+   * Puts a variable in the current scope (function or global scope).
+   * 
+   * @param name  The name of the variable.
+   * @param value The value to assign.
+   */
   public void put(String name, Object value) {
     if (!frames.isEmpty()) {
       frames.get(frames.size() - 1).put(name, value);
@@ -306,6 +518,11 @@ class Environment {
     }
   }
 
+  /**
+   * Provides a string representation of the Environment, with a guard for recursive calls.
+   *
+   * @return A string representation of the environment.
+   */
   @Override
   public String toString() {
     if (inToStringCall) return "...";
@@ -316,14 +533,19 @@ class Environment {
   }
 }
 
-// Exception Class for Shell
+/**
+ * A custom exception class for user-level errors that occur during script execution.
+ */
 final class ShellException extends RuntimeException {
   public ShellException(String message) {
     super(message);
   }
 }
 
-// Represents a return value from a function
+/**
+ * A wrapper class to signify a return value from a function. This is used to
+ * unwind the call stack during a return statement.
+ */
 final class ReturnValue {
   public final Object value;
 
@@ -337,18 +559,36 @@ final class ReturnValue {
   }
 }
 
-// This represents an evaluable fragment
+/**
+ * An interface representing any piece of code that can be evaluated.
+ */
 interface Evaluable {
+  /**
+   * Evaluates the code fragment in context of a given environment.
+   *
+   * @param env The environment to use for evaluation.
+   * @return The result of the evaluation.
+   */
   public Object evaluate(Environment env);
 }
 
-// This represents an callable fragment
+/**
+ * An interface representing a callable function.
+ */
 interface EvaluableFunction {
+  /**
+   * Evaluates the function with a given set of parameters.
+   *
+   * @param env The environment to use for evaluation.
+   * @param parameters The arguments passed to the function.
+   * @return The return value of the function.
+   */
   public Object evaluate(Environment env, ArrayList<Object> parameters);
 }
 
-// Just a thin wrapper that returns the stored value
-// used for constant definitions
+/**
+ * Represents a constant literal value in the code, such as a number or a string.
+ */
 final class ConstantStatement implements Evaluable {
   final Object value;
 
@@ -356,6 +596,12 @@ final class ConstantStatement implements Evaluable {
     this.value = value;
   }
 
+  /**
+   * Returns the held constant value.
+   *
+   * @param env The environment (unused).
+   * @return The constant value.
+   */
   @Override
   public Object evaluate(Environment env) {
     return value;
@@ -367,8 +613,20 @@ final class ConstantStatement implements Evaluable {
   }
 }
 
-// A utility class for accessing properties on objects / maps / etc
+/**
+ * A utility class for accessing properties on objects, maps, and classes using
+ * Java Reflection. This allows the script to interact with Java objects.
+ */
 final class Accessor {
+  /**
+   * Accesses a property on an object through a given path.
+   *
+   * @param env The environment for the initial variable lookup.
+   * @param path The path of properties to access (e.g., ["myObject", "myField"]).
+   * @param accessMethods True if method resolution should be attempted for the last element.
+   * @return The final value or a MaybeMethodStatement if a method was found.
+   * @throws ShellException if access is invalid (e.g., property on null).
+   */
   public static Object access(Environment env, List<String> path, boolean accessMethods) {
     assert (path.size() >= 1);
 
@@ -450,8 +708,11 @@ final class Accessor {
   }
 }
 
-// Accesses a variable, supports traversing
-// e.g. `x` or `x.y`
+/**
+ * Represents a variable access statement, which can be a simple variable name
+ * or a chain of property accesses.
+ * e.g. `x` or `x.y`
+ */
 final class AccessStatement implements Evaluable {
   final String[] path;
 
@@ -460,6 +721,13 @@ final class AccessStatement implements Evaluable {
     this.path = path;
   }
 
+  /**
+   * Evaluates the access path to retrieve the final value.
+   *
+   * @param env The environment in which to evaluate.
+   * @return The retrieved value.
+   * @throws ShellException if the variable is not found.
+   */
   @Override
   public Object evaluate(Environment env) {
 
@@ -481,8 +749,10 @@ final class AccessStatement implements Evaluable {
   }
 }
 
-// Represents an assignment statement, supports traversing
-// e.g. `x = 0;` or `x.y = 0;`
+/**
+ * Represents an assignment statement, supports traversing
+ * e.g. `x = 0;` or `x.y = 0;`
+ */
 final class AssignmentStatement implements Evaluable {
   final AccessStatement left;
   final Evaluable right;
@@ -492,6 +762,13 @@ final class AssignmentStatement implements Evaluable {
     this.right = right;
   }
 
+  /**
+   * Evaluates the right-hand side and assigns the result to the left-hand side.
+   *
+   * @param env The environment in which to evaluate.
+   * @return The value that was assigned.
+   * @throws ShellException if the assignment target is invalid.
+   */
   @Override
   public Object evaluate(Environment env) {
     Object valueToAssign = right.evaluate(env);
@@ -536,8 +813,10 @@ final class AssignmentStatement implements Evaluable {
   }
 }
 
-// represents what could be a method statement.
-// This is used to determine which onverride to use for method call.
+/**
+ * Represents what could be a callable method / function statement.
+ * Uses reflection to find the best matching overload.
+ */
 final class MaybeMethodStatement implements EvaluableFunction {
   Object instance;
   String methodName;
@@ -547,6 +826,15 @@ final class MaybeMethodStatement implements EvaluableFunction {
     this.methodName = methodName;
   }
 
+  /**
+   * Evaluates the method call by finding a suitable method overload for the
+   * given parameters and invoking it.
+   *
+   * @param env The environment (unused).
+   * @param parameters The arguments for the method call.
+   * @return The result of the method invocation.
+   * @throws ShellException if no suitable method is found or if invocation fails.
+   */
   @Override
   public Object evaluate(Environment env, ArrayList<Object> parameters) {
     Object targetInstance = (instance instanceof Class) ? null : instance;
@@ -602,11 +890,20 @@ final class MaybeMethodStatement implements EvaluableFunction {
     throw new ShellException("No matching method '" + methodName + "' found for the given arguments in " + targetClass.getSimpleName());
   }
 
+  /** Map of primitive types to their corresponding wrapper classes. */
   static final Map<Class<?>, Class<?>> WRAPPER_TYPES = Map.of(
       boolean.class, Boolean.class, byte.class, Byte.class, char.class, Character.class,
       double.class, Double.class, float.class, Float.class, int.class, Integer.class,
       long.class, Long.class, short.class, Short.class);
 
+  /**
+   * Checks if a value from a source type can be assigned to a target type,
+   * handling primitive-to-wrapper conversions.
+   *
+   * @param targetType The type of the parameter.
+   * @param sourceType The type of the argument.
+   * @return true if assignment is possible.
+   */
   private boolean isAssignable(Class<?> targetType, Class<?> sourceType) {
     if (targetType.isAssignableFrom(sourceType)) return true;
     if (targetType.isPrimitive()) {
@@ -616,8 +913,10 @@ final class MaybeMethodStatement implements EvaluableFunction {
   }
 }
 
-// Represents a function definition
-// e.g. `(x, y, z) { return(x + y + z); }`
+/**
+ * Represents a user-defined function in the shell script.
+// e.g. `(x, y) { return(.java.lang.Math.pow(x, y)); }`
+ */
 final class FunctionStatement implements EvaluableFunction {
   final Evaluable[] instructions;
 
@@ -630,6 +929,14 @@ final class FunctionStatement implements EvaluableFunction {
     this.variadicIndex = variadicIndex;
   }
 
+  /**
+   * Executes the function call statement
+   *
+   * @param env The parent environment.
+   * @param parameters The arguments passed to the function.
+   * @return The function's return value, or null if no return statement is executed.
+   * @throws ShellException if the wrong number of arguments is provided.
+   */
   @Override
   public Object evaluate(Environment env, ArrayList<Object> parameters) {
     final ShellMap frame = env.pushFrame();
@@ -666,7 +973,9 @@ final class FunctionStatement implements EvaluableFunction {
   }
 }
 
-// Represents a resolved class that can be called like a function for instantiation
+/**
+ * Represents a resolved class that can be "called" like a function for instantiation.
+ */
 final class ClassResultStatement implements EvaluableFunction {
   final Class<?> c;
 
@@ -674,6 +983,15 @@ final class ClassResultStatement implements EvaluableFunction {
     this.c = c;
   }
 
+  /**
+   * Acts as a constructor call. It finds a matching public constructor based
+   * on the arguments and creates a new instance.
+   *
+   * @param env The environment (unused).
+   * @param parameters The arguments for the constructor.
+   * @return The newly created class instance coerced to an Object.
+   * @throws ShellException if no matching constructor is found or instantiation fails.
+   */
   @Override
   public Object evaluate(Environment env, ArrayList<Object> parameters) {
     Object[] args = parameters.toArray();
@@ -695,8 +1013,10 @@ final class ClassResultStatement implements EvaluableFunction {
   }
 }
 
-// Represents a class resolution statement
-// e.g. `.java.lang.String`
+/**
+ * Represents a statement that resolves a Java class by its fully qualified name
+ * (e.g., `.java.lang.String`).
+ */
 final class ClassResolutionStatement implements Evaluable {
   final String name;
 
@@ -704,6 +1024,13 @@ final class ClassResolutionStatement implements Evaluable {
     this.name = name;
   }
 
+  /**
+   * Resolves the class name into a Class object using Reflection.
+   *
+   * @param env The environment (unused).
+   * @return A ClassResultStatement wrapping the resolved Class object.
+   * @throws ShellException if the class cannot be found.
+   */
   @Override
   public Object evaluate(Environment env) {
     try {
@@ -719,9 +1046,11 @@ final class ClassResolutionStatement implements Evaluable {
   }
 }
 
-// Represents a function call statement
-// e.g. `x(0, 1, 2);`
-// NOTE: calling a class creates a new instance of that class
+/**
+ * Represents a function call statement
+ * e.g. `x(0, 1, 2);`
+ * NOTE: calling a class creates a new instance of that class
+ */
 final class FunctionCallStatement implements Evaluable {
   final Evaluable caller;
   final ArrayList<Evaluable> arguments;
@@ -731,6 +1060,13 @@ final class FunctionCallStatement implements Evaluable {
     this.arguments = arguments;
   }
 
+  /**
+   * Evaluates the caller and the arguments, then invokes the caller with the resolved arguments.
+   *
+   * @param env The environment in which to evaluate.
+   * @return The result of the function call.
+   * @throws ShellException if the caller is not a function.
+   */
   @Override
   public Object evaluate(Environment env) {
     final Object trueCaller = caller.evaluate(env);
@@ -750,7 +1086,9 @@ final class FunctionCallStatement implements Evaluable {
   }
 }
 
-// Parser implementation, this is what converts texts to 'Evaluable / EvaluableFunction' objects
+/**
+ * Parser implementation, this is what converts texts to 'Evaluable / EvaluableFunction' objects
+ */
 class Parser {
   private final String source;
   private int pos = 0;
@@ -759,26 +1097,54 @@ class Parser {
     this.source = source;
   }
 
+  /**
+   * Checks if the parser has reached the end of the source string.
+   *
+   * @return true if at the end, false otherwise.
+   */
   public boolean isAtEnd() {
     skipWhitespace();
     return pos >= source.length();
   }
 
+  /**
+   * Looks at the current character without consuming it.
+   *
+   * @return The character at the current position, or '\0' if at the end.
+   */
   private char peek() {
     if (pos >= source.length()) return '\0';
     return source.charAt(pos);
   }
 
+  /**
+   * Consumes and returns the current character, advancing the position.
+   *
+   * @return The consumed character.
+   */
   private char advance() {
     return source.charAt(pos++);
   }
 
+  /**
+   * Checks if the current character matches the expected character.
+   * If it does, consumes it and returns true.
+   *
+   * @param expected The character to match.
+   * @return true on match, false otherwise.
+   */
   private boolean match(char expected) {
     if (isAtEnd() || peek() != expected) return false;
     pos++;
     return true;
   }
 
+  /**
+   * Requires the next character to be a specific character, throwing an error if it's not.
+   *
+   * @param expected The expected character.
+   * @param message The error message to throw on failure.
+   */
   private void consume(char expected, String message) {
     skipWhitespace();
     if (!match(expected)) {
@@ -786,18 +1152,31 @@ class Parser {
     }
   }
 
+  /**
+   * Skips over any whitespace characters.
+   */
   private void skipWhitespace() {
     while (pos < source.length() && Character.isWhitespace(source.charAt(pos))) {
       pos++;
     }
   }
 
+  /**
+   * Parses a single statement, which is an expression followed by a semicolon.
+   *
+   * @return The parsed Evaluable statement.
+   */
   public Evaluable parseStatement() {
     Evaluable expr = parseExpression();
     consume(';', "Expected ';' after statement.");
     return expr;
   }
 
+  /**
+   * Parses an expression, which can be a primary value, an assignment, or a function call.
+   *
+   * @return The parsed Evaluable expression.
+   */
   private Evaluable parseExpression() {
     Evaluable expr = parsePrimary();
 
@@ -822,6 +1201,12 @@ class Parser {
     return expr;
   }
 
+  /**
+   * Parses a primary expression, such as a number, string, variable access,
+   * or function definition `(params) ...`.
+   *
+   * @return The parsed Evaluable primary expression.
+   */
   private Evaluable parsePrimary() {
     skipWhitespace();
     char c = peek();
@@ -835,6 +1220,11 @@ class Parser {
     throw new ShellException("Unexpected character: " + c);
   }
 
+  /**
+   * Parses a number literal (integer, float, double, long).
+   *
+   * @return A ConstantStatement containing the parsed number.
+   */
   private ConstantStatement parseNumber() {
     int start = pos;
     while (!isAtEnd() && Character.isDigit(peek())) advance();
@@ -859,6 +1249,11 @@ class Parser {
     return new ConstantStatement(Integer.parseInt(numberStr));
   }
 
+  /**
+   * Parses a string (double-quoted) or character (single-quoted) literal.
+   *
+   * @return A ConstantStatement containing the parsed string or char.
+   */
   private ConstantStatement parseStringOrChar() {
     char quote = advance(); // Consume opening quote
     int start = pos;
@@ -875,12 +1270,21 @@ class Parser {
     return new ConstantStatement(value);
   }
 
+  /**
+   * Parses a class resolution expression (e.g., `.java.lang.String`).
+   *
+   * @return A ClassResolutionStatement.
+   */
   private Evaluable parseClassResolution() {
     consume('.', "Expected '.' for class resolution.");
     return new ClassResolutionStatement(readIdentifierWithDots());
   }
 
-  // Check for function definition: `(params) { ... }`
+  /**
+   * Parses a function definition `(params) { ... }`.
+   *
+   * @return A ConstantStatement containing the new FunctionStatement.
+   */
   private Evaluable parseFunctionDef() {
     consume('(', "Expected '(' for group or function definition.");
     skipWhitespace();
@@ -909,6 +1313,13 @@ class Parser {
     }
   }
 
+  /**
+   * Parses the body of a function, which is a sequence of statements inside curly braces.
+   *
+   * @param params The names of the function's parameters.
+   * @param variadicIndex The index of the variadic parameter, or -1 if none.
+   * @return A FunctionStatement representing the parsed function.
+   */
   private FunctionStatement parseFunctionBody(String[] params, int variadicIndex) {
     consume('{', "Expected '{' to start function body.");
     ArrayList<Evaluable> body = new ArrayList<>();
@@ -917,6 +1328,11 @@ class Parser {
     return new FunctionStatement(body.toArray(new Evaluable[0]), params, variadicIndex);
   }
 
+  /**
+   * Parses a variable access or property access chain (e.g., `x` or `x.y.z`).
+   *
+   * @return An AccessStatement.
+   */
   private Evaluable parseAccess() {
     ArrayList<String> path = new ArrayList<>();
     path.add(readIdentifier());
@@ -924,12 +1340,22 @@ class Parser {
     return new AccessStatement(path.toArray(new String[0]));
   }
 
+  /**
+   * Reads an identifier (variable name)
+   *
+   * @return The identifier string.
+   */
   private String readIdentifier() {
     int start = pos;
     while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_')) advance();
     return source.substring(start, pos).trim();
   }
 
+  /**
+   * Reads an identifier that is allowed to contain dots (for class names).
+   *
+   * @return The identifier string.
+   */
   private String readIdentifierWithDots() {
     int start = pos;
     while (!isAtEnd() && (Character.isLetterOrDigit(peek()) || peek() == '_' || peek() == '.')) advance();
