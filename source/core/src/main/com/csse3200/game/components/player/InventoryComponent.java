@@ -56,6 +56,19 @@ public class InventoryComponent extends Component {
         return inventory.getOrDefault(itemId, 0);
     }
 
+    /**
+     * Gets the count for all items in the inventory.
+     *
+     * @return the stored count, or {@code 0} if the inventory is empty
+     */
+    public int getTotalItemCount() {
+        int total = 0;
+        for (Map.Entry<String, Integer> entry : inventory.entrySet()) {
+            total += entry.getValue();
+        }
+        return total;
+    }
+
 
     /**
      * Completely removes the entry for {@code itemId} from the inventory.
@@ -77,6 +90,16 @@ public class InventoryComponent extends Component {
             inventory.put(itemId, inventory.get(itemId) - 1);
         } else {
             System.err.println("You have no " + itemId + " in your inventory");
+        }
+    }
+
+    public void useItems(String itemId,  int amount) {
+        int i = amount;
+        if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
+            while (inventory.get(itemId) > 0 && i > 0) {
+                inventory.put(itemId, inventory.get(itemId) - 1);
+                i--;
+            }
         }
     }
 }
