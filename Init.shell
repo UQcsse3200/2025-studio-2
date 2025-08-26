@@ -1,6 +1,7 @@
 
 init = () {
-  "This makes the function slightly faster as we onlt need to look at the top frame";
+  "This makes the function slightly faster as we only need to look at the top frame";
+  globalThis = globalThis;
   setGlobal = globalThis.setGlobal;
 
   "
@@ -64,6 +65,3 @@ init = () {
 };
 
 init();
-
-!
-
