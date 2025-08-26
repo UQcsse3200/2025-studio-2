@@ -93,6 +93,18 @@ public class InventoryComponent extends Component {
         }
     }
 
+    /**
+     * Consumes a specified number of items from the inventory.
+     * <p>
+     * This method will decrement the count of the given {@code itemId} until either
+     * the requested {@code amount} has been used or the available quantity is depleted.
+     * If the item does not exist in the inventory or has a count of zero, no changes occur.
+     * </p>
+     *
+     * @param itemId the identifier of the item to use
+     * @param amount the number of items to attempt to consume; if greater than the
+     *               available count, all available items are consumed
+     */
     public void useItems(String itemId,  int amount) {
         int i = amount;
         if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
