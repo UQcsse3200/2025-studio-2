@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.factories.EnemyFactory;
 import com.csse3200.game.entities.factories.NPCFactory;
 import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactory;
@@ -141,12 +142,13 @@ public class ForestGameArea extends GameArea {
     }
   }
 
+  // Test drone spawn in forest area
   private void spawnDrone() {
     GridPoint2 minPos = new GridPoint2(0, 0);
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
 
     GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-    Entity drone = NPCFactory.createDrone(player);
+    Entity drone = EnemyFactory.createDrone(player);
     spawnEntityAt(drone, randomPos, true, true);
  }
 
