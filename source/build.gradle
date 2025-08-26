@@ -96,6 +96,7 @@ project(":core") {
         api "org.slf4j:slf4j-jdk14:$slf4jVersion"
 
         // Unit Testing
+        testImplementation "org.mockito:mockito-inline:5.+"
         testImplementation "org.junit.jupiter:junit-jupiter-api:$junit5Version"
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:$junit5Version'
         testImplementation("org.junit.vintage:junit-vintage-engine:$junit5Version") {

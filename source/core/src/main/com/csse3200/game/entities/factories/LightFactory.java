@@ -46,7 +46,8 @@ public class LightFactory {
                                          float coneDeg) {
         Entity e = new Entity();
         e.addComponent(new ConeLightComponent(rayHandler(), rays, color, distance, directionDeg, coneDeg));
-        e.addComponent(new KeyboardLightingInputTestComponent());
+        // commented out as it was for debugging but i will keep it here
+        // e.addComponent(new KeyboardLightingInputTestComponent());
         return e;
     }
 
