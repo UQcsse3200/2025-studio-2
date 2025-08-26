@@ -166,7 +166,6 @@ public class Shell {
           inputBuffer.append(line);
           if (!line.trim().endsWith("!") && scanner.hasNextLine()) {
             inputBuffer.append("\n");
-            out.println("  ");
             continue;
           }
 
@@ -294,6 +293,7 @@ public class Shell {
 
     /**
      * Creates a range with a step of 1.
+     *
      * @param start The starting value (inclusive).
      * @param end The ending value (inclusive).
      */
@@ -303,6 +303,7 @@ public class Shell {
 
     /**
      * Creates a range with a specified step.
+     *
      * @param start The starting value (inclusive).
      * @param end The ending value (inclusive).
      * @param step The increment value.
@@ -315,6 +316,7 @@ public class Shell {
 
     /**
      * Checks if the iteration has more elements.
+     *
      * @return true if the current value is less than or equal to the end.
      */
     public boolean hasNext() {
@@ -323,6 +325,7 @@ public class Shell {
 
     /**
      * Returns the next element in the iteration.
+     *
      * @return The next long value in the range.
      */
     public Long next() {
@@ -334,6 +337,7 @@ public class Shell {
 
   /**
    * Implements a for-each loop construct that iterates over various iterable types.
+   *
    * @param iterable The object to iterate over (can be an Iterator, Collection, Array, or Map).
    * @param function The function to execute for each item.
    * @return null after the loop completes.
@@ -365,6 +369,7 @@ public class Shell {
 
   /**
    * Implements a while loop construct.
+   *
    * @param condition The condition to evaluate before each iteration.
    * @param function The function to execute in the loop body.
    * @return The result of the last executed statement in the loop.
@@ -379,6 +384,7 @@ public class Shell {
 
   /**
    * Implements a try-catch construct for error handling.
+   *
    * @param tryBlock The function containing code that might throw an exception.
    * @param catchBlock The function to execute if a ShellException is caught.
    * @return The result of the try block, or the result of the catch block if an exception occurred.
@@ -393,6 +399,7 @@ public class Shell {
 
   /**
    * Sets a value in the global environment scope.
+   *
    * @param name The name of the global variable.
    * @param value The value to set.
    * @return The value that was set.
@@ -404,6 +411,7 @@ public class Shell {
 
   /**
    * Gets a value from the global environment scope.
+   *
    * @param name The name of the global variable.
    * @return The value of the global variable.
    */
@@ -626,7 +634,7 @@ final class Accessor {
   public static Object access(Environment env, List<String> path, boolean accessMethods) {
     assert (path.size() >= 1);
     Object current = env.get(path.get(0));
-    return accessObj(current, path.subList(1, path.size() + 1), accessMethods);
+    return accessObj(current, path.subList(1, path.size()), accessMethods);
   }
 
   /**
@@ -672,9 +680,9 @@ final class Accessor {
         }
       }
 
+      boolean found = false;
       for (Class<?> currentClass = targetClass; currentClass != null; currentClass = currentClass.getSuperclass()) {
         try {
-          boolean found = false;
           for (Class<?> c : currentClass.getDeclaredClasses()) {
             if (c.getSimpleName().equals(propertyName)) {
               current = c;
@@ -694,6 +702,7 @@ final class Accessor {
           }
           field.setAccessible(true);
           current = field.get(instance);
+          found = true;
           break;
         } catch (NoSuchFieldException e) {
           //  might be a method
@@ -710,7 +719,9 @@ final class Accessor {
         }
       }
 
-      throw new ShellException("Cannot access property '" + path.get(i) + "' on " + targetClass.getSimpleName());
+      if (!found) {
+        throw new ShellException("Cannot access property '" + path.get(i) + "' on " + targetClass.getSimpleName());
+      }
     }
 
     return current;
