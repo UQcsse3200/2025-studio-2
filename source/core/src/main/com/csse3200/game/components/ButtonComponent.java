@@ -9,63 +9,71 @@ import com.csse3200.game.services.ServiceLocator;
 
 /**
  * Component for button entities that can be pushed by the player to trigger other events
- * Class controls the state of the button (normal or pushed), the logic for cooldown and
+ * Class controls the state of the button (normal or pushed) and
  * the button colour based on the type (door, platform or nothing)
  */
 public class ButtonComponent extends Component {
     private boolean isPushed = false;
-    private float cooldown = 0f; //time remaining before button can be pushed again
     private String type; //type of button
 
+    private boolean playerInRange = false;
+    private ColliderComponent playerCollider = null;
+    private boolean addToPlayer = false;
+
     /**
-     * Registers the button to listen for "push" events
+     * Creates the button
      */
     @Override
     public void create() {
-        entity.getEvents().addListener("push", this::onPush);
     }
 
     /**
-     * Updates the button cooldown timer each frame
+     * Updates the button
      */
     @Override
     public void update() {
-        if(cooldown > 0) {
-            cooldown -= ServiceLocator.getTimeSource().getDeltaTime();
-        }
     }
 
     /**
-     * Sets the type for this button (which selects texture)
-     * @param type String representing the button type (door, platform or nothing)
+     * Sets whether a player is in interaction range of this button
+     * Adds the player to the "interact" event the first time
+     *
+     * @param collider Player's ColliderComponent (null if player leaves collision range)
      */
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * Handles a "push" event: checks for player collision and triggers collision if player
-     *  is to the left of the button
-     * @param other object that collided with the button (expected to be a ColliderComponent)
-     */
-    private void onPush(Object other) {
-        if(cooldown > 0) {
+    public void setPlayerInRange(ColliderComponent collider) {
+        //not in range if not colliding, return from function
+        if(collider == null) {
+            playerInRange = false;
+            playerCollider = null;
             return;
         }
-        if (other instanceof ColliderComponent) {
-            Entity otherEntity = ((ColliderComponent) other).getEntity();
 
-            // Ensure other entity is the player
-            if (otherEntity.getComponent(PlayerActions.class) != null) {
-                Vector2 playerPos = otherEntity.getPosition();
-                Vector2 buttonPos = entity.getPosition();
+        playerInRange = true;
+        playerCollider = collider;
 
-                //only trigger if player is left of button and start countdown
-                if(playerPos.x < buttonPos.x - 0.5f) {
-                    toggleButton();
-                    cooldown = 0.5f;
-                }
-            }
+        //adds player to event if not already
+        if(!addToPlayer) {
+            Entity player = playerCollider.getEntity();
+            player.getEvents().addListener("interact", this::onPlayerInteract);
+            addToPlayer = true;
+        }
+
+    }
+
+    /**
+     * Handles players interaction when they press 'E' (defined in KeyboardPlayerInputComponent)
+     * Only toggles the button if the player is currently colliding with button
+     */
+    private void onPlayerInteract() {
+        if( !playerInRange || playerCollider == null) { return;}
+
+        Entity playerEntity = playerCollider.getEntity();
+
+        Vector2 playerPos = playerEntity.getPosition();
+        Vector2 buttonPos = entity.getPosition();
+
+        if(playerPos.x < buttonPos.x - 0.5f) {
+            toggleButton();
         }
     }
 
@@ -97,6 +105,14 @@ public class ButtonComponent extends Component {
                 render.setTexture(texture);
             }
         }
+    }
+
+    /**
+     * Sets the type for this button (which selects texture)
+     * @param type String representing the button type (door, platform or nothing)
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
     /**
