@@ -1,3 +1,5 @@
+package com.csse3200.game.ui.terminal;
+
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
