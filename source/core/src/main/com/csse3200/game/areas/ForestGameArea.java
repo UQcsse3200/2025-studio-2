@@ -35,6 +35,7 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
+    "images/key_tester.png",
     "images/hex_grass_1.png",
     "images/hex_grass_2.png",
     "images/hex_grass_3.png",
@@ -189,6 +190,11 @@ public class ForestGameArea extends GameArea {
 
     Entity button3 = ButtonFactory.createButton(false, "nothing");
     spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+  }
+
+  public void spawnKey() {
+      Entity key = CollectableFactory.createKey("door");
+      spawnEntityAt(key, new GridPoint2(17,17), true, true);
   }
 
   private void spawnLights() {
