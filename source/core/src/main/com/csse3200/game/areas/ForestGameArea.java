@@ -88,7 +88,8 @@ public class ForestGameArea extends GameArea {
     //spawnBoxes();  // uncomment this method when you want to play with boxes
     //spawnButtons(); //uncomment this method to see and interact with boxes
 
-    spawnLights();
+    // uncomment to spawn in lights
+    // spawnLights();
     playMusic();
   }
 
@@ -190,20 +191,12 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnLights() {
-//    Entity light = LightFactory.createConeLight(
-//            128,
-//            Color.WHITE,
-//            10f,
-//            0f,
-//            35f
-//    );
-//    spawnEntityAt(light, new GridPoint2(5, 5), true, true);
-
-      Entity securityLight = LightFactory.createSecurityLight(
+    // see the LightFactory class for more details on spawning these
+    Entity securityLight = LightFactory.createSecurityLight(
               player,
               PhysicsLayer.OBSTACLE,
               128,
-              Color.WHITE,
+              Color.GREEN,
               10f,
               0f,
               35f
