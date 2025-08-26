@@ -30,23 +30,19 @@ public class LightingEngine implements Disposable {
         rayHandler.setBlur(true);
     }
 
-    public RayHandler getRayHandler() {
-        return rayHandler;
+    /**
+     * Injectable constructor method used for junit tests.
+     *
+     * @param rayHandler mock rayHandler
+     * @param camera camera component
+     */
+    LightingEngine(RayHandler rayHandler, CameraComponent camera) {
+        this.rayHandler = rayHandler;
+        this.camera = camera;
     }
 
-    /**
-     * Disregard this function for now. Was used to try and test cutting the renderable area of the
-     * lighting engine.
-     */
-    public void renderClipped(int x, int y, int width, int height) {
-        rayHandler.setCombinedMatrix(camera.getProjectionMatrix());
-
-        Gdx.gl.glEnable(GL20.GL_SCISSOR_TEST);
-        Gdx.gl.glScissor(x, y, width, height);
-        //rayHandler.useCustomViewport(x, y, width, height);
-        rayHandler.updateAndRender();
-        //rayHandler.useDefaultViewport();
-        Gdx.gl.glDisable(GL20.GL_SCISSOR_TEST);
+    public RayHandler getRayHandler() {
+        return rayHandler;
     }
 
     /**

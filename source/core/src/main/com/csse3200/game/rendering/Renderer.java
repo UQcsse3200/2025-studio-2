@@ -136,24 +136,6 @@ public class Renderer implements Disposable {
     stage.draw();
   }
 
-  private void renderLightingHelper(LightingEngine lightingEngine) {
-    float TARGET_ASPECT = 4f / 3f;
-    int screenW = Gdx.graphics.getBackBufferWidth();
-    int screenH = Gdx.graphics.getBackBufferHeight();
-
-    float screenAspect = (float) screenW / screenH;
-    int x = 0, y = 0, w = screenW, h = screenH;
-    if (screenAspect > TARGET_ASPECT) {
-      w = Math.round(screenH * TARGET_ASPECT);
-      x = (screenW - w) / 2;
-    } else if (screenAspect < TARGET_ASPECT) {
-      h = Math.round(screenW / TARGET_ASPECT);
-      y = (screenH - h) / 2;
-    }
-
-    lightingEngine.renderClipped(x, y, w, h);
-  }
-
   /**
    * Resize the renderer to a new screen size.
    *
