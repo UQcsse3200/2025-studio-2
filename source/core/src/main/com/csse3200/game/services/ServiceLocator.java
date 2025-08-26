@@ -24,6 +24,12 @@ public class ServiceLocator {
   private static InputService inputService;
   private static ResourceService resourceService;
 
+  // The debugging terminal is supposed to exist forever
+  private static final TerminalService terminalService = new TerminalService();
+
+  public static TerminalService getTerminalService() {
+    return terminalService;
+  }
 
   public static EntityService getEntityService() {
     return entityService;
@@ -79,7 +85,7 @@ public class ServiceLocator {
     resourceService = source;
   }
 
-  public static void clear() {
+    public static void clear() {
     entityService = null;
     renderService = null;
     physicsService = null;
