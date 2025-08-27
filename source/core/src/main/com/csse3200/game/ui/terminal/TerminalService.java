@@ -15,12 +15,7 @@ public class TerminalService {
   private static final Terminal terminalComponent = new Terminal();
   private static final TerminalDisplay terminalDisplay = new TerminalDisplay();
   private static Stage stage;
-  private static final Shell shell = new Shell(new Shell.Console() {
-    @Override public void print(Object obj) { TerminalService.print(obj); }
-    @Override public String next() { return null; }
-    @Override public boolean hasNext() { return false; }
-    @Override public void close() {}
-  });
+  private static final Shell shell = Initializer.getInitializedShell();
 
   /**
    * Called by the RenderService when a new Stage is set.
