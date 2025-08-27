@@ -365,19 +365,23 @@ public class Shell {
   public Object forEach(Object iterable, EvaluableFunction function) {
     if (iterable instanceof Iterator) {
       while (((Iterator<?>) iterable).hasNext()) {
-        function.evaluate(env, new ArrayList<>(List.of(((Iterator<?>) iterable).next())));
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(((Iterator<?>) iterable).next())));
+        if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
     } else if (iterable instanceof Collection) {
       for (Object item : (Collection<?>) iterable) {
-        function.evaluate(env, new ArrayList<>(List.of(item)));
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(item)));
+        if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
     } else if (iterable.getClass().isArray()) {
       for (int i = 0; i < Array.getLength(iterable); i++) {
-        function.evaluate(env, new ArrayList<>(List.of(Array.get(iterable, i))));
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(Array.get(iterable, i))));
+        if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
     } else if (iterable instanceof Map) {
       for (Object key : ((Map<?, ?>) iterable).keySet()) {
-        function.evaluate(env, new ArrayList<>(List.of(key, ((Map<?, ?>) iterable).get(key))));
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(key, ((Map<?, ?>) iterable).get(key))));
+        if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
     } else {
       throw new ShellException("Cannot iterate over " + iterable.getClass().getSimpleName());
@@ -394,11 +398,11 @@ public class Shell {
    * @return The result of the last executed statement in the loop.
    */
   public Object whileLoop(Evaluable condition, EvaluableFunction function) {
-    Object result = null;
     while (isTruthy(condition.evaluate(env))) {
-      result = function.evaluate(env, new ArrayList<>());
+      final Object result = function.evaluate(env, new ArrayList<>());
+      if (result instanceof ReturnValue) return ((ReturnValue) result).value;
     }
-    return result;
+    return null;
   }
 
   /**
