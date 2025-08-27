@@ -1,13 +1,19 @@
 package com.csse3200.game.entities.factories;
 
+import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
-import com.csse3200.game.entities.configs.NPCConfigs;
+import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.PhysicsService;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.ResourceService;
@@ -25,7 +31,7 @@ public class EnemyFactoryTest {
     private ResourceService rs;
     @BeforeEach
     void setUp() {
-        NPCConfigs configs = FileLoader.readClass(NPCConfigs.class, "configs/NPCs.json");
+        EnemyConfigs configs = FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
         droneConfig = configs.drone;
 
         // Register services needed for entities
@@ -75,4 +81,22 @@ public class EnemyFactoryTest {
         assertNotSame(a, b, "Factory should create a new instance each time");
     }
 
+    @Test
+    void createDrone_hasBaseComponents() {
+        Entity drone = EnemyFactory.createDrone(new Entity());
+        ServiceLocator.getEntityService().register(drone);
+
+        assertNotNull(drone.getComponent(PhysicsComponent.class),
+                "Drone should have a PhysicsComponent");
+        assertNotNull(drone.getComponent(PhysicsMovementComponent.class),
+                "Drone should have a PhysicsMovementComponent");
+        assertNotNull(drone.getComponent(ColliderComponent.class),
+                "Drone should have a ColliderComponent");
+        assertNotNull(drone.getComponent(HitboxComponent.class),
+                "Drone should have a HitboxComponent");
+        assertNotNull(drone.getComponent(TouchAttackComponent.class),
+                "Drone should have a TouchAttackComponent");
+        assertNotNull(drone.getComponent(AITaskComponent.class),
+                "Drone should have an AITaskComponent");
+    }
 }
