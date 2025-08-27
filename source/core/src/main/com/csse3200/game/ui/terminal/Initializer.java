@@ -35,7 +35,12 @@ public class Initializer {
   private static final String init = """
     init = () {
       "This makes the function slightly faster as we only need to look at the top frame";
+      globalThis = globalThis;
       setGlobal = globalThis.setGlobal;
+
+      "Simple true / false constants";
+      setGlobal("false", globalThis.isTruthy(0));
+      setGlobal("true", globalThis.isTruthy(1));
 
       "
         exports setGlobal function
