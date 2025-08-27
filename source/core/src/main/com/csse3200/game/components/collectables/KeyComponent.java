@@ -43,10 +43,17 @@ public class KeyComponent extends CollectableComponent {
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
             inventory.addItem(keyId);
-            System.out.println("Key collected by player");
-            System.out.println("Number of " + keyId + " in inventory: " + inventory.getItemCount(keyId));
             return true;
         }
         return false;
+    }
+
+    /**
+     *Returns this key types identifier.
+     *
+     * @return the non-null key identifier string
+     */
+    public String getKeyId() {
+        return keyId;
     }
 }
