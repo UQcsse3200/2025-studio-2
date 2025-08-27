@@ -48,6 +48,11 @@ public class ObstacleFactory {
     return wall;
   }
 
+    /**
+     * Creates a door Entity with key identifier
+     * @param keyId the unique key identifier that can unlock this door
+     * @return a new door entity bound to {@code keyId}, in the locked state
+     */
   public static Entity createDoor (String keyId) {
 
       Entity door = new Entity()

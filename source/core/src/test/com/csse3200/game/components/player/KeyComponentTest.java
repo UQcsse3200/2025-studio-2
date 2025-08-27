@@ -2,6 +2,7 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.CollectableFactory;
 import com.csse3200.game.entities.factories.PlayerFactoryTest;
@@ -25,7 +26,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 class KeyComponentTest {
 
-    // Reference: Gemini to set up the @BeforeEach
+    private EntityService entityService;
+    private Entity player;
+    private InventoryComponent inv;
+
+    /*
+     * setup() authored with assistance from ChatGPT (GPT-5 Thinking)
+     * Date: 2025-08-25 (AEST)
+     */
     @BeforeEach
     void setup() {
         ServiceLocator.registerPhysicsService(new PhysicsService());
@@ -36,7 +44,6 @@ class KeyComponentTest {
         when(inputFactory.createForPlayer()).thenReturn(mock(InputComponent.class));
         ServiceLocator.registerInputService(inputSvc);
 
-        // If your entities render or dispose, also stub these:
         RenderService render = mock(RenderService.class);
         doNothing().when(render).register(any());
         doNothing().when(render).unregister(any());
@@ -49,32 +56,85 @@ class KeyComponentTest {
         doNothing().when(rs).loadAll();
         ServiceLocator.registerResourceService(rs);
 
-        EntityService es = mock(EntityService.class);
-        doNothing().when(es).register(any());
-        doNothing().when(es).unregister(any());
-        ServiceLocator.registerEntityService(es);
+        entityService = mock(EntityService.class);
+        doNothing().when(entityService).register(any());
+        doNothing().when(entityService).unregister(any());
+        ServiceLocator.registerEntityService(entityService);
 
+        player = PlayerFactoryTest.createPlayer();
+        player.create();
+        inv = player.getComponent(InventoryComponent.class);
+        assertNotNull(inv, "Player should have InventoryComponent");
     }
 
     @Test
-    void playerCollectsKeyOnCollision() {
-        Entity player = PlayerFactoryTest.createPlayer();
-        player.create();
-        InventoryComponent inv = player.getComponent(InventoryComponent.class);
-        assertNotNull(inv);
-
+    void keyStartsUncollected() {
         Entity key = CollectableFactory.createKey("pink-key");
         key.create();
+
+        assertFalse(inv.hasItem("pink-key"), "Inventory should not contain the key initially");
+        verify(entityService, never()).unregister(key);
+
+        KeyComponent kc = key.getComponent(KeyComponent.class);
+        assertNotNull(kc, "Key entity should have a KeyComponent");
+        assertEquals("pink-key", kc.getKeyId(), "KeyComponent should store its id");
+    }
+
+    @Test
+    void collectMarksAsCollected() {
+        Entity key = CollectableFactory.createKey("pink-key");
+        key.create();
+        assertFalse(inv.hasItem("pink-key"));
+
+        // Simulate collision (adjust if your signal is single-arg)
         key.getEvents().trigger("collisionStart", key, player);
 
-        assertTrue(inv.hasItem("pink-key"));
+        // Inventory updated and entity disposed via unregister()
+        assertTrue(inv.hasItem("pink-key"), "Inventory should contain the collected key");
+        verify(entityService, times(1)).unregister(key);
 
+        // Triggering again doesn't double-add or double-unregister
+        int countAfter = inv.getItemCount("pink-key");
+        key.getEvents().trigger("collisionStart", key, player);
+        assertEquals(countAfter, inv.getItemCount("pink-key"));
+        verify(entityService, times(1)).unregister(key);
+    }
+
+    @Test
+    void cannotCollectTwiceAcrossMultipleEntitiesOfSameId() {
+        Entity key1 = CollectableFactory.createKey("pink-key");
         Entity key2 = CollectableFactory.createKey("pink-key");
+        key1.create();
         key2.create();
-        key2.getEvents().trigger("collisionStart", key, player);
-        assertEquals(2, inv.getItemCount("pink-key"));
 
-        key.getEvents().trigger("collisionStart", key, player);
-        assertEquals(2, inv.getItemCount("pink-key"));
+        // Collect first key
+        key1.getEvents().trigger("collisionStart", key1, player);
+        assertTrue(inv.hasItem("pink-key"));
+        int afterFirst = inv.getItemCount("pink-key");
+
+        // Collect second key of same id
+        key2.getEvents().trigger("collisionStart", key2, player);
+        assertEquals(afterFirst + 1, inv.getItemCount("pink-key"),
+                "Collecting a second entity of the same key id should increment by one");
+
+        // Double-trigger on the first should not increase cojnt
+        key1.getEvents().trigger("collisionStart", key1, player);
+        assertEquals(afterFirst + 1, inv.getItemCount("pink-key"));
+
+        // Each key entity should be unregistered exactly once
+        verify(entityService, times(1)).unregister(key1);
+        verify(entityService, times(1)).unregister(key2);
+    }
+
+    @Test
+    void nonPlayerCollisionDoesNothing() {
+        Entity key = CollectableFactory.createKey("pink-key");
+        key.create();
+        Entity rock = new Entity(); // no InventoryComponent, not a player
+        rock.create();
+
+        key.getEvents().trigger("collisionStart", key, rock);
+        assertEquals(0, inv.getTotalItemCount());
+        verify(entityService, never()).unregister(key);
     }
 }
