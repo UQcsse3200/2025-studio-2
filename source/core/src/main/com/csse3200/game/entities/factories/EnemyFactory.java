@@ -8,7 +8,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.components.npc.GhostAnimationController;
 import com.csse3200.game.components.tasks.ChaseTask;
-import com.csse3200.game.components.tasks.WanderTask;
+import com.csse3200.game.components.tasks.PatrolTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
 import com.csse3200.game.entities.configs.EnemyConfigs;
@@ -30,9 +30,10 @@ public class EnemyFactory {
      * Creates a drone entity.
      *
      * @param target entity to chase
+     * @param route for enemy patrol
      * @return entity
      */
-    public static Entity createDrone(Entity target) {
+    public static Entity createDrone(Entity target, Vector2[] route) {
         Entity drone = createBaseEnemy(target);
         BaseEntityConfig config = configs.drone;
 
@@ -43,8 +44,13 @@ public class EnemyFactory {
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
 
+        AITaskComponent aiComponent =
+                new AITaskComponent()
+                        .addTask(new PatrolTask(route, 1f))
+                        .addTask(new ChaseTask(target, 10, 3f, 4f));
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+                .addComponent(aiComponent)
                 .addComponent(animator)
                 // TO DO: Swap to DroneAnimationController when added
                 .addComponent(new GhostAnimationController());
@@ -58,18 +64,20 @@ public class EnemyFactory {
      * @return enemy
      */
     private static Entity createBaseEnemy(Entity target) {
+        /* NOTE: Moved this to createDrone in case we want diff enemy types w/o patrol paths
         AITaskComponent aiComponent =
-                new AITaskComponent()
-                        .addTask(new WanderTask(new Vector2(2f, 2f), 2f))
-                        .addTask(new ChaseTask(target, 10, 3f, 4f));
+              new AITaskComponent()
+                      .addTask(new WanderTask(new Vector2(2f, 2f), 2f))
+                      .addTask(new ChaseTask(target, 10, 3f, 4f));
+        */
         Entity enemy =
                 new Entity()
                         .addComponent(new PhysicsComponent())
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
-                        .addComponent(aiComponent);
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f));
+                        //.addComponent(aiComponent);
 
         PhysicsUtils.setScaledCollider(enemy, 0.9f, 0.4f);
         return enemy;

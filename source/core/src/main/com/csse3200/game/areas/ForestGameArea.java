@@ -24,6 +24,7 @@ public class ForestGameArea extends GameArea {
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
+  private static final GridPoint2 DRONE_SPAWN_TEST = new GridPoint2(11, 11);
   private static final float WALL_WIDTH = 0.1f;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
@@ -146,10 +147,18 @@ public class ForestGameArea extends GameArea {
   private void spawnDrone() {
     GridPoint2 minPos = new GridPoint2(0, 0);
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
+    // GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
 
-    GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-    Entity drone = EnemyFactory.createDrone(player);
-    spawnEntityAt(drone, randomPos, true, true);
+    // Test route (for now we use relative positions like Chase/Wander tasks)
+    Vector2[] route = {
+            new Vector2(0f, 0f),
+            new Vector2(2f, 0f),
+            new Vector2(2f, 2f),
+            new Vector2(0f, 2f),
+            new Vector2(0f, 0f)
+    };
+    Entity drone = EnemyFactory.createDrone(player, route);
+    spawnEntityAt(drone, DRONE_SPAWN_TEST, true, true);
  }
 
   private void spawnGhostKing() {

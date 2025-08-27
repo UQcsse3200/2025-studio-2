@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
@@ -53,7 +54,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_hasCombatStatsComponent() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2[] {});
         ServiceLocator.getEntityService().register(drone);
 
         CombatStatsComponent stats = drone.getComponent(CombatStatsComponent.class);
@@ -64,7 +65,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_hasAnimations() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2[] {});
         ServiceLocator.getEntityService().register(drone);
 
         // Future: Update for drone-specific animations
@@ -76,14 +77,14 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_returnDistinctEntities() {
-        Entity a = EnemyFactory.createDrone(new Entity());
-        Entity b = EnemyFactory.createDrone(new Entity());
+        Entity a = EnemyFactory.createDrone(new Entity(), new Vector2[] {});
+        Entity b = EnemyFactory.createDrone(new Entity(), new Vector2[] {});
         assertNotSame(a, b, "Factory should create a new instance each time");
     }
 
     @Test
     void createDrone_hasBaseComponents() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2[] {});
         ServiceLocator.getEntityService().register(drone);
 
         assertNotNull(drone.getComponent(PhysicsComponent.class),

@@ -63,10 +63,6 @@ public class NPCFactory {
     return ghost;
   }
 
-  public static Entity createDrone(Entity target) {
-      return EnemyFactory.createDrone(target); // TO DO: Remove this
-  }
-
   /**
    * Creates a ghost king entity.
    *
