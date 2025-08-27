@@ -35,7 +35,6 @@ public class Initializer {
   private static final String init = """
     init = () {
       "This makes the function slightly faster as we only need to look at the top frame";
-      globalThis = globalThis;
       setGlobal = globalThis.setGlobal;
 
       "
@@ -48,7 +47,7 @@ public class Initializer {
       setGlobal("getGlobal", globalThis.getGlobal);
 
       "print stuff to the console";
-      setGlobal("print", globalThis.console.print);
+      setGlobal("print", (...stuff) {  globalThis.forEach(stuff, globalThis.console.print); });
 
       "--- Types ---";
 
@@ -96,8 +95,143 @@ public class Initializer {
       setGlobal("and", globalThis.and);
       setGlobal("or", globalThis.or);
       setGlobal("not", globalThis.not);
+      setGlobal("eql", .java.util.Objects.deepEquals);
     };
 
     init();
+  """;
+
+  /**
+   * Setup debug functionality.
+   * Note: None of this has been tested yet, there WILL be bugs.
+   */
+  private static final String debug = """
+  debugInit = () {
+    "This makes the function slightly faster as we only need to look at the top frame";
+    setGlobal = setGlobal;
+
+    "--- Services ---";
+    setGlobal("TerminalService", .com.csse3200.game.ui.terminal.TerminalService);
+    setGlobal("ServiceLocator", .com.csse3200.game.services.ServiceLocator);
+    setGlobal("entityService", () { return(ServiceLocator.getEntityService()); });
+    setGlobal("renderService", () { return(ServiceLocator.getRenderService()); });
+    setGlobal("physicsService", () { return(ServiceLocator.getPhysicsService()); });
+    setGlobal("inputService", () { return(ServiceLocator.getInputService()); });
+    setGlobal("resourceService", () { return(ServiceLocator.getResourceService()); });
+    setGlobal("timeSource", () { return(ServiceLocator.getTimeSource()); });
+
+    "--- Game Control ---";
+    "Set the game's time scale. e.g. timescale(0.5); for half speed.";
+    setGlobal("setTimescale", (scale) { TerminalService.customTimeScale = scale; });
+
+    "Resume the game in the background";
+    setGlobal("resume", () {
+      source = timeSource();
+      source.setTimeScale(.com.csse3200.game.ui.terminal.TerminalService.customTimeScale);
+    });
+
+    "Pause the game if resume was called before";
+    setGlobal("pause", () {
+      source = timeSource();
+      source.setTimeScale(.com.csse3200.game.ui.terminal.TerminalService.customTimeScale);
+    });
+
+    "Toggle physics debug rendering. e.g. debug(true);";
+    setGlobal("debug", (active) {
+      debug = renderService.getDebug();
+      debug.setActive(active);
+    });
+
+    "--- Entity Manipulation ---";
+    "Get a list of all registered entities";
+    setGlobal("getEntities", () {
+      es = entityService();
+      return(es.entities);
+    });
+
+    "Get a single entity by its ID. e.g. getEntity(1);";
+    setGlobal("getEntityById", (id) {
+      setGlobal(".id", id);
+      forEach(getEntities(), (entity) {
+        if (eql(entity.getId(), getGlobal(".id")), () {
+          return(entity);
+        });
+      });
+      return(null);
+    });
+
+    "Teleport an entity to a new position. e.g. teleport(getEntity(1), 10, 10);";
+    setGlobal("teleportEntity", (entity, x, y) {
+      entity.setPosition(x, y);
+    });
+
+    "--- Utilities ---";
+    "Inspect an object's fields and methods. e.g. inspect(services);";
+    setGlobal("inspect", (obj) {
+      if (eql(obj, null), () { return("null"); });
+
+      cls = ifElse(eql((obj) { class = obj.getClass(); return(class.getName()); } (obj), "java.lang.Class"),
+        () { return(obj); },
+        () { return(obj.getClass()); }
+      );
+
+      print("Inspecting Class: ", cls.getName(), "\n\n--- Fields ---\n");
+
+      forEach(cls.getDeclaredFields(), (field) {
+        field.setAccessible(true);
+        tryCatch((field) {
+          print(field.toGenericString(), " = ", field.get(obj), "\n");
+        }, print);
+      });
+
+      print("\n--- Methods ---\n");
+      forEach(cls.getDeclaredMethods(), (method) {
+        method.setAccessible(true);
+        print(method.toGenericString(), "\n");
+      });
+    });
+
+    "List all local / global variables.";
+    setGlobal("env", () { return(globalThis.env); });
+
+    "Prints this help message";
+    setGlobal("help", "
+      --- Help: In-Game Debug Shell ---
+      --- Basic Commands ---
+      print(...args) - Prints one or more values to the console.
+      if(cond, func) - Executes func if cond is true.
+      ifElse(cond, t, f) - Executes func t if cond is true, else func f.
+      while(cond, func) - Executes func while cond is true.
+      forEach(iter, func) - Executes func for each item in an iterable.
+      tryCatch(try, catch) - Executes try func, calls catch func on error.
+      and(a, b), or(a, b) - Logical AND and OR.
+      not(a) - Logical NOT.
+      eql(a, b) - Checks if two objects are deeply equal.
+      --- Game Control ---
+      setTimescale(scale) - Sets the game's speed. 1.0 is normal, 0.0 is paused.
+      Example: setTimescale(0.5);
+      resume() - Re-applies the custom timescale. Useful after manual pause.
+      pause() - (Identical to resume) Re-applies the custom timescale.
+      debug(boolean) - Toggles the physics debug view. e.g. debug(true);
+      --- Entity Manipulation ---
+      getEntities() - Returns an array of all active entities.
+      getEntityById(id) - Finds an entity by its ID. e.g. getEntityById(5);
+      teleportEntity(e, x, y) - Moves an entity 'e' to coordinates (x, y).
+      Example: teleportEntity(getEntityById(5), 10, 10);
+      --- Services (as functions) ---
+      entityService() - Returns the EntityService instance.
+      renderService() - Returns the RenderService instance.
+      physicsService() - Returns the PhysicsService instance.
+      inputService() - Returns the InputService instance.
+      resourceService() - Returns the ResourceService instance.
+      timeSource() - Returns the GameTime instance.
+      --- Debugging Utilities ---
+      inspect(object) - Shows all fields and methods of a Java object or class.
+      Example: inspect(getEntityById(5));
+      env() - Shows the current shell environment with all variables.
+    ");
+  };
+
+  debugInit();
   """;
 }

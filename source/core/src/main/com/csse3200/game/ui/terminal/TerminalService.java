@@ -17,6 +17,13 @@ public class TerminalService {
   private static Stage stage;
   private static final Shell shell = Initializer.getInitializedShell();
 
+  /* This field will be used by the shell and therefore must not be final */
+  private static Float customTimeScale = null;
+
+  private TerminalService() {
+    throw new IllegalStateException("Instantiating static util class");
+  }
+
   /**
    * Called by the RenderService when a new Stage is set.
    * This allows the terminal to attach its UI to the current screen's stage.
@@ -60,14 +67,13 @@ public class TerminalService {
     focusTerminalInput();
 
     GameTime timeSource = ServiceLocator.getTimeSource();
-    if (timeSource != null) {
-      if (terminalComponent.isOpen()) {
-        timeSource.setTimeScale(0f);
-        logger.info("Game paused by terminal");
-      } else {
-        timeSource.setTimeScale(1f);
-        logger.info("Game resumed by terminal");
-      }
+    if (timeSource == null) return;
+    if (terminalComponent.isOpen()) {
+      timeSource.setTimeScale(0f);
+      logger.info("Game paused by terminal");
+    } else {
+      timeSource.setTimeScale((customTimeScale == null)? 1f: customTimeScale);
+      logger.info("Game resumed by terminal");
     }
   }
 
