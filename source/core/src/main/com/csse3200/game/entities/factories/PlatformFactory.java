@@ -7,10 +7,18 @@ import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
-
+/**
+ * Factory to create Platform entities.
+ *
+ * <p>Each Platform entity type should have a creation method that returns a corresponding entity.
+ */
 public class PlatformFactory {
 
-    public static Entity createPlatform() {
+    /**
+     * Creates a static platform entity.
+     * @return entity
+     */
+    public static Entity createStaticPlatform() {
         Entity platform =
                 new Entity()
                         .addComponent(new TextureRenderComponent("images/platform.png"))

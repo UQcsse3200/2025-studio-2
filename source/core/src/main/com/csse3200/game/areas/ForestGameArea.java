@@ -70,10 +70,10 @@ public class ForestGameArea extends GameArea {
     displayUI();
 
     spawnTerrain();
-    spawnTrees();
+    //spawnTrees();
     player = spawnPlayer();
-    spawnGhosts();
-    spawnGhostKing();
+    //spawnGhosts();
+    //spawnGhostKing();
     spawnPlatform(); //Testing platform
 
     playMusic();
@@ -153,16 +153,44 @@ public class ForestGameArea extends GameArea {
   }
   //Platform spawn in testing
   private void spawnPlatform() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-    GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-    Entity tree = PlatformFactory.createPlatform();
-    spawnEntityAt(tree, randomPos, true, false);
+    /*
+    Creates floor and several steps to test jumping
+    */
+    GridPoint2 groundPos = new GridPoint2(0, 2);
+    Entity ground = PlatformFactory.createStaticPlatform();
+    ground.setScale(15,1);
+    spawnEntityAt(ground, groundPos, false, false);
+
+    GridPoint2 step1Pos = new GridPoint2(5,3);
+    Entity step1 = PlatformFactory.createStaticPlatform();
+    step1.setScale(2,1);
+    spawnEntityAt(step1, step1Pos, false, false);
+
+    GridPoint2 step2Pos = new GridPoint2(10,4);
+    Entity step2 = PlatformFactory.createStaticPlatform();
+    step2.setScale(2,1);
+    spawnEntityAt(step2, step2Pos, false, false);
+
+    GridPoint2 step3Pos = new GridPoint2(16,5);
+    Entity step3 = PlatformFactory.createStaticPlatform();
+    step3.setScale(2,1);
+    spawnEntityAt(step3, step3Pos, false, false);
+
+    GridPoint2 step4Pos = new GridPoint2(20,7);
+    Entity step4 = PlatformFactory.createStaticPlatform();
+    step4.setScale(2,1);
+    spawnEntityAt(step4, step4Pos, false, false);
+
+    GridPoint2 longPlatformPos = new GridPoint2(0,11);
+    Entity longPlatform = PlatformFactory.createStaticPlatform();
+    longPlatform.setScale(10,0.1f);
+    spawnEntityAt(longPlatform, longPlatformPos, false, false);
+
   }
   private void playMusic() {
     Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
     music.setLooping(true);
-    music.setVolume(0.3f);
+    music.setVolume(0.1f);
     music.play();
   }
 
