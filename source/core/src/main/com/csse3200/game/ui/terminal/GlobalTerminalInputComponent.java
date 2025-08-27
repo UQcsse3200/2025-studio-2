@@ -27,7 +27,10 @@ public class GlobalTerminalInputComponent extends InputComponent {
       return true;
     } else if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
       ctrlHeld = true;
-    } else if (Input.Keys.toString(keycode).length() == 1 ) {
+    }
+    if (!terminal.isOpen()) return false;
+
+    if (Input.Keys.toString(keycode).length() == 1 ) {
       TerminalService.focusTerminalInput();
     }
 
@@ -38,7 +41,11 @@ public class GlobalTerminalInputComponent extends InputComponent {
   public boolean keyUp(int keycode) {
     if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
       ctrlHeld = false;
-    } else if (Input.Keys.toString(keycode).length() == 1 ) {
+    }
+
+    if (!terminal.isOpen()) return false;
+
+    if (Input.Keys.toString(keycode).length() == 1 ) {
       TerminalService.focusTerminalInput();
     }
     return false;
@@ -46,9 +53,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
 
   @Override
   public boolean keyTyped(char character) {
-    if (!terminal.isOpen()) {
-      return false;
-    }
+    if (!terminal.isOpen()) return false;
 
     if ((character == '\r' || character == '\n') && ctrlHeld) {
       // Command execution may take a long time
