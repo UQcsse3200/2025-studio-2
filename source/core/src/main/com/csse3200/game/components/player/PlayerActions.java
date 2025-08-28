@@ -1,5 +1,6 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -12,7 +13,9 @@ import com.csse3200.game.services.ServiceLocator;
  * and when triggered should call methods within this class.
  */
 public class PlayerActions extends Component {
-  private static final Vector2 MAX_SPEED = new Vector2(3f, 3f); // Metres per second
+  private static final Vector2 MAX_SPEED = new Vector2(6f, 6f); // Metres per
+  private static final float MAX_ACCELERATION = 70f;
+  // second
 
   private PhysicsComponent physicsComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
@@ -40,6 +43,11 @@ public class PlayerActions extends Component {
     if (moving) {
       updateSpeed();
     }
+
+    Body body = physicsComponent.getBody();
+    if (body.getLinearVelocity().y < 0) {
+      body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
+    }
   }
 
   private void updateSpeed() {
@@ -48,8 +56,21 @@ public class PlayerActions extends Component {
     Vector2 desiredVelocity = walkDirection.cpy().scl(MAX_SPEED);
     // impulse = (desiredVel - currentVel) * mass
     //only update the horizontal impulse
-    Vector2 impulse = new Vector2(desiredVelocity.x - velocity.x, 0).scl(body.getMass());
+    float inAirControl = isJumping ? 0.2f : 1f;
+
+    float deltaV = desiredVelocity.x - velocity.x;
+    float maxDeltaV = MAX_ACCELERATION * inAirControl * Gdx.graphics.getDeltaTime();
+    if (deltaV > maxDeltaV) deltaV = maxDeltaV;
+    if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
+
+    Vector2 impulse = new Vector2(deltaV * body.getMass(), 0);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+
+    /**
+    Vector2 impulse =
+            new Vector2((desiredVelocity.x - velocity.x) * inAirControl, 0).scl(body.getMass());
+    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+     */
   }
 
   /**
@@ -80,16 +101,17 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
 
     Vector2 vel = body.getLinearVelocity();
+
     if (vel.y != 0) {
       body.setLinearVelocity(vel.x, 0f);
     }
 
-    float impulseY = body.getMass() * 7f;
+      float impulseY = body.getMass() * 12.5f;
 
-    body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
-    /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
+      body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
+      /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
 
-    isJumping = true;
+      isJumping = true;
   }
 
   void onLand() {

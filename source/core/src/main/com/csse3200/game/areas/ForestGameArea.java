@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
-  private static final int NUM_GHOSTS = 2;
+  private static final int NUM_GHOSTS = 0;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
   private static final String[] forestTextures = {
@@ -72,7 +72,7 @@ public class ForestGameArea extends GameArea {
     spawnTrees();
     player = spawnPlayer();
     spawnGhosts();
-    spawnGhostKing();
+    //spawnGhostKing();
 
     playMusic();
   }
@@ -109,8 +109,9 @@ public class ForestGameArea extends GameArea {
         false,
         false);
     // Bottom
-    spawnEntityAt(
-        ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
+    //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
+    spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+            new GridPoint2(0, 4), false, false);
   }
 
   private void spawnTrees() {
@@ -118,9 +119,12 @@ public class ForestGameArea extends GameArea {
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
 
     for (int i = 0; i < NUM_TREES; i++) {
-      GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
+      //GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
+      //Entity tree = ObstacleFactory.createTree();
+      //spawnEntityAt(tree, randomPos, true, false);
+      GridPoint2 position = new GridPoint2(3*i + 10, 4 + (2*i));
       Entity tree = ObstacleFactory.createTree();
-      spawnEntityAt(tree, randomPos, true, false);
+      spawnEntityAt(tree, position, true, false);
     }
   }
 
