@@ -357,34 +357,36 @@ public class Shell {
   /**
    * Implements a for-each loop construct that iterates over various iterable types.
    *
-   * @param iterable The object to iterate over (can be an Iterator, Collection, Array, or Map).
+   * @param obj The object to iterate over (can be an Iterator, Collection, Array, or Map).
    * @param function The function to execute for each item.
    * @return null after the loop completes.
    * @throws ShellException if the object is not iterable.
    */
-  public Object forEach(Object iterable, EvaluableFunction function) {
-    if (iterable instanceof Iterator) {
-      while (((Iterator<?>) iterable).hasNext()) {
-        final Object result = function.evaluate(env, new ArrayList<>(List.of(((Iterator<?>) iterable).next())));
+  public Object forEach(Object obj, EvaluableFunction function) {
+    if (obj == null) return null;
+    if (obj.getClass().isArray()) {
+      int length = Array.getLength(obj);
+      for (int i = 0; i < length; i++) {
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(Array.get(obj, i))));
         if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
-    } else if (iterable instanceof Collection) {
-      for (Object item : (Collection<?>) iterable) {
+    } else if (obj instanceof Iterator<?> iterator) {
+      while (iterator.hasNext()) {
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(iterator.next())));
+        if (result instanceof ReturnValue) return ((ReturnValue) result).value;
+      }
+    } else if (obj instanceof Iterable<?> iterable) {
+      for (Object item : iterable) {
         final Object result = function.evaluate(env, new ArrayList<>(List.of(item)));
         if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
-    } else if (iterable.getClass().isArray()) {
-      for (int i = 0; i < Array.getLength(iterable); i++) {
-        final Object result = function.evaluate(env, new ArrayList<>(List.of(Array.get(iterable, i))));
+    } else if (obj instanceof Map<?, ?> map) {
+      for (Map.Entry<?, ?> entry : map.entrySet()) {
+        final Object result = function.evaluate(env, new ArrayList<>(List.of(entry.getKey(), entry.getValue())));
         if (result instanceof ReturnValue) return ((ReturnValue) result).value;
       }
-    } else if (iterable instanceof Map) {
-      for (Object key : ((Map<?, ?>) iterable).keySet()) {
-        final Object result = function.evaluate(env, new ArrayList<>(List.of(key, ((Map<?, ?>) iterable).get(key))));
-        if (result instanceof ReturnValue) return ((ReturnValue) result).value;
-      }
-    } else {
-      throw new ShellException("Cannot iterate over " + iterable.getClass().getSimpleName());
+    } else  {
+      throw new ShellException("Cannot iterate over " + obj.getClass().getSimpleName());
     }
 
     return null;
@@ -440,6 +442,16 @@ public class Shell {
    */
   public Object getGlobal(String name) {
     return env.global.get(name);
+  }
+
+  /**
+   * Returns true if the give object is actually a class type
+   *
+   * @param obj the object to be tested
+   * @return true if obj is a class, false otherwise
+   */
+  public boolean isClass(Object obj) {
+    return obj instanceof Class<?>;
   }
 }
 
@@ -726,9 +738,20 @@ final class Accessor {
         }
 
         if (i == path.size() - 1 && accessMethods) {
-          for (Method method : currentClass.getDeclaredMethods()) {
-            if (method.getName().equals(propertyName)) {
-              return new MaybeMethodStatement(current, propertyName);
+          try {
+            currentClass.getDeclaredMethod(propertyName);
+            return new MaybeMethodStatement(current, propertyName);
+          } catch (NoSuchMethodException e) {
+            // Ignore
+          }
+
+          if (current instanceof Class) {
+            try {
+              Class.class.getDeclaredMethod(propertyName);
+              return new MaybeMethodStatement(currentClass, propertyName);
+            } catch (NoSuchMethodException e) {
+              System.err.println("Error accessing class '" + propertyName + "': " + e.getMessage());
+              // Ignore
             }
           }
         }
@@ -855,6 +878,32 @@ final class MaybeMethodStatement implements EvaluableFunction {
     this.methodName = methodName;
   }
 
+  private boolean isInvocable(Method method, Object targetInstance, Object[] args) {
+    if (!method.getName().equals(methodName) || method.getParameterCount() != args.length) return false;
+
+    boolean isStatic = Modifier.isStatic(method.getModifiers());
+    if (!isStatic && targetInstance == null) return false;
+
+    Class<?>[] paramTypes = method.getParameterTypes();
+    for (int i = 0; i < args.length; i++) {
+      if (args[i] == null) {
+        if (paramTypes[i].isPrimitive()) return false;
+      } else if (!isAssignable(paramTypes[i], args[i].getClass())) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  private Object tryInvoke(Method method, Object targetInstance, Object[] args) {
+    try {
+      return method.invoke(targetInstance, args);
+    } catch (Exception e) {
+      throw new ShellException("Error invoking method '" + methodName + "': " + e.getCause().getMessage());
+    }
+  }
+
   /**
    * Evaluates the method call by finding a suitable method overload for the
    * given parameters and invoking it.
@@ -870,51 +919,18 @@ final class MaybeMethodStatement implements EvaluableFunction {
     Class<?> targetClass = (instance instanceof Class) ? (Class<?>) instance : instance.getClass();
     Object[] args = parameters.toArray();
 
-    ArrayList<Method> candidates = new ArrayList<>();
-
-    for (Method method : targetClass.getMethods()) {
-      if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
-        candidates.add(method);
+    for (Class<?> currentClass = targetClass; currentClass != null; currentClass = currentClass.getSuperclass()) {
+      for (Method method : currentClass.getDeclaredMethods()) {
+        if (isInvocable(method, targetInstance, args)) return tryInvoke(method, targetInstance, args);
       }
     }
 
-    for (Class<?> c : targetClass.getDeclaredClasses()) {
-      for (Method method : c.getDeclaredMethods()) {
-        if (method.getName().equals(methodName) && method.getParameterCount() == args.length) {
-          candidates.add(method);
-        }
+    if (instance instanceof Class) {
+      for (Method method : Class.class.getDeclaredMethods()) {
+        if (isInvocable(method, instance, args)) return tryInvoke(method, instance, args);
       }
     }
 
-    for (Method method : candidates) {
-      assert (method.getName().equals(methodName));
-      if (method.getParameterCount() != args.length) continue;
-
-      boolean isStatic = Modifier.isStatic(method.getModifiers());
-      if (!isStatic && targetInstance == null) continue;
-
-      Class<?>[] paramTypes = method.getParameterTypes();
-      boolean typesMatch = true;
-      for (int i = 0; i < args.length; i++) {
-        if (args[i] == null) {
-          if (paramTypes[i].isPrimitive()) {
-            typesMatch = false;
-            break;
-          }
-        } else if (!isAssignable(paramTypes[i], args[i].getClass())) {
-          typesMatch = false;
-          break;
-        }
-      }
-
-      if (typesMatch) {
-        try {
-          return method.invoke(targetInstance, args);
-        } catch (Exception e) {
-          throw new ShellException("Error invoking method '" + methodName + "': " + e.getCause().getMessage());
-        }
-      }
-    }
     throw new ShellException("No matching method '" + methodName + "' found for the given arguments in " + targetClass.getSimpleName());
   }
 
