@@ -864,9 +864,9 @@ record AssignmentStatement(AccessStatement left, Evaluable right) implements Eva
     }
 
     Class<?> targetClass = (toSet instanceof Class) ? (Class<?>) toSet : toSet.getClass();
-    for (Class<?> c : targetClass.getDeclaredClasses()) {
+    for (Class<?> currentClass = targetClass; currentClass != null; currentClass = currentClass.getSuperclass()) {
       try {
-        Field field = c.getDeclaredField(path[path.length - 1]);
+        Field field = currentClass.getDeclaredField(path[path.length - 1]);
         field.setAccessible(true);
         field.set(toSet, valueToAssign);
         return valueToAssign;
