@@ -158,16 +158,10 @@ public class Initializer {
     setGlobal("getEntityById", (id) {
       setGlobal(".id", id);
       forEach(getEntities(), (entity) {
-        if (eql(entity.getId(), getGlobal(".id")), () {
-          return(entity);
-        });
+        setGlobal(".entity", entity);
+        if (eql(entity.getId(), getGlobal(".id")), () { return(getGlobal(".entity")); });
       });
       return(null);
-    });
-
-    "Teleport an entity to a new position. e.g. teleport(getEntity(1), 10, 10);";
-    setGlobal("teleportEntity", (entity, x, y) {
-      entity.setPosition(x, y);
     });
 
     "--- Utilities ---";
@@ -175,9 +169,10 @@ public class Initializer {
     setGlobal("inspect", (obj) {
       if (eql(obj, null), () { return("null"); });
 
+      setGlobal(".obj", obj);
       cls = ifElse(eql((obj) { class = obj.getClass(); return(class.getName()); } (obj), "java.lang.Class"),
-        () { return(obj); },
-        () { return(obj.getClass()); }
+        () { return(getGlobal(".obj")); },
+        () { obj = getGlobal(".obj"); return(obj.getClass()); }
       );
 
       print("Inspecting Class: ", cls.getName(), "\n\n--- Fields ---\n");
@@ -221,8 +216,6 @@ public class Initializer {
       --- Entity Manipulation ---
       getEntities() - Returns an array of all active entities.
       getEntityById(id) - Finds an entity by its ID. e.g. getEntityById(5);
-      teleportEntity(e, x, y) - Moves an entity 'e' to coordinates (x, y).
-      Example: teleportEntity(getEntityById(5), 10, 10);
       --- Services (as functions) ---
       entityService() - Returns the EntityService instance.
       renderService() - Returns the RenderService instance.
