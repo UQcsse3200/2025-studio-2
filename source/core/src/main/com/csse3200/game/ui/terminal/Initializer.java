@@ -233,36 +233,56 @@ public class Initializer {
     "Prints this help message";
     setGlobal("help", "
       --- Help: In-Game Debug Shell ---
-      --- Basic Commands ---
-      print(...args) - Prints one or more values to the console.
-      if(cond, func) - Executes func if cond is true.
-      ifElse(cond, t, f) - Executes func t if cond is true, else func f.
-      while(cond, func) - Executes func while cond is true.
-      forEach(iter, func) - Executes func for each item in an iterable.
-      tryCatch(try, catch) - Executes try func, calls catch func on error.
-      and(a, b), or(a, b) - Logical AND and OR.
-      not(a) - Logical NOT.
-      eql(a, b) - Checks if two objects are deeply equal.
-      --- Game Control ---
-      setTimescale(scale) - Sets the game's speed. 1.0 is normal, 0.0 is paused.
-      Example: setTimescale(0.5);
-      resume() - Re-applies the custom timescale. Useful after manual pause.
-      pause() - (Identical to resume) Re-applies the custom timescale.
-      debug(boolean) - Toggles the physics debug view. e.g. debug(true);
+      --- Core Functions and Constants ---
+      globalThis            - A reference to the current Shell instance.
+      true / false          - Boolean constants.
+      Shell                 - The Java Class object for the Shell interpreter.
+      Range                 - The Java Class object for creating numerical ranges.
+      print(...stuff)       - Prints one or more arguments to the terminal.
+      setGlobal(name, value)- Sets a variable in the global scope.
+      getGlobal(name)       - Retrieves a variable from the global scope.
+      exists(varName)       - Returns true if a variable with the given name exists.
+      getParentVar(key)     - Retrieves a variable from the parent function's scope.
+
+      --- Conditional Logic & Control Flow ---
+      return(value)         - Returns a value from a function.
+      returnN(n, value)     - Returns a value from n nested function scopes.
+      if(cond, func)        - Executes func if cond is truthy.
+      ifElse(c, t, f)       - Executes t if c is truthy, else f.
+      while(cond, func)     - Executes func while cond is truthy.
+      forEach(iter, func)   - Executes func for each item in an iterable.
+      tryCatch(try, catch)  - Executes try func, calls catch func on ShellException.
+      eql(a, b)             - Performs a deep equality check on two objects.
+      and(a, b) / or(a, b)  - Logical AND and OR operations.
+      not(a)                - Logical NOT operation.
+      isNull(a)             - Returns true if the object a is null.
+
+      --- Game Control & State ---
+      debug(active)         - Toggles the physics debug view (truthy/falsey).
+      pause()               - Pauses the game by setting timescale to 0.
+      resume()              - Resumes the game by restoring the custom timescale.
+      setTimescale(scale)   - Sets the game's time scale (1.0 is normal, 0.0 is paused).
+                              This is kept even after the terminal is closed
+
       --- Entity Manipulation ---
-      getEntities() - Returns an array of all active entities.
-      getEntityById(id) - Finds an entity by its ID. e.g. getEntityById(5);
-      --- Services (as functions) ---
-      entityService() - Returns the EntityService instance.
-      renderService() - Returns the RenderService instance.
-      physicsService() - Returns the PhysicsService instance.
-      inputService() - Returns the InputService instance.
-      resourceService() - Returns the ResourceService instance.
-      timeSource() - Returns the GameTime instance.
+      getPlayer()           - Finds and returns the player entity if it exists.
+      getEntities()         - Returns an Array of all the game entities.
+      getEntityById(id)     - Finds and returns an entity given it's integer ID.
+
+      --- Service Accessors ---
+      TerminalService       - Java Class for the TerminalService.
+      ServiceLocator        - Java Class for the ServiceLocator.
+      entityService()       - Returns the EntityService instance.
+      renderService()       - Returns the RenderService instance.
+      physicsService()      - Returns the PhysicsService instance.
+      inputService()        - Returns the InputService instance.
+      resourceService()     - Returns the ResourceService instance.
+      timeSource()          - Returns the GameTime instance.
+
       --- Debugging Utilities ---
-      inspect(object) - Shows all fields and methods of a Java object or class.
-      Example: inspect(getEntityById(5));
-      env() - Shows the current shell environment with all variables.
+      inspect(obj)          - Prints all public fields/methods of an object/class.
+      env()                 - Returns the Environment object (global state of the shell).
+      help                  - This help string.
     ");
   };
 

@@ -47,7 +47,6 @@ public class TerminalDisplay extends UIComponent {
     // Create labels for history and current input
     historyArea = new TextArea("", transparentStyle);
     historyArea.setPrefRows(1);
-    historyArea.setBlinkTime(Float.POSITIVE_INFINITY);
     for (int i = 0; i < 50; i += 1) {
       historyArea.appendText("\n");
     }
