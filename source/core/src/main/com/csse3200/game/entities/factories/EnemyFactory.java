@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.StartPositionComponent;
 import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.components.npc.GhostAnimationController;
 import com.csse3200.game.components.tasks.ChaseTask;
@@ -33,7 +34,7 @@ public class EnemyFactory {
      * @param route for enemy patrol
      * @return entity
      */
-    public static Entity createDrone(Entity target, Vector2[] route) {
+    public static Entity createDrone(Entity target, Vector2 startPos, Vector2[] route) {
         Entity drone = createBaseEnemy(target);
         BaseEntityConfig config = configs.drone;
 
@@ -46,12 +47,13 @@ public class EnemyFactory {
 
         AITaskComponent aiComponent =
                 new AITaskComponent()
-                        .addTask(new PatrolTask(route, 1f))
+                        .addTask(new PatrolTask(route, 0.5f))
                         .addTask(new ChaseTask(target, 10, 3f, 4f));
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(aiComponent)
                 .addComponent(animator)
+                .addComponent(new StartPositionComponent(startPos))
                 // TO DO: Swap to DroneAnimationController when added
                 .addComponent(new GhostAnimationController());
 

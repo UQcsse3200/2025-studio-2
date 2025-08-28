@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.Task;
+import com.csse3200.game.components.StartPositionComponent;
 
 public class PatrolTask extends DefaultTask implements PriorityTask {
     private final Vector2[] offsets; // Relative waypoints
     private final float waitTime;
 
     private Vector2 origin;
-    private boolean anchored = false;
     private int i = 0;
     private boolean forward = true;
 
@@ -36,9 +36,12 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
             return;
         }
 
-        if (!anchored) {
-            origin = new Vector2(owner.getEntity().getPosition());
-            anchored = true;
+        if (origin == null) {
+            StartPositionComponent sp = owner.getEntity().getComponent(StartPositionComponent.class);
+            if (sp == null) {
+                throw new IllegalStateException("PatrolTask requires StartPositionComponent on entity");
+            }
+            origin = sp.getStartPos();
         }
 
         if (waitTask == null) {
@@ -49,6 +52,8 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
         if (movementTask == null) {
             movementTask = new MovementTask(getWorldPos());
             movementTask.create(owner);
+        } else {
+            movementTask.setTarget(getWorldPos());
         }
 
         movementTask.start();
@@ -61,15 +66,8 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     public void update() {
         if (currentTask.getStatus() != Status.ACTIVE) {
             if (currentTask == movementTask) {
-                if (isEnd()) {
-                    swapTask(waitTask);
-                } else {
-                    nextIndex();
-                    movementTask.setTarget(getWorldPos());
-                    movementTask.start();
-                }
+                swapTask(waitTask); // Always wait between waypoints
             } else {
-                toggleDirection();
                 nextIndex();
                 movementTask.setTarget(getWorldPos());
                 swapTask(movementTask);
@@ -87,9 +85,14 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     }
 
     // Helpers
-    /** Check if index of waypoint points to start/end */
+    /** Check if index of waypoint points to start */
+    private boolean isStart() {
+        return i == 0;
+    }
+
+    /** Check if index of waypoint points to end */
     private boolean isEnd() {
-        return i == 0 || i == offsets.length - 1;
+        return i == offsets.length - 1;
     }
 
     /** Toggle patrol direction */
@@ -99,12 +102,20 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
 
     /** Increment/decrement index based on patrol direction */
     private void nextIndex() {
+        if (offsets.length <= 1) return;
+
         if (forward) {
-            if (i < offsets.length - 1) {
+            if (isEnd()) {
+                toggleDirection();
+                i--;
+            } else {
                 i++;
             }
         } else {
-            if (i > 0) {
+            if (isStart()) {
+                toggleDirection();
+                i++;
+            } else {
                 i--;
             }
         }
