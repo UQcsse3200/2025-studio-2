@@ -52,7 +52,10 @@ public class Initializer {
       setGlobal("getGlobal", globalThis.getGlobal);
 
       "print stuff to the console";
-      setGlobal("print", (...stuff) {  globalThis.forEach(stuff, globalThis.console.print); });
+      setGlobal("print", (...stuff) {
+        if(eql((){}(), stuff), () { return(return()); });
+        globalThis.forEach(stuff, globalThis.console.print);
+      });
 
       "--- Types ---";
 
@@ -96,16 +99,35 @@ public class Initializer {
       ";
       setGlobal("tryCatch", globalThis.tryCatch);
 
-      "--- Airthematic ---";
+      "--- Conditional logic ---";
       setGlobal("and", globalThis.and);
       setGlobal("or", globalThis.or);
       setGlobal("not", globalThis.not);
       setGlobal("eql", .java.util.Objects.deepEquals);
+      setGlobal("isNull", .java.util.Objects.isNull);
 
       "--- Other ---";
 
       "Returns true if the give object is actually a class type";
       setGlobal("isClass", globalThis.isClass);
+
+      "Return from n nested scopes, returnN(1, value) is same as return(value)";
+      setGlobal("returnN", (n, value) {
+        setGlobal(".value", value);
+        forEach(Range(1, n), (_) { (_){}(setGlobal(".value", return(getGlobal(".value")))); });
+        return(getGlobal(".value"));
+      });
+
+      "Returns true if the given variable exists in the current scope";
+      setGlobal("exists", globalThis.exists);
+
+      "Get a value from the parent scope, parent scope must me a function scope, not global";
+      setGlobal("getParentVar", (key) {
+        globalThis = globalThis;
+        frames = globalThis.env.frames;
+        map = globalThis.ShellMapClass.getMap(frames.get(.java.lang.Integer.sum(frames.size(), -3)));
+        return map.get(key);
+      });
     };
 
     init();
@@ -164,7 +186,7 @@ public class Initializer {
       setGlobal(".id", id);
       forEach(getEntities(), (entity) {
         setGlobal(".entity", entity);
-        if (eql(entity.getId(), getGlobal(".id")), () { return(getGlobal(".entity")); });
+        if (eql(entity.getId(), getGlobal(".id")), () { returnN(3, getGlobal(".entity")); });
       });
     });
 
@@ -197,6 +219,16 @@ public class Initializer {
 
     "List all local / global variables.";
     setGlobal("env", () { return(globalThis.env); });
+
+    "Find the player, returns null if nothing is found";
+    setGlobal("getPlayer", () {
+      forEach(getEntities(), (entity) {
+        setGlobal(".entity", entity);
+        if (not(isNull(entity.getComponent(.com.csse3200.game.components.player.InventoryComponent))), () {
+          returnN(3, getGlobal(".entity"));
+        });
+      });
+    });
 
     "Prints this help message";
     setGlobal("help", "
