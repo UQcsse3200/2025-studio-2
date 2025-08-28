@@ -28,12 +28,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
     } else if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
       ctrlHeld = true;
     }
-    if (!terminal.isOpen()) return false;
-
-    if (Input.Keys.toString(keycode).length() == 1 ) {
-      TerminalService.focusTerminalInput();
-    }
-
+    handleFocusChange(keycode);
     return false;
   }
 
@@ -42,13 +37,18 @@ public class GlobalTerminalInputComponent extends InputComponent {
     if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
       ctrlHeld = false;
     }
+    handleFocusChange(keycode);
+    return false;
+  }
 
-    if (!terminal.isOpen()) return false;
+  private void handleFocusChange(int keycode) {
+    if (!terminal.isOpen()) return;
 
-    if (Input.Keys.toString(keycode).length() == 1 ) {
+    final String key = Input.Keys.toString(keycode);
+    boolean isCtrlC = ctrlHeld && ("c".equals(key) || "C".equals(key));
+    if (key.length() == 1 && !isCtrlC) {
       TerminalService.focusTerminalInput();
     }
-    return false;
   }
 
   @Override

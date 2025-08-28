@@ -101,6 +101,11 @@ public class Initializer {
       setGlobal("or", globalThis.or);
       setGlobal("not", globalThis.not);
       setGlobal("eql", .java.util.Objects.deepEquals);
+
+      "--- Other ---";
+
+      "Returns true if the give object is actually a class type";
+      setGlobal("isClass", globalThis.isClass);
     };
 
     init();
@@ -161,32 +166,31 @@ public class Initializer {
         setGlobal(".entity", entity);
         if (eql(entity.getId(), getGlobal(".id")), () { return(getGlobal(".entity")); });
       });
-      return(null);
     });
 
     "--- Utilities ---";
     "Inspect an object's fields and methods. e.g. inspect(services);";
     setGlobal("inspect", (obj) {
-      if (eql(obj, null), () { return("null"); });
-
       setGlobal(".obj", obj);
-      cls = ifElse(eql((obj) { class = obj.getClass(); return(class.getName()); } (obj), "java.lang.Class"),
-        () { return(getGlobal(".obj")); },
-        () { obj = getGlobal(".obj"); return(obj.getClass()); }
-      );
+      if(not(isClass(obj)), () { obj = getGlobal(".obj"); setGlobal(".obj", obj.getClass()); });
+      cls = getGlobal(".obj");
+      setGlobal(".obj", obj);
 
       print("Inspecting Class: ", cls.getName(), "\n\n--- Fields ---\n");
 
-      forEach(cls.getDeclaredFields(), (field) {
-        field.setAccessible(true);
-        tryCatch((field) {
-          print(field.toGenericString(), " = ", field.get(obj), "\n");
-        }, print);
+      forEach(cls.getFields(), (field) {
+        setGlobal(".field", field);
+        tryCatch(() {
+          field = getGlobal(".field");
+          field.setAccessible(true);
+          print(field.toGenericString(), " = ", field.get(getGlobal(".obj")), "\n");
+        }, (e) {
+          print("Opps, An error occurred", e, "\n");
+        });
       });
 
-      print("\n--- Methods ---\n");
-      forEach(cls.getDeclaredMethods(), (method) {
-        method.setAccessible(true);
+      print("\n--- Methods ---\n", cls);
+      forEach(cls.getMethods(), (method) {
         print(method.toGenericString(), "\n");
       });
     });
