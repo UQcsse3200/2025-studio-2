@@ -118,6 +118,7 @@ public class Keymap {
 
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);
+    registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT);
     registerAction("TerminalToggle", Input.Keys.GRAVE);
   }
 }

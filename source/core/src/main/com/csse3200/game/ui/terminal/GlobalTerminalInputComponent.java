@@ -3,11 +3,11 @@ package com.csse3200.game.ui.terminal;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.input.Keymap;
 
 public class GlobalTerminalInputComponent extends InputComponent {
-  private static final int TOGGLE_KEY = Input.Keys.GRAVE; // ` key
   private Terminal terminal;
-  private boolean ctrlHeld = false;
+  private boolean modifierHeld = false;
 
   public GlobalTerminalInputComponent() {
     // Highest priority to capture input first
@@ -22,11 +22,12 @@ public class GlobalTerminalInputComponent extends InputComponent {
 
   @Override
   public boolean keyDown(int keycode) {
-    if (keycode == TOGGLE_KEY && ctrlHeld) {
+    if (keycode == Keymap.getActionKeyCode("TerminalToggle") && modifierHeld) {
       TerminalService.toggle();
       return true;
-    } else if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
-      ctrlHeld = true;
+    } else if (keycode == Keymap.getActionKeyCode("TerminalModifier")
+            || keycode == Keymap.getActionKeyCode("TerminalModifierAlt")) {
+      modifierHeld = true;
     }
     handleFocusChange(keycode);
     return false;
@@ -34,8 +35,9 @@ public class GlobalTerminalInputComponent extends InputComponent {
 
   @Override
   public boolean keyUp(int keycode) {
-    if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
-      ctrlHeld = false;
+    if (keycode == Keymap.getActionKeyCode("TerminalModifier")
+            || keycode == Keymap.getActionKeyCode("TerminalModifierAlt")) {
+      modifierHeld = false;
     }
     handleFocusChange(keycode);
     return false;
@@ -45,7 +47,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
     if (!terminal.isOpen()) return;
 
     final String key = Input.Keys.toString(keycode);
-    boolean isCtrlC = ctrlHeld && ("c".equals(key) || "C".equals(key));
+    boolean isCtrlC = modifierHeld && ("c".equals(key) || "C".equals(key));
     if (key.length() == 1 && !isCtrlC) {
       TerminalService.focusTerminalInput();
     }
@@ -55,7 +57,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
   public boolean keyTyped(char character) {
     if (!terminal.isOpen()) return false;
 
-    if ((character == '\r' || character == '\n') && ctrlHeld) {
+    if ((character == '\r' || character == '\n') && modifierHeld) {
       // Command execution may take a long time
       Gdx.app.postRunnable(TerminalService::executeCurrentCommand);
     } else {
