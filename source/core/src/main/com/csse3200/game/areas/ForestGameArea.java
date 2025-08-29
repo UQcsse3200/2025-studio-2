@@ -47,7 +47,8 @@ public class ForestGameArea extends GameArea {
           "images/blue_button.png",
           "images/blue_button_pushed.png",
           "images/red_button.png",
-          "images/red_button_pushed.png"
+          "images/red_button_pushed.png",
+    "images/spikes_sprite.png"
 
   };
   private static final String[] forestTextureAtlases = {
@@ -92,7 +93,9 @@ public class ForestGameArea extends GameArea {
 
      spawnLights(); // uncomment to spawn in lights
      spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)
-    playMusic();
+
+    spawnTraps();
+//    playMusic();
   }
 
   private void displayUI() {
@@ -179,6 +182,11 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
       // Add other types of boxes here
+  }
+
+  private void spawnTraps() {
+    Entity spikes = TrapFactory.createSpikes(1, 0);
+    spawnEntityAt(spikes, new GridPoint2(10,15), true,  true);
   }
 
   private void spawnButtons() {
