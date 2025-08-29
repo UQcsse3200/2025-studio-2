@@ -18,9 +18,8 @@ public class PlayerActions extends Component {
   private static final float MAX_ACCELERATION = 70f;
   // second
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
-  // per second
-  private static final Vector2 ADRENALINE_SPEED = new Vector2(12f, 12f); // Metres
-  // per second
+  private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.scl(2);
+  private static final int DASH_SPEED_MULTIPLIER = 4;
 
   private PhysicsComponent physicsComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
@@ -48,7 +47,6 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("adrenalineStop", this::stopAdrenaline);
 
     entity.getEvents().addListener("dash", this::dash);
-    entity.getEvents().addListener("dashStop", this::stopDashing);
   }
 
   @Override
@@ -171,18 +169,10 @@ public class PlayerActions extends Component {
     moving = true;
 
     Body body = physicsComponent.getBody();
-    direction.scl(4);
-    body.applyLinearImpulse(direction, body.getWorldCenter(), true);
-    direction.scl((float) 1 / 4);
-  }
 
-  /**
-   * Decelerates the player back to regular speed.
-   */
-  void stopDashing() {
-    this.walkDirection = Vector2.Zero.cpy();
-    updateSpeed();
-    moving = false;
+    direction.scl(DASH_SPEED_MULTIPLIER);
+    body.applyLinearImpulse(direction, body.getWorldCenter(), true);
+    direction.scl((float) 1 / DASH_SPEED_MULTIPLIER);
   }
 
   /**
