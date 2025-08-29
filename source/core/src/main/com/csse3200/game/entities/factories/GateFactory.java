@@ -8,14 +8,14 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
- * Factory to create Platform entities.
+ * Factory to create Gate entities.
  *
- * <p>Each Platform entity type should have a creation method that returns a corresponding entity.
+ * <p>Each Gate entity type should have a creation method that returns a corresponding entity.
  */
 public class GateFactory {
 
     /**
-     * Creates a static platform entity.
+     * Creates a static Gate entity.
      * @return entity
      */
     public static Entity createGate() {
