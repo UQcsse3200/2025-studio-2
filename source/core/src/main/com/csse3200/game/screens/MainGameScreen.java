@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
@@ -13,6 +14,8 @@ import com.csse3200.game.entities.factories.RenderFactory;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
+import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
@@ -40,6 +43,7 @@ public class MainGameScreen extends ScreenAdapter {
   private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
+  private final LightingEngine lightingEngine;
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -61,6 +65,11 @@ public class MainGameScreen extends ScreenAdapter {
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
     renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
 
+    // Registering the new lighting service with the service manager
+    LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
+    ServiceLocator.registerLightingService(lightingService);
+    lightingEngine = lightingService.getEngine();
+
     loadAssets();
     createUI();
 
@@ -74,7 +83,7 @@ public class MainGameScreen extends ScreenAdapter {
   public void render(float delta) {
     physicsEngine.update();
     ServiceLocator.getEntityService().update();
-    renderer.render();
+    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   @Override
@@ -98,6 +107,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Disposing main game screen");
 
     renderer.dispose();
+    lightingEngine.dispose();
     unloadAssets();
 
     ServiceLocator.getEntityService().dispose();
