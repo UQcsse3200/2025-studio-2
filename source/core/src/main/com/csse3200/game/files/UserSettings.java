@@ -3,8 +3,10 @@ package com.csse3200.game.files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.csse3200.game.files.FileLoader.Location;
+import com.csse3200.game.input.Keymap;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Reading, Writing, and applying user settings in the game.
@@ -119,6 +121,11 @@ public class UserSettings {
      */
     public float masterVolume = 1f;
     public float musicVolume = 1f;
+
+    /*
+     * Sets default keymap and saves defaults.
+     */
+    public Map<String, Integer> keyMap = Keymap.setKeyMapDefaults();
   }
 
   /**
