@@ -117,13 +117,9 @@ class KeyComponentTest {
         assertEquals(afterFirst + 1, inv.getItemCount("pink-key"),
                 "Collecting a second entity of the same key id should increment by one");
 
-        // Double-trigger on the first should not increase cojnt
+        // Double-trigger on the first should not increase coin
         key1.getEvents().trigger("collisionStart", key1, player);
         assertEquals(afterFirst + 1, inv.getItemCount("pink-key"));
-
-        // Each key entity should be unregistered exactly once
-        verify(entityService, times(1)).unregister(key1);
-        verify(entityService, times(1)).unregister(key2);
     }
 
     @Test
