@@ -87,6 +87,18 @@ public class UserSettings {
   }
 
   /**
+   * Returns the multiplier corresponding to master volume. All sound effects' volume should be
+   * multiplied by this float before they are played.
+   * Example: A return value of 0.5 means the user has set the master volume to 50%, and thus all
+   * sounds should be reduced by 50%.
+   * @return The master volume
+   */
+  public static float getMasterVolume() {
+    Settings settings = get();
+    return settings.masterVolume;
+  }
+
+  /**
    * Stores game settings, can be serialised/deserialised.
    */
   public static class Settings {
