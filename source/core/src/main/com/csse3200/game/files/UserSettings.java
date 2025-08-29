@@ -121,11 +121,6 @@ public class UserSettings {
      */
     public float masterVolume = 1f;
     public float musicVolume = 1f;
-
-    /*
-     * Sets default keymap and saves defaults.
-     */
-    public Map<String, Integer> keyMap = Keymap.setKeyMapDefaults();
   }
 
   /**
