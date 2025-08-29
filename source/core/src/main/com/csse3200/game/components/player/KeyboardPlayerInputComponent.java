@@ -32,7 +32,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
 
       case Keys.SPACE:
-
         triggerJumpEvent();
         return true;
       case Keys.A:
@@ -47,19 +46,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         walkDirection.add(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
-<<<<<<< Updated upstream
-
       case Keys.E:
         entity.getEvents().trigger("interact");
-=======
       case Keys.V:
         triggerDashEvent();
         return true;
-      case Keys.SPACE:
-        entity.getEvents().trigger("attack");
->>>>>>> Stashed changes
-        return true;
-
       default:
         return false;
     }
