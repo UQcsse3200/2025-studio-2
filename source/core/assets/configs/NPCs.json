@@ -7,10 +7,5 @@
     "health": 100,
     "baseAttack": 25,
     "spookyFactor": 7
-  },
-  "drone": {
-    "health": 100,
-    "baseAttack": 50
   }
 }
-

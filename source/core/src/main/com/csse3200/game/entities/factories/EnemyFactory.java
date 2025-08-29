@@ -11,7 +11,7 @@ import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.components.tasks.WanderTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
-import com.csse3200.game.entities.configs.NPCConfigs;
+import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
@@ -23,8 +23,8 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 public class EnemyFactory {
-    private static final NPCConfigs configs =
-            FileLoader.readClass(NPCConfigs.class, "configs/NPCs.json");
+    private static final EnemyConfigs configs =
+            FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
 
     /**
      * Creates a drone entity.
