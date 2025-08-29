@@ -144,12 +144,22 @@ public class ForestGameArea extends GameArea {
 
   // Test drone spawn in forest area
   private void spawnDrone() {
+    //Define the minimum and maximum bounds for random generation
     GridPoint2 minPos = new GridPoint2(0, 0);
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
 
+    // Generate a random coordinate within the bounds and a fixed pos
     GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
+    GridPoint2 fixedPos = new GridPoint2(1, 10); // predefind pos
+
+    //Call the factory method to generate a Drone entity
     Entity drone = EnemyFactory.createDrone(player);
+    Entity droneB = EnemyFactory.createDrone(player);
+
+    // Place the drone at a randomPos point on the map
+    // The last two true values represent "snap to grid" and "notify listeners"
     spawnEntityAt(drone, randomPos, true, true);
+    spawnEntityAt(droneB, fixedPos, true, true);
  }
 
   private void spawnGhostKing() {
