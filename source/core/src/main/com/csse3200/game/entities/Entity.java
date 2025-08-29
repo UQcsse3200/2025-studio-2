@@ -34,7 +34,7 @@ public class Entity {
   private final EventHandler eventHandler;
   private boolean enabled = true;
   private boolean created = false;
-  private Vector2 position = Vector2.Zero.cpy();
+  private Vector2 position = Vector2.Zero.cpy(); // initialize the original position(0,0)
   private Vector2 scale = new Vector2(1, 1);
   private Array<Component> createdComponents;
 
