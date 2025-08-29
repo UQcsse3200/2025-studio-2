@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
@@ -45,6 +46,25 @@ public class ObstacleFactory {
         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
     wall.setScale(width, height);
     return wall;
+  }
+
+    /**
+     * Creates a door Entity with key identifier
+     * @param keyId the unique key identifier that can unlock this door
+     * @return a new door entity bound to {@code keyId}, in the locked state
+     */
+  public static Entity createDoor (String keyId) {
+
+      Entity door = new Entity()
+              .addComponent(new PhysicsComponent().setBodyType(BodyType.StaticBody))
+              .addComponent(new DoorComponent(keyId))
+              .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+              .addComponent(new TextureRenderComponent("images/door_closed.png"));
+
+      door.getComponent(TextureRenderComponent.class).scaleEntity();
+      door.scaleHeight(1f);
+      PhysicsUtils.setScaledCollider(door, 1f, 1f);
+      return door;
   }
 
   private ObstacleFactory() {
