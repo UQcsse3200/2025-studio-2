@@ -91,6 +91,12 @@ public class UserSettings {
      */
 //    public float uiScale = 1f;
     public DisplaySettings displayMode = null;
+
+    /*
+     * Members for controlling volume of sound effects.
+     */
+    public float masterVolume = 1f;
+    public float musicVolume = 1f;
   }
 
   /**

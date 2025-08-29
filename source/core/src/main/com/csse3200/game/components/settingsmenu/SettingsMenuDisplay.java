@@ -31,7 +31,9 @@ public class SettingsMenuDisplay extends UIComponent {
   private TextField fpsText;
   private CheckBox fullScreenCheck;
   private CheckBox vsyncCheck;
-  private Slider uiScaleSlider;
+//  private Slider uiScaleSlider;
+  private Slider masterVolumeSlider;
+  private Slider musicVolumeSlider;
   private SelectBox<StringDecorator<DisplayMode>> displayModeSelect;
 
   public SettingsMenuDisplay(GdxGame game) {
@@ -85,6 +87,16 @@ public class SettingsMenuDisplay extends UIComponent {
 //    uiScaleSlider.setValue(settings.uiScale);
 //    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
 
+    Label masterVolumeLabel = new Label("Master Volume:", skin);
+    masterVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    masterVolumeSlider.setValue(settings.masterVolume);
+    Label masterVolumeValue = new Label(String.format("%.2fx", settings.masterVolume), skin);
+
+    Label musicVolumeLabel = new Label("Music Volume:", skin);
+    musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    musicVolumeSlider.setValue(settings.musicVolume);
+    Label musicVolumeValue = new Label(String.format("%.2fx", settings.musicVolume), skin);
+
     Label displayModeLabel = new Label("Resolution:", skin);
     displayModeSelect = new SelectBox<>(skin);
     Monitor selectedMonitor = Gdx.graphics.getMonitor();
@@ -117,6 +129,22 @@ public class SettingsMenuDisplay extends UIComponent {
     table.add(displayModeLabel).right().padRight(15f);
     table.add(displayModeSelect).left();
 
+    // Create master volume slider
+    table.row().padTop(10f);
+    Table masterVolumeTable = new Table();
+    masterVolumeTable.add(masterVolumeSlider).width(100).left();
+    masterVolumeTable.add(masterVolumeValue).left().padLeft(5f).expandX();
+    table.add(masterVolumeLabel).right().padRight(15f);
+    table.add(masterVolumeTable).left();
+
+    // Create music volume slider
+    table.row().padTop(10f);
+    Table musicVolumeTable = new Table();
+    musicVolumeTable.add(musicVolumeSlider).width(100).left();
+    musicVolumeTable.add(musicVolumeValue).left().padLeft(5f).expandX();
+    table.add(musicVolumeLabel).right().padRight(15f);
+    table.add(musicVolumeTable).left();
+
     // Events on inputs
 //    uiScaleSlider.addListener(
 //        (Event event) -> {
@@ -124,6 +152,19 @@ public class SettingsMenuDisplay extends UIComponent {
 //          uiScaleValue.setText(String.format("%.2fx", value));
 //          return true;
 //        });
+
+    // Handle slider events
+    masterVolumeSlider.addListener((Event event) -> {
+      float value = masterVolumeSlider.getValue();
+      masterVolumeValue.setText(String.format("%.2fx", value));
+      return true;
+    });
+
+    musicVolumeSlider.addListener((Event event) -> {
+      float value = musicVolumeSlider.getValue();
+      musicVolumeValue.setText(String.format("%.2fx", value));
+      return true;
+    });
 
     return table;
   }
