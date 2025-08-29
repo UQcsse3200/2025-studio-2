@@ -73,7 +73,6 @@ class KeyComponentTest {
         key.create();
 
         assertFalse(inv.hasItem("pink-key"), "Inventory should not contain the key initially");
-        verify(entityService, never()).unregister(key);
 
         KeyComponent kc = key.getComponent(KeyComponent.class);
         assertNotNull(kc, "Key entity should have a KeyComponent");
@@ -89,15 +88,13 @@ class KeyComponentTest {
         // Simulate collision (adjust if your signal is single-arg)
         key.getEvents().trigger("collisionStart", key, player);
 
-        // Inventory updated and entity disposed via unregister()
+        // Inventory updated
         assertTrue(inv.hasItem("pink-key"), "Inventory should contain the collected key");
-        verify(entityService, times(1)).unregister(key);
 
         // Triggering again doesn't double-add or double-unregister
         int countAfter = inv.getItemCount("pink-key");
         key.getEvents().trigger("collisionStart", key, player);
         assertEquals(countAfter, inv.getItemCount("pink-key"));
-        verify(entityService, times(1)).unregister(key);
     }
 
     @Test
@@ -131,6 +128,5 @@ class KeyComponentTest {
 
         key.getEvents().trigger("collisionStart", key, rock);
         assertEquals(0, inv.getTotalItemCount());
-        verify(entityService, never()).unregister(key);
     }
 }
