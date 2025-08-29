@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.TouchAttackComponent;
-import com.csse3200.game.components.npc.GhostAnimationController;
+import com.csse3200.game.components.npc.DroneAnimationController;
+import com.csse3200.game.components.npc.DroneAttackComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.components.tasks.WanderTask;
 import com.csse3200.game.entities.Entity;
@@ -39,15 +39,17 @@ public class EnemyFactory {
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
-        // Future: Implement drone-specific animation
+
+        // Add drone animations
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("drop", 0.5f, Animation.PlayMode.LOOP); // Attack animation
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
-                // TO DO: Swap to DroneAnimationController when added
-                .addComponent(new GhostAnimationController());
+                .addComponent(new DroneAnimationController())
+                .addComponent(new DroneAttackComponent(PhysicsLayer.PLAYER, 3.0f)); // 3 second attack cooldown
 
         drone.getComponent(AnimationRenderComponent.class).scaleEntity();
         return drone;
@@ -68,10 +70,10 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
+//                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
                         .addComponent(aiComponent);
 
-        PhysicsUtils.setScaledCollider(enemy, 0.9f, 0.4f);
+        PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
     }
 
