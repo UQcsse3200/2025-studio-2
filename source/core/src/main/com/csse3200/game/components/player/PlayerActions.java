@@ -13,15 +13,21 @@ import com.csse3200.game.services.ServiceLocator;
  * and when triggered should call methods within this class.
  */
 public class PlayerActions extends Component {
+<<<<<<< Updated upstream
   private static final Vector2 MAX_SPEED = new Vector2(6f, 6f); // Metres per
   private static final float MAX_ACCELERATION = 70f;
   // second
+=======
+  private static final Vector2 WALK_SPEED = new Vector2(3f, 3f); // Metres per second
+  private static final Vector2 DASH_SPEED = new Vector2(6f, 6f); // Metres per second
+>>>>>>> Stashed changes
 
   private PhysicsComponent physicsComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
   private Vector2 jumpDirection = Vector2.Zero.cpy();
   private boolean moving = false;
+  private boolean dashing = false;
 
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
@@ -31,11 +37,15 @@ public class PlayerActions extends Component {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
+
     entity.getEvents().addListener("attack", this::attack);
     entity.getEvents().addListener("interact", this::interact);
+
     entity.getEvents().addListener("jump", this::jump);
     entity.getEvents().addListener("landed", this::onLand);
 
+    entity.getEvents().addListener("dash", this::dash);
+    entity.getEvents().addListener("dashStop", this::stopDashing);
   }
 
   @Override
@@ -53,7 +63,12 @@ public class PlayerActions extends Component {
   private void updateSpeed() {
     Body body = physicsComponent.getBody();
     Vector2 velocity = body.getLinearVelocity();
-    Vector2 desiredVelocity = walkDirection.cpy().scl(MAX_SPEED);
+    Vector2 desiredVelocity;
+    if (dashing) {
+      desiredVelocity = walkDirection.cpy().scl(DASH_SPEED);
+    } else {
+      desiredVelocity = walkDirection.cpy().scl(WALK_SPEED);
+    }
     // impulse = (desiredVel - currentVel) * mass
     //only update the horizontal impulse
     float inAirControl = isJumping ? 0.2f : 1f;
@@ -120,6 +135,24 @@ public class PlayerActions extends Component {
     isJumping = false;
     isDoubleJump = false;
   }
+
+  void dash(Vector2 direction) {
+    System.out.println("Dashing!");
+    this.walkDirection = direction;
+    moving = true;
+    dashing = true;
+  }
+
+  /**
+   * Stops the player from walking.
+   */
+  void stopDashing() {
+    this.walkDirection = Vector2.Zero.cpy();
+    updateSpeed();
+    moving = false;
+    dashing = false;
+  }
+
 
   /**
    * Makes the player attack.

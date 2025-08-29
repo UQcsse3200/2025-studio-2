@@ -47,9 +47,17 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         walkDirection.add(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
+<<<<<<< Updated upstream
 
       case Keys.E:
         entity.getEvents().trigger("interact");
+=======
+      case Keys.V:
+        triggerDashEvent();
+        return true;
+      case Keys.SPACE:
+        entity.getEvents().trigger("attack");
+>>>>>>> Stashed changes
         return true;
 
       default:
@@ -105,5 +113,13 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private void triggerLandedEvent() {
     // WRITE SO IF COLLISION WITH GROUND HAPPENS THIS TRIGGERS
     entity.getEvents().trigger("landed");
+  }
+
+  private void triggerDashEvent() {
+    if (walkDirection.epsilonEquals(Vector2.Zero)) {
+      entity.getEvents().trigger("dashStop");
+    } else {
+      entity.getEvents().trigger("dash", walkDirection);
+    }
   }
 }
