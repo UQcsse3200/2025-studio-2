@@ -170,8 +170,8 @@ public class Initializer {
 
     "Toggle physics debug rendering. e.g. debug(true);";
     setGlobal("debug", (active) {
-      debug = renderService.getDebug();
-      debug.setActive(active);
+      debug = ServiceLocator.renderService.getDebug();
+      debug.setActive(globalThis.isTruthy(active));
     });
 
     "--- Entity Manipulation ---";
@@ -258,7 +258,7 @@ public class Initializer {
       isNull(a)             - Returns true if the object a is null.
 
       --- Game Control & State ---
-      debug(active)         - Toggles the physics debug view (truthy/falsey).
+      debug(active)         - Toggles the physics debug view (truthy/falsy).
       pause()               - Pauses the game by setting timescale to 0.
       resume()              - Resumes the game by restoring the custom timescale.
       setTimescale(scale)   - Sets the game's time scale (1.0 is normal, 0.0 is paused).

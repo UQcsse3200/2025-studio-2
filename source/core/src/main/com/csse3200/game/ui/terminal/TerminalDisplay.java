@@ -43,6 +43,7 @@ public class TerminalDisplay extends UIComponent {
     TextField.TextFieldStyle defaultStyle = skin.get(TextField.TextFieldStyle.class);
     TextField.TextFieldStyle transparentStyle = new TextField.TextFieldStyle(defaultStyle);
     transparentStyle.background = null;
+    transparentStyle.fontColor = Color.WHITE;
 
     // Create labels for history and current input
     historyArea = new TextArea("", transparentStyle);
