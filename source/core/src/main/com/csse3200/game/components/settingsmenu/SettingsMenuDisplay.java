@@ -238,6 +238,10 @@ public class SettingsMenuDisplay extends UIComponent {
     settings.displayMode = new DisplaySettings(displayModeSelect.getSelected().object);
     settings.vsync = vsyncCheck.isChecked();
 
+    // Set volume
+    settings.masterVolume = masterVolumeSlider.getValue();
+    settings.musicVolume = musicVolumeSlider.getValue();
+
     UserSettings.set(settings, true);
   }
 
