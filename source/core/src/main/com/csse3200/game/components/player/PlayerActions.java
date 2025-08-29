@@ -8,6 +8,8 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.physics.*;
+import com.badlogic.gdx.physics.box2d.*;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -20,6 +22,7 @@ public class PlayerActions extends Component {
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.scl(2);
   private static final int DASH_SPEED_MULTIPLIER = 4;
+  private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
@@ -31,11 +34,10 @@ public class PlayerActions extends Component {
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
 
-  private float jumpImpulseFactor = 12.5f;
-
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
+
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
 
@@ -49,6 +51,9 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("adrenalineStop", this::stopAdrenaline);
 
     entity.getEvents().addListener("dash", this::dash);
+
+    entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+
   }
 
   @Override
@@ -58,6 +63,7 @@ public class PlayerActions extends Component {
     }
 
     Body body = physicsComponent.getBody();
+
     if (body.getLinearVelocity().y < 0) {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
     }
@@ -126,7 +132,7 @@ public class PlayerActions extends Component {
       body.setLinearVelocity(vel.x, 0f);
     }
 
-      float impulseY = body.getMass() * jumpImpulseFactor;
+      float impulseY = body.getMass() * JUMP_IMPULSE_FACTOR;
 
       body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
       /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
@@ -136,9 +142,10 @@ public class PlayerActions extends Component {
 
   void onLand() {
     Body body = physicsComponent.getBody();
-    //SORT OUT COLLISION WITH GROUND STUFF HERE
+    body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
+
   }
 
   /**
@@ -194,4 +201,10 @@ public class PlayerActions extends Component {
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
   }
+
+  void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
+        onLand();
+
+  }
+
 }
