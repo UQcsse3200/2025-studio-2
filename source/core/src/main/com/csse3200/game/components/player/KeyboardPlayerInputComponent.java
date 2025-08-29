@@ -49,6 +49,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       case Keys.E:
         entity.getEvents().trigger("interact");
       case Keys.V:
+        triggerAdrenalineEvent();
+        return true;
+      case Keys.SHIFT_LEFT:
         triggerDashEvent();
         return true;
       default:
@@ -104,6 +107,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private void triggerLandedEvent() {
     // WRITE SO IF COLLISION WITH GROUND HAPPENS THIS TRIGGERS
     entity.getEvents().trigger("landed");
+  }
+
+  private void triggerAdrenalineEvent() {
+    if (walkDirection.epsilonEquals(Vector2.Zero)) {
+      entity.getEvents().trigger("adrenalineStop");
+    } else {
+      entity.getEvents().trigger("adrenaline", walkDirection);
+    }
   }
 
   private void triggerDashEvent() {

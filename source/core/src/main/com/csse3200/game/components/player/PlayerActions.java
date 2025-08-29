@@ -2,6 +2,7 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
@@ -18,7 +19,7 @@ public class PlayerActions extends Component {
   // second
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   // per second
-  private static final Vector2 DASH_SPEED = new Vector2(12f, 12f); // Metres
+  private static final Vector2 ADRENALINE_SPEED = new Vector2(12f, 12f); // Metres
   // per second
 
   private PhysicsComponent physicsComponent;
@@ -26,7 +27,7 @@ public class PlayerActions extends Component {
 
   private Vector2 jumpDirection = Vector2.Zero.cpy();
   private boolean moving = false;
-  private boolean dashing = false;
+  private boolean adrenaline = false;
 
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
@@ -42,6 +43,9 @@ public class PlayerActions extends Component {
 
     entity.getEvents().addListener("jump", this::jump);
     entity.getEvents().addListener("landed", this::onLand);
+
+    entity.getEvents().addListener("adrenaline", this::adrenaline);
+    entity.getEvents().addListener("adrenalineStop", this::stopAdrenaline);
 
     entity.getEvents().addListener("dash", this::dash);
     entity.getEvents().addListener("dashStop", this::stopDashing);
@@ -63,11 +67,13 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
     Vector2 velocity = body.getLinearVelocity();
     Vector2 desiredVelocity;
-    if (dashing) {
-      desiredVelocity = walkDirection.cpy().scl(DASH_SPEED);
+
+    if (adrenaline) {
+      desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
     } else {
       desiredVelocity = walkDirection.cpy().scl(WALK_SPEED);
     }
+
     // impulse = (desiredVel - currentVel) * mass
     //only update the horizontal impulse
     float inAirControl = isJumping ? 0.2f : 1f;
@@ -135,23 +141,49 @@ public class PlayerActions extends Component {
     isDoubleJump = false;
   }
 
-  void dash(Vector2 direction) {
-    System.out.println("Dashing!");
+  /**
+   * Boosts the players speed, `activates adrenaline`
+   * @param direction The direction in which the player should move
+   */
+  void adrenaline(Vector2 direction) {
     this.walkDirection = direction;
     moving = true;
-    dashing = true;
+    adrenaline = true;
   }
 
   /**
-   * Stops the player from walking.
+   * Deactivates adrenaline.
+   * Stops the player from moving at faster.
+   */
+  void stopAdrenaline() {
+    this.walkDirection = Vector2.Zero.cpy();
+    updateSpeed();
+    moving = false;
+    adrenaline = false;
+  }
+
+  /**
+   * Gives the player a boost of speed in the given direction
+   * @param direction The direction in which the player should dash
+   */
+  void dash(Vector2 direction) {
+    this.walkDirection = direction;
+    moving = true;
+
+    Body body = physicsComponent.getBody();
+    direction.scl(4);
+    body.applyLinearImpulse(direction, body.getWorldCenter(), true);
+    direction.scl((float) 1 / 4);
+  }
+
+  /**
+   * Decelerates the player back to regular speed.
    */
   void stopDashing() {
     this.walkDirection = Vector2.Zero.cpy();
     updateSpeed();
     moving = false;
-    dashing = false;
   }
-
 
   /**
    * Makes the player attack.
