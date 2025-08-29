@@ -73,6 +73,7 @@ class KeyComponentTest {
         key.create();
 
         assertFalse(inv.hasItem("pink-key"), "Inventory should not contain the key initially");
+        verify(entityService, never()).unregister(key);
 
         KeyComponent kc = key.getComponent(KeyComponent.class);
         assertNotNull(kc, "Key entity should have a KeyComponent");
@@ -88,13 +89,15 @@ class KeyComponentTest {
         // Simulate collision (adjust if your signal is single-arg)
         key.getEvents().trigger("collisionStart", key, player);
 
-        // Inventory updated
+        // Inventory updated and entity disposed via unregister()
         assertTrue(inv.hasItem("pink-key"), "Inventory should contain the collected key");
+        verify(entityService, times(1)).unregister(key);
 
         // Triggering again doesn't double-add or double-unregister
         int countAfter = inv.getItemCount("pink-key");
         key.getEvents().trigger("collisionStart", key, player);
         assertEquals(countAfter, inv.getItemCount("pink-key"));
+        verify(entityService, times(1)).unregister(key);
     }
 
     @Test
@@ -114,9 +117,13 @@ class KeyComponentTest {
         assertEquals(afterFirst + 1, inv.getItemCount("pink-key"),
                 "Collecting a second entity of the same key id should increment by one");
 
-        // Double-trigger on the first should not increase coin
+        // Double-trigger on the first should not increase cojnt
         key1.getEvents().trigger("collisionStart", key1, player);
         assertEquals(afterFirst + 1, inv.getItemCount("pink-key"));
+
+        // Each key entity should be unregistered exactly once
+        verify(entityService, times(1)).unregister(key1);
+        verify(entityService, times(1)).unregister(key2);
     }
 
     @Test
@@ -128,5 +135,6 @@ class KeyComponentTest {
 
         key.getEvents().trigger("collisionStart", key, rock);
         assertEquals(0, inv.getTotalItemCount());
+        verify(entityService, never()).unregister(key);
     }
 }
