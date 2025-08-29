@@ -93,7 +93,7 @@ public class InventoryComponent extends Component {
      * Uses one instance of {@code itemId}.
      * <p>
      *     Decrements inventory item count by 1 if the item is present
-     *     in the inventory and the number of items is &gt 0.
+     *     in the inventory and the number of items is &gt; 0.
 \     * </p>
      *
      * @param itemId non-null identifier of item to decrement.
