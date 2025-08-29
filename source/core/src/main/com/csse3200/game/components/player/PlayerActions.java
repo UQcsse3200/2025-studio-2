@@ -32,6 +32,8 @@ public class PlayerActions extends Component {
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
 
+  private float jumpImpulseFactor = 12.5f;
+
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
@@ -126,7 +128,7 @@ public class PlayerActions extends Component {
       body.setLinearVelocity(vel.x, 0f);
     }
 
-      float impulseY = body.getMass() * 12.5f;
+      float impulseY = body.getMass() * jumpImpulseFactor;
 
       body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
       /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
