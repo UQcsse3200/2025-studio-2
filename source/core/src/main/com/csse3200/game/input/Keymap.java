@@ -51,7 +51,7 @@ public class Keymap {
    * @return Boolean for if the action and key were registered/set correctly (true) or not
    * (false).
    */
-  private static boolean registerAction(String actionName, int keyCode) {
+  public static boolean registerAction(String actionName, int keyCode) {
     // Register action, return false if unsuccessful
     if (!registerAction(actionName)) {
       return false;
@@ -106,10 +106,8 @@ public class Keymap {
   /**
    * Attempts to register and set key codes for all actions in the game. Any actions that require
    * a keybind in the game should be set here with there default key codes.
-   *
-   * @return The key map after default actions have been registered.
    */
-  public static Map<String, Integer> setKeyMapDefaults() {
+  public static void setKeyMapDefaults() {
     // Player keybindings
     registerAction("PlayerUp", Input.Keys.W);
     registerAction("PlayerDown", Input.Keys.S);
@@ -121,15 +119,5 @@ public class Keymap {
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);
     registerAction("TerminalToggle", Input.Keys.GRAVE);
-
-    return keyMap;
-  }
-
-  /**
-   * Returns the map of all actions and their respective key bindings.
-   * @return The key map containing actions and key codes.
-   */
-  public static Map<String, Integer> getKeyMap() {
-    return keyMap;
   }
 }
