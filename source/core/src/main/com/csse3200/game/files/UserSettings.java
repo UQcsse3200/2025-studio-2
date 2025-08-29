@@ -89,7 +89,7 @@ public class UserSettings {
     /**
      * ui Scale. Currently unused, but can be implemented.
      */
-    public float uiScale = 1f;
+//    public float uiScale = 1f;
     public DisplaySettings displayMode = null;
   }
 

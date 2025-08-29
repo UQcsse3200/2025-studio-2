@@ -80,10 +80,10 @@ public class SettingsMenuDisplay extends UIComponent {
     vsyncCheck = new CheckBox("", skin);
     vsyncCheck.setChecked(settings.vsync);
 
-    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
-    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
-    uiScaleSlider.setValue(settings.uiScale);
-    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
+//    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
+//    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
+//    uiScaleSlider.setValue(settings.uiScale);
+//    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
 
     Label displayModeLabel = new Label("Resolution:", skin);
     displayModeSelect = new SelectBox<>(skin);
@@ -105,25 +105,25 @@ public class SettingsMenuDisplay extends UIComponent {
     table.add(vsyncLabel).right().padRight(15f);
     table.add(vsyncCheck).left();
 
-    table.row().padTop(10f);
-    Table uiScaleTable = new Table();
-    uiScaleTable.add(uiScaleSlider).width(100).left();
-    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
+//    table.row().padTop(10f);
+//    Table uiScaleTable = new Table();
+//    uiScaleTable.add(uiScaleSlider).width(100).left();
+//    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
 
-    table.add(uiScaleLabel).right().padRight(15f);
-    table.add(uiScaleTable).left();
+//    table.add(uiScaleLabel).right().padRight(15f);
+//    table.add(uiScaleTable).left();
 
     table.row().padTop(10f);
     table.add(displayModeLabel).right().padRight(15f);
     table.add(displayModeSelect).left();
 
     // Events on inputs
-    uiScaleSlider.addListener(
-        (Event event) -> {
-          float value = uiScaleSlider.getValue();
-          uiScaleValue.setText(String.format("%.2fx", value));
-          return true;
-        });
+//    uiScaleSlider.addListener(
+//        (Event event) -> {
+//          float value = uiScaleSlider.getValue();
+//          uiScaleValue.setText(String.format("%.2fx", value));
+//          return true;
+//        });
 
     return table;
   }
@@ -193,7 +193,7 @@ public class SettingsMenuDisplay extends UIComponent {
       settings.fps = fpsVal;
     }
     settings.fullscreen = fullScreenCheck.isChecked();
-    settings.uiScale = uiScaleSlider.getValue();
+//    settings.uiScale = uiScaleSlider.getValue();
     settings.displayMode = new DisplaySettings(displayModeSelect.getSelected().object);
     settings.vsync = vsyncCheck.isChecked();
 
