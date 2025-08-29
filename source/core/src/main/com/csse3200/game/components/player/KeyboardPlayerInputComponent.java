@@ -69,7 +69,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyUp(int keycode) {
     switch (keycode) {
       case Keys.SPACE:
-        triggerLandedEvent();
+
         return true;
       case Keys.A:
         walkDirection.sub(Vector2Utils.LEFT);
@@ -102,11 +102,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private void triggerJumpEvent() {
     entity.getEvents().trigger("jump"); //put jump here
 
-  }
-
-  private void triggerLandedEvent() {
-    // WRITE SO IF COLLISION WITH GROUND HAPPENS THIS TRIGGERS
-    entity.getEvents().trigger("landed");
   }
 
   private void triggerAdrenalineEvent() {
