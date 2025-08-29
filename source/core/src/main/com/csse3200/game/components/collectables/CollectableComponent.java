@@ -36,7 +36,8 @@ public abstract class CollectableComponent extends Component {
 
         if (onCollect(p)) {
             collected = true;
-            entity.dispose(); // dispose collectable
+            entity.setEnabled(false);
+            // entity.dispose(); // dispose collectable
         }
     }
 
