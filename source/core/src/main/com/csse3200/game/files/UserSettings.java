@@ -77,6 +77,16 @@ public class UserSettings {
   }
 
   /**
+   * Returns the normalized music volume stored in the user settings. That is, the music volume is
+   * a fraction of it's intended volume according to the master volume.
+   * @return The normalized volume for the music.
+   */
+  public static float getMusicVolumeNormalized() {
+    Settings settings = get();
+    return settings.musicVolume * settings.masterVolume;
+  }
+
+  /**
    * Stores game settings, can be serialised/deserialised.
    */
   public static class Settings {
