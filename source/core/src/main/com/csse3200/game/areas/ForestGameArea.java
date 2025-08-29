@@ -47,7 +47,10 @@ public class ForestGameArea extends GameArea {
           "images/blue_button.png",
           "images/blue_button_pushed.png",
           "images/red_button.png",
-          "images/red_button_pushed.png"
+          "images/red_button_pushed.png",
+          "images/box_blue.png",
+          "images/box_red.png",
+          "images/box_white.png"
 
   };
   private static final String[] forestTextureAtlases = {
@@ -170,15 +173,24 @@ public class ForestGameArea extends GameArea {
 
   private void spawnBoxes() {
 
-      // Static box
-      Entity staticBox = BoxFactory.createStaticBox();
-      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+//      // Static box
+//      Entity staticBox = BoxFactory.createStaticBox();
+//      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+
+      // Row of static boxes, until platforms are in main
+      int rowLength = 6;
+      int startX = 10;
+      int fixedY = 20;
+
+      for (int i = 0; i < rowLength; i++) {
+          Entity staticBox = BoxFactory.createStaticBox();
+          spawnEntityAt(staticBox, new GridPoint2(startX + i, fixedY), true, true);
+      }
 
       // Moveable box
       Entity moveableBox = BoxFactory.createMoveableBox();
-      spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
+      spawnEntityAt(moveableBox, new GridPoint2(startX + rowLength / 2, fixedY + 1), true,  true);
 
-      // Add other types of boxes here
   }
 
   private void spawnButtons() {

@@ -1,8 +1,5 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -23,17 +20,9 @@ public class BoxFactory {
      * @return A new static box Entity
      */
     public static Entity createStaticBox() {
-        // Placeholder texture (white) rendered via Pixmap (8 bits each per RGBA)
-        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.valueOf("FFFFFF"));
-        pixmap.fill();
-
-        // Convert Pixmap box to Texture
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose();
 
         Entity staticBox = new Entity()
-                .addComponent(new TextureRenderComponent(texture))
+                .addComponent(new TextureRenderComponent("images/box_white.png"))
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
@@ -56,15 +45,8 @@ public class BoxFactory {
      * @return A new moveable box Entity
      */
     public static Entity createMoveableBox() {
-        Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-        pixmap.setColor(Color.valueOf("#4682B4"));
-        pixmap.fill();
-
-        Texture texture = new Texture(pixmap);
-        pixmap.dispose();
-
         Entity moveableBox = new Entity()
-                .addComponent(new TextureRenderComponent(texture))
+                .addComponent(new TextureRenderComponent("images/box_blue.png"))
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.DynamicBody))
                 .addComponent(new ColliderComponent()
