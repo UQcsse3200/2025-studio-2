@@ -5,4 +5,7 @@ package com.csse3200.game.input;
  */
 public class Keymap {
 
+    private Keymap() {
+        throw new IllegalStateException("Cannot instantiate static Keymap class");
+    }
 }
