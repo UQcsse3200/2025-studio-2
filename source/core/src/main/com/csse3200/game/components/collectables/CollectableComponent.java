@@ -4,6 +4,8 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.rendering.RenderComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
  * Component that tracks and manages a player's inventory as a multiset of item identifiers
@@ -36,7 +38,7 @@ public abstract class CollectableComponent extends Component {
 
         if (onCollect(p)) {
             collected = true;
-            entity.dispose(); // dispose collectable
+            entity.setEnabled(false);
         }
     }
 
