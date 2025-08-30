@@ -32,4 +32,3 @@ public class PlatformFactory {
         throw new IllegalStateException("Instantiating static util class");
     }
 }
-;
