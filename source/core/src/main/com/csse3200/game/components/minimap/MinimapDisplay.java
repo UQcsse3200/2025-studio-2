@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,14 +28,6 @@ public class MinimapDisplay extends UIComponent {
   private Table rootTable;
 
   /**
-   * The shape the minimap will have
-   */
-  public enum MinimapShape {
-    SQUARE,
-    CIRCULAR
-  }
-
-  /**
    * Dictate where the Minimap will be drawn
    */
   public enum MinimapPosition {
@@ -50,21 +41,7 @@ public class MinimapDisplay extends UIComponent {
    * Used to specify the options for drawing the minimap.
    */
   public static class MinimapOptions {
-    public MinimapShape shape;
     public MinimapPosition position;
-
-    public MinimapOptions() {
-      this(MinimapShape.SQUARE);
-    }
-
-    public MinimapOptions(MinimapShape shape) {
-      this(shape, MinimapPosition.BOTTOM_RIGHT);
-    }
-
-    private MinimapOptions(MinimapShape shape, MinimapPosition position) {
-      this.shape = shape;
-      this.position = position;
-    }
   }
 
   /**
@@ -114,9 +91,6 @@ public class MinimapDisplay extends UIComponent {
     contentStack.add(markerGroup);
 
     Table minimapContainer = new Table();
-    if (options.shape == MinimapShape.CIRCULAR) {
-      minimapContainer.setClip(true);
-    }
     minimapContainer.add(contentStack).size(displaySize);
 
     Stack finalStack = new Stack();

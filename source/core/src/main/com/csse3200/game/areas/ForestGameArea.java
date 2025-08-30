@@ -105,7 +105,6 @@ public class ForestGameArea extends GameArea {
         ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
 
     MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-    options.shape = MinimapDisplay.MinimapShape.CIRCULAR;
     options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
 
     float tileSize = terrain.getTileSize();
