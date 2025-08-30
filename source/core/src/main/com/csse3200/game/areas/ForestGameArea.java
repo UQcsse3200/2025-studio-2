@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ButtonContactListener;
@@ -45,11 +46,12 @@ public class ForestGameArea extends GameArea {
     "images/iso_grass_3.png",
     "images/button.png",
     "images/button_pushed.png",
-          "images/blue_button.png",
-          "images/blue_button_pushed.png",
-          "images/red_button.png",
-          "images/red_button_pushed.png"
-
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/minimap_forest_area.png",
+    "images/minimap_player_marker.png",
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -84,6 +86,8 @@ public class ForestGameArea extends GameArea {
     spawnTerrain();
     spawnTrees();
 
+    MinimapDisplay minimapDisplay = createMinimap();
+
     player = spawnPlayer();
     spawnGhosts();
     spawnGhostKing();
@@ -94,6 +98,27 @@ public class ForestGameArea extends GameArea {
      spawnLights(); // uncomment to spawn in lights
      spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)
     playMusic();
+  }
+
+  private MinimapDisplay createMinimap() {
+    Texture minimapTexture =
+        ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
+
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.shape = MinimapDisplay.MinimapShape.CIRCULAR;
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+
+    float tileSize = terrain.getTileSize();
+    Vector2 worldSize =
+        new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    MinimapDisplay minimapDisplay =
+        new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+
+    Entity minimapEntity = new Entity();
+    minimapEntity.addComponent(minimapDisplay);
+    spawnEntity(minimapEntity);
+
+    return minimapDisplay;
   }
 
   private void displayUI() {
