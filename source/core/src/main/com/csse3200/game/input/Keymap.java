@@ -20,31 +20,13 @@ public class Keymap {
   /**
    * Keymap should never be instantiated
    */
-  private Keymap() {
+  public Keymap() {
     throw new IllegalStateException("Cannot instantiate static Keymap class");
   }
 
   /**
-   * Registers a new action into the keymap with a null key code (-1). Returns false if the action
-   * is already in the keymap.
-   *
-   * @param actionName The name of the action to be added to the map.
-   * @return Boolean for if the action was registered (true) or not (false).
-   */
-  private static boolean registerAction(String actionName) {
-    // If action has already been registered, do nothing and return false
-    if (keyMap.containsKey(actionName)) {
-      return false;
-    }
-
-    // Create mapping with null keycode, return true
-    keyMap.put(actionName, -1);
-    return true;
-  }
-
-  /**
    * Registers a new action into the keymap with a given key code. Returns false if the action is
-   * already in the keymap or if the key code is already in use.
+   * already in the keymap, or if the key code is already in use.
    *
    * @param actionName The name of the action to be added to the map.
    * @param keyCode    The key code to be assigned to the action.
@@ -52,37 +34,40 @@ public class Keymap {
    * (false).
    */
   public static boolean registerAction(String actionName, int keyCode) {
-    // Register action, return false if unsuccessful
-    if (!registerAction(actionName)) {
+    // Return false if action is in keymap
+    if (keyMap.containsKey(actionName)) {
+      return false;
+    }
+    // Check if key code is already a value in map
+    if (keyMap.containsValue(keyCode)) {
       return false;
     }
 
-    // Try to set keycode for action, return false if unsuccessful
-    return setActionKeyCode(actionName, keyCode);
+    // Register new action
+    keyMap.put(actionName, keyCode);
+    return true;
   }
 
   /**
-   * Sets a key code as the value for a key labelled actionName. Returns false if the action does
-   * not exist, or if the key code has already been assigned to an action.
+   * Updates an existing action in the keymap with a given key code. Returns false if the action is
+   * not in the keymap, or if the key code is already in use.
    *
-   * @param actionName The action whose value is being altered.
+   * @param actionName The name of the action to be added to the map.
    * @param keyCode    The key code to be assigned to the action.
-   * @return Boolean for if the key code was set successfully (true) or not (false).
+   * @return Boolean for if the action and key were registered/set correctly (true) or not
+   * (false).
    */
   public static boolean setActionKeyCode(String actionName, int keyCode) {
-    // If action does not exist, do nothing and return false
+    // Return false if action is not in keymap
     if (!keyMap.containsKey(actionName)) {
       return false;
     }
-
-    // Check to see if key code is already a value in map, return false and do nothing if so
-    for (Integer value : keyMap.values()) {
-      if (value == keyCode) {
-        return false;
-      }
+    // Check if key code is already a value in map
+    if (keyMap.containsValue(keyCode)) {
+      return false;
     }
 
-    // Otherwise, set key code to specified action.
+    // Register new action
     keyMap.put(actionName, keyCode);
     return true;
   }
@@ -95,8 +80,8 @@ public class Keymap {
    * not set for action.
    */
   public static int getActionKeyCode(String actionName) {
-    // Key code is -1 if action does not exist or key code not set for action
-    if (!keyMap.containsKey(actionName) || keyMap.get(actionName) == null) {
+    // Key code is -1 if action does not exist
+    if (!keyMap.containsKey(actionName)) {
       return -1;
     }
 
@@ -120,5 +105,9 @@ public class Keymap {
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);
     registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT);
     registerAction("TerminalToggle", Input.Keys.GRAVE);
+  }
+
+  public static Map<String, Integer> getKeyMap() {
+    return keyMap;
   }
 }
