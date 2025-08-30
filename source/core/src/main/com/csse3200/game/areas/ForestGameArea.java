@@ -204,6 +204,13 @@ public class ForestGameArea extends GameArea {
     longPlatform.setScale(10,0.1f);
     spawnEntityAt(longPlatform, longPlatformPos, false, false);
 
+    Entity movingPlatform = PlatformFactory.createMovingPlatform(
+            new Vector2(5f, 8f),
+            new Vector2(12f, 8f),
+            1.5f
+    );
+    movingPlatform.setScale(2,1);
+    spawnEntity(movingPlatform);
   }
   private void spawnBoxes() {
 
