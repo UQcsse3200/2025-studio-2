@@ -57,6 +57,7 @@ public class MovingPlatformComponent extends Component {
                             .add(delta),0);
         }
         lastPos.set(pos);
+        System.out.println("Pos: " + pos + " Target: " + target + " Vel: " + dir);
     }
 
     private void onCollisionStart(Object fixture, Object otherFixture) {

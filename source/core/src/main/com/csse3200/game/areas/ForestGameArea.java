@@ -205,14 +205,13 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(longPlatform, longPlatformPos, false, false);
 
     float ts = terrain.getTileSize();
-    spawnEntityAt(
-            PlatformFactory.createMovingPlatform(
-                    new Vector2(6f * ts, 0f),
-                    2f
-            ),
-            new GridPoint2(8,6),
-            false, false
-    );
+    GridPoint2 movingPos = new GridPoint2(8,6);
+    Vector2 offsetWorld  = new Vector2(6f * ts, 0f);
+    float speed = 2f;
+    Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
+    movingPlatform.setScale(2,1);
+    spawnEntityAt(movingPlatform, movingPos, false, false);
+
   }
   private void spawnBoxes() {
 
