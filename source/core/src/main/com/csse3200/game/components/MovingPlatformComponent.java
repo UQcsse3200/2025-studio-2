@@ -11,27 +11,27 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import java.util.HashSet;
 import java.util.Set;
 public class MovingPlatformComponent extends Component {
-    private final Vector2 start;
-    private final Vector2 end;
+    private Vector2 start;
+    private Vector2 end;
+    private final Vector2 offset;
     private final float speed;
     private boolean forward = true;
     private PhysicsComponent physics;
     private final Set<Entity> passengers = new HashSet<>();
     private Vector2 lastPos;
 
-    public MovingPlatformComponent(Vector2 start, Vector2 end, float speed){
-        this.start = start;
-        this.end = end;
+    public MovingPlatformComponent(Vector2 offset, float speed){
+        this.offset = offset;
         this.speed = speed;
     }
 
     @Override
     public void create(){
         physics = entity.getComponent(PhysicsComponent.class);
-        physics.getBody().setTransform(start,0);
-        lastPos = start.cpy();
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-        entity.getEvents().addListener("collisionEnd", this::onCollisionEnd);
+        Vector2 pos = physics.getBody().getPosition().cpy();
+        start = pos;
+        end = pos.cpy().add(offset);
+        lastPos=pos.cpy();
     }
 
     @Override

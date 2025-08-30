@@ -31,13 +31,13 @@ public class PlatformFactory {
         return platform;
     }
 
-    public static Entity createMovingPlatform(Vector2 start, Vector2 end, float speed) {
+    public static Entity createMovingPlatform(Vector2 offsetWorld, float speed) {
         Entity platform_d =
                 new Entity()
                         .addComponent(new TextureRenderComponent("images/platform.png"))
                         .addComponent(new PhysicsComponent())
                         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                        .addComponent(new MovingPlatformComponent(start, end, speed));
+                        .addComponent(new MovingPlatformComponent(offsetWorld, speed));
         platform_d.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
         platform_d.getComponent(TextureRenderComponent.class).scaleEntity();
         return platform_d;
