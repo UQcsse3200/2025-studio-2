@@ -72,8 +72,9 @@ public class ForestGameArea extends GameArea {
     spawnTrees();
     player = spawnPlayer();
     spawnDrone();
-    spawnGhosts();
-    spawnGhostKing();
+    spawnPatrollingDrone();
+    //spawnGhosts();
+    //spawnGhostKing();
 
     playMusic();
   }
@@ -144,24 +145,22 @@ public class ForestGameArea extends GameArea {
 
   // Test drone spawn in forest area
   private void spawnDrone() {
-    // GridPoint2 minPos = new GridPoint2(0, 0);
-    // GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-    // GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-    GridPoint2 startPos = new GridPoint2(12, 12); // Test start point
-    Vector2 worldPos = terrain.tileToWorldPosition(startPos);
+    GridPoint2 tilePos = new GridPoint2(10, 12);
+    Entity drone = EnemyFactory.createDrone(player);
+    spawnEntityAt(drone, tilePos, true, true);
+  }
 
-    // Test route (for now we use relative positions like Chase/Wander tasks)
-    Vector2[] route = {
-            new Vector2(0f, 0f),
-            new Vector2(2f, 0f),
-            new Vector2(2f, 2f),
-            new Vector2(0f, 2f),
-            new Vector2(0f, 0f)
+  private void spawnPatrollingDrone() {
+    GridPoint2 tilePos = new GridPoint2(13, 12);
+    Vector2 worldPos = terrain.tileToWorldPosition(tilePos);
+    Vector2[] patrolSteps = {
+            new Vector2(0, 0),
+            new Vector2(2, 0),
+            new Vector2(2, 0)
     };
-
-    Entity drone = EnemyFactory.createDrone(player, worldPos, route);
-    spawnEntityAt(drone, startPos, true, true);
- }
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, worldPos, patrolSteps);
+    spawnEntityAt(patrolDrone, tilePos, true, true);
+  }
 
   private void spawnGhostKing() {
     GridPoint2 minPos = new GridPoint2(0, 0);

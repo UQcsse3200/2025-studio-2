@@ -4,13 +4,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.Task;
-import com.csse3200.game.components.StartPositionComponent;
 
 public class PatrolTask extends DefaultTask implements PriorityTask {
-    private final Vector2[] offsets; // Relative waypoints
+    private final Vector2 spawnPos;
+    private final Vector2[] steps; // Relative waypoints
     private final float waitTime;
 
-    private Vector2 origin;
+    private Vector2[] waypoints;
     private int i = 0;
     private boolean forward = true;
 
@@ -18,30 +18,36 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     private WaitTask waitTask;
     private Task currentTask;
 
-    public PatrolTask(Vector2[] offsets, float waitTime) {
+    public PatrolTask(Vector2 spawnPos, Vector2[] steps, float waitTime) {
+        this.spawnPos = spawnPos;
         this.waitTime = waitTime;
-        this.offsets = new Vector2[offsets.length];
-        for (int k = 0; k < offsets.length; k++) this.offsets[k] = new Vector2(offsets[k]);
+        this.steps = new Vector2[steps.length];
+        for (int k = 0; k < steps.length; k++) this.steps[k] = new Vector2(steps[k]);
     }
 
     @Override
     public int getPriority() {return 1;} // Low priority
 
+    private void buildWaypoints() {
+        waypoints = new Vector2[steps.length];
+        Vector2 acc = new Vector2();
+        for (int k = 0; k < steps.length; k++) {
+            acc.add(steps[k]);
+            waypoints[k] = new Vector2(spawnPos).add(acc);
+        }
+    }
+
     @Override
     public void start() {
         super.start();
 
-        if (offsets.length == 0) {
+        if (steps.length == 0) {
             status = Status.FINISHED;
             return;
         }
 
-        if (origin == null) {
-            StartPositionComponent sp = owner.getEntity().getComponent(StartPositionComponent.class);
-            if (sp == null) {
-                throw new IllegalStateException("PatrolTask requires StartPositionComponent on entity");
-            }
-            origin = sp.getStartPos();
+        if (waypoints == null) {
+            buildWaypoints();
         }
 
         if (waitTask == null) {
@@ -85,14 +91,25 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     }
 
     // Helpers
-    /** Check if index of waypoint points to start */
-    private boolean isStart() {
-        return i == 0;
+    boolean isWaiting() {
+        return currentTask == waitTask;
     }
 
-    /** Check if index of waypoint points to end */
-    private boolean isEnd() {
-        return i == offsets.length - 1;
+    boolean isMoving() {
+        return currentTask == movementTask;
+    }
+
+    int getIndex() {
+        return i;
+    }
+
+    Vector2[] getWaypoints() {
+        if (waypoints == null) return null;
+        else return waypoints;
+    }
+
+    boolean isMovingForward() {
+        return forward;
     }
 
     /** Toggle patrol direction */
@@ -102,17 +119,17 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
 
     /** Increment/decrement index based on patrol direction */
     private void nextIndex() {
-        if (offsets.length <= 1) return;
+        if (waypoints.length <= 1) return;
 
         if (forward) {
-            if (isEnd()) {
+            if (getIndex() == waypoints.length - 1) {
                 toggleDirection();
                 i--;
             } else {
                 i++;
             }
         } else {
-            if (isStart()) {
+            if (getIndex() == 0) {
                 toggleDirection();
                 i++;
             } else {
@@ -121,9 +138,9 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
         }
     }
 
-    /** Get the next waypoint (in the world) based on startPos and offsets */
+    /** Get the next waypoint */
     private Vector2 getWorldPos() {
-        return new Vector2(origin).add(offsets[i]);
+        return new Vector2(waypoints[i]);
     }
 
     /** Stop current task and start newTask */
