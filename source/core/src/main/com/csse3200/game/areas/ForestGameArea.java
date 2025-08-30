@@ -90,7 +90,7 @@ public class ForestGameArea extends GameArea {
     spawnGhosts();
     spawnGhostKing();
 
-    spawnBoxes();  // comment this method when you want to hide the boxes
+    // spawnBoxes();  // uncomment this method when you want to play with boxes
     // spawnButtons(); //uncomment this method to see and interact with buttons
 
     // spawnLights(); // uncomment to spawn in lights
@@ -173,24 +173,15 @@ public class ForestGameArea extends GameArea {
 
   private void spawnBoxes() {
 
-//      // Static box
-//      Entity staticBox = BoxFactory.createStaticBox();
-//      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
-
-      // Row of static boxes, until platforms are in main
-      int rowLength = 6;
-      int startX = 10;
-      int fixedY = 20;
-
-      for (int i = 0; i < rowLength; i++) {
-          Entity staticBox = BoxFactory.createStaticBox();
-          spawnEntityAt(staticBox, new GridPoint2(startX + i, fixedY), true, true);
-      }
+      // Static box
+      Entity staticBox = BoxFactory.createStaticBox();
+      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
 
       // Moveable box
       Entity moveableBox = BoxFactory.createMoveableBox();
-      spawnEntityAt(moveableBox, new GridPoint2(startX + rowLength / 2, fixedY + 1), true,  true);
+      spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
+      // Add other types of boxes here
   }
 
   private void spawnButtons() {

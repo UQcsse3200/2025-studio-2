@@ -17,8 +17,11 @@ public class InventoryComponent extends Component {
 
     /**
      * Adds an item to the inventory
+     * <p>
+     *     If item not present in inventory, the new item is created
+     *     and inserted into the inventory with a count of 1.
+     * </p>
      *
-     * @apiNote If item not present, it is inserted with a count of one.
      * @param itemId non-null identifier (e.g., {@code "key:door"}).
      */
     public void addItem(String itemId) {
@@ -27,19 +30,26 @@ public class InventoryComponent extends Component {
 
     /**
      * Adds {@code amount} instances of the given item id (stacking).
+     * <p>
+     *      If item not present in inventory, the new item is created
+     *      and inserted into the inventory with a count of amount.
+     * </p>
      *
-     * @apiNote If item not present, it is inserted with a count of amount.
      * @param itemId non-null identifier (e.g., {@code "key:door"}).
-     * @param amount number of items to add; where amount >= 0.
+     * @param amount number of items to add.
+     * @throws IllegalArgumentException when amount is negative
      */
     public void addItems(String itemId, int amount) {
+        if (amount < 0) {
+            throw new IllegalArgumentException("Amount cannot be negative");
+        }
         inventory.put(itemId, inventory.getOrDefault(itemId, 0) + amount);
     }
 
     /**
      * Returns whether at least one instance of {@code itemId} exists in the inventory.
      *
-     * @param itemId non-null identifier.
+     * @param itemId non-null identifier of item.
      * @return {@code true} if the count is &gt; 0; otherwise {@code false}.
      */
     public boolean hasItem(String itemId) {
@@ -47,9 +57,10 @@ public class InventoryComponent extends Component {
     }
 
     /**
-     * Gets the current stack count for {@code itemId}.
+     * Gets the current stack count for {@code itemId}, where the stack count
+     * is the number of instances of an item in the inventory.
      *
-     * @param itemId non-null identifier.
+     * @param itemId non-null identifier of item.
      * @return the stored count, or {@code 0} if the item is absent
      */
     public int getItemCount(String itemId) {
@@ -57,7 +68,7 @@ public class InventoryComponent extends Component {
     }
 
     /**
-     * Gets the count for all items in the inventory.
+     * Gets the count for all instances of items in the inventory.
      *
      * @return the stored count, or {@code 0} if the inventory is empty
      */
@@ -69,9 +80,8 @@ public class InventoryComponent extends Component {
         return total;
     }
 
-
     /**
-     * Completely removes the entry for {@code itemId} from the inventory.
+     * Removes all items with {@code itemId} from the inventory.
      *
      * @param itemId non-null identifier to remove.
      */
@@ -79,11 +89,14 @@ public class InventoryComponent extends Component {
         inventory.remove(itemId);
     }
 
-
     /**
-     * Uses one instance of {@code itemId}: decrements its count by {@code 1} if present.
+     * Uses one instance of {@code itemId}.
+     * <p>
+     *     Decrements inventory item count by 1 if the item is present
+     *     in the inventory and the number of items is &gt; 0.
+\     * </p>
      *
-     * @param itemId non-null identifier to decrement.
+     * @param itemId non-null identifier of item to decrement.
      */
     public void useItem(String itemId) {
         if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
