@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.TouchAttackComponent;
-import com.csse3200.game.components.npc.GhostAnimationController;
+import com.csse3200.game.components.npc.DroneAnimationController;
+import com.csse3200.game.components.npc.DroneAttackComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.components.tasks.PatrolTask;
 import com.csse3200.game.entities.Entity;
@@ -43,15 +43,16 @@ public class EnemyFactory {
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
-        // TODO: Implement drone-specific animation
+
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("drop", 0.5f, Animation.PlayMode.LOOP); // Attack animation
 
         Entity drone = createBaseEnemy(target)
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
-                // TODO: Swap to DroneAnimationController when added
-                .addComponent(new GhostAnimationController());
+                .addComponent(new DroneAnimationController())
+                .addComponent(new DroneAttackComponent(PhysicsLayer.PLAYER, 3.0f)); // 3 second attack cooldown
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
@@ -73,13 +74,13 @@ public class EnemyFactory {
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
-                .addTask(new PatrolTask(patrolStart, patrolSteps, 1f));
+                .addTask(new PatrolTask(spawnPos, patrolSteps, 1f));
         return drone;
     }
 
     /**
      * Creates a base enemy entity with a minimal, reusable set of components that all enemies share
-     * (physics, movement, collider, hitbox, touch attack and AI task holder (with no tasks).
+     * (physics, movement, collider, hitbox and AI task holder (with no tasks).
      * @return enemy
      */
     private static Entity createBaseEnemy(Entity target) {
@@ -89,10 +90,11 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
                         .addComponent(new AITaskComponent());
 
-        PhysicsUtils.setScaledCollider(enemy, 0.9f, 0.4f);
+//                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
+
+        PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
     }
 

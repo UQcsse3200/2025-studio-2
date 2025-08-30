@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.npc.GhostAnimationController;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -71,8 +72,6 @@ public class EnemyFactoryTest {
                 "Drone should have a HitboxComponent");
         assertEquals(drone.getComponent(HitboxComponent.class).getLayer(), PhysicsLayer.NPC,
                 "Drone PhysicsLayer should be NPC");
-        assertNotNull(drone.getComponent(TouchAttackComponent.class),
-                "Drone should have a TouchAttackComponent");
         assertNotNull(drone.getComponent(AITaskComponent.class),
                 "Drone should have an AITaskComponent");
     }
@@ -106,7 +105,7 @@ public class EnemyFactoryTest {
         ServiceLocator.getEntityService().register(drone);
 
         // TODO: Update for drone-specific animation controller
-        assertNotNull(drone.getComponent(GhostAnimationController.class),
+        assertNotNull(drone.getComponent(DroneAnimationController.class),
                 "Drone should have AnimationController");
     }
 
