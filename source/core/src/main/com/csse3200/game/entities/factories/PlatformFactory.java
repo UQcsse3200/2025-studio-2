@@ -32,16 +32,17 @@ public class PlatformFactory {
     }
 
     public static Entity createMovingPlatform(Vector2 offsetWorld, float speed) {
-        Entity platform_d =
-                new Entity()
-                        .addComponent(new TextureRenderComponent("images/platform.png"))
-                        .addComponent(new PhysicsComponent())
-                        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                        .addComponent(new MovingPlatformComponent(offsetWorld, speed));
-        platform_d.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
-        platform_d.getComponent(TextureRenderComponent.class).scaleEntity();
-        return platform_d;
+        Entity platform = new Entity()
+                .addComponent(new TextureRenderComponent("images/platform.png"))
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                .addComponent(new MovingPlatformComponent(offsetWorld, speed));
+
+        platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
+        platform.getComponent(TextureRenderComponent.class).scaleEntity();
+        return platform;
     }
+
     private PlatformFactory() {
         throw new IllegalStateException("Instantiating static util class");
     }
