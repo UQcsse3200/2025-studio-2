@@ -56,6 +56,12 @@ public class TerrainFactory {
   public TerrainComponent createTerrain(TerrainType terrainType) {
     ResourceService resourceService = ServiceLocator.getResourceService();
     switch (terrainType) {
+      case CAVE_ORTHO:
+        TextureRegion orthoCave =
+                new TextureRegion(resourceService.getAsset("images/cave_1.png", Texture.class));
+        TextureRegion orthoCaveRocks =
+                new TextureRegion(resourceService.getAsset("images/cave_2.png", Texture.class));
+        return createCaveTerrain(0.5f, orthoCave, orthoCaveRocks);
       case FOREST_DEMO:
         TextureRegion orthoGrass =
             new TextureRegion(resourceService.getAsset("images/grass_1.png", Texture.class));
@@ -93,6 +99,14 @@ public class TerrainFactory {
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
 
+  private TerrainComponent createCaveTerrain(
+          float tileWorldSize, TextureRegion cave, TextureRegion rocks) {
+    GridPoint2 tilePixelSize = new GridPoint2(cave.getRegionWidth(), cave.getRegionHeight());
+    TiledMap tiledMap = createCaveTiles(tilePixelSize, cave, rocks);
+    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
+    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
+  }
+
   private TiledMapRenderer createRenderer(TiledMap tiledMap, float tileScale) {
     switch (orientation) {
       case ORTHOGONAL:
@@ -119,6 +133,23 @@ public class TerrainFactory {
 
     // Add some grass and rocks
     fillTilesAtRandom(layer, MAP_SIZE, grassTuftTile, TUFT_TILE_COUNT);
+    fillTilesAtRandom(layer, MAP_SIZE, rockTile, ROCK_TILE_COUNT);
+
+    tiledMap.getLayers().add(layer);
+    return tiledMap;
+  }
+
+  private TiledMap createCaveTiles(
+          GridPoint2 tileSize, TextureRegion cave, TextureRegion rocks) {
+    TiledMap tiledMap = new TiledMap();
+    TerrainTile grassTile = new TerrainTile(cave);
+    TerrainTile rockTile = new TerrainTile(rocks);
+    TiledMapTileLayer layer = new TiledMapTileLayer(MAP_SIZE.x, MAP_SIZE.y, tileSize.x, tileSize.y);
+
+    // Create base grass
+    fillTiles(layer, MAP_SIZE, grassTile);
+
+    // Add some grass and rocks
     fillTilesAtRandom(layer, MAP_SIZE, rockTile, ROCK_TILE_COUNT);
 
     tiledMap.getLayers().add(layer);
@@ -155,6 +186,7 @@ public class TerrainFactory {
   public enum TerrainType {
     FOREST_DEMO,
     FOREST_DEMO_ISO,
-    FOREST_DEMO_HEX
+    FOREST_DEMO_HEX,
+    CAVE_ORTHO
   }
 }
