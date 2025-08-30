@@ -22,10 +22,21 @@ import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
+/**
+ * Factory for creating different types of enemies.
+ * - Base drones pursue the player but are otherwise idle.
+ * - Patrolling drones follow a patrol route.
+ */
 public class EnemyFactory {
     private static final EnemyConfigs configs =
             FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
 
+    /**
+     * Creates a drone enemy that remains idle unless chasing its target.
+     * Has drone-specific animation, combat stats and chase task.
+     * @param target that drone pursues when chasing
+     * @return drone enemy entity
+     */
     public static Entity createDrone(Entity target) {
         BaseEntityConfig config = configs.drone;
 
@@ -50,7 +61,14 @@ public class EnemyFactory {
         return drone;
     }
 
-    public static Entity createPatrollingDrone(Entity target, Vector2 patrolStart, Vector2[] patrolSteps) {
+    /**
+     * Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.
+     * @param target that drone pursues when chasing
+     * @param spawnPos used to store the starting position of the patrolling drone in the game
+     * @param patrolSteps used to build a cumulative waypoint route for patrols
+     * @return a patrolling drone enemy entity
+     */
+    public static Entity createPatrollingDrone(Entity target, Vector2 spawnPos, Vector2[] patrolSteps) {
         Entity drone = createDrone(target);
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
@@ -60,7 +78,8 @@ public class EnemyFactory {
     }
 
     /**
-     * Creates a generic enemy to be used as a base by specific enemy creation methods.
+     * Creates a base enemy entity with a minimal, reusable set of components that all enemies share
+     * (physics, movement, collider, hitbox, touch attack and AI task holder (with no tasks).
      * @return enemy
      */
     private static Entity createBaseEnemy(Entity target) {
