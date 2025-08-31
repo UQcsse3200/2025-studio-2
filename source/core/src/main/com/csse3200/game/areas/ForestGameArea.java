@@ -82,6 +82,7 @@ public class ForestGameArea extends GameArea {
   @Override
   public void create() {
     PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    // Use combined contact listener to support both tooltips and button interactions (for now)
     engine.getWorld().setContactListener(new CombinedContactListener());
     loadAssets();
 
