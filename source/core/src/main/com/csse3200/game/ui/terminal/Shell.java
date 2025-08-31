@@ -399,8 +399,8 @@ public class Shell {
    * @param function The function to execute in the loop body.
    * @return The result of the last executed statement in the loop.
    */
-  public Object whileLoop(Evaluable condition, EvaluableFunction function) {
-    while (isTruthy(condition.evaluate(env))) {
+  public Object whileLoop(EvaluableFunction condition, EvaluableFunction function) {
+    while (isTruthy(condition.evaluate(env, new ArrayList<>()))) {
       final Object result = function.evaluate(env, new ArrayList<>());
       if (result instanceof ReturnValue) return ((ReturnValue) result).value;
     }

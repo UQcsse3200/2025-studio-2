@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
@@ -24,6 +25,7 @@ import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.maingame.MainGameExitDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
+import com.csse3200.game.input.PauseInputComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,9 @@ public class MainGameScreen extends ScreenAdapter {
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
+
+  private boolean paused = false;
+
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -73,13 +78,17 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
     ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+    //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
+    //caveGameArea.create();
     forestGameArea.create();
   }
 
   @Override
   public void render(float delta) {
-    physicsEngine.update();
-    ServiceLocator.getEntityService().update();
+    if (!paused) {
+        physicsEngine.update();
+        ServiceLocator.getEntityService().update();
+    }
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
@@ -127,6 +136,14 @@ public class MainGameScreen extends ScreenAdapter {
     resourceService.unloadAssets(mainGameTextures);
   }
 
+  public boolean isPaused() {
+      return paused;
+  }
+
+  public void togglePaused() {
+      paused = !paused;
+  }
+
   /**
    * Creates the main game's ui including components for rendering ui elements to the screen and
    * capturing and handling ui input.
@@ -139,7 +156,8 @@ public class MainGameScreen extends ScreenAdapter {
     ui.addComponent(new InputDecorator(stage, 10))
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
-        .addComponent(new MainGameExitDisplay());
+        .addComponent(new MainGameExitDisplay())
+        .addComponent(new PauseInputComponent(this));
 
     ServiceLocator.getEntityService().register(ui);
   }
