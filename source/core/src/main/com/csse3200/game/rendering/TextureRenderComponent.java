@@ -7,7 +7,7 @@ import com.csse3200.game.services.ServiceLocator;
 
 /** Render a static texture. */
 public class TextureRenderComponent extends RenderComponent {
-  private final Texture texture;
+  private Texture texture;
 
   /**
    * @param texturePath Internal path of static texture to render.
@@ -16,7 +16,11 @@ public class TextureRenderComponent extends RenderComponent {
   public TextureRenderComponent(String texturePath) {
     this(ServiceLocator.getResourceService().getAsset(texturePath, Texture.class));
   }
-//...
+
+  public void setTexture(String texture) {
+    this.texture = ServiceLocator.getResourceService().getAsset(texture, Texture.class);
+  }
+
   /** @param texture Static texture to render. Will be scaled to the entity's scale. */
   public TextureRenderComponent(Texture texture) {
     this.texture = texture;

@@ -24,6 +24,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
     entity.getEvents().addListener("attack", this::attack);
+    entity.getEvents().addListener("interact", this::interact);
   }
 
   @Override
@@ -67,5 +68,15 @@ public class PlayerActions extends Component {
   void attack() {
     Sound attackSound = ServiceLocator.getResourceService().getAsset("sounds/Impact4.ogg", Sound.class);
     attackSound.play();
+  }
+
+  /**
+   * Makes the player interact
+   */
+  void interact() {
+    // do something
+    Sound interactSound = ServiceLocator.getResourceService().getAsset(
+            "sounds/chimesound.mp3", Sound.class);
+    interactSound.play();
   }
 }
