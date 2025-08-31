@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.csse3200.game.ui.UIComponent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
+/**
+ * UIComponent for rendering the current FPS in the game.
+ */
 public class FPSDisplay extends UIComponent {
     /**
      * Label used to show the game's current FPS
