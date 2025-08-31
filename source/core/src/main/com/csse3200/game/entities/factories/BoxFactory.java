@@ -7,7 +7,22 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
+/**
+ * Factory class for creating box entities in the game.
+ * <p>
+ * Types of boxes that can be created include: <br>
+ * -  white static (immovable) <br>
+ * -  blue movable
+ */
 public class BoxFactory {
+
+    /**
+     * Private constructor to prevent instantiation of non-static box instances and remove gradle
+     * warnings about missing constructor in this class.
+     */
+    private BoxFactory() {
+        // Intentionally blank
+    }
 
     /**
      * Creates a static (immovable) box entity.
