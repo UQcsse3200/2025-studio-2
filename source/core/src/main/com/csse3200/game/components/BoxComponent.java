@@ -7,23 +7,36 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
+/**
+ * Component for a box that can be moved by the player.
+ * <p>
+ * Handles player interactions with a box, including lifting, carrying and dropping.
+ */
 public class BoxComponent extends Component {
 
-//    private static final float INTERACT_RANGE = 1.5f;
+    /** Maximum distance for the player to lift the box */
     private static final float LIFT_RANGE = 1f;
 
     private ColliderComponent playerCollider = null;
     private boolean playerInRange = false;
-//    private boolean isPulled = false;
     private boolean isLifted = false;
     private boolean addToPlayer = false;
     private PhysicsComponent boxPhysics;
 
+    /**
+     * Retrieves the PhysicsComponent of the box when the component is created.
+     */
     @Override
     public void create() {
         boxPhysics = entity.getComponent(PhysicsComponent.class);
     }
 
+    /**
+     * Sets the player collider when the player is range of the box.
+     * Adds event listeners to the player for interacting and walking.
+     *
+     * @param collider  The ColliderComponent of the player
+     */
     public void setPlayerInRange(ColliderComponent collider) {
         if (collider == null) {
             resetPlayerState();
@@ -41,21 +54,37 @@ public class BoxComponent extends Component {
         }
     }
 
+    /**
+     * Resets the state of the box in relation to the player
+     */
     private void resetPlayerState() {
         playerInRange = false;
         playerCollider = null;
         isLifted = false;
     }
 
+    /**
+     * Gets the player entity currently in range of the box
+     *
+     * @return
+     */
     private Entity getPlayer() {
         return (!playerInRange || playerCollider == null) ? null : playerCollider.getEntity();
     }
 
+    /**
+     * Retrieves the PlayerActions component of the player currently in range.
+     *
+     * @return  The PlayerActions component, or null if none
+     */
     private PlayerActions getPlayerActions() {
         Entity player = getPlayer();
         return (player == null) ? null : player.getComponent(PlayerActions.class);
     }
 
+    /**
+     * Handles the player attempting to lift a box if it is in range.
+     */
     private void onPlayerInteract() {
         Entity player = getPlayer();
         if (player == null) {
@@ -66,11 +95,12 @@ public class BoxComponent extends Component {
 
         if (distance <= LIFT_RANGE) {
             toggleLift();
-//        } else if (distance <= INTERACT_RANGE) {
-//            togglePull();
         }
     }
 
+    /**
+     * Toggles the lifted state of the box.
+     */
     private void toggleLift() {
         isLifted = !isLifted;
         if (isLifted) {
@@ -81,11 +111,11 @@ public class BoxComponent extends Component {
             boxPhysics.getBody().setAngularVelocity(0);
         }
     }
-//
-//    private void togglePull() {
-//        isPulled = !isPulled;
-//    }
 
+    /**
+     * Updates the box every frame.  If the player is lifting the box, the box continues to move
+     * with the player.
+     */
     @Override
     public void update() {
         if (isLifted) {
@@ -93,29 +123,23 @@ public class BoxComponent extends Component {
         }
     }
 
+    /**
+     * Called when the player moves.  Updates the box position if it is lifted.
+     *
+     * @param direction  The direction the player is walking (currently unused)
+     */
     public void onPlayerWalk(Vector2 direction) {
         if (!playerInRange || playerCollider == null) {
             return;
         }
-//        if (isPulled) {
-//            applyPull();
-//        }
         if (isLifted) {
             moveWithPlayer();
         }
     }
 
-//    private void applyPull() {
-//        PlayerActions actions = getPlayerActions();
-//
-//        if (actions == null) {
-//            return;
-//        }
-//
-//        Vector2 impulse = new Vector2(actions.getWalkDirection()).scl(-1f).scl(boxPhysics.getBody().getMass());
-//        boxPhysics.getBody().applyLinearImpulse(impulse, boxPhysics.getBody().getWorldCenter(), true);
-//    }
-
+    /**
+     * moves the lifted box to stay in position with the player
+     */
     private void moveWithPlayer() {
         Entity player = getPlayer();
         if (player == null) {
@@ -124,25 +148,5 @@ public class BoxComponent extends Component {
 
         Vector2 liftPosition = player.getPosition().cpy().add(0, 0.5f);
         boxPhysics.getBody().setTransform(liftPosition, 0);
-//        entity.setPosition(player.getPosition().cpy().add(0, 1f));
     }
-
-    public void throwBox(float forceMultiplier) {
-        if (!isLifted) {
-            return;
-        }
-
-        PlayerActions actions = getPlayerActions();
-        Entity player = getPlayer();
-        if (actions == null || player == null) {
-            return;
-        }
-
-        Vector2 throwDir = new Vector2(actions.getWalkDirection()).nor().scl(forceMultiplier);
-
-        boxPhysics.setBodyType(BodyDef.BodyType.DynamicBody);
-        boxPhysics.getBody().applyLinearImpulse(throwDir.scl(boxPhysics.getBody().getMass()), boxPhysics.getBody().getWorldCenter(), true);
-        isLifted = false;
-    }
-
 }

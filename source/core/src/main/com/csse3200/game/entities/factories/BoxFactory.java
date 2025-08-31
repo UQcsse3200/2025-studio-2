@@ -52,12 +52,10 @@ public class BoxFactory {
      * Creates a dynamic (moveable) box entity.
      * <p>
      * The box currently displays as a blue square, scaled to half a game unit.
-     * Its texture is currently a placeholder and can be replaced with a pixel image.
      * <p>
-     * Its dynamic body type makes it moveable.
-     * [Not finished:  The player can push (implemented), pull, pick up, and throw the box.
-     * The box will fall if pushed or thrown through platform gaps.  When thrown, the box can
-     * be used to damage enemies.  It can also be destroyed.]
+     * Its dynamic body type makes it moveable.  The player can automatically push the box with
+     * its body, or interact with the box to lift it or drop it.  The player can move with the
+     * box whilst it is lifted.
      * @return A new moveable box Entity
      */
     public static Entity createMoveableBox() {
