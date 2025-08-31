@@ -4,11 +4,13 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
+import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -63,7 +65,9 @@ public class MainGameScreen extends ScreenAdapter {
     ServiceLocator.registerRenderService(new RenderService());
 
     renderer = RenderFactory.createRenderer();
-    renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
+
+    //renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
+
     renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
 
     // Registering the new lighting service with the service manager
@@ -84,6 +88,16 @@ public class MainGameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
+
+      Vector2 new_position = renderer.getCamera().getEntity().getPosition();
+      Array<Entity> entities = EntityService.get_entities();
+      for (Entity entity : entities) {
+          if (entity.getComponent(PlayerActions.class) != null) {
+              new_position = entity.getPosition();
+          }
+      }
+      renderer.getCamera().getEntity().setPosition(new_position);
+
     physicsEngine.update();
     ServiceLocator.getEntityService().update();
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.

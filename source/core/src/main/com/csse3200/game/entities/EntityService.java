@@ -15,7 +15,7 @@ public class EntityService {
   private static final Logger logger = LoggerFactory.getLogger(EntityService.class);
   private static final int INITIAL_CAPACITY = 16;
 
-  private final Array<Entity> entities = new Array<>(false, INITIAL_CAPACITY);
+  private static final Array<Entity> entities = new Array<>(false, INITIAL_CAPACITY);
 
   /**
    * Register a new entity with the entity service. The entity will be created and start updating.
@@ -53,5 +53,13 @@ public class EntityService {
     for (Entity entity : entities) {
       entity.dispose();
     }
+  }
+
+  /**
+   * Returns entities Array
+   * @return entities array
+   */
+  public static Array<Entity> get_entities() {
+    return entities;
   }
 }
