@@ -1,16 +1,20 @@
 package com.csse3200.game.physics;
 
+import com.badlogic.gdx.math.Octree;
 import com.badlogic.gdx.physics.box2d.*;
+import com.csse3200.game.components.BoxComponent;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 
+import javax.swing.*;
+
 /**
  * ContactListener for detecting collisions between the player entity and the button entity
  * Triggers the push event when contact is made
  */
-public class ButtonContactListener implements ContactListener {
+public class ObjectContactListener implements ContactListener {
 
     /**
      * Called when two features begin to touch and checks if a player has collided with a button
@@ -26,8 +30,12 @@ public class ButtonContactListener implements ContactListener {
         if (a == null || b == null) return;
 
         //set player in range
-        setPlayerInRange(a, b, true);
-        setPlayerInRange(b, a, true);
+        setPlayerInRangeOfButton(a, b, true);
+        setPlayerInRangeOfButton(b, a, true);
+
+        setPlayerInRangeOfBox(a, b, true);
+        setPlayerInRangeOfBox(b, a, true);
+
     }
 
     /**
@@ -53,13 +61,23 @@ public class ButtonContactListener implements ContactListener {
      * @param other entity for player component
      * @param inRange true if player in collision, false if they leave collision
      */
-    private void setPlayerInRange(Entity button, Entity other, boolean inRange) {
+    private void setPlayerInRangeOfButton(Entity button, Entity other, boolean inRange) {
         ButtonComponent buttonComponent = button.getComponent(ButtonComponent.class);
         PlayerActions player = other.getComponent(PlayerActions.class);
 
         if(buttonComponent != null && player != null) {
             ColliderComponent collider = inRange ? other.getComponent(ColliderComponent.class) : null;
             buttonComponent.setPlayerInRange(collider);
+        }
+    }
+
+    private void setPlayerInRangeOfBox(Entity box, Entity other, boolean inRange) {
+        BoxComponent boxComponent = box.getComponent(BoxComponent.class);
+        PlayerActions player = other.getComponent(PlayerActions.class);
+
+        if (boxComponent != null && player != null) {
+            ColliderComponent collider = inRange ? other.getComponent(ColliderComponent.class) : null;
+            boxComponent.setPlayerInRange(collider);
         }
     }
 
@@ -78,8 +96,11 @@ public class ButtonContactListener implements ContactListener {
         if (a == null || b == null) return;
 
         //check both direction of a collision
-        setPlayerInRange(a, b, false);
-        setPlayerInRange(b, a, false);
+        setPlayerInRangeOfButton(a, b, false);
+        setPlayerInRangeOfButton(b, a, false);
+
+        setPlayerInRangeOfBox(a, b, false);
+        setPlayerInRangeOfBox(b, a, false);
 
     }
 

@@ -2,14 +2,14 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.physics.ButtonContactListener;
+import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -19,6 +19,8 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -81,7 +83,7 @@ public class ForestGameArea extends GameArea {
   @Override
   public void create() {
     PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ButtonContactListener());
+    engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
 
     displayUI();
@@ -93,7 +95,7 @@ public class ForestGameArea extends GameArea {
     spawnPlatform(); //Testing platform
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
-    // spawnButtons(); //uncomment this method to see and interact with buttons
+    spawnButtons(); //uncomment this method to see and interact with buttons
 
     // spawnLights(); // uncomment to spawn in lights
     // spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)

@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.csse3200.game.components.BoxComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -68,7 +69,8 @@ public class BoxFactory {
                         .setLayer(PhysicsLayer.OBSTACLE)
                         .setDensity(1f)
                         .setRestitution(0.1f)
-                        .setFriction(0.8f));
+                        .setFriction(0.8f))
+                .addComponent(new BoxComponent());
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;
