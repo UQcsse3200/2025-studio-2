@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.*;
@@ -21,6 +22,7 @@ public class PlayerActions extends Component {
   // second
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(2);
+  private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
   private static final int DASH_SPEED_MULTIPLIER = 4;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
@@ -33,6 +35,8 @@ public class PlayerActions extends Component {
 
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
+
+  private boolean crouching = false;
 
   @Override
   public void create() {
@@ -53,6 +57,7 @@ public class PlayerActions extends Component {
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
 
+    entity.getEvents().addListener("crouch", this::crouch);
   }
 
   @Override
@@ -75,6 +80,8 @@ public class PlayerActions extends Component {
 
     if (adrenaline) {
       desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
+    } else if (crouching) {
+      desiredVelocity = walkDirection.cpy().scl(CROUCH_SPEED);
     } else {
       desiredVelocity = walkDirection.cpy().scl(WALK_SPEED);
     }
@@ -192,6 +199,18 @@ public class PlayerActions extends Component {
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
         onLand();
 
+  }
+
+  void crouch() {
+    if (crouching) {
+      crouching = false;
+      updateSpeed();
+      PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
+    } else {
+      crouching = true;
+      updateSpeed();
+      PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
+    }
   }
 
 }
