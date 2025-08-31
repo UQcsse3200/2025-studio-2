@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
@@ -13,6 +14,7 @@ import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -26,6 +28,10 @@ public class PlayerFactory {
   private static final PlayerConfig stats =
       FileLoader.readClass(PlayerConfig.class, "configs/player.json");
 
+  private static final float FOOT_HITBOX_WIDTH = 0.6f;
+  private static final float FOOT_HITBOX_HEIGHT = 0.01f;
+  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0, -0.32f);
+  private static final float FOOT_HITBOX_ANGLE = 0;
   /**
    * Create a player entity.
    * @return entity
@@ -49,6 +55,21 @@ public class PlayerFactory {
     PhysicsUtils.setScaledCollider(player, 0.6f, 1.0f);
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();
+
+    // Fixture for Player feet, used to reset jump or handle landing logic
+    Body body = player.getComponent(PhysicsComponent.class).getBody();
+
+    PolygonShape footHitbox = new PolygonShape();
+    footHitbox.setAsBox(FOOT_HITBOX_WIDTH, FOOT_HITBOX_HEIGHT, FOOT_HITBOX_OFFSET, FOOT_HITBOX_ANGLE);
+
+    FixtureDef footFixtureDef = new FixtureDef();
+    footFixtureDef.shape = footHitbox;
+    footFixtureDef.isSensor = true;
+
+    Fixture footFixture = body.createFixture(footFixtureDef);
+    footFixture.setUserData("foot");
+
+    footHitbox.dispose();
     return player;
   }
 
