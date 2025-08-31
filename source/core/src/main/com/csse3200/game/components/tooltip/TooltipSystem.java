@@ -1,6 +1,5 @@
 package com.csse3200.game.components.tooltip;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -10,11 +9,10 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.BodyUserData;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.ui.UIComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Complete tooltip system for displaying contextual information when players approach entities.
@@ -109,15 +107,11 @@ public class TooltipSystem {
      * - With custom area: new TooltipComponent("Boss", TooltipStyle.WARNING, 4.0f, 3.0f)
      */
     public static class TooltipComponent extends Component {
-        private static final Logger logger = LoggerFactory.getLogger(TooltipComponent.class);
         
         private final String text;
         private final TooltipStyle style;
         private final float widthMultiplier;
         private final float heightMultiplier;
-        
-        private HitboxComponent autoCreatedHitbox;
-        private boolean playerInRange = false;
         
         /**
          * Creates a tooltip with default style and auto-sized trigger area
@@ -150,102 +144,70 @@ public class TooltipSystem {
             this.heightMultiplier = heightMultiplier;
         }
         
+        private Entity triggerZoneEntity; // Store reference to trigger zone
+        
         @Override
         public void create() {
             super.create();
-            setupHitboxIfNeeded();
-            setupCollisionListeners();
+            createTriggerZoneEntity();
         }
         
         /**
-         * Automatically creates a HitboxComponent if the entity doesn't have one
+         * Creates a separate invisible entity for tooltip detection with custom radius
          */
-        private void setupHitboxIfNeeded() {
-            HitboxComponent existingHitbox = entity.getComponent(HitboxComponent.class);
-            if (existingHitbox == null) {
-                // Create a HitboxComponent automatically
-                autoCreatedHitbox = new HitboxComponent();
-                entity.addComponent(autoCreatedHitbox);
-                
-                // Set trigger area size based on entity scale and multipliers
-                Vector2 entityScale = entity.getScale();
-                Vector2 triggerSize = new Vector2(
-                    entityScale.x * widthMultiplier,
-                    entityScale.y * heightMultiplier
-                );
-                
-                autoCreatedHitbox.setAsBoxAligned(
-                    triggerSize,
-                    PhysicsComponent.AlignX.CENTER,
-                    PhysicsComponent.AlignY.CENTER
-                );
-                
-                logger.debug("Auto-created HitboxComponent for tooltip with size {}x{}", triggerSize.x, triggerSize.y);
-            }
-        }
-        
-        /**
-         * Sets up collision event listeners for player detection
-         */
-        private void setupCollisionListeners() {
-            entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-            entity.getEvents().addListener("collisionEnd", this::onCollisionEnd);
-        }
-        
-        /**
-         * Handles collision start events - shows tooltip when player enters
-         * @param me This entity's fixture
-         * @param other The other entity's fixture
-         */
-        @SuppressWarnings("unused") // Parameters required by event system
-        private void onCollisionStart(Fixture me, Fixture other) {
-            if (other == null || other.getBody() == null || other.getBody().getUserData() == null) {
-                return;
-            }
+        private void createTriggerZoneEntity() {
+            // Calculate trigger zone size
+            Vector2 entityScale = entity.getScale();
+            Vector2 triggerSize = new Vector2(
+                entityScale.x * widthMultiplier,
+                entityScale.y * heightMultiplier
+            );
             
-            BodyUserData userData = (BodyUserData) other.getBody().getUserData();
-            Entity otherEntity = userData.entity;
+            // Create a new invisible entity for tooltip detection
+            triggerZoneEntity = new Entity();
+            // Don't set position yet - it will be updated in update() method
+            triggerZoneEntity.setScale(triggerSize);
             
-            if (isPlayer(otherEntity) && !playerInRange) {
-                playerInRange = true;
-                TooltipManager.showTooltip(text, style);
+            // Add physics components for collision detection
+            triggerZoneEntity.addComponent(new PhysicsComponent().setBodyType(com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody));
+            HitboxComponent hitbox = new HitboxComponent();
+            hitbox.setLayer(PhysicsLayer.OBSTACLE);
+            triggerZoneEntity.addComponent(hitbox);
+            
+            // Add a component to handle the tooltip logic
+            triggerZoneEntity.addComponent(new TriggerZoneComponent(text, style));
+            
+            // Try to spawn via entity service
+            try {
+                // Get the entity service and spawn the trigger zone
+                var entityService = com.csse3200.game.services.ServiceLocator.getEntityService();
+                if (entityService != null) {
+                    entityService.register(triggerZoneEntity);
+                }
+            } catch (Exception e) {
+                // Silent fail
+            }
+        }
+        
+        @Override
+        public void update() {
+            super.update();
+            // Keep trigger zone positioned at the main entity's location
+            if (triggerZoneEntity != null) {
+                triggerZoneEntity.setPosition(entity.getPosition());
             }
         }
         
         /**
-         * Handles collision end events - hides tooltip when player exits
-         * @param me This entity's fixture  
-         * @param other The other entity's fixture
+         * Gets the trigger zone entity for manual spawning if needed
+         * @return the trigger zone entity, or null if not created
          */
-        @SuppressWarnings("unused") // Parameters required by event system
-        private void onCollisionEnd(Fixture me, Fixture other) {
-            if (other == null || other.getBody() == null || other.getBody().getUserData() == null) {
-                return;
-            }
-            
-            BodyUserData userData = (BodyUserData) other.getBody().getUserData();
-            Entity otherEntity = userData.entity;
-            
-            if (isPlayer(otherEntity) && playerInRange) {
-                playerInRange = false;
-                TooltipManager.hideTooltip();
-            }
-        }
-        
-        /**
-         * Checks if an entity is the player
-         * @param entity The entity to check
-         * @return true if the entity is the player
-         */
-        private boolean isPlayer(Entity entity) {
-            if (entity == null) return false;
-            return entity.getComponent(PlayerActions.class) != null;
+        public Entity getTriggerZoneEntity() {
+            return triggerZoneEntity;
         }
         
         @Override
         public void dispose() {
-            // Note: Entity doesn't have removeComponent method, 
-            // components are automatically cleaned up on entity disposal
             super.dispose();
         }
     }
@@ -342,6 +304,62 @@ public class TooltipSystem {
         public void dispose() {
             hideTooltip();
             super.dispose();
+        }
+    }
+    
+    /**
+     * Component for invisible trigger zone entities that handle tooltip detection
+     */
+    public static class TriggerZoneComponent extends Component {
+        private final String text;
+        private final TooltipStyle style;
+        private boolean playerInRange = false;
+        
+        public TriggerZoneComponent(String text, TooltipStyle style) {
+            this.text = text;
+            this.style = style;
+        }
+        
+        @Override
+        public void create() {
+            super.create();
+            // Listen for collision events
+            entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+            entity.getEvents().addListener("collisionEnd", this::onCollisionEnd);
+        }
+        
+        @SuppressWarnings("unused") // Parameter required by event system
+        private void onCollisionStart(Fixture me, Fixture other) {
+            if (other == null || other.getBody() == null || other.getBody().getUserData() == null) {
+                return;
+            }
+            
+            BodyUserData userData = (BodyUserData) other.getBody().getUserData();
+            Entity otherEntity = userData.entity;
+            
+            if (isPlayer(otherEntity) && !playerInRange) {
+                playerInRange = true;
+                TooltipManager.showTooltip(text, style);
+            }
+        }
+        
+        @SuppressWarnings("unused") // Parameter required by event system
+        private void onCollisionEnd(Fixture me, Fixture other) {
+            if (other == null || other.getBody() == null || other.getBody().getUserData() == null) {
+                return;
+            }
+            
+            BodyUserData userData = (BodyUserData) other.getBody().getUserData();
+            Entity otherEntity = userData.entity;
+            
+            if (isPlayer(otherEntity) && playerInRange) {
+                playerInRange = false;
+                TooltipManager.hideTooltip();
+            }
+        }
+        
+        private boolean isPlayer(Entity entity) {
+            return entity.getComponent(PlayerActions.class) != null;
         }
     }
 }

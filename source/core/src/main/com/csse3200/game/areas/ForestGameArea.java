@@ -237,12 +237,12 @@ public class ForestGameArea extends GameArea {
 
       // Static box
       Entity staticBox = BoxFactory.createStaticBox();
+      staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
       spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
 
       // Moveable box
       Entity moveableBox = BoxFactory.createMoveableBox();
-      moveableBox.addComponent(new TooltipSystem.TooltipComponent(
-          "Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS, 5.0f, 5.0f));
+      moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
       // Add other types of boxes here
@@ -250,9 +250,11 @@ public class ForestGameArea extends GameArea {
 
   private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false, "platform");
+    button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
 
     Entity button2 = ButtonFactory.createButton(false, "door");
+    button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
 
     Entity button3 = ButtonFactory.createButton(false, "nothing");
