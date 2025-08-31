@@ -44,13 +44,13 @@ public class ForestGameArea extends GameArea {
     "images/iso_grass_3.png",
     "images/button.png",
     "images/button_pushed.png",
-          "images/blue_button.png",
-          "images/blue_button_pushed.png",
-          "images/red_button.png",
-          "images/red_button_pushed.png",
-          "images/box_blue.png",
-          "images/box_red.png",
-          "images/box_white.png"
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/box_blue.png",
+    "images/box_red.png",
+    "images/box_white.png"
 
   };
   private static final String[] forestTextureAtlases = {
@@ -90,7 +90,7 @@ public class ForestGameArea extends GameArea {
     spawnGhosts();
     spawnGhostKing();
 
-    // spawnBoxes();  // uncomment this method when you want to play with boxes
+     spawnBoxes();  // uncomment this method when you want to play with boxes
     // spawnButtons(); //uncomment this method to see and interact with buttons
 
     // spawnLights(); // uncomment to spawn in lights
