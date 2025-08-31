@@ -70,6 +70,12 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     return getInactivePriority();
   }
 
+  /**
+   *
+   * @return
+   */
+
+  //updated this function to stop chasing once the player is in threshold
   private float getDistanceToTarget() {
     Vector2 target_position=target.getPosition();
     Vector2 curr_position=owner.getEntity().getPosition();

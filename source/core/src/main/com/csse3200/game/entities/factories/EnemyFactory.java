@@ -15,6 +15,7 @@ import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
+import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -34,6 +35,8 @@ public class EnemyFactory {
      */
     public static Entity createDrone(Entity target) {
         Entity drone = createBaseEnemy(target);
+        // imported the touchattackcomponent and set speed of drone
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.7f);
         BaseEntityConfig config = configs.drone;
 
         AnimationRenderComponent animator =
@@ -70,7 +73,7 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-//                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,1.5f))
                         .addComponent(aiComponent);
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
