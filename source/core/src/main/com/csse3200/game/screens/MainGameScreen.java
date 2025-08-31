@@ -21,6 +21,7 @@ import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.maingame.MainGameExitDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
+import com.csse3200.game.input.PauseInputComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +38,9 @@ public class MainGameScreen extends ScreenAdapter {
   private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
+
+  private boolean paused = false;
+
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -69,8 +73,10 @@ public class MainGameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
-    physicsEngine.update();
-    ServiceLocator.getEntityService().update();
+    if (!paused) {
+        physicsEngine.update();
+        ServiceLocator.getEntityService().update();
+    }
     renderer.render();
   }
 
@@ -117,6 +123,14 @@ public class MainGameScreen extends ScreenAdapter {
     resourceService.unloadAssets(mainGameTextures);
   }
 
+  public boolean isPaused() {
+      return paused;
+  }
+
+  public void togglePaused() {
+      paused = !paused;
+  }
+
   /**
    * Creates the main game's ui including components for rendering ui elements to the screen and
    * capturing and handling ui input.
@@ -129,7 +143,8 @@ public class MainGameScreen extends ScreenAdapter {
     ui.addComponent(new InputDecorator(stage, 10))
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
-        .addComponent(new MainGameExitDisplay());
+        .addComponent(new MainGameExitDisplay())
+        .addComponent(new PauseInputComponent(this));
 
     ServiceLocator.getEntityService().register(ui);
   }
