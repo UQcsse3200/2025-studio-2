@@ -1,6 +1,8 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.BoxComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -72,5 +74,21 @@ public class BoxFactory {
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;
+    }
+
+    public static Entity createAutonomousBox(float leftX, float rightX, float speed) {
+        Entity autonomousBox = new Entity()
+                .addComponent(new TextureRenderComponent("images/box_orange.png"))
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                .addComponent(new AutonomousBoxComponent());
+
+        autonomousBox.setScale(0.5f, 0.5f);
+
+        AutonomousBoxComponent autonomousBoxComponent
+                = autonomousBox.getComponent(AutonomousBoxComponent.class);
+        autonomousBoxComponent.setBounds(leftX, rightX);
+        autonomousBoxComponent.setSpeed(speed);
+        return autonomousBox;
     }
 }

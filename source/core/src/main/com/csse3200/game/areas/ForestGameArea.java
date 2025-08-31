@@ -7,11 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -53,8 +55,10 @@ public class ForestGameArea extends GameArea {
     "images/red_button.png",
     "images/red_button_pushed.png",
     "images/box_blue.png",
+    "images/box_orange.png",
     "images/box_red.png",
     "images/box_white.png"
+
 
   };
   private static final String[] forestTextureAtlases = {
@@ -214,13 +218,20 @@ public class ForestGameArea extends GameArea {
 
       // Static box
       Entity staticBox = BoxFactory.createStaticBox();
-      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+      spawnEntityAt(staticBox, new GridPoint2(10,20), true,  true);
 
       // Moveable box
       Entity moveableBox = BoxFactory.createMoveableBox();
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
-      // Add other types of boxes here
+      // Autonomous box
+      float startX = 3f;
+      float endX = 10f;
+      float y = 17f;
+      float speed = 2f;
+
+      Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+      spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
   }
 
   private void spawnButtons() {
