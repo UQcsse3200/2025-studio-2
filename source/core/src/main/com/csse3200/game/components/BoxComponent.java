@@ -73,6 +73,51 @@ public class BoxComponent extends Component {
     }
 
     /**
+     * Checks if the player is currently in range of the box.
+     *
+     * @return true if the player is in range, false otherwise
+     */
+    public boolean isPlayerInRange() {
+        return playerInRange;
+    }
+
+    /**
+     * Checks if the box is currently lifted by the player.
+     *
+     * @return true if the box is lifted, false otherwise
+     */
+    public boolean isLifted() {
+        return isLifted;
+    }
+
+    /**
+     * Checks if the event listeners have been added to the player.
+     *
+     * @return true if listeners are added, false otherwise
+     */
+    public boolean isAddToPlayer() {
+        return addToPlayer;
+    }
+
+    /**
+     * Retrieves this box's PhysicsComponent.
+     *
+     * @return the box's PhysicsComponent
+     */
+    public PhysicsComponent getBoxPhysics() {
+        return boxPhysics;
+    }
+
+    /**
+     * Retrieves the ColliderComponent of the player currently interacting with the box
+     *
+     * @return  the player's ColliderComponent, or null if no player is in range
+     */
+    public ColliderComponent getPlayerCollider() {
+        return playerCollider;
+    }
+
+    /**
      * Retrieves the PlayerActions component of the player currently in range.
      *
      * @return  The PlayerActions component, or null if none
