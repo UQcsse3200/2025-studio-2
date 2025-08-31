@@ -26,7 +26,7 @@ public class BoxFactoryTest {
         // Register PhysicsService to initialise a box's physics body during tests
         ServiceLocator.registerPhysicsService(new PhysicsService());
 
-        // Mock ResourceService so Pixmap and Texture assets won't throw exceptions
+        // Mock ResourceService so assets won't throw exceptions
         ResourceService mockResourceService = mock(ResourceService.class);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
         ServiceLocator.registerResourceService(mockResourceService);
