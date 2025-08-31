@@ -117,6 +117,15 @@ public class PlayerActions extends Component {
     moving = false;
   }
 
+  /**
+   * Makes the player jump
+   *
+   * This method applies an upward impules to the players physics body to initiate a jump.
+   * It handles both single and double jumps - if the player has already used their single and
+   * double jump the method returns immediately
+   *
+   * Before applying the impuse, the players vertical velocity is set to 0 to keep consistent jump heights
+   */
   void jump() {
 
     if (isJumping && isDoubleJump) return;
@@ -139,6 +148,11 @@ public class PlayerActions extends Component {
       isJumping = true;
   }
 
+  /**
+   * Called when a player lands on a surface
+   *
+   * This method resets the players jump state, allowing them to jump again
+   */
   void onLand() {
     Body body = physicsComponent.getBody();
     //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
@@ -189,6 +203,12 @@ public class PlayerActions extends Component {
     interactSound.play();
   }
 
+  /**
+   * Called when a collision involving the players starts
+   *
+   * @param selfFixture The fixture belonging to the player entity involved in the collision
+   * @param otherFixture The fixture belonging to the other entity involved in the collision
+   */
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
 
     if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
