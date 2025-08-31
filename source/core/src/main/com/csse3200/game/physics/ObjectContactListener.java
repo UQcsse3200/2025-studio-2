@@ -11,14 +11,15 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import javax.swing.*;
 
 /**
- * ContactListener for detecting collisions between the player entity and the button entity
+ * ContactListener for detecting collisions between the player entity and specified objects in the
+ * game such as buttons, boxes etc.
  * Triggers the push event when contact is made
  */
 public class ObjectContactListener implements ContactListener {
 
     /**
-     * Called when two features begin to touch and checks if a player has collided with a button
-     * If so, button keeps track that player is in range
+     * Called when two features begin to touch and checks if a player has collided with an object
+     * If so, the game object keeps track that player is in range
      *
      * @param contact object representing the collision
      */
@@ -29,13 +30,12 @@ public class ObjectContactListener implements ContactListener {
 
         if (a == null || b == null) return;
 
-        //set player in range
+        // Set player in range
         setPlayerInRangeOfButton(a, b, true);
         setPlayerInRangeOfButton(b, a, true);
 
         setPlayerInRangeOfBox(a, b, true);
         setPlayerInRangeOfBox(b, a, true);
-
     }
 
     /**
@@ -46,7 +46,9 @@ public class ObjectContactListener implements ContactListener {
      * @return associated entity, null if none found
      */
     private Entity getEntityFromFixture(Fixture fixture) {
-        if (fixture == null || fixture.getBody() == null || fixture.getBody().getUserData() == null) {
+        if (fixture == null
+                || fixture.getBody() == null
+                || fixture.getBody().getUserData() == null) {
             return null;
         }
         BodyUserData data = (BodyUserData) fixture.getBody().getUserData();
@@ -66,25 +68,37 @@ public class ObjectContactListener implements ContactListener {
         PlayerActions player = other.getComponent(PlayerActions.class);
 
         if(buttonComponent != null && player != null) {
-            ColliderComponent collider = inRange ? other.getComponent(ColliderComponent.class) : null;
+            ColliderComponent collider = inRange
+                    ? other.getComponent(ColliderComponent.class)
+                    : null;
             buttonComponent.setPlayerInRange(collider);
         }
     }
 
+    /**
+     * Sets whether player is in range of a box for an interaction.
+     * This is triggered on collision begin and end
+     *
+     * @param box entity for box component
+     * @param other entity for player component
+     * @param inRange true if player in collision, false if they leave collision
+     */
     private void setPlayerInRangeOfBox(Entity box, Entity other, boolean inRange) {
         BoxComponent boxComponent = box.getComponent(BoxComponent.class);
         PlayerActions player = other.getComponent(PlayerActions.class);
 
         if (boxComponent != null && player != null) {
-            ColliderComponent collider = inRange ? other.getComponent(ColliderComponent.class) : null;
+            ColliderComponent collider = inRange
+                    ? other.getComponent(ColliderComponent.class)
+                    : null;
             boxComponent.setPlayerInRange(collider);
         }
     }
 
     /**
      * Called when two features end contact
-     * If player moves away from button (i.e. no longer colliding), button stops tracking the player
-     *  as being in range for an interaction
+     * If player moves away from an object (i.e. no longer colliding), object stops tracking the
+     * player as being in range for an interaction
      *
      * @param contact object representing the collision
      */
@@ -95,7 +109,7 @@ public class ObjectContactListener implements ContactListener {
 
         if (a == null || b == null) return;
 
-        //check both direction of a collision
+        // Check both direction of a collision
         setPlayerInRangeOfButton(a, b, false);
         setPlayerInRangeOfButton(b, a, false);
 
