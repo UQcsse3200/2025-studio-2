@@ -17,8 +17,8 @@ public class PlayerActions extends Component {
   private static final Vector2 MAX_SPEED = new Vector2(6f, 6f); // Metres per
   private static final float MAX_ACCELERATION = 70f;
   // second
-  private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
-  private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.scl(2);
+  private static final Vector2 WALK_SPEED = new Vector2(3f, 3f); // Metres
+  private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(10);
   private static final int DASH_SPEED_MULTIPLIER = 4;
 
   private PhysicsComponent physicsComponent;
@@ -45,8 +45,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("jump", this::jump);
     entity.getEvents().addListener("landed", this::onLand);
 
-    entity.getEvents().addListener("adrenaline", this::adrenaline);
-    entity.getEvents().addListener("adrenalineStop", this::stopAdrenaline);
+    entity.getEvents().addListener("toggleAdrenaline", this::toggleAdrenaline);
 
     entity.getEvents().addListener("dash", this::dash);
   }
@@ -68,6 +67,7 @@ public class PlayerActions extends Component {
     Vector2 velocity = body.getLinearVelocity();
     Vector2 desiredVelocity;
 
+    System.out.println(adrenaline);
     if (adrenaline) {
       desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
     } else {
@@ -145,21 +145,9 @@ public class PlayerActions extends Component {
    * Boosts the players speed, `activates adrenaline`
    * @param direction The direction in which the player should move
    */
-  void adrenaline(Vector2 direction) {
+  void toggleAdrenaline(Vector2 direction) {
     this.walkDirection = direction;
-    moving = true;
-    adrenaline = true;
-  }
-
-  /**
-   * Deactivates adrenaline.
-   * Stops the player from moving at faster.
-   */
-  void stopAdrenaline() {
-    this.walkDirection = Vector2.Zero.cpy();
-    updateSpeed();
-    moving = false;
-    adrenaline = false;
+    adrenaline = !adrenaline;
   }
 
   /**

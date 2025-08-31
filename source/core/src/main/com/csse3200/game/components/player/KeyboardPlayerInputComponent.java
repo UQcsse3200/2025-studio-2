@@ -26,21 +26,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
     switch (keycode) {
-      case Keys.W:
-        /*walkDirection.add(Vector2Utils.UP);
-        triggerWalkEvent();*/
-        return true;
-
       case Keys.SPACE:
         triggerJumpEvent();
         return true;
       case Keys.A:
         walkDirection.add(Vector2Utils.LEFT);
         triggerWalkEvent();
-        return true;
-      case Keys.S:
-        /*walkDirection.add(Vector2Utils.DOWN);
-        triggerWalkEvent();*/
         return true;
       case Keys.D:
         walkDirection.add(Vector2Utils.RIGHT);
@@ -49,6 +40,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       case Keys.E:
         entity.getEvents().trigger("interact");
       case Keys.V:
+        System.out.println("Toggling Adrenaline!");
         triggerAdrenalineEvent();
         return true;
       case Keys.SHIFT_LEFT:
@@ -74,10 +66,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       case Keys.A:
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
-        return true;
-      case Keys.S:
-        /*walkDirection.sub(Vector2Utils.DOWN);
-        triggerWalkEvent();*/
         return true;
       case Keys.D:
         walkDirection.sub(Vector2Utils.RIGHT);
@@ -110,18 +98,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerAdrenalineEvent() {
-    if (walkDirection.epsilonEquals(Vector2.Zero)) {
-      entity.getEvents().trigger("adrenalineStop");
-    } else {
-      entity.getEvents().trigger("adrenaline", walkDirection);
-    }
+    entity.getEvents().trigger("toggleAdrenaline", walkDirection);
   }
 
   private void triggerDashEvent() {
-    if (walkDirection.epsilonEquals(Vector2.Zero)) {
-      entity.getEvents().trigger("dashStop");
-    } else {
-      entity.getEvents().trigger("dash", walkDirection);
-    }
+    entity.getEvents().trigger("dash", walkDirection);
   }
 }
