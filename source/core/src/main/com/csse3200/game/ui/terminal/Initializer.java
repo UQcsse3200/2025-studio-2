@@ -126,7 +126,7 @@ public class Initializer {
         globalThis = globalThis;
         frames = globalThis.env.frames;
         map = globalThis.ShellMapClass.getMap(frames.get(.java.lang.Integer.sum(frames.size(), -3)));
-        return map.get(key);
+        return(map.get(key));
       });
     };
 
@@ -135,7 +135,7 @@ public class Initializer {
 
   /**
    * Setup debug functionality.
-   * Note: None of this has been tested yet, there WILL be bugs.
+   * Note: There may be bugs due to external functionality changing.
    */
   private static final String debug = """
   debugInit = () {
