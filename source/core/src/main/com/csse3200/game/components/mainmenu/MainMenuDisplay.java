@@ -44,8 +44,6 @@ public class MainMenuDisplay extends UIComponent {
             ServiceLocator.getResourceService()
                 .getAsset("images/superintelligence_title.png", Texture.class));
 
-//    title.setScale(0.8f);
-
     TextButton startBtn = new TextButton("Start", skin);
     TextButton loadBtn = new TextButton("Load", skin);
     TextButton settingsBtn = new TextButton("Settings", skin);
@@ -89,15 +87,17 @@ public class MainMenuDisplay extends UIComponent {
           }
         });
 
-    table.add(title).padBottom(100f);
+    // Add title
+    table.add(title).padBottom(-50f);
     table.row();
-    table.add(startBtn).padTop(30f);
-    table.row();
-    table.add(loadBtn).padTop(15f);
-    table.row();
-    table.add(settingsBtn).padTop(15f);
-    table.row();
-    table.add(exitBtn).padTop(15f);
+
+    // Add row containing buttons
+    Table row = new Table();
+    row.add(startBtn).padLeft(15f).padRight(15f);
+    row.add(loadBtn).padLeft(15f).padRight(15f);
+    row.add(settingsBtn).padLeft(15f).padRight(15f);
+    row.add(exitBtn).padLeft(15f).padRight(15f);
+    table.add(row);
 
     stage.addActor(table);
   }
