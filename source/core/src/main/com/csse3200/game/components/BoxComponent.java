@@ -24,6 +24,13 @@ public class BoxComponent extends Component {
     private PhysicsComponent boxPhysics;
 
     /**
+     * Default constructor to remove gradle warnings about missing constructor in this class.
+     */
+    public BoxComponent() {
+        // Intentionally blank
+    }
+
+    /**
      * Retrieves the PhysicsComponent of the box when the component is created.
      */
     @Override
