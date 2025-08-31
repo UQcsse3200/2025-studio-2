@@ -71,7 +71,15 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
   }
 
   private float getDistanceToTarget() {
-    return owner.getEntity().getPosition().dst(target.getPosition());
+    Vector2 target_position=target.getPosition();
+    Vector2 curr_position=owner.getEntity().getPosition();
+    float distancee= target_position.dst(curr_position);
+    float threshold=0.5f;
+    if(distancee < threshold){
+      return 0f;
+    }
+    return distancee;
+
   }
 
   private int getActivePriority() {
