@@ -107,6 +107,10 @@ public class Keymap {
     registerAction("TerminalToggle", Input.Keys.GRAVE);
   }
 
+  /**
+   * Getter function for the keymap.
+   * @return The keymap.
+   */
   public static Map<String, Integer> getKeyMap() {
     return keyMap;
   }
