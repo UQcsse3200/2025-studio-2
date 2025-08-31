@@ -141,7 +141,7 @@ public class PlayerActions extends Component {
 
   void onLand() {
     Body body = physicsComponent.getBody();
-    body.setLinearVelocity(body.getLinearVelocity().x, 0f);
+    //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
 
@@ -190,8 +190,10 @@ public class PlayerActions extends Component {
   }
 
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
-        onLand();
 
+    if ("foot".equals(selfFixture.getUserData())) {
+      onLand();
+    }
   }
 
 }
