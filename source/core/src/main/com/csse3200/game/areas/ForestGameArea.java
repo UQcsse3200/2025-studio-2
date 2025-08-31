@@ -27,7 +27,7 @@ public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
-  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
+  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 12);
   private static final float WALL_WIDTH = 0.1f;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
@@ -269,7 +269,7 @@ public class ForestGameArea extends GameArea {
               0f,
               35f
       );
-      spawnEntityAt(securityLight, new GridPoint2(5, 5), true, true);
+      spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
   }
 
   private void playMusic() {

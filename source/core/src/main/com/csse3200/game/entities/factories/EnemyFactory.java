@@ -56,10 +56,14 @@ public class EnemyFactory {
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
-                //TODO: Implement light-activated chase
-                .addTask(new ChaseTask(target, 10, 3f, 4f));
-        drone.getComponent(AnimationRenderComponent.class).scaleEntity();
+                .addTask(new ChaseTask(target,10, 3f, 4f));
+
+        AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
+        arc.scaleEntity();
+        arc.startAnimation("float");
+
         return drone;
+
     }
 
     /**
