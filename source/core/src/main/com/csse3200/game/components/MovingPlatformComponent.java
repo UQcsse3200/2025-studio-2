@@ -66,7 +66,10 @@ public class MovingPlatformComponent extends Component {
         for (Entity passenger : passengers) {
             PhysicsComponent pc = passenger.getComponent(PhysicsComponent.class);
             if (pc != null) {
-                pc.getBody().setTransform(pc.getBody().getPosition().add(delta), 0);
+                Body pb = pc.getBody();
+                pb.setTransform(pb.getPosition().add(delta), pb.getAngle());
+                pb.setLinearVelocity(pb.getLinearVelocity().x + body.getLinearVelocity().x,
+                        pb.getLinearVelocity().y);
             }
         }
 
@@ -76,7 +79,11 @@ public class MovingPlatformComponent extends Component {
     private void onCollisionStart(Fixture thisFixture, Fixture otherFixture) {
         Entity other = ((BodyUserData) otherFixture.getBody().getUserData()).entity;
         if (other != null && other.getComponent(PlayerActions.class) != null) {
-            passengers.add(other);
+            float playerBottom = other.getPosition().y;
+            float platformTop = entity.getPosition().y + entity.getScale().y / 2f;
+            if(playerBottom >= platformTop - 0.05f) {
+                passengers.add(other);
+            }
         }
     }
 
