@@ -191,7 +191,7 @@ public class PlayerActions extends Component {
 
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
 
-    if ("foot".equals(selfFixture.getUserData())) {
+    if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
       onLand();
     }
   }
