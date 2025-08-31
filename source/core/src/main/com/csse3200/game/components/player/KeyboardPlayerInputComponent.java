@@ -40,7 +40,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       case Keys.E:
         entity.getEvents().trigger("interact");
       case Keys.V:
-        System.out.println("Toggling Adrenaline!");
         triggerAdrenalineEvent();
         return true;
       case Keys.SHIFT_LEFT:
