@@ -55,7 +55,7 @@ public class EnemyFactory {
 
         Entity drone = createBaseEnemy(target);
 
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.7f);
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
