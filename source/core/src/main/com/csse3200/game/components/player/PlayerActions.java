@@ -73,7 +73,6 @@ public class PlayerActions extends Component {
     Vector2 velocity = body.getLinearVelocity();
     Vector2 desiredVelocity;
 
-    System.out.println(adrenaline);
     if (adrenaline) {
       desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
     } else {
