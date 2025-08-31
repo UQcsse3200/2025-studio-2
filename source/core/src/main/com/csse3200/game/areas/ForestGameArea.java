@@ -12,6 +12,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ButtonContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.TrapContactListener;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -78,6 +79,7 @@ public class ForestGameArea extends GameArea {
   public void create() {
     PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ButtonContactListener());
+    engine.getWorld().setContactListener(new TrapContactListener());
     loadAssets();
 
     displayUI();
@@ -185,8 +187,9 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnTraps() {
-    Entity spikes = TrapFactory.createSpikes(1, 0);
-    spawnEntityAt(spikes, new GridPoint2(10,15), true,  true);
+    GridPoint2 spawnPos =  new GridPoint2(14,15);
+    Entity spikes = TrapFactory.createSpikes(terrain, spawnPos);
+    spawnEntityAt(spikes, spawnPos, true,  true);
   }
 
   private void spawnButtons() {
