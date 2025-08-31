@@ -105,6 +105,9 @@ public class Keymap {
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);
     registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT);
     registerAction("TerminalToggle", Input.Keys.GRAVE);
+
+    // Pause
+    registerAction("PauseGame", Input.Keys.ESCAPE);
   }
 
   /**

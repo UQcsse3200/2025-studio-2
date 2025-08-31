@@ -16,7 +16,7 @@ public class PauseInputComponent extends InputComponent {
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Keys.ESCAPE) {
+        if (keycode == Keymap.getActionKeyCode("PauseGame")) {
             gameScreen.togglePaused();
             return true;
         }
