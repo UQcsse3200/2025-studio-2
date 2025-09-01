@@ -3,6 +3,7 @@ package com.csse3200.game.components.settingsmenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Graphics.Monitor;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -31,7 +32,9 @@ public class SettingsMenuDisplay extends UIComponent {
   private TextField fpsText;
   private CheckBox fullScreenCheck;
   private CheckBox vsyncCheck;
-  private Slider uiScaleSlider;
+//  private Slider uiScaleSlider;
+  private Slider masterVolumeSlider;
+  private Slider musicVolumeSlider;
   private SelectBox<StringDecorator<DisplayMode>> displayModeSelect;
 
   public SettingsMenuDisplay(GdxGame game) {
@@ -46,6 +49,17 @@ public class SettingsMenuDisplay extends UIComponent {
   }
 
   private void addActors() {
+    Image background =
+        new Image(
+            ServiceLocator.getResourceService()
+                .getAsset("images/superintelligence_menu_background.png", Texture.class));
+
+    background.setFillParent(true);
+    stage.addActor(background);
+
+    background.setFillParent(true);
+    stage.addActor(background);
+
     Label title = new Label("Settings", skin, "title");
     Table settingsTable = makeSettingsTable();
     Table menuBtns = makeMenuBtns();
@@ -80,10 +94,20 @@ public class SettingsMenuDisplay extends UIComponent {
     vsyncCheck = new CheckBox("", skin);
     vsyncCheck.setChecked(settings.vsync);
 
-    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
-    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
-    uiScaleSlider.setValue(settings.uiScale);
-    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
+//    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
+//    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
+//    uiScaleSlider.setValue(settings.uiScale);
+//    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
+
+    Label masterVolumeLabel = new Label("Master Volume:", skin);
+    masterVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    masterVolumeSlider.setValue(settings.masterVolume);
+    Label masterVolumeValue = new Label(String.format("%.2fx", settings.masterVolume), skin);
+
+    Label musicVolumeLabel = new Label("Music Volume:", skin);
+    musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    musicVolumeSlider.setValue(settings.musicVolume);
+    Label musicVolumeValue = new Label(String.format("%.2fx", settings.musicVolume), skin);
 
     Label displayModeLabel = new Label("Resolution:", skin);
     displayModeSelect = new SelectBox<>(skin);
@@ -105,25 +129,54 @@ public class SettingsMenuDisplay extends UIComponent {
     table.add(vsyncLabel).right().padRight(15f);
     table.add(vsyncCheck).left();
 
-    table.row().padTop(10f);
-    Table uiScaleTable = new Table();
-    uiScaleTable.add(uiScaleSlider).width(100).left();
-    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
+//    table.row().padTop(10f);
+//    Table uiScaleTable = new Table();
+//    uiScaleTable.add(uiScaleSlider).width(100).left();
+//    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
 
-    table.add(uiScaleLabel).right().padRight(15f);
-    table.add(uiScaleTable).left();
+//    table.add(uiScaleLabel).right().padRight(15f);
+//    table.add(uiScaleTable).left();
 
     table.row().padTop(10f);
     table.add(displayModeLabel).right().padRight(15f);
     table.add(displayModeSelect).left();
 
+    // Create master volume slider
+    table.row().padTop(10f);
+    Table masterVolumeTable = new Table();
+    masterVolumeTable.add(masterVolumeSlider).width(100).left();
+    masterVolumeTable.add(masterVolumeValue).left().padLeft(5f).expandX();
+    table.add(masterVolumeLabel).right().padRight(15f);
+    table.add(masterVolumeTable).left();
+
+    // Create music volume slider
+    table.row().padTop(10f);
+    Table musicVolumeTable = new Table();
+    musicVolumeTable.add(musicVolumeSlider).width(100).left();
+    musicVolumeTable.add(musicVolumeValue).left().padLeft(5f).expandX();
+    table.add(musicVolumeLabel).right().padRight(15f);
+    table.add(musicVolumeTable).left();
+
     // Events on inputs
-    uiScaleSlider.addListener(
-        (Event event) -> {
-          float value = uiScaleSlider.getValue();
-          uiScaleValue.setText(String.format("%.2fx", value));
-          return true;
-        });
+//    uiScaleSlider.addListener(
+//        (Event event) -> {
+//          float value = uiScaleSlider.getValue();
+//          uiScaleValue.setText(String.format("%.2fx", value));
+//          return true;
+//        });
+
+    // Handle slider events
+    masterVolumeSlider.addListener((Event event) -> {
+      float value = masterVolumeSlider.getValue();
+      masterVolumeValue.setText(String.format("%.2fx", value));
+      return true;
+    });
+
+    musicVolumeSlider.addListener((Event event) -> {
+      float value = musicVolumeSlider.getValue();
+      musicVolumeValue.setText(String.format("%.2fx", value));
+      return true;
+    });
 
     return table;
   }
@@ -193,9 +246,13 @@ public class SettingsMenuDisplay extends UIComponent {
       settings.fps = fpsVal;
     }
     settings.fullscreen = fullScreenCheck.isChecked();
-    settings.uiScale = uiScaleSlider.getValue();
+//    settings.uiScale = uiScaleSlider.getValue();
     settings.displayMode = new DisplaySettings(displayModeSelect.getSelected().object);
     settings.vsync = vsyncCheck.isChecked();
+
+    // Set volume
+    settings.masterVolume = masterVolumeSlider.getValue();
+    settings.musicVolume = musicVolumeSlider.getValue();
 
     UserSettings.set(settings, true);
   }

@@ -7,16 +7,19 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.physics.ButtonContactListener;
+import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,11 +49,12 @@ public class ForestGameArea extends GameArea {
     "images/gate.png",
     "images/button.png",
     "images/button_pushed.png",
-          "images/blue_button.png",
-          "images/blue_button_pushed.png",
-          "images/red_button.png",
-          "images/red_button_pushed.png"
-
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/minimap_forest_area.png",
+    "images/minimap_player_marker.png",
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -78,12 +82,15 @@ public class ForestGameArea extends GameArea {
   @Override
   public void create() {
     PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ButtonContactListener());
+    engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
 
     displayUI();
     spawnTerrain();
     //spawnTrees();
+
+    MinimapDisplay minimapDisplay = createMinimap();
+
     player = spawnPlayer();
     //spawnGhosts();
     //spawnGhostKing();
@@ -97,9 +104,30 @@ public class ForestGameArea extends GameArea {
     playMusic();
   }
 
+  private MinimapDisplay createMinimap() {
+    Texture minimapTexture =
+        ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
+
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+
+    float tileSize = terrain.getTileSize();
+    Vector2 worldSize =
+        new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    MinimapDisplay minimapDisplay =
+        new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+
+    Entity minimapEntity = new Entity();
+    minimapEntity.addComponent(minimapDisplay);
+    spawnEntity(minimapEntity);
+
+    return minimapDisplay;
+  }
+
   private void displayUI() {
     Entity ui = new Entity();
     ui.addComponent(new GameAreaDisplay("Box Forest"));
+    ui.addComponent(new TooltipSystem.TooltipDisplay());
     spawnEntity(ui);
   }
 
@@ -209,10 +237,12 @@ public class ForestGameArea extends GameArea {
 
       // Static box
       Entity staticBox = BoxFactory.createStaticBox();
+      staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
       spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
 
       // Moveable box
       Entity moveableBox = BoxFactory.createMoveableBox();
+      moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
       // Add other types of boxes here
@@ -220,9 +250,11 @@ public class ForestGameArea extends GameArea {
 
   private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false, "platform");
+    button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
 
     Entity button2 = ButtonFactory.createButton(false, "door");
+    button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
 
     Entity button3 = ButtonFactory.createButton(false, "nothing");
@@ -251,7 +283,7 @@ public class ForestGameArea extends GameArea {
   private void playMusic() {
     Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
     music.setLooping(true);
-    music.setVolume(0.1f);
+    music.setVolume(UserSettings.getMusicVolumeNormalized());
     music.play();
   }
 
