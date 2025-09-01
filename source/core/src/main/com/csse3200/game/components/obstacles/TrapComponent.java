@@ -17,10 +17,6 @@ public class TrapComponent extends CombatStatsComponent {
         super(health, baseAttack);
     }
 
-    public TrapComponent(int health, int baseAttack) {
-        super(health, baseAttack);
-    }
-
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,
