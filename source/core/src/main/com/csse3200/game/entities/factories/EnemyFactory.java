@@ -9,6 +9,7 @@ import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.npc.DroneAttackComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
+import com.csse3200.game.components.tasks.CooldownTask;
 import com.csse3200.game.components.tasks.PatrolTask;
 import com.csse3200.game.components.tasks.WanderTask;
 import com.csse3200.game.entities.Entity;
@@ -84,7 +85,13 @@ public class EnemyFactory {
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent.addTask(new PatrolTask(1f)); // Make it patrol. Already has Chase from createDrone()
+
+        // Add CooldownTask between Chase and Patrol
+        aiComponent.addTask(new CooldownTask(2f)); // wait 2 seconds before teleport
+
+        // PatrolTask is low priority, will only run after CooldownTask finishes
+        aiComponent.addTask(new PatrolTask(1f));
+
         return drone;
     }
 
