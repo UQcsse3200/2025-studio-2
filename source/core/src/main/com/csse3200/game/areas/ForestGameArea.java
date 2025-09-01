@@ -255,20 +255,27 @@ public class ForestGameArea extends GameArea {
       // Add other types of boxes here
   }
 
-  private void spawnElevatorPlatform() {
-      float ts_b = terrain.getTileSize();
-      Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-              new Vector2(0, 4f * ts_b), //offset parameter
-              2f                             //Speed parameter
-      );
-      spawnEntityAt(elevator, new GridPoint2(12,5), false, false);
-      Entity button = ButtonFactory.createButton(false, "activatePlatform");
-      spawnEntityAt(button, new GridPoint2(10,5), false, false);
-      button.getEvents().addListener("buttonPressed", () -> {
-          elevator.getEvents().trigger("activatePlatform");
-      });
-  }
-  private void spawnButtons() {
+    private void spawnElevatorPlatform() {
+        float ts = terrain.getTileSize();
+
+        // Elevator: moves up 4 tiles when triggered
+        Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+                new Vector2(0, 4f * ts), // offset: 4 tiles up
+                2f                       // speed
+        );
+        spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
+
+        // Button to trigger it
+        Entity button = ButtonFactory.createButton(false, "activatePlatform");
+        spawnEntityAt(button, new GridPoint2(10, 7), true, true);
+
+        // Link button to platform
+        button.getEvents().addListener("buttonPressed", () -> {
+            elevator.getEvents().trigger("activatePlatform");
+        });
+    }
+
+    private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false, "platform");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
