@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.csse3200.game.ui.terminal.TerminalService;
 import com.csse3200.game.utils.SortedIntMap;
 
 /**
@@ -66,6 +67,7 @@ public class RenderService implements Disposable {
 
   public void setStage(Stage stage) {
     this.stage = stage;
+    TerminalService.setStage(stage);
   }
 
   public Stage getStage() {

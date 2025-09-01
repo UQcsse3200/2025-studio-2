@@ -12,6 +12,8 @@ import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.security.Provider;
+
 /**
  * A ui component for displaying the Main menu.
  */
@@ -27,12 +29,20 @@ public class MainMenuDisplay extends UIComponent {
   }
 
   private void addActors() {
+    Image background =
+        new Image(
+            ServiceLocator.getResourceService()
+                .getAsset("images/superintelligence_menu_background.png", Texture.class));
+
+    background.setFillParent(true);
+    stage.addActor(background);
+
     table = new Table();
     table.setFillParent(true);
     Image title =
         new Image(
             ServiceLocator.getResourceService()
-                .getAsset("images/box_boy_title.png", Texture.class));
+                .getAsset("images/superintelligence_title.png", Texture.class));
 
     TextButton startBtn = new TextButton("Start", skin);
     TextButton loadBtn = new TextButton("Load", skin);
@@ -77,15 +87,17 @@ public class MainMenuDisplay extends UIComponent {
           }
         });
 
-    table.add(title);
+    // Add title
+    table.add(title).padBottom(-50f);
     table.row();
-    table.add(startBtn).padTop(30f);
-    table.row();
-    table.add(loadBtn).padTop(15f);
-    table.row();
-    table.add(settingsBtn).padTop(15f);
-    table.row();
-    table.add(exitBtn).padTop(15f);
+
+    // Add row containing buttons
+    Table row = new Table();
+    row.add(startBtn).padLeft(15f).padRight(15f);
+    row.add(loadBtn).padLeft(15f).padRight(15f);
+    row.add(settingsBtn).padLeft(15f).padRight(15f);
+    row.add(exitBtn).padLeft(15f).padRight(15f);
+    table.add(row);
 
     stage.addActor(table);
   }
