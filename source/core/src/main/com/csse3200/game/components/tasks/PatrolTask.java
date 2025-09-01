@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.Task;
+import com.csse3200.game.ai.tasks.TaskRunner;
+import com.csse3200.game.components.enemy.PatrolRouteComponent;
 
 /**
  * Makes an entity move through a sequence of waypoints and wait briefly at each one. Changes direction when it
@@ -15,11 +17,9 @@ import com.csse3200.game.ai.tasks.Task;
  * TODO: Will modify task priority and start() logic with additional checks once this is done.
  * */
 public class PatrolTask extends DefaultTask implements PriorityTask {
-    private final Vector2 spawnPos;
-    private final Vector2[] steps; // Relative waypoints
     private final float waitTime;
 
-    private Vector2[] waypoints;
+    private PatrolRouteComponent route;
     private int i = 0;
     private boolean forward = true;
 
@@ -29,30 +29,15 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
 
     /**
      * Creates a patrol starting from a fixed start position.
-     * @param spawnPos specifies the starting position
-     * @param steps array of relative steps used to build the waypoints
      * @param waitTime specifies how long to wait at each waypoint
      */
-    public PatrolTask(Vector2 spawnPos, Vector2[] steps, float waitTime) {
-        this.spawnPos = spawnPos;
+    public PatrolTask(float waitTime) {
         this.waitTime = waitTime;
-        this.steps = new Vector2[steps.length];
-        for (int k = 0; k < steps.length; k++) this.steps[k] = new Vector2(steps[k]);
     }
 
     /** Return a low priority of 1. */
     @Override
     public int getPriority() {return 1;} // Low priority
-
-    /** Build an array of (cumulative) waypoints based on relative steps. */
-    private void buildWaypoints() {
-        waypoints = new Vector2[steps.length];
-        Vector2 acc = new Vector2();
-        for (int k = 0; k < steps.length; k++) {
-            acc.add(steps[k]);
-            waypoints[k] = new Vector2(spawnPos).add(acc);
-        }
-    }
 
     /**
      * Set up subtasks (wait, movement) and begin moving toward first waypoint. If there are
@@ -62,13 +47,13 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     public void start() {
         super.start();
 
-        if (steps.length == 0) {
-            status = Status.FINISHED;
-            return;
-        }
+        if (route == null) {
+            route = this.owner.getEntity().getComponent(PatrolRouteComponent.class);
 
-        if (waypoints == null) {
-            buildWaypoints();
+            if (route.numWaypoints() == 0) {
+                throw new IllegalStateException("Patrol route is empty");
+            }
+
         }
 
         if (waitTask == null) {
@@ -77,10 +62,10 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
         }
 
         if (movementTask == null) {
-            movementTask = new MovementTask(getWorldPos());
+            movementTask = new MovementTask(route.getWaypointAt(i));
             movementTask.create(owner);
         } else {
-            movementTask.setTarget(getWorldPos());
+            movementTask.setTarget(route.getWaypointAt(i));
         }
 
         movementTask.start();
@@ -100,7 +85,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
                 swapTask(waitTask); // Always wait between waypoints
             } else {
                 nextIndex();
-                movementTask.setTarget(getWorldPos());
+                movementTask.setTarget(route.getWaypointAt(i));
                 swapTask(movementTask);
             }
         }
@@ -120,7 +105,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      * Check if waiting.
      * @return true if currentTask is waitTask
      */
-    boolean isWaiting() {
+    public boolean isWaiting() {
         return currentTask == waitTask;
     }
 
@@ -128,30 +113,29 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      * Check if moving.
      * @return true if currentTask is movementTask
      */
-    boolean isMoving() {
+    public boolean isMoving() {
         return currentTask == movementTask;
     }
 
     /** Get the current index pointing to a waypoint. */
-    int getIndex() {
+    public int getIndex() {
         return i;
-    }
-
-    /**
-     * Get an array of the cumulative waypoints, built from the relative steps.
-     * @return an array of waypoints or null if unset
-     */
-    Vector2[] getWaypoints() {
-        if (waypoints == null) return null;
-        else return waypoints;
     }
 
     /**
      * Check patrol direction.
      * @return true for forward, otherwise false
      */
-    boolean isMovingForward() {
+    public boolean isMovingForward() {
         return forward;
+    }
+
+    /**
+     * Get the waypoint of current index
+     * @return target waypoint
+     */
+    public Vector2 getTargetWaypoint() {
+        return route.getWaypointAt(i);
     }
 
     /** Toggle patrol direction. */
@@ -166,10 +150,10 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      * Does nothing for single point patrols.
      */
     private void nextIndex() {
-        if (waypoints.length <= 1) return;
+        if (route.numWaypoints() <= 1) return;
 
         if (forward) {
-            if (getIndex() == waypoints.length - 1) {
+            if (getIndex() == route.numWaypoints() - 1) {
                 toggleDirection();
                 i--;
             } else {
@@ -183,11 +167,6 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
                 i--;
             }
         }
-    }
-
-    /** Get the waypoint that the current index points to. */
-    private Vector2 getWorldPos() {
-        return new Vector2(waypoints[i]);
     }
 
     /**

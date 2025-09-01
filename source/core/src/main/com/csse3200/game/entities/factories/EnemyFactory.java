@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.npc.DroneAttackComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
@@ -84,10 +85,11 @@ public class EnemyFactory {
      */
     public static Entity createPatrollingDrone(Entity target, Vector2 spawnPos, Vector2[] patrolSteps) {
         Entity drone = createDrone(target);
+        drone.addComponent(new PatrolRouteComponent(spawnPos, patrolSteps));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
-                .addTask(new PatrolTask(spawnPos, patrolSteps, 1f));
+                .addTask(new PatrolTask(1f));
         return drone;
     }
 

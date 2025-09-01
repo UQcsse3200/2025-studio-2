@@ -168,13 +168,13 @@ public class ForestGameArea extends GameArea {
 
   // Test drone spawn in forest area
   private void spawnDrone() {
-    GridPoint2 tilePos = new GridPoint2(10, 12);
+    GridPoint2 tilePos = new GridPoint2(2, 11);
     Entity drone = EnemyFactory.createDrone(player);
     spawnEntityAt(drone, tilePos, true, true);
   }
 
   private void spawnPatrollingDrone() {
-    GridPoint2 tilePos = new GridPoint2(13, 12);
+    GridPoint2 tilePos = new GridPoint2(5, 11);
     Vector2 worldPos = terrain.tileToWorldPosition(tilePos);
     Vector2[] patrolSteps = {
             new Vector2(0, 0),
