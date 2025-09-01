@@ -36,6 +36,8 @@ public class PlayerActions extends Component {
 
   private boolean crouching = false;
 
+  private boolean soundPlayed = false;
+
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
@@ -192,6 +194,7 @@ public class PlayerActions extends Component {
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
+    soundPlayed = true;
   }
 
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
@@ -208,11 +211,11 @@ public class PlayerActions extends Component {
     if (crouching) {
       crouching = false;
       updateSpeed();
-      PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
+      //PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
     } else {
       crouching = true;
       updateSpeed();
-      PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
+      //PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
     }
   }
 
@@ -226,5 +229,21 @@ public class PlayerActions extends Component {
 
   public float getYDirection() {
     return walkDirection.y;
+  }
+
+  public boolean getIsJumping() {
+    return isJumping;
+  }
+
+  public boolean getIsDoubleJumping() {
+    return isDoubleJump;
+  }
+
+  public boolean getIsCrouching() {
+    return crouching;
+  }
+
+  public boolean hasSoundPlayed() {
+    return soundPlayed;
   }
 }

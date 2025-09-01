@@ -1,18 +1,19 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 public class PlayerActionsTest {
@@ -31,6 +32,8 @@ public class PlayerActionsTest {
         physicsComponent = mock(PhysicsComponent.class);
         mockBody = mock(Body.class);
         when(physicsComponent.getBody()).thenReturn(mockBody);
+        when(mockBody.getLinearVelocity()).thenReturn(new Vector2(0, 0));
+        when(mockBody.getMass()).thenReturn(1f);
 
         playerEntity = new Entity();
         playerEntity.addComponent(physicsComponent);
@@ -38,6 +41,11 @@ public class PlayerActionsTest {
         playerActions = new PlayerActions();
         playerEntity.addComponent(playerActions);
         playerEntity.create();
+
+        ResourceService mockResourceService = mock(ResourceService.class);
+        ServiceLocator.registerResourceService(mockResourceService);
+        Sound mockSound = mock(Sound.class);
+        when(mockResourceService.getAsset(anyString(), eq(Sound.class))).thenReturn(mockSound);
     }
 
     @Test
@@ -48,5 +56,49 @@ public class PlayerActionsTest {
         assertTrue(playerActions.isMoving());
         assertEquals(1.0, playerActions.getXDirection());
         assertEquals(0.0, playerActions.getYDirection());
+    }
+
+    @Test
+    void testStopWalking() {
+        Vector2 dir = new Vector2(1,0);
+        playerEntity.getEvents().trigger("walk", dir);
+        playerEntity.getEvents().trigger("walkStop");
+
+        assertFalse(playerActions.isMoving());
+        assertEquals(0f, playerActions.getXDirection());
+        assertEquals(0f, playerActions.getYDirection());
+    }
+
+    @Test
+    void testJump() {
+
+        playerEntity.getEvents().trigger("jump");
+
+        assertTrue(playerActions.getIsJumping());
+        assertFalse(playerActions.getIsDoubleJumping());
+    }
+
+    @Test
+    void testOnLandResetsJump() {
+        playerEntity.getEvents().trigger("jump");
+        playerEntity.getEvents().trigger("landed");
+
+        assertFalse(playerActions.getIsJumping());
+        assertFalse(playerActions.getIsDoubleJumping());
+    }
+
+    @Test
+    void testCrouchTogglesState() {
+        playerEntity.getEvents().trigger("crouch");
+        assertTrue(playerActions.getIsCrouching());
+
+        playerEntity.getEvents().trigger("crouch");
+        assertFalse(playerActions.getIsCrouching());
+    }
+
+    @Test
+    void testInteractPlaysSound() {
+        playerEntity.getEvents().trigger("interact");
+        assertTrue(playerActions.hasSoundPlayed());
     }
 }
