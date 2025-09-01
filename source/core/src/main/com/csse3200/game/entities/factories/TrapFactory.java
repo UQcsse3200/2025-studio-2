@@ -34,11 +34,10 @@ public class TrapFactory {
      * and the trap will be able to be rotated to face up (default), right, down, or left, as a visual
      * effect so it can be used on a variety of platforms and/or walls.
      *
-     * @param terrain The terrain in which the trap is being created
      * @param position The start position of the trap
      * @return the Spike trap Entity created.
      */
-    public static Entity createSpikes(TerrainComponent terrain, GridPoint2 position) {//int length, int rotateClockwise) {
+    public static Entity createSpikes(GridPoint2 position) {//int length, int rotateClockwise) {
         Entity spikes = new Entity();
         String texture = "images/spikes_sprite.png";
         spikes.addComponent(new TextureRenderComponent(texture));
@@ -54,12 +53,12 @@ public class TrapFactory {
         Vector2 center = collider.getEntity().getScale().scl(0.5f);
         collider.setAsBoxAligned(center, PhysicsComponent.AlignX.CENTER, PhysicsComponent.AlignY.BOTTOM);
 
-        // Add trap component
-        position.x -= 1;
-        Vector2 safePosition = terrain.tileToWorldPosition(position);
-        float tileSize = terrain.getTileSize();
-        safePosition.x += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().x);
-        safePosition.y += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().y);
+        // Add trap component - commented out as position-reset functionality is currently not working.
+//        position.x -= 1;
+//        Vector2 safePosition = terrain.tileToWorldPosition(position);
+//        float tileSize = terrain.getTileSize();
+//        safePosition.x += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().x);
+//        safePosition.y += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().y);
 
         TrapComponent trapComponent = new TrapComponent();
         spikes.addComponent(trapComponent);
