@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.input.Keymap;
 import com.csse3200.game.utils.math.Vector2Utils;
 
 /**
@@ -25,32 +26,31 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
-    switch (keycode) {
-      case Keys.W:
-        walkDirection.add(Vector2Utils.UP);
-        triggerWalkEvent();
-        return true;
-      case Keys.A:
-        walkDirection.add(Vector2Utils.LEFT);
-        triggerWalkEvent();
-        return true;
-      case Keys.S:
-        walkDirection.add(Vector2Utils.DOWN);
-        triggerWalkEvent();
-        return true;
-      case Keys.D:
-        walkDirection.add(Vector2Utils.RIGHT);
-        triggerWalkEvent();
-        return true;
-      case Keys.SPACE:
-        entity.getEvents().trigger("attack");
-        return true;
-      case Keys.E:
-        entity.getEvents().trigger("interact");
-        return true;
-      default:
-        return false;
+    if (keycode == Keymap.getActionKeyCode("PlayerUp")) {
+      walkDirection.add(Vector2Utils.UP);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+      walkDirection.add(Vector2Utils.LEFT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerDown")) {
+      walkDirection.add(Vector2Utils.DOWN);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      walkDirection.add(Vector2Utils.RIGHT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerAttack")) {
+      entity.getEvents().trigger("attack");
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
+      entity.getEvents().trigger("interact");
+      return true;
     }
+
+    return false;
   }
 
   /**
@@ -61,26 +61,25 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
-    switch (keycode) {
-      case Keys.W:
-        walkDirection.sub(Vector2Utils.UP);
-        triggerWalkEvent();
-        return true;
-      case Keys.A:
-        walkDirection.sub(Vector2Utils.LEFT);
-        triggerWalkEvent();
-        return true;
-      case Keys.S:
-        walkDirection.sub(Vector2Utils.DOWN);
-        triggerWalkEvent();
-        return true;
-      case Keys.D:
-        walkDirection.sub(Vector2Utils.RIGHT);
-        triggerWalkEvent();
-        return true;
-      default:
-        return false;
+    if (keycode == Keymap.getActionKeyCode("PlayerUp")) {
+      walkDirection.sub(Vector2Utils.UP);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+      walkDirection.sub(Vector2Utils.LEFT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerDown")) {
+      walkDirection.sub(Vector2Utils.DOWN);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      walkDirection.sub(Vector2Utils.RIGHT);
+      triggerWalkEvent();
+      return true;
     }
+
+    return false;
   }
 
   private void triggerWalkEvent() {
