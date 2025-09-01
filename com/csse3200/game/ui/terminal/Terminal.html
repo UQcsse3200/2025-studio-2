@@ -93,8 +93,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">Terminal</span>
 <span class="extends-implements">extends <a href="../../components/Component.html" title="class in com.csse3200.game.components">Component</a></span></div>
-<div class="block">State tracker for a debug terminal. Any commands to be actioned through the terminal input should
- be added to the map of commands.</div>
+<div class="block">A component that holds the state of the debug terminal.
+ This includes the history of messages, the current input line, and its open/closed state.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -117,8 +117,6 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">Terminal</a>()</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(java.util.Map)" class="member-name-link">Terminal</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="commands/Command.html" title="interface in com.csse3200.game.ui.terminal.commands">Command</a>&gt;&nbsp;commands)</code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -134,52 +132,14 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addCommand(java.lang.String,com.csse3200.game.ui.terminal.commands.Command)" class="member-name-link">addCommand</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- <a href="commands/Command.html" title="interface in com.csse3200.game.ui.terminal.commands">Command</a>&nbsp;command)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds a command to the list of valid terminal commands.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#appendToMessage(char)" class="member-name-link">appendToMessage</a><wbr>(char&nbsp;character)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Appends the character to the end of the entered message.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEnteredMessage()" class="member-name-link">getEnteredMessage</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#handleBackspace()" class="member-name-link">handleBackspace</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Removes the last character of the entered message.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isOpen()" class="member-name-link">isOpen</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addCommandToHistory(java.lang.String)" class="member-name-link">addCommandToHistory</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;command)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#processMessage()" class="member-name-link">processMessage</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Processes the completed message entered by the user.</div>
-</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isOpen()" class="member-name-link">isOpen</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setClosed()" class="member-name-link">setClosed</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Closes the terminal and clears the stored message.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setEnteredMessage(java.lang.String)" class="member-name-link">setEnteredMessage</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Sets the text shown on the terminal</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setOpen()" class="member-name-link">setOpen</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Opens the terminal.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toggleIsOpen()" class="member-name-link">toggleIsOpen</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Toggles between the terminal being open and closed.</div>
-</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toggleIsOpen()" class="member-name-link">toggleIsOpen</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -206,12 +166,6 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Terminal</span>()</div>
 </section>
 </li>
-<li>
-<section class="detail" id="&lt;init&gt;(java.util.Map)">
-<h3>Terminal</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">Terminal</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="commands/Command.html" title="interface in com.csse3200.game.ui.terminal.commands">Command</a>&gt;&nbsp;commands)</span></div>
-</section>
-</li>
 </ul>
 </section>
 </li>
@@ -221,98 +175,21 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="getEnteredMessage()">
-<h3>getEnteredMessage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getEnteredMessage</span>()</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>message entered by user</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="isOpen()">
 <h3>isOpen</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isOpen</span>()</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>console is open</dd>
-</dl>
 </section>
 </li>
 <li>
 <section class="detail" id="toggleIsOpen()">
 <h3>toggleIsOpen</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">toggleIsOpen</span>()</div>
-<div class="block">Toggles between the terminal being open and closed.</div>
 </section>
 </li>
 <li>
-<section class="detail" id="setOpen()">
-<h3>setOpen</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setOpen</span>()</div>
-<div class="block">Opens the terminal.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setClosed()">
-<h3>setClosed</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setClosed</span>()</div>
-<div class="block">Closes the terminal and clears the stored message.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="addCommand(java.lang.String,com.csse3200.game.ui.terminal.commands.Command)">
-<h3>addCommand</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addCommand</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;name,
- <a href="commands/Command.html" title="interface in com.csse3200.game.ui.terminal.commands">Command</a>&nbsp;command)</span></div>
-<div class="block">Adds a command to the list of valid terminal commands.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>name</code> - command name</dd>
-<dd><code>command</code> - command</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="processMessage()">
-<h3>processMessage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">processMessage</span>()</div>
-<div class="block">Processes the completed message entered by the user. If the message corresponds to a valid
- command, the command will be actioned.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>true if command handled, false otherwise</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="appendToMessage(char)">
-<h3>appendToMessage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">appendToMessage</span><wbr><span class="parameters">(char&nbsp;character)</span></div>
-<div class="block">Appends the character to the end of the entered message.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>character</code> - character to append</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="handleBackspace()">
-<h3>handleBackspace</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">handleBackspace</span>()</div>
-<div class="block">Removes the last character of the entered message.</div>
-</section>
-</li>
-<li>
-<section class="detail" id="setEnteredMessage(java.lang.String)">
-<h3>setEnteredMessage</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setEnteredMessage</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;text)</span></div>
-<div class="block">Sets the text shown on the terminal</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>text</code> - Text to show</dd>
-</dl>
+<section class="detail" id="addCommandToHistory(java.lang.String)">
+<h3>addCommandToHistory</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addCommandToHistory</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;command)</span></div>
 </section>
 </li>
 </ul>

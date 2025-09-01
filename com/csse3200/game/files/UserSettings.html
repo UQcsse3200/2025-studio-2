@@ -138,6 +138,16 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Get the stored user settings</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMasterVolume()" class="member-name-link">getMasterVolume</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the multiplier corresponding to master volume.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static float</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#getMusicVolumeNormalized()" class="member-name-link">getMusicVolumeNormalized</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Returns the normalized music volume stored in the user settings.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#set(com.csse3200.game.files.UserSettings.Settings,boolean)" class="member-name-link">set</a><wbr>(<a href="UserSettings.Settings.html" title="class in com.csse3200.game.files">UserSettings.Settings</a>&nbsp;settings,
  boolean&nbsp;applyImmediate)</code></div>
@@ -193,6 +203,32 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>settings</code> - Settings to apply</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getMusicVolumeNormalized()">
+<h3>getMusicVolumeNormalized</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getMusicVolumeNormalized</span>()</div>
+<div class="block">Returns the normalized music volume stored in the user settings. That is, the music volume is
+ a fraction of it's intended volume according to the master volume.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The normalized volume for the music.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getMasterVolume()">
+<h3>getMasterVolume</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">float</span>&nbsp;<span class="element-name">getMasterVolume</span>()</div>
+<div class="block">Returns the multiplier corresponding to master volume. All sound effects' volume should be
+ multiplied by this float before they are played.
+ Example: A return value of 0.5 means the user has set the master volume to 50%, and thus all
+ sounds should be reduced by 50%.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>The master volume</dd>
 </dl>
 </section>
 </li>
