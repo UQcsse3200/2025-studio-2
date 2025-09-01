@@ -1,14 +1,18 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -21,6 +25,8 @@ public class SprintOneGameArea extends GameArea {
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
     private static final float WALL_WIDTH = 0.1f;
     private static final String[] gameTextures = {
+            "images/minimap_forest_area.png",
+            "images/blue_button.png",
             "images/cave_1.png",
             "images/cave_2.png",
             "images/TechWallBase.png",
@@ -78,14 +84,54 @@ public class SprintOneGameArea extends GameArea {
         spawnGate();
         spawnBoxes();
         playMusic();
+        spawnLights();
+        spawnButtons();
+        createMinimap();
     }
 
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Sprint one demo level"));
+        ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
+    private MinimapDisplay createMinimap() {
+        Texture minimapTexture =
+                ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
 
+        MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+        options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+
+        float tileSize = terrain.getTileSize();
+        Vector2 worldSize =
+                new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+        MinimapDisplay minimapDisplay =
+                new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+
+        Entity minimapEntity = new Entity();
+        minimapEntity.addComponent(minimapDisplay);
+        spawnEntity(minimapEntity);
+
+        return minimapDisplay;
+    }
+    private void spawnButtons() {
+        Entity button = ButtonFactory.createButton(false, "platform");
+        button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button, new GridPoint2(8,5), true,  true);
+    }
+    private void spawnLights() {
+        // see the LightFactory class for more details on spawning these
+        Entity securityLight = LightFactory.createSecurityLight(
+                player,
+                PhysicsLayer.OBSTACLE,
+                128,
+                Color.GREEN,
+                10f,
+                0f,
+                35f
+        );
+        spawnEntityAt(securityLight, new GridPoint2(20, 5), true, true);
+    }
     private void spawnTerrain() {
         // Background terrain
         terrain = terrainFactory.createTerrain(TerrainType.SPRINT_ONE_ORTHO);
