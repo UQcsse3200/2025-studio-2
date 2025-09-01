@@ -187,7 +187,8 @@ public class SprintOneGameArea extends GameArea {
 
         // Button to trigger it
         Entity button = ButtonFactory.createButton(false, "activatePlatform");
-        spawnEntityAt(button, new GridPoint2(0, 0), true, true);
+        spawnEntityAt(button, new GridPoint2(11, 10), true, true);
+        logger.info("Button spawned at {}", new GridPoint2(11, 10));
 
         // Link button to platform
         button.getEvents().addListener("buttonPressed", () -> {
