@@ -43,7 +43,9 @@ public class SprintOneGameArea extends GameArea {
             "images/iso_grass_2.png",
             "images/iso_grass_3.png",
             "images/button.png",
-            "images/button_pushed.png"
+            "images/button_pushed.png",
+            "images/blue_button_pushed.png",
+            "images/blue_button.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
