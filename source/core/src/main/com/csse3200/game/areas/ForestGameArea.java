@@ -14,7 +14,6 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.physics.TrapContactListener;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -89,7 +88,6 @@ public class ForestGameArea extends GameArea {
   public void create() {
     PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
-    engine.getWorld().setContactListener(new TrapContactListener());
     loadAssets();
 
     displayUI();

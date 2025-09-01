@@ -12,7 +12,7 @@ public class TrapComponent extends CombatStatsComponent {
     private Vector2 safePosition; // The nearest safe position to which to respawn colliding entities.
     // Note: Will want to improve logic to set safePosition based on
     public TrapComponent(Vector2 safePosition) {
-        this(0, 10, safePosition);
+        this(0, 5, safePosition);
     }
 
     public TrapComponent(int health, int baseAttack) {
@@ -67,12 +67,13 @@ public class TrapComponent extends CombatStatsComponent {
         }
 
         Entity player = collider.getEntity();
-        player.getComponent(CombatStatsComponent.class).hit(this);
-        // TODO PROBLEM THAT THE PLAYER COLLIDES WAY TOO SOON IF APPROACHING FROM BELOW
-        //  (make a second collider below only and if player is also colliding with that then cancel?)
+        if (player.getPosition().y >= this.getEntity().getPosition().y) {
+            player.getComponent(CombatStatsComponent.class).hit(this);
+        }
+
         // also todo rotation
         // also todo position resets but fuck that it still breaks the game after a couple hours I need to do 3506.
-//        System.out.println("About to break everything");
+//        System.out.println("THIS BREAKS EVERYTHING. DO NOT UNCOMMENT.");
 //        player.getComponent(PhysicsComponent.class).getBody().setTransform(safePosition, 0f);
     }
 }

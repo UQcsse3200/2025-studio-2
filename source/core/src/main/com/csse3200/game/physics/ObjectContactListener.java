@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Octree;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.BoxComponent;
 import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -36,6 +37,9 @@ public class ObjectContactListener implements ContactListener {
 
         setPlayerInRangeOfBox(a, b, true);
         setPlayerInRangeOfBox(b, a, true);
+
+        setPlayerInRangeOfTrap(a, b);
+        setPlayerInRangeOfTrap(b, a);
     }
 
     /**
@@ -115,7 +119,6 @@ public class ObjectContactListener implements ContactListener {
 
         setPlayerInRangeOfBox(a, b, false);
         setPlayerInRangeOfBox(b, a, false);
-
     }
 
     @Override
@@ -126,5 +129,22 @@ public class ObjectContactListener implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 
+    }
+
+
+    /**
+     * Check if the colliding entities consist of a trap and a player.
+     * In future, this method may be extended to apply to enemies or the player.
+     * @param colliding the colliding entity, expected to be a player.
+     * @param trap the entity on which to call TrapComponent.damage
+     */
+    private void setPlayerInRangeOfTrap(Entity colliding, Entity trap) {
+        PlayerActions player = colliding.getComponent(PlayerActions.class);
+        TrapComponent trapComponent = trap.getComponent(TrapComponent.class);
+
+        if(trapComponent != null && player != null) {
+            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
+            trapComponent.damage(collider);
+        }
     }
 }
