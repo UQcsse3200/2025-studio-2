@@ -2,6 +2,7 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.MovingPlatformComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -52,6 +53,16 @@ public class PlatformFactory {
         return platform;
     }
 
+    public static Entity createButtonTriggeredPlatform(Vector2 offsetWorld, float speed) {
+        Entity platform = new Entity()
+                .addComponent(new TextureRenderComponent("images/platform.png"))
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
+        platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
+        platform.getComponent(TextureRenderComponent.class).scaleEntity();
+        return platform;
+    }
     private PlatformFactory() {
         throw new IllegalStateException("Instantiating static util class");
     }

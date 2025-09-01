@@ -240,6 +240,17 @@ public class ForestGameArea extends GameArea {
     movingPlatform.setScale(2,1);
     spawnEntityAt(movingPlatform, movingPos, false, false);
 
+    float ts_b = terrain.getTileSize();
+    Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+            new Vector2(0, 4f * ts_b), //offset parameter
+            2f                             //Speed parameter
+    );
+    spawnEntityAt(elevator, new GridPoint2(12,5), false, false);
+    Entity button = ButtonFactory.createButton(false, "activatePlatform");
+    spawnEntityAt(button, new GridPoint2(10,5), false, false);
+    button.getEvents().addListener("buttonPressed", () -> {
+        elevator.getEvents().trigger("activatePlatform");
+    });
   }
   private void spawnBoxes() {
 
