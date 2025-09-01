@@ -32,10 +32,9 @@ public class PatrolTaskTest {
 
     @Test
     void startsMovingToFirstWaypoint() {
-        Vector2 spawnPos = new Vector2(0, 0);
-        Vector2[] steps = {new Vector2(1, 0), new Vector2(2, 0)};
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
 
-        Entity e = makePatrollingEntity(spawnPos, steps);
+        Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0.5f);
         e.create();
         Vector2[] waypoints = getWaypoints(e);
@@ -55,10 +54,9 @@ public class PatrolTaskTest {
 
     @Test
     void swapsToWaitAfterMovement() {
-        Vector2 spawnPos = new Vector2(0, 0);
-        Vector2[] steps = {new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(1, 0)};
 
-        Entity e = makePatrollingEntity(spawnPos, steps);
+        Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
         Vector2[] waypoints = getWaypoints(e);
@@ -86,10 +84,9 @@ public class PatrolTaskTest {
 
     @Test
     void pingPongAtEnds() {
-        Vector2 spawnPos = new Vector2(0, 0);
-        Vector2[] steps = {new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(1, 0)};
 
-        Entity e = makePatrollingEntity(spawnPos, steps);
+        Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
@@ -119,15 +116,13 @@ public class PatrolTaskTest {
 
     @Test
     void handlesSingleStepPatrol() {
-        Vector2 spawnPos = new Vector2(0, 0);
-        Vector2[] steps = {new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0)};
 
-        Entity e = makePatrollingEntity(spawnPos, steps);
+        Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
         patrol.start();
-        Vector2[] waypoints = getWaypoints(e);
 
         e.setPosition(patrol.getTargetWaypoint());
         patrol.update();
@@ -149,10 +144,9 @@ public class PatrolTaskTest {
 
     @Test
     void shouldTriggerEvent() {
-        Vector2 spawnPos = new Vector2(0, 0);
-        Vector2[] steps = {new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0)};
 
-        Entity e = makePatrollingEntity(spawnPos, steps);
+        Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
@@ -166,10 +160,9 @@ public class PatrolTaskTest {
 
     @Test
     void stop_makesTaskInactive() {
-        Vector2 spawnPos = new Vector2(0, 0);
-        Vector2[] steps = {new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0)};
 
-        Entity e = makePatrollingEntity(spawnPos, steps);
+        Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
@@ -189,11 +182,11 @@ public class PatrolTaskTest {
                 "PatrolTask should have priority 1");
     }
 
-    private Entity makePatrollingEntity(Vector2 start, Vector2[] steps) {
+    private Entity makePatrollingEntity(Vector2[] route) {
         return new Entity()
                 .addComponent(new PhysicsComponent())
                 .addComponent(new PhysicsMovementComponent())
-                .addComponent(new PatrolRouteComponent(start, steps));
+                .addComponent(new PatrolRouteComponent(route));
     }
 
     private PatrolTask addPatrol(Entity e, float wait) {

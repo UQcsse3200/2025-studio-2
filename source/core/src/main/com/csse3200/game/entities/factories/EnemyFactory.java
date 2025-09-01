@@ -43,8 +43,6 @@ public class EnemyFactory {
     public static Entity createDrone(Entity target) {
         BaseEntityConfig config = configs.drone;
 
-
-
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
@@ -56,7 +54,7 @@ public class EnemyFactory {
 
         Entity drone = createBaseEnemy(target);
 
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f);
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
@@ -65,8 +63,7 @@ public class EnemyFactory {
                 .addComponent(new DroneAttackComponent(PhysicsLayer.PLAYER, 3.0f)); // 3 second attack cooldown
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent
-                .addTask(new ChaseTask(target,10, 3f, 4f));
+        aiComponent.addTask(new ChaseTask(target,10, 3f, 4f)); // Only chase, drone should be idle otherwise
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
@@ -79,17 +76,15 @@ public class EnemyFactory {
     /**
      * Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.
      * @param target that drone pursues when chasing
-     * @param spawnPos used to store the starting position of the patrolling drone in the game
-     * @param patrolSteps used to build a cumulative waypoint route for patrols
+     * @param patrolRoute contains list of waypoints in patrol route
      * @return a patrolling drone enemy entity
      */
-    public static Entity createPatrollingDrone(Entity target, Vector2 spawnPos, Vector2[] patrolSteps) {
+    public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
         Entity drone = createDrone(target);
-        drone.addComponent(new PatrolRouteComponent(spawnPos, patrolSteps));
+        drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent
-                .addTask(new PatrolTask(1f));
+        aiComponent.addTask(new PatrolTask(1f)); // Make it patrol. Already has Chase from createDrone()
         return drone;
     }
 
@@ -99,10 +94,6 @@ public class EnemyFactory {
      * @return enemy
      */
     private static Entity createBaseEnemy(Entity target) {
-        AITaskComponent aiComponent =
-                new AITaskComponent()
-                        .addTask(new WanderTask(new Vector2(2f, 2f), 2f))
-                        .addTask(new ChaseTask(target, 10, 3f, 4f));
         Entity enemy =
                 new Entity()
                         .addComponent(new PhysicsComponent())
@@ -110,7 +101,7 @@ public class EnemyFactory {
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                         .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,1.5f))
-                        .addComponent(aiComponent);
+                        .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;

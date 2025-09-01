@@ -27,7 +27,7 @@ public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
-  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 12);
+  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 5);
   private static final float WALL_WIDTH = 0.1f;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
@@ -88,6 +88,7 @@ public class ForestGameArea extends GameArea {
     spawnTerrain();
     //spawnTrees();
     player = spawnPlayer();
+
     spawnDrone();
     spawnPatrollingDrone();
     //spawnGhosts();
@@ -174,15 +175,16 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnPatrollingDrone() {
-    GridPoint2 tilePos = new GridPoint2(5, 11);
-    Vector2 worldPos = terrain.tileToWorldPosition(tilePos);
-    Vector2[] patrolSteps = {
-            new Vector2(0, 0),
-            new Vector2(2, 0),
-            new Vector2(2, 0)
+    GridPoint2 spawnPos = new GridPoint2(4, 11);
+
+    Vector2[] patrolRoute = {
+            terrain.tileToWorldPosition(spawnPos),
+            terrain.tileToWorldPosition(new GridPoint2(8, 11)),
+            terrain.tileToWorldPosition(new GridPoint2(12, 11)),
+            terrain.tileToWorldPosition(new GridPoint2(16, 11))
     };
-    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, worldPos, patrolSteps);
-    spawnEntityAt(patrolDrone, tilePos, true, true);
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
+    spawnEntityAt(patrolDrone, spawnPos, false, false); // Changed to false so patrol doesn't look weird
   }
 
   private void spawnGhostKing() {

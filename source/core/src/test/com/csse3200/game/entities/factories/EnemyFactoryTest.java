@@ -126,7 +126,6 @@ public class EnemyFactoryTest {
     void patrollingDroneHasPatrolRouteComponent() {
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(
                 new Entity(),
-                new Vector2(5, 5),
                 new Vector2[0]
         );
         assertNotNull(patrolDrone.getComponent(PatrolRouteComponent.class),
@@ -138,7 +137,6 @@ public class EnemyFactoryTest {
         Entity drone = assertDoesNotThrow(
                 () -> EnemyFactory.createPatrollingDrone(
                         new Entity(),
-                        new Vector2(5, 5),
                         new Vector2[0]
                 ), "Factory should not throw when steps array is empty");
         assertNotNull(drone);
