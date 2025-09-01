@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.services.ResourceService;
@@ -73,9 +74,9 @@ public class SprintOneGameArea extends GameArea {
 
         spawnTerrain();
         player = spawnPlayer();
-        spawnPlatform(); //Testing platform
-        spawnGate(); //Testing gate
-
+        spawnPlatform();
+        spawnGate();
+        spawnBoxes();
         playMusic();
     }
 
@@ -135,8 +136,29 @@ public class SprintOneGameArea extends GameArea {
         step1.setScale(2,1);
         spawnEntityAt(step1, step1Pos, false, false);
 
-    }
+        float ts = terrain.getTileSize();
+        GridPoint2 movingPos = new GridPoint2(8,6);
+        Vector2 offsetWorld  = new Vector2(6f * ts, 1f);
+        float speed = 2f;
+        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
+        movingPlatform.setScale(2,1);
+        spawnEntityAt(movingPlatform, movingPos, false, false);
 
+    }
+    private void spawnBoxes() {
+
+        // Static box
+        Entity staticBox = BoxFactory.createStaticBox();
+        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+
+        // Moveable box
+        Entity moveableBox = BoxFactory.createMoveableBox();
+        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
+        spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
+
+        // Add other types of boxes here
+    }
     private void spawnGate() {
     /*
     Creates gate to test
