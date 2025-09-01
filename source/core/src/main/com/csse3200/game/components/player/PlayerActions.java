@@ -21,7 +21,7 @@ public class PlayerActions extends Component {
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
 
-  private static final int DASH_SPEED_MULTIPLIER = 10;
+  private static final int DASH_SPEED_MULTIPLIER = 15;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
@@ -159,6 +159,9 @@ public class PlayerActions extends Component {
    * @param direction The direction in which the player should move
    */
   void toggleAdrenaline(Vector2 direction) {
+    if (crouching) {
+      return;
+    }
     this.walkDirection = direction;
     adrenaline = !adrenaline;
   }
@@ -168,6 +171,11 @@ public class PlayerActions extends Component {
    * @param direction The direction in which the player should dash
    */
   void dash(Vector2 direction) {
+
+    if (crouching) {
+      return;
+    }
+
     this.walkDirection = direction;
     moving = true;
 
