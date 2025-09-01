@@ -20,7 +20,8 @@ public class PlayerActions extends Component {
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-  private static final int DASH_SPEED_MULTIPLIER = 4;
+
+  private static final int DASH_SPEED_MULTIPLIER = 10;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
@@ -171,6 +172,7 @@ public class PlayerActions extends Component {
     moving = true;
 
     Body body = physicsComponent.getBody();
+
 
     direction.scl(DASH_SPEED_MULTIPLIER);
     body.applyLinearImpulse(direction, body.getWorldCenter(), true);
