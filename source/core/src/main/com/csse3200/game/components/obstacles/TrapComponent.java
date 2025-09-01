@@ -9,19 +9,16 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
 public class TrapComponent extends CombatStatsComponent {
-    private Vector2 safePosition; // The nearest safe position to which to respawn colliding entities.
-    // Note: Will want to improve logic to set safePosition based on
-    public TrapComponent(Vector2 safePosition) {
-        this(0, 5, safePosition);
+    public TrapComponent() {
+        this(0, 5);
     }
 
     public TrapComponent(int health, int baseAttack) {
         super(health, baseAttack);
     }
 
-    public TrapComponent(int health, int baseAttack, Vector2 safePosition) {
+    public TrapComponent(int health, int baseAttack) {
         super(health, baseAttack);
-        this.safePosition = safePosition;
     }
 
 
@@ -70,10 +67,5 @@ public class TrapComponent extends CombatStatsComponent {
         if (player.getPosition().y >= this.getEntity().getPosition().y) {
             player.getComponent(CombatStatsComponent.class).hit(this);
         }
-
-        // also todo rotation
-        // also todo position resets but fuck that it still breaks the game after a couple hours I need to do 3506.
-//        System.out.println("THIS BREAKS EVERYTHING. DO NOT UNCOMMENT.");
-//        player.getComponent(PhysicsComponent.class).getBody().setTransform(safePosition, 0f);
     }
 }
