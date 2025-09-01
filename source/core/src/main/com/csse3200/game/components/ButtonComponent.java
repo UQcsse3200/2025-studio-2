@@ -141,4 +141,11 @@ public class ButtonComponent extends Component {
     public void setPushed(boolean pushed) {
         this.isPushed = pushed;
     }
+
+    /**
+     * Returns true if button is pushed, false otherwise
+     */
+    public boolean isPushed() {
+        return isPushed;
+    }
 }

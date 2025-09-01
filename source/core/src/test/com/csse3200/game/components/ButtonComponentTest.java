@@ -1,10 +1,7 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -16,7 +13,6 @@ import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +24,7 @@ public class ButtonComponentTest {
 
     @BeforeEach
     void setup() {
-        // Register PhysicsService to initialise a box's physics body during tests
+        // Register PhysicsService to initialise a button's physics body during tests
         ServiceLocator.registerPhysicsService(new PhysicsService());
 
         // Mock ResourceService so Texture assets and Renderer won't throw exceptions
@@ -60,10 +56,43 @@ public class ButtonComponentTest {
     }
 
     @Test
-    void setPlayerInRange() {
+    void setPlayerInRange_setsPlayerCorrectly() {
         buttonComponent.setPlayerInRange(playerCollider);
         assertTrue(buttonComponent.isPlayerInRange());
         assertEquals(playerCollider, buttonComponent.getPlayerCollider());
     }
 
+    @Test
+    void setPlayerInRange_nullColliderResetsState() {
+        buttonComponent.setPlayerInRange(playerCollider);
+        buttonComponent.setPlayerInRange(null);
+        assertFalse(buttonComponent.isPlayerInRange());
+        assertNull(buttonComponent.getPlayerCollider());
+    }
+
+    @Test
+    void playerInteract_togglesButton() {
+        player.setPosition(new Vector2(0, 0));
+        button.setPosition(new Vector2(0.6f, 0));
+
+        buttonComponent.setPlayerInRange(playerCollider);
+        player.getEvents().trigger("interact");
+        assertTrue(buttonComponent.isPushed());
+    }
+
+    @Test
+    void playerInteract_doesNotToggleIfRight() {
+        player.setPosition(new Vector2(1.2f, 0));
+        button.setPosition(new Vector2(0.6f, 0));
+
+        buttonComponent.setPlayerInRange(playerCollider);
+        player.getEvents().trigger("interact");
+        assertFalse(buttonComponent.isPushed());
+    }
+
+    @Test
+    void setPushed_setsState() {
+        buttonComponent.setPushed(true);
+        assertTrue(buttonComponent.isPushed());
+    }
 }
