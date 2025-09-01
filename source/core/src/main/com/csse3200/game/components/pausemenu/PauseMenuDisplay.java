@@ -13,11 +13,9 @@ import com.csse3200.game.ui.UIComponent;
 
 public class PauseMenuDisplay extends UIComponent {
     private MainGameScreen screen;
-    private boolean visible = false;
+    private Table rootTable;
 
     private Texture blackTexture;
-    private Image background;
-
     private Table tabBar;
     private Table tabContent;
     private Table bottomButtons;
@@ -33,48 +31,39 @@ public class PauseMenuDisplay extends UIComponent {
     public void create() {
         super.create();
 
-        // Create black overlay
+        rootTable = new Table();
+        rootTable.setFillParent(true);
+
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0, 0, 0, 0.7f);
         pixmap.fill();
-        pixmap.drawRectangle(1, 1, 30, 30);
         blackTexture = new Texture(pixmap);
         pixmap.dispose();
+        Image background = new Image(blackTexture);
 
-        background = new Image(blackTexture);
-        background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        background.setVisible(false);
-        stage.addActor(background);
+        Stack stack = new Stack();
+        stack.add(background);
 
-        // Tab bar at top
+        tabContent = new Table();
+        tabContent.center();
+        stack.add(tabContent);
+
         tabBar = new Table();
         tabBar.top().padTop(10);
-        tabBar.setFillParent(true);
-        stage.addActor(tabBar);
-
         addTabButton("Inventory", Tab.INVENTORY);
         addTabButton("Upgrades", Tab.UPGRADES);
         addTabButton("Settings", Tab.SETTINGS);
         addTabButton("Map", Tab.MAP);
+        stack.add(tabBar);
 
-        // Tab content area
-        tabContent = new Table();
-        tabContent.center();
-        tabContent.setFillParent(true);
-        stage.addActor(tabContent);
-
-        updateTabContent();
-
-        // Bottom buttons
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
-        bottomButtons.setFillParent(true);
-        stage.addActor(bottomButtons);
-
-        //addBottomButton("Exit to Menu", () -> screen.exit()));
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
-        //addBottomButton("Restart", () -> screen.restart());
+        stack.add(bottomButtons);
 
+        rootTable.add(stack).expand().fill();
+        stage.addActor(rootTable);
+        updateTabContent();
         setVisible(false);
     }
 
@@ -106,8 +95,12 @@ public class PauseMenuDisplay extends UIComponent {
         bottomButtons.add(button).padRight(10);
     }
 
-    // Switch tabs
-    public void setTab(Tab tab) {
+  /**
+   * Switch tabs to the specified tab.
+   *
+   * @param tab the tab to which we should switch.
+   */
+  public void setTab(Tab tab) {
         this.currentTab = tab;
         updateTabContent();
     }
@@ -118,25 +111,27 @@ public class PauseMenuDisplay extends UIComponent {
         tabContent.add(label);
     }
 
-    // Show/hide overlay
+  /**
+   * Show/hide overlay.
+   *
+   * @param visible true makes the pause menu visible, false sets it to invisible.
+   */
     public void setVisible(boolean visible) {
-        this.visible = visible;
-        background.setVisible(visible);
-        tabBar.setVisible(visible);
-        tabContent.setVisible(visible);
-        bottomButtons.setVisible(visible);
-    }
-
-    public boolean isVisible() {
-        return visible;
+        rootTable.setVisible(visible);
+        if (visible) {
+            rootTable.toFront();
+        }
     }
 
     @Override
-    protected void draw(SpriteBatch batch) {
-    }
+    protected void draw(SpriteBatch batch) {}
 
     @Override
     public void dispose() {
         blackTexture.dispose();
+        if (rootTable != null) {
+            rootTable.remove();
+        }
+        super.dispose();
     }
 }
