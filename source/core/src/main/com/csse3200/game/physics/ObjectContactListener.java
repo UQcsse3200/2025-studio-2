@@ -1,15 +1,12 @@
 package com.csse3200.game.physics;
 
-import com.badlogic.gdx.math.Octree;
 import com.badlogic.gdx.physics.box2d.*;
-import com.csse3200.game.components.BoxComponent;
+import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
-
-import javax.swing.*;
 
 /**
  * Combined contact listener that handles both general collision events (for tooltips, collectables, etc.)
@@ -100,14 +97,14 @@ public class ObjectContactListener implements ContactListener {
      * @param inRange true if player in collision, false if they leave collision
      */
     private void setPlayerInRangeOfBox(Entity box, Entity other, boolean inRange) {
-        BoxComponent boxComponent = box.getComponent(BoxComponent.class);
+        MoveableBoxComponent moveableBoxComponent = box.getComponent(MoveableBoxComponent.class);
         PlayerActions player = other.getComponent(PlayerActions.class);
 
-        if (boxComponent != null && player != null) {
+        if (moveableBoxComponent != null && player != null) {
             ColliderComponent collider = inRange
                     ? other.getComponent(ColliderComponent.class)
                     : null;
-            boxComponent.setPlayerInRange(collider);
+            moveableBoxComponent.setPlayerInRange(collider);
         }
     }
 

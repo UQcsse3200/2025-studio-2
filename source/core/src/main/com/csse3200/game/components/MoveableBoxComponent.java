@@ -12,7 +12,7 @@ import com.csse3200.game.physics.components.PhysicsComponent;
  * <p>
  * Handles player interactions with a box, including lifting, carrying and dropping.
  */
-public class BoxComponent extends Component {
+public class MoveableBoxComponent extends Component {
 
     /** Maximum distance for the player to lift the box */
     private static final float LIFT_RANGE = 1f;
@@ -26,7 +26,7 @@ public class BoxComponent extends Component {
     /**
      * Default constructor to remove gradle warnings about missing constructor in this class.
      */
-    public BoxComponent() {
+    public MoveableBoxComponent() {
         // Intentionally blank
     }
 

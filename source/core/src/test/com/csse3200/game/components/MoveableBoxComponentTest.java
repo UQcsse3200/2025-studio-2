@@ -1,8 +1,6 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.math.Octree;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.PhysicsService;
@@ -10,7 +8,6 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import net.dermetfan.gdx.physics.box2d.PositionController;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,10 +21,10 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(GameExtension.class)
-public class BoxComponentTest {
+public class MoveableBoxComponentTest {
 
     private Entity box;
-    private BoxComponent boxComponent;
+    private MoveableBoxComponent boxComponent;
     private Entity player;
     private ColliderComponent playerCollider;
 
@@ -43,8 +40,8 @@ public class BoxComponentTest {
         ServiceLocator.registerResourceService(mockResourceService);
 
         // Create the box entity
-        box = new Entity().addComponent(new PhysicsComponent()).addComponent(new BoxComponent());
-        boxComponent = box.getComponent(BoxComponent.class);
+        box = new Entity().addComponent(new PhysicsComponent()).addComponent(new MoveableBoxComponent());
+        boxComponent = box.getComponent(MoveableBoxComponent.class);
         box.create();
 
         // Create player with collider
