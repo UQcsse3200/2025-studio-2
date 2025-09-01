@@ -98,10 +98,14 @@ loadScripts(document, 'script');</script>
 implements com.badlogic.gdx.physics.box2d.ContactListener</span></div>
 <div class="block">Combined contact listener that handles both general collision events (for tooltips, collectables, etc.)
  and specific object collision logic.
- 
+
  This listener:
  1. Triggers general "collisionStart" and "collisionEnd" events on all entities (for tooltip system)
- 2. Handles object-specific collision logic (for button interactions)</div>
+ 2. Handles object-specific collision logic (for button interactions)
+
+ ContactListener for detecting collisions between the player entity and specified objects in the
+ game such as buttons, boxes etc.
+ Triggers the push event when contact is made</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -202,8 +206,7 @@ implements com.badlogic.gdx.physics.box2d.ContactListener</span></div>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">endContact</span><wbr><span class="parameters">(com.badlogic.gdx.physics.box2d.Contact&nbsp;contact)</span></div>
 <div class="block">Called when two features end contact
  If player moves away from an object (i.e. no longer colliding), object stops tracking the
- player as being in range for an interaction
- Also triggers general collision end events for tooltips and other systems</div>
+ player as being in range for an interaction</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code>endContact</code>&nbsp;in interface&nbsp;<code>com.badlogic.gdx.physics.box2d.ContactListener</code></dd>
