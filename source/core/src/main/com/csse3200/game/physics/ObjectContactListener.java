@@ -12,6 +12,13 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import javax.swing.*;
 
 /**
+ * Combined contact listener that handles both general collision events (for tooltips, collectables, etc.)
+ * and specific object collision logic.
+ *
+ * This listener:
+ * 1. Triggers general "collisionStart" and "collisionEnd" events on all entities (for tooltip system)
+ * 2. Handles object-specific collision logic (for button interactions)
+ *
  * ContactListener for detecting collisions between the player entity and specified objects in the
  * game such as buttons, boxes etc.
  * Triggers the push event when contact is made
@@ -21,11 +28,16 @@ public class ObjectContactListener implements ContactListener {
     /**
      * Called when two features begin to touch and checks if a player has collided with an object
      * If so, the game object keeps track that player is in range
+     * Also triggers general collision events for tooltips and other systems
      *
      * @param contact object representing the collision
      */
     @Override
     public void beginContact(Contact contact) {
+        // First, trigger general collision events (for tooltips, collectables, etc.)
+        triggerEventOn(contact.getFixtureA(), "collisionStart", contact.getFixtureB());
+        triggerEventOn(contact.getFixtureB(), "collisionStart", contact.getFixtureA());
+
         Entity a = getEntityFromFixture(contact.getFixtureA());
         Entity b = getEntityFromFixture(contact.getFixtureB());
 
@@ -100,6 +112,17 @@ public class ObjectContactListener implements ContactListener {
     }
 
     /**
+     * Triggers events on entities involved in collisions.
+     * This is used for tooltip system and other general collision events.
+     */
+    private void triggerEventOn(Fixture fixture, String evt, Fixture otherFixture) {
+        BodyUserData userData = (BodyUserData) fixture.getBody().getUserData();
+        if (userData != null && userData.entity != null) {
+            userData.entity.getEvents().trigger(evt, fixture, otherFixture);
+        }
+    }
+
+    /**
      * Called when two features end contact
      * If player moves away from an object (i.e. no longer colliding), object stops tracking the
      * player as being in range for an interaction
@@ -108,6 +131,10 @@ public class ObjectContactListener implements ContactListener {
      */
     @Override
     public void endContact(Contact contact) {
+        // First, trigger general collision events (for tooltips, collectables, etc.)
+        triggerEventOn(contact.getFixtureA(), "collisionEnd", contact.getFixtureB());
+        triggerEventOn(contact.getFixtureB(), "collisionEnd", contact.getFixtureA());
+
         Entity a = getEntityFromFixture(contact.getFixtureA());
         Entity b = getEntityFromFixture(contact.getFixtureB());
 
