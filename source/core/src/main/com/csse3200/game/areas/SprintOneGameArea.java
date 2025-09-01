@@ -25,6 +25,7 @@ public class SprintOneGameArea extends GameArea {
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
     private static final float WALL_WIDTH = 0.1f;
     private static final String[] gameTextures = {
+            "images/minimap_player_marker.png",
             "images/minimap_forest_area.png",
             "images/blue_button.png",
             "images/cave_1.png",
@@ -79,6 +80,7 @@ public class SprintOneGameArea extends GameArea {
         displayUI();
 
         spawnTerrain();
+        createMinimap();
         player = spawnPlayer();
         spawnPlatform();
         spawnGate();
@@ -86,7 +88,7 @@ public class SprintOneGameArea extends GameArea {
         playMusic();
         spawnLights();
         spawnButtons();
-        createMinimap();
+
     }
 
     private void displayUI() {
