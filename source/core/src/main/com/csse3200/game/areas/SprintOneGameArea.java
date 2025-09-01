@@ -176,24 +176,29 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private void spawnElevatorPlatform() {
-        float ts = terrain.getTileSize();
+           float ts = terrain.getTileSize();
 
-        // Elevator: moves up 4 tiles when triggered
-        Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                new Vector2(0, 4f * ts), // offset: 4 tiles up
-                2f                       // speed
-        );
-        spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
+           // Elevator: moves up 4 tiles when triggered
+           Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+                   new Vector2(0, 4f * ts), // offset: 4 tiles up
+                   2f                       // speed
+           );
+           GridPoint2 elevatorPos = new GridPoint2(12, 10); // right of player
+           spawnEntityAt(elevator, elevatorPos, false, false);
+           logger.info("Elevator spawned at {}", elevatorPos);
 
-        // Button to trigger it
-        Entity button = ButtonFactory.createButton(false, "activatePlatform");
-        spawnEntityAt(button, new GridPoint2(11, 10), true, true);
-        logger.info("Button spawned at {}", new GridPoint2(11, 10));
+           // Button to trigger it (blue platform type)
+           Entity button = ButtonFactory.createButton(false, "platform");
+           GridPoint2 buttonPos = new GridPoint2(11, 10); // between player and elevator
+           spawnEntityAt(button, buttonPos, true, true);
+           logger.info("Elevator button spawned at {}", buttonPos);
 
-        // Link button to platform
-        button.getEvents().addListener("buttonPressed", () -> {
-            elevator.getEvents().trigger("activatePlatform");
-        });
+           // Link button to platform
+           button.getEvents().addListener("buttonPressed", () -> {
+               logger.info("Button pressed -> activating elevator");
+               elevator.getEvents().trigger("activatePlatform");
+           });
+
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
