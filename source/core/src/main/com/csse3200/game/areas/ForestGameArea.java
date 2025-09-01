@@ -95,12 +95,12 @@ public class ForestGameArea extends GameArea {
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
+    spawnElevatorPlatform();
+    spawnBoxes();  // uncomment this method when you want to play with boxes
+    spawnButtons(); //uncomment this method to see and interact with buttons
 
-     spawnBoxes();  // uncomment this method when you want to play with boxes
-     spawnButtons(); //uncomment this method to see and interact with buttons
-
-     spawnLights(); // uncomment to spawn in lights
-     spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)
+    spawnLights(); // uncomment to spawn in lights
+    spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)
     playMusic();
   }
 
@@ -239,18 +239,6 @@ public class ForestGameArea extends GameArea {
     Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
     movingPlatform.setScale(2,1);
     spawnEntityAt(movingPlatform, movingPos, false, false);
-
-    float ts_b = terrain.getTileSize();
-    Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-            new Vector2(0, 4f * ts_b), //offset parameter
-            2f                             //Speed parameter
-    );
-    spawnEntityAt(elevator, new GridPoint2(12,5), false, false);
-    Entity button = ButtonFactory.createButton(false, "activatePlatform");
-    spawnEntityAt(button, new GridPoint2(10,5), false, false);
-    button.getEvents().addListener("buttonPressed", () -> {
-        elevator.getEvents().trigger("activatePlatform");
-    });
   }
   private void spawnBoxes() {
 
@@ -267,6 +255,19 @@ public class ForestGameArea extends GameArea {
       // Add other types of boxes here
   }
 
+  private void spawnElevatorPlatform() {
+      float ts_b = terrain.getTileSize();
+      Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+              new Vector2(0, 4f * ts_b), //offset parameter
+              2f                             //Speed parameter
+      );
+      spawnEntityAt(elevator, new GridPoint2(12,5), false, false);
+      Entity button = ButtonFactory.createButton(false, "activatePlatform");
+      spawnEntityAt(button, new GridPoint2(10,5), false, false);
+      button.getEvents().addListener("buttonPressed", () -> {
+          elevator.getEvents().trigger("activatePlatform");
+      });
+  }
   private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false, "platform");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
