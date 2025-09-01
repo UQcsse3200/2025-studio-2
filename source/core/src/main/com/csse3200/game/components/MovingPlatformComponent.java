@@ -64,7 +64,7 @@ public class MovingPlatformComponent extends Component {
         }
 
         // Move passengers by the platform's delta
-        Vector2 delta = pos.cpy().sub(lastPos);
+        /*Vector2 delta = pos.cpy().sub(lastPos);
         for (Entity passenger : passengers) {
             PhysicsComponent pc = passenger.getComponent(PhysicsComponent.class);
             if (pc != null) {
@@ -72,7 +72,7 @@ public class MovingPlatformComponent extends Component {
                 pc.getBody().setTransform(newPos, pc.getBody().getAngle());
                 pc.getBody().setLinearVelocity(Vector2.Zero);
             }
-        }
+        }*/
 
         lastPos.set(pos);
     }
