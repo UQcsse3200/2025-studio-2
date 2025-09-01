@@ -34,6 +34,7 @@ public class ForestGameArea extends GameArea {
   private static final int NUM_GHOSTS = 2;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
+  private static boolean keySpawned;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
     "images/tree.png",
@@ -110,10 +111,9 @@ public class ForestGameArea extends GameArea {
     spawnPlatform(); //Testing platform
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
-    spawnButtons(); //uncomment this method to see and interact with buttons
+    spawnButtons();
 
     spawnLights(); // uncomment to spawn in lights
-    spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)
 
     spawnTraps();
     playMusic();
@@ -287,6 +287,15 @@ public class ForestGameArea extends GameArea {
 
     Entity button3 = ButtonFactory.createButton(false, "nothing");
     spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+
+    //listener to spawn key when door button pushed
+    button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+      if (isPushed && !keySpawned) {
+        spawnKey();
+        keySpawned = true;
+      }
+    });
+
   }
 
   public void spawnKey() {
