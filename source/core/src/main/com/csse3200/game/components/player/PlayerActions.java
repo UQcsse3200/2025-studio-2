@@ -2,11 +2,9 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.*;
@@ -203,6 +201,9 @@ public class PlayerActions extends Component {
     }
   }
 
+  /**
+   * Makes the player crouch
+   */
   void crouch() {
     if (crouching) {
       crouching = false;
@@ -215,4 +216,15 @@ public class PlayerActions extends Component {
     }
   }
 
+  public boolean isMoving() {
+    return moving;
+  }
+
+  public float getXDirection() {
+    return walkDirection.x;
+  }
+
+  public float getYDirection() {
+    return walkDirection.y;
+  }
 }
