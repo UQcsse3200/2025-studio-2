@@ -9,12 +9,14 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.physics.ObjectContactListener;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -23,6 +25,8 @@ public class SprintOneGameArea extends GameArea {
     private static final String[] gameTextures = {
             "images/cave_1.png",
             "images/cave_2.png",
+            "images/box_white.png",
+            "images/box_blue.png",
             "images/TechWallBase.png",
             "images/TechWallVariant1.png",
             "images/TechWallVariant2.png",
@@ -41,7 +45,11 @@ public class SprintOneGameArea extends GameArea {
             "images/hex_grass_3.png",
             "images/iso_grass_1.png",
             "images/iso_grass_2.png",
-            "images/iso_grass_3.png"
+            "images/iso_grass_3.png",
+            "images/button.png",
+            "images/button_pushed.png",
+            "images/blue_button_pushed.png",
+            "images/blue_button.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -68,13 +76,15 @@ public class SprintOneGameArea extends GameArea {
     /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
     @Override
     public void create() {
+        PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+        engine.getWorld().setContactListener(new ObjectContactListener());
         loadAssets();
-
         displayUI();
 
         spawnTerrain();
         player = spawnPlayer();
         spawnPlatform();
+        spawnElevatorPlatform();
         spawnGate();
         spawnBoxes();
         playMusic();
@@ -169,6 +179,41 @@ public class SprintOneGameArea extends GameArea {
         gate.setScale(1, 2);
         spawnEntityAt(gate, gatePos, false, false);
     }
+
+    private void spawnElevatorPlatform() {
+        float ts = terrain.getTileSize();
+
+        // Elevator: moves up 3 tiles when triggered
+        Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+                new Vector2(0, 3f * ts),
+                2f
+        );
+        GridPoint2 elevatorPos = new GridPoint2(12, 10);
+        spawnEntityAt(elevator, elevatorPos, false, false);
+        logger.info("Elevator spawned at {}", elevatorPos);
+
+        // Button with tooltip
+        Entity button = ButtonFactory.createButton(false, "platform");
+        button.addComponent(new TooltipSystem.TooltipComponent(
+                "Platform Button\nPress E to interact",
+                TooltipSystem.TooltipStyle.DEFAULT
+        ));
+        GridPoint2 buttonPos = new GridPoint2(11, 10);
+        spawnEntityAt(button, buttonPos, true, true);
+        logger.info("Elevator button spawned at {}", buttonPos);
+
+        // Listen for toggle event from button
+        button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed) {
+                logger.info("Button toggled ON — activating elevator");
+                elevator.getEvents().trigger("activatePlatform");
+            } else {
+                logger.info("Button toggled OFF — stopping elevator");
+                elevator.getEvents().trigger("deactivatePlatform");
+            }
+        });
+    }
+
 
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
