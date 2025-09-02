@@ -28,11 +28,18 @@ import com.csse3200.game.services.ServiceLocator;
  * Factory to create a player entity.
  *
  * <p>Predefined player properties are loaded from a config stored as a json file and should have
- * the properties stores in 'PlayerConfig'.
+ * the properties stored in 'PlayerConfig'.
  */
 public class PlayerFactory {
-  private static final PlayerConfig stats =
-      FileLoader.readClass(PlayerConfig.class, "configs/player.json");
+  private static final PlayerConfig stats = loadPlayerConfig();
+
+  private static PlayerConfig loadPlayerConfig() {
+    PlayerConfig config = FileLoader.readClass(PlayerConfig.class, "configs/player.json");
+    if (config == null) {
+      throw new IllegalStateException("Failed to load player config from configs/player.json");
+    }
+    return config;
+  }
 
   private static final float FOOT_HITBOX_WIDTH = 0.25f;
   private static final float FOOT_HITBOX_HEIGHT = 0.0001f;
@@ -44,19 +51,20 @@ public class PlayerFactory {
    */
   public static Entity createPlayer() {
     InputComponent inputComponent =
-        ServiceLocator.getInputService().getInputFactory().createForPlayer();
+            ServiceLocator.getInputService().getInputFactory().createForPlayer();
 
     Entity player =
-        new Entity()
-            .addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))
-            .addComponent(new PhysicsComponent())
-            .addComponent(new ColliderComponent())
-            .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
-            .addComponent(new PlayerActions())
-            .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
-            .addComponent(new InventoryComponent())
-            .addComponent(inputComponent)
-            .addComponent(new PlayerStatsDisplay());
+            new Entity()
+                    .addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))
+                    .addComponent(new PhysicsComponent())
+                    .addComponent(new ColliderComponent())
+                    .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
+                    .addComponent(new PlayerActions())
+                    .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
+                    .addComponent(new InventoryComponent())
+                    .addComponent(inputComponent)
+                    .addComponent(new PlayerStatsDisplay());
+
     player.addComponent(new StaminaComponent(100f, 10f, 25f, 20));
 
 
@@ -65,7 +73,8 @@ public class PlayerFactory {
     PhysicsUtils.setScaledCollider(player, 0.6f, 1.0f);
 
     Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
-    if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
+    if (minimapActor != null && minimapActor.getUserObject() != null
+            && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
       player.addComponent(new MinimapComponent(minimapDisplay, "images/minimap_player_marker.png"));
     }
 
