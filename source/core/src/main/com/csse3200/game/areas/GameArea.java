@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.events.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,15 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
+  private final EventHandler events = new EventHandler();
+
+  public EventHandler getEvents() {
+    return events;
+  }
+
+  public void trigger(String eventName, Object... args) {
+    events.trigger(eventName, args);
+  }
 
   protected GameArea() {
     areaEntities = new ArrayList<>();
