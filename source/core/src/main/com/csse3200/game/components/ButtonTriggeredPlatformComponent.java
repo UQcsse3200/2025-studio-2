@@ -19,7 +19,7 @@ public class ButtonTriggeredPlatformComponent extends Component{
         this.offset = offset.cpy();
         this.speed = speed;
     }
-
+    private boolean enabled = false;
     @Override
     public void create() {
         physics = entity.getComponent(PhysicsComponent.class);
@@ -28,17 +28,15 @@ public class ButtonTriggeredPlatformComponent extends Component{
         origin = physics.getBody().getPosition().cpy();
 
         //Listen for button activation
-        entity.getEvents().addListener("activatePlatform", this::onActivate);
+        entity.getEvents().addListener("activatePlatform", this::onToggle);
     }
 
-    private void onActivate() {
-        active = true;
-        forward = !forward;//To alter the direction each time
-        platformLogger.info("Platform activated! Moving {}", forward ? "forward" : "backward");
+    private void onToggle() {
+        enabled = !enabled;
     }
     @Override
     public void update() {
-        if (!active) return;
+        if (!enabled) return;
         platformLogger.info("Platform update running");
         Body body = physics.getBody();
         Vector2 pos = body.getPosition();

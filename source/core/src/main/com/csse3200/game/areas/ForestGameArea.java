@@ -271,7 +271,7 @@ public class ForestGameArea extends GameArea {
 
       // Link button to platform
       button.getEvents().addListener("buttonPressed", () -> {
-          elevator.getEvents().trigger("activatePlatform");
+          elevator.getEvents().trigger("togglePlatform");
       });
   }
 
