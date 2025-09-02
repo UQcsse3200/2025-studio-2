@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.badlogic.gdx.Input;
 import com.csse3200.game.input.Keymap;
-import com.csse3200.game.input.InputComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +64,6 @@ public class SettingsMenuDisplay extends UIComponent {
     settingsInputComponent.setKeyBindButtons(keyBindButtons);
 
     stage.setKeyboardFocus(stage.getRoot());
-//    Gdx.input.setInputProcessor(stage);
   }
 
   private void addActors() {
@@ -77,12 +75,9 @@ public class SettingsMenuDisplay extends UIComponent {
     background.setFillParent(true);
     stage.addActor(background);
 
-    background.setFillParent(true);
-    stage.addActor(background);
-
     Label title = new Label("Settings", skin, "title");
     Table settingsTable = makeSettingsTable();
-    Table menuBtns = makeMenuBtns();
+    Table menuButtons = makeMenuButtons();
 
     rootTable = new Table();
     rootTable.setFillParent(true);
@@ -93,7 +88,7 @@ public class SettingsMenuDisplay extends UIComponent {
     rootTable.add(settingsTable).expandX().expandY();
 
     rootTable.row();
-    rootTable.add(menuBtns).fillX();
+    rootTable.add(menuButtons).fillX();
 
     stage.addActor(rootTable);
   }
@@ -212,74 +207,76 @@ public class SettingsMenuDisplay extends UIComponent {
    * @param table
    */
   private void addKeyBindingControls(Table table) {
-    // Order for keys to appear
-    String[] keyOrder = {
-        "PlayerUp",
-        "PlayerLeft",
-        "PlayerDown",
-        "PlayerRight",
-        "PlayerAttack",
-        "PlayerInteract",
-        "TerminalModifier",
-        "TerminalModifierAlt",
-        "TerminalToggle"
-    };
+    // Clear existing buttons
+    keyBindButtons.clear();
 
-    for (String actionName : keyOrder) {
-      int keyCode = Keymap.getActionKeyCode(actionName);
+    // Get all actions from keymap and create buttons for each
+    Map<String, Integer> keyMap = Keymap.getKeyMap();
 
-      // Skip if the action doesn't exist in the keymap
-      if (keyCode == -1) continue;
+    for (Map.Entry<String, Integer> entry : keyMap.entrySet()) {
+      String actionName = entry.getKey();
+      int currentKeyCode = entry.getValue();
 
       table.row().padTop(5f);
 
-      // Create a readable label for the action
+      // Action name label
       String displayName = formatActionName(actionName);
       Label actionLabel = new Label(displayName + ":", skin);
       table.add(actionLabel).right().padRight(15f);
 
-      // Create button showing current key
-      String keyName = Input.Keys.toString(keyCode);
-      TextButton keyButton = new TextButton(keyName, skin);
+      // Current key display button
+      TextButton keyButton = new TextButton(Input.Keys.toString(currentKeyCode), skin);
       keyButton.addListener(new ChangeListener() {
         @Override
         public void changed(ChangeEvent event, Actor actor) {
-          if (settingsInputComponent != null) {
-            settingsInputComponent.startRebinding(actionName, keyButton);
-          }
+          settingsInputComponent.startRebinding(actionName, keyButton);
+          keyButton.setText("Press Key");
         }
       });
 
-      keyBindButtons.put(actionName, keyButton);
       table.add(keyButton).width(170).height(25).left();
+
+      // Store the button with the action name as key
+      keyBindButtons.put(actionName, keyButton);
     }
 
 
   }
 
   /**
-   *
-   * @param actionName
-   * @return
+   * Formats action names to be more user-friendly
+   * Converts camelCase to space-separated words and removes 'Player' prefix
+   * @param actionName the action name to format
+   * @return the formatted display name
    */
   private String formatActionName(String actionName) {
-    switch (actionName) {
-      case "PlayerUp": return "Up";
-      case "PlayerLeft": return "Left";
-      case "PlayerDown": return "Down";
-      case "PlayerRight": return "Right";
-      case "PlayerAttack": return "Attack";
-      case "PlayerInteract": return "Interact";
-      case "TerminalModifier": return "Terminal Modifier";
-      case "TerminalModifierAlt": return "Terminal Modifier Alt";
-      case "TerminalToggle": return "Terminal Toggle";
-      default:
-        // Fallback to camelCase conversion
-        return actionName.replaceAll("([A-Z])", " $1")
-            .replaceFirst("^\\s", "")
-            .replace("Player", "")
-            .trim();
-    }
+    // convert camelCase to formatted words
+    StringBuilder formatted = new StringBuilder();
+      for (int i = 0; i < actionName.length(); i++) {
+        char c = actionName.charAt(i);
+        if (i > 0 && Character.isUpperCase(c)) {
+          formatted.append(' ');
+        }
+        formatted.append(c);
+      }
+
+      // Remove "Player" prefix and trim
+      String result = formatted.toString()
+          .replace("Player ", "")
+          .replace("Terminal ", "Terminal ")
+          .trim();
+
+      return result;
+  }
+
+  /**
+   * Updates the display text of a key bind button after rebinding
+   * @param actionName The action that was rebound
+   * @param newKeyCode The new key code
+   */
+  public void updateKeyBindButton(String actionName, int newKeyCode) {
+    TextButton button = keyBindButtons.get(actionName);
+    button.setText(Input.Keys.toString(newKeyCode));
   }
 
   private StringDecorator<DisplayMode> getActiveMode(Array<StringDecorator<DisplayMode>> modes) {
@@ -311,7 +308,7 @@ public class SettingsMenuDisplay extends UIComponent {
     return displayMode.width + "x" + displayMode.height + ", " + displayMode.refreshRate + "hz";
   }
 
-  private Table makeMenuBtns() {
+  private Table makeMenuButtons() {
     TextButton exitBtn = new TextButton("Exit", skin);
     TextButton applyBtn = new TextButton("Apply", skin);
 
