@@ -30,7 +30,7 @@ public class PlayerFactory {
 
   private static final float FOOT_HITBOX_WIDTH = 0.6f;
   private static final float FOOT_HITBOX_HEIGHT = 0.01f;
-  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0, -0.32f);
+  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0, -0.31f);
   private static final float FOOT_HITBOX_ANGLE = 0;
   /**
    * Create a player entity.
