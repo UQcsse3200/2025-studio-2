@@ -106,8 +106,11 @@ public class Keymap {
     registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT);
     registerAction("TerminalToggle", Input.Keys.GRAVE);
 
-    // Pause
-    registerAction("PauseGame", Input.Keys.ESCAPE);
+    // Pausing / player menus
+    registerAction("PauseSettings", Input.Keys.ESCAPE);
+    registerAction("PauseInventory", Input.Keys.I);
+    registerAction("PauseUpgrades", Input.Keys.U);
+    registerAction("PauseMap", Input.Keys.M);
   }
 
   /**
