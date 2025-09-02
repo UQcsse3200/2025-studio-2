@@ -185,25 +185,35 @@ public class SprintOneGameArea extends GameArea {
 
         // Elevator: moves up 3 tiles when triggered
         Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                new Vector2(0, 3f * ts), // offset: 3 tiles up
-                2f                       // speed
+                new Vector2(0, 3f * ts),
+                2f
         );
-        GridPoint2 elevatorPos = new GridPoint2(12, 10); // right of player
+        GridPoint2 elevatorPos = new GridPoint2(12, 10);
         spawnEntityAt(elevator, elevatorPos, false, false);
         logger.info("Elevator spawned at {}", elevatorPos);
 
-        // Button to trigger it (blue platform type)
+        // Button with tooltip
         Entity button = ButtonFactory.createButton(false, "platform");
-        GridPoint2 buttonPos = new GridPoint2(11, 10); // between player and elevator
+        button.addComponent(new TooltipSystem.TooltipComponent(
+                "Platform Button\nPress E to interact",
+                TooltipSystem.TooltipStyle.DEFAULT
+        ));
+        GridPoint2 buttonPos = new GridPoint2(11, 10);
         spawnEntityAt(button, buttonPos, true, true);
         logger.info("Elevator button spawned at {}", buttonPos);
 
-        // Link button to platform
-        button.getEvents().addListener("buttonPressed", () -> {
-            logger.info("Button was pressed!");
-            elevator.getEvents().trigger("activatePlatform");
+        // Listen for toggle event from button
+        button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed) {
+                logger.info("Button toggled ON — activating elevator");
+                elevator.getEvents().trigger("activatePlatform");
+            } else {
+                logger.info("Button toggled OFF — stopping elevator");
+                elevator.getEvents().trigger("deactivatePlatform");
+            }
         });
     }
+
 
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
