@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.PhysicsService;
@@ -26,7 +27,7 @@ public class BoxFactoryTest {
         // Register PhysicsService to initialise a box's physics body during tests
         ServiceLocator.registerPhysicsService(new PhysicsService());
 
-        // Mock ResourceService so Pixmap and Texture assets won't throw exceptions
+        // Mock ResourceService so assets won't throw exceptions
         ResourceService mockResourceService = mock(ResourceService.class);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
         ServiceLocator.registerResourceService(mockResourceService);
@@ -69,5 +70,49 @@ public class BoxFactoryTest {
         PhysicsComponent physics = moveableBox.getComponent(PhysicsComponent.class);
         assertEquals(BodyDef.BodyType.DynamicBody, physics.getBody().getType(),
                 "Moveable Box PhysicsComponent should have a dynamic body type");
+    }
+
+    @Test
+    void createAutonomousBox_hasAllComponents() {
+        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 2f);
+        assertNotNull(autonomousBox.getComponent(TextureRenderComponent.class),
+                "Autonomous Box should have a TextureRendererComponent");
+        assertNotNull(autonomousBox.getComponent(PhysicsComponent.class),
+                "Autonomous Box should have a PhysicsComponent");
+        assertNotNull(autonomousBox.getComponent(ColliderComponent.class),
+                "Autonomous Box should have a ColliderComponent");
+    }
+
+    @Test
+    void createAutonomousBox_isKinematic() {
+        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 2f);
+        PhysicsComponent physics = autonomousBox.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.KinematicBody, physics.getBody().getType(),
+                "Autonomous Box PhysicsComponent should have a kinematic body type");
+    }
+
+    @Test
+    void createAutonomousBox_setsBoundsAndSpeed() {
+        float leftX = 3f;
+        float rightX = 10f;
+        float speed = 2f;
+        Entity autonomousBox = BoxFactory.createAutonomousBox(leftX, rightX, speed);
+        AutonomousBoxComponent component = autonomousBox.getComponent(AutonomousBoxComponent.class);
+
+        assertEquals(
+                leftX,
+                component.getLeftX(),
+                "Left bound should match value passed to factory"
+        );
+        assertEquals(
+                rightX,
+                component.getRightX(),
+                "Right bound should match value passed to factory"
+        );
+        assertEquals(
+                speed,
+                component.getSpeed(),
+                "Speed should match value passed to factory"
+        );
     }
 }
