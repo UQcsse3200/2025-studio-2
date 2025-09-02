@@ -91,6 +91,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
   private int getActivePriority() {
     float dst = getDistanceToTarget();
     if (dst > maxChaseDistance || !isTargetVisible()) {
+      owner.getEntity().getEvents().trigger("chaseEnd");
       return -1; // Too far, stop chasing
     }
     return priority;

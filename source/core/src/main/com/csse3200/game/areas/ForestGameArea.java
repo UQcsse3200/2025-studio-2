@@ -195,23 +195,27 @@ public class ForestGameArea extends GameArea {
   }
 
   // Test drone spawn in forest area
+  private static final GridPoint2 DRONE_SPAWN_TILE = new GridPoint2(2, 11);
+
   private void spawnDrone() {
-    GridPoint2 tilePos = new GridPoint2(2, 11);
-    Entity drone = EnemyFactory.createDrone(player);
-    spawnEntityAt(drone, tilePos, true, true);
+
+    Vector2 spawnWorldPos = terrain.tileToWorldPosition(DRONE_SPAWN_TILE);
+    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
+    spawnEntityAt(drone, DRONE_SPAWN_TILE, true, true);
+
   }
 
   private void spawnPatrollingDrone() {
-    GridPoint2 spawnPos = new GridPoint2(4, 11);
+    GridPoint2 spawnTile = new GridPoint2(4, 11);
 
     Vector2[] patrolRoute = {
-            terrain.tileToWorldPosition(spawnPos),
+            terrain.tileToWorldPosition(spawnTile),
             terrain.tileToWorldPosition(new GridPoint2(8, 11)),
             terrain.tileToWorldPosition(new GridPoint2(12, 11)),
             terrain.tileToWorldPosition(new GridPoint2(16, 11))
     };
     Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
-    spawnEntityAt(patrolDrone, spawnPos, false, false); // Changed to false so patrol doesn't look weird
+    spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
   }
 
   private void spawnGhostKing() {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
+import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.npc.DroneAttackComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
@@ -41,8 +42,9 @@ public class EnemyFactory {
      * @param target that drone pursues when chasing
      * @return drone enemy entity
      */
-    public static Entity createDrone(Entity target) {
+    public static Entity createDrone(Entity target,Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
+
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
@@ -54,6 +56,10 @@ public class EnemyFactory {
         animator.addAnimation("drop", 0.5f, Animation.PlayMode.LOOP); // Attack animation
 
         Entity drone = createBaseEnemy(target);
+        // Store the spawn position (so we can reset later)
+        if (spawnPos != null) {
+            drone.addComponent(new SpawnPositionComponent(spawnPos));
+        }
 
         drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 
@@ -64,7 +70,15 @@ public class EnemyFactory {
                 .addComponent(new DroneAttackComponent(PhysicsLayer.PLAYER, 3.0f)); // 3 second attack cooldown
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent.addTask(new ChaseTask(target,10, 3f, 4f));
+        // Tasks
+        ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
+        CooldownTask cooldownTask = new CooldownTask(2f);
+
+        // When chase ends, activate cooldown
+        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+        aiComponent.addTask(chaseTask);
+        aiComponent.addTask(cooldownTask);
+
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
@@ -81,16 +95,17 @@ public class EnemyFactory {
      * @return a patrolling drone enemy entity
      */
     public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
-        Entity drone = createDrone(target);
+        Vector2 spawnPos = patrolRoute[0];
+        Entity drone = createDrone(target, spawnPos);
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
+        // Single cooldown + patrol
+        CooldownTask cooldownTask = new CooldownTask(2f);
+        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
 
-        // Add CooldownTask between Chase and Patrol
-        aiComponent.addTask(new CooldownTask(2f)); // wait 2 seconds before teleport
-
-        // PatrolTask is low priority, will only run after CooldownTask finishes
-        aiComponent.addTask(new PatrolTask(1f));
+        aiComponent.addTask(cooldownTask);       // priority 2 when active
+        aiComponent.addTask(new PatrolTask(2f)); // default patrol
 
         return drone;
     }
