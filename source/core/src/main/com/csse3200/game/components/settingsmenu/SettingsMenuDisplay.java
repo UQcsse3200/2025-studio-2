@@ -128,7 +128,13 @@ public class SettingsMenuDisplay extends UIComponent {
     displayModeSelect = new SelectBox<>(skin);
     Monitor selectedMonitor = Gdx.graphics.getMonitor();
     displayModeSelect.setItems(getDisplayModes(selectedMonitor));
-    displayModeSelect.setSelected(getActiveMode(displayModeSelect.getItems()));
+
+    // Set current display mode properly
+    StringDecorator<DisplayMode> currentMode =
+        getCurrentDisplayMode(displayModeSelect.getItems(), settings);
+    if (currentMode != null) {
+      displayModeSelect.setSelected(currentMode);
+    }
 
     // Position Components on table
     Table table = new Table();
@@ -269,6 +275,59 @@ public class SettingsMenuDisplay extends UIComponent {
   }
 
   /**
+   * Gets the current display mode from the available options, checking both
+   * the actual current display mode and the saved settings
+   */
+  private StringDecorator<DisplayMode> getCurrentDisplayMode(
+      Array<StringDecorator<DisplayMode>> modes,
+      UserSettings.Settings settings) {
+
+    DisplayMode targetMode;
+
+    // Try to use the saved display mode from settings
+    if (settings.displayMode != null) {
+      // Create a DisplayMode from saved settings
+      DisplayMode savedMode = findMatchingDisplayMode(settings.displayMode);
+      if (savedMode != null) {
+        targetMode = savedMode;
+      } else {
+        // Fall back to current display mode if saved mode doesn't exist
+        targetMode = Gdx.graphics.getDisplayMode();
+      }
+    } else {
+      // No saved settings, use current display mode
+      targetMode = Gdx.graphics.getDisplayMode();
+    }
+
+    // Find the matching mode in dropdown
+    for (StringDecorator<DisplayMode> stringMode : modes) {
+      DisplayMode mode = stringMode.object;
+      if (targetMode.width == mode.width
+          && targetMode.height == mode.height
+          && targetMode.refreshRate == mode.refreshRate) {
+        return stringMode;
+      }
+    }
+
+    // If no exact match found, return the first item
+    return modes.size > 0 ? modes.first() : null;
+  }
+
+  /**
+   * Finds a DisplayMode that matches the saved DisplaySettings
+   */
+  private DisplayMode findMatchingDisplayMode(UserSettings.DisplaySettings displaySettings) {
+    for (DisplayMode mode : Gdx.graphics.getDisplayModes()) {
+      if (mode.width == displaySettings.width
+          && mode.height == displaySettings.height
+          && mode.refreshRate == displaySettings.refreshRate) {
+        return mode;
+      }
+    }
+    return null;
+  }
+
+  /**
    * Formats action names to be more user-friendly
    * Converts camelCase to space-separated words and removes 'Player' prefix
    * @param actionName the action name to format
@@ -303,20 +362,6 @@ public class SettingsMenuDisplay extends UIComponent {
   public void updateKeyBindButton(String actionName, int newKeyCode) {
     TextButton button = keyBindButtons.get(actionName);
     button.setText(Input.Keys.toString(newKeyCode));
-  }
-
-  private StringDecorator<DisplayMode> getActiveMode(Array<StringDecorator<DisplayMode>> modes) {
-    DisplayMode active = Gdx.graphics.getDisplayMode();
-
-    for (StringDecorator<DisplayMode> stringMode : modes) {
-      DisplayMode mode = stringMode.object;
-      if (active.width == mode.width
-          && active.height == mode.height
-          && active.refreshRate == mode.refreshRate) {
-        return stringMode;
-      }
-    }
-    return null;
   }
 
   private Array<StringDecorator<DisplayMode>> getDisplayModes(Monitor monitor) {
