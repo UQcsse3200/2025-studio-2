@@ -16,6 +16,8 @@ import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.InputFactory;
 import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.areas.GameArea;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class DoorComponentTest {
+    private GameArea game;
 
     // Reference: Gemini to set up the @BeforeEach
     @BeforeEach
@@ -56,6 +59,10 @@ class DoorComponentTest {
         doNothing().when(es).unregister(any());
         ServiceLocator.registerEntityService(es);
 
+        game = new GameArea() {
+            @Override
+            public void create() { }
+        };
     }
 
     // --- Helpers ---
@@ -66,7 +73,7 @@ class DoorComponentTest {
     }
 
     private Entity makeDoor(String keyId) {
-        Entity door = ObstacleFactory.createDoor(keyId);
+        Entity door = ObstacleFactory.createDoor(keyId, game);
         door.create();
         return door;
     }
