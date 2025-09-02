@@ -12,6 +12,7 @@ import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 import com.csse3200.game.ui.inventoryscreen.MapTab;
+import com.csse3200.game.ui.inventoryscreen.SettingsTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 
 public class PauseMenuDisplay extends UIComponent {
@@ -25,6 +26,7 @@ public class PauseMenuDisplay extends UIComponent {
 
     private final InventoryTab inventoryTab = new InventoryTab();
     private final UpgradesTab upgradesTab = new UpgradesTab();
+    private final SettingsTab settingsTab = new SettingsTab();
     private final MapTab mapTab = new MapTab();
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
@@ -117,8 +119,8 @@ public class PauseMenuDisplay extends UIComponent {
         Actor ui = switch (currentTab) {
             case INVENTORY -> inventoryTab.build(skin);
             case UPGRADES -> upgradesTab.build(skin);
+            case SETTINGS -> settingsTab.build(skin);
             case MAP -> mapTab.build(skin);
-            default -> new Label("SETTINGS", skin);
         };
         tabContent.add(ui).center();
     }
