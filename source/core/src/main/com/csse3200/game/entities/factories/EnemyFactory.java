@@ -6,9 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
-import com.csse3200.game.components.npc.DroneAttackComponent;
 import com.csse3200.game.components.tasks.ChaseTask;
+import com.csse3200.game.components.tasks.BombDropTask;
 import com.csse3200.game.components.tasks.PatrolTask;
+import com.csse3200.game.components.tasks.WanderTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
 import com.csse3200.game.entities.configs.EnemyConfigs;
@@ -17,6 +18,7 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
@@ -46,21 +48,24 @@ public class EnemyFactory {
 
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("drop", 0.5f, Animation.PlayMode.LOOP); // Attack animation
+        animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP); // Attack animation
 
         Entity drone = createBaseEnemy(target)
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
-                .addComponent(new DroneAnimationController())
-                .addComponent(new DroneAttackComponent(PhysicsLayer.PLAYER, 3.0f)); // 3 second attack cooldown
-
+                .addComponent(new DroneAnimationController());
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
                 //TODO: Implement light-activated chase
-                .addTask(new ChaseTask(target, 10, 3f, 4f));
+                .addTask(new WanderTask(new Vector2(2f, 2f), 2f))  // Priority 1
+                // Chase with hover height of 3 units above player
+                .addTask(new ChaseTask(target, 10, 5f, 7f, 3f, 1.5f, 2f))  // Priority 10
+                // Bomb drop task with higher priority when conditions met
+                .addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f)); // Priority 15 when above player
         drone.getComponent(AnimationRenderComponent.class).scaleEntity();
         return drone;
     }
+
 
     /**
      * Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.
@@ -75,6 +80,7 @@ public class EnemyFactory {
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
                 .addTask(new PatrolTask(spawnPos, patrolSteps, 1f));
+
         return drone;
     }
 
@@ -90,9 +96,8 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
                         .addComponent(new AITaskComponent());
-
-//                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;

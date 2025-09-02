@@ -5,38 +5,30 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.DisposalComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.factories.ExplosionFactory;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Component for bomb projectiles that explode after a delay and deal area damage.
- * Requires CombatStatsComponent and HitboxComponent on this entity.
- */
 public class BombComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(BombComponent.class);
 
     private final GameTime timeSource;
-    private final float explosionDelay; // in seconds
+    private final float explosionDelay;
     private final float explosionRadius;
     private final short targetLayer;
     private long dropTime;
     private boolean hasExploded = false;
-    private CombatStatsComponent combatStats;
-    private HitboxComponent hitboxComponent;
+    private boolean hasLanded = false;
+    private float blinkTimer = 0f;
+    private boolean isVisible = true;
 
-    /**
-     * Create a bomb component with specified parameters
-     * @param explosionDelay Time in seconds before explosion
-     * @param explosionRadius Radius of explosion damage area
-     * @param targetLayer Physics layer of entities to damage
-     */
     public BombComponent(float explosionDelay, float explosionRadius, short targetLayer) {
         this.timeSource = ServiceLocator.getTimeSource();
         this.explosionDelay = explosionDelay;
@@ -47,82 +39,144 @@ public class BombComponent extends Component {
     @Override
     public void create() {
         super.create();
-        combatStats = entity.getComponent(CombatStatsComponent.class);
-        hitboxComponent = entity.getComponent(HitboxComponent.class);
-        dropTime = timeSource.getTime();
-
-        // Add collision listener to handle ground impact
         entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-
-        logger.debug("Bomb created with {}s delay and {}m radius", explosionDelay, explosionRadius);
+        dropTime = timeSource.getTime();
+        logger.debug("Bomb created with {}s delay", explosionDelay);
     }
 
     @Override
     public void update() {
-        if (!hasExploded && timeSource.getTimeSince(dropTime) >= explosionDelay * 1000) {
+        if (hasExploded) return;
+
+        // Visual warning: make bomb blink faster as it approaches explosion
+        float timeLeft = explosionDelay - (timeSource.getTimeSince(dropTime) / 1000f);
+        if (timeLeft < 1f && hasLanded) {
+            // Blink effect in last second
+            blinkTimer += timeSource.getDeltaTime();
+            if (blinkTimer > 0.1f) {
+                toggleVisibility();
+                blinkTimer = 0f;
+            }
+        }
+
+        // Check for explosion
+        if (timeSource.getTimeSince(dropTime) >= explosionDelay * 1000) {
             explode();
         }
     }
 
     private void onCollisionStart(Fixture me, Fixture other) {
-        // If bomb hits the ground or an obstacle, start countdown immediately
+        // Bomb has hit the ground or obstacle
         if (PhysicsLayer.contains(PhysicsLayer.OBSTACLE, other.getFilterData().categoryBits)) {
-            logger.debug("Bomb hit ground/obstacle, starting explosion countdown");
-            // Could add visual/audio feedback here
+            hasLanded = true;
+            // Stop horizontal movement when landed
+            PhysicsComponent physicsComponent = entity.getComponent(PhysicsComponent.class);
+            if (physicsComponent != null) {
+                Body body = physicsComponent.getBody();
+                body.setLinearVelocity(0, body.getLinearVelocity().y);
+            }
+            logger.debug("Bomb landed, starting countdown");
+        }
+    }
+
+    private void toggleVisibility() {
+        isVisible = !isVisible;
+        if (!isVisible) {
+            entity.setScale(0f, 0f);
+        } else {
+            entity.setScale(0.5f, 0.5f);
         }
     }
 
     private void explode() {
+        if (hasExploded) return;
         hasExploded = true;
         logger.debug("Bomb exploding at position {}", entity.getPosition());
-
-        // Trigger explosion event for visual/audio effects
-        entity.getEvents().trigger("bombExplode");
 
         // Deal area damage
         dealAreaDamage();
 
-        // Remove the bomb entity after explosion
-        entity.dispose();
+        // Create visual explosion effect
+        createExplosionEffect();
+
+        // Hide the bomb immediately
+        entity.setScale(0f, 0f);
+
+        // Add disposal component for safe cleanup after 0.1 seconds
+        entity.addComponent(new DisposalComponent(0.1f));
+
+        // Disable this component to prevent further updates
+        this.setEnabled(false);
     }
 
-    private void dealAreaDamage() {
-        Vector2 bombPosition = entity.getCenterPosition();
+    /*private void markForDisposal() {
+        // Disable all components to prevent further updates
+        entity.setEnabled(false);
 
-        // Get all entities in the game world
-        // This is a simplified approach - in a real game you might use spatial partitioning
+        // Schedule disposal for next frame
+        // We'll use a simple approach: make the entity invisible and let it be cleaned up
+        entity.setScale(0f, 0f);
+
+        // Trigger a disposal event that can be handled safely
+        entity.getEvents().trigger("scheduleDisposal");
+
+        // Alternative: You could also add a disposal queue to the EntityService
+        // For now, we'll just disable the entity
+    }*/
+
+    private void dealAreaDamage() {
+        Vector2 bombPos = entity.getCenterPosition();
+
         ServiceLocator.getPhysicsService().getPhysics().getWorld().QueryAABB(
                 (fixture) -> {
                     if (!PhysicsLayer.contains(targetLayer, fixture.getFilterData().categoryBits)) {
-                        return true; // Continue querying
+                        return true;
                     }
 
                     Body body = fixture.getBody();
-                    Entity targetEntity = ((BodyUserData) body.getUserData()).entity;
-                    Vector2 targetPosition = targetEntity.getCenterPosition();
+                    BodyUserData userData = (BodyUserData) body.getUserData();
+                    if (userData == null || userData.entity == null) {
+                        return true;
+                    }
 
-                    float distance = bombPosition.dst(targetPosition);
+                    Entity target = userData.entity;
+                    Vector2 targetPos = target.getCenterPosition();
+
+                    float distance = bombPos.dst(targetPos);
                     if (distance <= explosionRadius) {
-                        // Deal damage to target
-                        CombatStatsComponent targetStats = targetEntity.getComponent(CombatStatsComponent.class);
-                        if (targetStats != null && combatStats != null) {
-                            targetStats.hit(combatStats);
-                            logger.debug("Bomb damaged {} at distance {}", targetEntity, distance);
+                        // Damage falloff based on distance
+                        float damageFactor = 1f - (distance / explosionRadius) * 0.5f;
+
+                        CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
+                        CombatStatsComponent bombStats = entity.getComponent(CombatStatsComponent.class);
+
+                        if (targetStats != null && bombStats != null) {
+                            int finalDamage = (int)(bombStats.getBaseAttack() * damageFactor);
+                            targetStats.addHealth(-finalDamage);
+                            logger.debug("Bomb dealt {} damage to {}", finalDamage, target);
                         }
 
                         // Apply knockback
-                        PhysicsComponent physicsComponent = targetEntity.getComponent(PhysicsComponent.class);
-                        if (physicsComponent != null) {
-                            Vector2 knockbackDirection = targetPosition.cpy().sub(bombPosition).nor();
-                            float knockbackForce = Math.max(0, explosionRadius - distance) * 5f; // Scale with distance
-                            Vector2 impulse = knockbackDirection.scl(knockbackForce);
-                            physicsComponent.getBody().applyLinearImpulse(impulse, body.getWorldCenter(), true);
+                        PhysicsComponent physics = target.getComponent(PhysicsComponent.class);
+                        if (physics != null) {
+                            Vector2 knockback = targetPos.cpy().sub(bombPos).nor();
+                            float force = (explosionRadius - distance) * 10f;
+                            knockback.scl(force);
+                            physics.getBody().applyLinearImpulse(knockback,
+                                    physics.getBody().getWorldCenter(), true);
                         }
                     }
-                    return true; // Continue querying
+                    return true;
                 },
-                bombPosition.x - explosionRadius, bombPosition.y - explosionRadius,
-                bombPosition.x + explosionRadius, bombPosition.y + explosionRadius
+                bombPos.x - explosionRadius, bombPos.y - explosionRadius,
+                bombPos.x + explosionRadius, bombPos.y + explosionRadius
         );
+    }
+
+    private void createExplosionEffect() {
+        Entity explosion = ExplosionFactory.createExplosion(entity.getCenterPosition(), this.explosionRadius);
+        ServiceLocator.getEntityService().register(explosion);
+
+        logger.debug("Created explosion effect entity at {}", entity.getCenterPosition());
     }
 }

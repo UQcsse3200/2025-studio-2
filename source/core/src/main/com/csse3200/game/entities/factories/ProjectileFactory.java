@@ -26,41 +26,92 @@ import com.csse3200.game.services.ServiceLocator;
 public class ProjectileFactory {
 
     /**
-     * Creates a bomb entity that explodes after a delay
-     * @param source The entity that created the bomb
-     * @param targetPosition Position where the bomb should be placed
-     * @param explosionDelay Time in seconds before explosion
+     * Creates a bomb entity that falls from source position toward target
+     * @param source The entity that created the bomb (drone)
+     * @param spawnPosition Position where bomb spawns (drone's position)
+     * @param targetPosition Position where bomb should land (player's position)
+     * @param explosionDelay Time in seconds before explosion after landing
      * @param explosionRadius Radius of explosion damage area
      * @param damage Damage the bomb will deal
      * @return Bomb entity
      */
-    public static Entity createBomb(Entity source, Vector2 targetPosition, float explosionDelay,
-                                    float explosionRadius, int damage) {
-        Entity bomb = createProjectile(source, new Vector2(0,-1), 3,4);
-
-        AnimationRenderComponent animator =
-                new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
-
-        // Add bomb animations
-        animator.addAnimation("bomb", 0.1f, Animation.PlayMode.LOOP);
-
-        bomb
-                .addComponent(animator)
-                .addComponent(new CombatStatsComponent(1, damage)) // 1 health, specified damage
+    public static Entity createBomb(Entity source, Vector2 spawnPosition, Vector2 targetPosition,
+                                    float explosionDelay, float explosionRadius, int damage) {
+        Entity bomb = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new CombatStatsComponent(1, damage))
                 .addComponent(new BombComponent(explosionDelay, explosionRadius, PhysicsLayer.PLAYER));
 
-        // Set bomb position
-        bomb.setPosition(targetPosition);
+        // Try to add texture, use a default if bomb.png doesn't exist
+        try {
+            bomb.addComponent(new TextureRenderComponent("images/bomb.png"));
+        } catch (Exception e) {
+            // Use a small box as placeholder for bomb
+            bomb.addComponent(new TextureRenderComponent("images/box_boy_leaf.png"));
+        }
 
-        // Set up physics - make it a dynamic body so it can fall/move
+        // Position bomb at spawn position (drone's location)
+        bomb.setPosition(spawnPosition);
+
+        // Set up physics for falling
         bomb.getComponent(PhysicsComponent.class).setBodyType(BodyDef.BodyType.DynamicBody);
 
-        // Scale the bomb appropriately
-        PhysicsUtils.setScaledCollider(bomb, 1.0f, 1.0f);
+        // Calculate horizontal velocity to reach target
+        float horizontalDistance = targetPosition.x - spawnPosition.x;
+        float fallTime = 1.5f; // Approximate time to fall
+        float horizontalVelocity = horizontalDistance / fallTime;
 
-        // Make the bomb render properly
-        bomb.getComponent(AnimationRenderComponent.class).scaleEntity();
+        // Set initial velocity - horizontal movement toward target, vertical falling
+        bomb.getComponent(PhysicsComponent.class).getBody().setLinearVelocity(
+                horizontalVelocity,  // Horizontal velocity toward target
+                -2f                  // Initial downward velocity
+        );
+
+        // Set collision properties
+        bomb.getComponent(ColliderComponent.class)
+                .setSensor(false)   // Should collide with ground
+                .setDensity(2f)     // Make it heavy
+                .setRestitution(0.1f); // Low bounce
+
+        // Scale the bomb to be small
+        bomb.setScale(0.3f, 0.3f);
+        PhysicsUtils.setScaledCollider(bomb, 0.3f, 0.3f);
+
+        return bomb;
+    }
+
+    public static Entity createBomb(Entity source, Vector2 targetPosition,
+                                    float explosionDelay, float explosionRadius, int damage) {
+        Entity bomb = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new CombatStatsComponent(1, damage))
+                .addComponent(new BombComponent(explosionDelay, explosionRadius, PhysicsLayer.PLAYER))
+                .addComponent(new TextureRenderComponent("images/bomb.png")); // Use a simple texture
+
+        // Position bomb above target (will fall down)
+        Vector2 bombStartPos = targetPosition.cpy();
+        bombStartPos.y += 5f; // Start 5 units above target
+        bomb.setPosition(bombStartPos);
+
+        // Set physics for falling
+        bomb.getComponent(PhysicsComponent.class).setBodyType(BodyDef.BodyType.DynamicBody);
+        PhysicsComponent physicsComponent = bomb.getComponent(PhysicsComponent.class);
+
+        // Apply downward velocity for falling effect
+        bomb.getComponent(PhysicsComponent.class).getBody().setLinearVelocity(0, -3f);
+
+        // Set collision properties
+        bomb.getComponent(ColliderComponent.class)
+                .setSensor(false)  // Should collide with ground
+                .setDensity(2f);    // Make it heavy
+
+        // Scale the bomb
+        bomb.setScale(0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(bomb, 0.5f, 0.5f);
 
         return bomb;
     }
@@ -81,7 +132,7 @@ public class ProjectileFactory {
                 .addComponent(new CombatStatsComponent(1, damage));
 
         // Set initial position at source
-        projectile.setPosition(source.getPosition());
+        projectile.setPosition(source.getCenterPosition());
 
         // Set up physics for movement
         projectile.getComponent(PhysicsComponent.class).setBodyType(BodyDef.BodyType.DynamicBody);
