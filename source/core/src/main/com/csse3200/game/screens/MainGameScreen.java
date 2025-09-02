@@ -80,10 +80,10 @@ public class MainGameScreen extends ScreenAdapter {
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
     ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
     CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
-    //SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
-    //sprintOneGameArea.create();
-    caveGameArea.create();
-    forestGameArea.create();
+    SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
+    sprintOneGameArea.create();
+    //caveGameArea.create();
+    //forestGameArea.create();
   }
 
   @Override
