@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.components.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.MovingPlatformComponent;
@@ -59,7 +60,7 @@ public class PlatformFactory {
                 .addComponent(new PhysicsComponent())
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
                 .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
-        platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
+        platform.getComponent(PhysicsComponent.class).setBodyType(BodyDef.BodyType.KinematicBody);
         platform.getComponent(TextureRenderComponent.class).scaleEntity();
         return platform;
     }

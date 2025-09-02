@@ -180,7 +180,7 @@ public class SprintOneGameArea extends GameArea {
 
            // Elevator: moves up 4 tiles when triggered
            Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                   new Vector2(0, 4f * ts), // offset: 4 tiles up
+                   new Vector2(0, 3f * ts), // offset: 4 tiles up
                    2f                       // speed
            );
            GridPoint2 elevatorPos = new GridPoint2(12, 10); // right of player
@@ -189,7 +189,7 @@ public class SprintOneGameArea extends GameArea {
 
            // Button to trigger it (blue platform type)
            Entity button = ButtonFactory.createButton(false, "platform");
-           GridPoint2 buttonPos = new GridPoint2(11, 10); // between player and elevator
+           GridPoint2 buttonPos = new GridPoint2(9, 10); // between player and elevator
            spawnEntityAt(button, buttonPos, true, true);
            logger.info("Elevator button spawned at {}", buttonPos);
 

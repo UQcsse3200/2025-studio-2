@@ -2,10 +2,9 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.csse3200.game.components.player.PlayerActions;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ButtonTriggeredPlatformComponent extends Component{
     private final Vector2 offset;    // units per second
@@ -15,7 +14,7 @@ public class ButtonTriggeredPlatformComponent extends Component{
     private Vector2 origin; //This is the position where the platform will spawn at
     private boolean active = false;
     private boolean forward = true;
-
+    private final Logger platformLogger = LoggerFactory.getLogger(ButtonTriggeredPlatformComponent.class);
     public ButtonTriggeredPlatformComponent(Vector2 offset, float speed) {
         this.offset = offset.cpy();
         this.speed = speed;
@@ -35,14 +34,14 @@ public class ButtonTriggeredPlatformComponent extends Component{
     private void onActivate() {
         active = true;
         forward = !forward;//To alter the direction each time
+        platformLogger.info("Platform activated! Moving {}", forward ? "forward" : "backward");
     }
     @Override
     public void update() {
         if (!active) return;
-
+        platformLogger.info("Platform update running");
         Body body = physics.getBody();
         Vector2 pos = body.getPosition();
-
         // Calculate target dynamically from origin + offset
         Vector2 target = forward ? origin.cpy().add(offset) : origin.cpy();
         Vector2 dir = target.cpy().sub(pos);
