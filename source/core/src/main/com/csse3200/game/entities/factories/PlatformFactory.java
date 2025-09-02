@@ -60,7 +60,7 @@ public class PlatformFactory {
                 .addComponent(new PhysicsComponent())
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
                 .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
-        platform.getComponent(PhysicsComponent.class).setBodyType(BodyDef.BodyType.KinematicBody);
+        platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
         platform.getComponent(TextureRenderComponent.class).scaleEntity();
         return platform;
     }

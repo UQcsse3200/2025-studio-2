@@ -145,16 +145,12 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {
-        Entity button = ButtonFactory.createButton(false, "platform");
-        button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button, new GridPoint2(8,5), true,  true);
-
         Entity button2 = ButtonFactory.createButton(false, "door");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
+        spawnEntityAt(button2, new GridPoint2(8,5), true,  true);
 
         Entity button3 = ButtonFactory.createButton(false, "nothing");
-        spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+        spawnEntityAt(button3, new GridPoint2(12,4), true,  true);
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -247,6 +243,7 @@ public class SprintOneGameArea extends GameArea {
 
         // Static box
         Entity staticBox = BoxFactory.createStaticBox();
+
         staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
                 " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
@@ -285,10 +282,11 @@ public class SprintOneGameArea extends GameArea {
 
         // Elevator: moves up 3 tiles when triggered
         Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                new Vector2(0, 3f * ts),
+                new Vector2(0, 6f * ts),
                 2f
         );
         GridPoint2 elevatorPos = new GridPoint2(12, 10);
+        elevator.setScale(2,0.5f);
         spawnEntityAt(elevator, elevatorPos, false, false);
         logger.info("Elevator spawned at {}", elevatorPos);
 
@@ -298,7 +296,7 @@ public class SprintOneGameArea extends GameArea {
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonPos = new GridPoint2(11, 10);
+        GridPoint2 buttonPos = new GridPoint2(15, 11);
         spawnEntityAt(button, buttonPos, true, true);
         logger.info("Elevator button spawned at {}", buttonPos);
 
