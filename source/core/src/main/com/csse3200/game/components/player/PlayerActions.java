@@ -23,7 +23,7 @@ public class PlayerActions extends Component {
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
 
-  private static final int DASH_SPEED_MULTIPLIER = 15;
+  private static final int DASH_SPEED_MULTIPLIER = 5;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
@@ -187,7 +187,6 @@ public class PlayerActions extends Component {
     //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
-
   }
 
   /**
@@ -213,7 +212,6 @@ public class PlayerActions extends Component {
     }
 
     this.walkDirection = direction;
-    moving = true;
 
     Body body = physicsComponent.getBody();
 
@@ -297,4 +295,9 @@ public class PlayerActions extends Component {
   public boolean hasSoundPlayed() {
     return soundPlayed;
   }
+
+  public boolean hasAdrenaline() {
+    return adrenaline;
+  }
+
 }
