@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -12,6 +13,8 @@ import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -24,12 +27,23 @@ public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
     private static final float WALL_WIDTH = 0.1f;
+    private static boolean keySpawned;
+
     private static final String[] gameTextures = {
+            "images/button.png",
+            "images/key_tester.png",
+            "images/button_pushed.png",
+            "images/blue_button.png",
+            "images/blue_button_pushed.png",
+            "images/red_button.png",
+            "images/red_button_pushed.png",
+            "images/box_orange.png",
             "images/minimap_player_marker.png",
             "images/minimap_forest_area.png",
+            "images/box_blue.png",
+            "images/box_white.png",
             "images/blue_button.png",
-            "images/cave_1.png",
-            "images/cave_2.png",
+            "images/spikes_sprite.png",
             "images/TechWallBase.png",
             "images/TechWallVariant1.png",
             "images/TechWallVariant2.png",
@@ -75,6 +89,8 @@ public class SprintOneGameArea extends GameArea {
     /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
     @Override
     public void create() {
+        PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+        engine.getWorld().setContactListener(new ObjectContactListener());
         loadAssets();
 
         displayUI();
@@ -88,13 +104,14 @@ public class SprintOneGameArea extends GameArea {
         playMusic();
         spawnLights();
         spawnButtons();
+        spawnTraps();
 
     }
 
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Sprint one demo level"));
-        ui.addComponent(new TooltipSystem.TooltipDisplay());
+        //ui.addComponent(new TooltipSystem.TooltipDisplay()); //Breaking moving Platform
         spawnEntity(ui);
     }
     private MinimapDisplay createMinimap() {
@@ -116,11 +133,38 @@ public class SprintOneGameArea extends GameArea {
 
         return minimapDisplay;
     }
+    private void spawnTraps() {
+        GridPoint2 spawnPos =  new GridPoint2(2,4);
+        Entity spikes = TrapFactory.createSpikes(spawnPos);
+        spawnEntityAt(spikes, spawnPos, true,  true);
+    }
     private void spawnButtons() {
         Entity button = ButtonFactory.createButton(false, "platform");
         button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button, new GridPoint2(8,5), true,  true);
+
+        Entity button2 = ButtonFactory.createButton(false, "door");
+        button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
+
+        Entity button3 = ButtonFactory.createButton(false, "nothing");
+        spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+
+        //listener to spawn key when door button pushed
+        button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed && !keySpawned) {
+                spawnKey();
+                keySpawned = true;
+            }
+        });
+
     }
+
+    public void spawnKey() {
+        Entity key = CollectableFactory.createKey("door");
+        spawnEntityAt(key, new GridPoint2(17,17), true, true);
+    }
+
     private void spawnLights() {
         // see the LightFactory class for more details on spawning these
         Entity securityLight = LightFactory.createSecurityLight(
@@ -205,7 +249,14 @@ public class SprintOneGameArea extends GameArea {
         moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
         spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
-        // Add other types of boxes here
+        // Autonomous box
+        float startX = 3f;
+        float endX = 10f;
+        float y = 17f;
+        float speed = 2f;
+
+        Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+        spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
     }
     private void spawnGate() {
     /*

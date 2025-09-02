@@ -277,7 +277,6 @@ public class ForestGameArea extends GameArea {
       Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
       spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
   }
-
   private void spawnTraps() {
     GridPoint2 spawnPos =  new GridPoint2(7,15);
     Entity spikes = TrapFactory.createSpikes(spawnPos);
