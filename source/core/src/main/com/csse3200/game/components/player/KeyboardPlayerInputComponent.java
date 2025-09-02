@@ -49,6 +49,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("interact");
       return true;
     }
+    else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+      entity.getEvents().trigger("sprintStart");
+      return true;
+    }
 
     return false;
   }
@@ -76,6 +80,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
       walkDirection.sub(Vector2Utils.RIGHT);
       triggerWalkEvent();
+      return true;
+    }
+    else if (keycode == Keys.SHIFT_LEFT || keycode == Keys.SHIFT_RIGHT) {
+      entity.getEvents().trigger("sprintStop");
       return true;
     }
 
