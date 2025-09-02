@@ -2,7 +2,6 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.math.Matrix3;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
@@ -16,12 +15,13 @@ import com.badlogic.gdx.physics.box2d.*;
  * and when triggered should call methods within this class.
  */
 public class PlayerActions extends Component {
-  private static final Vector2 MAX_SPEED = new Vector2(6f, 6f); // Metres per
   private static final float MAX_ACCELERATION = 70f;
   // second
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
-  private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(2);
-  private static final int DASH_SPEED_MULTIPLIER = 4;
+  private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
+  private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
+
+  private static final int DASH_SPEED_MULTIPLIER = 15;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
@@ -33,6 +33,10 @@ public class PlayerActions extends Component {
 
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
+
+  private boolean crouching = false;
+
+  private boolean soundPlayed = false;
 
   @Override
   public void create() {
@@ -53,6 +57,7 @@ public class PlayerActions extends Component {
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
 
+    entity.getEvents().addListener("crouch", this::crouch);
   }
 
   @Override
@@ -75,6 +80,8 @@ public class PlayerActions extends Component {
 
     if (adrenaline) {
       desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
+    } else if (crouching) {
+      desiredVelocity = walkDirection.cpy().scl(CROUCH_SPEED);
     } else {
       desiredVelocity = walkDirection.cpy().scl(WALK_SPEED);
     }
@@ -166,6 +173,9 @@ public class PlayerActions extends Component {
    * @param direction The direction in which the player should move
    */
   void toggleAdrenaline(Vector2 direction) {
+    if (crouching) {
+      return;
+    }
     this.walkDirection = direction;
     adrenaline = !adrenaline;
   }
@@ -175,10 +185,16 @@ public class PlayerActions extends Component {
    * @param direction The direction in which the player should dash
    */
   void dash(Vector2 direction) {
+
+    if (crouching) {
+      return;
+    }
+
     this.walkDirection = direction;
     moving = true;
 
     Body body = physicsComponent.getBody();
+
 
     direction.scl(DASH_SPEED_MULTIPLIER);
     body.applyLinearImpulse(direction, body.getWorldCenter(), true);
@@ -201,6 +217,7 @@ public class PlayerActions extends Component {
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
+    soundPlayed = true;
   }
 
   /**
@@ -216,4 +233,46 @@ public class PlayerActions extends Component {
     }
   }
 
+  /**
+   * Makes the player crouch
+   */
+  void crouch() {
+    if (crouching) {
+      crouching = false;
+      updateSpeed();
+      //PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
+    } else {
+      crouching = true;
+      updateSpeed();
+      //PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
+    }
+  }
+
+  public boolean isMoving() {
+    return moving;
+  }
+
+  public float getXDirection() {
+    return walkDirection.x;
+  }
+
+  public float getYDirection() {
+    return walkDirection.y;
+  }
+
+  public boolean getIsJumping() {
+    return isJumping;
+  }
+
+  public boolean getIsDoubleJumping() {
+    return isDoubleJump;
+  }
+
+  public boolean getIsCrouching() {
+    return crouching;
+  }
+
+  public boolean hasSoundPlayed() {
+    return soundPlayed;
+  }
 }

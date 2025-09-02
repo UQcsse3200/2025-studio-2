@@ -45,6 +45,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       case Keys.SHIFT_LEFT:
         triggerDashEvent();
         return true;
+      case Keys.CONTROL_LEFT:
+        triggerCrouchEvent();
+        return true;
       default:
         return false;
     }
@@ -97,5 +100,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private void triggerDashEvent() {
     entity.getEvents().trigger("dash", walkDirection);
+  }
+
+  private void triggerCrouchEvent() {
+    entity.getEvents().trigger("crouch");
   }
 }

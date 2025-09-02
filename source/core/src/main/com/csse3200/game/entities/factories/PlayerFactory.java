@@ -52,7 +52,7 @@ public class PlayerFactory {
             .addComponent(inputComponent)
             .addComponent(new PlayerStatsDisplay());
 
-    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+    PhysicsUtils.setScaledCollider(player, 0.6f, 1.0f);
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();
 
