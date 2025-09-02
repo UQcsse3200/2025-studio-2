@@ -71,15 +71,6 @@ public class PlayerFactory {
     });
     player.getEvents().addListener("sprintStop", () -> stamina.setSprinting(false));
 
-// TEMP: Console logs to verify behaviour (remove before merging)
-    player.getEvents().addListener("staminaUpdate", (Integer cur, Integer max) -> {
-      Gdx.app.log("STAM", cur + "/" + max + (stamina.isExhausted() ? " (EXHAUSTED)" : ""));
-    });
-    player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
-    player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
-// --- end stamina block ---
-
-
     Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
     if (minimapActor != null && minimapActor.getUserObject() != null
             && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
