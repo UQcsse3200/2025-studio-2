@@ -27,7 +27,7 @@ public abstract class CollectableComponent extends Component {
     }
 
     /**
-     * Handles collision start events with other entities.     *d
+     * Handles collision start events with other entities.
      * @param player the other entity in the collision, expected to be the Player
      */
     private void onCollisionStart(Entity player) {
