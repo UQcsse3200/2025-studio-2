@@ -9,14 +9,17 @@ import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
- * Component that tracks and manages a player's inventory as a multiset of item identifiers
- * (stack counts).
+ * Abstract component for collectable items in the game world.
+ * Handles collision detection with the player and invokes {@link #onCollect(Entity)}
+ * when picked up. Subclasses define what happens on collection
+ * (e.g., adding to inventory, increasing score).
  */
+
 public abstract class CollectableComponent extends Component {
     private boolean collected = false;
 
     /**
-     * Registers a two-argument listener for {@code "collisionStart"} that delegates to
+     * Registers a listener for {@code "onCollisionStart"} events to trigger collection logic.
      */
     @Override
     public void create() {
@@ -24,9 +27,8 @@ public abstract class CollectableComponent extends Component {
     }
 
     /**
-     * Handles begin-contact events for this collectable.
-     *d
-     * @param player      the other object in the collision; expected to be a Player {@link Entity}
+     * Handles collision start events with other entities.     *d
+     * @param player the other entity in the collision, expected to be the Player
      */
     private void onCollisionStart(Entity player) {
         HitboxComponent cc = player.getComponent(HitboxComponent.class);
@@ -41,6 +43,11 @@ public abstract class CollectableComponent extends Component {
         }
     }
 
-    /** Return true if collection succeeded (then the collectable will be disposed). */
+    /**
+     * Called when this collectable is picked up by the player.
+     *
+     * @param collector the player entity collecting this item
+     * @return true if collection succeeded (and the item should be removed), false otherwise
+     */
     protected abstract boolean onCollect(Entity collector);
 }
