@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.events.listeners.EventListener0;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -34,6 +36,9 @@ public class PlayerActions extends Component {
   private boolean moving = false;
   private boolean adrenaline = false;
   private boolean crouching = false;
+
+  // For Tests (Not Functionality)
+  private boolean hasDashed = false;
 
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
@@ -192,40 +197,37 @@ public class PlayerActions extends Component {
 
   /**
    * Boosts the players speed, `activates adrenaline`
-   * @param direction The direction in which the player should move
    */
-  void toggleAdrenaline(Vector2 direction) {
+  void toggleAdrenaline() {
     // Player cannot sprint (adrenaline) while crouching
     if (crouching) {
       return;
     }
 
-    this.walkDirection = direction;
     // Toggle the adrenaline on or off
     adrenaline = !adrenaline;
   }
 
   /**
    * Gives the player a boost of speed in the given direction
-   * @param direction The direction in which the player should dash
    */
-  void dash(Vector2 direction) {
+  void dash() {
 
     // Player cannot dash while crouching
     if (crouching) {
       return;
     }
 
-    this.walkDirection = direction;
+    hasDashed = true;
 
     // Retrieve the body to apply the force (impulse)
     Body body = physicsComponent.getBody();
 
     // Scale the direction vector to increase speed
-    direction.scl(DASH_SPEED_MULTIPLIER);
-    body.applyLinearImpulse(direction, body.getWorldCenter(), true);
+    this.walkDirection.scl(DASH_SPEED_MULTIPLIER);
+    body.applyLinearImpulse(this.walkDirection, body.getWorldCenter(), true);
     // Unscale the direction vector to ensure player does not infinitely dash in one direction
-    direction.scl((float) 1 / DASH_SPEED_MULTIPLIER);
+    this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
   }
 
   /**
@@ -305,6 +307,10 @@ public class PlayerActions extends Component {
 
   public boolean hasAdrenaline() {
     return adrenaline;
+  }
+
+  public boolean hasDashed() {
+    return hasDashed;
   }
 
 }
