@@ -1,21 +1,31 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.NPCFactory;
-import com.csse3200.game.entities.factories.ObstacleFactory;
-import com.csse3200.game.entities.factories.PlayerFactory;
+import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -24,6 +34,7 @@ public class ForestGameArea extends GameArea {
   private static final int NUM_GHOSTS = 0;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
+  private static boolean keySpawned;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
     "images/tree.png",
@@ -32,12 +43,32 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
+    "images/key_tester.png",
     "images/hex_grass_1.png",
     "images/hex_grass_2.png",
     "images/hex_grass_3.png",
     "images/iso_grass_1.png",
     "images/iso_grass_2.png",
-    "images/iso_grass_3.png"
+    "images/iso_grass_3.png",
+    "images/platform.png",
+    "images/gate.png",
+    "images/button.png",
+    "images/button_pushed.png",
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/box_blue.png",
+    "images/box_orange.png",
+    "images/box_red.png",
+    "images/box_white.png",
+    "images/spikes_sprite.png",
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/minimap_forest_area.png",
+    "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -64,6 +95,8 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
     loadLevel();
   }
@@ -79,7 +112,6 @@ public class ForestGameArea extends GameArea {
 
   private void loadLevel() {
     displayUI();
-
     spawnTerrain();
     spawnTrees();
     player = spawnPlayer();
@@ -87,12 +119,46 @@ public class ForestGameArea extends GameArea {
     spawnGhosts();
     //spawnGhostKing();
 
+    MinimapDisplay minimapDisplay = createMinimap();
+
+    player = spawnPlayer();
+    //spawnGhosts();
+    //spawnGhostKing();
+    spawnPlatform(); //Testing platform
+
+    spawnBoxes();  // uncomment this method when you want to play with boxes
+    spawnButtons();
+
+    spawnLights(); // uncomment to spawn in lights
+
+    spawnTraps();
     playMusic();
+  }
+
+  private MinimapDisplay createMinimap() {
+    Texture minimapTexture =
+        ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
+
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+
+    float tileSize = terrain.getTileSize();
+    Vector2 worldSize =
+        new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    MinimapDisplay minimapDisplay =
+        new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+
+    Entity minimapEntity = new Entity();
+    minimapEntity.addComponent(minimapDisplay);
+    spawnEntity(minimapEntity);
+
+    return minimapDisplay;
   }
 
   private void displayUI() {
     Entity ui = new Entity();
     ui.addComponent(new GameAreaDisplay("Box Forest"));
+    ui.addComponent(new TooltipSystem.TooltipDisplay());
     spawnEntity(ui);
   }
 
@@ -166,11 +232,115 @@ public class ForestGameArea extends GameArea {
     Entity ghostKing = NPCFactory.createGhostKing(player);
     spawnEntityAt(ghostKing, randomPos, true, true);
   }
+  //Platform spawn in testing
+  private void spawnPlatform() {
+    /*
+    Creates floor and several steps to test jumping
+    */
+    GridPoint2 groundPos = new GridPoint2(0, 2);
+    Entity ground = PlatformFactory.createStaticPlatform();
+    ground.setScale(15,1);
+    spawnEntityAt(ground, groundPos, false, false);
+
+    GridPoint2 step1Pos = new GridPoint2(5,3);
+    Entity step1 = PlatformFactory.createStaticPlatform();
+    step1.setScale(2,1);
+    spawnEntityAt(step1, step1Pos, false, false);
+
+    GridPoint2 step2Pos = new GridPoint2(10,4);
+    Entity step2 = PlatformFactory.createStaticPlatform();
+    step2.setScale(2,1);
+    spawnEntityAt(step2, step2Pos, false, false);
+
+    GridPoint2 step3Pos = new GridPoint2(16,5);
+    Entity step3 = PlatformFactory.createStaticPlatform();
+    step3.setScale(2,1);
+    spawnEntityAt(step3, step3Pos, false, false);
+
+    GridPoint2 step4Pos = new GridPoint2(20,7);
+    Entity step4 = PlatformFactory.createStaticPlatform();
+    step4.setScale(2,1);
+    spawnEntityAt(step4, step4Pos, false, false);
+
+    GridPoint2 longPlatformPos = new GridPoint2(0,11);
+    Entity longPlatform = PlatformFactory.createStaticPlatform();
+    longPlatform.setScale(10,0.1f);
+    spawnEntityAt(longPlatform, longPlatformPos, false, false);
+
+  }
+  private void spawnBoxes() {
+
+      // Static box
+      Entity staticBox = BoxFactory.createStaticBox();
+      staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+      spawnEntityAt(staticBox, new GridPoint2(10,20), true,  true);
+
+      // Moveable box
+      Entity moveableBox = BoxFactory.createMoveableBox();
+      moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
+
+      // Autonomous box
+      float startX = 3f;
+      float endX = 10f;
+      float y = 17f;
+      float speed = 2f;
+
+      Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+      spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
+  }
+
+  private void spawnTraps() {
+    GridPoint2 spawnPos =  new GridPoint2(7,15);
+    Entity spikes = TrapFactory.createSpikes(spawnPos);
+    spawnEntityAt(spikes, spawnPos, true,  true);
+  }
+
+  private void spawnButtons() {
+    Entity button = ButtonFactory.createButton(false, "platform");
+    button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+    spawnEntityAt(button, new GridPoint2(25,15), true,  true);
+
+    Entity button2 = ButtonFactory.createButton(false, "door");
+    button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+    spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
+
+    Entity button3 = ButtonFactory.createButton(false, "nothing");
+    spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+
+    //listener to spawn key when door button pushed
+    button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+      if (isPushed && !keySpawned) {
+        spawnKey();
+        keySpawned = true;
+      }
+    });
+
+  }
+
+  public void spawnKey() {
+      Entity key = CollectableFactory.createKey("door");
+      spawnEntityAt(key, new GridPoint2(17,17), true, true);
+  }
+
+  private void spawnLights() {
+    // see the LightFactory class for more details on spawning these
+    Entity securityLight = LightFactory.createSecurityLight(
+              player,
+              PhysicsLayer.OBSTACLE,
+              128,
+              Color.GREEN,
+              10f,
+              0f,
+              35f
+      );
+      spawnEntityAt(securityLight, new GridPoint2(5, 5), true, true);
+  }
 
   private void playMusic() {
     Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
     music.setLooping(true);
-    music.setVolume(0.3f);
+    music.setVolume(UserSettings.getMusicVolumeNormalized());
     music.play();
   }
 

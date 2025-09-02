@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.*;
@@ -115,6 +116,18 @@ public class PlayerActions extends Component {
     moving = true;
   }
 
+    /**
+     * Returns the player's current walking direction as a 2D vector.
+     * <p>
+     * The x component shows horizontal movement positive (right), negative (left) <br>
+     * The y component shows vertical movement:  positive (up), negative (down)
+     *
+     * @return  a copy of the current walking direction vector
+     */
+  public Vector2 getWalkDirection() {
+      return walkDirection.cpy();
+  }
+
   /**
    * Stops the player from walking.
    */
@@ -124,6 +137,15 @@ public class PlayerActions extends Component {
     moving = false;
   }
 
+  /**
+   * Makes the player jump
+   *
+   * This method applies an upward impules to the players physics body to initiate a jump.
+   * It handles both single and double jumps - if the player has already used their single and
+   * double jump the method returns immediately
+   *
+   * Before applying the impuse, the players vertical velocity is set to 0 to keep consistent jump heights
+   */
   void jump() {
 
     if (isJumping && isDoubleJump) return;
@@ -146,6 +168,11 @@ public class PlayerActions extends Component {
       isJumping = true;
   }
 
+  /**
+   * Called when a player lands on a surface
+   *
+   * This method resets the players jump state, allowing them to jump again
+   */
   void onLand() {
     Body body = physicsComponent.getBody();
     //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
@@ -192,7 +219,7 @@ public class PlayerActions extends Component {
    */
   void attack() {
     Sound attackSound = ServiceLocator.getResourceService().getAsset("sounds/Impact4.ogg", Sound.class);
-    attackSound.play();
+    attackSound.play(UserSettings.getMasterVolume());
   }
 
   /**
@@ -206,9 +233,15 @@ public class PlayerActions extends Component {
     soundPlayed = true;
   }
 
+  /**
+   * Called when a collision involving the players starts
+   *
+   * @param selfFixture The fixture belonging to the player entity involved in the collision
+   * @param otherFixture The fixture belonging to the other entity involved in the collision
+   */
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
 
-    if ("foot".equals(selfFixture.getUserData())) {
+    if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
       onLand();
     }
   }
