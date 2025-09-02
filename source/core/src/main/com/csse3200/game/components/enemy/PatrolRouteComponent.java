@@ -3,9 +3,19 @@ package com.csse3200.game.components.enemy;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.Component;
 
+/**
+ * A component that stores the patrol route for an enemy entity, which is represented
+ * as an ordered list of waypoints.
+ * This component should be added to any entity that is expected to perform patrol behaviour
+ * (via PatrolTask) so the route can be queried.
+ */
 public class PatrolRouteComponent extends Component {
     private final Vector2[] waypoints;
 
+    /**
+     * Create a new PatrolRouteComponent with the supplied waypoints.
+     * @param waypoints an array of world positions defining the patrol route
+     */
     public PatrolRouteComponent(Vector2[] waypoints) {
         this.waypoints = new Vector2[waypoints.length];
         for (int k = 0; k < waypoints.length; k++) this.waypoints[k] = new Vector2(waypoints[k]);

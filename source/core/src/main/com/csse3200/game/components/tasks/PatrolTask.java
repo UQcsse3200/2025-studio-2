@@ -8,13 +8,14 @@ import com.csse3200.game.components.enemy.PatrolRouteComponent;
 
 
 /**
- * Makes an entity move through a sequence of waypoints and wait briefly at each one. Changes direction when it
- * reaches the end, repeating indefinitely. Waypoints are computed once from a fixed spawn position and a list
- * of relative step vectors. Requires an entity with a PhysicsMovementComponent.
- * In the current implementation, if the entity does not start at the first waypoint, it beelines there (no
- * pathfinding/obstacle avoidance).
- * TODO: Implement a cool down task to ensure entity starts a patrol at the first waypoint.
- * TODO: Will modify task priority and start() logic with additional checks once this is done.
+ * Task that makes an entity move through a sequence of waypoints and pause briefly at each.
+ * The entity patrols back and forth along its route, reversing direction when it reaches the end,
+ * and repeats this indefinitely.
+ * Requires the entity to have a PatrolRouteComponent which defines the set of waypoints to follow.
+ * Note: This task only controls behaviour during the patrol itself. Resetting the entity back to
+ * its starting waypoint (e.g. after switching from chase mode back to patrol) is handled separately
+ * by a cooldown task. For full patrol-chase-cooldown cycles, both tasks should be added to the
+ * entity's AITaskComponent.
  * */
 public class PatrolTask extends DefaultTask implements PriorityTask {
     private final float waitTime;
@@ -29,7 +30,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
 
     /**
      * Creates a patrol starting from a fixed start position.
-     * @param waitTime specifies how long to wait at each waypoint
+     * @param waitTime specifies how long to wait at each waypoint before moving to the next.
      */
     public PatrolTask(float waitTime) {
         this.waitTime = waitTime;

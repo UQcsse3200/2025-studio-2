@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.screens.MainMenuScreen;
 import com.csse3200.game.screens.SettingsScreen;
@@ -24,6 +25,10 @@ public class GdxGame extends Game {
   public void create() {
     logger.info("Creating game");
     loadSettings();
+
+    // Create keybindings
+    logger.info("Assigning keybinds");
+    Keymap.setKeyMapDefaults();
 
     // Sets background to light yellow
     Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);

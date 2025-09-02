@@ -64,7 +64,7 @@ public class EnemyFactory {
                 .addComponent(new DroneAttackComponent(PhysicsLayer.PLAYER, 3.0f)); // 3 second attack cooldown
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent.addTask(new ChaseTask(target,10, 3f, 4f)); // Only chase, drone should be idle otherwise
+        aiComponent.addTask(new ChaseTask(target,10, 3f, 4f));
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();

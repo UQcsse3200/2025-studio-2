@@ -3,8 +3,10 @@ package com.csse3200.game.files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.csse3200.game.files.FileLoader.Location;
+import com.csse3200.game.input.Keymap;
 
 import java.io.File;
+import java.util.Map;
 
 /**
  * Reading, Writing, and applying user settings in the game.
@@ -49,14 +51,15 @@ public class UserSettings {
     Gdx.graphics.setForegroundFPS(settings.fps);
     Gdx.graphics.setVSync(settings.vsync);
 
-    if (settings.fullscreen) {
-      DisplayMode displayMode = findMatching(settings.displayMode);
-      if (displayMode == null) {
+    DisplayMode displayMode = findMatching(settings.displayMode);
+    if (displayMode == null) {
         displayMode = Gdx.graphics.getDisplayMode();
-      }
+    }
+
+    if (settings.fullscreen) {
       Gdx.graphics.setFullscreenMode(displayMode);
     } else {
-      Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+      Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
     }
   }
 
@@ -76,6 +79,28 @@ public class UserSettings {
   }
 
   /**
+   * Returns the normalized music volume stored in the user settings. That is, the music volume is
+   * a fraction of it's intended volume according to the master volume.
+   * @return The normalized volume for the music.
+   */
+  public static float getMusicVolumeNormalized() {
+    Settings settings = get();
+    return settings.musicVolume * settings.masterVolume;
+  }
+
+  /**
+   * Returns the multiplier corresponding to master volume. All sound effects' volume should be
+   * multiplied by this float before they are played.
+   * Example: A return value of 0.5 means the user has set the master volume to 50%, and thus all
+   * sounds should be reduced by 50%.
+   * @return The master volume
+   */
+  public static float getMasterVolume() {
+    Settings settings = get();
+    return settings.masterVolume;
+  }
+
+  /**
    * Stores game settings, can be serialised/deserialised.
    */
   public static class Settings {
@@ -88,8 +113,14 @@ public class UserSettings {
     /**
      * ui Scale. Currently unused, but can be implemented.
      */
-    public float uiScale = 1f;
+//    public float uiScale = 1f;
     public DisplaySettings displayMode = null;
+
+    /*
+     * Members for controlling volume of sound effects.
+     */
+    public float masterVolume = 1f;
+    public float musicVolume = 1f;
   }
 
   /**
