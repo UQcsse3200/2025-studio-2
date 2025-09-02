@@ -1,5 +1,6 @@
 package com.csse3200.game.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
@@ -77,13 +79,43 @@ public class MainGameScreen extends ScreenAdapter {
 
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
-    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
+//    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+//    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
     SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
     sprintOneGameArea.create();
+
+
+    sprintOneGameArea.getEvents().addListener("doorEntered", (String keyId) -> {
+      logger.info("Door entered in sprint1 with key {}", keyId);
+      switchArea(keyId, sprintOneGameArea);
+    });
+    //forestGameArea.create();
+
+//    sprintOneGameArea.dispose();
+//    forestGameArea.create();
+
     //caveGameArea.create();
     //forestGameArea.create();
   }
+
+  private void switchArea(String keyId, GameArea oldArea) {
+    oldArea.dispose();
+    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+
+    GameArea newArea = null;
+    if ("forest".equals(keyId)) {
+      newArea = new ForestGameArea(terrainFactory);
+    } else if ("sprint1".equals(keyId)) {
+      newArea = new SprintOneGameArea(terrainFactory);
+    }
+
+    if (newArea != null) {
+      GameArea finalNewArea = newArea; // effectively final copy
+      finalNewArea.getEvents().addListener("doorEntered", (String k) -> switchArea(k, finalNewArea));
+      finalNewArea.create();
+    }
+  }
+
 
   @Override
   public void render(float delta) {
