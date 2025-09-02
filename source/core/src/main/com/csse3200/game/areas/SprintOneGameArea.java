@@ -235,7 +235,7 @@ public class SprintOneGameArea extends GameArea {
         Vector2 offsetWorld  = new Vector2(2f * ts, 6f);
         float speed = 2f;
         Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
-        movingPlatform.setScale(2,0.5f);
+        movingPlatform.setScale(2,1f);
         spawnEntityAt(movingPlatform, movingPos, false, false);
 
     }

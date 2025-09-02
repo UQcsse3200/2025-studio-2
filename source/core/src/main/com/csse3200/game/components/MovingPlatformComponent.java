@@ -35,21 +35,18 @@ public class MovingPlatformComponent extends Component {
         physics = entity.getComponent(PhysicsComponent.class);
 
         // After spawnEntityAt has placed the entity, read its actual start position
-        Vector2 pos = physics.getBody().getPosition().cpy();
+        Vector2 pos = entity.getPosition().cpy();
         start = pos;
         end = pos.cpy().add(offset);
 
         lastPos = pos.cpy();
 
-        // Listen for collision events from PhysicsContactListener
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-        entity.getEvents().addListener("collisionEnd", this::onCollisionEnd);
     }
 
     @Override
     public void update() {
         Body body = physics.getBody();
-        Vector2 pos = body.getPosition();
+        Vector2 pos = entity.getPosition().cpy();
         Vector2 target = forward ? end : start;
         Vector2 dir = target.cpy().sub(pos);
 
@@ -63,38 +60,7 @@ public class MovingPlatformComponent extends Component {
             body.setLinearVelocity(dir);
         }
 
-        // Move passengers by the platform's delta
-        /*Vector2 delta = pos.cpy().sub(lastPos);
-        for (Entity passenger : passengers) {
-            PhysicsComponent pc = passenger.getComponent(PhysicsComponent.class);
-            if (pc != null) {
-                Vector2 newPos = entity.getPosition().cpy().add(offset);
-                pc.getBody().setTransform(newPos, pc.getBody().getAngle());
-                pc.getBody().setLinearVelocity(Vector2.Zero);
-            }
-        }*/
-
         lastPos.set(pos);
     }
 
-    private void onCollisionStart(Fixture thisFixture, Fixture otherFixture) {
-        Entity other = ((BodyUserData) otherFixture.getBody().getUserData()).entity;
-        if (other != null && other.getComponent(PlayerActions.class) != null) {
-            float playerBottom = other.getPosition().y;
-            float platformCenterY = entity.getCenterPosition().y;
-            if (playerBottom >= platformCenterY - 0.05f) {
-                passengers.add(other);
-                // Store offset in world coords
-                Vector2 offset = other.getPosition().cpy().sub(entity.getPosition());
-                passengerOffsets.put(other, offset);
-            }
-        }
-    }
-
-
-    private void onCollisionEnd(Fixture thisFixture, Fixture otherFixture) {
-        Entity other = ((BodyUserData) otherFixture.getBody().getUserData()).entity;
-        passengers.remove(other);
-        passengerOffsets.remove(other);
-    }
 }
