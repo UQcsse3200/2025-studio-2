@@ -31,6 +31,14 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
 
     private boolean wasInDropZone = false; // record whether it was in the bomb drop zone before
 
+    /**
+     * Create a bomb dropping task.
+     * @param target player or other entity to attack
+     * @param priority priority to task
+     * @param dropRange max horizontal distance to consider "below"
+     * @param minHeight min vertical different (drone above target) to allow bomb drops
+     * @param cooldown min time between consecutive drops in seconds
+     */
     public BombDropTask(Entity target, int priority, float dropRange, float minHeight, float cooldown) {
         this.target = target;
         this.priority = priority;
@@ -40,6 +48,10 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         this.timeSource = ServiceLocator.getTimeSource();
     }
 
+    /**
+     * Computes scheduling priority
+     * @return priority of the task
+     */
     @Override
     public int getPriority() {
         boolean inDropZone = isPlayerInDropZone();
@@ -60,6 +72,9 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         return -1;
     }
 
+    /**
+     * Start drone attack and trigger a dropStart event on owner entity
+     */
     @Override
     public void start() {
         super.start();
@@ -69,6 +84,7 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         attackTimer = 0f;
     }
 
+    /** Advance attack sequence when attack */
     @Override
     public void update() {
         if (isAttacking) {
@@ -88,6 +104,7 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         }
     }
 
+    /** Stop attack task */
     @Override
     public void stop() {
         super.stop();
@@ -96,6 +113,7 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         logger.debug("Stopping bomb drop task.");
     }
 
+    /** Check whether player is within the strict bomb-drop zone */
     private boolean isPlayerInDropZone() {
         Vector2 dronePos = owner.getEntity().getCenterPosition();
         Vector2 playerPos = target.getCenterPosition();
@@ -106,6 +124,9 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         return verticalDistance >= minHeight && horizontalDistance <= dropRange;
     }
 
+    /** Check whether the player is within an extended drop zone, allowing the task to
+     * remain in drop mode until the player leaves a slightly larger boundary
+     */
     private boolean isPlayerInExtendedDropZone() {
         // Extended bomb drop zone for lag judgment
         Vector2 dronePos = owner.getEntity().getCenterPosition();
@@ -118,10 +139,12 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
                 horizontalDistance <= (dropRange + HYSTERESIS);
     }
 
+    /** Determine whether cooldown period has elapsed since last drop */
     private boolean canDrop() {
         return timeSource.getTimeSince(lastDropTime) >= cooldown * 1000;
     }
 
+    /** Spawn a bomb entity slightly offset from the drone's current position */
     private void dropBomb() {
         Vector2 dronePos = owner.getEntity().getPosition().cpy();
         Vector2 bombSpawnPos = new Vector2(

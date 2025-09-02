@@ -110,9 +110,9 @@ public class ForestGameArea extends GameArea {
 
     player = spawnPlayer();
 
-    //spawnDrone();
-    spawnPatrollingDrone();
-    //spawnBomberDrone();
+    //spawnDrone(); // Play with idle/chasing drones (unless chasing)
+    spawnPatrollingDrone(); // Play with patrolling/chasing drones
+    //spawnBomberDrone(); // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -227,9 +227,7 @@ public class ForestGameArea extends GameArea {
 
     Vector2[] patrolRoute = {
             terrain.tileToWorldPosition(spawnTile),
-            terrain.tileToWorldPosition(new GridPoint2(8, 11)),
-            terrain.tileToWorldPosition(new GridPoint2(12, 11)),
-            terrain.tileToWorldPosition(new GridPoint2(16, 11))
+            terrain.tileToWorldPosition(new GridPoint2(6, 11)),
     };
     Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird

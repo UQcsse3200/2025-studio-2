@@ -10,7 +10,9 @@ import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.rendering.DebugRenderer;
 import com.csse3200.game.services.ServiceLocator;
 
-/** Chases a target entity until they get too far away or line of sight is lost */
+/** Task that makes an entity chase a target until either the target is too far away or the line of sight
+ * is lost. Designed specifically for flying bomber enemies that should maintain a hover height above the
+ * target and stop chasing when the target enters a bomb-drop zone. */
 public class BombChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
     private final int priority;
@@ -25,11 +27,15 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     private final float minHeight;
 
     /**
-     * @param target The entity to chase.
-     * @param priority Task priority when chasing (0 when not chasing).
-     * @param viewDistance Maximum distance from the entity at which chasing can start.
-     * @param maxChaseDistance Maximum distance from the entity while chasing before giving up.
-     * @param hoverHeight Preferred height to maintain above target (for flying enemies)
+     * Creates a chase task for a bomber-style enemy.
+     *
+     * @param target            the entity to chase
+     * @param priority          task priority when chasing
+     * @param viewDistance      maximum distance at which chasing can start (when inactive)
+     * @param maxChaseDistance  maximum distance before chasing stops
+     * @param hoverHeight       preferred vertical offset to maintain above the target
+     * @param dropRange         horizontal range within which the target is considered in the bomb-drop zone
+     * @param minHeight         minimum vertical difference (drone above target) to qualify for the drop zone
      */
     public BombChaseTask(Entity target, int priority, float viewDistance, float maxChaseDistance, float hoverHeight,
                          float dropRange, float minHeight) {
@@ -44,6 +50,9 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         debugRenderer = ServiceLocator.getRenderService().getDebug();
     }
 
+    /**
+     * Initialise and starts a movement task toward the chase target then triggers the chaseStart event.
+     */
     @Override
     public void start() {
         super.start();
@@ -54,6 +63,9 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         this.owner.getEntity().getEvents().trigger("chaseStart");
     }
 
+    /**
+     * Update the chase target each frame based on current position and hover rules.
+     */
     @Override
     public void update() {
         movementTask.setTarget(getChaseTarget());
@@ -64,7 +76,8 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     }
 
     /**
-     * Calculate chase target position - for flying enemies, maintain height above target
+     * Calculate the desired chase position. For flying enemies, maintains a vertical offset above the target.
+     * If the chaser is already horizontally aligned, the x-position is held to hover directly above the target.
      */
     private Vector2 getChaseTarget() {
         Vector2 targetPos = target.getPosition().cpy();
@@ -85,6 +98,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     }
 
 
+    /** Stop the task */
     @Override
     public void stop() {
         super.stop();
@@ -93,6 +107,10 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         }
     }
 
+    /**
+     * Get current priority of the task.
+     * If target is within bomb-drop zone, -1, to allow bombing task to start.
+     */
     @Override
     public int getPriority() {
         // If player in bomb_drop zone, then set chasing action to -1
@@ -106,6 +124,10 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         return getInactivePriority();
     }
 
+    /**
+     * Check whether the target is in bomb drop zone relative to the drone.
+     * The target is considered in-zone if the drop is a minHeight above the target.
+     */
     private boolean isPlayerInDropZone() {
         Vector2 dronePos = owner.getEntity().getCenterPosition();
         Vector2 playerPos = target.getCenterPosition();
@@ -116,7 +138,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         return verticalDistance >= minHeight && horizontalDistance <= dropRange;
     }
 
-    //updated this function to stop chasing once the player is in threshold
+    /** Return the distance from owner to target (with error margin). */
     private float getDistanceToTarget() {
         Vector2 target_position=target.getPosition();
         Vector2 curr_position=owner.getEntity().getPosition();
@@ -129,6 +151,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
 
     }
 
+    /** Get active priority of task */
     private int getActivePriority() {
         float dst = getDistanceToTarget();
         if (dst > maxChaseDistance || !isTargetVisible()) {
@@ -138,6 +161,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         return priority;
     }
 
+    /** Get inactive priority of task */
     private int getInactivePriority() {
         float dst = getDistanceToTarget();
         if (dst < viewDistance && isTargetVisible()) {
@@ -146,6 +170,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         return -1;
     }
 
+    /** Tests line of sight to the target */
     private boolean isTargetVisible() {
         Vector2 from = owner.getEntity().getCenterPosition();
         Vector2 to = target.getCenterPosition();

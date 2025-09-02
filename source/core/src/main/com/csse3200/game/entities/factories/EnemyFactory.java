@@ -36,6 +36,7 @@ public class EnemyFactory {
      * Creates a drone enemy that remains idle unless chasing its target.
      * Has drone-specific animation, combat stats and chase task.
      * @param target that drone pursues when chasing
+     * @param spawnPos the starting world position of the enemy
      * @return drone enemy entity
      */
     public static Entity createDrone(Entity target, Vector2 spawnPos) {
@@ -88,6 +89,13 @@ public class EnemyFactory {
         return drone;
     }
 
+    /**
+     * Create a bomber-style drone enemy that chases the target and drops bombs when target is
+     * directly below (within a certain range).
+     * @param target that drone pursues when bombing/chasing
+     * @param spawnPos the starting world position of the enemy
+     * @return a bomber drone entity
+     */
     public static Entity createBomberDrone(Entity target, Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
