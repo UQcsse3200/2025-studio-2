@@ -5,6 +5,8 @@ import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.Task;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -18,6 +20,7 @@ import com.csse3200.game.components.enemy.PatrolRouteComponent;
  * entity's AITaskComponent.
  * */
 public class PatrolTask extends DefaultTask implements PriorityTask {
+    private static final Logger logger = LoggerFactory.getLogger(PatrolTask.class);
     private final float waitTime;
 
     private PatrolRouteComponent route;
@@ -41,20 +44,15 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     public int getPriority() {return 1;} // Low priority
 
     /**
-     * Set up subtasks (wait, movement) and begin moving toward first waypoint. If there are
-     * no steps the status of the task is FINISHED.
+     * Set up subtasks (wait, movement) and begin moving toward first waypoint.
      */
     @Override
     public void start() {
+        logger.debug("PATROL START");
         super.start();
 
         if (route == null) {
             route = this.owner.getEntity().getComponent(PatrolRouteComponent.class);
-
-            if (route.numWaypoints() == 0) {
-                throw new IllegalStateException("Patrol route is empty");
-            }
-
         }
 
         if (waitTask == null) {

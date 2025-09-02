@@ -8,11 +8,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
-import com.csse3200.game.components.tasks.ChaseTask;
-import com.csse3200.game.components.tasks.BombDropTask;
-import com.csse3200.game.components.tasks.CooldownTask;
-import com.csse3200.game.components.tasks.PatrolTask;
-import com.csse3200.game.components.tasks.WanderTask;
+import com.csse3200.game.components.tasks.*;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
 import com.csse3200.game.entities.configs.EnemyConfigs;
@@ -42,41 +38,31 @@ public class EnemyFactory {
      * @param target that drone pursues when chasing
      * @return drone enemy entity
      */
-    public static Entity createDrone(Entity target,Vector2 spawnPos) {
+    public static Entity createDrone(Entity target, Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
+        Entity drone = createBaseEnemy();
+        if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos)); // For resets
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
-
-        // Add drone animations
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP); // Attack animation
-
-        Entity drone = createBaseEnemy(target);
-        // Store the spawn position (so we can reset later)
-        if (spawnPos != null) {
-            drone.addComponent(new SpawnPositionComponent(spawnPos));
-        }
-
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
+
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        // Tasks
-        ChaseTask chaseTask = new ChaseTask(target, 10, 5f, 7f, 3f, 1.5f, 2f);
-        CooldownTask cooldownTask = new CooldownTask(2f);
+        ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
+        CooldownTask cooldownTask = new CooldownTask(3f);
 
         // When chase ends, activate cooldown
         drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
-        aiComponent.addTask(chaseTask);
-        aiComponent.addTask(cooldownTask);
-        aiComponent.addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f));
-
+        aiComponent
+                .addTask(chaseTask)
+                .addTask(cooldownTask);
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
@@ -92,17 +78,41 @@ public class EnemyFactory {
      * @return a patrolling drone enemy entity
      */
     public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
-        Vector2 spawnPos = patrolRoute[0];
-        Entity drone = createDrone(target, spawnPos);
+        Entity drone = createDrone(target, patrolRoute[0]);
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        // Single cooldown + patrol
-        CooldownTask cooldownTask = new CooldownTask(2f);
-        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
 
-        aiComponent.addTask(cooldownTask);       // priority 2 when active
-        aiComponent.addTask(new PatrolTask(2f)); // default patrol
+        aiComponent.addTask(new PatrolTask(1f));
+
+        return drone;
+    }
+
+    public static Entity createBomberDrone(Entity target, Vector2 spawnPos) {
+        BaseEntityConfig config = configs.drone;
+        Entity drone = createBaseEnemy();
+        if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
+
+        AnimationRenderComponent animator =
+                new AnimationRenderComponent(
+                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP); // Attack animation
+
+        drone
+                .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+                .addComponent(animator)
+                .addComponent(new DroneAnimationController());
+
+        AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
+        aiComponent
+                .addTask(new BombChaseTask(target, 10, 5f, 7f, 3f, 1.5f, 2f))
+                .addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f));
+
+        AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
+        arc.scaleEntity();
+        arc.startAnimation("float");
 
         return drone;
     }
@@ -112,7 +122,7 @@ public class EnemyFactory {
      * (physics, movement, collider, hitbox and AI task holder (with no tasks).
      * @return enemy
      */
-    private static Entity createBaseEnemy(Entity target) {
+    private static Entity createBaseEnemy() {
         Entity enemy =
                 new Entity()
                         .addComponent(new PhysicsComponent())
@@ -121,6 +131,8 @@ public class EnemyFactory {
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                         .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,1.5f))
                         .addComponent(new AITaskComponent()); // Want this empty for base enemies
+
+        enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;

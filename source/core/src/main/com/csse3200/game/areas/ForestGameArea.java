@@ -96,8 +96,9 @@ public class ForestGameArea extends GameArea {
 
     player = spawnPlayer();
 
-    spawnDrone();
-    //spawnPatrollingDrone();
+    //spawnDrone();
+    spawnPatrollingDrone();
+    //spawnBomberDrone();
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -217,6 +218,12 @@ public class ForestGameArea extends GameArea {
     };
     Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+  }
+
+  private void spawnBomberDrone() {
+    Vector2 spawnWorldPos = terrain.tileToWorldPosition(DRONE_SPAWN_TILE);
+    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
+    spawnEntityAt(bomberDrone, DRONE_SPAWN_TILE, true, true);
   }
 
   private void spawnGhostKing() {
