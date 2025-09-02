@@ -8,10 +8,13 @@ public class SpawnPositionComponent extends Component {
     private final Vector2 spawnPos;
 
     public SpawnPositionComponent(Vector2 spawnPos) {
+        if (spawnPos == null) {
+            throw new IllegalArgumentException("spawnPos must not be null");
+        }
         this.spawnPos = spawnPos.cpy(); // store a copy
     }
 
     public Vector2 getSpawnPos() {
-        return spawnPos;
+        return spawnPos.cpy();
     }
 }
