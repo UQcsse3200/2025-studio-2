@@ -1,4 +1,4 @@
-package com.csse3200.game.areas;
+           package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.GridPoint2;
@@ -28,6 +28,7 @@ public class SprintOneGameArea extends GameArea {
             "images/TechWallVariant3.png",
             "images/platform.png",
             "images/gate.png",
+            "images/Gate_open.png",
             "images/box_boy_leaf.png",
             "images/tree.png",
             "images/ghost_king.png",
@@ -35,6 +36,7 @@ public class SprintOneGameArea extends GameArea {
             "images/grass_1.png",
             "images/grass_2.png",
             "images/grass_3.png",
+            "images/key_tester.png",
             "images/hex_grass_1.png",
             "images/hex_grass_2.png",
             "images/hex_grass_3.png",
@@ -75,6 +77,7 @@ public class SprintOneGameArea extends GameArea {
         player = spawnPlayer();
         spawnPlatform(); //Testing platform
         spawnGate(); //Testing gate
+        spawnKey();
 
         playMusic();
     }
@@ -141,11 +144,17 @@ public class SprintOneGameArea extends GameArea {
     /*
     Creates gate to test
     */
-        float gateX = terrain.getMapBounds(0).x * terrain.getTileSize();
+        //float gateX = terrain.getMapBounds(0).x * terrain.getTileSize();
         GridPoint2 gatePos = new GridPoint2((int) 28, 4);
-        Entity gate = GateFactory.createGate();
-        gate.setScale(1, 2);
-        spawnEntityAt(gate, gatePos, false, false);
+        //Entity gate = GateFactory.createGate();
+        //gate.setScale(1, 2);
+        //spawnEntityAt(gate, gatePos, false, false);
+        spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, false, false);
+    }
+
+    public void spawnKey() {
+        Entity key = CollectableFactory.createKey("door");
+        spawnEntityAt(key, new GridPoint2(17,17), true, true);
     }
 
     private void playMusic() {
