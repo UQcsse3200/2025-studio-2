@@ -1,7 +1,12 @@
 package com.csse3200.game.entities.factories;
 
+
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.components.player.PlayerStatsDisplay;
@@ -48,11 +53,20 @@ public class PlayerFactory {
             .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
             .addComponent(new PlayerActions())
             .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
-            .addComponent(new InventoryComponent(stats.gold))
+            .addComponent(new InventoryComponent())
             .addComponent(inputComponent)
             .addComponent(new PlayerStatsDisplay());
 
+
     PhysicsUtils.setScaledCollider(player, 0.6f, 1.0f);
+
+    Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
+    if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
+      player.addComponent(new MinimapComponent(minimapDisplay, "images/minimap_player_marker.png"));
+    }
+
+    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();
 
