@@ -101,7 +101,7 @@ public class Keymap {
     registerAction("PlayerJump", Input.Keys.SPACE);
     registerAction("PlayerAdrenaline", Input.Keys.V);
     registerAction("PlayerDash", Input.Keys.SHIFT_LEFT);
-    registerAction("PlayerCrouch", Input.Keys.SHIFT_LEFT);
+    registerAction("PlayerCrouch", Input.Keys.C);
 
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);
