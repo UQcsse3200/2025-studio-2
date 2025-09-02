@@ -17,8 +17,17 @@ public class PatrolRouteComponent extends Component {
      * @param waypoints an array of world positions defining the patrol route
      */
     public PatrolRouteComponent(Vector2[] waypoints) {
+        if (waypoints == null || waypoints.length == 0) {
+            throw new IllegalArgumentException("Patrol route must have at least one waypoint");
+        }
+
         this.waypoints = new Vector2[waypoints.length];
-        for (int k = 0; k < waypoints.length; k++) this.waypoints[k] = new Vector2(waypoints[k]);
+        for (int k = 0; k < waypoints.length; k++) {
+            if (waypoints[k] == null) {
+                throw new IllegalArgumentException("Patrol route must not have null waypoints");
+            }
+            this.waypoints[k] = new Vector2(waypoints[k]);
+        }
     }
 
     /**
@@ -56,6 +65,8 @@ public class PatrolRouteComponent extends Component {
      * @exception IllegalStateException if waypoints not initialised
      */
     public Vector2[] getWaypoints() {
-        return waypoints;
+        Vector2[] waypointsCpy = new Vector2[waypoints.length];
+        for (int k = 0; k < waypoints.length; k++) waypointsCpy[k] = new Vector2(waypoints[k]);
+        return waypointsCpy;
     }
 }
