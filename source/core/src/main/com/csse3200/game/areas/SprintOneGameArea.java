@@ -235,11 +235,11 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(step1, step1Pos, false, false);
 
         float ts = terrain.getTileSize();
-        GridPoint2 movingPos = new GridPoint2(8,6);
-        Vector2 offsetWorld  = new Vector2(6f * ts, 1f);
+        GridPoint2 movingPos = new GridPoint2(15,5);
+        Vector2 offsetWorld  = new Vector2(2f * ts, 6f);
         float speed = 2f;
         Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
-        movingPlatform.setScale(2,1);
+        movingPlatform.setScale(2,0.5f);
         spawnEntityAt(movingPlatform, movingPos, false, false);
 
     }
@@ -247,12 +247,14 @@ public class SprintOneGameArea extends GameArea {
 
         // Static box
         Entity staticBox = BoxFactory.createStaticBox();
-        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
+                " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
 
         // Moveable box
         Entity moveableBox = BoxFactory.createMoveableBox();
-        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
+        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
+                TooltipSystem.TooltipStyle.SUCCESS));
         spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
         // Autonomous box
@@ -262,6 +264,9 @@ public class SprintOneGameArea extends GameArea {
         float speed = 2f;
 
         Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+        autonomousBox.addComponent(new TooltipSystem.TooltipComponent("Autonomous Box\nThis box has a fixed path" +
+                " and you cannot push it!", TooltipSystem.TooltipStyle.SUCCESS));
+
         spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
     }
     private void spawnGate() {
