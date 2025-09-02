@@ -195,7 +195,7 @@ public class SprintOneGameArea extends GameArea {
 
            // Link button to platform
            button.getEvents().addListener("buttonPressed", () -> {
-               logger.info("Button pressed -> activating elevator");
+               logger.info("Button was pressed!");
                elevator.getEvents().trigger("activatePlatform");
            });
 
