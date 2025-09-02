@@ -66,6 +66,12 @@ public class UserSettings {
     applyKeybindSettings(settings.keyBindSettings);
   }
 
+  /**
+   * Applies custom keybind settings to the current keymap.
+   * Only applies keybinds if custom settings exist, otherwise uses defaults.
+   *
+   * @param keyBindSettings The keybind settings to apply, may be null
+   */
   private static void applyKeybindSettings(KeyBindSettings keyBindSettings) {
     if (keyBindSettings != null && keyBindSettings.customKeybinds != null) {
       // Apply custom keybinds
@@ -75,6 +81,10 @@ public class UserSettings {
     }
   }
 
+  /**
+   * Saves the current keymap state to user settings.
+   * Creates a snapshot of all current keybinds and stores them as custom settings.
+   */
   public static void saveCurrentKeybinds() {
     Settings settings = get();
     if (settings.keyBindSettings == null) {
@@ -88,7 +98,8 @@ public class UserSettings {
   }
 
   /**
-   * Resets all keybinds to their default values and saves the settings
+   * Resets all keybinds to their default values and saves the settings.
+   * Clears any custom keybind overrides and restores the original keymap.
    */
   public static void resetKeybindsToDefaults() {
     Settings settings = get();
@@ -117,6 +128,13 @@ public class UserSettings {
     applyKeybindSettings(settings.keyBindSettings);
   }
 
+  /**
+   * Finds a DisplayMode that matches the desired display settings.
+   * Searches through available display modes for exact width, height, and refresh rate match.
+   *
+   * @param desiredSettings The display settings to match against
+   * @return Matching DisplayMode or null if no match found
+   */
   private static DisplayMode findMatching(DisplaySettings desiredSettings) {
     if (desiredSettings == null) {
       return null;

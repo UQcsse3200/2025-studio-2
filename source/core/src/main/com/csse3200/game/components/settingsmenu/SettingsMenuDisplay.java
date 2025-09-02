@@ -47,11 +47,16 @@ public class SettingsMenuDisplay extends UIComponent {
 
   private SettingsInputComponent settingsInputComponent;
 
+
   public SettingsMenuDisplay(GdxGame game) {
     super();
     this.game = game;
   }
 
+  /**
+   * Creates the settings menu UI components and initializes the input handling system.
+   * Sets up the key binding buttons and passes them to the input component for rebinding functionality.
+   */
   @Override
   public void create() {
     super.create();
@@ -66,6 +71,10 @@ public class SettingsMenuDisplay extends UIComponent {
     stage.setKeyboardFocus(stage.getRoot());
   }
 
+  /**
+   * Creates and configures all UI actors for the settings menu, including background,
+   * title, settings table, and menu buttons. Arranges them in the root table layout.
+   */
   private void addActors() {
     Image background =
         new Image(
@@ -93,6 +102,12 @@ public class SettingsMenuDisplay extends UIComponent {
     stage.addActor(rootTable);
   }
 
+  /**
+   * Creates the main settings configuration table containing all user preference controls
+   * including display settings, audio controls, and key binding options.
+   *
+   * @return Table containing all settings UI components
+   */
   private Table makeSettingsTable() {
     // Get current values
     UserSettings.Settings settings = UserSettings.get();
@@ -209,8 +224,10 @@ public class SettingsMenuDisplay extends UIComponent {
   }
 
   /**
-   * TODO
-   * @param table
+   * Creates UI controls for key binding configuration, allowing users to rebind game actions
+   * to different keys. Generates buttons for each action in the keymap and includes a reset option.
+   *
+   * @param table The table to add key binding controls to
    */
   private void addKeyBindingControls(Table table) {
     // Clear existing buttons
@@ -260,6 +277,10 @@ public class SettingsMenuDisplay extends UIComponent {
     table.add(defaultButton).colspan(2).height(25).center();
   }
 
+  /**
+   * Updates all key binding button displays to reflect the current keymap state.
+   * Used after resetting to defaults or loading saved settings.
+   */
   private void updateAllKeybindButtons() {
     Map<String, Integer> currentKeyMap = Keymap.getKeyMap();
 
@@ -276,7 +297,11 @@ public class SettingsMenuDisplay extends UIComponent {
 
   /**
    * Gets the current display mode from the available options, checking both
-   * the actual current display mode and the saved settings
+   * the actual current display mode and the saved settings.
+   *
+   * @param modes Available display modes to choose from
+   * @param settings Current user settings containing saved display preferences
+   * @return The matching display mode decorator, or first available if no match found
    */
   private StringDecorator<DisplayMode> getCurrentDisplayMode(
       Array<StringDecorator<DisplayMode>> modes,
@@ -314,7 +339,10 @@ public class SettingsMenuDisplay extends UIComponent {
   }
 
   /**
-   * Finds a DisplayMode that matches the saved DisplaySettings
+   * Finds a DisplayMode that matches the saved DisplaySettings.
+   *
+   * @param displaySettings The saved display settings to match against
+   * @return Matching DisplayMode or null if no match found
    */
   private DisplayMode findMatchingDisplayMode(UserSettings.DisplaySettings displaySettings) {
     for (DisplayMode mode : Gdx.graphics.getDisplayModes()) {
@@ -355,15 +383,11 @@ public class SettingsMenuDisplay extends UIComponent {
   }
 
   /**
-   * Updates the display text of a key bind button after rebinding
-   * @param actionName The action that was rebound
-   * @param newKeyCode The new key code
+   * Retrieves and formats all available display modes for the specified monitor.
+   *
+   * @param monitor The monitor to get display modes for
+   * @return Array of decorated display modes for UI selection
    */
-  public void updateKeyBindButton(String actionName, int newKeyCode) {
-    TextButton button = keyBindButtons.get(actionName);
-    button.setText(Input.Keys.toString(newKeyCode));
-  }
-
   private Array<StringDecorator<DisplayMode>> getDisplayModes(Monitor monitor) {
     DisplayMode[] displayModes = Gdx.graphics.getDisplayModes(monitor);
     Array<StringDecorator<DisplayMode>> arr = new Array<>();
@@ -375,10 +399,21 @@ public class SettingsMenuDisplay extends UIComponent {
     return arr;
   }
 
+  /**
+   * Formats a DisplayMode into a user-friendly string representation.
+   *
+   * @param displayMode The display mode to format
+   * @return Formatted string showing resolution and refresh rate
+   */
   private String prettyPrint(DisplayMode displayMode) {
     return displayMode.width + "x" + displayMode.height + ", " + displayMode.refreshRate + "hz";
   }
 
+  /**
+   * Creates the bottom menu buttons (Exit and Apply) with their respective click handlers.
+   *
+   * @return Table containing the menu navigation buttons
+   */
   private Table makeMenuButtons() {
     TextButton exitBtn = new TextButton("Exit", skin);
     TextButton applyBtn = new TextButton("Apply", skin);
@@ -407,6 +442,10 @@ public class SettingsMenuDisplay extends UIComponent {
     return table;
   }
 
+  /**
+   * Applies all current UI settings to the user preferences and saves them.
+   * Validates input values and updates display, audio, and control settings.
+   */
   private void applyChanges() {
     UserSettings.Settings settings = UserSettings.get();
 
@@ -429,10 +468,19 @@ public class SettingsMenuDisplay extends UIComponent {
     UserSettings.saveCurrentKeybinds();
   }
 
+  /**
+   * Exits the settings menu and returns to the main menu screen.
+   */
   private void exitMenu() {
     game.setScreen(ScreenType.MAIN_MENU);
   }
 
+  /**
+   * Safely parses a string to an integer, returning null if parsing fails.
+   *
+   * @param num String to parse
+   * @return Parsed integer or null if invalid
+   */
   private Integer parseOrNull(String num) {
     try {
       return Integer.parseInt(num, 10);
@@ -456,7 +504,6 @@ public class SettingsMenuDisplay extends UIComponent {
     if (settingsInputComponent != null && settingsInputComponent.isRebinding()) {
       settingsInputComponent.cancelRebinding();
     }
-    // The input handler will be disposed automatically when the entity is disposed
     rootTable.clear();
     super.dispose();
   }

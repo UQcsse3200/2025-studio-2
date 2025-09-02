@@ -3,9 +3,6 @@ package com.csse3200.game.input;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.csse3200.game.screens.SettingsScreen;
-import com.csse3200.game.services.ServiceLocator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -13,7 +10,6 @@ import java.util.Map;
  * Input handler for settings menu key rebinding functionality.
  */
 public class SettingsInputComponent extends InputComponent {
-  private static final Logger logger = LoggerFactory.getLogger(SettingsInputComponent.class);
 
   private Map<String, TextButton> keyBindButtons;
   private String currentlyRebinding = null;
@@ -22,11 +18,6 @@ public class SettingsInputComponent extends InputComponent {
   public SettingsInputComponent(SettingsScreen settingsScreen) {
     super(20); // High priority to capture input during rebinding
   }
-
-//  @Override
-//  public void create() {
-//    super.create();
-//  }
 
   /**
    * Set the key binding buttons that this component will manage
@@ -103,7 +94,6 @@ public class SettingsInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
-    logger.debug("SIC keydown called");
     if (currentlyRebinding != null) {
       if (keycode == Input.Keys.ESCAPE) {
         cancelRebinding();
