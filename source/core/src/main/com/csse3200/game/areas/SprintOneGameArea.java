@@ -179,30 +179,30 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private void spawnElevatorPlatform() {
-           float ts = terrain.getTileSize();
+        float ts = terrain.getTileSize();
 
-           // Elevator: moves up 4 tiles when triggered
-           Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                   new Vector2(0, 3f * ts), // offset: 4 tiles up
-                   2f                       // speed
-           );
-           GridPoint2 elevatorPos = new GridPoint2(12, 10); // right of player
-           spawnEntityAt(elevator, elevatorPos, false, false);
-           logger.info("Elevator spawned at {}", elevatorPos);
+        // Elevator: moves up 3 tiles when triggered
+        Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+                new Vector2(0, 3f * ts), // offset: 3 tiles up
+                2f                       // speed
+        );
+        GridPoint2 elevatorPos = new GridPoint2(12, 10); // right of player
+        spawnEntityAt(elevator, elevatorPos, false, false);
+        logger.info("Elevator spawned at {}", elevatorPos);
 
-           // Button to trigger it (blue platform type)
-           Entity button = ButtonFactory.createButton(false, "platform");
-           GridPoint2 buttonPos = new GridPoint2(9, 10); // between player and elevator
-           spawnEntityAt(button, buttonPos, true, true);
-           logger.info("Elevator button spawned at {}", buttonPos);
+        // Button to trigger it (blue platform type)
+        Entity button = ButtonFactory.createButton(false, "platform");
+        GridPoint2 buttonPos = new GridPoint2(11, 10); // between player and elevator
+        spawnEntityAt(button, buttonPos, true, true);
+        logger.info("Elevator button spawned at {}", buttonPos);
 
-           // Link button to platform
-           button.getEvents().addListener("buttonPressed", () -> {
-               logger.info("Button was pressed!");
-               elevator.getEvents().trigger("activatePlatform");
-           });
-
+        // Link button to platform
+        button.getEvents().addListener("buttonPressed", () -> {
+            logger.info("Button was pressed!");
+            elevator.getEvents().trigger("activatePlatform");
+        });
     }
+
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
