@@ -70,6 +70,7 @@ public class PlayerFactory {
     footFixture.setUserData("foot");
 
     footHitbox.dispose();
+
     return player;
   }
 
