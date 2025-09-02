@@ -5,9 +5,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.entities.Entity;
 
 import com.csse3200.game.entities.factories.*;
@@ -24,6 +26,8 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
@@ -31,6 +35,7 @@ public class ForestGameArea extends GameArea {
   private static final int NUM_GHOSTS = 2;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 5);
   private static final float WALL_WIDTH = 0.1f;
+  private static boolean keySpawned;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
     "images/tree.png",
@@ -56,8 +61,17 @@ public class ForestGameArea extends GameArea {
     "images/blue_button_pushed.png",
     "images/red_button.png",
     "images/red_button_pushed.png",
+    "images/box_blue.png",
+    "images/box_orange.png",
+    "images/box_red.png",
+    "images/box_white.png",
+    "images/spikes_sprite.png",
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
     "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png",
+    "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -103,11 +117,12 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
 
-     //spawnBoxes();  // uncomment this method when you want to play with boxes
-     //spawnButtons(); //uncomment this method to see and interact with buttons
+    spawnBoxes();  // uncomment this method when you want to play with boxes
+    spawnButtons();
 
-     //spawnLights(); // uncomment to spawn in lights
-     //spawnKey(); // uncomment this method to spawn the key (visuals still being worked on)
+    spawnLights(); // uncomment to spawn in lights
+
+    spawnTraps();
     playMusic();
   }
 
@@ -275,14 +290,27 @@ public class ForestGameArea extends GameArea {
       // Static box
       Entity staticBox = BoxFactory.createStaticBox();
       staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
-      spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+      spawnEntityAt(staticBox, new GridPoint2(10,20), true,  true);
 
       // Moveable box
       Entity moveableBox = BoxFactory.createMoveableBox();
       moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
-      // Add other types of boxes here
+      // Autonomous box
+      float startX = 3f;
+      float endX = 10f;
+      float y = 17f;
+      float speed = 2f;
+
+      Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+      spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
+  }
+
+  private void spawnTraps() {
+    GridPoint2 spawnPos =  new GridPoint2(7,15);
+    Entity spikes = TrapFactory.createSpikes(spawnPos);
+    spawnEntityAt(spikes, spawnPos, true,  true);
   }
 
   private void spawnButtons() {
@@ -296,6 +324,15 @@ public class ForestGameArea extends GameArea {
 
     Entity button3 = ButtonFactory.createButton(false, "nothing");
     spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+
+    //listener to spawn key when door button pushed
+    button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+      if (isPushed && !keySpawned) {
+        spawnKey();
+        keySpawned = true;
+      }
+    });
+
   }
 
   public void spawnKey() {
