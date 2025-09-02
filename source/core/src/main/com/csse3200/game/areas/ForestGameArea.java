@@ -116,9 +116,10 @@ public class ForestGameArea extends GameArea {
     spawnButtons();
 
     spawnLights(); // uncomment to spawn in lights
-
+      // spawnKey();
     spawnTraps();
     playMusic();
+    spawnDoor();
   }
 
   private MinimapDisplay createMinimap() {
@@ -302,7 +303,14 @@ public class ForestGameArea extends GameArea {
 
   public void spawnKey() {
       Entity key = CollectableFactory.createKey("door");
-      spawnEntityAt(key, new GridPoint2(17,17), true, true);
+      key.addComponent(new TooltipSystem.TooltipComponent("Collect the key", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(key, new GridPoint2(17,19), true, true);
+  }
+
+  public void spawnDoor() {
+      Entity door = ObstacleFactory.createDoor("door");
+      door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+      spawnEntityAt(door, new GridPoint2(3,10), true, true);
   }
 
   private void spawnLights() {
