@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -56,6 +57,9 @@ public class PlayerFactory {
             .addComponent(new InventoryComponent())
             .addComponent(inputComponent)
             .addComponent(new PlayerStatsDisplay());
+    player.addComponent(new StaminaComponent(100f, 10f, 25f, 20));
+
+
 
 
     PhysicsUtils.setScaledCollider(player, 0.6f, 1.0f);
