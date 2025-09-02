@@ -10,6 +10,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
@@ -95,19 +96,27 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
-    PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
     loadLevel();
   }
 
-  public void reset() {
+  protected void reset() {
     // debug
     // for (Entity entity : areaEntities) {
     //   System.out.println(entity);
     // }
+
+    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
+    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+
+    // Delete all entities within the room
     super.dispose();
     loadLevel();
+
+    // transfer all of the retained data
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
   }
 
   private void loadLevel() {
@@ -116,20 +125,17 @@ public class ForestGameArea extends GameArea {
     spawnTrees();
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset); //debug
-    spawnGhosts();
+    //spawnGhosts();
     //spawnGhostKing();
 
     MinimapDisplay minimapDisplay = createMinimap();
 
-    player = spawnPlayer();
-    //spawnGhosts();
-    //spawnGhostKing();
     spawnPlatform(); //Testing platform
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
-    spawnLights(); // uncomment to spawn in lights
+//    spawnLights(); // uncomment to spawn in lights
 
     spawnTraps();
     playMusic();

@@ -27,6 +27,24 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   /**
+   * Return current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @return walkDirection
+   */
+  public Vector2 getWalkDirection() {
+    return walkDirection;
+  }
+
+  /**
+   * Set current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @param walkDirection - walkDirection to set.
+   */
+  public void setWalkDirection(Vector2 walkDirection) {
+    this.walkDirection.set(walkDirection);
+  }
+
+  /**
    * Triggers player events on specific keycodes.
    *
    * @return whether the input was processed
@@ -50,13 +68,17 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("interact");
     } else if (keycode == ADRENALINE_KEY) {
       triggerAdrenalineEvent();
-      return true;
+        return true;
     } else if (keycode == DASH_KEY) {
-      triggerDashEvent();
-      return true;
+        triggerDashEvent();
+        return true;
     } else if (keycode == CROUCH_KEY) {
       triggerCrouchEvent();
       return true;
+      // debug
+    } else if (keycode == Keys.R) {
+        entity.getEvents().trigger("reset"); // This might cause a memory leak?
+        return true;
     }
 
     return false;
@@ -77,9 +99,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       } else if (keycode == RIGHT_KEY) {
         walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
-        return true;
-      } else if (keycode == Keys.R) { //debug
-        entity.getEvents().trigger("reset");
         return true;
       }
       return false;
