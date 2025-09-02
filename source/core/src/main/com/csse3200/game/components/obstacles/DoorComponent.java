@@ -68,6 +68,9 @@ public class DoorComponent extends Component {
     private void openDoor() {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         col.setSensor(true);
+
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_open.png");
     }
 
     /**
@@ -76,6 +79,9 @@ public class DoorComponent extends Component {
     private void closeDoor() {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         if (col != null) col.setSensor(false);
+
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_closed.png");
     }
 
     /**
