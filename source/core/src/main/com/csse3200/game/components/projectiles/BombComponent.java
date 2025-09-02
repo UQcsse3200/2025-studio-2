@@ -16,10 +16,13 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A component that turns an entity into a timed bombed (added to Projectiles)
+ */
 public class BombComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(BombComponent.class);
 
-    private final GameTime timeSource;
+    private GameTime timeSource;
     private final float explosionDelay;
     private final float explosionRadius;
     private final short targetLayer;
@@ -29,16 +32,25 @@ public class BombComponent extends Component {
     private float blinkTimer = 0f;
     private boolean isVisible = true;
 
+    /**
+     * Create a new bomb component
+     * @param explosionDelay Seconds until explosion after being dropped
+     * @param explosionRadius Radius of the explosion
+     * @param targetLayer Physics layer of entities that can be damaged
+     */
     public BombComponent(float explosionDelay, float explosionRadius, short targetLayer) {
-        this.timeSource = ServiceLocator.getTimeSource();
         this.explosionDelay = explosionDelay;
         this.explosionRadius = explosionRadius;
         this.targetLayer = targetLayer;
     }
 
+    /**
+     * Create the bomb, register collision listener, get drop time
+     */
     @Override
     public void create() {
         super.create();
+        timeSource = ServiceLocator.getTimeSource();
         entity.getEvents().addListener("collisionStart", this::onCollisionStart);
         dropTime = timeSource.getTime();
         logger.debug("Bomb created with {}s delay", explosionDelay);
@@ -46,6 +58,7 @@ public class BombComponent extends Component {
         entity.addComponent(new DisposalComponent(0.1f));
     }
 
+    /** Update the bomb each frame. Handles blinking and triggers explosion after delay */
     @Override
     public void update() {
         if (hasExploded) return;
@@ -67,6 +80,7 @@ public class BombComponent extends Component {
         }
     }
 
+    /** Called when bomb collides with another fixture */
     private void onCollisionStart(Fixture me, Fixture other) {
         // Bomb has hit the ground or obstacle
         if (PhysicsLayer.contains(PhysicsLayer.OBSTACLE, other.getFilterData().categoryBits)) {
@@ -81,6 +95,7 @@ public class BombComponent extends Component {
         }
     }
 
+    /** Toggle visibility for blinking effect */
     private void toggleVisibility() {
         isVisible = !isVisible;
         if (!isVisible) {
@@ -90,6 +105,7 @@ public class BombComponent extends Component {
         }
     }
 
+    /** Trigger explosion, deal damage, spawn effect, trigger disposal */
     private void explode() {
         if (hasExploded) return;
         hasExploded = true;
@@ -111,6 +127,7 @@ public class BombComponent extends Component {
         this.setEnabled(false);
     }
 
+    /** Damage area and knockback to valid targets in explosion range */
     private void dealAreaDamage() {
         Vector2 bombPos = entity.getCenterPosition();
 
@@ -165,5 +182,9 @@ public class BombComponent extends Component {
         ServiceLocator.getEntityService().register(explosion);
 
         logger.debug("Created explosion effect entity at {}", entity.getCenterPosition());
+    }
+
+    public boolean hasExploded() {
+        return hasExploded;
     }
 }

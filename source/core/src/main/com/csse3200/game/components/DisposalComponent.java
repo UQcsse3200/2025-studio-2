@@ -9,7 +9,7 @@ import com.csse3200.game.services.ServiceLocator;
  */
 public class DisposalComponent extends Component {
     private final float delay;
-    private final GameTime timeSource;
+    private GameTime timeSource;
     private long startTime;
     private boolean started = false;
 
@@ -19,12 +19,12 @@ public class DisposalComponent extends Component {
      */
     public DisposalComponent(float delay) {
         this.delay = delay;
-        this.timeSource = ServiceLocator.getTimeSource();
     }
 
     @Override
     public void create() {
         super.create();
+        timeSource = ServiceLocator.getTimeSource();
         entity.getEvents().addListener("scheduleDisposal", this::startDisposal);
     }
 
