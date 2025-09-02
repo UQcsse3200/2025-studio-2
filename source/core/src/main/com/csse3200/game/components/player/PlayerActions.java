@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -39,9 +40,12 @@ public class PlayerActions extends Component {
 
   private boolean soundPlayed = false;
 
+  private CombatStatsComponent combatStatsComponent;
+
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
+    combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
 
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
@@ -71,6 +75,11 @@ public class PlayerActions extends Component {
 
     if (body.getLinearVelocity().y < 0) {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
+    }
+
+    // Check if the player's health is currently 0, in which case, reset level
+    if (combatStatsComponent.isDead()) {
+      entity.requestReset();
     }
   }
 

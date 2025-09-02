@@ -38,6 +38,8 @@ public class Entity {
   private Vector2 scale = new Vector2(1, 1);
   private Array<Component> createdComponents;
 
+  private boolean resetRequested = false;
+
   public Entity() {
     id = nextId;
     nextId++;
@@ -249,6 +251,11 @@ public class Entity {
     for (Component component : createdComponents) {
       component.triggerUpdate();
     }
+
+    if (resetRequested) {
+      getEvents().trigger("reset");
+      resetRequested = false;
+    }
   }
 
   /**
@@ -268,6 +275,13 @@ public class Entity {
    */
   public EventHandler getEvents() {
     return eventHandler;
+  }
+
+  /**
+   * Perform a level reset.
+   */
+  public void requestReset() {
+    resetRequested = true;
   }
 
   @Override

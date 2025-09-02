@@ -13,6 +13,7 @@ import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -112,6 +113,7 @@ public class ForestGameArea extends GameArea {
     Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
 
     // Delete all entities within the room
+    // Note: Using super's dispose() instead of local as super does not unload assets.
     super.dispose();
     loadLevel();
 
@@ -124,7 +126,7 @@ public class ForestGameArea extends GameArea {
     spawnTerrain();
     spawnTrees();
     player = spawnPlayer();
-    player.getEvents().addListener("reset", this::reset); //debug
+    player.getEvents().addListener("reset", this::reset);
     //spawnGhosts();
     //spawnGhostKing();
 
@@ -135,6 +137,7 @@ public class ForestGameArea extends GameArea {
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
+    // LIGHTING ENGINE DISPOSAL IS NOT CURRENTLY COMPATIBLE WITH LEVEL RESET.
 //    spawnLights(); // uncomment to spawn in lights
 
     spawnTraps();
