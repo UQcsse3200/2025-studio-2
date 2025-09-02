@@ -14,7 +14,7 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.GdxGame.ScreenType;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.files.UserSettings.DisplaySettings;
-import com.csse3200.game.input.SettingsInputComponent;
+//import com.csse3200.game.input.SettingsInputComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.utils.StringDecorator;
@@ -46,7 +46,7 @@ public class SettingsMenuDisplay extends UIComponent {
 
   private Map<String, TextButton> keyBindButtons = new HashMap<>();
 
-  private SettingsInputComponent settingsInputComponent;
+//  private SettingsInputComponent settingsInputComponent;
 
   public SettingsMenuDisplay(GdxGame game) {
     super();
@@ -58,13 +58,13 @@ public class SettingsMenuDisplay extends UIComponent {
     super.create();
 
     // Create and add the settings input component
-    settingsInputComponent = new SettingsInputComponent();
-    entity.addComponent(settingsInputComponent);
+//    settingsInputComponent = new SettingsInputComponent();
+//    entity.addComponent(settingsInputComponent);
 
     addActors();
 
     // Pass the key bind buttons to the input component
-    settingsInputComponent.setKeyBindButtons(keyBindButtons);
+//    settingsInputComponent.setKeyBindButtons(keyBindButtons);
 
     stage.setKeyboardFocus(stage.getRoot());
 //    Gdx.input.setInputProcessor(stage);
