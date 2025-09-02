@@ -2,5 +2,10 @@
   "health": 100,
   "baseAttack": 10,
   "gold": 50,
-  "favouriteColour": "peach"
+  "favouriteColour": "peach",
+  "maxStamina": 100,
+  "staminaRegenPerSecond": 10.0,
+  "sprintDrainPerSecond": 25.0,
+  "staminaRegenDelaySeconds": 1.0
+
 }

@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -49,6 +50,9 @@ public class PlayerFactory {
             .addComponent(new InventoryComponent())
             .addComponent(inputComponent)
             .addComponent(new PlayerStatsDisplay());
+    player.addComponent(new StaminaComponent(100f, 10f, 25f, 20));
+
+
 
     Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
     if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
