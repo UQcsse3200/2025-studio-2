@@ -9,12 +9,14 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.physics.ObjectContactListener;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -72,8 +74,9 @@ public class SprintOneGameArea extends GameArea {
     /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
     @Override
     public void create() {
+        PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+        engine.getWorld().setContactListener(new ObjectContactListener());
         loadAssets();
-
         displayUI();
 
         spawnTerrain();
