@@ -24,6 +24,11 @@ public class InventoryTab implements InventoryTabInterface {
     private static final float GRID_Y_PCT = 0.182f; // bottom edge of grid
     private static final float GRID_W_PCT = 0.508f;
     private static final float GRID_H_PCT = 0.62f;
+
+    // Nudge the grid a tiny bit (in base-art pixels; negative X = left, negative Y = down)
+    private static final float GRID_OFFSET_X_BASE = -18f;
+    private static final float GRID_OFFSET_Y_BASE = -30f;
+
     // Grid layout
     private static final int   GRID_ROWS = 4;
     private static final int   GRID_COLS = 4;
@@ -51,19 +56,20 @@ public class InventoryTab implements InventoryTabInterface {
         overlay.setSize(canvasW, canvasH);
         overlay.setLayoutEnabled(false);
 
+        // Scale factor to convert base art pixels to current canvas pixels
+        float scale = canvasH / BASE_H;
+
         // Grid positioning within background
-        float gx = GRID_X_PCT * canvasW; // grid X offset from left
-        float gy = GRID_Y_PCT * canvasH; // grid Y offset from bottom
-        float gw = GRID_W_PCT * canvasW; // grid width
-        float gh = GRID_H_PCT * canvasH; // grid height
+        float gx = GRID_X_PCT * canvasW + GRID_OFFSET_X_BASE * scale;
+        float gy = GRID_Y_PCT * canvasH + GRID_OFFSET_Y_BASE * scale;
+        float gw = GRID_W_PCT * canvasW;
+        float gh = GRID_H_PCT * canvasH;
 
         Table grid = new Table();
         grid.setSize(gw, gh);
         grid.setPosition(gx, gy); // place grid inside overlay
 
-        float scale = canvasH / BASE_H;
         float pad   = GRID_PAD_BASE * scale;
-
 
         float slotW = (gw - pad * (GRID_COLS - 1)) / GRID_COLS;
         float slotH = (gh - pad * (GRID_ROWS - 1)) / GRID_ROWS;
