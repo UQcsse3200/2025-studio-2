@@ -65,12 +65,23 @@ public class ForestGameArea extends GameArea {
   @Override
   public void create() {
     loadAssets();
+    loadLevel();
+  }
 
+  public void reset() {
+    for (Entity entity : areaEntities) {
+      entity.dispose();
+    }
+    loadLevel();
+  }
+
+  private void loadLevel() {
     displayUI();
 
     spawnTerrain();
     spawnTrees();
     player = spawnPlayer();
+    player.getEvents().addListener("reset", this::reset); //debug
     spawnGhosts();
     //spawnGhostKing();
 
