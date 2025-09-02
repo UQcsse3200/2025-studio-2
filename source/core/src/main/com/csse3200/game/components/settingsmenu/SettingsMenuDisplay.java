@@ -264,6 +264,7 @@ public class SettingsMenuDisplay extends UIComponent {
       String result = formatted.toString()
           .replace("Player ", "")
           .replace("Terminal ", "Terminal ")
+          .replace("Pause", "")
           .trim();
 
       return result;
