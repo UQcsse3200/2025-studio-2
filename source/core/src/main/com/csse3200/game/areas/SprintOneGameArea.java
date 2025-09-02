@@ -117,7 +117,7 @@ public class SprintOneGameArea extends GameArea {
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Sprint one demo level"));
-        //ui.addComponent(new TooltipSystem.TooltipDisplay()); //Breaking moving Platform
+        ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
     private MinimapDisplay createMinimap() {

@@ -9,6 +9,8 @@ public class PhysicsLayer {
   // NPC (Non-Playable Character) colliders
   public static final short NPC = (1 << 3);
   public static final short COLLECTABLE = (1 << 4);
+  // Tooltip trigger zones
+  public static final short TOOLTIP = (1 << 5);
   public static final short ALL = ~0;
 
   public static boolean contains(short filterBits, short layer) {
