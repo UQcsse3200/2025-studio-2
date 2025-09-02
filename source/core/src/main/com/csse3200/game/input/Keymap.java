@@ -2,21 +2,21 @@ package com.csse3200.game.input;
 
 import com.badlogic.gdx.Input;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 /*
- * Static class that manages all keybindings for specific actions within the game
+ * Static class that manages all keybindings for specific actions within the game.
  */
 public class Keymap {
 
   /**
-   * Hash map:
+   * Linked Hash map (linked to maintain order of registered action):
    * Keys are the name of a certain action.
    * Values are record containing key code action is mapped to and editable flag.
    */
-  private static Map<String, KeyBinding> keyMap = new HashMap<>();
+  private static Map<String, KeyBinding> keyMap = new LinkedHashMap<>();
 
   /**
    * Keymap should never be instantiated
@@ -126,7 +126,7 @@ public class Keymap {
    * Removes all actions and associated keybinds from the map.
    */
   public static void clearKeyMap() {
-    keyMap = new HashMap<>();
+    keyMap = new LinkedHashMap<>();
   }
 
   /**
@@ -141,7 +141,12 @@ public class Keymap {
     // Then, convert back to map from stream
     return keyMap.entrySet().stream()
             .filter(entry -> entry.getValue().display())
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().keyCode()));
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> entry.getValue().keyCode(),
+                    (oldValue, newValue) -> oldValue,
+                    LinkedHashMap::new
+            ));
   }
 
   /**
