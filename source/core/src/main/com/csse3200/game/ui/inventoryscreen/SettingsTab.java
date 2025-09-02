@@ -9,6 +9,8 @@ import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.services.ServiceLocator;
 
+import java.util.Map;
+
 /**
  * Settings tab for the pause menu inventory screen.
  * Provides access to commonly adjusted game settings during gameplay.
@@ -16,23 +18,19 @@ import com.csse3200.game.services.ServiceLocator;
  * Features included:
  * - Master Volume: Control overall game volume (0-100%) with real-time updates
  * - Music Volume: Control background music volume (0-100%) with immediate effect
- * - Key Bindings: Interactive buttons showing current player controls (placeholder rebinding)
+ * - Key Bindings: Interactive display of all current keybinds with placeholder rebinding functionality
  * 
- * Note: Display settings (FPS, fullscreen, VSync, resolution) are commented out
- * but can be easily re-enabled by uncommenting the relevant code sections.
+ * This is designed for quick in-game access to essential settings. For advanced display 
+ * settings (FPS, fullscreen, VSync, resolution), use the main settings menu instead.
  * 
- * Settings are applied immediately when "Apply" is clicked.
- * Volume settings are persisted and update currently playing music in real-time.
+ * The keybind section dynamically loads all actions from the Keymap, ensuring 
+ * comprehensive coverage including player controls, terminal keys, and pause menu shortcuts.
  */
 public class SettingsTab implements InventoryTabInterface {
     
     // UI Components
-    // private TextField fpsText;  // COMMENTED OUT - Display settings
-    // private CheckBox fullScreenCheck;  // COMMENTED OUT - Display settings
-    // private CheckBox vsyncCheck;  // COMMENTED OUT - Display settings
     private Slider masterVolumeSlider;
     private Slider musicVolumeSlider;
-    // private SelectBox<StringDecorator<DisplayMode>> displayModeSelect;  // COMMENTED OUT - Display settings
     
     // Labels for real-time value updates
     private Label masterVolumeValue;
@@ -61,46 +59,6 @@ public class SettingsTab implements InventoryTabInterface {
     
     private Table createSettingsTable(Skin skin, UserSettings.Settings settings) {
         Table table = new Table();
-        
-        // === COMMENTED OUT DISPLAY SETTINGS ===
-        // FPS Setting
-        // Label fpsLabel = new Label("FPS Cap:", skin);
-        // fpsText = new TextField(Integer.toString(settings.fps), skin);
-        // fpsText.setTextFieldFilter(new TextField.TextFieldFilter.DigitsOnlyFilter());
-        // 
-        // table.add(fpsLabel).right().padRight(15f);
-        // table.add(fpsText).width(100).left();
-        // table.row().padTop(10f);
-        // 
-        // // Fullscreen Setting
-        // Label fullScreenLabel = new Label("Fullscreen:", skin);
-        // fullScreenCheck = new CheckBox("", skin);
-        // fullScreenCheck.setChecked(settings.fullscreen);
-        // 
-        // table.add(fullScreenLabel).right().padRight(15f);
-        // table.add(fullScreenCheck).left();
-        // table.row().padTop(10f);
-        // 
-        // // VSync Setting
-        // Label vsyncLabel = new Label("VSync:", skin);
-        // vsyncCheck = new CheckBox("", skin);
-        // vsyncCheck.setChecked(settings.vsync);
-        // 
-        // table.add(vsyncLabel).right().padRight(15f);
-        // table.add(vsyncCheck).left();
-        // table.row().padTop(10f);
-        // 
-        // // Resolution Setting
-        // Label displayModeLabel = new Label("Resolution:", skin);
-        // displayModeSelect = new SelectBox<>(skin);
-        // Monitor selectedMonitor = Gdx.graphics.getMonitor();
-        // displayModeSelect.setItems(getDisplayModes(selectedMonitor));
-        // displayModeSelect.setSelected(getActiveMode(displayModeSelect.getItems()));
-        // 
-        // table.add(displayModeLabel).right().padRight(15f);
-        // table.add(displayModeSelect).left();
-        // table.row().padTop(10f);
-        // === END COMMENTED DISPLAY SETTINGS ===
         
         // Master Volume Setting
         Label masterVolumeLabel = new Label("Master Volume:", skin);
@@ -176,93 +134,110 @@ public class SettingsTab implements InventoryTabInterface {
     }
     
     private void addKeyBindingControls(Table table, Skin skin) {
-        // Order for keys to appear
-        String[] keyOrder = {
-            "PlayerUp",
-            "PlayerLeft", 
-            "PlayerDown",
-            "PlayerRight",
-            "PlayerAttack",
-            "PlayerInteract"
+        // Get all actions from the keymap and iterate through them
+        Map<String, Integer> keyMap = Keymap.getKeyMap();
+        
+        // Define preferred order for display (player actions first, then terminal, then pause)
+        String[] preferredOrder = {
+            "PlayerUp", "PlayerLeft", "PlayerDown", "PlayerRight", 
+            "PlayerAttack", "PlayerInteract",
+            "TerminalModifier", "TerminalModifierAlt", "TerminalToggle",
+            "PauseSettings", "PauseInventory", "PauseMap", "PauseUpgrades"
         };
-
-        for (String actionName : keyOrder) {
-            int keyCode = Keymap.getActionKeyCode(actionName);
-
-            // Skip if the action doesn't exist in the keymap
-            if (keyCode == -1) continue;
-
-            // Create a readable label for the action
-            String displayName = formatActionName(actionName);
-            Label actionLabel = new Label(displayName + ":", skin);
-            table.add(actionLabel).right().padRight(15f);
-
-            // Create interactive button showing current key
-            String keyName = Input.Keys.toString(keyCode);
-            TextButton keyButton = new TextButton(keyName, skin);
-            
-            // Add click listener for key rebinding (placeholder functionality)
-            keyButton.addListener(new ChangeListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    // Placeholder for key rebinding - show feedback that it's clickable
-                    String originalText = keyButton.getText().toString();
-                    keyButton.setText("Bind..");
-                    
-                    // Reset text after a short delay (simulated)
-                    // In a full implementation, this would wait for a new key press
-                    new Thread(() -> {
-                        try {
-                            Thread.sleep(1500); // 1.5 second delay
-                            keyButton.setText(originalText);
-                        } catch (InterruptedException e) {
-                            keyButton.setText(originalText);
-                        }
-                    }).start();
-                }
-            });
-            
-            table.add(keyButton).left().padLeft(10f).width(140).height(30);
-            table.row().padTop(5f);
+        
+        // First, add actions in preferred order if they exist
+        for (String actionName : preferredOrder) {
+            if (keyMap.containsKey(actionName)) {
+                addKeyBindingRow(table, skin, actionName, keyMap.get(actionName));
+            }
         }
+        
+        // Then add any remaining actions not in the preferred order
+        for (Map.Entry<String, Integer> entry : keyMap.entrySet()) {
+            String actionName = entry.getKey();
+            // Skip if already added in preferred order
+            boolean alreadyAdded = false;
+            for (String preferredAction : preferredOrder) {
+                if (preferredAction.equals(actionName)) {
+                    alreadyAdded = true;
+                    break;
+                }
+            }
+            if (!alreadyAdded) {
+                addKeyBindingRow(table, skin, actionName, entry.getValue());
+            }
+        }
+    }
+    
+    private void addKeyBindingRow(Table table, Skin skin, String actionName, int keyCode) {
+        // Create a readable label for the action
+        String displayName = formatActionName(actionName);
+        Label actionLabel = new Label(displayName + ":", skin);
+        table.add(actionLabel).right().padRight(15f);
+
+        // Create interactive button showing current key
+        String keyName = Input.Keys.toString(keyCode);
+        TextButton keyButton = new TextButton(keyName, skin);
+        
+        // Add click listener for key rebinding (placeholder functionality)
+        keyButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                // Placeholder for key rebinding - show feedback that it's clickable
+                String originalText = keyButton.getText().toString();
+                keyButton.setText("Bind..");
+                
+                // Reset text after a short delay (simulated)
+                // In a full implementation, this would wait for a new key press
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(1500); // 1.5 second delay
+                        keyButton.setText(originalText);
+                    } catch (InterruptedException e) {
+                        keyButton.setText(originalText);
+                    }
+                }).start();
+            }
+        });
+        
+        table.add(keyButton).left().padLeft(10f).width(140).height(30);
+        table.row().padTop(5f);
     }
     
     private String formatActionName(String actionName) {
         switch (actionName) {
+            // Player movement and actions
             case "PlayerUp": return "Move Up";
             case "PlayerLeft": return "Move Left";
             case "PlayerDown": return "Move Down";
             case "PlayerRight": return "Move Right";
             case "PlayerAttack": return "Attack";
             case "PlayerInteract": return "Interact";
+            
+            // Terminal controls
+            case "TerminalModifier": return "Terminal Ctrl (Left)";
+            case "TerminalModifierAlt": return "Terminal Ctrl (Right)";
+            case "TerminalToggle": return "Toggle Terminal";
+            
+            // Pause menu controls
+            case "PauseSettings": return "Pause/Settings";
+            case "PauseInventory": return "Open Inventory";
+            case "PauseMap": return "Open Map";
+            case "PauseUpgrades": return "Open Upgrades";
+            
             default:
-                // Fallback to camelCase conversion
+                // Fallback to camelCase conversion for any new actions
                 return actionName.replaceAll("([A-Z])", " $1")
                     .replaceFirst("^\\s", "")
                     .replace("Player", "")
+                    .replace("Terminal", "Term")
+                    .replace("Pause", "")
                     .trim();
         }
     }
     
     private void applyChanges() {
         UserSettings.Settings settings = UserSettings.get();
-        
-        // === COMMENTED OUT DISPLAY SETTINGS ===
-        // Apply FPS setting
-        // try {
-        //     int fpsVal = Integer.parseInt(fpsText.getText());
-        //     if (fpsVal > 0 && fpsVal <= 300) { // Reasonable FPS range
-        //         settings.fps = fpsVal;
-        //     }
-        // } catch (NumberFormatException e) {
-        //     // Keep existing FPS if invalid input
-        // }
-        // 
-        // // Apply display settings
-        // settings.fullscreen = fullScreenCheck.isChecked();
-        // settings.vsync = vsyncCheck.isChecked();
-        // settings.displayMode = new DisplaySettings(displayModeSelect.getSelected().object);
-        // === END COMMENTED DISPLAY SETTINGS ===
         
         // Apply volume settings
         settings.masterVolume = masterVolumeSlider.getValue();
@@ -290,35 +265,4 @@ public class SettingsTab implements InventoryTabInterface {
         
         // Could add more music tracks here if there are other areas with different music
     }
-    
-    // === COMMENTED OUT DISPLAY METHODS ===
-    // private Array<StringDecorator<DisplayMode>> getDisplayModes(Monitor monitor) {
-    //     DisplayMode[] displayModes = Gdx.graphics.getDisplayModes(monitor);
-    //     Array<StringDecorator<DisplayMode>> arr = new Array<>();
-    //     
-    //     for (DisplayMode displayMode : displayModes) {
-    //         arr.add(new StringDecorator<>(displayMode, this::prettyPrint));
-    //     }
-    //     
-    //     return arr;
-    // }
-    // 
-    // private String prettyPrint(DisplayMode displayMode) {
-    //     return displayMode.width + "x" + displayMode.height + ", " + displayMode.refreshRate + "Hz";
-    // }
-    // 
-    // private StringDecorator<DisplayMode> getActiveMode(Array<StringDecorator<DisplayMode>> modes) {
-    //     DisplayMode activeMode = Gdx.graphics.getDisplayMode();
-    //     
-    //     for (StringDecorator<DisplayMode> mode : modes) {
-    //         DisplayMode dm = mode.object;
-    //         if (dm.width == activeMode.width && dm.height == activeMode.height 
-    //             && dm.refreshRate == activeMode.refreshRate) {
-    //             return mode;
-    //         }
-    //     }
-    //     
-    //     return modes.first(); // Fallback to first mode
-    // }
-    // === END COMMENTED DISPLAY METHODS ===
 }
