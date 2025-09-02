@@ -37,6 +37,8 @@ public class ForestGameArea extends GameArea {
   private static boolean keySpawned;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
+    "images/box_white.png",
+    "images/box_blue.png",
     "images/tree.png",
     "images/ghost_king.png",
     "images/ghost_1.png",
@@ -109,6 +111,9 @@ public class ForestGameArea extends GameArea {
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
+    spawnElevatorPlatform();
+    spawnBoxes();  // uncomment this method when you want to play with boxes
+    spawnButtons(); //uncomment this method to see and interact with buttons
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
@@ -254,7 +259,6 @@ public class ForestGameArea extends GameArea {
     Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
     movingPlatform.setScale(2,1);
     spawnEntityAt(movingPlatform, movingPos, false, false);
-
   }
   private void spawnBoxes() {
 
@@ -283,7 +287,27 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(spikes, spawnPos, true,  true);
   }
 
-  private void spawnButtons() {
+  private void spawnElevatorPlatform() {
+      float ts = terrain.getTileSize();
+
+      // Elevator: moves up 4 tiles when triggered
+      Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+              new Vector2(0, 4f * ts), // offset: 4 tiles up
+              2f                       // speed
+      );
+      spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
+
+      // Button to trigger it
+      Entity button = ButtonFactory.createButton(false, "activatePlatform");
+      spawnEntityAt(button, new GridPoint2(10, 7), true, true);
+
+      // Link button to platform
+      button.getEvents().addListener("buttonPressed", () -> {
+          elevator.getEvents().trigger("togglePlatform");
+      });
+  }
+
+    private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false, "platform");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
