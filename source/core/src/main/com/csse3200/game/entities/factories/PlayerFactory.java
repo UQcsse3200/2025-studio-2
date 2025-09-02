@@ -1,4 +1,5 @@
 package com.csse3200.game.entities.factories;
+import com.badlogic.gdx.Gdx;
 
 
 import com.badlogic.gdx.math.Vector2;
@@ -65,7 +66,26 @@ public class PlayerFactory {
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay());
 
-    player.addComponent(new StaminaComponent(100f, 10f, 25f, 20));
+    // --- Stamina: add component, wire sprint, and TEMP logging ---
+    StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
+    player.addComponent(stamina);
+
+// Wire sprint toggle (expects your input component to emit sprintStart/sprintStop)
+    player.getEvents().addListener("sprintStart", () -> {
+      if (!stamina.isExhausted() && stamina.getCurrentStamina() > 0) {
+        stamina.setSprinting(true);
+      }
+    });
+    player.getEvents().addListener("sprintStop", () -> stamina.setSprinting(false));
+
+// TEMP: Console logs to verify behaviour (remove before merging)
+    player.getEvents().addListener("staminaUpdate", (Integer cur, Integer max) -> {
+      Gdx.app.log("STAM", cur + "/" + max + (stamina.isExhausted() ? " (EXHAUSTED)" : ""));
+    });
+    player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
+    player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
+// --- end stamina block ---
+
 
 
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.events.listeners.EventListener0;
 import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.files.UserSettings;
@@ -24,15 +25,17 @@ public class PlayerActions extends Component {
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
+    private static final Vector2 MAX_SPEED = new Vector2(3f, 3f);
+    private static final float   SPRINT_MULT = 1.8f;
 
   private static final int DASH_SPEED_MULTIPLIER = 5;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
+  private StaminaComponent stamina;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
   private Vector2 jumpDirection = Vector2.Zero.cpy();
-
   private boolean moving = false;
   private boolean adrenaline = false;
   private boolean crouching = false;
@@ -43,15 +46,20 @@ public class PlayerActions extends Component {
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
 
+  private boolean crouching = false;
+
   private boolean soundPlayed = false;
 
   private CombatStatsComponent combatStatsComponent;
+
+  // Whether player is currently holding sprint (Shift)
+  private boolean wantsSprint = false;
 
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
-
+    stamina = entity.getComponent(StaminaComponent.class);
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
 
@@ -68,6 +76,18 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
 
     entity.getEvents().addListener("crouch", this::crouch);
+      entity.getEvents().addListener("sprintStart", () -> {
+          wantsSprint = true;
+          if (stamina != null && !stamina.isExhausted() && stamina.getCurrentStamina() > 0) {
+              stamina.setSprinting(true); // start draining now
+          }
+      });
+      entity.getEvents().addListener("sprintStop", () -> {
+          wantsSprint = false;
+          if (stamina != null) {
+              stamina.setSprinting(false); // stop draining, start delay
+          }
+      });
   }
 
   @Override
@@ -92,9 +112,10 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
     Vector2 velocity = body.getLinearVelocity();
     Vector2 desiredVelocity;
+    boolean canSprint = stamina != null && !stamina.isExhausted() && stamina.getCurrentStamina() > 0;
+    float mult = (wantsSprint && canSprint) ? SPRINT_MULT : 1f;
 
-    // Adjust player speed based on sprinting/crouching/walking
-    if (adrenaline) {
+      if (adrenaline) {
       desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
     } else if (crouching) {
       desiredVelocity = walkDirection.cpy().scl(CROUCH_SPEED);
@@ -127,28 +148,25 @@ public class PlayerActions extends Component {
    * @param direction direction to move in
    */
   void walk(Vector2 direction) {
-    this.walkDirection.x = direction.x;
-    moving = true;
+      this.walkDirection.set(direction); // <- keep/make this
+      moving = true;
   }
 
-    /**
-     * Returns the player's current walking direction as a 2D vector.
-     * <p>
-     * The x component shows horizontal movement positive (right), negative (left) <br>
-     * The y component shows vertical movement:  positive (up), negative (down)
-     *
-     * @return  a copy of the current walking direction vector
-     */
+
+  /**
+   * Returns the player's current walking direction as a 2D vector.
+   * x: +right, -left; y: +up, -down
+   */
   public Vector2 getWalkDirection() {
-      return walkDirection.cpy();
+    return walkDirection.cpy();
   }
 
   /**
    * Stops the player from walking.
    */
   void stopWalking() {
-    this.walkDirection = Vector2.Zero.cpy();
-    updateSpeed();
+    this.walkDirection.setZero();
+    updateSpeed(); // apply zero desired velocity so we decelerate immediately
     moving = false;
   }
 
@@ -193,10 +211,12 @@ public class PlayerActions extends Component {
     //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
+
   }
 
   /**
    * Boosts the players speed, `activates adrenaline`
+   * @param direction The direction in which the player should move
    */
   void toggleAdrenaline() {
     // Player cannot sprint (adrenaline) while crouching
@@ -210,17 +230,17 @@ public class PlayerActions extends Component {
 
   /**
    * Gives the player a boost of speed in the given direction
+   * @param direction The direction in which the player should dash
    */
   void dash() {
 
-    // Player cannot dash while crouching
     if (crouching) {
       return;
     }
 
-    hasDashed = true;
+    this.walkDirection = direction;
+    moving = true;
 
-    // Retrieve the body to apply the force (impulse)
     Body body = physicsComponent.getBody();
 
     // Scale the direction vector to increase speed
