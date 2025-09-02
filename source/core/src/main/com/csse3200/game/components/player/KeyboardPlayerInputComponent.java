@@ -73,9 +73,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
-      case Keys.R: //debug
-        entity.getEvents().trigger("reset");
-        return true;
       default:
         return false;
     }
