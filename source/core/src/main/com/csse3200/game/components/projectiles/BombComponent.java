@@ -42,6 +42,8 @@ public class BombComponent extends Component {
         entity.getEvents().addListener("collisionStart", this::onCollisionStart);
         dropTime = timeSource.getTime();
         logger.debug("Bomb created with {}s delay", explosionDelay);
+        // Add disposal component for safe cleanup after 0.1 seconds
+        entity.addComponent(new DisposalComponent(0.1f));
     }
 
     @Override
@@ -102,27 +104,12 @@ public class BombComponent extends Component {
         // Hide the bomb immediately
         entity.setScale(0f, 0f);
 
-        // Add disposal component for safe cleanup after 0.1 seconds
-        entity.addComponent(new DisposalComponent(0.1f));
+        // Start disposal countdown
+        entity.getEvents().trigger("scheduleDisposal");
 
         // Disable this component to prevent further updates
         this.setEnabled(false);
     }
-
-    /*private void markForDisposal() {
-        // Disable all components to prevent further updates
-        entity.setEnabled(false);
-
-        // Schedule disposal for next frame
-        // We'll use a simple approach: make the entity invisible and let it be cleaned up
-        entity.setScale(0f, 0f);
-
-        // Trigger a disposal event that can be handled safely
-        entity.getEvents().trigger("scheduleDisposal");
-
-        // Alternative: You could also add a disposal queue to the EntityService
-        // For now, we'll just disable the entity
-    }*/
 
     private void dealAreaDamage() {
         Vector2 bombPos = entity.getCenterPosition();

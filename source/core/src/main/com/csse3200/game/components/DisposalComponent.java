@@ -25,8 +25,13 @@ public class DisposalComponent extends Component {
     @Override
     public void create() {
         super.create();
-        startTime = timeSource.getTime();
+        entity.getEvents().addListener("scheduleDisposal", this::startDisposal);
+    }
+
+    public void startDisposal() {
+        if (started) return;
         started = true;
+        startTime = timeSource.getTime();
     }
 
     @Override
@@ -36,5 +41,6 @@ public class DisposalComponent extends Component {
         if (timeSource.getTimeSince(startTime) >= delay * 1000) {
             entity.dispose();
         }
+        setEnabled(false);
     }
 }
