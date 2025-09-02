@@ -6,6 +6,7 @@ import com.csse3200.game.files.FileLoader.Location;
 import com.csse3200.game.input.Keymap;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -61,6 +62,59 @@ public class UserSettings {
     } else {
       Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
     }
+
+    applyKeybindSettings(settings.keyBindSettings);
+  }
+
+  private static void applyKeybindSettings(KeyBindSettings keyBindSettings) {
+    if (keyBindSettings != null && keyBindSettings.customKeybinds != null) {
+      // Apply custom keybinds
+      for (Map.Entry<String, Integer> entry : keyBindSettings.customKeybinds.entrySet()) {
+        Keymap.setActionKeyCode(entry.getKey(), entry.getValue());
+      }
+    }
+  }
+
+  public static void saveCurrentKeybinds() {
+    Settings settings = get();
+    if (settings.keyBindSettings == null) {
+      settings.keyBindSettings = new KeyBindSettings();
+    }
+
+    // get current keybinds from Keymap and save
+    settings.keyBindSettings.customKeybinds = new HashMap<>(Keymap.getKeyMap());
+
+  set(settings, false); // save without applying (already applied)
+  }
+
+  /**
+   * Resets all keybinds to their default values and saves the settings
+   */
+  public static void resetKeybindsToDefaults() {
+    Settings settings = get();
+
+    // Clear custom keybinds
+    if (settings.keyBindSettings != null) {
+      settings.keyBindSettings.customKeybinds = null;
+    }
+
+    // Reset keymap to defaults
+    Keymap.clearKeyMap();
+    Keymap.setKeyMapDefaults();
+
+    set(settings, false); // Save the cleared custom keybinds
+  }
+
+  /**
+   * Initialises keybinds on game startup by applying saved settings or defaults
+   */
+  public static void initialiseKeybinds() {
+    // Set defaults
+    Keymap.setKeyMapDefaults();
+
+    // Then apply any saved custom keybinds
+    Settings settings = get();
+    applyKeybindSettings(settings.keyBindSettings);
   }
 
   private static DisplayMode findMatching(DisplaySettings desiredSettings) {
@@ -116,11 +170,16 @@ public class UserSettings {
 //    public float uiScale = 1f;
     public DisplaySettings displayMode = null;
 
-    /*
+    /**
      * Members for controlling volume of sound effects.
      */
     public float masterVolume = 1f;
     public float musicVolume = 1f;
+
+    /**
+     * Custom keybinds
+     */
+    public KeyBindSettings keyBindSettings = null;
   }
 
   /**
@@ -138,6 +197,20 @@ public class UserSettings {
       this.height = displayMode.height;
       this.refreshRate = displayMode.refreshRate;
     }
+  }
+
+  /**
+   * Stores custom keybind settings. Can be serialised/deserialised.
+   */
+  public static class KeyBindSettings {
+    /**
+     * Map of action names to custom key codes.
+     * Only stores keybinds that differ from defaults.
+     * Null means use all default keybinds.
+     */
+    public Map<String, Integer> customKeybinds = null;
+
+    public KeyBindSettings() {}
   }
 
   private UserSettings() {

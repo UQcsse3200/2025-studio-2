@@ -354,6 +354,9 @@ public class SettingsMenuDisplay extends UIComponent {
     settings.musicVolume = musicVolumeSlider.getValue();
 
     UserSettings.set(settings, true);
+
+    // Apply current keybinds
+    UserSettings.saveCurrentKeybinds();
   }
 
   private void exitMenu() {
