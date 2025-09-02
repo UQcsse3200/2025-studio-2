@@ -37,6 +37,7 @@ public class ForestGameArea extends GameArea {
   private static boolean keySpawned;
   private static final String[] forestTextures = {
     "images/box_boy_leaf.png",
+    "images/box_white.png",
     "images/tree.png",
     "images/ghost_king.png",
     "images/ghost_1.png",
