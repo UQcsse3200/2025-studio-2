@@ -10,6 +10,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
+import com.csse3200.game.ui.inventoryscreen.InventoryTab;
+import com.csse3200.game.ui.inventoryscreen.MapTab;
+import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 
 public class PauseMenuDisplay extends UIComponent {
     private MainGameScreen screen;
@@ -19,6 +22,10 @@ public class PauseMenuDisplay extends UIComponent {
     private Table tabBar;
     private Table tabContent;
     private Table bottomButtons;
+
+    private final InventoryTab inventoryTab = new InventoryTab();
+    private final UpgradesTab upgradesTab = new UpgradesTab();
+    private final MapTab mapTab = new MapTab();
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
     private Tab currentTab = Tab.INVENTORY;
@@ -107,8 +114,13 @@ public class PauseMenuDisplay extends UIComponent {
 
     private void updateTabContent() {
         tabContent.clear();
-        Label label = new Label(currentTab.name(), skin);
-        tabContent.add(label);
+        Actor ui = switch (currentTab) {
+            case INVENTORY -> inventoryTab.build(skin);
+            case UPGRADES -> upgradesTab.build(skin);
+            case MAP -> mapTab.build(skin);
+            default -> new Label("SETTINGS", skin);
+        };
+        tabContent.add(ui).center();
     }
 
   /**

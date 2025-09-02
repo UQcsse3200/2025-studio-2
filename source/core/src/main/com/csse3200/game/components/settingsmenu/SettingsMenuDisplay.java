@@ -14,11 +14,17 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.GdxGame.ScreenType;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.files.UserSettings.DisplaySettings;
+import com.csse3200.game.input.SettingsInputComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.utils.StringDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.badlogic.gdx.Input;
+import com.csse3200.game.input.Keymap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Settings menu display and logic. If you bork the settings, they can be changed manually in
@@ -32,10 +38,14 @@ public class SettingsMenuDisplay extends UIComponent {
   private TextField fpsText;
   private CheckBox fullScreenCheck;
   private CheckBox vsyncCheck;
-//  private Slider uiScaleSlider;
+  //  private Slider uiScaleSlider;
   private Slider masterVolumeSlider;
   private Slider musicVolumeSlider;
   private SelectBox<StringDecorator<DisplayMode>> displayModeSelect;
+
+  private Map<String, TextButton> keyBindButtons = new HashMap<>();
+
+  private SettingsInputComponent settingsInputComponent;
 
   public SettingsMenuDisplay(GdxGame game) {
     super();
@@ -45,7 +55,15 @@ public class SettingsMenuDisplay extends UIComponent {
   @Override
   public void create() {
     super.create();
+
+    // Create and add the settings input component
+    settingsInputComponent = entity.getComponent(SettingsInputComponent.class);
     addActors();
+
+    // Pass the key bind buttons to the input component
+    settingsInputComponent.setKeyBindButtons(keyBindButtons);
+
+    stage.setKeyboardFocus(stage.getRoot());
   }
 
   private void addActors() {
@@ -57,12 +75,9 @@ public class SettingsMenuDisplay extends UIComponent {
     background.setFillParent(true);
     stage.addActor(background);
 
-    background.setFillParent(true);
-    stage.addActor(background);
-
     Label title = new Label("Settings", skin, "title");
     Table settingsTable = makeSettingsTable();
-    Table menuBtns = makeMenuBtns();
+    Table menuButtons = makeMenuButtons();
 
     rootTable = new Table();
     rootTable.setFillParent(true);
@@ -73,7 +88,7 @@ public class SettingsMenuDisplay extends UIComponent {
     rootTable.add(settingsTable).expandX().expandY();
 
     rootTable.row();
-    rootTable.add(menuBtns).fillX();
+    rootTable.add(menuButtons).fillX();
 
     stage.addActor(rootTable);
   }
@@ -178,7 +193,91 @@ public class SettingsMenuDisplay extends UIComponent {
       return true;
     });
 
+    table.row().padTop(20f);
+    Label keyBindLabel = new Label("Key Bindings:", skin, "title");
+    table.add(keyBindLabel).colspan(2).center();
+
+    addKeyBindingControls(table);
+
     return table;
+  }
+
+  /**
+   * TODO
+   * @param table
+   */
+  private void addKeyBindingControls(Table table) {
+    // Clear existing buttons
+    keyBindButtons.clear();
+
+    // Get all actions from keymap and create buttons for each
+    Map<String, Integer> keyMap = Keymap.getKeyMap();
+
+    for (Map.Entry<String, Integer> entry : keyMap.entrySet()) {
+      String actionName = entry.getKey();
+      int currentKeyCode = entry.getValue();
+
+      table.row().padTop(5f);
+
+      // Action name label
+      String displayName = formatActionName(actionName);
+      Label actionLabel = new Label(displayName + ":", skin);
+      table.add(actionLabel).right().padRight(15f);
+
+      // Current key display button
+      TextButton keyButton = new TextButton(Input.Keys.toString(currentKeyCode), skin);
+      keyButton.addListener(new ChangeListener() {
+        @Override
+        public void changed(ChangeEvent event, Actor actor) {
+          settingsInputComponent.startRebinding(actionName, keyButton);
+          keyButton.setText("Press Key");
+        }
+      });
+
+      table.add(keyButton).width(170).height(25).left();
+
+      // Store the button with the action name as key
+      keyBindButtons.put(actionName, keyButton);
+    }
+
+
+  }
+
+  /**
+   * Formats action names to be more user-friendly
+   * Converts camelCase to space-separated words and removes 'Player' prefix
+   * @param actionName the action name to format
+   * @return the formatted display name
+   */
+  private String formatActionName(String actionName) {
+    // convert camelCase to formatted words
+    StringBuilder formatted = new StringBuilder();
+      for (int i = 0; i < actionName.length(); i++) {
+        char c = actionName.charAt(i);
+        if (i > 0 && Character.isUpperCase(c)) {
+          formatted.append(' ');
+        }
+        formatted.append(c);
+      }
+
+      // Remove "Player" prefix and trim
+      String result = formatted.toString()
+          .replace("Player ", "")
+          .replace("Terminal ", "Terminal ")
+          .replace("Pause", "")
+          .trim();
+
+      return result;
+  }
+
+  /**
+   * Updates the display text of a key bind button after rebinding
+   * @param actionName The action that was rebound
+   * @param newKeyCode The new key code
+   */
+  public void updateKeyBindButton(String actionName, int newKeyCode) {
+    TextButton button = keyBindButtons.get(actionName);
+    button.setText(Input.Keys.toString(newKeyCode));
   }
 
   private StringDecorator<DisplayMode> getActiveMode(Array<StringDecorator<DisplayMode>> modes) {
@@ -210,7 +309,7 @@ public class SettingsMenuDisplay extends UIComponent {
     return displayMode.width + "x" + displayMode.height + ", " + displayMode.refreshRate + "hz";
   }
 
-  private Table makeMenuBtns() {
+  private Table makeMenuButtons() {
     TextButton exitBtn = new TextButton("Exit", skin);
     TextButton applyBtn = new TextButton("Apply", skin);
 
@@ -281,6 +380,10 @@ public class SettingsMenuDisplay extends UIComponent {
 
   @Override
   public void dispose() {
+    if (settingsInputComponent != null && settingsInputComponent.isRebinding()) {
+      settingsInputComponent.cancelRebinding();
+    }
+    // The input handler will be disposed automatically when the entity is disposed
     rootTable.clear();
     super.dispose();
   }
