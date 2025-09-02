@@ -37,16 +37,13 @@ public class DoorComponent extends Component {
      * Handles collision events. If the colliding entity is the player and the door is locked,
      * it attempts to unlock the door using the player's inventory.
      *
-     * @param me    the door entity (ignored here)
      * @param other the colliding entity
      */
-    private void onCollisionStart(Object me, Object other) {
-        if (!(other instanceof Entity player)) return;
+    private void onCollisionStart(Entity other) {
+        HitboxComponent cc = other.getComponent(HitboxComponent.class);
+        if ((cc.getLayer() != PhysicsLayer.PLAYER)) return;
 
-        ColliderComponent cc = player.getComponent(ColliderComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
-
-        if (locked) tryUnlock(player);
+        if (locked) tryUnlock(other);
     }
 
     /**
