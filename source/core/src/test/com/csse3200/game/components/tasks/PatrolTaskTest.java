@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 
 import com.csse3200.game.ai.tasks.Task;
+import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.listeners.EventListener0;
 import com.csse3200.game.extensions.GameExtension;
@@ -31,31 +32,20 @@ public class PatrolTaskTest {
 
     @Test
     void startsMovingToFirstWaypoint() {
-        Vector2 spawnPos = new Vector2(10, 10);
-        Vector2[] steps = {new Vector2(1, 0), new Vector2(2, 0)};
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
 
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(spawnPos, steps, 0.25f);
-        ai.addTask(patrol);
-        e.addComponent(ai);
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0.5f);
         e.create();
-
-        // Before start: way points not built
-        assertNull(patrol.getWaypoints(), "Waypoints should not be built before PatrolTask starts");
+        Vector2[] waypoints = getWaypoints(e);
 
         patrol.start();
 
-        // After start: Waypoints built, index at 0, entity is moving towards waypoints[0]
-        Vector2[] waypoints = patrol.getWaypoints();
-        assertNotNull(waypoints,
-                "Waypoints should be built after PatrolTask starts");
+        // After start: Index at 0, entity is moving towards waypoints[0]
         assertEquals(0, patrol.getIndex(),
                 "Waypoint index should be 0 after PatrolTask starts");
-        assertEquals(new Vector2(11, 10), waypoints[0],
-                "Waypoints should be final position: startPos + steps[i]");
-        assertEquals(new Vector2(13, 10), waypoints[1],
-                "Waypoints should be final position: startPos + steps[i]");
+        assertEquals(waypoints[0], patrol.getTargetWaypoint(),
+                "Target should be first waypoint");
         assertTrue(patrol.isMoving(),
                 "Entity should be moving after PatrolTask starts");
         assertFalse(patrol.isWaiting(),
@@ -63,61 +53,44 @@ public class PatrolTaskTest {
     }
 
     @Test
-    void emptySteps_finishedImmediately() {
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), new Vector2[0], 0f);
-        ai.addTask(patrol);
-        e.addComponent(ai);
-        e.create();
-
-        patrol.start();
-        assertEquals(Task.Status.FINISHED, patrol.getStatus(),
-                "PatrolTask should have status FINISHED if PatrolTask has empty steps");
-    }
-
-    @Test
     void swapsToWaitAfterMovement() {
-        Vector2[] steps = {new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(1, 0)};
 
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), steps, 0f);
-        ai.addTask(patrol);
-        e.addComponent(ai);
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
         e.create();
+        Vector2[] waypoints = getWaypoints(e);
 
         patrol.start();
-        Vector2[] waypoints = patrol.getWaypoints();
+
         assertTrue(patrol.isMoving());
         assertEquals(0, patrol.getIndex());
+        assertEquals(waypoints[0], patrol.getTargetWaypoint());
 
         // Finish movement to wp[0] and start waiting
-        e.setPosition(waypoints[patrol.getIndex()].cpy());
+        e.setPosition(patrol.getTargetWaypoint());
         patrol.update(); // Movement finishes
         patrol.update(); // Starts waiting
         assertTrue(patrol.isWaiting());
         assertEquals(0, patrol.getIndex());
+        assertEquals(waypoints[0], patrol.getTargetWaypoint());
 
         // Finish waiting and advance to next waypoint
         patrol.update();
         assertTrue(patrol.isMoving());
         assertEquals(1, patrol.getIndex());
+        assertEquals(waypoints[1], patrol.getTargetWaypoint());
     }
 
     @Test
     void pingPongAtEnds() {
-        Vector2[] steps = {new Vector2(0.5f, 0), new Vector2(0.5f, 0), new Vector2(0.5f, 0)};
+        Vector2[] route = {new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(1, 0)};
 
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), steps, 0);
-        ai.addTask(patrol);
-        e.addComponent(ai);
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
         patrol.start();
-        Vector2[] waypoints = patrol.getWaypoints();
 
         int[] walked = new int[6];
         boolean[] directions = new boolean[6];
@@ -126,7 +99,7 @@ public class PatrolTaskTest {
         directions[i] = patrol.isMovingForward();
         i++;
         while (i < walked.length) {
-            e.setPosition(waypoints[patrol.getIndex()].cpy());
+            e.setPosition(patrol.getTargetWaypoint());
             patrol.update(); // Finish movement
             patrol.update(); // Swap to wait (wait time = 0)
             patrol.update(); // Swap to movement
@@ -143,18 +116,15 @@ public class PatrolTaskTest {
 
     @Test
     void handlesSingleStepPatrol() {
-        Vector2[] steps = {new Vector2(0.5f, 0)};
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), steps, 0);
-        ai.addTask(patrol);
-        e.addComponent(ai);
+        Vector2[] route = {new Vector2(0, 0)};
+
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
         patrol.start();
-        Vector2[] waypoints = patrol.getWaypoints();
 
-        e.setPosition(waypoints[patrol.getIndex()].cpy());
+        e.setPosition(patrol.getTargetWaypoint());
         patrol.update();
         assertTrue(patrol.isMoving(),
                 "Movement task is FINISHED but still the currentTask");
@@ -174,11 +144,10 @@ public class PatrolTaskTest {
 
     @Test
     void shouldTriggerEvent() {
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), new Vector2[]{new Vector2(0.5f, 0)}, 0);
-        ai.addTask(patrol);
-        e.addComponent(ai);
+        Vector2[] route = {new Vector2(0, 0)};
+
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
         EventListener0 callback = mock(EventListener0.class);
@@ -191,11 +160,10 @@ public class PatrolTaskTest {
 
     @Test
     void stop_makesTaskInactive() {
-        Entity e = makePhysicsEntity();
-        AITaskComponent ai = new AITaskComponent();
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), new Vector2[]{new Vector2(0.5f, 0)}, 0);
-        ai.addTask(patrol);
-        e.addComponent(ai);
+        Vector2[] route = {new Vector2(0, 0)};
+
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
         patrol.start();
@@ -209,14 +177,27 @@ public class PatrolTaskTest {
 
     @Test
     void hasLowPriority() {
-        PatrolTask patrol = new PatrolTask(new Vector2(0, 0), new Vector2[]{}, 0);
+        PatrolTask patrol = new PatrolTask(0);
         assertEquals(1, patrol.getPriority(),
                 "PatrolTask should have priority 1");
     }
 
-    private Entity makePhysicsEntity() {
+    private Entity makePatrollingEntity(Vector2[] route) {
         return new Entity()
                 .addComponent(new PhysicsComponent())
-                .addComponent(new PhysicsMovementComponent());
+                .addComponent(new PhysicsMovementComponent())
+                .addComponent(new PatrolRouteComponent(route));
+    }
+
+    private PatrolTask addPatrol(Entity e, float wait) {
+        AITaskComponent ai = new AITaskComponent();
+        PatrolTask patrol = new PatrolTask(wait);
+        ai.addTask(patrol);
+        e.addComponent(ai);
+        return patrol;
+    }
+
+    private Vector2[] getWaypoints(Entity e) {
+        return e.getComponent(PatrolRouteComponent.class).getWaypoints();
     }
 }

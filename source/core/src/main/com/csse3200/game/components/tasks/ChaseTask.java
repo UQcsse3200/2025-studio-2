@@ -121,36 +121,52 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         return verticalDistance >= minHeight && horizontalDistance <= dropRange;
     }
 
-    private float getDistanceToTarget() {
-        return owner.getEntity().getPosition().dst(target.getPosition());
-    }
 
-    private int getActivePriority() {
-        float dst = getDistanceToTarget();
-        if (dst > maxChaseDistance || !isTargetVisible()) {
-            return -1; // Too far, stop chasing
-        }
-        return priority;
-    }
+  /**
+   *
+   * @return
+   */
 
-    private int getInactivePriority() {
-        float dst = getDistanceToTarget();
-        if (dst < viewDistance && isTargetVisible()) {
-            return priority;
-        }
-        return -1;
+  //updated this function to stop chasing once the player is in threshold
+  private float getDistanceToTarget() {
+    Vector2 target_position=target.getPosition();
+    Vector2 curr_position=owner.getEntity().getPosition();
+    float distancee= target_position.dst(curr_position);
+    float threshold=0.5f;
+    if(distancee < threshold){
+      return 0f;
     }
+    return distancee;
 
-    private boolean isTargetVisible() {
-        Vector2 from = owner.getEntity().getCenterPosition();
-        Vector2 to = target.getCenterPosition();
+  }
 
-        // If there is an obstacle in the path to the player, not visible.
-        if (physics.raycast(from, to, PhysicsLayer.OBSTACLE, hit)) {
-            debugRenderer.drawLine(from, hit.point);
-            return false;
-        }
-        debugRenderer.drawLine(from, to);
-        return true;
+  private int getActivePriority() {
+    float dst = getDistanceToTarget();
+    if (dst > maxChaseDistance || !isTargetVisible()) {
+      owner.getEntity().getEvents().trigger("chaseEnd");
+      return -1; // Too far, stop chasing
     }
+    return priority;
+  }
+
+  private int getInactivePriority() {
+    float dst = getDistanceToTarget();
+    if (dst < viewDistance && isTargetVisible()) {
+      return priority;
+    }
+    return -1;
+  }
+
+  private boolean isTargetVisible() {
+    Vector2 from = owner.getEntity().getCenterPosition();
+    Vector2 to = target.getCenterPosition();
+
+    // If there is an obstacle in the path to the player, not visible.
+    if (physics.raycast(from, to, PhysicsLayer.OBSTACLE, hit)) {
+      debugRenderer.drawLine(from, hit.point);
+      return false;
+    }
+    debugRenderer.drawLine(from, to);
+    return true;
+  }
 }

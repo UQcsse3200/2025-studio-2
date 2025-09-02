@@ -48,11 +48,4 @@ public abstract class InputFactory {
    * @return Player input handler
    */
   public abstract InputComponent createForPlayer();
-
-  /**
-   * Creates an input handler for the terminal
-   *
-   * @return Terminal input handler
-   */
-  public abstract InputComponent createForTerminal();
 }

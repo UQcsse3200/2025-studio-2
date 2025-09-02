@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.npc.GhostAnimationController;
 import com.csse3200.game.entities.Entity;
@@ -59,7 +60,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_hasBaseEnemyComponents() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         assertNotNull(drone.getComponent(PhysicsComponent.class),
@@ -78,7 +79,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_hasCombatStatsComponent() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         CombatStatsComponent stats = drone.getComponent(CombatStatsComponent.class);
@@ -89,7 +90,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_hasAnimations() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         // TODO: Update for drone-specific animations
@@ -101,7 +102,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_hasAnimationController() {
-        Entity drone = EnemyFactory.createDrone(new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         // TODO: Update for drone-specific animation controller
@@ -111,8 +112,8 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_isIdempotent() {
-        Entity a = EnemyFactory.createDrone(new Entity());
-        Entity b = EnemyFactory.createDrone(new Entity());
+        Entity a = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f));
+        Entity b = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f));
         assertNotSame(a, b, "Drones should be distinct");
 
         AITaskComponent ai_a = a.getComponent(AITaskComponent.class);
@@ -122,12 +123,21 @@ public class EnemyFactoryTest {
     }
 
     @Test
+    void patrollingDroneHasPatrolRouteComponent() {
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(
+                new Entity(),
+                new Vector2[]{new Vector2(5f, 5f)}
+        );
+        assertNotNull(patrolDrone.getComponent(PatrolRouteComponent.class),
+                "Patrolling drone should have a PatrolRouteComponent");
+    }
+
+    @Test
     void createPatrollingDrone_emptySteps() {
         Entity drone = assertDoesNotThrow(
                 () -> EnemyFactory.createPatrollingDrone(
                         new Entity(),
-                        new Vector2(5, 5),
-                        new Vector2[0]
+                        new Vector2[]{new Vector2(0f, 0f)}
                 ), "Factory should not throw when steps array is empty");
         assertNotNull(drone);
     }

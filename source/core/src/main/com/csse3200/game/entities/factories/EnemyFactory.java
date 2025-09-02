@@ -5,9 +5,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.enemy.PatrolRouteComponent;
+import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.components.tasks.BombDropTask;
+import com.csse3200.game.components.tasks.CooldownTask;
 import com.csse3200.game.components.tasks.PatrolTask;
 import com.csse3200.game.components.tasks.WanderTask;
 import com.csse3200.game.entities.Entity;
@@ -16,9 +19,9 @@ import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
+import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
-import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
@@ -39,47 +42,67 @@ public class EnemyFactory {
      * @param target that drone pursues when chasing
      * @return drone enemy entity
      */
-    public static Entity createDrone(Entity target) {
+    public static Entity createDrone(Entity target,Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
 
+        // Add drone animations
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP); // Attack animation
 
-        Entity drone = createBaseEnemy(target)
+        Entity drone = createBaseEnemy(target);
+        // Store the spawn position (so we can reset later)
+        if (spawnPos != null) {
+            drone.addComponent(new SpawnPositionComponent(spawnPos));
+        }
+
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
+
+        drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent
-                //TODO: Implement light-activated chase
-                .addTask(new WanderTask(new Vector2(2f, 2f), 2f))  // Priority 1
-                // Chase with hover height of 3 units above player
-                .addTask(new ChaseTask(target, 10, 5f, 7f, 3f, 1.5f, 2f))  // Priority 10
-                // Bomb drop task with higher priority when conditions met
-                .addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f)); // Priority 15 when above player
-        drone.getComponent(AnimationRenderComponent.class).scaleEntity();
+        // Tasks
+        ChaseTask chaseTask = new ChaseTask(target, 10, 5f, 7f, 3f, 1.5f, 2f);
+        CooldownTask cooldownTask = new CooldownTask(2f);
+
+        // When chase ends, activate cooldown
+        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+        aiComponent.addTask(chaseTask);
+        aiComponent.addTask(cooldownTask);
+        aiComponent.addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f));
+
+
+        AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
+        arc.scaleEntity();
+        arc.startAnimation("float");
+
         return drone;
     }
-
 
     /**
      * Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.
      * @param target that drone pursues when chasing
-     * @param spawnPos used to store the starting position of the patrolling drone in the game
-     * @param patrolSteps used to build a cumulative waypoint route for patrols
+     * @param patrolRoute contains list of waypoints in patrol route
      * @return a patrolling drone enemy entity
      */
-    public static Entity createPatrollingDrone(Entity target, Vector2 spawnPos, Vector2[] patrolSteps) {
-        Entity drone = createDrone(target);
+    public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
+        Vector2 spawnPos = patrolRoute[0];
+        Entity drone = createDrone(target, spawnPos);
+        drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent
-                .addTask(new PatrolTask(spawnPos, patrolSteps, 1f));
+        // Single cooldown + patrol
+        CooldownTask cooldownTask = new CooldownTask(2f);
+        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+
+        aiComponent.addTask(cooldownTask);       // priority 2 when active
+        aiComponent.addTask(new PatrolTask(2f)); // default patrol
 
         return drone;
     }
@@ -96,8 +119,8 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 1.5f))
-                        .addComponent(new AITaskComponent());
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,1.5f))
+                        .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
