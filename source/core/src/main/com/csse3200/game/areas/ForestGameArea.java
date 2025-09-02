@@ -69,9 +69,11 @@ public class ForestGameArea extends GameArea {
   }
 
   public void reset() {
-    for (Entity entity : areaEntities) {
-      entity.dispose();
-    }
+    // debug
+    // for (Entity entity : areaEntities) {
+    //   System.out.println(entity);
+    // }
+    super.dispose();
     loadLevel();
   }
 
