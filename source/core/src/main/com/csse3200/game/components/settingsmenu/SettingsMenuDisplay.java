@@ -14,11 +14,18 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.GdxGame.ScreenType;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.files.UserSettings.DisplaySettings;
+import com.csse3200.game.input.SettingsInputComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.utils.StringDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.badlogic.gdx.Input;
+import com.csse3200.game.input.Keymap;
+import com.csse3200.game.input.InputComponent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Settings menu display and logic. If you bork the settings, they can be changed manually in
@@ -32,10 +39,14 @@ public class SettingsMenuDisplay extends UIComponent {
   private TextField fpsText;
   private CheckBox fullScreenCheck;
   private CheckBox vsyncCheck;
-//  private Slider uiScaleSlider;
+  //  private Slider uiScaleSlider;
   private Slider masterVolumeSlider;
   private Slider musicVolumeSlider;
   private SelectBox<StringDecorator<DisplayMode>> displayModeSelect;
+
+  private Map<String, TextButton> keyBindButtons = new HashMap<>();
+
+  private SettingsInputComponent settingsInputComponent;
 
   public SettingsMenuDisplay(GdxGame game) {
     super();
@@ -45,7 +56,18 @@ public class SettingsMenuDisplay extends UIComponent {
   @Override
   public void create() {
     super.create();
+
+    // Create and add the settings input component
+    settingsInputComponent = new SettingsInputComponent();
+    entity.addComponent(settingsInputComponent);
+
     addActors();
+
+    // Pass the key bind buttons to the input component
+    settingsInputComponent.setKeyBindButtons(keyBindButtons);
+
+    stage.setKeyboardFocus(stage.getRoot());
+//    Gdx.input.setInputProcessor(stage);
   }
 
   private void addActors() {
@@ -178,7 +200,86 @@ public class SettingsMenuDisplay extends UIComponent {
       return true;
     });
 
+    table.row().padTop(20f);
+    Label keyBindLabel = new Label("Key Bindings:", skin, "title");
+    table.add(keyBindLabel).colspan(2).center();
+
+    addKeyBindingControls(table);
+
     return table;
+  }
+
+  /**
+   * TODO
+   * @param table
+   */
+  private void addKeyBindingControls(Table table) {
+    // Order for keys to appear
+    String[] keyOrder = {
+        "PlayerUp",
+        "PlayerLeft",
+        "PlayerDown",
+        "PlayerRight",
+        "PlayerAttack",
+        "PlayerInteract",
+        "TerminalModifier",
+        "TerminalModifierAlt",
+        "TerminalToggle"
+    };
+
+    for (String actionName : keyOrder) {
+      int keyCode = Keymap.getActionKeyCode(actionName);
+
+      // Skip if the action doesn't exist in the keymap
+      if (keyCode == -1) continue;
+
+      table.row().padTop(5f);
+
+      // Create a readable label for the action
+      String displayName = formatActionName(actionName);
+      Label actionLabel = new Label(displayName + ":", skin);
+      table.add(actionLabel).right().padRight(15f);
+
+      // Create button showing current key
+      String keyName = Input.Keys.toString(keyCode);
+      TextButton keyButton = new TextButton(keyName, skin);
+      keyButton.addListener(new ChangeListener() {
+        @Override
+        public void changed(ChangeEvent event, Actor actor) {
+          // placeholder
+        }
+      });
+
+      keyBindButtons.put(actionName, keyButton);
+      table.add(keyButton).width(170).height(25).left();
+    }
+
+
+  }
+
+  /**
+   *
+   * @param actionName
+   * @return
+   */
+  private String formatActionName(String actionName) {
+    switch (actionName) {
+      case "PlayerUp": return "Up";
+      case "PlayerLeft": return "Left";
+      case "PlayerDown": return "Down";
+      case "PlayerRight": return "Right";
+      case "PlayerAttack": return "Attack";
+      case "PlayerInteract": return "Interact";
+      case "TerminalModifier": return "Terminal Modifier";
+      case "TerminalModifierAlt": return "Terminal Modifier Alt";
+      case "TerminalToggle": return "Terminal Toggle";
+      default:
+        // Fallback to camelCase conversion
+        return actionName.replaceAll("([A-Z])", " $1")
+            .replaceFirst("^\\s", "")
+            .replace("Player", "")
+            .trim();
+    }
   }
 
   private StringDecorator<DisplayMode> getActiveMode(Array<StringDecorator<DisplayMode>> modes) {
@@ -281,6 +382,7 @@ public class SettingsMenuDisplay extends UIComponent {
 
   @Override
   public void dispose() {
+    // The input handler will be disposed automatically when the entity is disposed
     rootTable.clear();
     super.dispose();
   }
