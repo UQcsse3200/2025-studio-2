@@ -240,7 +240,32 @@ public class SettingsMenuDisplay extends UIComponent {
       keyBindButtons.put(actionName, keyButton);
     }
 
+    // Create reset to default button
+    table.row().padTop(15f);
+    TextButton defaultButton = new TextButton("Restore Defaults", skin);
+    defaultButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        UserSettings.resetKeybindsToDefaults();
+        updateAllKeybindButtons();
+      }
+    });
 
+    table.add(defaultButton).colspan(2).height(25).center();
+  }
+
+  private void updateAllKeybindButtons() {
+    Map<String, Integer> currentKeyMap = Keymap.getKeyMap();
+
+    for (Map.Entry<String, Integer> entry : currentKeyMap.entrySet()) {
+      String actionName = entry.getKey();
+      int keyCode = entry.getValue();
+
+      TextButton button = keyBindButtons.get(actionName);
+      if (button != null) {
+        button.setText(Input.Keys.toString(keyCode));
+      }
+    }
   }
 
   /**
