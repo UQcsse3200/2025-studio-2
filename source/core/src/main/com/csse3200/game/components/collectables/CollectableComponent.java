@@ -3,9 +3,10 @@ package com.csse3200.game.components.collectables;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.ColliderComponent;
-import com.csse3200.game.rendering.RenderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * Component that tracks and manages a player's inventory as a multiset of item identifiers
@@ -16,28 +17,26 @@ public abstract class CollectableComponent extends Component {
 
     /**
      * Registers a two-argument listener for {@code "collisionStart"} that delegates to
-     * {@link #onCollisionStart(Object, Object)} when this entity collides with another.
      */
     @Override
     public void create() {
-        // physics emits a 2-arg event: (collectable, playerOrOther)
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+        entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
     }
 
     /**
      * Handles begin-contact events for this collectable.
-     *
-     * @param collectable the event's "self" argument (this entity)
+     *d
      * @param player      the other object in the collision; expected to be a Player {@link Entity}
      */
-    private void onCollisionStart(Object collectable, Object player) {
-        if (collected || !(player instanceof Entity p)) return;
+    private void onCollisionStart(Entity player) {
+        HitboxComponent cc = player.getComponent(HitboxComponent.class);
+        if ((cc.getLayer() != PhysicsLayer.PLAYER) || collected) return;
 
-        ColliderComponent cc = p.getComponent(ColliderComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
-
-        if (onCollect(p)) {
-            collected = true;
+        collected = onCollect(player);
+        if (collected) {
+            TextureRenderComponent renderComponent = entity.getComponent(TextureRenderComponent.class);
+            RenderService renderService = ServiceLocator.getRenderService();
+            renderService.unregister(renderComponent);
             entity.setEnabled(false);
         }
     }
