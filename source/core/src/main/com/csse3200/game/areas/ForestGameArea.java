@@ -44,7 +44,8 @@ public class ForestGameArea extends GameArea {
     "images/iso_grass_3.png",
     "images/platform.png",
     "images/gate.png",
-    "images/button.png",
+          "images/Gate_open.png",
+          "images/button.png",
     "images/button_pushed.png",
           "images/blue_button.png",
           "images/blue_button_pushed.png",
@@ -246,6 +247,14 @@ public class ForestGameArea extends GameArea {
               35f
       );
       spawnEntityAt(securityLight, new GridPoint2(5, 5), true, true);
+  }
+
+  private void spawnGate() {
+    /*
+    Creates gate to test
+    */
+    GridPoint2 gatePos = new GridPoint2((int) 28, 4);
+    spawnEntityAt(ObstacleFactory.createDoor("sprint1", this), gatePos, false, false);
   }
 
   private void playMusic() {
