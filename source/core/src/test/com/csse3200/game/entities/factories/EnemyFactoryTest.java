@@ -71,7 +71,7 @@ public class EnemyFactoryTest {
                 "Drone should have a ColliderComponent.class");
         assertNotNull(drone.getComponent(HitboxComponent.class),
                 "Drone should have a HitboxComponent");
-        assertEquals(drone.getComponent(HitboxComponent.class).getLayer(), PhysicsLayer.NPC,
+        assertEquals(PhysicsLayer.NPC, drone.getComponent(HitboxComponent.class).getLayer(),
                 "Drone PhysicsLayer should be NPC");
         assertNotNull(drone.getComponent(AITaskComponent.class),
                 "Drone should have an AITaskComponent");

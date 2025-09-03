@@ -115,6 +115,7 @@ public class EnemyFactory {
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent
+                .addTask(new WanderTask(new Vector2(2f, 2f), 2f))
                 .addTask(new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f))
                 .addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f));
 
