@@ -245,6 +245,12 @@ public class SprintOneGameArea extends GameArea {
         movingPlatform.setScale(2,1f);
         spawnEntityAt(movingPlatform, movingPos, false, false);
 
+        // Platform for patrolling drone
+        GridPoint2 longPlatPos = new GridPoint2(3, 22);
+        Entity longPlatform = PlatformFactory.createStaticPlatform();
+        longPlatform.setScale(5, 0.25f);
+        spawnEntityAt(longPlatform, longPlatPos, false, false);
+
     }
     private void spawnBoxes() {
 
@@ -300,19 +306,19 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(20, 23);
+        GridPoint2 spawnTile = new GridPoint2(3, 22);
 
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(6, 23)),
-                terrain.tileToWorldPosition(new GridPoint2(8, 23))
+                terrain.tileToWorldPosition(new GridPoint2(7, 22)),
+                terrain.tileToWorldPosition(new GridPoint2(11, 22))
         };
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
         spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
     }
 
     private void spawnBomberDrone() {
-        GridPoint2 spawnTile = new GridPoint2(2, 23);
+        GridPoint2 spawnTile = new GridPoint2(3, 15);
         Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
         Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
