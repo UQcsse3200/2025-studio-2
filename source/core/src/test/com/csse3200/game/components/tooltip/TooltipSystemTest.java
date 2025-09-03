@@ -2,7 +2,6 @@ package com.csse3200.game.components.tooltip;
 
 import com.csse3200.game.components.tooltip.TooltipSystem.*;
 import com.csse3200.game.extensions.GameExtension;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TooltipSystemTest {
 
   @Test
-  @DisplayName("Should create TooltipComponent without errors")
   void shouldCreateTooltipComponent() {
     // Test basic creation with different constructors
     assertDoesNotThrow(() -> new TooltipComponent("Test message"));
@@ -23,7 +21,6 @@ public class TooltipSystemTest {
   }
 
   @Test
-  @DisplayName("Should have correct tooltip style properties")
   void shouldHaveCorrectTooltipStyleProperties() {
     // Test DEFAULT style
     assertEquals("button", TooltipStyle.DEFAULT.getBackgroundDrawable());
@@ -39,7 +36,6 @@ public class TooltipSystemTest {
   }
 
   @Test
-  @DisplayName("Should handle TooltipManager operations without errors")
   void shouldHandleTooltipManagerOperations() {
     // Test that TooltipManager methods can be called without errors
     assertDoesNotThrow(() -> {
@@ -50,7 +46,6 @@ public class TooltipSystemTest {
   }
 
   @Test
-  @DisplayName("Should create TooltipComponent instances successfully")
   void shouldCreateTooltipComponentInstances() {
     TooltipComponent basicTooltip = new TooltipComponent("Basic tooltip");
     TooltipComponent styledTooltip = new TooltipComponent("Styled tooltip", TooltipStyle.WARNING);

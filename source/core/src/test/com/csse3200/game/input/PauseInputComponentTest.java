@@ -4,7 +4,6 @@ import com.badlogic.gdx.Input;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.screens.MainGameScreen;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,7 +28,6 @@ public class PauseInputComponentTest {
   MainGameScreen mockGameScreen;
 
   @Test
-  @DisplayName("Keycodes that aren't considered a pause key should do nothing")
   void shouldIgnoreNonPauseKey() {
     try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
       // Setup keymap mocks
@@ -50,7 +48,6 @@ public class PauseInputComponentTest {
   }
 
   @Test
-  @DisplayName("Pause-related key should open menu")
   void shouldPauseAndOpenMenuOnFirstPress() {
     try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
       // Setup keymap mocks
@@ -74,7 +71,6 @@ public class PauseInputComponentTest {
   }
 
   @Test
-  @DisplayName("Pause with some key, followed by same key, should unpause")
   void shouldTogglePauseOnSecondPressOfSameKey() {
     try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
       // Setup keymap mocks
@@ -100,7 +96,6 @@ public class PauseInputComponentTest {
   }
 
   @Test
-  @DisplayName("Pause with some key, followed by different key, should switch tab")
   void shouldSwitchTabsWithoutTogglingPauseWhenAlreadyPaused() {
     try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
       // Setup keymap mocks
