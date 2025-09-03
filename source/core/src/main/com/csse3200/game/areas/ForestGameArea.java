@@ -85,6 +85,7 @@ public class ForestGameArea extends GameArea {
   private final TerrainFactory terrainFactory;
 
   private Entity player;
+  private Entity securityLight;
 
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
@@ -110,10 +111,11 @@ public class ForestGameArea extends GameArea {
     MinimapDisplay minimapDisplay = createMinimap();
 
     player = spawnPlayer();
+    spawnLights(); //lights need to be spawned before drone
 
-    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    spawnDrone();             // Play with idle/chasing drones (unless chasing)
     //spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    spawnBomberDrone();       // Play with bomber drones
+    //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -121,7 +123,7 @@ public class ForestGameArea extends GameArea {
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
-    spawnLights(); // uncomment to spawn in lights
+    // uncomment to spawn in lights
       // spawnKey();
     spawnTraps();
     playMusic();
@@ -213,34 +215,7 @@ public class ForestGameArea extends GameArea {
     }
   }
 
-  private void spawnDrone() {
-    GridPoint2 spawnTile = new GridPoint2(16, 11);
-    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
-    spawnEntityAt(drone, spawnTile, true, true);
-
-  }
-
-  private void spawnPatrollingDrone() {
-    GridPoint2 spawnTile = new GridPoint2(4, 11);
-
-    Vector2[] patrolRoute = {
-            terrain.tileToWorldPosition(spawnTile),
-            terrain.tileToWorldPosition(new GridPoint2(6, 11)),
-            terrain.tileToWorldPosition(new GridPoint2(8, 11))
-    };
-    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
-    spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
-  }
-
-  private void spawnBomberDrone() {
-    GridPoint2 spawnTile = new GridPoint2(2, 11);
-    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
-
-    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
-    spawnEntityAt(bomberDrone, spawnTile, true, true);
-  }
 
   private void spawnGhostKing() {
     GridPoint2 minPos = new GridPoint2(0, 0);
@@ -350,7 +325,7 @@ public class ForestGameArea extends GameArea {
 
   private void spawnLights() {
     // see the LightFactory class for more details on spawning these
-    Entity securityLight = LightFactory.createSecurityLight(
+    securityLight = LightFactory.createSecurityLight(
               player,
               PhysicsLayer.OBSTACLE,
               128,
@@ -360,6 +335,34 @@ public class ForestGameArea extends GameArea {
               35f
       );
       spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
+  }
+  private void spawnDrone() {
+    GridPoint2 spawnTile = new GridPoint2(3, 17);
+    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos,securityLight ); // pass world pos here
+    spawnEntityAt(drone, spawnTile, true, true);
+
+  }
+
+  private void spawnPatrollingDrone() {
+    GridPoint2 spawnTile = new GridPoint2(4, 11);
+
+    Vector2[] patrolRoute = {
+            terrain.tileToWorldPosition(spawnTile),
+            terrain.tileToWorldPosition(new GridPoint2(6, 11)),
+            terrain.tileToWorldPosition(new GridPoint2(8, 11))
+    };
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute, securityLight);
+    spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+  }
+
+  private void spawnBomberDrone() {
+    GridPoint2 spawnTile = new GridPoint2(2, 11);
+    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
+    spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 
   private void playMusic() {
