@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.events.listeners.EventListener0;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -23,20 +25,23 @@ public class PlayerActions extends Component {
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
 
-  private static final int DASH_SPEED_MULTIPLIER = 15;
+  private static final int DASH_SPEED_MULTIPLIER = 5;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
   private Vector2 jumpDirection = Vector2.Zero.cpy();
+
   private boolean moving = false;
   private boolean adrenaline = false;
+  private boolean crouching = false;
+
+  // For Tests (Not Functionality)
+  private boolean hasDashed = false;
 
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
-
-  private boolean crouching = false;
 
   private boolean soundPlayed = false;
 
@@ -88,6 +93,7 @@ public class PlayerActions extends Component {
     Vector2 velocity = body.getLinearVelocity();
     Vector2 desiredVelocity;
 
+    // Adjust player speed based on sprinting/crouching/walking
     if (adrenaline) {
       desiredVelocity = walkDirection.cpy().scl(ADRENALINE_SPEED);
     } else if (crouching) {
@@ -187,40 +193,41 @@ public class PlayerActions extends Component {
     //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
-
   }
 
   /**
    * Boosts the players speed, `activates adrenaline`
-   * @param direction The direction in which the player should move
    */
-  void toggleAdrenaline(Vector2 direction) {
+  void toggleAdrenaline() {
+    // Player cannot sprint (adrenaline) while crouching
     if (crouching) {
       return;
     }
-    this.walkDirection = direction;
+
+    // Toggle the adrenaline on or off
     adrenaline = !adrenaline;
   }
 
   /**
    * Gives the player a boost of speed in the given direction
-   * @param direction The direction in which the player should dash
    */
-  void dash(Vector2 direction) {
+  void dash() {
 
+    // Player cannot dash while crouching
     if (crouching) {
       return;
     }
 
-    this.walkDirection = direction;
-    moving = true;
+    hasDashed = true;
 
+    // Retrieve the body to apply the force (impulse)
     Body body = physicsComponent.getBody();
 
-
-    direction.scl(DASH_SPEED_MULTIPLIER);
-    body.applyLinearImpulse(direction, body.getWorldCenter(), true);
-    direction.scl((float) 1 / DASH_SPEED_MULTIPLIER);
+    // Scale the direction vector to increase speed
+    this.walkDirection.scl(DASH_SPEED_MULTIPLIER);
+    body.applyLinearImpulse(this.walkDirection, body.getWorldCenter(), true);
+    // Unscale the direction vector to ensure player does not infinitely dash in one direction
+    this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
   }
 
   /**
@@ -297,4 +304,13 @@ public class PlayerActions extends Component {
   public boolean hasSoundPlayed() {
     return soundPlayed;
   }
+
+  public boolean hasAdrenaline() {
+    return adrenaline;
+  }
+
+  public boolean hasDashed() {
+    return hasDashed;
+  }
+
 }

@@ -122,11 +122,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerAdrenalineEvent() {
-    entity.getEvents().trigger("toggleAdrenaline", walkDirection);
+    entity.getEvents().trigger("toggleAdrenaline");
   }
 
   private void triggerDashEvent() {
-    entity.getEvents().trigger("dash", walkDirection);
+    entity.getEvents().trigger("dash");
   }
 
   private void triggerCrouchEvent() {

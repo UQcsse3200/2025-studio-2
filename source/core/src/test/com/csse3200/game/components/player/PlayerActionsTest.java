@@ -76,6 +76,10 @@ public class PlayerActionsTest {
 
         assertTrue(playerActions.getIsJumping());
         assertFalse(playerActions.getIsDoubleJumping());
+
+        playerEntity.getEvents().trigger("jump");
+        assertTrue(playerActions.getIsJumping());
+        assertTrue(playerActions.getIsDoubleJumping());
     }
 
     @Test
@@ -100,5 +104,45 @@ public class PlayerActionsTest {
     void testInteractPlaysSound() {
         playerEntity.getEvents().trigger("interact");
         assertTrue(playerActions.hasSoundPlayed());
+    }
+
+    @Test
+    void testPlayerAdrenaline() {
+        assertFalse(playerActions.hasAdrenaline());
+        playerEntity.getEvents().trigger("toggleAdrenaline");
+        assertTrue(playerActions.hasAdrenaline());
+    }
+
+    @Test
+    void testAdrenalineCanBeToggled() {
+        // On
+        playerEntity.getEvents().trigger("toggleAdrenaline");
+        assertTrue(playerActions.hasAdrenaline());
+        // Off
+        playerEntity.getEvents().trigger("toggleAdrenaline");
+        assertFalse(playerActions.hasAdrenaline());
+        // On
+        playerEntity.getEvents().trigger("toggleAdrenaline");
+        assertTrue(playerActions.hasAdrenaline());
+    }
+
+    @Test
+    void testCanDash() {
+        assertFalse(playerActions.hasDashed());
+        playerEntity.getEvents().trigger("dash");
+        assertTrue(playerActions.hasDashed());
+    }
+
+    @Test
+    void testCantDashWhileCrouching() {
+        assertFalse(playerActions.hasDashed());
+        playerEntity.getEvents().trigger("crouch");
+        playerEntity.getEvents().trigger("dash");
+        assertFalse(playerActions.hasDashed());
+
+        playerEntity.getEvents().trigger("crouch");
+        playerEntity.getEvents().trigger("dash");
+        assertTrue(playerActions.hasDashed());
+
     }
 }
