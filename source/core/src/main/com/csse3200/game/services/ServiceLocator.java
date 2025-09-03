@@ -25,6 +25,7 @@ public class ServiceLocator {
   private static InputService inputService;
   private static ResourceService resourceService;
   private static LightingService lightingService;
+  private static MinimapService minimapService;
 
   public static LightingService getLightingService() { return lightingService; }
 
@@ -50,6 +51,10 @@ public class ServiceLocator {
 
   public static ResourceService getResourceService() {
     return resourceService;
+  }
+
+  public static MinimapService getMinimapService() {
+    return minimapService;
   }
 
   public static void registerLightingService(LightingService service) {
@@ -85,6 +90,11 @@ public class ServiceLocator {
   public static void registerResourceService(ResourceService source) {
     logger.debug("Registering resource service {}", source);
     resourceService = source;
+  }
+
+  public static void registerMinimapService(MinimapService source) {
+    logger.debug("Registering minimap service {}", source);
+    minimapService = source;
   }
 
   public static void clear() {

@@ -1,6 +1,7 @@
 package com.csse3200.game.input;
 
 
+import com.badlogic.gdx.Input;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,21 +16,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(GameExtension.class)
 public class KeymapTest {
-  private Map<String, Integer> originalMap;
 
   @BeforeEach
   @DisplayName("Add test mappings to key map")
   void createTestMap() {
-    Keymap.getKeyMap().put("TestAction1", 1);
-    Keymap.getKeyMap().put("TestAction2", 2);
-
-    originalMap = new HashMap<>(Keymap.getKeyMap());
+    Keymap.setKeyMapDefaults();
   }
 
   @AfterEach
   @DisplayName("Clear test map before next test")
   void resetTestMap() {
-    Keymap.getKeyMap().clear();
+    Keymap.clearKeyMap();
   }
 
   @Test
@@ -43,51 +40,44 @@ public class KeymapTest {
   @DisplayName("Register action with a keycode")
   void registerActionTest() {
     // Attempt to register with pre-existing action name
-    assertFalse(Keymap.registerAction("TestAction1", 3));
+    assertFalse(Keymap.registerAction("PlayerUp", Input.Keys.UP, true));
     // Attempt to register with already bound key code
-    assertFalse(Keymap.registerAction("TestAction3", 2));
-
-    // Ensure the key map has not changed
-    assertEquals(originalMap, Keymap.getKeyMap());
+    assertFalse(Keymap.registerAction("PlayerUpTwo", Keymap.getActionKeyCode("PlayerUp"), true));
 
     // Add new valid entry
-    assertTrue(Keymap.registerAction("TestAction3", 3));
-
-    // Ensure the key map is different to original
-    assertNotEquals(originalMap, Keymap.getKeyMap());
+    assertTrue(Keymap.registerAction("PlayerUpTwo", Input.Keys.UP, true));
   }
 
   @Test
   @DisplayName("Update action with a key code")
   void updateActionTest() {
     // Attempt to change key code for non-existent action name
-    assertFalse(Keymap.setActionKeyCode("TestAction3", 3));
+    assertFalse(Keymap.setActionKeyCode("PlayerUpTwo", Input.Keys.UP));
     // Attempt to change key code for already bound key code
-    assertFalse(Keymap.registerAction("TestAction1", 2));
-
-    // Ensure key map has not changed
-    assertEquals(originalMap, Keymap.getKeyMap());
+    assertFalse(Keymap.setActionKeyCode("PlayerUp", Keymap.getActionKeyCode("PlayerDown")));
 
     // Update action with valid key code
-    assertTrue(Keymap.setActionKeyCode("TestAction1", 3));
-
-    // Ensure the key map is different to original
-    assertNotEquals(originalMap, Keymap.getKeyMap());
+    assertTrue(Keymap.setActionKeyCode("PlayerUp", Input.Keys.W));
   }
 
   @Test
   @DisplayName("Retrieve key code from action")
   void getKeyCodeTest() {
     // Attempt to get key code for non-existent action
-    assertEquals(-1, Keymap.getActionKeyCode("TestAction3"));
-
-    // Ensure key map has not changed
-    assertEquals(originalMap, Keymap.getKeyMap());
+    assertEquals(-1, Keymap.getActionKeyCode("PlayerUpTwo"));
 
     // Attempt to get key code for existent action
-    assertEquals(1, Keymap.getActionKeyCode("TestAction1"));
+    assertEquals(Input.Keys.W, Keymap.getActionKeyCode("PlayerUp"));
+  }
 
-    // Ensure key map has not changed
-    assertEquals(originalMap, Keymap.getKeyMap());
+  @Test
+  @DisplayName("Get display-friendly values from keymap")
+  void getKeymapTest() {
+    Map<String, Integer> displayable = Keymap.getKeyMap();
+
+    // Check to see if displayable action is present
+    assertTrue(displayable.containsKey("PlayerUp"));
+    // Check to see if non-displayable action is present
+    assertFalse(displayable.containsKey("TerminalModifier"));
   }
 }

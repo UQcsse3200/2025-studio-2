@@ -5,17 +5,16 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -24,8 +23,6 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -84,7 +81,6 @@ public class ForestGameArea extends GameArea {
 
   private final TerrainFactory terrainFactory;
 
-  private Entity player;
 
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
@@ -107,7 +103,7 @@ public class ForestGameArea extends GameArea {
     spawnTerrain();
     //spawnTrees();
 
-    MinimapDisplay minimapDisplay = createMinimap();
+    createMinimap();
 
     player = spawnPlayer();
 
@@ -128,24 +124,29 @@ public class ForestGameArea extends GameArea {
     spawnDoor();
   }
 
-  private MinimapDisplay createMinimap() {
+  private void createMinimap() {
     Texture minimapTexture =
         ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
-
-    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
 
     float tileSize = terrain.getTileSize();
     Vector2 worldSize =
         new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
+
+    MinimapDisplay.MinimapOptions options = getMinimapOptions();
+
     MinimapDisplay minimapDisplay =
-        new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+        new MinimapDisplay(150f, options);
 
     Entity minimapEntity = new Entity();
     minimapEntity.addComponent(minimapDisplay);
     spawnEntity(minimapEntity);
+  }
 
-    return minimapDisplay;
+  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+    return options;
   }
 
   private void displayUI() {
