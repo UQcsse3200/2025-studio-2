@@ -288,8 +288,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/collectables/CollectableComponent.html" class="type-name-link" title="class in com.csse3200.game.components.collectables">CollectableComponent</a> - Class in <a href="com/csse3200/game/components/collectables/package-summary.html">com.csse3200.game.components.collectables</a></dt>
 <dd>
-<div class="block">Component that tracks and manages a player's inventory as a multiset of item identifiers
- (stack counts).</div>
+<div class="block">Abstract component for collectable items in the game world.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/collectables/CollectableComponent.html#%3Cinit%3E()" class="member-name-link">CollectableComponent()</a> - Constructor for class com.csse3200.game.components.collectables.<a href="com/csse3200/game/components/collectables/CollectableComponent.html" title="class in com.csse3200.game.components.collectables">CollectableComponent</a></dt>
 <dd>&nbsp;</dd>
@@ -465,8 +464,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/components/collectables/CollectableComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.collectables.<a href="com/csse3200/game/components/collectables/CollectableComponent.html" title="class in com.csse3200.game.components.collectables">CollectableComponent</a></dt>
 <dd>
-<div class="block">Registers a two-argument listener for <code>"collisionStart"</code> that delegates to
- <code>CollectableComponent.onCollisionStart(Object, Object)</code> when this entity collides with another.</div>
+<div class="block">Registers a listener for <code>"onCollisionStart"</code> events to trigger collection logic.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/Component.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/Component.html" title="class in com.csse3200.game.components">Component</a></dt>
 <dd>
@@ -2033,7 +2031,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/components/collectables/CollectableComponent.html#onCollect(com.csse3200.game.entities.Entity)" class="member-name-link">onCollect(Entity)</a> - Method in class com.csse3200.game.components.collectables.<a href="com/csse3200/game/components/collectables/CollectableComponent.html" title="class in com.csse3200.game.components.collectables">CollectableComponent</a></dt>
 <dd>
-<div class="block">Return true if collection succeeded (then the collectable will be disposed).</div>
+<div class="block">Called when this collectable is picked up by the player.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/collectables/KeyComponent.html#onCollect(com.csse3200.game.entities.Entity)" class="member-name-link">onCollect(Entity)</a> - Method in class com.csse3200.game.components.collectables.<a href="com/csse3200/game/components/collectables/KeyComponent.html" title="class in com.csse3200.game.components.collectables">KeyComponent</a></dt>
 <dd>
@@ -2773,6 +2771,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a sorted intmap with the specified capacity</div>
 </dd>
+<dt><a href="com/csse3200/game/areas/ForestGameArea.html#spawnDoor()" class="member-name-link">spawnDoor()</a> - Method in class com.csse3200.game.areas.<a href="com/csse3200/game/areas/ForestGameArea.html" title="class in com.csse3200.game.areas">ForestGameArea</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/areas/GameArea.html#spawnEntity(com.csse3200.game.entities.Entity)" class="member-name-link">spawnEntity(Entity)</a> - Method in class com.csse3200.game.areas.<a href="com/csse3200/game/areas/GameArea.html" title="class in com.csse3200.game.areas">GameArea</a></dt>
 <dd>
 <div class="block">Spawn entity at its current position</div>

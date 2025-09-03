@@ -97,8 +97,10 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">CollectableComponent</span>
 <span class="extends-implements">extends <a href="../Component.html" title="class in com.csse3200.game.components">Component</a></span></div>
-<div class="block">Component that tracks and manages a player's inventory as a multiset of item identifiers
- (stack counts).</div>
+<div class="block">Abstract component for collectable items in the game world.
+ Handles collision detection with the player and invokes <a href="#onCollect(com.csse3200.game.entities.Entity)"><code>onCollect(Entity)</code></a>
+ when picked up. Subclasses define what happens on collection
+ (e.g., adding to inventory, increasing score).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -138,13 +140,12 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#create()" class="member-name-link">create</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Registers a two-argument listener for <code>"collisionStart"</code> that delegates to
- <code>onCollisionStart(Object, Object)</code> when this entity collides with another.</div>
+<div class="block">Registers a listener for <code>"onCollisionStart"</code> events to trigger collection logic.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract boolean</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#onCollect(com.csse3200.game.entities.Entity)" class="member-name-link">onCollect</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;collector)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
-<div class="block">Return true if collection succeeded (then the collectable will be disposed).</div>
+<div class="block">Called when this collectable is picked up by the player.</div>
 </div>
 </div>
 </div>
@@ -184,8 +185,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="create()">
 <h3>create</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">create</span>()</div>
-<div class="block">Registers a two-argument listener for <code>"collisionStart"</code> that delegates to
- <code>onCollisionStart(Object, Object)</code> when this entity collides with another.</div>
+<div class="block">Registers a listener for <code>"onCollisionStart"</code> events to trigger collection logic.</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="../Component.html#create()">create</a></code>&nbsp;in class&nbsp;<code><a href="../Component.html" title="class in com.csse3200.game.components">Component</a></code></dd>
@@ -196,7 +196,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="onCollect(com.csse3200.game.entities.Entity)">
 <h3>onCollect</h3>
 <div class="member-signature"><span class="modifiers">protected abstract</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">onCollect</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;collector)</span></div>
-<div class="block">Return true if collection succeeded (then the collectable will be disposed).</div>
+<div class="block">Called when this collectable is picked up by the player.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>collector</code> - the player entity collecting this item</dd>
+<dt>Returns:</dt>
+<dd>true if collection succeeded (and the item should be removed), false otherwise</dd>
+</dl>
 </section>
 </li>
 </ul>
