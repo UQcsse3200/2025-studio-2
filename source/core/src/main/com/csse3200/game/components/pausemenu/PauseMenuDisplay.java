@@ -8,15 +8,18 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.csse3200.game.GdxGame;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 import com.csse3200.game.ui.inventoryscreen.MapTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
+import com.csse3200.game.components.player.InventoryComponent;
 
 public class PauseMenuDisplay extends UIComponent {
     private MainGameScreen screen;
     private Table rootTable;
+    private GdxGame game;
 
     private Texture blackTexture;
     private Table tabBar;
@@ -30,8 +33,9 @@ public class PauseMenuDisplay extends UIComponent {
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay (MainGameScreen screen) {
+    public PauseMenuDisplay (MainGameScreen screen, GdxGame game) {
         this.screen = screen;
+        this.game = game;
     }
 
     @Override
@@ -66,6 +70,8 @@ public class PauseMenuDisplay extends UIComponent {
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
+        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -99,7 +105,7 @@ public class PauseMenuDisplay extends UIComponent {
                 action.run();
             }
         });
-        bottomButtons.add(button).padRight(10);
+        bottomButtons.add(button).padRight(25);
     }
 
   /**

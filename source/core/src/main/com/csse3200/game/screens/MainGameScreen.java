@@ -158,7 +158,7 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void createUI() {
     logger.debug("Creating ui");
-    pauseMenuDisplay = new PauseMenuDisplay(this);
+    pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
