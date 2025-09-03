@@ -41,12 +41,18 @@ public class StaminaComponent extends Component {
                             int attackStaminaCost) {
         this(maxStamina, staminaRegenPerSecond, sprintDrainPerSecond, attackStaminaCost, 1.0f);
     }
+    @Override
+    public void create() {
+        super.create();
+        entity.getEvents().addListener("sprintStart", () -> setSprinting(true));
+        entity.getEvents().addListener("sprintStop", () -> setSprinting(false));
+    }
 
     public void update(float dt) {
         if (dt <= 0f) return;
         tick(dt);
     }
-
+    @Override
     public void update() {
         tick(1f / 60f);
     }
