@@ -7,6 +7,7 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
 
 public class DoorComponent extends Component {
     private final String keyId;
@@ -30,7 +31,7 @@ public class DoorComponent extends Component {
      */
     @Override
     public void create() {
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+        entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
 
@@ -44,14 +45,13 @@ public class DoorComponent extends Component {
      * @param me    the door entity (ignored here)
      * @param other the colliding entity
      */
-    private void onCollisionStart(Object me, Object other) {
-        if (!(other instanceof Entity player)) return;
+    private void onCollisionStart(Entity other) {
+        HitboxComponent cc = other.getComponent(HitboxComponent.class);
+        if ((cc.getLayer() != PhysicsLayer.PLAYER)) return;
 
-        ColliderComponent cc = player.getComponent(ColliderComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
 
         if (locked) {
-            tryUnlock(player);
+            tryUnlock(other);
         } else {
             // Door already open -> trigger transition
             this.area.trigger("doorEntered", keyId);
@@ -71,10 +71,17 @@ public class DoorComponent extends Component {
             inv.useItem(keyId);
             locked = false;
             entity.getEvents().trigger("openDoor");
+//            entity.getEvents().trigger("collisionStart", this, player);
 
             // Notify the area
             this.area.trigger("doorEntered", keyId);
         }
+    }
+
+    public void gateCollide(Entity play) {
+        Object player = play;
+        Object level_gate = this;
+        entity.getEvents().trigger("collisionStart", level_gate, player);
     }
 
     /**

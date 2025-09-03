@@ -89,6 +89,7 @@ public class MainGameScreen extends ScreenAdapter {
       logger.info("Door entered in sprint1 with key {}", keyId);
       switchArea(keyId, sprintOneGameArea);
     });
+
     //forestGameArea.create();
 
 //    sprintOneGameArea.dispose();
@@ -105,13 +106,14 @@ public class MainGameScreen extends ScreenAdapter {
     GameArea newArea = null;
     if ("forest".equals(keyId)) {
       newArea = new ForestGameArea(terrainFactory);
+      String key = "sprint1";
     } else if ("sprint1".equals(keyId)) {
       newArea = new SprintOneGameArea(terrainFactory);
     }
 
     if (newArea != null) {
       GameArea finalNewArea = newArea; // effectively final copy
-      finalNewArea.getEvents().addListener("doorEntered", (String k) -> switchArea(k, finalNewArea));
+      finalNewArea.getEvents().addListener("doorEntered", (String key) -> switchArea(key, finalNewArea));
       finalNewArea.create();
     }
   }
