@@ -46,8 +46,6 @@ public class PlayerActions extends Component {
   private boolean isJumping = false;
   private boolean isDoubleJump = false;
 
-  private boolean crouching = false;
-
   private boolean soundPlayed = false;
 
   private CombatStatsComponent combatStatsComponent;
@@ -216,7 +214,6 @@ public class PlayerActions extends Component {
 
   /**
    * Boosts the players speed, `activates adrenaline`
-   * @param direction The direction in which the player should move
    */
   void toggleAdrenaline() {
     // Player cannot sprint (adrenaline) while crouching
@@ -230,16 +227,14 @@ public class PlayerActions extends Component {
 
   /**
    * Gives the player a boost of speed in the given direction
-   * @param direction The direction in which the player should dash
    */
   void dash() {
-
     if (crouching) {
       return;
     }
 
-    this.walkDirection = direction;
     moving = true;
+    hasDashed = true;
 
     Body body = physicsComponent.getBody();
 
