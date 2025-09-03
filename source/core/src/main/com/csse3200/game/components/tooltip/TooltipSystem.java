@@ -171,7 +171,7 @@ public class TooltipSystem {
             // Add physics components for collision detection
             triggerZoneEntity.addComponent(new PhysicsComponent().setBodyType(com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody));
             HitboxComponent hitbox = new HitboxComponent();
-            hitbox.setLayer(PhysicsLayer.OBSTACLE);
+            hitbox.setLayer(PhysicsLayer.TOOLTIP);
             triggerZoneEntity.addComponent(hitbox);
             
             // Add a component to handle the tooltip logic

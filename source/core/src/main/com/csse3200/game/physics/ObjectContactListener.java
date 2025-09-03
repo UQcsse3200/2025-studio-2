@@ -112,23 +112,6 @@ public class ObjectContactListener implements ContactListener {
     }
 
     /**
-     * Check if the colliding entities consist of a trap and a player, and if so calls the
-     * trap's damage function.
-     * In future, this method may be extended to apply to enemies or the player.
-     * @param colliding the colliding entity, expected to be a player.
-     * @param trap the entity on which to call TrapComponent.damage
-     */
-    private void setPlayerInRangeOfTrap(Entity colliding, Entity trap) {
-        PlayerActions player = colliding.getComponent(PlayerActions.class);
-        TrapComponent trapComponent = trap.getComponent(TrapComponent.class);
-
-        if(trapComponent != null && player != null) {
-            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
-            trapComponent.damage(collider);
-        }
-    }
-
-    /**
      * Triggers events on entities involved in collisions.
      * This is used for tooltip system and other general collision events.
      */
@@ -173,5 +156,23 @@ public class ObjectContactListener implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 
+    }
+
+
+    /**
+     * Check if the colliding entities consist of a trap and a player, and if so calls the
+     * trap's damage function.
+     * In future, this method may be extended to apply to enemies or the player.
+     * @param colliding the colliding entity, expected to be a player.
+     * @param trap the entity on which to call TrapComponent.damage
+     */
+    private void setPlayerInRangeOfTrap(Entity colliding, Entity trap) {
+        PlayerActions player = colliding.getComponent(PlayerActions.class);
+        TrapComponent trapComponent = trap.getComponent(TrapComponent.class);
+
+        if(trapComponent != null && player != null) {
+            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
+            trapComponent.damage(collider);
+        }
     }
 }

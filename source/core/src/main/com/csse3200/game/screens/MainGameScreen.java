@@ -7,8 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
+import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -45,6 +48,7 @@ public class MainGameScreen extends ScreenAdapter {
   private final LightingEngine lightingEngine;
 
   private boolean paused = false;
+  private PauseMenuDisplay pauseMenuDisplay;
 
 
   public MainGameScreen(GdxGame game) {
@@ -78,9 +82,11 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
     ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
-    //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
+    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
+    SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
+    sprintOneGameArea.create();
     //caveGameArea.create();
-    forestGameArea.create();
+    //forestGameArea.create();
   }
 
   @Override
@@ -144,12 +150,18 @@ public class MainGameScreen extends ScreenAdapter {
       paused = !paused;
   }
 
+  public void togglePauseMenu(Tab tab) {
+      pauseMenuDisplay.setTab(tab);
+      pauseMenuDisplay.setVisible(paused);
+  }
+
   /**
    * Creates the main game's ui including components for rendering ui elements to the screen and
    * capturing and handling ui input.
    */
   private void createUI() {
     logger.debug("Creating ui");
+    pauseMenuDisplay = new PauseMenuDisplay(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
@@ -157,6 +169,7 @@ public class MainGameScreen extends ScreenAdapter {
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
         .addComponent(new MainGameExitDisplay())
+        .addComponent(pauseMenuDisplay)
         .addComponent(new PauseInputComponent(this));
 
     ServiceLocator.getEntityService().register(ui);
