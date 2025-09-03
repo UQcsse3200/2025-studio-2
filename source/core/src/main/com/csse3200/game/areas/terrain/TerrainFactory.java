@@ -22,6 +22,8 @@ import com.csse3200.game.services.ServiceLocator;
 public class TerrainFactory {
   private static final GridPoint2 MAP_SIZE = new GridPoint2(30, 30);
   private static final int TUFT_TILE_COUNT = 30;
+  //Set to 0 as Wall variant image doesnt look good, so keeping as all base for now
+  private static final int VARIANT_TILE_COUNT = 0;
   private static final int ROCK_TILE_COUNT = 30;
 
   private final OrthographicCamera camera;
@@ -57,6 +59,16 @@ public class TerrainFactory {
   public TerrainComponent createTerrain(TerrainType terrainType) {
     ResourceService resourceService = ServiceLocator.getResourceService();
     switch (terrainType) {
+      case SPRINT_ONE_ORTHO:
+        TextureRegion base =
+                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
+        TextureRegion variant1 =
+                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
+        TextureRegion variant2 =
+                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
+        TextureRegion variant3 =
+                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
+        return createSprintOneTerrain(0.5f, base, variant1, variant2, variant3);
       case CAVE_ORTHO:
         TextureRegion orthoCave =
                 new TextureRegion(resourceService.getAsset("images/cave_1.png", Texture.class));
@@ -107,6 +119,17 @@ public class TerrainFactory {
     TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
+  private TerrainComponent createSprintOneTerrain(
+          float tileWorldSize, TextureRegion baseTile,
+          TextureRegion variant1,
+          TextureRegion variant2,
+          TextureRegion variant3) {
+    GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
+    TiledMap tiledMap = createSprintOneTiles(tilePixelSize, baseTile, variant1, variant2, variant3);
+    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
+    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
+  }
+
 
   private TiledMapRenderer createRenderer(TiledMap tiledMap, float tileScale) {
     switch (orientation) {
@@ -157,6 +180,31 @@ public class TerrainFactory {
     return tiledMap;
   }
 
+  private TiledMap createSprintOneTiles(
+          GridPoint2 tileSize,
+          TextureRegion base,
+          TextureRegion variant1,
+          TextureRegion variant2,
+          TextureRegion variant3) {
+    TiledMap tiledMap = new TiledMap();
+    TerrainTile baseTile = new TerrainTile(base);
+    TerrainTile variant1Tile = new TerrainTile(variant1);
+    TerrainTile variant2Tile = new TerrainTile(variant2);
+    TerrainTile variant3Tile = new TerrainTile(variant3);
+    TiledMapTileLayer layer = new TiledMapTileLayer(MAP_SIZE.x, MAP_SIZE.y, tileSize.x, tileSize.y);
+
+    // Create base grass
+    fillTiles(layer, MAP_SIZE, baseTile);
+
+    // Add some grass and rocks
+    fillTilesAtRandom(layer, MAP_SIZE, variant1Tile, VARIANT_TILE_COUNT);
+    fillTilesAtRandom(layer, MAP_SIZE, variant2Tile, VARIANT_TILE_COUNT);
+    fillTilesAtRandom(layer, MAP_SIZE, variant3Tile, VARIANT_TILE_COUNT);
+
+    tiledMap.getLayers().add(layer);
+    return tiledMap;
+  }
+
   private static void fillTilesAtRandom(
       TiledMapTileLayer layer, GridPoint2 mapSize, TerrainTile tile, int amount) {
     GridPoint2 min = new GridPoint2(0, 0);
@@ -188,6 +236,7 @@ public class TerrainFactory {
     FOREST_DEMO,
     FOREST_DEMO_ISO,
     FOREST_DEMO_HEX,
-    CAVE_ORTHO
+    CAVE_ORTHO,
+    SPRINT_ONE_ORTHO
   }
 }

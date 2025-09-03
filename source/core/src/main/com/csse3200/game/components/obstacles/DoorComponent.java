@@ -5,6 +5,8 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 
 public class DoorComponent extends Component {
     private final String keyId;
@@ -26,7 +28,7 @@ public class DoorComponent extends Component {
      */
     @Override
     public void create() {
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+        entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
     }
@@ -35,16 +37,13 @@ public class DoorComponent extends Component {
      * Handles collision events. If the colliding entity is the player and the door is locked,
      * it attempts to unlock the door using the player's inventory.
      *
-     * @param me    the door entity (ignored here)
      * @param other the colliding entity
      */
-    private void onCollisionStart(Object me, Object other) {
-        if (!(other instanceof Entity player)) return;
+    private void onCollisionStart(Entity other) {
+        HitboxComponent cc = other.getComponent(HitboxComponent.class);
+        if ((cc.getLayer() != PhysicsLayer.PLAYER)) return;
 
-        ColliderComponent cc = player.getComponent(ColliderComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
-
-        if (locked) tryUnlock(player);
+        if (locked) tryUnlock(other);
     }
 
     /**
@@ -69,6 +68,9 @@ public class DoorComponent extends Component {
     private void openDoor() {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         col.setSensor(true);
+
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_open.png");
     }
 
     /**
@@ -77,6 +79,9 @@ public class DoorComponent extends Component {
     private void closeDoor() {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         if (col != null) col.setSensor(false);
+
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_closed.png");
     }
 
     /**

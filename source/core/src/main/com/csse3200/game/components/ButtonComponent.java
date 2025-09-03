@@ -109,6 +109,7 @@ public class ButtonComponent extends Component {
 
     /**
      * Sets the type for this button (which selects texture)
+     *
      * @param type String representing the button type (door, platform or nothing)
      */
     public void setType(String type) {
@@ -116,8 +117,35 @@ public class ButtonComponent extends Component {
     }
 
     /**
-     * sets the buttons pushed state manually [for future implementations]
+     * Checks if the player is currently in range of the button.
+     *
+     * @return true if the player is in range, false otherwise
+     */
+    public boolean isPlayerInRange() {
+        return playerInRange;
+    }
+
+    /**
+     * Retrieves the ColliderComponent of the player currently interacting with the box
+     *
+     * @return  the player's ColliderComponent, or null if no player is in range
+     */
+    public ColliderComponent getPlayerCollider() {
+        return  playerCollider;
+    }
+
+    /**
+     * Sets the buttons pushed state manually [for future implementations]
      * @param pushed state to set the button to
      */
-    public void setPushed(boolean pushed) { this.isPushed = pushed; }
+    public void setPushed(boolean pushed) {
+        this.isPushed = pushed;
+    }
+
+    /**
+     * Returns true if button is pushed, false otherwise
+     */
+    public boolean isPushed() {
+        return isPushed;
+    }
 }
