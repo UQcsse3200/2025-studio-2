@@ -10,6 +10,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
@@ -376,7 +377,7 @@ public class ForestGameArea extends GameArea {
   }
 
   public void spawnDoor() {
-      Entity door = ObstacleFactory.createDoor("door", this);
+      Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
       door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
       spawnEntityAt(door, new GridPoint2(3,10), true, true);
   }
@@ -400,8 +401,9 @@ public class ForestGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 1, 5);
-    Entity gate = ObstacleFactory.createDoor("sprint1", this);
+    Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
     gate.setScale(1, 2);
+    gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
   }
 
