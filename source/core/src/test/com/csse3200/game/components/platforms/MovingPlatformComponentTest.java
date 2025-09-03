@@ -49,9 +49,27 @@ class MovingPlatformComponentTest {
 
     @Test
     void testPlatformReversesWhenCloseToTarget() {
-        when(mockBody.getPosition()).thenReturn(new Vector2(5f, 0f));
+        // Spy on the entity so we can control getPosition()
+        platform = spy(new Entity());
+        doReturn(new Vector2(5f, 0f)).when(platform).getPosition();
+
+        // Attach mocked physics
+        mockBody = mock(Body.class);
+        when(mockBody.getAngle()).thenReturn(0f);
+        physics = mock(PhysicsComponent.class);
+        when(physics.getBody()).thenReturn(mockBody);
+
+        platform.addComponent(physics);
+
+        component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
+        platform.addComponent(component);
+        component.create();
+
+        // Run update — should trigger reversal branch
         component.update();
+
         verify(mockBody).setTransform(any(Vector2.class), anyFloat());
-        verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(new Vector2(0,0), 0.0001f)));
+        verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(new Vector2(0, 0), 0.0001f)));
     }
+
 }
