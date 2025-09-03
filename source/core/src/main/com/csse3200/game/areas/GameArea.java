@@ -28,11 +28,19 @@ public abstract class GameArea implements Disposable {
   /** Create the game area in the world. */
   public abstract void create();
 
+  /** Reset current game area. */
+  protected abstract void reset();
+
+
   /** Dispose of all internal entities in the area */
   public void dispose() {
     for (Entity entity : areaEntities) {
+      // entity.dispose() does not delete the entity object itself.
       entity.dispose();
     }
+
+    // Clear list of entities.
+    areaEntities.clear();
   }
 
 
