@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
@@ -23,15 +24,19 @@ public class PauseMenuDisplay extends UIComponent {
     private Table tabContent;
     private Table bottomButtons;
 
-    private final InventoryTab inventoryTab = new InventoryTab();
+    private Entity player;
+
+    private final InventoryTab inventoryTab;
     private final UpgradesTab upgradesTab = new UpgradesTab();
     private final MapTab mapTab = new MapTab();
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay (MainGameScreen screen) {
+    public PauseMenuDisplay(MainGameScreen screen, Entity player) {
         this.screen = screen;
+        this.player = player;
+        this.inventoryTab = new InventoryTab(player);
     }
 
     @Override
