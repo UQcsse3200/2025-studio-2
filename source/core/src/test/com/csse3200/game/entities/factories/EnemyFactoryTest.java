@@ -5,7 +5,6 @@ import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.enemy.SpawnPositionComponentTest;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -74,12 +73,11 @@ public class EnemyFactoryTest {
     }
 
     @Test
-    void createDrone_hasCombatStatsComponent() {
+    void createDrone_hasCorrectCombatStats() {
         Entity player = new Entity();
         Entity securityLight = new Entity();
         Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
         ServiceLocator.getEntityService().register(drone);
-
         CombatStatsComponent stats = drone.getComponent(CombatStatsComponent.class);
         assertNotNull(stats, "Drone should have a CombatStatsComponent");
         assertEquals(droneConfig.health, stats.getHealth(), "Drone health mismatch");
@@ -105,14 +103,13 @@ public class EnemyFactoryTest {
         Entity securityLight = new Entity();
         Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
         ServiceLocator.getEntityService().register(drone);
-
         assertNotNull(drone.getComponent(DroneAnimationController.class), "Drone should have AnimationController");
     }
 
     @Test
-    void createDrone_isIdempotent() {
-        Entity player = new Entity();
+    void createDrone_returnsDistinct() {
         Entity securityLight = new Entity();
+        Entity player = new Entity();
 
         Entity a = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
         Entity b = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
@@ -124,7 +121,7 @@ public class EnemyFactoryTest {
     @Test
     void createDrone_addsSpawnPosition() {
         Vector2 start = new Vector2(0, 0);
-        Entity drone = EnemyFactory.createDrone(new Entity(), start);
+        Entity drone = EnemyFactory.createDrone(new Entity(), start, new Entity());
         SpawnPositionComponent sp = drone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
         assertEquals(start, sp.getSpawnPos(),
@@ -133,7 +130,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_doesNotAddNullSpawnPos() {
-        Entity drone = EnemyFactory.createDrone(new Entity(), null);
+        Entity drone = EnemyFactory.createDrone(new Entity(), null, new Entity());
         assertNull(drone.getComponent(SpawnPositionComponent.class),
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
@@ -162,6 +159,106 @@ public class EnemyFactoryTest {
                         securityLight
                 ), "Factory should not throw when steps array is empty");
         assertNotNull(drone);
+    }
+
+
+    void patrollingDrone_storesWaypointsInOrder() {
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 1), new Vector2(2, 2)};
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route, new Entity());
+        PatrolRouteComponent pr = patrolDrone.getComponent(PatrolRouteComponent.class);
+        assertNotNull(pr);
+
+        Vector2[] stored = pr.getWaypoints();
+        assertEquals(route.length, stored.length);
+        for (int i = 0; i < route.length; i++) {
+            assertEquals(route[i], stored[i]);
+        }
+    }
+
+    @Test
+    void patrollingDrone_hasSpawnPosition() {
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 1)};
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route, new Entity());
+
+        SpawnPositionComponent sp = patrolDrone.getComponent(SpawnPositionComponent.class);
+        assertNotNull(sp);
+        assertEquals(route[0], sp.getSpawnPos());
+    }
+
+    @Test
+    void createBomberDrone_hasBaseEnemyComponents() {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        ServiceLocator.getEntityService().register(bomberDrone);
+
+        assertNotNull(bomberDrone.getComponent(PhysicsComponent.class),
+                "Drone should have a PhysicsComponent");
+        assertNotNull(bomberDrone.getComponent(PhysicsMovementComponent.class),
+                "Drone should have a PhysicsMovementComponent");
+        assertNotNull(bomberDrone.getComponent(ColliderComponent.class),
+                "Drone should have a ColliderComponent.class");
+        assertNotNull(bomberDrone.getComponent(HitboxComponent.class),
+                "Drone should have a HitboxComponent");
+        assertEquals(PhysicsLayer.NPC, bomberDrone.getComponent(HitboxComponent.class).getLayer(),
+                "Drone PhysicsLayer should be NPC");
+        assertNotNull(bomberDrone.getComponent(AITaskComponent.class),
+                "Drone should have an AITaskComponent");
+    }
+
+    @Test
+    void createBomberDrone_hasAnimations() {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        ServiceLocator.getEntityService().register(bomberDrone);
+
+        AnimationRenderComponent anim = bomberDrone.getComponent(AnimationRenderComponent.class);
+        assertNotNull(anim, "Drone should have an AnimationRenderComponent");
+        assertTrue(anim.hasAnimation("float"), "Missing 'float' animation");
+        assertTrue(anim.hasAnimation("angry_float"), "Missing 'angry_float' animation");
+        assertTrue(anim.hasAnimation("drop"), "Missing 'drop' animation");
+    }
+
+    @Test
+    void createBomberDrone_hasAnimationController() {
+        Entity bomberDrone = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        ServiceLocator.getEntityService().register(bomberDrone);
+
+        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                "Drone should have AnimationController");
+    }
+
+    @Test
+    void bomberDrone_startsOnFloatAnim() {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        AnimationRenderComponent arc = bomberDrone.getComponent(AnimationRenderComponent.class);
+        assertEquals("float", arc.getCurrentAnimation());
+        assertTrue(arc.hasAnimation("float"));
+    }
+
+    @Test
+    void createBomberDrone_hasCorrectCombatStats() {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        ServiceLocator.getEntityService().register(bomberDrone);
+
+        CombatStatsComponent stats = bomberDrone.getComponent(CombatStatsComponent.class);
+        assertNotNull(stats, "Drone should have a CombatStatsComponent");
+        assertEquals(droneConfig.health, stats.getHealth(), "Drone health mismatch");
+        assertEquals(droneConfig.baseAttack, stats.getBaseAttack(), "Drone baseAttack mismatch");
+    }
+
+    @Test
+    void createBomberDrone_addsSpawnPosition() {
+        Vector2 start = new Vector2(0, 0);
+        Entity bomberDrone = EnemyFactory.createDrone(new Entity(), start, new Entity());
+        SpawnPositionComponent sp = bomberDrone.getComponent(SpawnPositionComponent.class);
+        assertNotNull(sp);
+        assertEquals(start, sp.getSpawnPos(),
+                "Should have SpawnPositionComponent correctly initialised");
+    }
+
+    @Test
+    void createBomberDrone_doesNotAddNullSpawnPos() {
+        Entity bomberDrone = EnemyFactory.createDrone(new Entity(), null, new Entity());
+        assertNull(bomberDrone.getComponent(SpawnPositionComponent.class),
+                "No SpawnPositionComponent when initialised with null spawnPos");
     }
 
 }
