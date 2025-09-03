@@ -28,7 +28,7 @@ public class PlayerActions extends Component {
     private static final Vector2 MAX_SPEED = new Vector2(3f, 3f);
     private static final float   SPRINT_MULT = 1.8f;
 
-  private static final int DASH_SPEED_MULTIPLIER = 5;
+  private static final int DASH_SPEED_MULTIPLIER = 15;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
