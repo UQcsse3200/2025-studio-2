@@ -90,7 +90,7 @@ public class PlayerFactory {
 
 
 
-    PhysicsUtils.setScaledCollider(player, 0.6f, 1.0f);
+    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
 
     Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
     if (minimapActor != null && minimapActor.getUserObject() != null
