@@ -462,11 +462,15 @@ public class SettingsMenuDisplay extends UIComponent {
     settings.masterVolume = masterVolumeSlider.getValue();
     settings.musicVolume = musicVolumeSlider.getValue();
 
+    // Save the settings without applying them immediately
+    UserSettings.set(settings, false);
+
+    // Save current keybinds
     UserSettings.saveCurrentKeybinds();
 
-    updateAllKeybindButtons();
+    UserSettings.applySettings(UserSettings.get());
 
-    UserSettings.set(settings, true);
+    updateAllKeybindButtons();
   }
 
   /**
