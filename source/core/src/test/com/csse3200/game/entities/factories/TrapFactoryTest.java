@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsService;
@@ -31,7 +32,7 @@ public class TrapFactoryTest {
 
     @Test
     void createSpikeHasAllComponents() {
-        Entity spikeTrap = TrapFactory.createSpikes(new GridPoint2(0,0), new GridPoint2(0, 0));
+        Entity spikeTrap = TrapFactory.createSpikes(new GridPoint2(0,0), new Vector2(0, 0));
         assertNotNull(spikeTrap.getComponent(PhysicsComponent.class),
                 "Spike trap should have a PhysicsComponent");
         assertNotNull(spikeTrap.getComponent(ColliderComponent.class),

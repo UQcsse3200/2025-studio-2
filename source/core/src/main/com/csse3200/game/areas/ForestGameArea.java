@@ -300,7 +300,7 @@ public class ForestGameArea extends GameArea {
 
   private void spawnTraps() {
     GridPoint2 spawnPos =  new GridPoint2(7,15);
-    GridPoint2 safeSpotPos = spawnPos.cpy().sub(-1, 0);
+    Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
     Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
     spawnEntityAt(spikes, spawnPos, true,  true);
   }

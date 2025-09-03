@@ -38,7 +38,7 @@ public class TrapComponentTest {
         ServiceLocator.registerResourceService(mockResourceService);
 
         // Create the trap entity
-        spikeTrap = TrapFactory.createSpikes(new GridPoint2(0, 0), new GridPoint2(0, 0));
+        spikeTrap = TrapFactory.createSpikes(new GridPoint2(0, 0), new Vector2(0, 0));
         trapComponent = spikeTrap.getComponent(TrapComponent.class);
 
         // Create player with collider and health

@@ -32,7 +32,7 @@ public class TrapFactory {
      * @param safeSpot Spot to teleport the player once they take damage
      * @return the Spike trap Entity created.
      */
-    public static Entity createSpikes(GridPoint2 position, GridPoint2 safeSpot) {//int length, int rotateClockwise) {
+    public static Entity createSpikes(GridPoint2 position, Vector2 safeSpot) {//int length, int rotateClockwise) {
         Entity spikes = new Entity();
         String texture = "images/spikes_sprite.png";
         spikes.addComponent(new TextureRenderComponent(texture));
@@ -55,7 +55,7 @@ public class TrapFactory {
 //        safePosition.x += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().x);
 //        safePosition.y += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().y);
 
-        TrapComponent trapComponent = new TrapComponent();
+        TrapComponent trapComponent = new TrapComponent(safeSpot);
         spikes.addComponent(trapComponent);
 
         return spikes;
