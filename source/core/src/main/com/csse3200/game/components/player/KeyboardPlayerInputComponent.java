@@ -81,14 +81,13 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
     }
-    else if (keycode == com.badlogic.gdx.Input.Keys.TAB) {
-        // Start sprint while Tab is held
-        entity.getEvents().trigger("sprintStart");
-        return true;
+    // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
+    else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
+      entity.getEvents().trigger("sprintStart");
+      return true;
     }
 
-
-      return false;
+    return false;
   }
 
   /**
@@ -112,9 +111,13 @@ public class KeyboardPlayerInputComponent extends InputComponent {
           // Stop sprinting when Tab is released
           entity.getEvents().trigger("sprintStop");
           return true;
+     } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
+              entity.getEvents().trigger("sprintStop");
+              return true;
+
       }
 
-      return false;
+    return false;
   }
 
   private void triggerWalkEvent() {
