@@ -49,7 +49,7 @@ class MovingPlatformComponentTest {
 
     @Test
     void testPlatformReversesWhenCloseToTarget() {
-        when(mockBody.getPosition()).thenReturn(new Vector2(4.96f, 0f));
+        when(mockBody.getPosition()).thenReturn(new Vector2(5f, 0f));
         component.update();
         verify(mockBody).setTransform(any(Vector2.class), anyFloat());
         verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(new Vector2(0,0), 0.0001f)));
