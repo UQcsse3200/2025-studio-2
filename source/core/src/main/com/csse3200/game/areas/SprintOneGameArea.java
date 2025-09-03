@@ -51,6 +51,8 @@ public class SprintOneGameArea extends GameArea {
             "images/TechWallVariant3.png",
             "images/platform.png",
             "images/gate.png",
+            "images/door_open.png",
+            "images/door_closed.png",
             "images/Gate_open.png",
             "images/box_boy_leaf.png",
             "images/tree.png",
