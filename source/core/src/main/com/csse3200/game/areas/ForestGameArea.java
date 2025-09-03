@@ -3,10 +3,41 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.minimap.MinimapDisplay;  // ADD THIS BACK
+import com.csse3200.game.components.PressurePlateComponent;  // your new import
+import com.csse3200.game.entities.factories.PressurePlateFactory; // your new import
+import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.utils.math.GridPoint2Utils;
+import com.csse3200.game.utils.math.RandomUtils;
+import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.tooltip.TooltipSystem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.entities.factories.PressurePlateFactory;
+import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
@@ -48,6 +79,8 @@ public class ForestGameArea extends GameArea {
     "images/hex_grass_2.png",
     "images/hex_grass_3.png",
     "images/iso_grass_1.png",
+    "images/pressure_plate_unpressed.png",
+    "images/pressure_plate_pressed.png",
     "images/iso_grass_2.png",
     "images/iso_grass_3.png",
     "images/drone.png",
@@ -120,6 +153,7 @@ public class ForestGameArea extends GameArea {
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
+    spawnPressurePlates();
 
     spawnLights(); // uncomment to spawn in lights
       // spawnKey();
@@ -335,6 +369,16 @@ public class ForestGameArea extends GameArea {
     });
 
   }
+
+    private void spawnPressurePlates() {
+        Entity plate = PressurePlateFactory.createPressurePlate();
+        PressurePlateComponent comp = plate.getComponent(PressurePlateComponent.class);
+        comp.setTextures("images/pressure_plate_unpressed.png",
+                "images/pressure_plate_pressed.png");
+        GridPoint2 platePos = new GridPoint2(20, 12);
+        spawnEntityAt(plate, platePos, true, true);
+    }
+
 
   public void spawnKey() {
       Entity key = CollectableFactory.createKey("door");
