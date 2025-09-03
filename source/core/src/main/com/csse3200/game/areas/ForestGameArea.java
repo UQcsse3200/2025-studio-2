@@ -11,7 +11,6 @@ import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.entities.Entity;
-
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
@@ -44,7 +43,7 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
-    "images/key_tester.png",
+    "images/key.png",
     "images/hex_grass_1.png",
     "images/hex_grass_2.png",
     "images/hex_grass_3.png",
@@ -71,7 +70,9 @@ public class ForestGameArea extends GameArea {
     "images/red_button.png",
     "images/red_button_pushed.png",
     "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png"
+    "images/minimap_player_marker.png",
+          "images/door_open.png",
+          "images/door_closed.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -117,13 +118,14 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
 
-    //spawnBoxes();  // uncomment this method when you want to play with boxes
-    //spawnButtons();
+    spawnBoxes();  // uncomment this method when you want to play with boxes
+    spawnButtons();
 
-    //spawnLights(); // uncomment to spawn in lights
-
-    //spawnTraps();
+    spawnLights(); // uncomment to spawn in lights
+      // spawnKey();
+    spawnTraps();
     playMusic();
+    spawnDoor();
   }
 
   private MinimapDisplay createMinimap() {
@@ -336,7 +338,14 @@ public class ForestGameArea extends GameArea {
 
   public void spawnKey() {
       Entity key = CollectableFactory.createKey("door");
-      spawnEntityAt(key, new GridPoint2(17,17), true, true);
+      key.addComponent(new TooltipSystem.TooltipComponent("Collect the key", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(key, new GridPoint2(17,19), true, true);
+  }
+
+  public void spawnDoor() {
+      Entity door = ObstacleFactory.createDoor("door");
+      door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+      spawnEntityAt(door, new GridPoint2(3,10), true, true);
   }
 
   private void spawnLights() {
