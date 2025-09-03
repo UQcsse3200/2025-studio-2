@@ -17,7 +17,7 @@ public class CombatStatsComponent extends Component {
 
   // "Grace period" between hits
   private static final long INVULN_FRAMES = 30;
-  private long lastHitFrame = 0;
+  private long lastHitFrame = -100;
 
   public CombatStatsComponent(int health, int baseAttack) {
     setHealth(health);
