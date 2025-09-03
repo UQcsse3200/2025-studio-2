@@ -3,56 +3,27 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.ContactListener;
-import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
-import com.csse3200.game.components.minimap.MinimapDisplay;  // ADD THIS BACK
-import com.csse3200.game.components.PressurePlateComponent;  // your new import
-import com.csse3200.game.entities.factories.PressurePlateFactory; // your new import
-import com.csse3200.game.components.AutonomousBoxComponent;
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.physics.ObjectContactListener;
-import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.utils.math.GridPoint2Utils;
-import com.csse3200.game.utils.math.RandomUtils;
-import com.csse3200.game.services.ResourceService;
-import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.tooltip.TooltipSystem;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.badlogic.gdx.utils.Timer;
 
-import javax.swing.*;
-import com.csse3200.game.components.PressurePlateComponent;
-import com.csse3200.game.entities.factories.PressurePlateFactory;
-import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.utils.math.GridPoint2Utils;
-import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.tooltip.TooltipSystem;
+import com.csse3200.game.utils.math.GridPoint2Utils;
+import com.csse3200.game.utils.math.RandomUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,10 +87,11 @@ public class ForestGameArea extends GameArea {
   private static final String[] forestMusic = {backgroundMusic};
 
   private final TerrainFactory terrainFactory;
-
+  private Entity door;
   private Entity player;
+  private Timer.Task doorCloseTask;
 
-  /**
+    /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
    * @param terrainFactory TerrainFactory used to create the terrain for the GameArea.
    * @requires terrainFactory != null
@@ -142,25 +114,23 @@ public class ForestGameArea extends GameArea {
 
     MinimapDisplay minimapDisplay = createMinimap();
 
-    player = spawnPlayer();
+      player = spawnPlayer();
+      spawnDrone();
+      spawnPatrollingDrone();
+      spawnBomberDrone();
+      spawnPlatform();
+      spawnBoxes();
+      spawnButtons();
 
-    spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    spawnBomberDrone();       // Play with bomber drones
-    //spawnGhosts();
-    //spawnGhostKing();
-    spawnPlatform(); //Testing platform
+      door = spawnDoor();        // <- create door before wiring plate
+      spawnPressurePlates();     // <- plate will talk to 'door'
 
-    spawnBoxes();  // uncomment this method when you want to play with boxes
-    spawnButtons();
-    spawnPressurePlates();
-
-    spawnLights(); // uncomment to spawn in lights
-      // spawnKey();
-    spawnTraps();
-    playMusic();
-    spawnDoor();
+      spawnLights();
+      spawnTraps();
+      playMusic();
   }
+
+ // add this
 
   private MinimapDisplay createMinimap() {
     Texture minimapTexture =
@@ -229,6 +199,7 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(tree, randomPos, true, false);
     }
   }
+
 
   private Entity spawnPlayer() {
     Entity newPlayer = PlayerFactory.createPlayer();
@@ -370,12 +341,27 @@ public class ForestGameArea extends GameArea {
 
   }
 
+
     private void spawnPressurePlates() {
         Entity plate = PressurePlateFactory.createPressurePlate();
         PressurePlateComponent comp = plate.getComponent(PressurePlateComponent.class);
-        comp.setTextures("images/pressure_plate_unpressed.png",
-                "images/pressure_plate_pressed.png");
-        GridPoint2 platePos = new GridPoint2(20, 12);
+        comp.setTextures("images/pressure_plate_unpressed.png", "images/pressure_plate_pressed.png");
+
+        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (door == null) return;
+
+            if (pressed) {
+                if (doorCloseTask != null) { doorCloseTask.cancel(); doorCloseTask = null; }
+                door.getEvents().trigger("openDoor");
+            } else {
+                doorCloseTask = new Timer.Task() {
+                    @Override public void run() { door.getEvents().trigger("closeDoor"); doorCloseTask = null; }
+                };
+                Timer.schedule(doorCloseTask, 10f);
+            }
+        });
+
+        GridPoint2 platePos = new GridPoint2(5, terrain.getMapBounds(0).y - 20);
         spawnEntityAt(plate, platePos, true, true);
     }
 
@@ -386,11 +372,14 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(key, new GridPoint2(17,19), true, true);
   }
 
-  public void spawnDoor() {
-      Entity door = ObstacleFactory.createDoor("door");
-      door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
-      spawnEntityAt(door, new GridPoint2(3,10), true, true);
-  }
+    private Entity spawnDoor() {
+        Entity d = ObstacleFactory.createDoor("door");
+        d.addComponent(new TooltipSystem.TooltipComponent(
+                "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+        d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
+        spawnEntityAt(d, new GridPoint2(3, 10), true, true);
+        return d;
+    }
 
   private void spawnLights() {
     // see the LightFactory class for more details on spawning these

@@ -27,7 +27,7 @@ public class PressurePlateFactory {
 
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
-        collider.setSensor(false);
+        collider.setSensor(true);
         plate.addComponent(collider);
 
         // Attach pressure plate logic
