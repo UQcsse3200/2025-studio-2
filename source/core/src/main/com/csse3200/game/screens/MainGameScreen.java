@@ -42,8 +42,11 @@ public class MainGameScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
   private static final String[] mainGameTextures = {"images/heart.png"};
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+  private static final float DEADZONE_H_FRAC = 0.40f;
+  private static final float DEADZONE_V_FRAC = 0.35f;
+  private static final float CAMERA_LERP = 0.15f;
 
-  private final GdxGame game;
+    private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
@@ -88,7 +91,7 @@ public class MainGameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
-
+      Vector2 __camBefore = renderer.getCamera().getEntity().getPosition().cpy();
       Vector2 new_position = renderer.getCamera().getEntity().getPosition();
       Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
       for (Entity entity : entities) {
@@ -97,10 +100,38 @@ public class MainGameScreen extends ScreenAdapter {
           }
       }
       renderer.getCamera().getEntity().setPosition(new_position);
+      if (new_position != null) {
+
+          Vector2 camPos = __camBefore;
+
+          float viewW = renderer.getCamera().getCamera().viewportWidth;
+          float viewH = renderer.getCamera().getCamera().viewportHeight;
+
+          float dzW = viewW * DEADZONE_H_FRAC;
+          float dzH = viewH * DEADZONE_V_FRAC;
+
+          float dzLeft   = camPos.x - dzW * 0.5f;
+          float dzRight  = camPos.x + dzW * 0.5f;
+          float dzBottom = camPos.y - dzH * 0.5f;
+          float dzTop    = camPos.y + dzH * 0.5f;
+
+          float targetX = camPos.x;
+          float targetY = camPos.y;
+
+          if (new_position.x < dzLeft)  targetX -= (dzLeft - new_position.x);
+          if (new_position.x > dzRight) targetX += (new_position.x - dzRight);
+
+          if (new_position.y < dzBottom) targetY -= (dzBottom - new_position.y);
+          if (new_position.y > dzTop)    targetY += (new_position.y - dzTop);
+
+          float newCamX = camPos.x + (targetX - camPos.x) * CAMERA_LERP;
+          float newCamY = camPos.y + (targetY - camPos.y) * CAMERA_LERP;
+          renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
+      }
 
     physicsEngine.update();
     ServiceLocator.getEntityService().update();
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+    renderer.render(lightingEngine);
   }
 
   @Override
