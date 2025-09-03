@@ -29,7 +29,7 @@ public class SpawnPositionComponentTest {
     }
 
     @Test
-    void getSpawnPosReturnsCopy() {
+    void getSpawnPos_returnsCopy() {
         Vector2 point = new Vector2(0, 0);
         SpawnPositionComponent spc = new SpawnPositionComponent(point);
 

@@ -261,4 +261,16 @@ public class EnemyFactoryTest {
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
 
+    @Test
+    void createBomberDrone_returnsDistinct() {
+        Entity a = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        Entity b = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        assertNotSame(a, b, "Drones should be distinct");
+
+        AITaskComponent ai_a = a.getComponent(AITaskComponent.class);
+        AITaskComponent ai_b = b.getComponent(AITaskComponent.class);
+        assertNotSame(ai_a, ai_b,
+                "Drones should have distinct AITaskComponents");
+    }
+
 }

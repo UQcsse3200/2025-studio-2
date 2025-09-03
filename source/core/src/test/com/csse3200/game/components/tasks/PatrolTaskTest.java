@@ -182,6 +182,34 @@ public class PatrolTaskTest {
                 "PatrolTask should have priority 1");
     }
 
+    @Test
+    void start_secondCallSafe() {
+        Vector2[] route = {new Vector2(0, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
+        e.create();
+
+        patrol.start();
+        assertTrue(patrol.isMoving());
+        patrol.start();
+        assertTrue(patrol.isMoving());
+        assertEquals(0, patrol.getIndex());
+    }
+
+    @Test
+    void stop_haltsProgressionOnUpdate() {
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
+        e.create();
+        patrol.start();
+
+        int before = patrol.getIndex();
+        patrol.stop();
+        patrol.update();
+        assertEquals(before, patrol.getIndex());
+    }
+
     private Entity makePatrollingEntity(Vector2[] route) {
         return new Entity()
                 .addComponent(new PhysicsComponent())
