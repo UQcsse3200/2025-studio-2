@@ -10,6 +10,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;

@@ -89,4 +89,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("walk", walkDirection);
     }
   }
+
+  public Vector2 getWalkDirection() {
+    return walkDirection;
+  }
+
+  public void setWalkDirection(Vector2 walkDirection) {
+    this.walkDirection.set(walkDirection);
+  }
 }

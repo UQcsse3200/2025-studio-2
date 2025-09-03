@@ -54,7 +54,7 @@ public class DoorComponent extends Component {
             tryUnlock(other);
         } else {
             // Door already open -> trigger transition
-            this.area.trigger("doorEntered", keyId);
+            this.area.trigger("doorEntered", keyId, other);
         }
     }
 
@@ -74,15 +74,16 @@ public class DoorComponent extends Component {
 //            entity.getEvents().trigger("collisionStart", this, player);
 
             // Notify the area
-            this.area.trigger("doorEntered", keyId);
+//            this.area.trigger("doorEntered", keyId, player);
+            this.area.trigger("doorEntered", keyId, player);
         }
     }
 
-    public void gateCollide(Entity play) {
-        Object player = play;
-        Object level_gate = this;
-        entity.getEvents().trigger("collisionStart", level_gate, player);
-    }
+//    public void gateCollide(Entity play) {
+//        Object player = play;
+//        Object level_gate = this;
+//        entity.getEvents().trigger("collisionStart", level_gate, player);
+//    }
 
     /**
      * Opens the door by making its collider a sensor (non-blocking).

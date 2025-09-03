@@ -21,13 +21,14 @@ public abstract class GameArea implements Disposable {
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
   private final EventHandler events = new EventHandler();
+  private Entity player;
 
   public EventHandler getEvents() {
     return events;
   }
 
-  public void trigger(String eventName, String keyId) {
-    events.trigger(eventName, keyId);
+  public void trigger(String eventName, String keyId, Entity player) {
+    events.trigger(eventName, keyId, player);
   }
 
   protected GameArea() {
@@ -76,5 +77,9 @@ public abstract class GameArea implements Disposable {
 
     entity.setPosition(worldPos);
     spawnEntity(entity);
+  }
+
+  public Entity getPlayer() {
+    return player;
   }
 }

@@ -15,6 +15,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -90,9 +91,9 @@ public class MainGameScreen extends ScreenAdapter {
     sprintOneGameArea.create();
 
 
-    sprintOneGameArea.getEvents().addListener("doorEntered", (String keyId) -> {
-      logger.info("Door entered in sprint1 with key {}", keyId);
-      switchArea(keyId, sprintOneGameArea);
+    sprintOneGameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
+      logger.info("Door entered in sprint1 with key {}", keyId, player);
+      switchArea(keyId, sprintOneGameArea, player);
     });
 
     //forestGameArea.create();
@@ -104,8 +105,10 @@ public class MainGameScreen extends ScreenAdapter {
     //forestGameArea.create();
   }
 
-  private void switchArea(String keyId, GameArea oldArea) {
+  private void switchArea(String keyId, GameArea oldArea, Entity player) {
     Gdx.app.postRunnable(() -> {
+      Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+
       oldArea.dispose();
       TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
@@ -119,9 +122,11 @@ public class MainGameScreen extends ScreenAdapter {
       if (newArea != null) {
         GameArea finalNewArea = newArea; // effectively final
         finalNewArea.getEvents().addListener(
-                "doorEntered", (String key) -> switchArea(key, finalNewArea)
+                "doorEntered", (String key, Entity play) -> switchArea(key, finalNewArea, player)
         );
         finalNewArea.create();
+//        Entity newPlayer = finalNewArea.getPlayer();
+//        newPlayer.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
       }
     });
   }
