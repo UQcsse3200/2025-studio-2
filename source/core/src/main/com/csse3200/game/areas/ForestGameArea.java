@@ -113,8 +113,8 @@ public class ForestGameArea extends GameArea {
     player = spawnPlayer();
     spawnLights(); //lights need to be spawned before drone
 
-    spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    //spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    spawnPatrollingDrone();   // Play with patrolling/chasing drones
     //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
@@ -338,7 +338,7 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
   }
   private void spawnDrone() {
-    GridPoint2 spawnTile = new GridPoint2(3, 17);
+    GridPoint2 spawnTile = new GridPoint2(2, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
     Entity drone = EnemyFactory.createDrone(player, spawnWorldPos,securityLight ); // pass world pos here
@@ -359,10 +359,10 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnBomberDrone() {
-    GridPoint2 spawnTile = new GridPoint2(2, 11);
+    GridPoint2 spawnTile = new GridPoint2(3, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
+    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos, securityLight);
     spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 

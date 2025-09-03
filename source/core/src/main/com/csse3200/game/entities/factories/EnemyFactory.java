@@ -58,8 +58,9 @@ public class EnemyFactory {
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
         CooldownTask cooldownTask = new CooldownTask(3f);
+
         // SECURITY LIGHT INTEGRATION
-// When security light detects player, activate chasing
+        // When security light detects player, activate chasing
         securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
 
         // When chase ends, activate cooldown
@@ -99,7 +100,7 @@ public class EnemyFactory {
      * @param spawnPos the starting world position of the enemy
      * @return a bomber drone entity
      */
-    public static Entity createBomberDrone(Entity target, Vector2 spawnPos) {
+    public static Entity createBomberDrone(Entity target, Vector2 spawnPos, Entity securityLight) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
@@ -116,15 +117,20 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
 
+        // AI setup
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
 
         BombChaseTask chaseTask = new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f);
         BombDropTask dropTask = new BombDropTask(target, 15, 1.5f, 2f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
 
+        // SECURITY LIGHT INTEGRATION
+        // When security light detects player, activate the chase task
+        securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
+
         // When chase ends, activate cooldown
         drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
-
+        // Add tasks to AI
         aiComponent
                 .addTask(chaseTask)
                 .addTask(dropTask)
