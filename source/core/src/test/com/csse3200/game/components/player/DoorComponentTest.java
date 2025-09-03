@@ -38,7 +38,6 @@ class DoorComponentTest {
         when(inputFactory.createForPlayer()).thenReturn(mock(InputComponent.class));
         ServiceLocator.registerInputService(inputSvc);
 
-        // If your entities render or dispose, also stub these:
         RenderService render = mock(RenderService.class);
         doNothing().when(render).register(any());
         doNothing().when(render).unregister(any());
@@ -84,7 +83,7 @@ class DoorComponentTest {
         Entity door   = makeDoor("pink-key");
 
         DoorComponent dc = door.getComponent(DoorComponent.class);
-        door.getEvents().trigger("collisionStart", door, player);
+        door.getEvents().trigger("onCollisionStart", player);
 
         assertTrue(dc.isLocked(), "Door should stay locked when player has no key");
     }
@@ -95,7 +94,7 @@ class DoorComponentTest {
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
         Entity key = makeKey("pink-key");
 
-        key.getEvents().trigger("collisionStart", key, player);
+        key.getEvents().trigger("onCollisionStart", player);
         assertTrue(inv.hasItem("pink-key"), "Player should have the pink key after pickup");
     }
 
@@ -106,7 +105,7 @@ class DoorComponentTest {
 
         // Give the player the key via the real pickup path to mirror gameplay
         Entity key = makeKey("pink-key");
-        key.getEvents().trigger("collisionStart", key, player);
+        key.getEvents().trigger("onCollisionStart", player);
         assertTrue(inv.hasItem("pink-key"), "Sanity: player must have key before trying door");
 
         Entity door = makeDoor("pink-key");
@@ -114,7 +113,7 @@ class DoorComponentTest {
         assertTrue(dc.isLocked(), "Sanity: door starts locked");
 
         // Now collide: should unlock & consume key
-        door.getEvents().trigger("collisionStart", door, player);
+        door.getEvents().trigger("onCollisionStart", player);
 
         assertFalse(dc.isLocked(), "Door should be unlocked after collision with correct key");
         assertFalse(inv.hasItem("pink-key"), "Key should be consumed when unlocking the door");
