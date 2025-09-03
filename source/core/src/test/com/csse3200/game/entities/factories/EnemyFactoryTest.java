@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
+import com.csse3200.game.components.enemy.SpawnPositionComponent;
+import com.csse3200.game.components.enemy.SpawnPositionComponentTest;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -117,6 +119,23 @@ public class EnemyFactoryTest {
 
         assertNotSame(a, b, "Drones should be distinct");
         assertNotSame(a.getComponent(AITaskComponent.class), b.getComponent(AITaskComponent.class), "Drones should have distinct AITaskComponents");
+    }
+
+    @Test
+    void createDrone_addsSpawnPosition() {
+        Vector2 start = new Vector2(0, 0);
+        Entity drone = EnemyFactory.createDrone(new Entity(), start);
+        SpawnPositionComponent sp = drone.getComponent(SpawnPositionComponent.class);
+        assertNotNull(sp);
+        assertEquals(start, sp.getSpawnPos(),
+                "Should have SpawnPositionComponent correctly initialised");
+    }
+
+    @Test
+    void createDrone_doesNotAddNullSpawnPos() {
+        Entity drone = EnemyFactory.createDrone(new Entity(), null);
+        assertNull(drone.getComponent(SpawnPositionComponent.class),
+                "No SpawnPositionComponent when initialised with null spawnPos");
     }
 
     @Test
