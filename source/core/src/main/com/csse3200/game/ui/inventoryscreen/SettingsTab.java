@@ -180,14 +180,14 @@ public class SettingsTab implements InventoryTabInterface {
         
         // Add reset to defaults button
         table.row().padTop(15f);
-        TextButton resetButton = new TextButton("Reset to Defaults", skin);
+        TextButton resetButton = new TextButton("Restore Defaults", skin);
         resetButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 resetKeybindsToDefaults();
             }
         });
-        table.add(resetButton).colspan(2).center().width(150).height(30);
+        table.add(resetButton).colspan(2).center().width(300).height(30);
     }
     
     /**
