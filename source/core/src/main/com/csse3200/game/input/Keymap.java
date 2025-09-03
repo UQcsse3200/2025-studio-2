@@ -102,6 +102,7 @@ public class Keymap {
     registerAction("PlayerAdrenaline", Input.Keys.V);
     registerAction("PlayerDash", Input.Keys.SHIFT_LEFT);
     registerAction("PlayerCrouch", Input.Keys.C);
+    registerAction("Reset", Input.Keys.R);
 
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);

@@ -21,6 +21,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private final int ADRENALINE_KEY = Keymap.getActionKeyCode("PlayerAdrenaline");
   private final int DASH_KEY = Keymap.getActionKeyCode("PlayerDash");
   private final int CROUCH_KEY = Keymap.getActionKeyCode("PlayerCrouch");
+  private final int RESET_KEY = Keymap.getActionKeyCode("Reset");
 
   public KeyboardPlayerInputComponent() {
     super(5);
@@ -76,7 +77,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       triggerCrouchEvent();
       return true;
       // debug
-    } else if (keycode == Keys.R) {
+    } else if (keycode == RESET_KEY) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
     }
