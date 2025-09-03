@@ -1,0 +1,6 @@
+{
+  "drone": {
+    "health": 100,
+    "baseAttack": 10
+  }
+}

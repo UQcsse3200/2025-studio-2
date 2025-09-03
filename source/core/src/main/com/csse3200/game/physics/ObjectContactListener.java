@@ -40,6 +40,9 @@ public class ObjectContactListener implements ContactListener {
 
         if (a == null || b == null) return;
 
+        a.getEvents().trigger("onCollisionStart", b);
+        b.getEvents().trigger("onCollisionStart", a);
+
         // Set player in range
         setPlayerInRangeOfButton(a, b, true);
         setPlayerInRangeOfButton(b, a, true);
