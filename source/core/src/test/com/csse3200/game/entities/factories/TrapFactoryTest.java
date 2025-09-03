@@ -31,7 +31,7 @@ public class TrapFactoryTest {
 
     @Test
     void createSpikeHasAllComponents() {
-        Entity spikeTrap = TrapFactory.createSpikes(new GridPoint2(0,0));
+        Entity spikeTrap = TrapFactory.createSpikes(new GridPoint2(0,0), new GridPoint2(0, 0));
         assertNotNull(spikeTrap.getComponent(PhysicsComponent.class),
                 "Spike trap should have a PhysicsComponent");
         assertNotNull(spikeTrap.getComponent(ColliderComponent.class),

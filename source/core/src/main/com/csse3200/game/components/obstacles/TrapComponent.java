@@ -1,12 +1,8 @@
 package com.csse3200.game.components.obstacles;
 
-import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
-import com.csse3200.game.physics.components.PhysicsComponent;
 
 public class TrapComponent extends CombatStatsComponent {
     public TrapComponent() {
@@ -59,8 +55,11 @@ public class TrapComponent extends CombatStatsComponent {
             return;
         }
 
+        Entity trap = this.getEntity();
+
+        // Damage player
         Entity player = collider.getEntity();
-        if (player.getPosition().y >= this.getEntity().getPosition().y) {
+        if (player.getPosition().y >= trap.getPosition().y) {
             player.getComponent(CombatStatsComponent.class).hit(this);
         }
     }

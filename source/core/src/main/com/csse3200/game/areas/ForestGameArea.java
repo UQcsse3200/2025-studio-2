@@ -137,8 +137,7 @@ public class ForestGameArea extends GameArea {
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
-    // LIGHTING ENGINE DISPOSAL IS NOT CURRENTLY COMPATIBLE WITH LEVEL RESET.
-    spawnLights(); // uncomment to spawn in lights
+//    spawnLights(); // uncomment to spawn in lights
 
     spawnTraps();
     playMusic();
@@ -301,7 +300,8 @@ public class ForestGameArea extends GameArea {
 
   private void spawnTraps() {
     GridPoint2 spawnPos =  new GridPoint2(7,15);
-    Entity spikes = TrapFactory.createSpikes(spawnPos);
+    GridPoint2 safeSpotPos = spawnPos.cpy().sub(-1, 0);
+    Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
     spawnEntityAt(spikes, spawnPos, true,  true);
   }
 
