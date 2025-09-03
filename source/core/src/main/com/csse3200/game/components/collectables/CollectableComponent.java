@@ -19,7 +19,6 @@ public abstract class CollectableComponent extends Component {
 
     /**
      * Registers a two-argument listener for {@code "collisionStart"} that delegates to
-     * {@link #onCollisionStart(Object, Object)} when this entity collides with another.
      */
     @Override
     public void create() {
@@ -30,11 +29,16 @@ public abstract class CollectableComponent extends Component {
     /**
      * Handles begin-contact events for this collectable.
      *
-     * @param collectable the event's "self" argument (this entity)
+ //    * @param collectable the event's "self" argument (this entity)
      * @param player      the other object in the collision; expected to be a Player {@link Entity}
      */
     private void onCollisionStart(Entity player) {
         HitboxComponent cc = player.getComponent(HitboxComponent.class);
+
+        if (cc == null) {
+            return; // Not a collidable entity, ignore
+        }
+
         if ((cc.getLayer() != PhysicsLayer.PLAYER) || collected) return;
 
 
