@@ -1,10 +1,9 @@
 package com.csse3200.game.ui.inventoryscreen;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 public interface InventoryTabInterface {
-    // Add actors/resources for this tab to the stage
-    default void load(Stage stage) {}
-    // Remove actors/resources from this tab
-    default void unload(Stage stage) {}
+    /** Builds and returns the UI for this tab. */
+    Actor build(Skin skin);
 }

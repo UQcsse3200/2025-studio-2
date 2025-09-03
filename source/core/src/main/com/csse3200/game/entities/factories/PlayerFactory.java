@@ -64,7 +64,9 @@ public class PlayerFactory {
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
                     .addComponent(new InventoryComponent())
                     .addComponent(inputComponent)
-                    .addComponent(new PlayerStatsDisplay());
+                    .addComponent(new PlayerStatsDisplay())
+                    .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
+
 
     // --- Stamina: add component, wire sprint, and TEMP logging ---
     StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
@@ -91,12 +93,6 @@ public class PlayerFactory {
 
 
     PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
-
-    Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
-    if (minimapActor != null && minimapActor.getUserObject() != null
-            && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
-      player.addComponent(new MinimapComponent(minimapDisplay, "images/minimap_player_marker.png"));
-    }
 
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();

@@ -18,6 +18,7 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -26,8 +27,6 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -73,8 +72,8 @@ public class ForestGameArea extends GameArea {
     "images/red_button_pushed.png",
     "images/minimap_forest_area.png",
     "images/minimap_player_marker.png",
-          "images/door_open.png",
-          "images/door_closed.png"
+    "images/door_open.png",
+    "images/door_closed.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -85,9 +84,6 @@ public class ForestGameArea extends GameArea {
   private static final String[] forestMusic = {backgroundMusic};
 
   private final TerrainFactory terrainFactory;
-
-  private Entity player;
-
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
    * @param terrainFactory TerrainFactory used to create the terrain for the GameArea.
@@ -128,7 +124,8 @@ public class ForestGameArea extends GameArea {
   private void loadLevel() {
     displayUI();
     spawnTerrain();
-//    spawnTrees();
+    // spawnTrees();
+    createMinimap();
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset);
 
@@ -137,8 +134,6 @@ public class ForestGameArea extends GameArea {
     spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
-
-    MinimapDisplay minimapDisplay = createMinimap();
 
     spawnPlatform(); //Testing platform
 
@@ -152,24 +147,29 @@ public class ForestGameArea extends GameArea {
     spawnDoor();
   }
 
-  private MinimapDisplay createMinimap() {
+  private void createMinimap() {
     Texture minimapTexture =
         ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
-
-    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
 
     float tileSize = terrain.getTileSize();
     Vector2 worldSize =
         new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
+
+    MinimapDisplay.MinimapOptions options = getMinimapOptions();
+
     MinimapDisplay minimapDisplay =
-        new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+        new MinimapDisplay(150f, options);
 
     Entity minimapEntity = new Entity();
     minimapEntity.addComponent(minimapDisplay);
     spawnEntity(minimapEntity);
+  }
 
-    return minimapDisplay;
+  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+    return options;
   }
 
   private void displayUI() {

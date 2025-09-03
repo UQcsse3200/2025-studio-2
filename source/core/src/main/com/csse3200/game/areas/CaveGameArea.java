@@ -52,7 +52,6 @@ public class CaveGameArea extends GameArea {
 
   private final TerrainFactory terrainFactory;
 
-  private Entity player;
 
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.

@@ -42,6 +42,7 @@ public class GdxGame extends Game {
   private void loadSettings() {
     logger.debug("Loading game settings");
     UserSettings.Settings settings = UserSettings.get();
+    UserSettings.initialiseKeybinds();
     UserSettings.applySettings(settings);
   }
 
