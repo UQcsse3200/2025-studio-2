@@ -5,6 +5,7 @@ com.csse3200.game.areas
 com.csse3200.game.areas.terrain
 com.csse3200.game.components
 com.csse3200.game.components.collectables
+com.csse3200.game.components.enemy
 com.csse3200.game.components.gamearea
 com.csse3200.game.components.lighting
 com.csse3200.game.components.maingame
@@ -13,6 +14,7 @@ com.csse3200.game.components.minimap
 com.csse3200.game.components.npc
 com.csse3200.game.components.obstacles
 com.csse3200.game.components.player
+com.csse3200.game.components.projectiles
 com.csse3200.game.components.settingsmenu
 com.csse3200.game.components.tasks
 com.csse3200.game.components.tooltip
