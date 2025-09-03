@@ -33,9 +33,9 @@ public class PlayerFactory {
   private static final PlayerConfig stats =
       FileLoader.readClass(PlayerConfig.class, "configs/player.json");
 
-  private static final float FOOT_HITBOX_WIDTH = 0.6f;
-  private static final float FOOT_HITBOX_HEIGHT = 0.01f;
-  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0, -0.31f);
+  private static final float FOOT_HITBOX_WIDTH = 0.25f;
+  private static final float FOOT_HITBOX_HEIGHT = 0.0001f;
+  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0, 0f);
   private static final float FOOT_HITBOX_ANGLE = 0;
   /**
    * Create a player entity.
@@ -64,8 +64,6 @@ public class PlayerFactory {
     if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
       player.addComponent(new MinimapComponent(minimapDisplay, "images/minimap_player_marker.png"));
     }
-
-    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
 
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();

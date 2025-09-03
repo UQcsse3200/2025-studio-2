@@ -32,7 +32,7 @@ import javax.swing.*;
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
-  private static final int NUM_TREES = 7;
+  private static final int NUM_TREES = 0;
   private static final int NUM_GHOSTS = 0;
   private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
@@ -266,7 +266,7 @@ public class ForestGameArea extends GameArea {
     step3.setScale(2,1);
     spawnEntityAt(step3, step3Pos, false, false);
 
-    GridPoint2 step4Pos = new GridPoint2(20,7);
+    GridPoint2 step4Pos = new GridPoint2(20,6);
     Entity step4 = PlatformFactory.createStaticPlatform();
     step4.setScale(2,1);
     spawnEntityAt(step4, step4Pos, false, false);
