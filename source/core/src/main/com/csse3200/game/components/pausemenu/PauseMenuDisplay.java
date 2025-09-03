@@ -33,9 +33,8 @@ public class PauseMenuDisplay extends UIComponent {
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay (MainGameScreen screen, GdxGame game) {
+    public PauseMenuDisplay (MainGameScreen screen) {
         this.screen = screen;
-        this.game = game;
     }
 
     @Override
