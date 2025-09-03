@@ -103,8 +103,8 @@ public class Keymap {
   public static void setKeyMapDefaults() {
     // Player keybindings
     registerAction("PlayerUp", Input.Keys.W, true);
-    registerAction("PlayerDown", Input.Keys.S, true);
     registerAction("PlayerLeft", Input.Keys.A, true);
+    registerAction("PlayerDown", Input.Keys.S, true);
     registerAction("PlayerRight", Input.Keys.D, true);
     registerAction("PlayerAttack", Input.Keys.SPACE, true);
     registerAction("PlayerInteract", Input.Keys.E, true);
@@ -133,7 +133,7 @@ public class Keymap {
    * Getter method that returns a display-friendly version of the keybinding map. Entries whose
    * display flag is set as false are ignored.
    *
-   * @return The hash map with actions mapped to there keycodes.
+   * @return The hash map with actions mapped to their keycodes.
    */
   public static Map<String, Integer> getKeyMap() {
     // Convert to stream to do functional processing
