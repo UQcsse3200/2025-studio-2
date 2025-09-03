@@ -52,6 +52,6 @@ class MovingPlatformComponentTest {
         when(mockBody.getPosition()).thenReturn(new Vector2(4.96f, 0f));
         component.update();
         verify(mockBody).setTransform(any(Vector2.class), anyFloat());
-        verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(Vector2.Zero, 0.0001f)));
+        verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(new Vector2(0,0), 0.0001f)));
     }
 }
