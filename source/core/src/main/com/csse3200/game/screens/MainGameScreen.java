@@ -90,7 +90,7 @@ public class MainGameScreen extends ScreenAdapter {
   public void render(float delta) {
 
       Vector2 new_position = renderer.getCamera().getEntity().getPosition();
-      Array<Entity> entities = EntityService.get_entities();
+      Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
       for (Entity entity : entities) {
           if (entity.getComponent(PlayerActions.class) != null) {
               new_position = entity.getPosition();
