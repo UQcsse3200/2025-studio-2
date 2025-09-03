@@ -39,164 +39,172 @@ import org.slf4j.LoggerFactory;
  * <p>Details on libGDX screens: https://happycoding.io/tutorials/libgdx/game-screens
  */
 public class MainGameScreen extends ScreenAdapter {
-  private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
-  private static final String[] mainGameTextures = {"images/heart.png"};
-  private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
-  private static final float DEADZONE_H_FRAC = 0.40f;
-  private static final float DEADZONE_V_FRAC = 0.35f;
-  private static final float CAMERA_LERP = 0.15f;
+    private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
+    private static final String[] mainGameTextures = {"images/heart.png"};
+    private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+    private static final float DEADZONE_H_FRAC = 0.40f;
+    private static final float DEADZONE_V_FRAC = 0.35f;
+    private static final float CAMERA_LERP = 0.15f;
 
     private final GdxGame game;
-  private final Renderer renderer;
-  private final PhysicsEngine physicsEngine;
-  private final LightingEngine lightingEngine;
+    private final Renderer renderer;
+    private final PhysicsEngine physicsEngine;
+    private final LightingEngine lightingEngine;
 
-  public MainGameScreen(GdxGame game) {
-    this.game = game;
+    public MainGameScreen(GdxGame game) {
+        this.game = game;
 
-    logger.debug("Initialising main game screen services");
-    ServiceLocator.registerTimeSource(new GameTime());
+        logger.debug("Initialising main game screen services");
+        ServiceLocator.registerTimeSource(new GameTime());
 
-    PhysicsService physicsService = new PhysicsService();
-    ServiceLocator.registerPhysicsService(physicsService);
-    physicsEngine = physicsService.getPhysics();
+        PhysicsService physicsService = new PhysicsService();
+        ServiceLocator.registerPhysicsService(physicsService);
+        physicsEngine = physicsService.getPhysics();
 
-    ServiceLocator.registerInputService(new InputService());
-    ServiceLocator.registerResourceService(new ResourceService());
+        ServiceLocator.registerInputService(new InputService());
+        ServiceLocator.registerResourceService(new ResourceService());
 
-    ServiceLocator.registerEntityService(new EntityService());
-    ServiceLocator.registerRenderService(new RenderService());
+        ServiceLocator.registerEntityService(new EntityService());
+        ServiceLocator.registerRenderService(new RenderService());
 
-    renderer = RenderFactory.createRenderer();
+        renderer = RenderFactory.createRenderer();
 
-    //renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
+        // 设置初始相机位置
+        renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
 
-    renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
+        renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
 
-    // Registering the new lighting service with the service manager
-    LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
-    ServiceLocator.registerLightingService(lightingService);
-    lightingEngine = lightingService.getEngine();
+        // Registering the new lighting service with the service manager
+        LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
+        ServiceLocator.registerLightingService(lightingService);
+        lightingEngine = lightingService.getEngine();
 
-    loadAssets();
-    createUI();
+        loadAssets();
+        createUI();
 
-    logger.debug("Initialising main game screen entities");
-    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
-    //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
-    //caveGameArea.create();
-    forestGameArea.create();
-  }
+        logger.debug("Initialising main game screen entities");
+        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+        ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+        //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
+        //caveGameArea.create();
+        forestGameArea.create();
+    }
 
-  @Override
-  public void render(float delta) {
-      Vector2 __camBefore = renderer.getCamera().getEntity().getPosition().cpy();
-      Vector2 new_position = renderer.getCamera().getEntity().getPosition();
-      Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
-      for (Entity entity : entities) {
-          if (entity.getComponent(PlayerActions.class) != null) {
-              new_position = entity.getPosition();
-          }
-      }
-      renderer.getCamera().getEntity().setPosition(new_position);
-      if (new_position != null) {
+    @Override
+    public void render(float delta) {
 
-          Vector2 camPos = __camBefore;
+        Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
 
-          float viewW = renderer.getCamera().getCamera().viewportWidth;
-          float viewH = renderer.getCamera().getCamera().viewportHeight;
+        Vector2 playerPosition = null;
+        Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
+        for (Entity entity : entities) {
+            if (entity.getComponent(PlayerActions.class) != null) {
+                playerPosition = entity.getPosition().cpy();
+                break;
+            }
+        }
 
-          float dzW = viewW * DEADZONE_H_FRAC;
-          float dzH = viewH * DEADZONE_V_FRAC;
+        if (playerPosition != null) {
+            float viewW = renderer.getCamera().getCamera().viewportWidth;
+            float viewH = renderer.getCamera().getCamera().viewportHeight;
 
-          float dzLeft   = camPos.x - dzW * 0.5f;
-          float dzRight  = camPos.x + dzW * 0.5f;
-          float dzBottom = camPos.y - dzH * 0.5f;
-          float dzTop    = camPos.y + dzH * 0.5f;
+            float dzW = viewW * DEADZONE_H_FRAC;
+            float dzH = viewH * DEADZONE_V_FRAC;
 
-          float targetX = camPos.x;
-          float targetY = camPos.y;
+            float dzLeft   = currentCamPos.x - dzW * 0.5f;
+            float dzRight  = currentCamPos.x + dzW * 0.5f;
+            float dzBottom = currentCamPos.y - dzH * 0.5f;
+            float dzTop    = currentCamPos.y + dzH * 0.5f;
 
-          if (new_position.x < dzLeft)  targetX -= (dzLeft - new_position.x);
-          if (new_position.x > dzRight) targetX += (new_position.x - dzRight);
+            float targetX = currentCamPos.x;
+            float targetY = currentCamPos.y;
 
-          if (new_position.y < dzBottom) targetY -= (dzBottom - new_position.y);
-          if (new_position.y > dzTop)    targetY += (new_position.y - dzTop);
+            if (playerPosition.x < dzLeft) {
+                targetX -= (dzLeft - playerPosition.x);
+            } else if (playerPosition.x > dzRight) {
+                targetX += (playerPosition.x - dzRight);
+            }
 
-          float newCamX = camPos.x + (targetX - camPos.x) * CAMERA_LERP;
-          float newCamY = camPos.y + (targetY - camPos.y) * CAMERA_LERP;
-          renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
-      }
+            if (playerPosition.y < dzBottom) {
+                targetY -= (dzBottom - playerPosition.y);
+            } else if (playerPosition.y > dzTop) {
+                targetY += (playerPosition.y - dzTop);
+            }
 
-    physicsEngine.update();
-    ServiceLocator.getEntityService().update();
-    renderer.render(lightingEngine);
-  }
+            float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP;
+            float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP;
 
-  @Override
-  public void resize(int width, int height) {
-    renderer.resize(width, height);
-    logger.trace("Resized renderer: ({} x {})", width, height);
-  }
+            renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
+        }
 
-  @Override
-  public void pause() {
-    logger.info("Game paused");
-  }
+        physicsEngine.update();
+        ServiceLocator.getEntityService().update();
+        renderer.render(lightingEngine);
+    }
 
-  @Override
-  public void resume() {
-    logger.info("Game resumed");
-  }
+    @Override
+    public void resize(int width, int height) {
+        renderer.resize(width, height);
+        logger.trace("Resized renderer: ({} x {})", width, height);
+    }
 
-  @Override
-  public void dispose() {
-    logger.debug("Disposing main game screen");
+    @Override
+    public void pause() {
+        logger.info("Game paused");
+    }
 
-    renderer.dispose();
-    lightingEngine.dispose();
-    unloadAssets();
+    @Override
+    public void resume() {
+        logger.info("Game resumed");
+    }
 
-    ServiceLocator.getEntityService().dispose();
-    ServiceLocator.getRenderService().dispose();
-    ServiceLocator.getResourceService().dispose();
+    @Override
+    public void dispose() {
+        logger.debug("Disposing main game screen");
 
-    ServiceLocator.clear();
-  }
+        renderer.dispose();
+        lightingEngine.dispose();
+        unloadAssets();
 
-  private void loadAssets() {
-    logger.debug("Loading assets");
-    ResourceService resourceService = ServiceLocator.getResourceService();
-    resourceService.loadTextures(mainGameTextures);
-    ServiceLocator.getResourceService().loadAll();
-  }
+        ServiceLocator.getEntityService().dispose();
+        ServiceLocator.getRenderService().dispose();
+        ServiceLocator.getResourceService().dispose();
 
-  private void unloadAssets() {
-    logger.debug("Unloading assets");
-    ResourceService resourceService = ServiceLocator.getResourceService();
-    resourceService.unloadAssets(mainGameTextures);
-  }
+        ServiceLocator.clear();
+    }
 
-  /**
-   * Creates the main game's ui including components for rendering ui elements to the screen and
-   * capturing and handling ui input.
-   */
-  private void createUI() {
-    logger.debug("Creating ui");
-    Stage stage = ServiceLocator.getRenderService().getStage();
-    InputComponent inputComponent =
-        ServiceLocator.getInputService().getInputFactory().createForTerminal();
+    private void loadAssets() {
+        logger.debug("Loading assets");
+        ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.loadTextures(mainGameTextures);
+        ServiceLocator.getResourceService().loadAll();
+    }
 
-    Entity ui = new Entity();
-    ui.addComponent(new InputDecorator(stage, 10))
-        .addComponent(new PerformanceDisplay())
-        .addComponent(new MainGameActions(this.game))
-        .addComponent(new MainGameExitDisplay())
-        .addComponent(new Terminal())
-        .addComponent(inputComponent)
-        .addComponent(new TerminalDisplay());
+    private void unloadAssets() {
+        logger.debug("Unloading assets");
+        ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.unloadAssets(mainGameTextures);
+    }
 
-    ServiceLocator.getEntityService().register(ui);
-  }
+    /**
+     * Creates the main game's ui including components for rendering ui elements to the screen and
+     * capturing and handling ui input.
+     */
+    private void createUI() {
+        logger.debug("Creating ui");
+        Stage stage = ServiceLocator.getRenderService().getStage();
+        InputComponent inputComponent =
+                ServiceLocator.getInputService().getInputFactory().createForTerminal();
+
+        Entity ui = new Entity();
+        ui.addComponent(new InputDecorator(stage, 10))
+                .addComponent(new PerformanceDisplay())
+                .addComponent(new MainGameActions(this.game))
+                .addComponent(new MainGameExitDisplay())
+                .addComponent(new Terminal())
+                .addComponent(inputComponent)
+                .addComponent(new TerminalDisplay());
+
+        ServiceLocator.getEntityService().register(ui);
+    }
 }
