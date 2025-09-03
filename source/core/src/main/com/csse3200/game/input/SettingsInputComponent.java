@@ -33,6 +33,10 @@ public class SettingsInputComponent extends InputComponent {
    * @param button The button that was clicked
    */
   public void startRebinding(String actionName, TextButton button) {
+    if (keyBindButtons == null || !keyBindButtons.containsKey(actionName)) {
+      return; // Don't start rebinding if button doesn't exist
+    }
+
     // Cancel any existing rebinding
     if (currentlyRebinding != null) {
       cancelRebinding();
