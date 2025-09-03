@@ -301,8 +301,10 @@ public class SettingsTab implements InventoryTabInterface {
         // Clear pending changes
         pendingKeybinds.clear();
         
+        // Use the reset method from UserSettings
+        UserSettings.resetKeybindsToDefaults();
+        
         // Update buttons to show default values
-        Keymap.setKeyMapDefaults();
         updateAllKeybindButtons();
     }
     
