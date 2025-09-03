@@ -172,7 +172,7 @@ public class SettingsTab implements InventoryTabInterface {
                 }
             });
             
-            table.add(keyButton).width(140).height(30).left();
+            table.add(keyButton).width(200).height(30).left();
             
             // Store the button with the action name as key
             keyBindButtons.put(actionName, keyButton);
@@ -203,7 +203,7 @@ public class SettingsTab implements InventoryTabInterface {
         
         currentlyRebinding = actionName;
         originalButtonText = button.getText().toString();
-        button.setText("Press Key...");
+        button.setText("Press Key");
         
         // Set up a temporary input processor to capture the next key press
         setupRebindingInput();
@@ -383,14 +383,17 @@ public class SettingsTab implements InventoryTabInterface {
             Keymap.setActionKeyCode(entry.getKey(), entry.getValue());
         }
         
+        // Update the settings object with current keybinds BEFORE saving
+        if (settings.keyBindSettings == null) {
+            settings.keyBindSettings = new UserSettings.KeyBindSettings();
+        }
+        settings.keyBindSettings.customKeybinds = new HashMap<>(Keymap.getKeyMap());
+        
         // Clear pending changes and update display
         pendingKeybinds.clear();
         updateAllKeybindButtons();
         
-        // Save current keybinds to user settings
-        UserSettings.saveCurrentKeybinds();
-        
-        // Save and apply immediately
+        // Save and apply immediately with updated keybinds
         UserSettings.set(settings, true);
         
         // Update currently playing music volume immediately
