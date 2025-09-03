@@ -107,7 +107,7 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">InventoryTab</a>()</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.entities.Entity)" class="member-name-link">InventoryTab</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -123,12 +123,11 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#load(com.badlogic.gdx.scenes.scene2d.Stage)" class="member-name-link">load</a><wbr>(com.badlogic.gdx.scenes.scene2d.Stage&nbsp;stage)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#unload(com.badlogic.gdx.scenes.scene2d.Stage)" class="member-name-link">unload</a><wbr>(com.badlogic.gdx.scenes.scene2d.Stage&nbsp;stage)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.scenes.scene2d.Actor</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build</a><wbr>(com.badlogic.gdx.scenes.scene2d.ui.Skin&nbsp;skin)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Builds and returns the UI for this tab.</div>
+</div>
 </div>
 </div>
 </div>
@@ -147,9 +146,9 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;()">
+<section class="detail" id="&lt;init&gt;(com.csse3200.game.entities.Entity)">
 <h3>InventoryTab</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryTab</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryTab</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player)</span></div>
 </section>
 </li>
 </ul>
@@ -161,22 +160,14 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="load(com.badlogic.gdx.scenes.scene2d.Stage)">
-<h3>load</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">load</span><wbr><span class="parameters">(com.badlogic.gdx.scenes.scene2d.Stage&nbsp;stage)</span></div>
+<section class="detail" id="build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">
+<h3>build</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.scenes.scene2d.Actor</span>&nbsp;<span class="element-name">build</span><wbr><span class="parameters">(com.badlogic.gdx.scenes.scene2d.ui.Skin&nbsp;skin)</span></div>
+<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InventoryTabInterface.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">InventoryTabInterface</a></code></span></div>
+<div class="block">Builds and returns the UI for this tab.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
-<dd><code><a href="InventoryTabInterface.html#load(com.badlogic.gdx.scenes.scene2d.Stage)">load</a></code>&nbsp;in interface&nbsp;<code><a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="unload(com.badlogic.gdx.scenes.scene2d.Stage)">
-<h3>unload</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">unload</span><wbr><span class="parameters">(com.badlogic.gdx.scenes.scene2d.Stage&nbsp;stage)</span></div>
-<dl class="notes">
-<dt>Specified by:</dt>
-<dd><code><a href="InventoryTabInterface.html#unload(com.badlogic.gdx.scenes.scene2d.Stage)">unload</a></code>&nbsp;in interface&nbsp;<code><a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></code></dd>
+<dd><code><a href="InventoryTabInterface.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">build</a></code>&nbsp;in interface&nbsp;<code><a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></code></dd>
 </dl>
 </section>
 </li>

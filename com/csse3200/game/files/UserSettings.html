@@ -110,8 +110,13 @@ loadScripts(document, 'script');</script>
 <div class="block">Stores chosen display settings.</div>
 </div>
 <div class="col-first odd-row-color"><code>static class&nbsp;</code></div>
-<div class="col-second odd-row-color"><code><a href="UserSettings.Settings.html" class="type-name-link" title="class in com.csse3200.game.files">UserSettings.Settings</a></code></div>
+<div class="col-second odd-row-color"><code><a href="UserSettings.KeyBindSettings.html" class="type-name-link" title="class in com.csse3200.game.files">UserSettings.KeyBindSettings</a></code></div>
 <div class="col-last odd-row-color">
+<div class="block">Stores custom keybind settings.</div>
+</div>
+<div class="col-first even-row-color"><code>static class&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="UserSettings.Settings.html" class="type-name-link" title="class in com.csse3200.game.files">UserSettings.Settings</a></code></div>
+<div class="col-last even-row-color">
 <div class="block">Stores game settings, can be serialised/deserialised.</div>
 </div>
 </div>
@@ -149,9 +154,24 @@ loadScripts(document, 'script');</script>
 <div class="block">Returns the normalized music volume stored in the user settings.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#set(com.csse3200.game.files.UserSettings.Settings,boolean)" class="member-name-link">set</a><wbr>(<a href="UserSettings.Settings.html" title="class in com.csse3200.game.files">UserSettings.Settings</a>&nbsp;settings,
- boolean&nbsp;applyImmediate)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#initialiseKeybinds()" class="member-name-link">initialiseKeybinds</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Initialises keybinds on game startup by applying saved settings or defaults</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#resetKeybindsToDefaults()" class="member-name-link">resetKeybindsToDefaults</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Resets all keybinds to their default values and saves the settings.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveCurrentKeybinds()" class="member-name-link">saveCurrentKeybinds</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Saves the current keymap state to user settings.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#set(com.csse3200.game.files.UserSettings.Settings,boolean)" class="member-name-link">set</a><wbr>(<a href="UserSettings.Settings.html" title="class in com.csse3200.game.files">UserSettings.Settings</a>&nbsp;settings,
+ boolean&nbsp;applyImmediate)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Set the stored user settings</div>
 </div>
 </div>
@@ -204,6 +224,29 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>settings</code> - Settings to apply</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="saveCurrentKeybinds()">
+<h3>saveCurrentKeybinds</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">saveCurrentKeybinds</span>()</div>
+<div class="block">Saves the current keymap state to user settings.
+ Creates a snapshot of all current keybinds and stores them as custom settings.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="resetKeybindsToDefaults()">
+<h3>resetKeybindsToDefaults</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetKeybindsToDefaults</span>()</div>
+<div class="block">Resets all keybinds to their default values and saves the settings.
+ Clears any custom keybind overrides and restores the original keymap.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="initialiseKeybinds()">
+<h3>initialiseKeybinds</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">initialiseKeybinds</span>()</div>
+<div class="block">Initialises keybinds on game startup by applying saved settings or defaults</div>
 </section>
 </li>
 <li>

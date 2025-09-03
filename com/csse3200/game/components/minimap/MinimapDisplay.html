@@ -147,10 +147,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.badlogic.gdx.graphics.Texture,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,com.csse3200.game.components.minimap.MinimapDisplay.MinimapOptions)" class="member-name-link">MinimapDisplay</a><wbr>(com.badlogic.gdx.graphics.Texture&nbsp;minimapTexture,
- com.badlogic.gdx.math.Vector2&nbsp;origin,
- com.badlogic.gdx.math.Vector2&nbsp;worldSize,
- float&nbsp;displaySize,
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(float,com.csse3200.game.components.minimap.MinimapDisplay.MinimapOptions)" class="member-name-link">MinimapDisplay</a><wbr>(float&nbsp;displaySize,
  <a href="MinimapDisplay.MinimapOptions.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay.MinimapOptions</a>&nbsp;options)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates a new minimap display.</div>
@@ -195,31 +192,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Z index controls rendering order within a layer.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMarker(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.utils.Drawable)" class="member-name-link">setMarker</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.scenes.scene2d.utils.Drawable&nbsp;drawable)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Updates the marker on the minimap with a new drawable.</div>
-</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setVisible(boolean)" class="member-name-link">setVisible</a><wbr>(boolean&nbsp;visible)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMarkerColor(com.csse3200.game.entities.Entity,com.badlogic.gdx.graphics.Color)" class="member-name-link">setMarkerColor</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.graphics.Color&nbsp;color)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Tints the marker on the minimap with a new color.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stopTracking(com.csse3200.game.entities.Entity)" class="member-name-link">stopTracking</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Stops tracking an entity on the minimap.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trackEntity(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.ui.Image)" class="member-name-link">trackEntity</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.scenes.scene2d.ui.Image&nbsp;marker)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds an entity to be tracked on the minimap.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Called once per frame of the game, and should be used for most component logic.</div>
 </div>
 </div>
@@ -252,19 +229,13 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.badlogic.gdx.graphics.Texture,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,com.csse3200.game.components.minimap.MinimapDisplay.MinimapOptions)">
+<section class="detail" id="&lt;init&gt;(float,com.csse3200.game.components.minimap.MinimapDisplay.MinimapOptions)">
 <h3>MinimapDisplay</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">MinimapDisplay</span><wbr><span class="parameters">(com.badlogic.gdx.graphics.Texture&nbsp;minimapTexture,
- com.badlogic.gdx.math.Vector2&nbsp;origin,
- com.badlogic.gdx.math.Vector2&nbsp;worldSize,
- float&nbsp;displaySize,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">MinimapDisplay</span><wbr><span class="parameters">(float&nbsp;displaySize,
  <a href="MinimapDisplay.MinimapOptions.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay.MinimapOptions</a>&nbsp;options)</span></div>
 <div class="block">Creates a new minimap display.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>minimapTexture</code> - The texture to use for the minimap background.</dd>
-<dd><code>origin</code> - The position that origin of the texture will have in the world.</dd>
-<dd><code>worldSize</code> - The size of the game world the texture represents.</dd>
 <dd><code>displaySize</code> - The size (width and height) of the minimap on the screen.</dd>
 <dd><code>options</code> - Options for the minimap shape and position.</dd>
 </dl>
@@ -301,56 +272,6 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="../Component.html#update()">update</a></code>&nbsp;in class&nbsp;<code><a href="../Component.html" title="class in com.csse3200.game.components">Component</a></code></dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="trackEntity(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.ui.Image)">
-<h3>trackEntity</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">trackEntity</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.scenes.scene2d.ui.Image&nbsp;marker)</span></div>
-<div class="block">Adds an entity to be tracked on the minimap.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>entity</code> - The entity to track.</dd>
-<dd><code>marker</code> - The image to use for the entity's marker.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="stopTracking(com.csse3200.game.entities.Entity)">
-<h3>stopTracking</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stopTracking</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity)</span></div>
-<div class="block">Stops tracking an entity on the minimap.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>entity</code> - The entity to stop tracking.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="setMarker(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.utils.Drawable)">
-<h3>setMarker</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setMarker</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.scenes.scene2d.utils.Drawable&nbsp;drawable)</span></div>
-<div class="block">Updates the marker on the minimap with a new drawable.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>entity</code> - The entity whose marker to change.</dd>
-<dd><code>drawable</code> - The new drawable for the marker.</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="setMarkerColor(com.csse3200.game.entities.Entity,com.badlogic.gdx.graphics.Color)">
-<h3>setMarkerColor</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setMarkerColor</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.graphics.Color&nbsp;color)</span></div>
-<div class="block">Tints the marker on the minimap with a new color.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>entity</code> - The entity whose marker to change.</dd>
-<dd><code>color</code> - The new color for the marker.</dd>
 </dl>
 </section>
 </li>
@@ -411,6 +332,16 @@ loadScripts(document, 'script');</script>
 <dd><code>dispose</code>&nbsp;in interface&nbsp;<code>com.badlogic.gdx.utils.Disposable</code></dd>
 <dt>Overrides:</dt>
 <dd><code><a href="../../rendering/RenderComponent.html#dispose()">dispose</a></code>&nbsp;in class&nbsp;<code><a href="../../rendering/RenderComponent.html" title="class in com.csse3200.game.rendering">RenderComponent</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setVisible(boolean)">
+<h3>setVisible</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setVisible</span><wbr><span class="parameters">(boolean&nbsp;visible)</span></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>visible</code> - : Set the visibility of minimap display to this value.</dd>
 </dl>
 </section>
 </li>
