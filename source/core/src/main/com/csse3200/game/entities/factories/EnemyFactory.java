@@ -114,9 +114,18 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
+
+        BombChaseTask chaseTask = new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f);
+        BombDropTask dropTask = new BombDropTask(target, 15, 1.5f, 2f, 3f);
+        CooldownTask cooldownTask = new CooldownTask(3f);
+
+        // When chase ends, activate cooldown
+        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+
         aiComponent
-                .addTask(new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f))
-                .addTask(new BombDropTask(target, 15, 1.5f, 2f, 3f));
+                .addTask(chaseTask)
+                .addTask(dropTask)
+                .addTask(cooldownTask);
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
