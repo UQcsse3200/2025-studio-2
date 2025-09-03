@@ -1,0 +1,12 @@
+{
+  "bomb": {
+    "speed": 3,
+    "damage": 75,
+    "area": 30
+  },
+  "laser": {
+    "speed": 10,
+    "damage": 13,
+    "area": 3
+  }
+}

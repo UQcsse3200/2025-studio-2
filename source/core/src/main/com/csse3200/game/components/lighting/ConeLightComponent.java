@@ -95,11 +95,6 @@ public class ConeLightComponent extends Component {
     public void dispose() {
         if (coneLight != null) {
             coneLight.remove();
-            try {
-                coneLight.dispose(); // attempt to dispose, may throw if already disposed
-            } catch (IllegalArgumentException ignored) {
-                // Ignore exception caused by already disposed buffer
-            }
             coneLight = null;
         }
     }

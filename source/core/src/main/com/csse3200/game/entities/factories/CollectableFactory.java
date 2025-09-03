@@ -24,7 +24,7 @@ public class CollectableFactory {
         Entity key = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/key_tester.png"))
+                .addComponent(new TextureRenderComponent("images/key.png"))
                 .addComponent(new KeyComponent(target));
 
         key.setScale(0.5f, 0.5f);

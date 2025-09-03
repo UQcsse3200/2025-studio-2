@@ -41,7 +41,6 @@ class DoorComponentTest {
         when(inputFactory.createForPlayer()).thenReturn(mock(InputComponent.class));
         ServiceLocator.registerInputService(inputSvc);
 
-        // If your entities render or dispose, also stub these:
         RenderService render = mock(RenderService.class);
         doNothing().when(render).register(any());
         doNothing().when(render).unregister(any());

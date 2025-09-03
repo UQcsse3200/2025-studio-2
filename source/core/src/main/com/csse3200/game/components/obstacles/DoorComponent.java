@@ -34,9 +34,6 @@ public class DoorComponent extends Component {
         entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
-
-        this.openDoor();
-        locked = false;
     }
 
     /**
@@ -71,19 +68,8 @@ public class DoorComponent extends Component {
             inv.useItem(keyId);
             locked = false;
             entity.getEvents().trigger("openDoor");
-//            entity.getEvents().trigger("collisionStart", this, player);
-
-            // Notify the area
-//            this.area.trigger("doorEntered", keyId, player);
-            this.area.trigger("doorEntered", keyId, player);
         }
     }
-
-//    public void gateCollide(Entity play) {
-//        Object player = play;
-//        Object level_gate = this;
-//        entity.getEvents().trigger("collisionStart", level_gate, player);
-//    }
 
     /**
      * Opens the door by making its collider a sensor (non-blocking).
@@ -92,11 +78,8 @@ public class DoorComponent extends Component {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         col.setSensor(true);
 
-        String texture = "images/door_open.png";
-        TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
-        if (render != null) {
-            render.setTexture(texture);
-        }
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_open.png");
     }
 
     /**
@@ -106,11 +89,8 @@ public class DoorComponent extends Component {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         if (col != null) col.setSensor(false);
 
-        String texture = "images/door_closed.png";
-        TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
-        if (render != null) {
-            render.setTexture(texture);
-        }
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_closed.png");
     }
 
     /**

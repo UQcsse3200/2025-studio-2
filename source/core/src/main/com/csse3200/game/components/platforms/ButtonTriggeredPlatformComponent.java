@@ -1,12 +1,13 @@
-package com.csse3200.game.components;
+package com.csse3200.game.components.platforms;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ButtonTriggeredPlatformComponent extends Component{
+public class ButtonTriggeredPlatformComponent extends Component {
     private final Vector2 offset;    // units per second
     private final float speed;
     private final float epsilon = 0.05f;

@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -20,10 +19,8 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
-import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.physics.ObjectContactListener;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -34,6 +31,7 @@ public class SprintOneGameArea extends GameArea {
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key_tester.png",
+            "images/key.png",
             "images/button_pushed.png",
             "images/blue_button.png",
             "images/blue_button_pushed.png",
@@ -72,10 +70,12 @@ public class SprintOneGameArea extends GameArea {
             "images/button.png",
             "images/button_pushed.png",
             "images/blue_button_pushed.png",
-            "images/blue_button.png"
+            "images/blue_button.png",
+            "images/drone.png",
+            "images/bomb.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
+            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -102,6 +102,7 @@ public class SprintOneGameArea extends GameArea {
 
         PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
         engine.getWorld().setContactListener(new ObjectContactListener());
+        keySpawned = false;
         loadAssets();
         displayUI();
 
@@ -112,12 +113,14 @@ public class SprintOneGameArea extends GameArea {
         spawnElevatorPlatform();
         spawnGate();
         spawnBoxes();
-        spawnKey();
-
         playMusic();
         spawnLights();
         spawnButtons();
         spawnTraps();
+        spawnDrone();
+        spawnPatrollingDrone();
+        spawnBomberDrone();
+        //spawnDoor();
 
     }
 
@@ -154,10 +157,10 @@ public class SprintOneGameArea extends GameArea {
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button2, new GridPoint2(8,5), true,  true);
+        spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
 
         Entity button3 = ButtonFactory.createButton(false, "nothing");
-        spawnEntityAt(button3, new GridPoint2(12,4), true,  true);
+        spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -171,7 +174,7 @@ public class SprintOneGameArea extends GameArea {
 
     public void spawnKey() {
         Entity key = CollectableFactory.createKey("door");
-        spawnEntityAt(key, new GridPoint2(17,17), true, true);
+        spawnEntityAt(key, new GridPoint2(13,17), true, true);
     }
 
     private void spawnLights() {
@@ -232,18 +235,24 @@ public class SprintOneGameArea extends GameArea {
         ground.setScale(15,1);
         spawnEntityAt(ground, groundPos, false, false);
 
-        GridPoint2 step1Pos = new GridPoint2(5,3);
+        GridPoint2 step1Pos = new GridPoint2(7,4);
         Entity step1 = PlatformFactory.createStaticPlatform();
         step1.setScale(2,1);
         spawnEntityAt(step1, step1Pos, false, false);
 
         float ts = terrain.getTileSize();
-        GridPoint2 movingPos = new GridPoint2(15,5);
-        Vector2 offsetWorld  = new Vector2(2f * ts, 6f);
+        GridPoint2 movingPos = new GridPoint2(21,2);
+        Vector2 offsetWorld  = new Vector2(2.5f * ts, 8f);
         float speed = 2f;
         Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
         movingPlatform.setScale(2,1f);
         spawnEntityAt(movingPlatform, movingPos, false, false);
+
+        // Platform for patrolling drone
+        GridPoint2 longPlatPos = new GridPoint2(3, 22);
+        Entity longPlatform = PlatformFactory.createStaticPlatform();
+        longPlatform.setScale(5, 0.25f);
+        spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
     private void spawnBoxes() {
@@ -253,18 +262,18 @@ public class SprintOneGameArea extends GameArea {
 
         staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
                 " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+        spawnEntityAt(staticBox, new GridPoint2(12,4), true,  true);
 
         // Moveable box
         Entity moveableBox = BoxFactory.createMoveableBox();
         moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
                 TooltipSystem.TooltipStyle.SUCCESS));
-        spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
+        spawnEntityAt(moveableBox, new GridPoint2(15,20), true,  true);
 
         // Autonomous box
         float startX = 3f;
         float endX = 10f;
-        float y = 17f;
+        float y = 25f;
         float speed = 2f;
 
         Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
@@ -278,13 +287,45 @@ public class SprintOneGameArea extends GameArea {
     /*
     Creates gate to test
     */
-        //GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-//        spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, true, true);
-
         GridPoint2 gatePos = new GridPoint2((int) 28, 5);
         Entity gate = ObstacleFactory.createDoor("forest", this);
         gate.setScale(1, 2);
         spawnEntityAt(gate, gatePos, true, true);
+    }
+
+    public void spawnDoor() {
+        Entity door = ObstacleFactory.createDoor("door", this);
+        door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(door, new GridPoint2(28,19), true, true);
+    }
+
+    private void spawnDrone() {
+        GridPoint2 spawnTile = new GridPoint2(27, 25);
+        Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+        Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
+        spawnEntityAt(drone, spawnTile, true, true);
+
+    }
+
+    private void spawnPatrollingDrone() {
+        GridPoint2 spawnTile = new GridPoint2(3, 22);
+
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(7, 22)),
+                terrain.tileToWorldPosition(new GridPoint2(11, 22))
+        };
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
+        spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+    }
+
+    private void spawnBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(3, 15);
+        Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+        Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
     }
 
     private void spawnElevatorPlatform() {
@@ -292,10 +333,10 @@ public class SprintOneGameArea extends GameArea {
 
         // Elevator: moves up 3 tiles when triggered
         Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                new Vector2(0, 6f * ts),
+                new Vector2(0, 18.5f * ts),
                 2f
         );
-        GridPoint2 elevatorPos = new GridPoint2(12, 10);
+        GridPoint2 elevatorPos = new GridPoint2(13, 3);
         elevator.setScale(2,0.5f);
         spawnEntityAt(elevator, elevatorPos, false, false);
         logger.info("Elevator spawned at {}", elevatorPos);
@@ -306,7 +347,7 @@ public class SprintOneGameArea extends GameArea {
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonPos = new GridPoint2(15, 11);
+        GridPoint2 buttonPos = new GridPoint2(17, 4);
         spawnEntityAt(button, buttonPos, true, true);
         logger.info("Elevator button spawned at {}", buttonPos);
 

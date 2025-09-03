@@ -26,7 +26,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 class KeyComponentTest {
 
-    private EntityService entityService;
     private Entity player;
     private InventoryComponent inv;
 
@@ -56,7 +55,7 @@ class KeyComponentTest {
         doNothing().when(rs).loadAll();
         ServiceLocator.registerResourceService(rs);
 
-        entityService = mock(EntityService.class);
+        EntityService entityService = mock(EntityService.class);
         doNothing().when(entityService).register(any());
         doNothing().when(entityService).unregister(any());
         ServiceLocator.registerEntityService(entityService);
@@ -105,7 +104,7 @@ class KeyComponentTest {
         key2.create();
 
         // Collect first key
-        key1.getEvents().trigger("onCollisionStart", player);
+        key1.getEvents().trigger("onCollisionStart",  player);
         assertTrue(inv.hasItem("pink-key"));
         int afterFirst = inv.getItemCount("pink-key");
 
@@ -118,15 +117,4 @@ class KeyComponentTest {
         key1.getEvents().trigger("onCollisionStart", player);
         assertEquals(afterFirst + 1, inv.getItemCount("pink-key"));
     }
-
-//    @Test
-//    void nonPlayerCollisionDoesNothing() {
-//        Entity key = CollectableFactory.createKey("pink-key");
-//        key.create();
-//        Entity rock = new Entity(); // no InventoryComponent, not a player
-//        rock.create();
-//
-//        key.getEvents().trigger("collisionStart", key, rock);
-//        assertEquals(0, inv.getTotalItemCount());
-//    }
 }
