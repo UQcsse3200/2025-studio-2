@@ -29,7 +29,7 @@ public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
-  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
+  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 5);
   private static final float WALL_WIDTH = 0.1f;
   private static boolean keySpawned;
   private static final String[] forestTextures = {
@@ -40,13 +40,15 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
-    "images/key_tester.png",
+    "images/key.png",
     "images/hex_grass_1.png",
     "images/hex_grass_2.png",
     "images/hex_grass_3.png",
     "images/iso_grass_1.png",
     "images/iso_grass_2.png",
     "images/iso_grass_3.png",
+    "images/drone.png",
+    "images/bomb.png",
     "images/platform.png",
     "images/gate.png",
     "images/button.png",
@@ -65,10 +67,12 @@ public class ForestGameArea extends GameArea {
     "images/red_button.png",
     "images/red_button_pushed.png",
     "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png"
+    "images/minimap_player_marker.png",
+          "images/door_open.png",
+          "images/door_closed.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
+    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -102,6 +106,10 @@ public class ForestGameArea extends GameArea {
     createMinimap();
 
     player = spawnPlayer();
+
+    spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -110,9 +118,10 @@ public class ForestGameArea extends GameArea {
     spawnButtons();
 
     spawnLights(); // uncomment to spawn in lights
-
+      // spawnKey();
     spawnTraps();
     playMusic();
+    spawnDoor();
   }
 
   private void createMinimap() {
@@ -203,6 +212,35 @@ public class ForestGameArea extends GameArea {
       Entity ghost = NPCFactory.createGhost(player);
       spawnEntityAt(ghost, randomPos, true, true);
     }
+  }
+
+  private void spawnDrone() {
+    GridPoint2 spawnTile = new GridPoint2(16, 11);
+    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
+    spawnEntityAt(drone, spawnTile, true, true);
+
+  }
+
+  private void spawnPatrollingDrone() {
+    GridPoint2 spawnTile = new GridPoint2(4, 11);
+
+    Vector2[] patrolRoute = {
+            terrain.tileToWorldPosition(spawnTile),
+            terrain.tileToWorldPosition(new GridPoint2(6, 11)),
+            terrain.tileToWorldPosition(new GridPoint2(8, 11))
+    };
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
+    spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+  }
+
+  private void spawnBomberDrone() {
+    GridPoint2 spawnTile = new GridPoint2(2, 11);
+    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
+    spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 
   private void spawnGhostKing() {
@@ -301,7 +339,14 @@ public class ForestGameArea extends GameArea {
 
   public void spawnKey() {
       Entity key = CollectableFactory.createKey("door");
-      spawnEntityAt(key, new GridPoint2(17,17), true, true);
+      key.addComponent(new TooltipSystem.TooltipComponent("Collect the key", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(key, new GridPoint2(17,19), true, true);
+  }
+
+  public void spawnDoor() {
+      Entity door = ObstacleFactory.createDoor("door");
+      door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+      spawnEntityAt(door, new GridPoint2(3,10), true, true);
   }
 
   private void spawnLights() {
@@ -315,7 +360,7 @@ public class ForestGameArea extends GameArea {
               0f,
               35f
       );
-      spawnEntityAt(securityLight, new GridPoint2(5, 5), true, true);
+      spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
   }
 
   private void playMusic() {

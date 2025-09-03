@@ -95,7 +95,6 @@ public class ConeLightComponent extends Component {
     public void dispose() {
         if (coneLight != null) {
             coneLight.remove();
-            coneLight.dispose();
             coneLight = null;
         }
     }
