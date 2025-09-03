@@ -23,7 +23,6 @@ public abstract class GameArea implements Disposable {
 
   protected GameArea() {
     areaEntities = new ArrayList<>();
-    areaEntities.add(player);
   }
 
   /** Create the game area in the world. */
