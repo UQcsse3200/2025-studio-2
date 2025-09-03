@@ -91,7 +91,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     }
 
 
-    //updated this function to stop chasing once the player is in threshold
+    // Calculates the current distance between the drone and its target
     private float getDistanceToTarget() {
         return target.getPosition().dst(owner.getEntity().getPosition());
     }
@@ -122,7 +122,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
             return -1;
         }
 
-        // Otherwise, keep chasing
+        // Otherwise keep chasing
         return priority;
     }
 

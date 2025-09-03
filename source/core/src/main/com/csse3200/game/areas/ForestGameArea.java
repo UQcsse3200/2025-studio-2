@@ -324,7 +324,8 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnLights() {
-    // see the LightFactory class for more details on spawning these
+    // see the LightFactory class for more details on spawning these,
+    // CHANGED from team5: Stored securityLight as class field instead of local variable so drones can access it
     securityLight = LightFactory.createSecurityLight(
               player,
               PhysicsLayer.OBSTACLE,
