@@ -95,7 +95,9 @@ public class ConeLightComponent extends Component {
     public void dispose() {
         if (coneLight != null) {
             coneLight.remove();
-            coneLight.dispose();
+            // box2D's dispose() causes a crash when resetting the level,
+            // I have no idea why and will try to fix ASAP, sorry Tristyn - Seva
+//            coneLight.dispose();
             coneLight = null;
         }
     }

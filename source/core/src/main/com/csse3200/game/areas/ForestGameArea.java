@@ -138,7 +138,7 @@ public class ForestGameArea extends GameArea {
     spawnButtons();
 
     // LIGHTING ENGINE DISPOSAL IS NOT CURRENTLY COMPATIBLE WITH LEVEL RESET.
-//    spawnLights(); // uncomment to spawn in lights
+    spawnLights(); // uncomment to spawn in lights
 
     spawnTraps();
     playMusic();
