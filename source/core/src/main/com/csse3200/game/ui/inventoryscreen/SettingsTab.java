@@ -19,15 +19,15 @@ import java.util.Map;
  * Provides access to commonly adjusted game settings during gameplay.
  * 
  * Features included:
- * - Master Volume: Control overall game volume (0-100%) with real-time updates
- * - Music Volume: Control background music volume (0-100%) with immediate effect
- * - Key Bindings: Interactive display of all current keybinds with full rebinding functionality
+ * - Master Volume: Control overall game volume (0-100%)
+ * - Music Volume: Control background music volume (0-100%)
+ * - Key Bindings: Interactive display of all current keybinds with rebinding functionality
  * 
  * This is designed for quick in-game access to essential settings. For advanced display 
  * settings (FPS, fullscreen, VSync, resolution), use the main settings menu instead.
  * 
- * The keybind section dynamically loads all actions from the Keymap, ensuring 
- * comprehensive coverage including player controls, terminal keys, and pause menu shortcuts.
+ * The keybind section dynamically loads all from the Keymap,
+ * including player controls and pause menu shortcuts.
  */
 public class SettingsTab implements InventoryTabInterface {
     
@@ -402,6 +402,7 @@ public class SettingsTab implements InventoryTabInterface {
         updateCurrentMusicVolume();
     }
     
+    // THIS WILL NEED TO BE UPDATED IF THE GAME AREA OR MUSIC TRACK CHANGES
     private void updateCurrentMusicVolume() {
         try {
             // Try to update ForestGameArea background music
@@ -411,11 +412,8 @@ public class SettingsTab implements InventoryTabInterface {
                 music.setVolume(UserSettings.getMusicVolumeNormalized());
             }
         } catch (Exception e) {
-            // Music asset may not be loaded or playing, which is fine
-            // This just means we're not in the forest area or music isn't playing
+            // Music asset may not be loaded or playing.
         }
-        
-        // Could add more music tracks here if there are other areas with different music
     }
     
     /**
