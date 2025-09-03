@@ -270,16 +270,18 @@ public class SprintOneGameArea extends GameArea {
 
         spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
     }
+
     private void spawnGate() {
     /*
     Creates gate to test
     */
-        //float gateX = terrain.getMapBounds(0).x * terrain.getTileSize();
+        //GridPoint2 gatePos = new GridPoint2((int) 28, 5);
+//        spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, true, true);
+
         GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-        //Entity gate = GateFactory.createGate();
-        //gate.setScale(1, 2);
-        //spawnEntityAt(gate, gatePos, false, false);
-        spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, true, true);
+        Entity gate = ObstacleFactory.createDoor("forest", this);
+        gate.setScale(1, 2);
+        spawnEntityAt(gate, gatePos, true, true);
     }
 
     private void spawnElevatorPlatform() {
