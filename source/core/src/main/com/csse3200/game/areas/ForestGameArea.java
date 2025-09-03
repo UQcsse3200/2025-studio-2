@@ -132,9 +132,9 @@ public class ForestGameArea extends GameArea {
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset);
 
-//    spawnDrone();             // Play with idle/chasing drones (unless chasing)
-//    spawnPatrollingDrone();   // Play with patrolling/chasing drones
-//    spawnBomberDrone();       // Play with bomber drones
+    spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
 
