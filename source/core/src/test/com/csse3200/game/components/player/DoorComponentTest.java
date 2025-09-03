@@ -71,8 +71,8 @@ class DoorComponentTest {
         return player;
     }
 
-    private Entity makeDoor(String keyId) {
-        Entity door = ObstacleFactory.createDoor(keyId, game);
+    private Entity makeDoor(String keyId, String levelId) {
+        Entity door = ObstacleFactory.createDoor(keyId, game, levelId);
         door.create();
         return door;
     }
@@ -87,12 +87,12 @@ class DoorComponentTest {
     @Test
     void collideWithoutKey_doorRemainsLocked() {
         Entity player = makePlayer();
-        Entity door   = makeDoor("pink-key");
+        Entity door   = makeDoor("pink-key", "level1");
 
         DoorComponent dc = door.getComponent(DoorComponent.class);
         door.getEvents().trigger("onCollisionStart", player);
 
-        //assertTrue(dc.isLocked(), "Door should stay locked when player has no key");
+        assertTrue(dc.isLocked(), "Door should stay locked when player has no key");
     }
 
     @Test
@@ -115,15 +115,15 @@ class DoorComponentTest {
         key.getEvents().trigger("onCollisionStart", player);
         assertTrue(inv.hasItem("pink-key"), "Sanity: player must have key before trying door");
 
-        Entity door = makeDoor("pink-key");
+        Entity door = makeDoor("pink-key", "level1");
         DoorComponent dc = door.getComponent(DoorComponent.class);
-        //assertTrue(dc.isLocked(), "Sanity: door starts locked");
+        assertTrue(dc.isLocked(), "Sanity: door starts locked");
 
         // Now collide: should unlock & consume key
         door.getEvents().trigger("onCollisionStart", player);
 
-        //assertFalse(dc.isLocked(), "Door should be unlocked after collision with correct key");
-        //assertFalse(inv.hasItem("pink-key"), "Key should be consumed when unlocking the door");
+        assertFalse(dc.isLocked(), "Door should be unlocked after collision with correct key");
+        assertFalse(inv.hasItem("pink-key"), "Key should be consumed when unlocking the door");
     }
 }
 
