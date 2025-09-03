@@ -48,12 +48,8 @@ public class PlayerFactory {
             .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
             .addComponent(new InventoryComponent())
             .addComponent(inputComponent)
-            .addComponent(new PlayerStatsDisplay());
-
-    Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
-    if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
-      player.addComponent(new MinimapComponent(minimapDisplay, "images/minimap_player_marker.png"));
-    }
+            .addComponent(new PlayerStatsDisplay())
+            .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
     PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
     player.getComponent(ColliderComponent.class).setDensity(1.5f);
