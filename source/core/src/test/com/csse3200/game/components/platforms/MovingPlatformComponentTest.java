@@ -19,11 +19,12 @@ class MovingPlatformComponentTest {
 
     @BeforeEach
     void setUp() {
-        platform = new Entity();
+        // Spy on Entity so we can override getPosition()
+        platform = spy(new Entity());
 
         // Mock Body and PhysicsComponent
         mockBody = mock(Body.class);
-        when(mockBody.getPosition()).thenReturn(new Vector2(0, 0));
+        when(mockBody.getAngle()).thenReturn(0f);
 
         physics = mock(PhysicsComponent.class);
         when(physics.getBody()).thenReturn(mockBody);
@@ -32,7 +33,6 @@ class MovingPlatformComponentTest {
 
         component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
         platform.addComponent(component);
-        platform.create();
     }
 
     @Test
@@ -43,33 +43,27 @@ class MovingPlatformComponentTest {
 
     @Test
     void testPlatformMovesTowardTarget() {
+        // Simulate starting at origin
+        doReturn(new Vector2(0f, 0f)).when(platform).getPosition();
+
+        component.create();
         component.update();
+
         verify(mockBody, atLeastOnce()).setLinearVelocity(any(Vector2.class));
     }
 
     @Test
     void testPlatformReversesWhenCloseToTarget() {
-        // Spy on the entity so we can control getPosition()
-        platform = spy(new Entity());
-        doReturn(new Vector2(5f, 0f)).when(platform).getPosition();
-
-        // Attach mocked physics
-        mockBody = mock(Body.class);
-        when(mockBody.getAngle()).thenReturn(0f);
-        physics = mock(PhysicsComponent.class);
-        when(physics.getBody()).thenReturn(mockBody);
-
-        platform.addComponent(physics);
-
-        component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
-        platform.addComponent(component);
+        // First call to getPosition() during create() sets origin
+        doReturn(new Vector2(0f, 0f)).when(platform).getPosition();
         component.create();
 
-        // Run update — should trigger reversal branch
+        // Now simulate being exactly at the target
+        doReturn(new Vector2(5f, 0f)).when(platform).getPosition();
+
         component.update();
 
         verify(mockBody).setTransform(any(Vector2.class), anyFloat());
         verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(new Vector2(0, 0), 0.0001f)));
     }
-
 }
