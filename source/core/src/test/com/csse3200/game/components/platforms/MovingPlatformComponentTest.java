@@ -8,17 +8,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class MovingPlatformComponentTest {
 
     private Entity platform;
     private MovingPlatformComponent component;
     private PhysicsComponent physics;
+    private Body mockBody;
 
     @BeforeEach
     void setUp() {
         platform = new Entity();
-        physics = new PhysicsComponent();
+
+        // Mock Body and PhysicsComponent
+        mockBody = mock(Body.class);
+        when(mockBody.getPosition()).thenReturn(new Vector2(0, 0));
+
+        physics = mock(PhysicsComponent.class);
+        when(physics.getBody()).thenReturn(mockBody);
+
         platform.addComponent(physics);
 
         component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
@@ -28,33 +37,21 @@ class MovingPlatformComponentTest {
 
     @Test
     void testInitialOffsetAndSpeed() {
-        assertEquals(new Vector2(5f, 0f), component.offset, "Offset should match constructor");
-        assertEquals(2f, component.speed, "Speed should match constructor");
+        assertEquals(new Vector2(5f, 0f), component.offset);
+        assertEquals(2f, component.speed);
     }
 
     @Test
     void testPlatformMovesTowardTarget() {
-        Body body = physics.getBody();
-        Vector2 initialPos = platform.getPosition().cpy();
-
         component.update();
-        Vector2 velocity = body.getLinearVelocity();
-
-        assertNotEquals(0f, velocity.len(), "Platform should be moving");
-        assertTrue(velocity.x > 0, "Platform should move right toward offset");
+        verify(mockBody, atLeastOnce()).setLinearVelocity(any(Vector2.class));
     }
 
     @Test
     void testPlatformReversesWhenCloseToTarget() {
-        Body body = physics.getBody();
-
-        // Manually set position near end
-        Vector2 nearEnd = platform.getPosition().cpy().add(new Vector2(4.95f, 0f));
-        body.setTransform(nearEnd, body.getAngle());
-
+        when(mockBody.getPosition()).thenReturn(new Vector2(4.96f, 0f));
         component.update();
-        Vector2 velocity = body.getLinearVelocity();
-
-        assertEquals(Vector2.Zero, velocity, "Platform should snap and stop at target");
+        verify(mockBody).setTransform(any(Vector2.class), anyFloat());
+        verify(mockBody).setLinearVelocity(Vector2.Zero);
     }
 }

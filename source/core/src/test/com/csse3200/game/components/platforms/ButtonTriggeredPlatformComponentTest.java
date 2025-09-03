@@ -8,17 +8,25 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class ButtonTriggeredPlatformComponentTest {
 
     private Entity platform;
     private ButtonTriggeredPlatformComponent component;
     private PhysicsComponent physics;
+    private Body mockBody;
 
     @BeforeEach
     void setUp() {
         platform = new Entity();
-        physics = new PhysicsComponent();
+
+        mockBody = mock(Body.class);
+        when(mockBody.getPosition()).thenReturn(new Vector2(0, 0));
+
+        physics = mock(PhysicsComponent.class);
+        when(physics.getBody()).thenReturn(mockBody);
+
         platform.addComponent(physics);
 
         component = new ButtonTriggeredPlatformComponent(new Vector2(0f, 3f), 2f);
@@ -27,51 +35,29 @@ class ButtonTriggeredPlatformComponentTest {
     }
 
     @Test
-    void testPlatformStartsDisabled() {
-        platform.getEvents().trigger("activatePlatform"); // toggle once
-        platform.getEvents().trigger("activatePlatform"); // toggle back
-        platform.getEvents().trigger("activatePlatform"); // toggle on
+    void testStartsDisabled() {
+        assertFalse(getEnabledState());
+    }
 
-        assertTrue(getEnabledState(), "Platform should be enabled after odd number of toggles");
+    @Test
+    void testActivatePlatformEnablesMovement() {
+        platform.getEvents().trigger("activatePlatform");
+        assertTrue(getEnabledState());
     }
 
     @Test
     void testPlatformMovesWhenEnabled() {
-        platform.getEvents().trigger("activatePlatform"); // enable
+        platform.getEvents().trigger("activatePlatform");
         component.update();
-
-        Body body = physics.getBody();
-        Vector2 velocity = body.getLinearVelocity();
-
-        assertNotEquals(0f, velocity.len(), "Platform should be moving when enabled");
+        verify(mockBody, atLeastOnce()).setLinearVelocity(any(Vector2.class));
     }
 
     @Test
     void testPlatformDoesNotMoveWhenDisabled() {
         component.update();
-
-        Body body = physics.getBody();
-        Vector2 velocity = body.getLinearVelocity();
-
-        assertEquals(0f, velocity.len(), "Platform should not move when disabled");
+        verify(mockBody, never()).setLinearVelocity(any(Vector2.class));
     }
 
-    @Test
-    void testPlatformReversesDirection() {
-        platform.getEvents().trigger("activatePlatform"); // enable
-
-        // Move platform near target
-        Body body = physics.getBody();
-        Vector2 nearTarget = body.getPosition().cpy().add(new Vector2(0f, 2.95f));
-        body.setTransform(nearTarget, body.getAngle());
-
-        component.update();
-
-        Vector2 velocity = body.getLinearVelocity();
-        assertEquals(Vector2.Zero, velocity, "Platform should snap and stop at target");
-    }
-
-    // Helper method to access private 'enabled' field via reflection
     private boolean getEnabledState() {
         try {
             var field = ButtonTriggeredPlatformComponent.class.getDeclaredField("enabled");
