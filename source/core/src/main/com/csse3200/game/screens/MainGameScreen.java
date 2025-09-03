@@ -105,28 +105,31 @@ public class MainGameScreen extends ScreenAdapter {
     //forestGameArea.create();
   }
 
-  private void switchArea(String keyId, GameArea oldArea, Entity player) {
+  private void switchArea(String levelId, GameArea oldArea, Entity player) {
     Gdx.app.postRunnable(() -> {
       Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-      if (keyId != "") {
+      if (levelId != "") {
         oldArea.dispose();
         TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
         GameArea newArea = null;
-        String newKey = "";
-        if ("forest".equals(keyId)) {
+        String newLevel = "";
+        if ("forest".equals(levelId)) {
           newArea = new ForestGameArea(terrainFactory);
-          newKey = "sprint1";
-        } else if ("sprint1".equals(keyId)) {
+          newLevel = "sprint1";
+        } else if ("sprint1".equals(levelId)) {
           newArea = new SprintOneGameArea(terrainFactory);
-          newKey = "forest";
+          newLevel = "forest";
+        } else if ("cave".equals(levelId)) {
+          newArea = new CaveGameArea(terrainFactory);
+          newLevel = "sprint1";
         }
 
         if (newArea != null) {
           GameArea finalNewArea = newArea; // effectively final
-          String finalNewKey = newKey;
+          String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewKey, finalNewArea, player)
+                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
           );
           finalNewArea.create();
 //        Entity newPlayer = finalNewArea.getPlayer();
