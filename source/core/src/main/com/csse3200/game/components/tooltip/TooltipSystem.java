@@ -171,7 +171,7 @@ public class TooltipSystem {
             // Add physics components for collision detection
             triggerZoneEntity.addComponent(new PhysicsComponent().setBodyType(com.badlogic.gdx.physics.box2d.BodyDef.BodyType.StaticBody));
             HitboxComponent hitbox = new HitboxComponent();
-            hitbox.setLayer(PhysicsLayer.OBSTACLE);
+            hitbox.setLayer(PhysicsLayer.TOOLTIP);
             triggerZoneEntity.addComponent(hitbox);
             
             // Add a component to handle the tooltip logic
@@ -227,6 +227,7 @@ public class TooltipSystem {
      */
     public static class TooltipDisplay extends UIComponent {
         
+        private Table rootTable;
         private Table tooltipTable;
         private Label tooltipLabel;
         private boolean isVisible = false;
@@ -235,6 +236,13 @@ public class TooltipSystem {
         public void create() {
             super.create();
             TooltipManager.setActiveDisplay(this);
+            
+            // Create root table for layout
+            rootTable = new Table();
+            rootTable.setFillParent(true);
+            rootTable.bottom().left(); // Position in bottom-left
+            rootTable.pad(20f); // Add padding
+            stage.addActor(rootTable);
         }
         
         /**
@@ -256,7 +264,7 @@ public class TooltipSystem {
          */
         public void hideTooltip() {
             if (tooltipTable != null) {
-                tooltipTable.remove();
+                rootTable.clear(); // Clear from root table
                 tooltipTable = null;
                 tooltipLabel = null;
             }
@@ -281,28 +289,22 @@ public class TooltipSystem {
             // Add label to table with padding
             tooltipTable.add(tooltipLabel).pad(10f).prefWidth(300f);
             
-            // Add table to stage
-            stage.addActor(tooltipTable);
-            
-            // Position will be set in draw() method
+            // Add table to root table instead of directly to stage
+            rootTable.add(tooltipTable);
         }
         
         @Override
         public void draw(SpriteBatch batch) {
-            if (isVisible && tooltipTable != null) {
-                // Position tooltip in bottom-left corner with spacing
-                float spacing = 20f;
-                
-                tooltipTable.setPosition(spacing, spacing);
-                
-                // Pack table to fit content
-                tooltipTable.pack();
-            }
+            // No manual positioning needed - Scene2D handles it automatically
         }
         
         @Override
         public void dispose() {
             hideTooltip();
+            if (rootTable != null) {
+                rootTable.remove();
+                rootTable = null;
+            }
             super.dispose();
         }
     }

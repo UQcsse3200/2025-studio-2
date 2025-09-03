@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
@@ -49,6 +50,8 @@ public class MainGameScreen extends ScreenAdapter {
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
 
+  private GameArea forestGameArea;
+
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -76,14 +79,18 @@ public class MainGameScreen extends ScreenAdapter {
     lightingEngine = lightingService.getEngine();
 
     loadAssets();
-    createUI();
 
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+    forestGameArea = new ForestGameArea(terrainFactory);
     //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
     //caveGameArea.create();
     forestGameArea.create();
+
+    // Have to createUI after the game area is created since createUI
+    // needs the player which is created in the game area
+    createUI();
+
   }
 
   @Override
@@ -158,7 +165,7 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void createUI() {
     logger.debug("Creating ui");
-    pauseMenuDisplay = new PauseMenuDisplay(this);
+    pauseMenuDisplay = new PauseMenuDisplay(this, forestGameArea.getPlayer(), this.game);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();

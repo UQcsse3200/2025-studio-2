@@ -8,11 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 import com.csse3200.game.ui.inventoryscreen.MapTab;
+import com.csse3200.game.ui.inventoryscreen.SettingsTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 import com.csse3200.game.components.player.InventoryComponent;
 
@@ -26,15 +28,21 @@ public class PauseMenuDisplay extends UIComponent {
     private Table tabContent;
     private Table bottomButtons;
 
-    private final InventoryTab inventoryTab = new InventoryTab();
+    private Entity player;
+
+    private final InventoryTab inventoryTab;
     private final UpgradesTab upgradesTab = new UpgradesTab();
+    private final SettingsTab settingsTab = new SettingsTab();
     private final MapTab mapTab = new MapTab();
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay (MainGameScreen screen) {
+    public PauseMenuDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.screen = screen;
+        this.player = player;
+        this.inventoryTab = new InventoryTab(player);
+        this.game = game;
     }
 
     @Override
@@ -122,8 +130,8 @@ public class PauseMenuDisplay extends UIComponent {
         Actor ui = switch (currentTab) {
             case INVENTORY -> inventoryTab.build(skin);
             case UPGRADES -> upgradesTab.build(skin);
+            case SETTINGS -> settingsTab.build(skin);
             case MAP -> mapTab.build(skin);
-            default -> new Label("SETTINGS", skin);
         };
         tabContent.add(ui).center();
     }
