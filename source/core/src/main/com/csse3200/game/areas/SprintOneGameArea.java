@@ -33,6 +33,7 @@ public class SprintOneGameArea extends GameArea {
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key_tester.png",
+            "images/key.png",
             "images/button_pushed.png",
             "images/blue_button.png",
             "images/blue_button_pushed.png",
