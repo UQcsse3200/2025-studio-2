@@ -435,4 +435,12 @@ public class ForestGameArea extends GameArea {
     ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
     this.unloadAssets();
   }
+
+  /**
+   * Gets the player entity in this game area.
+   * @return the player entity, or null if no player exists
+   */
+  public Entity getPlayer() {
+    return player;
+  }
 }

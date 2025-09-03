@@ -1,22 +1,17 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
-import com.csse3200.game.areas.SprintOneGameArea;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
-<<<<<<< HEAD
 import com.csse3200.game.components.player.PlayerActions;
-=======
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
->>>>>>> main
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -46,26 +41,24 @@ public class MainGameScreen extends ScreenAdapter {
     private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
     private static final String[] mainGameTextures = {"images/heart.png"};
     private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
-    private static final float DEADZONE_H_FRAC = 0.40f;
-    private static final float DEADZONE_V_FRAC = 0.35f;
-    private static final float CAMERA_LERP = 0.15f;
+    
+    // Camera follow parameters
+    private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
+    private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
+    private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
     private final GdxGame game;
     private final Renderer renderer;
     private final PhysicsEngine physicsEngine;
     private final LightingEngine lightingEngine;
 
-<<<<<<< HEAD
-  private boolean paused = false;
-  private PauseMenuDisplay pauseMenuDisplay;
+    private boolean paused = false;
+    private PauseMenuDisplay pauseMenuDisplay;
 
+    private GameArea forestGameArea;
 
-  public MainGameScreen(GdxGame game) {
-    this.game = game;
-=======
     public MainGameScreen(GdxGame game) {
         this.game = game;
->>>>>>> 7a71c0d95170f25c5bd8c5a17a60d69d9704a260
 
         logger.debug("Initialising main game screen services");
         ServiceLocator.registerTimeSource(new GameTime());
@@ -81,10 +74,7 @@ public class MainGameScreen extends ScreenAdapter {
         ServiceLocator.registerRenderService(new RenderService());
 
         renderer = RenderFactory.createRenderer();
-
-        // 设置初始相机位置
         renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
-
         renderer.getDebug().renderPhysicsWorld(physicsEngine.getWorld());
 
         // Registering the new lighting service with the service manager
@@ -93,49 +83,39 @@ public class MainGameScreen extends ScreenAdapter {
         lightingEngine = lightingService.getEngine();
 
         loadAssets();
-        createUI();
 
-<<<<<<< HEAD
-    logger.debug("Initialising main game screen entities");
-    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
-    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
-    SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
-    sprintOneGameArea.create();
-    //caveGameArea.create();
-    //forestGameArea.create();
-  }
-
-  @Override
-  public void render(float delta) {
-<<<<<<< HEAD
-=======
         logger.debug("Initialising main game screen entities");
         TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-        ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+        forestGameArea = new ForestGameArea(terrainFactory);
         //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
         //caveGameArea.create();
         forestGameArea.create();
+
+        // Have to createUI after the game area is created since createUI
+        // needs the player which is created in the game area
+        createUI();
     }
 
     @Override
     public void render(float delta) {
->>>>>>> 7a71c0d95170f25c5bd8c5a17a60d69d9704a260
-
-        Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
-
-<<<<<<< HEAD
-    physicsEngine.update();
-    ServiceLocator.getEntityService().update();
-=======
-    if (!paused) {
-        physicsEngine.update();
-        ServiceLocator.getEntityService().update();
+        if (!paused) {
+            // Update camera position to follow player
+            updateCameraFollow();
+            
+            physicsEngine.update();
+            ServiceLocator.getEntityService().update();
+        }
+        renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
     }
->>>>>>> main
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
-  }
-=======
+
+    /**
+     * Updates the camera position to follow the player entity.
+     * The camera only moves when the player is near the edge of the screen.
+     */
+    private void updateCameraFollow() {
+        Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
+        
+        // Find the player entity
         Vector2 playerPosition = null;
         Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
         for (Entity entity : entities) {
@@ -144,12 +124,13 @@ public class MainGameScreen extends ScreenAdapter {
                 break;
             }
         }
->>>>>>> 7a71c0d95170f25c5bd8c5a17a60d69d9704a260
 
         if (playerPosition != null) {
+            // Get camera viewport dimensions
             float viewW = renderer.getCamera().getCamera().viewportWidth;
             float viewH = renderer.getCamera().getCamera().viewportHeight;
 
+            // Calculate deadzone boundaries (area where camera doesn't move)
             float dzW = viewW * DEADZONE_H_FRAC;
             float dzH = viewH * DEADZONE_V_FRAC;
 
@@ -158,63 +139,36 @@ public class MainGameScreen extends ScreenAdapter {
             float dzBottom = currentCamPos.y - dzH * 0.5f;
             float dzTop    = currentCamPos.y + dzH * 0.5f;
 
+            // Calculate target camera position
             float targetX = currentCamPos.x;
             float targetY = currentCamPos.y;
 
+            // Only move camera if player is outside the deadzone
             if (playerPosition.x < dzLeft) {
+                // Player is too far left, move camera left
                 targetX -= (dzLeft - playerPosition.x);
             } else if (playerPosition.x > dzRight) {
+                // Player is too far right, move camera right
                 targetX += (playerPosition.x - dzRight);
             }
 
             if (playerPosition.y < dzBottom) {
+                // Player is too far down, move camera down
                 targetY -= (dzBottom - playerPosition.y);
             } else if (playerPosition.y > dzTop) {
+                // Player is too far up, move camera up
                 targetY += (playerPosition.y - dzTop);
             }
 
+            // Smoothly interpolate camera position for smooth movement
             float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP;
             float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP;
 
+            // Update camera position
             renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
         }
-
-        physicsEngine.update();
-        ServiceLocator.getEntityService().update();
-        renderer.render(lightingEngine);
     }
 
-<<<<<<< HEAD
-  public boolean isPaused() {
-      return paused;
-  }
-
-  public void togglePaused() {
-      paused = !paused;
-  }
-
-  public void togglePauseMenu(Tab tab) {
-      pauseMenuDisplay.setTab(tab);
-      pauseMenuDisplay.setVisible(paused);
-  }
-
-  /**
-   * Creates the main game's ui including components for rendering ui elements to the screen and
-   * capturing and handling ui input.
-   */
-  private void createUI() {
-    logger.debug("Creating ui");
-    pauseMenuDisplay = new PauseMenuDisplay(this);
-    Stage stage = ServiceLocator.getRenderService().getStage();
-
-    Entity ui = new Entity();
-    ui.addComponent(new InputDecorator(stage, 10))
-        .addComponent(new PerformanceDisplay())
-        .addComponent(new MainGameActions(this.game))
-        .addComponent(new MainGameExitDisplay())
-        .addComponent(pauseMenuDisplay)
-        .addComponent(new PauseInputComponent(this));
-=======
     @Override
     public void resize(int width, int height) {
         renderer.resize(width, height);
@@ -225,7 +179,6 @@ public class MainGameScreen extends ScreenAdapter {
     public void pause() {
         logger.info("Game paused");
     }
->>>>>>> 7a71c0d95170f25c5bd8c5a17a60d69d9704a260
 
     @Override
     public void resume() {
@@ -260,24 +213,35 @@ public class MainGameScreen extends ScreenAdapter {
         resourceService.unloadAssets(mainGameTextures);
     }
 
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void togglePaused() {
+        paused = !paused;
+    }
+
+    public void togglePauseMenu(Tab tab) {
+        pauseMenuDisplay.setTab(tab);
+        pauseMenuDisplay.setVisible(paused);
+    }
+
     /**
      * Creates the main game's ui including components for rendering ui elements to the screen and
      * capturing and handling ui input.
      */
     private void createUI() {
         logger.debug("Creating ui");
+        pauseMenuDisplay = new PauseMenuDisplay(this, forestGameArea.getPlayer(), this.game);
         Stage stage = ServiceLocator.getRenderService().getStage();
-        InputComponent inputComponent =
-                ServiceLocator.getInputService().getInputFactory().createForTerminal();
 
         Entity ui = new Entity();
         ui.addComponent(new InputDecorator(stage, 10))
-                .addComponent(new PerformanceDisplay())
-                .addComponent(new MainGameActions(this.game))
-                .addComponent(new MainGameExitDisplay())
-                .addComponent(new Terminal())
-                .addComponent(inputComponent)
-                .addComponent(new TerminalDisplay());
+            .addComponent(new PerformanceDisplay())
+            .addComponent(new MainGameActions(this.game))
+            .addComponent(new MainGameExitDisplay())
+            .addComponent(pauseMenuDisplay)
+            .addComponent(new PauseInputComponent(this));
 
         ServiceLocator.getEntityService().register(ui);
     }
