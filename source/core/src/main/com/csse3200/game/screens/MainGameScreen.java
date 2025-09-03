@@ -106,23 +106,31 @@ public class MainGameScreen extends ScreenAdapter {
 
   private void switchArea(String keyId, GameArea oldArea) {
     Gdx.app.postRunnable(() -> {
-      oldArea.dispose();
-      TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+      if (keyId != "") {
+        oldArea.dispose();
+        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
-      GameArea newArea = null;
-      if ("forest".equals(keyId)) {
-        newArea = new ForestGameArea(terrainFactory);
-      } else if ("sprint1".equals(keyId)) {
-        newArea = new SprintOneGameArea(terrainFactory);
+        GameArea newArea = null;
+        String newKey = "";
+        if ("forest".equals(keyId)) {
+          newArea = new ForestGameArea(terrainFactory);
+          newKey = "sprint1";
+        } else if ("sprint1".equals(keyId)) {
+          newArea = new SprintOneGameArea(terrainFactory);
+          newKey = "forest";
+        }
+
+        if (newArea != null) {
+          GameArea finalNewArea = newArea; // effectively final
+          String finalNewKey = newKey;
+          finalNewArea.getEvents().addListener(
+                  "doorEntered", (String key) -> switchArea(finalNewKey, finalNewArea)
+          );
+          finalNewArea.create();
+        }
       }
 
-      if (newArea != null) {
-        GameArea finalNewArea = newArea; // effectively final
-        finalNewArea.getEvents().addListener(
-                "doorEntered", (String key) -> switchArea(key, finalNewArea)
-        );
-        finalNewArea.create();
-      }
+
     });
   }
 
