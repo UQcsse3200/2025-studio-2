@@ -9,8 +9,13 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
 /**
- * A cooldown task that runs after a chase. The entity waits for a short duration,
- * then teleports back to the start of its patrol route.
+ * A cooldown task that activates after a chase has ended.
+ * When activated, the entity remains idle for a set cooldown duration,
+ * then teleports back to either:
+ * - The start of its patrol route (if one exists)
+ * - Its original spawn position (if no patrol route exists)
+ * This ensures drones reset to their initial state instead of
+ * beelining back manually.
  */
 public class CooldownTask extends DefaultTask implements PriorityTask {
     private final float waitTime;
@@ -18,17 +23,31 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     private PatrolRouteComponent route;
     private boolean active = false;
 
+    /**
+     * Creates a cooldown task with the given wait duration.
+     *
+     * @param waitTime duration (in seconds) to wait before teleporting
+     *                 the entity back to its original position
+     */
     public CooldownTask(float waitTime) {
 
         this.waitTime = waitTime;
     }
-    /** Called (via event) to make this task runnable */
+
+    /**
+     * Activates the cooldown task. Typically triggered by a
+     * "chaseEnd" event when the drone loses the player.
+     */
     public void activate() {
         active = true;
         status = Status.INACTIVE;
     }
 
-
+    /**
+     * Starts the cooldown. Resets the timer, stops entity
+     * movement, disables gravity, and triggers a
+     * {@code "cooldownStart"} event for animations TO BE ADDED.
+     */
     @Override
     public void start() {
         super.start();
@@ -47,6 +66,12 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
         owner.getEntity().getEvents().trigger("cooldownStart");
     }
 
+    /**
+     * Updates the cooldown timer. Once the cooldown has elapsed,
+     * the entity is teleported back to its patrol start or spawn
+     * position, gravity is restored, and a {@code "cooldownEnd"}
+     * event is fired.
+     */
     @Override
     public void update() {
         float delta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
@@ -84,12 +109,22 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
         }
     }
 
+    /**
+     * Returns the priority of this task. The cooldown is only
+     * considered runnable while {@link #active} is true.
+     *
+     * @return priority 2 when active, otherwise -1 (disabled)
+     */
     @Override
     public int getPriority() {
         return active ? 2 : -1;
 
     }
 
+    /**
+     * Stops the cooldown task. Resets the timer so the task
+     * can be cleanly restarted later.
+     */
     @Override
     public void stop() {
         super.stop();
