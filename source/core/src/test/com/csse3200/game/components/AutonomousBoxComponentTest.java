@@ -43,12 +43,25 @@ public class AutonomousBoxComponentTest {
 
     @Test
     void update_movesBoxRightAndLeft() {
+        // Arrange: starting position
         when(mockBody.getPosition()).thenReturn(new Vector2(1.0f, 5.0f));
+
+        // Mock deltaTime to be fixed (~60 FPS)
+        Gdx.graphics = mock(Gdx.graphics.getClass());
+        when(Gdx.graphics.getDeltaTime()).thenReturn(0.016f);
+
+        // Act
         component.update();
+
+        // Expected X after one frame: 1.0 + (2.0 * 0.016) = 1.032
+        float expectedX = 1.0f + (2.0f * 0.016f);
+
+        // Assert with tolerance for floating-point drift
         verify(mockBody).setTransform(
-                floatThat(val -> Math.abs(val -1.0335f) < 0.001f),
+                floatThat(val -> Math.abs(val - expectedX) < 0.001f),
                 eq(5.0f),
                 eq(0.0f)
         );
     }
+
 }
