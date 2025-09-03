@@ -36,13 +36,13 @@ public class DoorComponent extends Component {
         entity.getEvents().addListener("closeDoor", this::closeDoor);
 
         this.openDoor();
+        locked = false;
     }
 
     /**
      * Handles collision events. If the colliding entity is the player and the door is locked,
      * it attempts to unlock the door using the player's inventory.
      *
-     * @param me    the door entity (ignored here)
      * @param other the colliding entity
      */
     private void onCollisionStart(Entity other) {
