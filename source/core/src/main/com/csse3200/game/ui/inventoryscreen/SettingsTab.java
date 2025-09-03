@@ -5,6 +5,8 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.services.ServiceLocator;
@@ -39,6 +41,12 @@ public class SettingsTab implements InventoryTabInterface {
     
     // Key binding management  
     private final Map<String, TextButton> keyBindButtons = new HashMap<>();
+    
+    // Keybind rebinding state
+    private String currentlyRebinding = null;
+    private String originalButtonText = null;
+    private final Map<String, Integer> pendingKeybinds = new HashMap<>();
+    private InputListener rebindingListener = null;
 
     @Override
     public Actor build(Skin skin) {
@@ -160,13 +168,7 @@ public class SettingsTab implements InventoryTabInterface {
             keyButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
-                    // Show visual feedback that rebinding is available  
-                    // For now, display the current key info in a simple format
-                    String currentKey = Input.Keys.toString(currentKeyCode);
-                    keyButton.setText("Key: " + currentKey);
-                    
-                    // Note: Full rebinding functionality requires integration with input system
-                    // This provides the same visual structure as main settings menu
+                    startRebinding(actionName, keyButton);
                 }
             });
             
@@ -174,6 +176,159 @@ public class SettingsTab implements InventoryTabInterface {
             
             // Store the button with the action name as key
             keyBindButtons.put(actionName, keyButton);
+        }
+        
+        // Add reset to defaults button
+        table.row().padTop(15f);
+        TextButton resetButton = new TextButton("Reset to Defaults", skin);
+        resetButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                resetKeybindsToDefaults();
+            }
+        });
+        table.add(resetButton).colspan(2).center().width(150).height(30);
+    }
+    
+    /**
+     * Start the rebinding process for a specific action
+     * @param actionName The action to rebind
+     * @param button The button that was clicked
+     */
+    private void startRebinding(String actionName, TextButton button) {
+        // Cancel any existing rebinding
+        if (currentlyRebinding != null) {
+            cancelRebinding();
+        }
+        
+        currentlyRebinding = actionName;
+        originalButtonText = button.getText().toString();
+        button.setText("Press Key...");
+        
+        // Set up a temporary input processor to capture the next key press
+        setupRebindingInput();
+    }
+    
+    /**
+     * Cancel the current rebinding process
+     */
+    private void cancelRebinding() {
+        if (currentlyRebinding != null && keyBindButtons.containsKey(currentlyRebinding)) {
+            TextButton button = keyBindButtons.get(currentlyRebinding);
+            button.setText(originalButtonText);
+            
+            currentlyRebinding = null;
+            originalButtonText = null;
+        }
+        clearRebindingInput();
+    }
+    
+    /**
+     * Complete the rebinding process with a new key
+     * @param newKeyCode The key code to bind to the current action
+     */
+    private void completeRebinding(int newKeyCode) {
+        if (currentlyRebinding == null) return;
+        
+        TextButton button = keyBindButtons.get(currentlyRebinding);
+        
+        // Check if the key is already being used by another pending keybind
+        for (Map.Entry<String, Integer> entry : pendingKeybinds.entrySet()) {
+            if (!entry.getKey().equals(currentlyRebinding) && entry.getValue() == newKeyCode) {
+                // Key already in use, cancel rebinding
+                cancelRebinding();
+                return;
+            }
+        }
+        
+        // Check if the key is already bound in the current keymap (excluding the current action)
+        for (Map.Entry<String, Integer> entry : Keymap.getKeyMap().entrySet()) {
+            if (!entry.getKey().equals(currentlyRebinding) && entry.getValue() == newKeyCode) {
+                // Key already in use, cancel rebinding
+                cancelRebinding();
+                return;
+            }
+        }
+        
+        // Store the pending keybind
+        pendingKeybinds.put(currentlyRebinding, newKeyCode);
+        
+        // Update button text
+        String keyName = Input.Keys.toString(newKeyCode);
+        button.setText(keyName + " *");  // Asterisk indicates pending change
+        
+        currentlyRebinding = null;
+        originalButtonText = null;
+        clearRebindingInput();
+    }
+    
+    /**
+     * Sets up temporary input handling for keybind rebinding
+     */
+    private void setupRebindingInput() {
+        rebindingListener = new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    // Cancel rebinding on escape
+                    cancelRebinding();
+                } else if (keycode != Input.Keys.UNKNOWN) {
+                    // Complete rebinding with the pressed key
+                    completeRebinding(keycode);
+                }
+                return true; // Consume the input
+            }
+        };
+        
+        // Add the listener to the stage to capture all key events
+        ServiceLocator.getRenderService().getStage().addListener(rebindingListener);
+    }
+    
+    /**
+     * Clears temporary input handling for keybind rebinding
+     */
+    private void clearRebindingInput() {
+        if (rebindingListener != null) {
+            ServiceLocator.getRenderService().getStage().removeListener(rebindingListener);
+            rebindingListener = null;
+        }
+    }
+    
+    /**
+     * Reset all keybinds to their default values
+     */
+    private void resetKeybindsToDefaults() {
+        // Clear pending changes
+        pendingKeybinds.clear();
+        
+        // Update buttons to show default values
+        Keymap.setKeyMapDefaults();
+        updateAllKeybindButtons();
+    }
+    
+    /**
+     * Updates all keybind buttons to reflect current or pending values
+     */
+    private void updateAllKeybindButtons() {
+        Map<String, Integer> currentKeyMap = Keymap.getKeyMap();
+        
+        for (Map.Entry<String, Integer> entry : currentKeyMap.entrySet()) {
+            String actionName = entry.getKey();
+            int keyCode = entry.getValue();
+            
+            // Check if there's a pending change for this action
+            if (pendingKeybinds.containsKey(actionName)) {
+                keyCode = pendingKeybinds.get(actionName);
+            }
+            
+            TextButton button = keyBindButtons.get(actionName);
+            if (button != null) {
+                String keyText = Input.Keys.toString(keyCode);
+                if (pendingKeybinds.containsKey(actionName)) {
+                    keyText += " *";  // Indicate pending change
+                }
+                button.setText(keyText);
+            }
         }
     }
     
@@ -223,6 +378,18 @@ public class SettingsTab implements InventoryTabInterface {
         settings.masterVolume = masterVolumeSlider.getValue();
         settings.musicVolume = musicVolumeSlider.getValue();
         
+        // Apply pending keybind changes
+        for (Map.Entry<String, Integer> entry : pendingKeybinds.entrySet()) {
+            Keymap.setActionKeyCode(entry.getKey(), entry.getValue());
+        }
+        
+        // Clear pending changes and update display
+        pendingKeybinds.clear();
+        updateAllKeybindButtons();
+        
+        // Save current keybinds to user settings
+        UserSettings.saveCurrentKeybinds();
+        
         // Save and apply immediately
         UserSettings.set(settings, true);
         
@@ -244,5 +411,15 @@ public class SettingsTab implements InventoryTabInterface {
         }
         
         // Could add more music tracks here if there are other areas with different music
+    }
+    
+    /**
+     * Cleanup method to call when the settings tab is closed
+     * This ensures any active rebinding is cancelled
+     */
+    public void dispose() {
+        if (currentlyRebinding != null) {
+            cancelRebinding();
+        }
     }
 }
