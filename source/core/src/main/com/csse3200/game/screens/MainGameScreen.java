@@ -163,6 +163,9 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void createUI() {
     logger.debug("Creating ui");
+    if (gameArea.getPlayer() == null) {
+      throw new IllegalStateException("GameArea has a null player");
+    }
     pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
     Stage stage = ServiceLocator.getRenderService().getStage();
 

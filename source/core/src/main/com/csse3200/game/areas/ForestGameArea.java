@@ -84,9 +84,6 @@ public class ForestGameArea extends GameArea {
   private static final String[] forestMusic = {backgroundMusic};
 
   private final TerrainFactory terrainFactory;
-
-  private Entity player;
-
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
    * @param terrainFactory TerrainFactory used to create the terrain for the GameArea.
@@ -103,7 +100,6 @@ public class ForestGameArea extends GameArea {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
-    createMinimap();
     loadLevel();
   }
 
@@ -129,6 +125,7 @@ public class ForestGameArea extends GameArea {
     displayUI();
     spawnTerrain();
     spawnTrees();
+    createMinimap();
     player = spawnPlayer();
 
     spawnDrone();             // Play with idle/chasing drones (unless chasing)

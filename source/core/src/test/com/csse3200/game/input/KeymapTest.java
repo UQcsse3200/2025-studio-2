@@ -40,34 +40,34 @@ public class KeymapTest {
   @DisplayName("Register action with a keycode")
   void registerActionTest() {
     // Attempt to register with pre-existing action name
-    assertFalse(Keymap.registerAction("PlayerUp", Input.Keys.UP, true));
+    assertFalse(Keymap.registerAction("PlayerRight", Input.Keys.UP, true));
     // Attempt to register with already bound key code
-    assertFalse(Keymap.registerAction("PlayerUpTwo", Keymap.getActionKeyCode("PlayerUp"), true));
+    assertFalse(Keymap.registerAction("PlayerRightTwo", Keymap.getActionKeyCode("PlayerRight"), true));
 
     // Add new valid entry
-    assertTrue(Keymap.registerAction("PlayerUpTwo", Input.Keys.UP, true));
+    assertTrue(Keymap.registerAction("PlayerRightTwo", Input.Keys.UP, true));
   }
 
   @Test
   @DisplayName("Update action with a key code")
   void updateActionTest() {
     // Attempt to change key code for non-existent action name
-    assertFalse(Keymap.setActionKeyCode("PlayerUpTwo", Input.Keys.UP));
+    assertFalse(Keymap.setActionKeyCode("PlayerRightTwo", Input.Keys.UP));
     // Attempt to change key code for already bound key code
-    assertFalse(Keymap.setActionKeyCode("PlayerUp", Keymap.getActionKeyCode("PlayerDown")));
+    assertFalse(Keymap.setActionKeyCode("PlayerRight", Keymap.getActionKeyCode("PlayerLeft")));
 
     // Update action with valid key code
-    assertTrue(Keymap.setActionKeyCode("PlayerUp", Input.Keys.W));
+    assertTrue(Keymap.setActionKeyCode("PlayerRight", Input.Keys.W));
   }
 
   @Test
   @DisplayName("Retrieve key code from action")
   void getKeyCodeTest() {
     // Attempt to get key code for non-existent action
-    assertEquals(-1, Keymap.getActionKeyCode("PlayerUpTwo"));
+    assertEquals(-1, Keymap.getActionKeyCode("PlayerRightTwo"));
 
     // Attempt to get key code for existent action
-    assertEquals(Input.Keys.W, Keymap.getActionKeyCode("PlayerUp"));
+    assertEquals(Input.Keys.D, Keymap.getActionKeyCode("PlayerRight"));
   }
 
   @Test
@@ -76,7 +76,7 @@ public class KeymapTest {
     Map<String, Integer> displayable = Keymap.getKeyMap();
 
     // Check to see if displayable action is present
-    assertTrue(displayable.containsKey("PlayerUp"));
+    assertTrue(displayable.containsKey("PlayerRight"));
     // Check to see if non-displayable action is present
     assertFalse(displayable.containsKey("TerminalModifier"));
   }
