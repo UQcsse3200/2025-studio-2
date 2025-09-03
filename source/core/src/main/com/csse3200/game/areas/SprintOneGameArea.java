@@ -147,14 +147,14 @@ public class SprintOneGameArea extends GameArea {
         return minimapDisplay;
     }
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(13,4);
+        GridPoint2 spawnPos =  new GridPoint2(2,4);
         Entity spikes = TrapFactory.createSpikes(spawnPos);
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button2, new GridPoint2(4,5), true,  true);
+        spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
 
         Entity button3 = ButtonFactory.createButton(false, "nothing");
         spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
@@ -232,14 +232,14 @@ public class SprintOneGameArea extends GameArea {
         ground.setScale(15,1);
         spawnEntityAt(ground, groundPos, false, false);
 
-        GridPoint2 step1Pos = new GridPoint2(5,4);
+        GridPoint2 step1Pos = new GridPoint2(7,4);
         Entity step1 = PlatformFactory.createStaticPlatform();
         step1.setScale(2,1);
         spawnEntityAt(step1, step1Pos, false, false);
 
         float ts = terrain.getTileSize();
-        GridPoint2 movingPos = new GridPoint2(21,4);
-        Vector2 offsetWorld  = new Vector2(2f * ts, 6f);
+        GridPoint2 movingPos = new GridPoint2(21,2);
+        Vector2 offsetWorld  = new Vector2(2.5f * ts, 8f);
         float speed = 2f;
         Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
         movingPlatform.setScale(2,1f);
@@ -259,13 +259,13 @@ public class SprintOneGameArea extends GameArea {
 
         staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
                 " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(staticBox, new GridPoint2(10,4), true,  true);
+        spawnEntityAt(staticBox, new GridPoint2(12,4), true,  true);
 
         // Moveable box
         Entity moveableBox = BoxFactory.createMoveableBox();
         moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
                 TooltipSystem.TooltipStyle.SUCCESS));
-        spawnEntityAt(moveableBox, new GridPoint2(5,6), true,  true);
+        spawnEntityAt(moveableBox, new GridPoint2(15,20), true,  true);
 
         // Autonomous box
         float startX = 3f;
@@ -330,10 +330,10 @@ public class SprintOneGameArea extends GameArea {
 
         // Elevator: moves up 3 tiles when triggered
         Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
-                new Vector2(0, 6f * ts),
+                new Vector2(0, 18.5f * ts),
                 2f
         );
-        GridPoint2 elevatorPos = new GridPoint2(12, 10);
+        GridPoint2 elevatorPos = new GridPoint2(13, 3);
         elevator.setScale(2,0.5f);
         spawnEntityAt(elevator, elevatorPos, false, false);
         logger.info("Elevator spawned at {}", elevatorPos);
@@ -344,7 +344,7 @@ public class SprintOneGameArea extends GameArea {
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonPos = new GridPoint2(16, 11);
+        GridPoint2 buttonPos = new GridPoint2(17, 4);
         spawnEntityAt(button, buttonPos, true, true);
         logger.info("Elevator button spawned at {}", buttonPos);
 
