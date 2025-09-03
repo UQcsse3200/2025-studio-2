@@ -1,11 +1,9 @@
-package com.csse3200.game.components;
+package com.csse3200.game.components.platforms;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
 import java.util.HashSet;
@@ -14,8 +12,8 @@ import java.util.HashMap;
 import java.util.Set;
 
 public class MovingPlatformComponent extends Component {
-    private final Vector2 offset; // relative movement from spawn position (world units)
-    private final float speed;    // units per second
+    final Vector2 offset; // relative movement from spawn position (world units)
+    final float speed;    // units per second
     private final float epsilon = 0.05f;
     private final Map<Entity, Vector2> passengerOffsets = new HashMap<>();
     private PhysicsComponent physics;

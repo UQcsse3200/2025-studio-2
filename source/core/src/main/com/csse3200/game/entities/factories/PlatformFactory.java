@@ -1,13 +1,10 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.csse3200.game.components.ButtonTriggeredPlatformComponent;
-import com.csse3200.game.components.MovingPlatformComponent;
+import com.csse3200.game.components.platforms.*;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -54,6 +51,12 @@ public class PlatformFactory {
         return platform;
     }
 
+    /**
+     * Creates button triggered platform, where if the player presses the button, the platform moves
+     * @param offsetWorld
+     * @param speed
+     * @return
+     */
     public static Entity createButtonTriggeredPlatform(Vector2 offsetWorld, float speed) {
         Entity platform = new Entity()
                 .addComponent(new TextureRenderComponent("images/platform.png"))
