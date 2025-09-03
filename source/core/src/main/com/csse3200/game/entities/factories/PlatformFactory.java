@@ -1,6 +1,10 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.ButtonTriggeredPlatformComponent;
+import com.csse3200.game.components.MovingPlatformComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
@@ -25,6 +29,38 @@ public class PlatformFactory {
                         .addComponent(new PhysicsComponent())
                         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
         platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
+        platform.getComponent(TextureRenderComponent.class).scaleEntity();
+        return platform;
+    }
+
+    /**
+     * Create a dynamic moving platform entity, movement is based upon the
+     * calculation of offsetWorld
+     * @param offsetWorld
+     * @param speed
+     * @return enity
+     */
+    public static Entity createMovingPlatform(Vector2 offsetWorld, float speed) {
+        ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);
+        collider.setFriction(7f);
+        Entity platform = new Entity()
+                .addComponent(new TextureRenderComponent("images/platform.png"))
+                .addComponent(new PhysicsComponent())
+                .addComponent(collider)
+                .addComponent(new MovingPlatformComponent(offsetWorld, speed));
+
+        platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
+        platform.getComponent(TextureRenderComponent.class).scaleEntity();
+        return platform;
+    }
+
+    public static Entity createButtonTriggeredPlatform(Vector2 offsetWorld, float speed) {
+        Entity platform = new Entity()
+                .addComponent(new TextureRenderComponent("images/platform.png"))
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
+        platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
         platform.getComponent(TextureRenderComponent.class).scaleEntity();
         return platform;
     }

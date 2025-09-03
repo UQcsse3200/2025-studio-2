@@ -1,27 +1,50 @@
-           package com.csse3200.game.areas;
+package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.physics.ObjectContactListener;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
     private static final float WALL_WIDTH = 0.1f;
+    private static boolean keySpawned;
+
     private static final String[] gameTextures = {
-            "images/cave_1.png",
-            "images/cave_2.png",
+            "images/button.png",
+            "images/key_tester.png",
+            "images/button_pushed.png",
+            "images/blue_button.png",
+            "images/blue_button_pushed.png",
+            "images/red_button.png",
+            "images/red_button_pushed.png",
+            "images/box_orange.png",
+            "images/minimap_player_marker.png",
+            "images/minimap_forest_area.png",
+            "images/box_blue.png",
+            "images/box_white.png",
+            "images/blue_button.png",
+            "images/spikes_sprite.png",
             "images/TechWallBase.png",
             "images/TechWallVariant1.png",
             "images/TechWallVariant2.png",
@@ -42,7 +65,11 @@ public class SprintOneGameArea extends GameArea {
             "images/hex_grass_3.png",
             "images/iso_grass_1.png",
             "images/iso_grass_2.png",
-            "images/iso_grass_3.png"
+            "images/iso_grass_3.png",
+            "images/button.png",
+            "images/button_pushed.png",
+            "images/blue_button_pushed.png",
+            "images/blue_button.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -69,25 +96,94 @@ public class SprintOneGameArea extends GameArea {
     /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
     @Override
     public void create() {
-        loadAssets();
 
+        PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+        engine.getWorld().setContactListener(new ObjectContactListener());
+        loadAssets();
         displayUI();
 
         spawnTerrain();
+        createMinimap();
         player = spawnPlayer();
-        spawnPlatform(); //Testing platform
-        spawnGate(); //Testing gate
+        spawnPlatform();
+        spawnElevatorPlatform();
+        spawnGate();
+        spawnBoxes();
         spawnKey();
 
         playMusic();
+        spawnLights();
+        spawnButtons();
+        spawnTraps();
+
     }
 
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Sprint one demo level"));
+        ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
+    private MinimapDisplay createMinimap() {
+        Texture minimapTexture =
+                ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
 
+        MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+        options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+
+        float tileSize = terrain.getTileSize();
+        Vector2 worldSize =
+                new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+        MinimapDisplay minimapDisplay =
+                new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+
+        Entity minimapEntity = new Entity();
+        minimapEntity.addComponent(minimapDisplay);
+        spawnEntity(minimapEntity);
+
+        return minimapDisplay;
+    }
+    private void spawnTraps() {
+        GridPoint2 spawnPos =  new GridPoint2(2,4);
+        Entity spikes = TrapFactory.createSpikes(spawnPos);
+        spawnEntityAt(spikes, spawnPos, true,  true);
+    }
+    private void spawnButtons() {
+        Entity button2 = ButtonFactory.createButton(false, "door");
+        button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button2, new GridPoint2(8,5), true,  true);
+
+        Entity button3 = ButtonFactory.createButton(false, "nothing");
+        spawnEntityAt(button3, new GridPoint2(12,4), true,  true);
+
+        //listener to spawn key when door button pushed
+        button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed && !keySpawned) {
+                spawnKey();
+                keySpawned = true;
+            }
+        });
+
+    }
+
+    public void spawnKey() {
+        Entity key = CollectableFactory.createKey("door");
+        spawnEntityAt(key, new GridPoint2(17,17), true, true);
+    }
+
+    private void spawnLights() {
+        // see the LightFactory class for more details on spawning these
+        Entity securityLight = LightFactory.createSecurityLight(
+                player,
+                PhysicsLayer.OBSTACLE,
+                128,
+                Color.GREEN,
+                10f,
+                0f,
+                35f
+        );
+        spawnEntityAt(securityLight, new GridPoint2(20, 5), true, true);
+    }
     private void spawnTerrain() {
         // Background terrain
         terrain = terrainFactory.createTerrain(TerrainType.SPRINT_ONE_ORTHO);
@@ -138,8 +234,42 @@ public class SprintOneGameArea extends GameArea {
         step1.setScale(2,1);
         spawnEntityAt(step1, step1Pos, false, false);
 
-    }
+        float ts = terrain.getTileSize();
+        GridPoint2 movingPos = new GridPoint2(15,5);
+        Vector2 offsetWorld  = new Vector2(2f * ts, 6f);
+        float speed = 2f;
+        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
+        movingPlatform.setScale(2,1f);
+        spawnEntityAt(movingPlatform, movingPos, false, false);
 
+    }
+    private void spawnBoxes() {
+
+        // Static box
+        Entity staticBox = BoxFactory.createStaticBox();
+
+        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
+                " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(staticBox, new GridPoint2(13,13), true,  true);
+
+        // Moveable box
+        Entity moveableBox = BoxFactory.createMoveableBox();
+        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
+                TooltipSystem.TooltipStyle.SUCCESS));
+        spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
+
+        // Autonomous box
+        float startX = 3f;
+        float endX = 10f;
+        float y = 17f;
+        float speed = 2f;
+
+        Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+        autonomousBox.addComponent(new TooltipSystem.TooltipComponent("Autonomous Box\nThis box has a fixed path" +
+                " and you cannot push it!", TooltipSystem.TooltipStyle.SUCCESS));
+
+        spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
+    }
     private void spawnGate() {
     /*
     Creates gate to test
@@ -152,10 +282,41 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, false, false);
     }
 
-    public void spawnKey() {
-        Entity key = CollectableFactory.createKey("door");
-        spawnEntityAt(key, new GridPoint2(17,17), true, true);
+    private void spawnElevatorPlatform() {
+        float ts = terrain.getTileSize();
+
+        // Elevator: moves up 3 tiles when triggered
+        Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+                new Vector2(0, 6f * ts),
+                2f
+        );
+        GridPoint2 elevatorPos = new GridPoint2(12, 10);
+        elevator.setScale(2,0.5f);
+        spawnEntityAt(elevator, elevatorPos, false, false);
+        logger.info("Elevator spawned at {}", elevatorPos);
+
+        // Button with tooltip
+        Entity button = ButtonFactory.createButton(false, "platform");
+        button.addComponent(new TooltipSystem.TooltipComponent(
+                "Platform Button\nPress E to interact",
+                TooltipSystem.TooltipStyle.DEFAULT
+        ));
+        GridPoint2 buttonPos = new GridPoint2(15, 11);
+        spawnEntityAt(button, buttonPos, true, true);
+        logger.info("Elevator button spawned at {}", buttonPos);
+
+        // Listen for toggle event from button
+        button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed) {
+                logger.info("Button toggled ON — activating elevator");
+                elevator.getEvents().trigger("activatePlatform");
+            } else {
+                logger.info("Button toggled OFF — stopping elevator");
+                elevator.getEvents().trigger("deactivatePlatform");
+            }
+        });
     }
+
 
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);

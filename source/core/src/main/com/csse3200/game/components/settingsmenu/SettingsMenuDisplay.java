@@ -3,6 +3,7 @@ package com.csse3200.game.components.settingsmenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Graphics.Monitor;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Event;
@@ -13,11 +14,18 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.GdxGame.ScreenType;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.files.UserSettings.DisplaySettings;
+//import com.csse3200.game.input.SettingsInputComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.utils.StringDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.badlogic.gdx.Input;
+import com.csse3200.game.input.Keymap;
+import com.csse3200.game.input.InputComponent;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Settings menu display and logic. If you bork the settings, they can be changed manually in
@@ -31,8 +39,14 @@ public class SettingsMenuDisplay extends UIComponent {
   private TextField fpsText;
   private CheckBox fullScreenCheck;
   private CheckBox vsyncCheck;
-  private Slider uiScaleSlider;
+  //  private Slider uiScaleSlider;
+  private Slider masterVolumeSlider;
+  private Slider musicVolumeSlider;
   private SelectBox<StringDecorator<DisplayMode>> displayModeSelect;
+
+  private Map<String, TextButton> keyBindButtons = new HashMap<>();
+
+//  private SettingsInputComponent settingsInputComponent;
 
   public SettingsMenuDisplay(GdxGame game) {
     super();
@@ -42,10 +56,32 @@ public class SettingsMenuDisplay extends UIComponent {
   @Override
   public void create() {
     super.create();
+
+    // Create and add the settings input component
+//    settingsInputComponent = new SettingsInputComponent();
+//    entity.addComponent(settingsInputComponent);
+
     addActors();
+
+    // Pass the key bind buttons to the input component
+//    settingsInputComponent.setKeyBindButtons(keyBindButtons);
+
+    stage.setKeyboardFocus(stage.getRoot());
+//    Gdx.input.setInputProcessor(stage);
   }
 
   private void addActors() {
+    Image background =
+        new Image(
+            ServiceLocator.getResourceService()
+                .getAsset("images/superintelligence_menu_background.png", Texture.class));
+
+    background.setFillParent(true);
+    stage.addActor(background);
+
+    background.setFillParent(true);
+    stage.addActor(background);
+
     Label title = new Label("Settings", skin, "title");
     Table settingsTable = makeSettingsTable();
     Table menuBtns = makeMenuBtns();
@@ -80,10 +116,20 @@ public class SettingsMenuDisplay extends UIComponent {
     vsyncCheck = new CheckBox("", skin);
     vsyncCheck.setChecked(settings.vsync);
 
-    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
-    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
-    uiScaleSlider.setValue(settings.uiScale);
-    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
+//    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
+//    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
+//    uiScaleSlider.setValue(settings.uiScale);
+//    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
+
+    Label masterVolumeLabel = new Label("Master Volume:", skin);
+    masterVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    masterVolumeSlider.setValue(settings.masterVolume);
+    Label masterVolumeValue = new Label(String.format("%.2fx", settings.masterVolume), skin);
+
+    Label musicVolumeLabel = new Label("Music Volume:", skin);
+    musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    musicVolumeSlider.setValue(settings.musicVolume);
+    Label musicVolumeValue = new Label(String.format("%.2fx", settings.musicVolume), skin);
 
     Label displayModeLabel = new Label("Resolution:", skin);
     displayModeSelect = new SelectBox<>(skin);
@@ -105,27 +151,135 @@ public class SettingsMenuDisplay extends UIComponent {
     table.add(vsyncLabel).right().padRight(15f);
     table.add(vsyncCheck).left();
 
-    table.row().padTop(10f);
-    Table uiScaleTable = new Table();
-    uiScaleTable.add(uiScaleSlider).width(100).left();
-    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
+//    table.row().padTop(10f);
+//    Table uiScaleTable = new Table();
+//    uiScaleTable.add(uiScaleSlider).width(100).left();
+//    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
 
-    table.add(uiScaleLabel).right().padRight(15f);
-    table.add(uiScaleTable).left();
+//    table.add(uiScaleLabel).right().padRight(15f);
+//    table.add(uiScaleTable).left();
 
     table.row().padTop(10f);
     table.add(displayModeLabel).right().padRight(15f);
     table.add(displayModeSelect).left();
 
+    // Create master volume slider
+    table.row().padTop(10f);
+    Table masterVolumeTable = new Table();
+    masterVolumeTable.add(masterVolumeSlider).width(100).left();
+    masterVolumeTable.add(masterVolumeValue).left().padLeft(5f).expandX();
+    table.add(masterVolumeLabel).right().padRight(15f);
+    table.add(masterVolumeTable).left();
+
+    // Create music volume slider
+    table.row().padTop(10f);
+    Table musicVolumeTable = new Table();
+    musicVolumeTable.add(musicVolumeSlider).width(100).left();
+    musicVolumeTable.add(musicVolumeValue).left().padLeft(5f).expandX();
+    table.add(musicVolumeLabel).right().padRight(15f);
+    table.add(musicVolumeTable).left();
+
     // Events on inputs
-    uiScaleSlider.addListener(
-        (Event event) -> {
-          float value = uiScaleSlider.getValue();
-          uiScaleValue.setText(String.format("%.2fx", value));
-          return true;
-        });
+//    uiScaleSlider.addListener(
+//        (Event event) -> {
+//          float value = uiScaleSlider.getValue();
+//          uiScaleValue.setText(String.format("%.2fx", value));
+//          return true;
+//        });
+
+    // Handle slider events
+    masterVolumeSlider.addListener((Event event) -> {
+      float value = masterVolumeSlider.getValue();
+      masterVolumeValue.setText(String.format("%.2fx", value));
+      return true;
+    });
+
+    musicVolumeSlider.addListener((Event event) -> {
+      float value = musicVolumeSlider.getValue();
+      musicVolumeValue.setText(String.format("%.2fx", value));
+      return true;
+    });
+
+    table.row().padTop(20f);
+    Label keyBindLabel = new Label("Key Bindings:", skin, "title");
+    table.add(keyBindLabel).colspan(2).center();
+
+    addKeyBindingControls(table);
 
     return table;
+  }
+
+  /**
+   * TODO
+   * @param table
+   */
+  private void addKeyBindingControls(Table table) {
+    // Order for keys to appear
+    String[] keyOrder = {
+        "PlayerUp",
+        "PlayerLeft",
+        "PlayerDown",
+        "PlayerRight",
+        "PlayerAttack",
+        "PlayerInteract",
+        "TerminalModifier",
+        "TerminalModifierAlt",
+        "TerminalToggle"
+    };
+
+    for (String actionName : keyOrder) {
+      int keyCode = Keymap.getActionKeyCode(actionName);
+
+      // Skip if the action doesn't exist in the keymap
+      if (keyCode == -1) continue;
+
+      table.row().padTop(5f);
+
+      // Create a readable label for the action
+      String displayName = formatActionName(actionName);
+      Label actionLabel = new Label(displayName + ":", skin);
+      table.add(actionLabel).right().padRight(15f);
+
+      // Create button showing current key
+      String keyName = Input.Keys.toString(keyCode);
+      TextButton keyButton = new TextButton(keyName, skin);
+      keyButton.addListener(new ChangeListener() {
+        @Override
+        public void changed(ChangeEvent event, Actor actor) {
+          // placeholder
+        }
+      });
+
+      keyBindButtons.put(actionName, keyButton);
+      table.add(keyButton).width(170).height(25).left();
+    }
+
+
+  }
+
+  /**
+   *
+   * @param actionName
+   * @return
+   */
+  private String formatActionName(String actionName) {
+    switch (actionName) {
+      case "PlayerUp": return "Up";
+      case "PlayerLeft": return "Left";
+      case "PlayerDown": return "Down";
+      case "PlayerRight": return "Right";
+      case "PlayerAttack": return "Attack";
+      case "PlayerInteract": return "Interact";
+      case "TerminalModifier": return "Terminal Modifier";
+      case "TerminalModifierAlt": return "Terminal Modifier Alt";
+      case "TerminalToggle": return "Terminal Toggle";
+      default:
+        // Fallback to camelCase conversion
+        return actionName.replaceAll("([A-Z])", " $1")
+            .replaceFirst("^\\s", "")
+            .replace("Player", "")
+            .trim();
+    }
   }
 
   private StringDecorator<DisplayMode> getActiveMode(Array<StringDecorator<DisplayMode>> modes) {
@@ -193,9 +347,13 @@ public class SettingsMenuDisplay extends UIComponent {
       settings.fps = fpsVal;
     }
     settings.fullscreen = fullScreenCheck.isChecked();
-    settings.uiScale = uiScaleSlider.getValue();
+//    settings.uiScale = uiScaleSlider.getValue();
     settings.displayMode = new DisplaySettings(displayModeSelect.getSelected().object);
     settings.vsync = vsyncCheck.isChecked();
+
+    // Set volume
+    settings.masterVolume = masterVolumeSlider.getValue();
+    settings.musicVolume = musicVolumeSlider.getValue();
 
     UserSettings.set(settings, true);
   }
@@ -224,6 +382,7 @@ public class SettingsMenuDisplay extends UIComponent {
 
   @Override
   public void dispose() {
+    // The input handler will be disposed automatically when the entity is disposed
     rootTable.clear();
     super.dispose();
   }
