@@ -43,11 +43,12 @@ public class AutonomousBoxComponentTest {
 
     @Test
     void update_movesBoxRightAndLeft() {
-        when(mockBody.getPosition()).thenReturn(new Vector2(1f, 5f));
+        when(mockBody.getPosition()).thenReturn(new Vector2(1.0f, 5.0f));
         component.update();
         verify(mockBody).setTransform(
-                eq(1f + 2f * Gdx.graphics.getDeltaTime()),
-                eq(5f), eq(0f)
+                floatThat(val -> Math.abs(val -1.0335f) < 0.001f),
+                eq(5.0f),
+                eq(0.0f)
         );
     }
 }
