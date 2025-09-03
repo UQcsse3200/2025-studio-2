@@ -137,12 +137,10 @@ public class EnemyFactoryTest {
 
     @Test
     void patrollingDroneHasPatrolRouteComponent() {
-        Entity player = new Entity();
-        Entity securityLight = new Entity();
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(
-                player,
+                new Entity(),
                 new Vector2[]{new Vector2(5f, 5f)},
-                securityLight
+                new Entity()
         );
         assertNotNull(patrolDrone.getComponent(PatrolRouteComponent.class),
                 "Patrolling drone should have a PatrolRouteComponent");
@@ -161,7 +159,7 @@ public class EnemyFactoryTest {
         assertNotNull(drone);
     }
 
-
+    @Test
     void patrollingDrone_storesWaypointsInOrder() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 1), new Vector2(2, 2)};
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route, new Entity());
@@ -218,11 +216,11 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-        Entity bomberDrone = EnemyFactory.createDrone(new Entity(), new Vector2(0f, 0f), new Entity());
-        ServiceLocator.getEntityService().register(bomberDrone);
+            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+            ServiceLocator.getEntityService().register(bomberDrone);
 
-        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
-                "Drone should have AnimationController");
+            assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                    "Drone should have AnimationController");
     }
 
     @Test
@@ -247,7 +245,7 @@ public class EnemyFactoryTest {
     @Test
     void createBomberDrone_addsSpawnPosition() {
         Vector2 start = new Vector2(0, 0);
-        Entity bomberDrone = EnemyFactory.createDrone(new Entity(), start, new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), start, new Entity());
         SpawnPositionComponent sp = bomberDrone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
         assertEquals(start, sp.getSpawnPos(),
@@ -256,7 +254,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_doesNotAddNullSpawnPos() {
-        Entity bomberDrone = EnemyFactory.createDrone(new Entity(), null, new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), null, new Entity());
         assertNull(bomberDrone.getComponent(SpawnPositionComponent.class),
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
