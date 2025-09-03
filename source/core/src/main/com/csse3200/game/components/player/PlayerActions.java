@@ -74,13 +74,13 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
 
     entity.getEvents().addListener("crouch", this::crouch);
-      entity.getEvents().addListener("sprintStart", () -> {
+    entity.getEvents().addListener("sprintStart", () -> {
           wantsSprint = true;
           if (stamina != null && !stamina.isExhausted() && stamina.getCurrentStamina() > 0) {
               stamina.setSprinting(true); // start draining now
           }
       });
-      entity.getEvents().addListener("sprintStop", () -> {
+    entity.getEvents().addListener("sprintStop", () -> {
           wantsSprint = false;
           if (stamina != null) {
               stamina.setSprinting(false); // stop draining, start delay
@@ -120,6 +120,7 @@ public class PlayerActions extends Component {
     } else {
       desiredVelocity = walkDirection.cpy().scl(WALK_SPEED);
     }
+    desiredVelocity.scl(mult);
 
     // impulse = (desiredVel - currentVel) * mass
     //only update the horizontal impulse
