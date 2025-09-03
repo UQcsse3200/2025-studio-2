@@ -2,6 +2,7 @@ package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -104,22 +105,25 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private void switchArea(String keyId, GameArea oldArea) {
-    oldArea.dispose();
-    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+    Gdx.app.postRunnable(() -> {
+      oldArea.dispose();
+      TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    GameArea newArea = null;
-    if ("forest".equals(keyId)) {
-      newArea = new ForestGameArea(terrainFactory);
-      String key = "sprint1";
-    } else if ("sprint1".equals(keyId)) {
-      newArea = new SprintOneGameArea(terrainFactory);
-    }
+      GameArea newArea = null;
+      if ("forest".equals(keyId)) {
+        newArea = new ForestGameArea(terrainFactory);
+      } else if ("sprint1".equals(keyId)) {
+        newArea = new SprintOneGameArea(terrainFactory);
+      }
 
-    if (newArea != null) {
-      GameArea finalNewArea = newArea; // effectively final copy
-      finalNewArea.getEvents().addListener("doorEntered", (String key) -> switchArea(key, finalNewArea));
-      finalNewArea.create();
-    }
+      if (newArea != null) {
+        GameArea finalNewArea = newArea; // effectively final
+        finalNewArea.getEvents().addListener(
+                "doorEntered", (String key) -> switchArea(key, finalNewArea)
+        );
+        finalNewArea.create();
+      }
+    });
   }
 
 
