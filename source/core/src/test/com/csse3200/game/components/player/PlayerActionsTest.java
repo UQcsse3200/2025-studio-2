@@ -76,6 +76,10 @@ public class PlayerActionsTest {
 
         assertTrue(playerActions.getIsJumping());
         assertFalse(playerActions.getIsDoubleJumping());
+
+        playerEntity.getEvents().trigger("jump");
+        assertTrue(playerActions.getIsJumping());
+        assertTrue(playerActions.getIsDoubleJumping());
     }
 
     @Test
