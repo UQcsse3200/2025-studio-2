@@ -45,6 +45,8 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
+    "images/door_open.png",
+    "images/door_closed.png",
     "images/key_tester.png",
     "images/hex_grass_1.png",
     "images/hex_grass_2.png",
@@ -113,6 +115,7 @@ public class ForestGameArea extends GameArea {
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
     spawnElevatorPlatform();
+    spawnGate();
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons(); //uncomment this method to see and interact with buttons
 
@@ -335,6 +338,7 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(key, new GridPoint2(17,17), true, true);
   }
 
+
   private void spawnLights() {
     // see the LightFactory class for more details on spawning these
     Entity securityLight = LightFactory.createSecurityLight(
@@ -353,8 +357,10 @@ public class ForestGameArea extends GameArea {
     /*
     Creates gate to test
     */
-    GridPoint2 gatePos = new GridPoint2((int) 28, 4);
-    spawnEntityAt(ObstacleFactory.createDoor("sprint1", this), gatePos, false, false);
+    GridPoint2 gatePos = new GridPoint2((int) 1, 5);
+    Entity gate = ObstacleFactory.createDoor("sprint1", this);
+    gate.setScale(1, 2);
+    spawnEntityAt(gate, gatePos, true, true);
   }
 
   private void playMusic() {
@@ -368,7 +374,6 @@ public class ForestGameArea extends GameArea {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(forestTextures);
-    resourceService.loadTextureAtlases(forestTextureAtlases);
     resourceService.loadSounds(forestSounds);
     resourceService.loadMusic(forestMusic);
 

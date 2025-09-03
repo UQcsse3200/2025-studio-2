@@ -92,7 +92,7 @@ public class DoorComponent extends Component {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         col.setSensor(true);
 
-        String texture = "images/Gate_open.png";
+        String texture = "images/door_open.png";
         TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
         if (render != null) {
             render.setTexture(texture);
@@ -106,7 +106,7 @@ public class DoorComponent extends Component {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         if (col != null) col.setSensor(false);
 
-        String texture = "images/gate.png";
+        String texture = "images/door_closed.png";
         TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
         if (render != null) {
             render.setTexture(texture);

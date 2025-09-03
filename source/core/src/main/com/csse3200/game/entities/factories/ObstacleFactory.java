@@ -60,7 +60,7 @@ public class ObstacleFactory {
               .addComponent(new PhysicsComponent().setBodyType(BodyType.StaticBody))
               .addComponent(new DoorComponent(keyId, area))
               .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-              .addComponent(new TextureRenderComponent("images/gate.png"));
+              .addComponent(new TextureRenderComponent("images/door_closed.png"));
 
       door.getComponent(TextureRenderComponent.class).scaleEntity();
       door.scaleHeight(1f);
