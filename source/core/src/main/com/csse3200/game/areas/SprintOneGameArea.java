@@ -275,11 +275,11 @@ public class SprintOneGameArea extends GameArea {
     Creates gate to test
     */
         //float gateX = terrain.getMapBounds(0).x * terrain.getTileSize();
-        GridPoint2 gatePos = new GridPoint2((int) 28, 4);
+        GridPoint2 gatePos = new GridPoint2((int) 28, 5);
         //Entity gate = GateFactory.createGate();
         //gate.setScale(1, 2);
         //spawnEntityAt(gate, gatePos, false, false);
-        spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, false, false);
+        spawnEntityAt(ObstacleFactory.createDoor("forest", this), gatePos, true, true);
     }
 
     private void spawnElevatorPlatform() {
