@@ -22,7 +22,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     private MovementTask movementTask;
     private boolean active = false;
     private boolean triggerMaxChase = false; // whether we start enforcing maxChaseDistance
-    private final float triggerDistance = 2f; // distance at which maxChaseDistance starts counting
+    private final float triggerDistance = 4f; // distance at which maxChaseDistance starts counting
 
 
     /**
