@@ -109,6 +109,7 @@ public class SprintOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap();
         player = spawnPlayer();
+        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
         spawnPlatform();
         spawnElevatorPlatform();
         //spawnGate();
