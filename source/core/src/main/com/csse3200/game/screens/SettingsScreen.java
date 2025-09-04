@@ -10,6 +10,7 @@ import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
+import com.csse3200.game.input.SettingsInputComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.GameTime;
@@ -87,7 +88,10 @@ public class SettingsScreen extends ScreenAdapter {
     logger.debug("Creating ui");
     Stage stage = ServiceLocator.getRenderService().getStage();
     Entity ui = new Entity();
-    ui.addComponent(new SettingsMenuDisplay(game)).addComponent(new InputDecorator(stage, 10));
+    ui.addComponent(new SettingsMenuDisplay(game))
+        .addComponent(new InputDecorator(stage, 10))
+        .addComponent(new SettingsInputComponent(this));
+
     // Add FPS counter for debugging purposes
     ui.addComponent(new FPSDisplay());
     ServiceLocator.getEntityService().register(ui);

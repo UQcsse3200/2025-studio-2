@@ -1,0 +1,126 @@
+package com.csse3200.game.input;
+
+import com.badlogic.gdx.Input;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
+import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.screens.MainGameScreen;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(GameExtension.class)
+@ExtendWith(MockitoExtension.class)
+public class PauseInputComponentTest {
+  // Keycodes for testing
+  private static final int SETTINGS_KEY = Input.Keys.ESCAPE;
+  private static final int INVENTORY_KEY = Input.Keys.I;
+  private static final int MAP_KEY = Input.Keys.M;
+  private static final int UPGRADES_KEY = Input.Keys.U;
+
+  // Mock the main game screen
+  @Mock
+  MainGameScreen mockGameScreen;
+
+  @Test
+  void shouldIgnoreNonPauseKey() {
+    try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
+      // Setup keymap mocks
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseSettings")).thenReturn(SETTINGS_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseInventory")).thenReturn(INVENTORY_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseMap")).thenReturn(MAP_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseUpgrades")).thenReturn(UPGRADES_KEY);
+
+      PauseInputComponent pauseInputComponent = new PauseInputComponent(mockGameScreen);
+      
+      // Press a key not mapped to any pause action
+      assertFalse(pauseInputComponent.keyDown(Input.Keys.A));
+
+      // Verify no pause-related methods were called
+      verify(mockGameScreen, never()).togglePaused();
+      verify(mockGameScreen, never()).togglePauseMenu(any(PauseMenuDisplay.Tab.class));
+    }
+  }
+
+  @Test
+  void shouldPauseAndOpenMenuOnFirstPress() {
+    try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
+      // Setup keymap mocks
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseSettings")).thenReturn(SETTINGS_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseInventory")).thenReturn(INVENTORY_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseMap")).thenReturn(MAP_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseUpgrades")).thenReturn(UPGRADES_KEY);
+
+      PauseInputComponent pauseInputComponent = new PauseInputComponent(mockGameScreen);
+      
+      // Assume game is not paused initially
+      when(mockGameScreen.isPaused()).thenReturn(false);
+
+      // Pressing a pause key should be handled
+      assertTrue(pauseInputComponent.keyDown(SETTINGS_KEY));
+
+      // Verify game state is toggled and the correct menu tab is opened
+      verify(mockGameScreen).togglePaused();
+      verify(mockGameScreen).togglePauseMenu(PauseMenuDisplay.Tab.SETTINGS);
+    }
+  }
+
+  @Test
+  void shouldTogglePauseOnSecondPressOfSameKey() {
+    try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
+      // Setup keymap mocks
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseSettings")).thenReturn(SETTINGS_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseInventory")).thenReturn(INVENTORY_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseMap")).thenReturn(MAP_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseUpgrades")).thenReturn(UPGRADES_KEY);
+
+      PauseInputComponent pauseInputComponent = new PauseInputComponent(mockGameScreen);
+      
+      // First press to pause the game
+      when(mockGameScreen.isPaused()).thenReturn(false);
+
+      // First press of key
+      assertTrue(pauseInputComponent.keyDown(SETTINGS_KEY));
+      // Second press of the same key
+      assertTrue(pauseInputComponent.keyDown(SETTINGS_KEY));
+
+      // Verify pause is toggled twice
+      verify(mockGameScreen, times(2)).togglePaused();
+      verify(mockGameScreen, times(2)).togglePauseMenu(PauseMenuDisplay.Tab.SETTINGS);
+    }
+  }
+
+  @Test
+  void shouldSwitchTabsWithoutTogglingPauseWhenAlreadyPaused() {
+    try (MockedStatic<Keymap> mockedKeymap = mockStatic(Keymap.class)) {
+      // Setup keymap mocks
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseSettings")).thenReturn(SETTINGS_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseInventory")).thenReturn(INVENTORY_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseMap")).thenReturn(MAP_KEY);
+      mockedKeymap.when(() -> Keymap.getActionKeyCode("PauseUpgrades")).thenReturn(UPGRADES_KEY);
+
+      PauseInputComponent pauseInputComponent = new PauseInputComponent(mockGameScreen);
+      
+      // First, pause the game with one key
+      when(mockGameScreen.isPaused()).thenReturn(false);
+      assertTrue(pauseInputComponent.keyDown(SETTINGS_KEY));
+      verify(mockGameScreen, times(1)).togglePaused();
+
+      // Now, assume the game is paused
+      when(mockGameScreen.isPaused()).thenReturn(true);
+
+      // Press a different pause key to switch tabs
+      assertTrue(pauseInputComponent.keyDown(INVENTORY_KEY));
+
+      // Verify the pause state was NOT toggled again, as a different key was pressed
+      verify(mockGameScreen, times(1)).togglePaused();
+      // Verify the menu was told to switch to the new tab
+      verify(mockGameScreen).togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
+    }
+  }
+}
