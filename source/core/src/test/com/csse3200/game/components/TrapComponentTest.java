@@ -38,7 +38,7 @@ public class TrapComponentTest {
         ServiceLocator.registerResourceService(mockResourceService);
 
         // Create the trap entity
-        spikeTrap = TrapFactory.createSpikes(new GridPoint2(0, 0), new Vector2(0, 0));
+        spikeTrap = TrapFactory.createSpikes(new GridPoint2(0, 0), new Vector2(4, 4));
         trapComponent = spikeTrap.getComponent(TrapComponent.class);
 
         // Create player with collider and health
@@ -57,5 +57,13 @@ public class TrapComponentTest {
         int playerInitHealth = player.getComponent(CombatStatsComponent.class).getHealth();
         trapComponent.damage(playerCollider);
         assert player.getComponent(CombatStatsComponent.class).getHealth() == playerInitHealth - trapComponent.getBaseAttack();
+    }
+
+    @Test
+    void testSafeSpot() {
+        Vector2 pos = player.getPosition();
+        trapComponent.damage(playerCollider);
+        player.update();
+        assert player.getPosition() != pos;
     }
 }
