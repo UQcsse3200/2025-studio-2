@@ -16,6 +16,8 @@ import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.InputFactory;
 import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.areas.GameArea;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class DoorComponentTest {
+    private GameArea game;
 
     // Reference: Gemini to set up the @BeforeEach
     @BeforeEach
@@ -55,6 +58,15 @@ class DoorComponentTest {
         doNothing().when(es).unregister(any());
         ServiceLocator.registerEntityService(es);
 
+        game = new GameArea() {
+            @Override
+            public void create() { }
+
+            @Override
+            protected void reset() {
+
+            }
+        };
     }
 
     // --- Helpers ---
@@ -64,8 +76,8 @@ class DoorComponentTest {
         return player;
     }
 
-    private Entity makeDoor(String keyId) {
-        Entity door = ObstacleFactory.createDoor(keyId);
+    private Entity makeDoor(String keyId, String levelId) {
+        Entity door = ObstacleFactory.createDoor(keyId, game, levelId);
         door.create();
         return door;
     }
@@ -80,7 +92,7 @@ class DoorComponentTest {
     @Test
     void collideWithoutKey_doorRemainsLocked() {
         Entity player = makePlayer();
-        Entity door   = makeDoor("pink-key");
+        Entity door   = makeDoor("pink-key", "level1");
 
         DoorComponent dc = door.getComponent(DoorComponent.class);
         door.getEvents().trigger("onCollisionStart", player);
@@ -108,7 +120,7 @@ class DoorComponentTest {
         key.getEvents().trigger("onCollisionStart", player);
         assertTrue(inv.hasItem("pink-key"), "Sanity: player must have key before trying door");
 
-        Entity door = makeDoor("pink-key");
+        Entity door = makeDoor("pink-key", "level1");
         DoorComponent dc = door.getComponent(DoorComponent.class);
         assertTrue(dc.isLocked(), "Sanity: door starts locked");
 

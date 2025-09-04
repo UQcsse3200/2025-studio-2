@@ -54,4 +54,12 @@ public class EntityService {
       entity.dispose();
     }
   }
+
+  /**
+   * Returns entities Array
+   * @return entities array
+   */
+  public Array<Entity> get_entities() {
+    return entities;
+  }
 }
