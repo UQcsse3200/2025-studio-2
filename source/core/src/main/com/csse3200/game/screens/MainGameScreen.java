@@ -50,8 +50,7 @@ public class MainGameScreen extends ScreenAdapter {
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
 
-  private GameArea forestGameArea;
-
+  private final GameArea gameArea;
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -82,15 +81,14 @@ public class MainGameScreen extends ScreenAdapter {
 
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    forestGameArea = new ForestGameArea(terrainFactory);
+    gameArea = new ForestGameArea(terrainFactory);
     //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
     //caveGameArea.create();
-    forestGameArea.create();
+    gameArea.create();
 
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
     createUI();
-
   }
 
   @Override
@@ -165,7 +163,10 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void createUI() {
     logger.debug("Creating ui");
-    pauseMenuDisplay = new PauseMenuDisplay(this, forestGameArea.getPlayer(), this.game);
+    if (gameArea.getPlayer() == null) {
+      throw new IllegalStateException("GameArea has a null player");
+    }
+    pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();

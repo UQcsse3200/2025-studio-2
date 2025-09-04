@@ -5,11 +5,15 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -68,8 +72,8 @@ public class ForestGameArea extends GameArea {
     "images/red_button_pushed.png",
     "images/minimap_forest_area.png",
     "images/minimap_player_marker.png",
-          "images/door_open.png",
-          "images/door_closed.png"
+    "images/door_open.png",
+    "images/door_closed.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -97,17 +101,37 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
-    PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
+    loadLevel();
+  }
 
+  protected void reset() {
+    // debug
+    // for (Entity entity : areaEntities) {
+    //   System.out.println(entity);
+    // }
+
+    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
+    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+
+    // Delete all entities within the room
+    // Note: Using super's dispose() instead of local as super does not unload assets.
+    super.dispose();
+    loadLevel();
+
+    // transfer all of the retained data
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+  }
+
+  private void loadLevel() {
     displayUI();
     spawnTerrain();
-    //spawnTrees();
-
+    // spawnTrees();
     createMinimap();
-
     player = spawnPlayer();
+    player.getEvents().addListener("reset", this::reset);
     spawnLights(); //lights need to be spawned before drone
 
     //spawnDrone();             // Play with idle/chasing drones (unless chasing)
@@ -115,6 +139,7 @@ public class ForestGameArea extends GameArea {
     //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
+
     spawnPlatform(); //Testing platform
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
@@ -181,12 +206,13 @@ public class ForestGameArea extends GameArea {
     // Top
     spawnEntityAt(
         ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
-        new GridPoint2(0, tileBounds.y),
+        new GridPoint2(0, tileBounds.y - 4),
         false,
         false);
     // Bottom
-    spawnEntityAt(
-        ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
+    //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
+    spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+            new GridPoint2(0, 4), false, false);
   }
 
   private void spawnTrees() {
@@ -252,7 +278,7 @@ public class ForestGameArea extends GameArea {
     step3.setScale(2,1);
     spawnEntityAt(step3, step3Pos, false, false);
 
-    GridPoint2 step4Pos = new GridPoint2(20,7);
+    GridPoint2 step4Pos = new GridPoint2(20,6);
     Entity step4 = PlatformFactory.createStaticPlatform();
     step4.setScale(2,1);
     spawnEntityAt(step4, step4Pos, false, false);
@@ -287,7 +313,8 @@ public class ForestGameArea extends GameArea {
 
   private void spawnTraps() {
     GridPoint2 spawnPos =  new GridPoint2(7,15);
-    Entity spikes = TrapFactory.createSpikes(spawnPos);
+    Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
+    Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
     spawnEntityAt(spikes, spawnPos, true,  true);
   }
 
