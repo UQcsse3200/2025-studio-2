@@ -116,13 +116,13 @@ public class MainGameScreen extends ScreenAdapter {
         String newLevel = "";
         if ("forest".equals(levelId)) {
           newArea = new ForestGameArea(terrainFactory);
-          newLevel = "sprint1";
+          newLevel = "cave";
         } else if ("sprint1".equals(levelId)) {
           newArea = new SprintOneGameArea(terrainFactory);
           newLevel = "forest";
         } else if ("cave".equals(levelId)) {
           newArea = new CaveGameArea(terrainFactory);
-          newLevel = "sprint1";
+          newLevel = "forest";
         }
 
         if (newArea != null) {
