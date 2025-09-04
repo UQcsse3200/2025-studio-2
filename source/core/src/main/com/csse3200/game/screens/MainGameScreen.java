@@ -1,21 +1,17 @@
 package com.csse3200.game.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -85,62 +81,13 @@ public class MainGameScreen extends ScreenAdapter {
 
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-//    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
-//    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
+    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
     SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
     sprintOneGameArea.create();
-
-
-    sprintOneGameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", keyId, player);
-      switchArea(keyId, sprintOneGameArea, player);
-    });
-
-    //forestGameArea.create();
-
-//    sprintOneGameArea.dispose();
-//    forestGameArea.create();
-
     //caveGameArea.create();
     //forestGameArea.create();
   }
-
-  private void switchArea(String levelId, GameArea oldArea, Entity player) {
-    Gdx.app.postRunnable(() -> {
-      Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-      if (levelId != "") {
-        oldArea.dispose();
-        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-
-        GameArea newArea = null;
-        String newLevel = "";
-        if ("forest".equals(levelId)) {
-          newArea = new ForestGameArea(terrainFactory);
-          newLevel = "cave";
-        } else if ("sprint1".equals(levelId)) {
-          newArea = new SprintOneGameArea(terrainFactory);
-          newLevel = "forest";
-        } else if ("cave".equals(levelId)) {
-          newArea = new CaveGameArea(terrainFactory);
-          newLevel = "forest";
-        }
-
-        if (newArea != null) {
-          GameArea finalNewArea = newArea; // effectively final
-          String finalNewLevel = newLevel;
-          finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
-          );
-          finalNewArea.create();
-//        Entity newPlayer = finalNewArea.getPlayer();
-//        newPlayer.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-        }
-      }
-
-
-    });
-  }
-
 
   @Override
   public void render(float delta) {

@@ -4,11 +4,15 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.services.ServiceLocator;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.csse3200.game.lighting.LightingEngine;
@@ -96,6 +100,7 @@ public class Renderer implements Disposable {
 
   /** Render everything to the render service. */
   public void render() {
+
     Matrix4 projMatrix = camera.getProjectionMatrix();
     batch.setProjectionMatrix(projMatrix);
     Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
