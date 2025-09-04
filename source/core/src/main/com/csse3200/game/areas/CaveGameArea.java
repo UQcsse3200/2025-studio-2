@@ -7,6 +7,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.services.ResourceService;
@@ -126,6 +127,7 @@ public class CaveGameArea extends GameArea {
   private void displayUI() {
     Entity ui = new Entity();
     ui.addComponent(new GameAreaDisplay("Box Cave"));
+    ui.addComponent(new TooltipSystem.TooltipDisplay());
     spawnEntity(ui);
   }
 
