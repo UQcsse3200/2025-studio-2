@@ -16,6 +16,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -30,7 +31,6 @@ public class SprintOneGameArea extends GameArea {
 
     private static final String[] gameTextures = {
             "images/button.png",
-            "images/key_tester.png",
             "images/key.png",
             "images/button_pushed.png",
             "images/blue_button.png",
@@ -104,15 +104,18 @@ public class SprintOneGameArea extends GameArea {
         engine.getWorld().setContactListener(new ObjectContactListener());
         keySpawned = false;
         loadAssets();
-        displayUI();
 
         spawnTerrain();
         createMinimap();
         player = spawnPlayer();
         player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
+        player.getEvents().addListener("reset", this::reset);
+
+
+
         spawnPlatform();
         spawnElevatorPlatform();
-        //spawnGate();
+
         spawnBoxes();
         playMusic();
         spawnLights();
@@ -122,6 +125,16 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         spawnBomberDrone();
         spawnDoor();
+        displayUI();
+
+    }
+    @Override
+    public Entity getPlayer() {
+        return player;
+    }
+
+    @Override
+    protected void reset() {
 
     }
 
@@ -141,8 +154,10 @@ public class SprintOneGameArea extends GameArea {
         float tileSize = terrain.getTileSize();
         Vector2 worldSize =
                 new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+        ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
+
         MinimapDisplay minimapDisplay =
-                new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+                new MinimapDisplay(150f, options);
 
         Entity minimapEntity = new Entity();
         minimapEntity.addComponent(minimapDisplay);
@@ -152,7 +167,8 @@ public class SprintOneGameArea extends GameArea {
     }
     private void spawnTraps() {
         GridPoint2 spawnPos =  new GridPoint2(2,4);
-        Entity spikes = TrapFactory.createSpikes(spawnPos);
+        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
+        Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {

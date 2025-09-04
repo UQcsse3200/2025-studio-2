@@ -8,8 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
+import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.entities.Entity;
 
 public class InventoryTab implements InventoryTabInterface {
+
+    private final Entity player;
     // Background texture
     private final Texture bgTex  = new Texture(Gdx.files.internal("inventory-screen/inventory-selected.png"));
     // empty item
@@ -33,6 +37,10 @@ public class InventoryTab implements InventoryTabInterface {
     private static final int   GRID_ROWS = 4;
     private static final int   GRID_COLS = 4;
     private static final float GRID_PAD_BASE = 10f;
+
+    public InventoryTab(Entity player) {
+        this.player = player;
+    }
 
     @Override
     public Actor build(Skin skin) {
@@ -77,18 +85,36 @@ public class InventoryTab implements InventoryTabInterface {
 
         grid.defaults().size(slotSize, slotSize).pad(pad);
 
-        // Make grid with placeholder slots
-        int total = GRID_ROWS * GRID_COLS;
-        for (int i = 0; i < total; i++) {
-            Image slotImg = new Image(new TextureRegionDrawable(new TextureRegion(slotTx)));
-            slotImg.setScaling(Scaling.fit);
-            grid.add(slotImg);
+        // Fill inventory from your InventoryComponent
+        InventoryComponent inv = player.getComponent(InventoryComponent.class);
+        int totalSlots = GRID_ROWS * GRID_COLS;
+        int filled = 0;
+        if (inv != null) {
+            // fill first N slots where N = total item count (capped by totalSlots)
+            filled = Math.min(inv.getTotalItemCount(), totalSlots);
+        }
+
+        for (int i = 0; i < totalSlots; i++) {
+            Actor cell;
+            if (i < filled) {
+                // Item exists but no icons yet -> blank spacer to preserve layout
+                Container<Actor> blank = new Container<>();
+                blank.size(slotSize, slotSize);
+                cell = blank;
+            } else {
+                // Empty slot art
+                Image empty = new Image(new TextureRegionDrawable(new TextureRegion(slotTx)));
+                empty.setScaling(Scaling.fit);
+                cell = empty;
+            }
+            grid.add(cell);
             if ((i + 1) % GRID_COLS == 0) grid.row();
         }
 
         overlay.addActor(grid);
         stack.add(overlay);
 
+        // Center the fixed-size canvas (no expand/fill)
         Container<Stack> centered = new Container<>(stack);
         centered.size(canvasW, canvasH);
         centered.align(Align.center);

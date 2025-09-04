@@ -61,6 +61,11 @@ class DoorComponentTest {
         game = new GameArea() {
             @Override
             public void create() { }
+
+            @Override
+            protected void reset() {
+
+            }
         };
     }
 

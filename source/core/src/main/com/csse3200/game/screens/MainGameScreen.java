@@ -61,7 +61,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
   private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
-
+  private GameArea gameArea;
   public MainGameScreen(GdxGame game) {
     this.game = game;
 
@@ -88,28 +88,23 @@ public class MainGameScreen extends ScreenAdapter {
     lightingEngine = lightingService.getEngine();
 
     loadAssets();
-    createUI();
 
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-//    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
-//    CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
-    SprintOneGameArea sprintOneGameArea = new SprintOneGameArea(terrainFactory);
-    sprintOneGameArea.create();
+
+    gameArea = new SprintOneGameArea(terrainFactory);
+    gameArea.create();
 
 
-    sprintOneGameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
+    gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", keyId, player);
-      switchArea(keyId, sprintOneGameArea, player);
+      switchArea(keyId, gameArea, player);
     });
 
-    //forestGameArea.create();
 
-//    sprintOneGameArea.dispose();
-//    forestGameArea.create();
-
-    //caveGameArea.create();
-    //forestGameArea.create();
+    // Have to createUI after the game area is created since createUI
+    // needs the player which is created in the game area
+    createUI();
   }
 
   private void switchArea(String levelId, GameArea oldArea, Entity player) {
@@ -286,7 +281,10 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void createUI() {
     logger.debug("Creating ui");
-    pauseMenuDisplay = new PauseMenuDisplay(this);
+    if (gameArea.getPlayer() == null) {
+      throw new IllegalStateException("GameArea has a null player");
+    }
+    pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();

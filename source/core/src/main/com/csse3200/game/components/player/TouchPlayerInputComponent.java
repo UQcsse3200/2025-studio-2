@@ -95,4 +95,12 @@ public class TouchPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("walk", walkDirection);
     }
   }
+
+  private void triggerDashEvent() {
+    if (walkDirection.epsilonEquals(Vector2.Zero)) {
+      entity.getEvents().trigger("dashStop");
+    } else {
+      entity.getEvents().trigger("dash", walkDirection);
+    }
+  }
 }

@@ -78,7 +78,6 @@ public class CaveGameArea extends GameArea {
 
   private final TerrainFactory terrainFactory;
 
-  private Entity player;
 
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
@@ -94,7 +93,22 @@ public class CaveGameArea extends GameArea {
   @Override
   public void create() {
     loadAssets();
+    loadLevel();
+  }
 
+  protected void reset() {
+    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
+    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+
+    // Delete all entities within the room
+    super.dispose();
+    loadLevel();
+
+    // transfer all of the retained data
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+  }
+
+  private void loadLevel() {
     displayUI();
 
     spawnTerrain();
