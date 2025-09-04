@@ -108,6 +108,7 @@ project(":core") {
 
         testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVersion"
         testImplementation "org.mockito:mockito-inline:$mockitoVersion"
+        testImplementation 'junit:junit:4.13.2'
 
         testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
         testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
