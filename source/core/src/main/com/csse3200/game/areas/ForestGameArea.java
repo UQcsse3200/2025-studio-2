@@ -81,7 +81,7 @@ public class ForestGameArea extends GameArea {
 
   private final TerrainFactory terrainFactory;
 
-  private Entity player;
+
   private Entity securityLight;
 
   /**
@@ -329,7 +329,7 @@ public class ForestGameArea extends GameArea {
     // see the LightFactory class for more details on spawning these,
     // CHANGED from team5: Stored securityLight as class field instead of local variable so drones can access it
     securityLight = LightFactory.createSecurityLight(
-              player,
+              getPlayer(),
               PhysicsLayer.OBSTACLE,
               128,
               Color.GREEN,
@@ -343,7 +343,7 @@ public class ForestGameArea extends GameArea {
     GridPoint2 spawnTile = new GridPoint2(2, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos,securityLight ); // pass world pos here
+    Entity drone = EnemyFactory.createDrone(getPlayer(), spawnWorldPos,securityLight ); // pass world pos here
     spawnEntityAt(drone, spawnTile, true, true);
 
   }
@@ -356,7 +356,7 @@ public class ForestGameArea extends GameArea {
             terrain.tileToWorldPosition(new GridPoint2(6, 11)),
             terrain.tileToWorldPosition(new GridPoint2(8, 11))
     };
-    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute, securityLight);
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(getPlayer(), patrolRoute, securityLight);
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
   }
 
@@ -364,7 +364,7 @@ public class ForestGameArea extends GameArea {
     GridPoint2 spawnTile = new GridPoint2(3, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos, securityLight);
+    Entity bomberDrone = EnemyFactory.createBomberDrone(getPlayer(), spawnWorldPos, securityLight);
     spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 
