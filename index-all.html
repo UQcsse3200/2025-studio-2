@@ -498,6 +498,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/components/DisposalComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/DisposalComponent.html" title="class in com.csse3200.game.components">DisposalComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/DoorControlComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/DoorControlComponent.html" title="class in com.csse3200.game.components">DoorControlComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/FPSDisplay.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/FPSDisplay.html" title="class in com.csse3200.game.components">FPSDisplay</a></dt>
 <dd>
 <div class="block">Creates all widgets to be drawn.</div>
@@ -544,6 +546,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates reusable ui styles and adds actors to the stage.</div>
 </dd>
+<dt><a href="com/csse3200/game/components/PressurePlateComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/PressurePlateComponent.html" title="class in com.csse3200.game.components">PressurePlateComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/projectiles/BombComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.projectiles.<a href="com/csse3200/game/components/projectiles/BombComponent.html" title="class in com.csse3200.game.components.projectiles">BombComponent</a></dt>
 <dd>
 <div class="block">Create the bomb, register collision listener, get drop time</div>
@@ -679,6 +683,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a player entity.</div>
 </dd>
+<dt><a href="com/csse3200/game/entities/factories/PressurePlateFactory.html#createPressurePlate()" class="member-name-link">createPressurePlate()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/PressurePlateFactory.html" title="class in com.csse3200.game.entities.factories">PressurePlateFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/entities/factories/ProjectileFactory.html#createProjectile(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,float,int)" class="member-name-link">createProjectile(Entity, Vector2, float, int)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/ProjectileFactory.html" title="class in com.csse3200.game.entities.factories">ProjectileFactory</a></dt>
 <dd>
 <div class="block">Creates a simple projectile (for potential future use)</div>
@@ -869,6 +875,12 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">A component that represents a door which can be locked or unlocked with a specific key.</div>
 </dd>
+<dt><a href="com/csse3200/game/components/DoorControlComponent.html" class="type-name-link" title="class in com.csse3200.game.components">DoorControlComponent</a> - Class in <a href="com/csse3200/game/components/package-summary.html">com.csse3200.game.components</a></dt>
+<dd>
+<div class="block">Lets a door react to "openDoor"/"closeDoor" events.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/DoorControlComponent.html#%3Cinit%3E()" class="member-name-link">DoorControlComponent()</a> - Constructor for class com.csse3200.game.components.<a href="com/csse3200/game/components/DoorControlComponent.html" title="class in com.csse3200.game.components">DoorControlComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/utils/math/Vector2Utils.html#DOWN" class="member-name-link">DOWN</a> - Static variable in class com.csse3200.game.utils.math.<a href="com/csse3200/game/utils/math/Vector2Utils.html" title="class in com.csse3200.game.utils.math">Vector2Utils</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></dt>
@@ -2340,6 +2352,16 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/PhysicsContactListener.html#preSolve(com.badlogic.gdx.physics.box2d.Contact,com.badlogic.gdx.physics.box2d.Manifold)" class="member-name-link">preSolve(Contact, Manifold)</a> - Method in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/PhysicsContactListener.html" title="class in com.csse3200.game.physics">PhysicsContactListener</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/PressurePlateComponent.html" class="type-name-link" title="class in com.csse3200.game.components">PressurePlateComponent</a> - Class in <a href="com/csse3200/game/components/package-summary.html">com.csse3200.game.components</a></dt>
+<dd>
+<div class="block">A pressure plate that toggles its pressed state when a player steps on it.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/PressurePlateComponent.html#%3Cinit%3E()" class="member-name-link">PressurePlateComponent()</a> - Constructor for class com.csse3200.game.components.<a href="com/csse3200/game/components/PressurePlateComponent.html" title="class in com.csse3200.game.components">PressurePlateComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/entities/factories/PressurePlateFactory.html" class="type-name-link" title="class in com.csse3200.game.entities.factories">PressurePlateFactory</a> - Class in <a href="com/csse3200/game/entities/factories/package-summary.html">com.csse3200.game.entities.factories</a></dt>
+<dd>
+<div class="block">Factory class for creating pressure plate entities.</div>
+</dd>
 <dt><a href="com/csse3200/game/ui/terminal/Shell.Console.html#print(java.lang.Object)" class="member-name-link">print(Object)</a> - Method in interface com.csse3200.game.ui.terminal.<a href="com/csse3200/game/ui/terminal/Shell.Console.html" title="interface in com.csse3200.game.ui.terminal">Shell.Console</a></dt>
 <dd>
 <div class="block">Prints any generic object to the output.</div>
@@ -2776,6 +2798,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Sets the player collider when the player is range of the box.</div>
 </dd>
+<dt><a href="com/csse3200/game/components/PressurePlateComponent.html#setPlayerOnPlate(com.csse3200.game.physics.components.ColliderComponent)" class="member-name-link">setPlayerOnPlate(ColliderComponent)</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/PressurePlateComponent.html" title="class in com.csse3200.game.components">PressurePlateComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/entities/Entity.html#setPosition(float,float)" class="member-name-link">setPosition(float, float)</a> - Method in class com.csse3200.game.entities.<a href="com/csse3200/game/entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></dt>
 <dd>
 <div class="block">Set the entity's game position.</div>
@@ -2848,6 +2872,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainTile.html#setTextureRegion(com.badlogic.gdx.graphics.g2d.TextureRegion)" class="member-name-link">setTextureRegion(TextureRegion)</a> - Method in class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainTile.html" title="class in com.csse3200.game.areas.terrain">TerrainTile</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/PressurePlateComponent.html#setTextures(java.lang.String,java.lang.String)" class="member-name-link">setTextures(String, String)</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/PressurePlateComponent.html" title="class in com.csse3200.game.components">PressurePlateComponent</a></dt>
+<dd>
+<div class="block">Allow external configuration of textures if you add a pressed texture later</div>
+</dd>
 <dt><a href="com/csse3200/game/services/GameTime.html#setTimeScale(float)" class="member-name-link">setTimeScale(float)</a> - Method in class com.csse3200.game.services.<a href="com/csse3200/game/services/GameTime.html" title="class in com.csse3200.game.services">GameTime</a></dt>
 <dd>
 <div class="block">Set the speed of time passing.</div>
@@ -2950,8 +2978,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create a sorted intmap with the specified capacity</div>
 </dd>
-<dt><a href="com/csse3200/game/areas/ForestGameArea.html#spawnDoor()" class="member-name-link">spawnDoor()</a> - Method in class com.csse3200.game.areas.<a href="com/csse3200/game/areas/ForestGameArea.html" title="class in com.csse3200.game.areas">ForestGameArea</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/areas/GameArea.html#spawnEntity(com.csse3200.game.entities.Entity)" class="member-name-link">spawnEntity(Entity)</a> - Method in class com.csse3200.game.areas.<a href="com/csse3200/game/areas/GameArea.html" title="class in com.csse3200.game.areas">GameArea</a></dt>
 <dd>
 <div class="block">Spawn entity at its current position</div>
