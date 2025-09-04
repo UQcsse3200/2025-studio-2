@@ -122,7 +122,8 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSpikes(com.badlogic.gdx.math.GridPoint2)" class="member-name-link">createSpikes</a><wbr>(com.badlogic.gdx.math.GridPoint2&nbsp;position)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSpikes(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.math.Vector2)" class="member-name-link">createSpikes</a><wbr>(com.badlogic.gdx.math.GridPoint2&nbsp;position,
+ com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a basic Spike trap with configurable length and rotation.</div>
 </div>
@@ -158,9 +159,10 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createSpikes(com.badlogic.gdx.math.GridPoint2)">
+<section class="detail" id="createSpikes(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.math.Vector2)">
 <h3>createSpikes</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createSpikes</span><wbr><span class="parameters">(com.badlogic.gdx.math.GridPoint2&nbsp;position)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createSpikes</span><wbr><span class="parameters">(com.badlogic.gdx.math.GridPoint2&nbsp;position,
+ com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</span></div>
 <div class="block">Creates a basic Spike trap with configurable length and rotation.
  <p>
  The Spike trap displays in 16-pixel high x 16-pixel wide units of sprite spikes_sprite.png.
@@ -174,6 +176,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>position</code> - The start position of the trap</dd>
+<dd><code>safeSpot</code> - Spot to teleport the player once they take damage</dd>
 <dt>Returns:</dt>
 <dd>the Spike trap Entity created.</dd>
 </dl>

@@ -187,6 +187,16 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requestMoveToSafeSpot(com.badlogic.gdx.math.Vector2)" class="member-name-link">requestMoveToSafeSpot</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">This is bad.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requestReset()" class="member-name-link">requestReset</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Perform a level reset.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#scaleHeight(float)" class="member-name-link">scaleHeight</a><wbr>(float&nbsp;y)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set the entity's height and scale the width to maintain aspect ratio.</div>
@@ -475,6 +485,27 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>entity's event handler</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="requestReset()">
+<h3>requestReset</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestReset</span>()</div>
+<div class="block">Perform a level reset.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="requestMoveToSafeSpot(com.badlogic.gdx.math.Vector2)">
+<h3>requestMoveToSafeSpot</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">requestMoveToSafeSpot</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</span></div>
+<div class="block">This is bad. By all means it makes no sense for this function to be here instead of inside TrapComponent, as the
+ only entity that calls this function is the player.
+ But since the world state is locked when the TrapComponent hit happens, here we are.
+ (Potential improvement for sprint 4 I guess)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>safeSpot</code> - - safe spot we want to move the player to.</dd>
 </dl>
 </section>
 </li>

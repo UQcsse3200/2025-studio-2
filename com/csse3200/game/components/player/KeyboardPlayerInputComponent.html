@@ -140,15 +140,25 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.math.Vector2</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getWalkDirection()" class="member-name-link">getWalkDirection</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Return current walk direction.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#keyDown(int)" class="member-name-link">keyDown</a><wbr>(int&nbsp;keycode)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Triggers player events on specific keycodes.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#keyDown(int)" class="member-name-link">keyDown</a><wbr>(int&nbsp;keycode)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#keyUp(int)" class="member-name-link">keyUp</a><wbr>(int&nbsp;keycode)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Triggers player events on specific keycodes.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#keyUp(int)" class="member-name-link">keyUp</a><wbr>(int&nbsp;keycode)</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setWalkDirection(com.badlogic.gdx.math.Vector2)" class="member-name-link">setWalkDirection</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;walkDirection)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Triggers player events on specific keycodes.</div>
+<div class="block">Set current walk direction.</div>
 </div>
 </div>
 </div>
@@ -187,6 +197,30 @@ loadScripts(document, 'script');</script>
 <section class="method-details" id="method-detail">
 <h2>Method Details</h2>
 <ul class="member-list">
+<li>
+<section class="detail" id="getWalkDirection()">
+<h3>getWalkDirection</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.Vector2</span>&nbsp;<span class="element-name">getWalkDirection</span>()</div>
+<div class="block">Return current walk direction.
+ (Only current use is for transfers between resets.)</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>walkDirection</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setWalkDirection(com.badlogic.gdx.math.Vector2)">
+<h3>setWalkDirection</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setWalkDirection</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;walkDirection)</span></div>
+<div class="block">Set current walk direction.
+ (Only current use is for transfers between resets.)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>walkDirection</code> - - walkDirection to set.</dd>
+</dl>
+</section>
+</li>
 <li>
 <section class="detail" id="keyDown(int)">
 <h3>keyDown</h3>
