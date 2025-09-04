@@ -7,8 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -45,6 +48,9 @@ public class MainGameScreen extends ScreenAdapter {
   private final LightingEngine lightingEngine;
 
   private boolean paused = false;
+  private PauseMenuDisplay pauseMenuDisplay;
+
+  private GameArea forestGameArea;
 
 
   public MainGameScreen(GdxGame game) {
@@ -73,14 +79,18 @@ public class MainGameScreen extends ScreenAdapter {
     lightingEngine = lightingService.getEngine();
 
     loadAssets();
-    createUI();
 
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    ForestGameArea forestGameArea = new ForestGameArea(terrainFactory);
+    forestGameArea = new ForestGameArea(terrainFactory);
     //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
     //caveGameArea.create();
     forestGameArea.create();
+
+    // Have to createUI after the game area is created since createUI
+    // needs the player which is created in the game area
+    createUI();
+
   }
 
   @Override
@@ -144,12 +154,18 @@ public class MainGameScreen extends ScreenAdapter {
       paused = !paused;
   }
 
+  public void togglePauseMenu(Tab tab) {
+      pauseMenuDisplay.setTab(tab);
+      pauseMenuDisplay.setVisible(paused);
+  }
+
   /**
    * Creates the main game's ui including components for rendering ui elements to the screen and
    * capturing and handling ui input.
    */
   private void createUI() {
     logger.debug("Creating ui");
+    pauseMenuDisplay = new PauseMenuDisplay(this, forestGameArea.getPlayer(), this.game);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
@@ -157,6 +173,7 @@ public class MainGameScreen extends ScreenAdapter {
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
         .addComponent(new MainGameExitDisplay())
+        .addComponent(pauseMenuDisplay)
         .addComponent(new PauseInputComponent(this));
 
     ServiceLocator.getEntityService().register(ui);

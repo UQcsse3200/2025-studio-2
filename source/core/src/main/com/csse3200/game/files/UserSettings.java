@@ -6,6 +6,7 @@ import com.csse3200.game.files.FileLoader.Location;
 import com.csse3200.game.input.Keymap;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -61,8 +62,79 @@ public class UserSettings {
     } else {
       Gdx.graphics.setWindowedMode(displayMode.width, displayMode.height);
     }
+
+    applyKeybindSettings(settings.keyBindSettings);
   }
 
+  /**
+   * Applies custom keybind settings to the current keymap.
+   * Only applies keybinds if custom settings exist, otherwise uses defaults.
+   *
+   * @param keyBindSettings The keybind settings to apply, may be null
+   */
+  private static void applyKeybindSettings(KeyBindSettings keyBindSettings) {
+    if (keyBindSettings != null && keyBindSettings.customKeybinds != null) {
+      // Apply custom keybinds
+      for (Map.Entry<String, Integer> entry : keyBindSettings.customKeybinds.entrySet()) {
+        Keymap.setActionKeyCode(entry.getKey(), entry.getValue());
+      }
+    }
+  }
+
+  /**
+   * Saves the current keymap state to user settings.
+   * Creates a snapshot of all current keybinds and stores them as custom settings.
+   */
+  public static void saveCurrentKeybinds() {
+    Settings settings = get();
+    if (settings.keyBindSettings == null) {
+      settings.keyBindSettings = new KeyBindSettings();
+    }
+
+    // get current keybinds from Keymap and save
+    settings.keyBindSettings.customKeybinds = new HashMap<>(Keymap.getKeyMap());
+
+  set(settings, false); // save without applying (already applied)
+  }
+
+  /**
+   * Resets all keybinds to their default values and saves the settings.
+   * Clears any custom keybind overrides and restores the original keymap.
+   */
+  public static void resetKeybindsToDefaults() {
+    Settings settings = get();
+
+    // Clear custom keybinds
+    if (settings.keyBindSettings != null) {
+      settings.keyBindSettings.customKeybinds = null;
+    }
+
+    // Reset keymap to defaults
+    Keymap.clearKeyMap();
+    Keymap.setKeyMapDefaults();
+
+    set(settings, false); // Save the cleared custom keybinds
+  }
+
+  /**
+   * Initialises keybinds on game startup by applying saved settings or defaults
+   */
+  public static void initialiseKeybinds() {
+    // Set defaults
+    Keymap.setKeyMapDefaults();
+
+    // Then apply any saved custom keybinds
+    Settings settings = get();
+    applyKeybindSettings(settings.keyBindSettings);
+  }
+
+  /**
+   * Finds a DisplayMode that matches the desired display settings.
+   * Searches through available display modes for exact width, height, and refresh rate match.
+   *
+   * @param desiredSettings The display settings to match against
+   * @return Matching DisplayMode or null if no match found
+   */
   private static DisplayMode findMatching(DisplaySettings desiredSettings) {
     if (desiredSettings == null) {
       return null;
@@ -116,11 +188,16 @@ public class UserSettings {
 //    public float uiScale = 1f;
     public DisplaySettings displayMode = null;
 
-    /*
+    /**
      * Members for controlling volume of sound effects.
      */
     public float masterVolume = 1f;
     public float musicVolume = 1f;
+
+    /**
+     * Custom keybinds
+     */
+    public KeyBindSettings keyBindSettings = null;
   }
 
   /**
@@ -138,6 +215,20 @@ public class UserSettings {
       this.height = displayMode.height;
       this.refreshRate = displayMode.refreshRate;
     }
+  }
+
+  /**
+   * Stores custom keybind settings. Can be serialised/deserialised.
+   */
+  public static class KeyBindSettings {
+    /**
+     * Map of action names to custom key codes.
+     * Only stores keybinds that differ from defaults.
+     * Null means use all default keybinds.
+     */
+    public Map<String, Integer> customKeybinds = null;
+
+    public KeyBindSettings() {}
   }
 
   private UserSettings() {

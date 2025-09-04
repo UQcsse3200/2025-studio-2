@@ -2,20 +2,21 @@ package com.csse3200.game.input;
 
 import com.badlogic.gdx.Input;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
- * Static class that manages all keybindings for specific actions within the game
+ * Static class that manages all keybindings for specific actions within the game.
  */
 public class Keymap {
 
   /**
-   * Hash map:
+   * Linked Hash map (linked to maintain order of registered action):
    * Keys are the name of a certain action.
-   * Values are the integer key codes for a specific key
+   * Values are record containing key code action is mapped to and editable flag.
    */
-  private static final Map<String, Integer> keyMap = new HashMap<>();
+  private static Map<String, KeyBinding> keyMap = new LinkedHashMap<>();
 
   /**
    * Keymap should never be instantiated
@@ -33,24 +34,25 @@ public class Keymap {
    * @return Boolean for if the action and key were registered/set correctly (true) or not
    * (false).
    */
-  public static boolean registerAction(String actionName, int keyCode) {
+  public static boolean registerAction(String actionName, int keyCode, boolean display) {
     // Return false if action is in keymap
     if (keyMap.containsKey(actionName)) {
       return false;
     }
     // Check if key code is already a value in map
-    if (keyMap.containsValue(keyCode)) {
+    if (keyMap.values().stream().anyMatch(binding -> binding.keyCode() == keyCode)) {
       return false;
     }
 
     // Register new action
-    keyMap.put(actionName, keyCode);
+    keyMap.put(actionName, new KeyBinding(keyCode, display));
     return true;
   }
 
   /**
    * Updates an existing action in the keymap with a given key code. Returns false if the action is
-   * not in the keymap, or if the key code is already in use.
+   * not in the keymap, or if the key code is already in use by a different action. Does not
+   * affect the display flag.
    *
    * @param actionName The name of the action to be added to the map.
    * @param keyCode    The key code to be assigned to the action.
@@ -58,17 +60,23 @@ public class Keymap {
    * (false).
    */
   public static boolean setActionKeyCode(String actionName, int keyCode) {
+    // Get existing binding
+    KeyBinding existing = keyMap.get(actionName);
+
     // Return false if action is not in keymap
-    if (!keyMap.containsKey(actionName)) {
+    if (existing == null) {
       return false;
     }
+
+
     // Check if key code is already a value in map
-    if (keyMap.containsValue(keyCode)) {
+    if (keyMap.entrySet().stream()
+            .anyMatch(entry -> !entry.getKey().equals(actionName) && entry.getValue().keyCode() == keyCode)) {
       return false;
     }
 
     // Register new action
-    keyMap.put(actionName, keyCode);
+    keyMap.put(actionName, new KeyBinding(keyCode, existing.display()));
     return true;
   }
 
@@ -85,7 +93,7 @@ public class Keymap {
       return -1;
     }
 
-    return keyMap.get(actionName);
+    return keyMap.get(actionName).keyCode();
   }
 
   /**
@@ -94,27 +102,59 @@ public class Keymap {
    */
   public static void setKeyMapDefaults() {
     // Player keybindings
-    registerAction("PlayerUp", Input.Keys.W);
-    registerAction("PlayerDown", Input.Keys.S);
-    registerAction("PlayerLeft", Input.Keys.A);
-    registerAction("PlayerRight", Input.Keys.D);
-    registerAction("PlayerAttack", Input.Keys.SPACE);
-    registerAction("PlayerInteract", Input.Keys.E);
+    registerAction("PlayerUp", Input.Keys.W, true);
+    registerAction("PlayerLeft", Input.Keys.A, true);
+    registerAction("PlayerDown", Input.Keys.S, true);
+    registerAction("PlayerRight", Input.Keys.D, true);
+    registerAction("PlayerAttack", Input.Keys.SPACE, true);
+    registerAction("PlayerInteract", Input.Keys.E, true);
 
     // Debug Terminal keybindings
-    registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT);
-    registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT);
-    registerAction("TerminalToggle", Input.Keys.GRAVE);
+    registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT, false);
+    registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT, false);
+    registerAction("TerminalToggle", Input.Keys.GRAVE, false);
 
     // Pause
-    registerAction("PauseGame", Input.Keys.ESCAPE);
+    registerAction("PauseSettings", Input.Keys.ESCAPE, true);
+    registerAction("PauseInventory", Input.Keys.I, true);
+    registerAction("PauseMap", Input.Keys.M, true);
+    registerAction("PauseUpgrades", Input.Keys.U, true);
+
   }
 
   /**
-   * Getter function for the keymap.
-   * @return The keymap.
+   * Removes all actions and associated keybinds from the map.
+   */
+  public static void clearKeyMap() {
+    keyMap = new LinkedHashMap<>();
+  }
+
+  /**
+   * Getter method that returns a display-friendly version of the keybinding map. Entries whose
+   * display flag is set as false are ignored.
+   *
+   * @return The hash map with actions mapped to their keycodes.
    */
   public static Map<String, Integer> getKeyMap() {
-    return keyMap;
+    // Convert to stream to do functional processing
+    // Filter out entries with display flag set as true
+    // Then, convert back to map from stream
+    return keyMap.entrySet().stream()
+            .filter(entry -> entry.getValue().display())
+            .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    entry -> entry.getValue().keyCode(),
+                    (oldValue, newValue) -> oldValue,
+                    LinkedHashMap::new
+            ));
+  }
+
+  /**
+   * Record that holds a keycode and flag for whether keybind should be displayed in settings menu.
+   *
+   * @param keyCode The key code associated with the keybinding.
+   * @param display A flag determining if binding should be shown in settings menu.
+   */
+  private record KeyBinding(int keyCode, boolean display) {
   }
 }
