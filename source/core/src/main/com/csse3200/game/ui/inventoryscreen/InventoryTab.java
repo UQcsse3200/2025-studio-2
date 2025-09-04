@@ -98,6 +98,7 @@ public class InventoryTab implements InventoryTabInterface {
             Actor cell;
             if (i < filled) {
                 // Item exists but no icons yet -> blank spacer to preserve layout
+                // when implementing use a stack (maybe) to use assests/inventory-screen/item-slot-border.png
                 Container<Actor> blank = new Container<>();
                 blank.size(slotSize, slotSize);
                 cell = blank;
