@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.ForestGameArea;
@@ -16,6 +17,7 @@ import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -53,6 +55,11 @@ public class MainGameScreen extends ScreenAdapter {
 
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
+
+  // Camera follow parameters
+  private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
+  private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
+  private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
 
   public MainGameScreen(GdxGame game) {
@@ -145,11 +152,76 @@ public class MainGameScreen extends ScreenAdapter {
   @Override
   public void render(float delta) {
     if (!paused) {
-        physicsEngine.update();
-        ServiceLocator.getEntityService().update();
+      // Update camera position to follow player
+      updateCameraFollow();
+
+      physicsEngine.update();
+      ServiceLocator.getEntityService().update();
     }
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
+
+  /**
+   * Updates the camera position to follow the player entity.
+   * The camera only moves when the player is near the edge of the screen.
+   */
+  private void updateCameraFollow() {
+    Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
+
+    // Find the player entity
+    Vector2 playerPosition = null;
+    Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
+    for (Entity entity : entities) {
+      if (entity.getComponent(PlayerActions.class) != null) {
+        playerPosition = entity.getPosition().cpy();
+        break;
+      }
+    }
+
+    if (playerPosition != null) {
+      // Get camera viewport dimensions
+      float viewW = renderer.getCamera().getCamera().viewportWidth;
+      float viewH = renderer.getCamera().getCamera().viewportHeight;
+
+      // Calculate deadzone boundaries (area where camera doesn't move)
+      float dzW = viewW * DEADZONE_H_FRAC;
+      float dzH = viewH * DEADZONE_V_FRAC;
+
+      float dzLeft   = currentCamPos.x - dzW * 0.5f;
+      float dzRight  = currentCamPos.x + dzW * 0.5f;
+      float dzBottom = currentCamPos.y - dzH * 0.5f;
+      float dzTop    = currentCamPos.y + dzH * 0.5f;
+
+      // Calculate target camera position
+      float targetX = currentCamPos.x;
+      float targetY = currentCamPos.y;
+
+      // Only move camera if player is outside the deadzone
+      if (playerPosition.x < dzLeft) {
+        // Player is too far left, move camera left
+        targetX -= (dzLeft - playerPosition.x);
+      } else if (playerPosition.x > dzRight) {
+        // Player is too far right, move camera right
+        targetX += (playerPosition.x - dzRight);
+      }
+
+      if (playerPosition.y < dzBottom) {
+        // Player is too far down, move camera down
+        targetY -= (dzBottom - playerPosition.y);
+      } else if (playerPosition.y > dzTop) {
+        // Player is too far up, move camera up
+        targetY += (playerPosition.y - dzTop);
+      }
+
+      // Smoothly interpolate camera position for smooth movement
+      float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP;
+      float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP;
+
+      // Update camera position
+      renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
+    }
+  }
+
 
   @Override
   public void resize(int width, int height) {
