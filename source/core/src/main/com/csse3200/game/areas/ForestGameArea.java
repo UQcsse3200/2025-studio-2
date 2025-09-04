@@ -2,7 +2,6 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
@@ -445,13 +444,5 @@ public class ForestGameArea extends GameArea {
     super.dispose();
     ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
     this.unloadAssets();
-  }
-
-  /**
-   * Gets the player entity in this game area.
-   * @return the player entity, or null if no player exists
-   */
-  public Entity getPlayer() {
-    return player;
   }
 }
