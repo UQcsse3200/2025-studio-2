@@ -109,9 +109,10 @@ public class SprintOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap();
         player = spawnPlayer();
+        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
         spawnPlatform();
         spawnElevatorPlatform();
-        spawnGate();
+        //spawnGate();
         spawnBoxes();
         playMusic();
         spawnLights();
@@ -120,7 +121,7 @@ public class SprintOneGameArea extends GameArea {
         spawnDrone();
         spawnPatrollingDrone();
         spawnBomberDrone();
-        //spawnDoor();
+        spawnDoor();
 
     }
 
@@ -288,15 +289,16 @@ public class SprintOneGameArea extends GameArea {
     Creates gate to test
     */
         GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-        Entity gate = ObstacleFactory.createDoor("forest", this);
+        Entity gate = ObstacleFactory.createDoor("door", this, "forest");
         gate.setScale(1, 2);
         spawnEntityAt(gate, gatePos, true, true);
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this);
+        Entity door = ObstacleFactory.createDoor("door", this, "cave");
+        door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(door, new GridPoint2(28,19), true, true);
+        spawnEntityAt(door, new GridPoint2(28,5), true, true);
     }
 
     private void spawnDrone() {

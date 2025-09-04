@@ -11,6 +11,7 @@ import com.csse3200.game.physics.components.HitboxComponent;
 
 public class DoorComponent extends Component {
     private final String keyId;
+    private final String levelId;
     private boolean locked = true;
     private final GameArea area;
 
@@ -20,9 +21,10 @@ public class DoorComponent extends Component {
      * <p>The door listens for collisions with player entities and checks their inventory
      * for a matching key. If the player has the correct key, the door is unlocked and opened.</p>
      */
-    public DoorComponent(String keyId, GameArea area) {
+    public DoorComponent(String keyId, GameArea area, String levelId) {
         this.keyId = keyId;
         this.area = area;
+        this.levelId = levelId;
     }
 
 
@@ -54,7 +56,7 @@ public class DoorComponent extends Component {
             tryUnlock(other);
         } else {
             // Door already open -> trigger transition
-            this.area.trigger("doorEntered", keyId, other);
+            this.area.trigger("doorEntered", levelId, other);
         }
     }
 
@@ -83,6 +85,8 @@ public class DoorComponent extends Component {
 
         TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
         texture.setTexture("images/door_open.png");
+
+        locked = false;
     }
 
     /**
@@ -94,6 +98,8 @@ public class DoorComponent extends Component {
 
         TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
         texture.setTexture("images/door_closed.png");
+
+        locked = true;
     }
 
     /**

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.services.ResourceService;
@@ -14,6 +15,7 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.components.obstacles.DoorComponent;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class CaveGameArea extends GameArea {
@@ -27,22 +29,47 @@ public class CaveGameArea extends GameArea {
     "images/cave_2.png",
     "images/platform.png",
     "images/gate.png",
-    "images/box_boy_leaf.png",
-    "images/tree.png",
-    "images/ghost_king.png",
-    "images/ghost_1.png",
-    "images/grass_1.png",
-    "images/grass_2.png",
-    "images/grass_3.png",
-    "images/hex_grass_1.png",
-    "images/hex_grass_2.png",
-    "images/hex_grass_3.png",
-    "images/iso_grass_1.png",
-    "images/iso_grass_2.png",
-    "images/iso_grass_3.png"
+          "images/box_boy_leaf.png",
+          "images/box_white.png",
+          "images/box_blue.png",
+          "images/tree.png",
+          "images/ghost_king.png",
+          "images/ghost_1.png",
+          "images/grass_1.png",
+          "images/grass_2.png",
+          "images/grass_3.png",
+          "images/key.png",
+          "images/door_open.png",
+          "images/door_closed.png",
+          "images/key.png",
+          "images/hex_grass_1.png",
+          "images/hex_grass_2.png",
+          "images/hex_grass_3.png",
+          "images/iso_grass_1.png",
+          "images/iso_grass_2.png",
+          "images/iso_grass_3.png",
+          "images/drone.png",
+          "images/bomb.png",
+          "images/button.png",
+          "images/button_pushed.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/box_blue.png",
+          "images/box_orange.png",
+          "images/box_red.png",
+          "images/box_white.png",
+          "images/spikes_sprite.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/minimap_forest_area.png",
+          "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
+    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" , "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -73,6 +100,7 @@ public class CaveGameArea extends GameArea {
     spawnTerrain();
     //spawnTrees();
     player = spawnPlayer();
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -194,11 +222,11 @@ public class CaveGameArea extends GameArea {
     /*
     Creates gate to test
     */
-    float gateX = terrain.getMapBounds(0).x * terrain.getTileSize();
-    GridPoint2 gatePos = new GridPoint2((int) 28, 4);
-    Entity gate = GateFactory.createGate();
+    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
+    Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
     gate.setScale(1, 2);
-    spawnEntityAt(gate, gatePos, false, false);
+    gate.getComponent(DoorComponent.class).openDoor();
+    spawnEntityAt(gate, gatePos, true, true);
   }
 
   private void playMusic() {
