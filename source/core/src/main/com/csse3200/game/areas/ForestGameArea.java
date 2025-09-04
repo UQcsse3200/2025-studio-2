@@ -11,6 +11,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
@@ -114,6 +115,7 @@ public class ForestGameArea extends GameArea {
     MinimapDisplay minimapDisplay = createMinimap();
 
     player = spawnPlayer();
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
 
     spawnDrone();             // Play with idle/chasing drones (unless chasing)
     spawnPatrollingDrone();   // Play with patrolling/chasing drones
@@ -400,7 +402,7 @@ public class ForestGameArea extends GameArea {
     /*
     Creates gate to test
     */
-    GridPoint2 gatePos = new GridPoint2((int) 1, 5);
+    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
     Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
