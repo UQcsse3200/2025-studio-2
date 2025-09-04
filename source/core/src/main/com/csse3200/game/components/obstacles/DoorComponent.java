@@ -34,6 +34,9 @@ public class DoorComponent extends Component {
         entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
+
+        this.openDoor();
+        this.locked = false;
     }
 
     /**

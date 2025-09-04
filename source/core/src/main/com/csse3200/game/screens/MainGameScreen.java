@@ -107,8 +107,13 @@ public class MainGameScreen extends ScreenAdapter {
 
   private void switchArea(String keyId, GameArea oldArea, Entity player) {
     Gdx.app.postRunnable(() -> {
-      Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-      if (keyId != "") {
+      Vector2 walkDirection = null;
+      KeyboardPlayerInputComponent inputComp = player.getComponent(KeyboardPlayerInputComponent.class);
+      if (inputComp != null) {
+        walkDirection = inputComp.getWalkDirection();
+      }
+
+      if (!keyId.isEmpty()) {
         oldArea.dispose();
         TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
@@ -125,16 +130,23 @@ public class MainGameScreen extends ScreenAdapter {
         if (newArea != null) {
           GameArea finalNewArea = newArea; // effectively final
           String finalNewKey = newKey;
-          finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewKey, finalNewArea, player)
-          );
+
           finalNewArea.create();
-//        Entity newPlayer = finalNewArea.getPlayer();
-//        newPlayer.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+          Entity newPlayer = finalNewArea.getPlayer();
+          if (newPlayer != null) {
+            KeyboardPlayerInputComponent newInput = newPlayer.getComponent(KeyboardPlayerInputComponent.class);
+            if (newInput != null && walkDirection != null) {
+              newInput.setWalkDirection(walkDirection);
+              //            newPlayer.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+            }
+
+            finalNewArea.getEvents().addListener(
+                    "doorEntered", (String key, Entity play) -> switchArea(finalNewKey, finalNewArea, play)
+            );
+          }
         }
       }
-
-
     });
   }
 
