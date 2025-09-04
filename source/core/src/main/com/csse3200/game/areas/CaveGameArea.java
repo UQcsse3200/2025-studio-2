@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.services.ResourceService;
@@ -99,6 +100,7 @@ public class CaveGameArea extends GameArea {
     spawnTerrain();
     //spawnTrees();
     player = spawnPlayer();
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -220,7 +222,7 @@ public class CaveGameArea extends GameArea {
     /*
     Creates gate to test
     */
-    GridPoint2 gatePos = new GridPoint2((int) 1, 5);
+    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
     Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
