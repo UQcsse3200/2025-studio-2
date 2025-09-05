@@ -56,15 +56,13 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        ChaseTask chaseTask = new ChaseTask(target);
+        CooldownTask cooldownTask = new CooldownTask(2f);
 
-        // SECURITY LIGHT INTEGRATION
-        // When security light detects player, activate chasing
+        // FOR LIGHT-GATED ENEMY CHASING
         securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
+        securityLight.getEvents().addListener("targetLost", entity -> chaseTask.deactivate());
 
-        // When chase ends, activate cooldown
-        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
         aiComponent
                 .addTask(chaseTask)
                 .addTask(cooldownTask);
@@ -122,7 +120,7 @@ public class EnemyFactory {
 
         BombChaseTask chaseTask = new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f);
         BombDropTask dropTask = new BombDropTask(target, 15, 1.5f, 2f, 3f);
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        CooldownTask cooldownTask = new CooldownTask(3);
 
         // SECURITY LIGHT INTEGRATION
         // When security light detects player, activate the chase task

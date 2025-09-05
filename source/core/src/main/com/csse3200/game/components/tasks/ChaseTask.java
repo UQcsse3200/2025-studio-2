@@ -13,44 +13,29 @@ import com.csse3200.game.services.ServiceLocator;
 /** Chases a target entity until they get too far away or line of sight is lost */
 public class ChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
-    private final int priority;
-    private final float viewDistance;
-    private final float maxChaseDistance;
+
     private final PhysicsEngine physics;
     private final DebugRenderer debugRenderer;
     private final RaycastHit hit = new RaycastHit();
     private MovementTask movementTask;
     private boolean active = false;
-    private boolean triggerMaxChase = false; // whether we start enforcing maxChaseDistance
-    private final float triggerDistance = 4f; // distance at which maxChaseDistance starts counting
-
 
     /**
      * @param target The entity to chase.
-     * @param priority Task priority when chasing (0 when not chasing).
-     * @param viewDistance Maximum distance from the entity at which chasing can start.
-     * @param maxChaseDistance Maximum distance from the entity while chasing before giving up.
      */
-    public ChaseTask(Entity target, int priority, float viewDistance, float maxChaseDistance) {
+    public ChaseTask(Entity target) {
         this.target = target;
-        this.priority = priority;
-        this.viewDistance = viewDistance;
-        this.maxChaseDistance = maxChaseDistance;
         physics = ServiceLocator.getPhysicsService().getPhysics();
         debugRenderer = ServiceLocator.getRenderService().getDebug();
     }
+
     public void activate() {
+        if (active) return;
         active = true;
-        triggerMaxChase = false; // reset so first chase ignores distance
-        if (status != Status.ACTIVE) {
-            status = Status.INACTIVE;
-        }
-
-
     }
 
     public void deactivate() {
-
+        if (!active) return;
         active = false;
         owner.getEntity().getEvents().trigger("chaseEnd");
     }
@@ -58,10 +43,15 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     @Override
     public void start() {
         super.start();
-        movementTask = new MovementTask(target.getPosition());
-        movementTask.create(owner);
-        movementTask.start();
 
+        if (movementTask == null) {
+            movementTask = new MovementTask(target.getPosition());
+            movementTask.create(owner);
+        } else {
+            movementTask.setTarget(target.getPosition());
+        }
+
+        movementTask.start();
 
         this.owner.getEntity().getEvents().trigger("chaseStart");
     }
@@ -73,57 +63,17 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         if (movementTask.getStatus() != Status.ACTIVE) {
             movementTask.start();
         }
-
     }
 
     @Override
     public void stop() {
+        if (movementTask != null) movementTask.stop();
         super.stop();
-        movementTask.stop();
     }
 
     @Override
     public int getPriority() {
-        if (status == Status.ACTIVE) {
-            return getActivePriority();
-        }
-        return getInactivePriority();
-    }
-
-
-    // Calculates the current distance between the drone and its target
-    private float getDistanceToTarget() {
-        return target.getPosition().dst(owner.getEntity().getPosition());
-    }
-
-    // In getInactivePriority, only return priority if active
-    private int getInactivePriority() {
-        if (active) {
-            // Activated by security light, start chasing
-            return priority;
-        }
-        return -1; // Not active, don't chase
-    }
-
-    // In getActivePriority, also check active
-    private int getActivePriority() {
-        if (!active) return -1;
-
-        float dst = getDistanceToTarget();
-
-        // Check if we are close enough to start enforcing maxChaseDistance
-        if (!triggerMaxChase && dst <= triggerDistance) {
-            triggerMaxChase = true;
-        }
-
-        // Only stop chasing if we are enforcing maxChaseDistance
-        if (triggerMaxChase && dst > maxChaseDistance) {
-            deactivate();
-            return -1;
-        }
-
-        // Otherwise keep chasing
-        return priority;
+        return active ? 10 : -1;
     }
 
     private boolean isTargetVisible() {

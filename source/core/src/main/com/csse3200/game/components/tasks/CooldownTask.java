@@ -3,10 +3,10 @@ package com.csse3200.game.components.tasks;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
-import com.csse3200.game.components.enemy.PatrolRouteComponent;
+import com.csse3200.game.ai.tasks.TaskRunner;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.physics.components.PhysicsComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A cooldown task that activates after a chase has ended.
@@ -19,9 +19,10 @@ import com.csse3200.game.physics.components.PhysicsComponent;
  */
 public class CooldownTask extends DefaultTask implements PriorityTask {
     private final float waitTime;
-    private float timer;
-    private PatrolRouteComponent route;
+
     private boolean active = false;
+    private Vector2 startPos;
+    private WaitTask waitTask;
 
     /**
      * Creates a cooldown task with the given wait duration.
@@ -30,8 +31,15 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
      *                 the entity back to its original position
      */
     public CooldownTask(float waitTime) {
-
         this.waitTime = waitTime;
+    }
+
+    @Override
+    public void create(TaskRunner taskRunner) {
+        super.create(taskRunner);
+        owner.getEntity().getEvents().addListener("chaseEnd", this::activate);
+        SpawnPositionComponent sp = owner.getEntity().getComponent(SpawnPositionComponent.class);
+        if (sp != null) startPos = new Vector2(sp.getSpawnPos());
     }
 
     /**
@@ -39,8 +47,13 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
      * "chaseEnd" event when the drone loses the player.
      */
     public void activate() {
+        if (active) return;
         active = true;
-        status = Status.INACTIVE;
+    }
+
+    public void deactivate() {
+        if (!active) return;
+        active = false;
     }
 
     /**
@@ -51,16 +64,18 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     @Override
     public void start() {
         super.start();
-        timer = 0f;
-        Entity entity = this.owner.getEntity();
 
-
-
-        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
-        if (physics != null) {
-            physics.getBody().setGravityScale(0f);
-            physics.getBody().setLinearVelocity(0f, 0f); // stop falling instantly
+        if (waitTask == null) {
+            waitTask = new WaitTask(waitTime);
+            waitTask.create(owner);
         }
+        waitTask.start();
+
+//        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
+//        if (physics != null) {
+//            physics.getBody().setGravityScale(0f);
+//            physics.getBody().setLinearVelocity(0f, 0f); // stop falling instantly
+//        }
 
         // Trigger event so animations/sfx can be implemented
         owner.getEntity().getEvents().trigger("cooldownStart");
@@ -74,60 +89,60 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
      */
     @Override
     public void update() {
-        float delta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
-        timer += delta;
-        if (timer >= waitTime) {
-            Entity entity = owner.getEntity();
-            Vector2 resetPos = null;
+        if (waitTask == null) return;
+        waitTask.update();
 
-            PatrolRouteComponent patrol = entity.getComponent(PatrolRouteComponent.class);
-            if (patrol != null) {
-                resetPos = patrol.patrolStart();
-            } else {
-                SpawnPositionComponent spawn = entity.getComponent(SpawnPositionComponent.class);
-                if (spawn != null) {
-                    resetPos = spawn.getSpawnPos();
-                }
-            }
-
-            if (resetPos != null) {
-                entity.setPosition(resetPos);
-            }
-            // Re-enable gravity after teleport
-            PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-            if (physics != null) {
-                physics.getBody().setGravityScale(1f);
-            }
-
-
-
+        if (waitTask.getStatus() == Status.FINISHED) {
+            owner.getEntity().setPosition(startPos);
             owner.getEntity().getEvents().trigger("cooldownEnd");
-
-            status = Status.FINISHED;
-            active = false;
-
+            deactivate();
         }
+
+//        float delta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
+//        timer += delta;
+//        if (timer >= waitTime) {
+//            Entity entity = owner.getEntity();
+//            Vector2 resetPos = null;
+//
+//            PatrolRouteComponent patrol = entity.getComponent(PatrolRouteComponent.class);
+//            if (patrol != null) {
+//                resetPos = patrol.patrolStart();
+//            } else {
+//                SpawnPositionComponent spawn = entity.getComponent(SpawnPositionComponent.class);
+//                if (spawn != null) {
+//                    resetPos = spawn.getSpawnPos();
+//                }
+//            }
+//
+//            if (resetPos != null) {
+//                entity.setPosition(resetPos);
+//            }
+//            // Re-enable gravity after teleport
+//            PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+//            if (physics != null) {
+//                physics.getBody().setGravityScale(1f);
+//            }
+//
+//            owner.getEntity().getEvents().trigger("cooldownEnd");
+//
+//            status = Status.FINISHED;
+//            active = false;
     }
 
     /**
      * Returns the priority of this task. The cooldown is only
-     * considered runnable while {@link #active} is true.
+     * considered runnable while active is true.
      *
-     * @return priority 2 when active, otherwise -1 (disabled)
+     * @return priority 5 when active, otherwise -1 (disabled)
      */
     @Override
     public int getPriority() {
-        return active ? 2 : -1;
-
+        return active ? 5 : -1;
     }
 
-    /**
-     * Stops the cooldown task. Resets the timer so the task
-     * can be cleanly restarted later.
-     */
     @Override
     public void stop() {
+        if (waitTask != null) waitTask.stop();
         super.stop();
-        timer = 0f;
     }
 }

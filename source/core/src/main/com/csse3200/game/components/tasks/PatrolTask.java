@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.Task;
+import com.csse3200.game.ai.tasks.TaskRunner;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,32 +44,34 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     @Override
     public int getPriority() {return 1;} // Low priority
 
+    @Override
+    public void create(TaskRunner owner) {
+        super.create(owner);
+
+        route = owner.getEntity().getComponent(PatrolRouteComponent.class);
+
+        waitTask = new WaitTask(waitTime);
+        waitTask.create(owner);
+
+        movementTask = new MovementTask(route.patrolStart());
+        movementTask.create(owner);
+    }
     /**
      * Set up subtasks (wait, movement) and begin moving toward first waypoint.
      */
     @Override
     public void start() {
-        logger.debug("PATROL START");
         super.start();
+        // Set "start" patrol conditions
+        i = 0;
+        forward = true;
 
         if (route == null) {
             route = this.owner.getEntity().getComponent(PatrolRouteComponent.class);
         }
 
-        if (waitTask == null) {
-            waitTask = new WaitTask(waitTime);
-            waitTask.create(owner);
-        }
-
-        if (movementTask == null) {
-            movementTask = new MovementTask(route.getWaypointAt(i));
-            movementTask.create(owner);
-        } else {
-            movementTask.setTarget(route.getWaypointAt(i));
-        }
-
-        movementTask.start();
-        currentTask = movementTask;
+        waitTask.start();
+        currentTask = waitTask;
 
         this.owner.getEntity().getEvents().trigger("patrolStart");
     }
@@ -79,13 +82,15 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      */
     @Override
     public void update() {
+        if (currentTask == null) return;
+
         if (currentTask.getStatus() != Status.ACTIVE) {
             if (currentTask == movementTask) {
                 swapTask(waitTask); // Always wait between waypoints
             } else {
                 nextIndex();
-                movementTask.setTarget(route.getWaypointAt(i));
                 swapTask(movementTask);
+                movementTask.setTarget(route.getWaypointAt(i));
             }
         }
         currentTask.update();
@@ -96,8 +101,8 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     public void stop() {
         if (currentTask != null) {
             currentTask.stop();
-            super.stop();
         }
+        super.stop();
     }
 
     /**
@@ -174,6 +179,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      */
     private void swapTask(Task newTask) {
         if (currentTask != null) {
+            logger.debug("{} Changing to task {}", currentTask, newTask);
             currentTask.stop();
         }
         currentTask = newTask;
