@@ -134,7 +134,7 @@ public class ForestGameArea extends GameArea {
     player.getEvents().addListener("reset", this::reset);
     spawnLights(); //lights need to be spawned before drone
 
-    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    spawnDrone();             // Play with idle/chasing drones (unless chasing)
     spawnPatrollingDrone();   // Play with patrolling/chasing drones
     //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
@@ -149,7 +149,7 @@ public class ForestGameArea extends GameArea {
       // spawnKey();
     spawnTraps();
     playMusic();
-    spawnDoor();
+    //spawnDoor();
   }
 
   private void createMinimap() {
@@ -380,8 +380,8 @@ public class ForestGameArea extends GameArea {
 
     Vector2[] patrolRoute = {
             terrain.tileToWorldPosition(spawnTile),
-            terrain.tileToWorldPosition(new GridPoint2(6, 11)),
-            terrain.tileToWorldPosition(new GridPoint2(8, 11))
+            terrain.tileToWorldPosition(new GridPoint2(8, 11)),
+            terrain.tileToWorldPosition(new GridPoint2(12, 11))
     };
     Entity patrolDrone = EnemyFactory.createPatrollingDrone(getPlayer(), patrolRoute, securityLight);
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird

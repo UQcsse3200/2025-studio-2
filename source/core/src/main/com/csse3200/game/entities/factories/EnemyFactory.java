@@ -57,7 +57,7 @@ public class EnemyFactory {
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target);
-        CooldownTask cooldownTask = new CooldownTask(2f);
+        CooldownTask cooldownTask = new CooldownTask(5f);
 
         // FOR LIGHT-GATED ENEMY CHASING
         securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
