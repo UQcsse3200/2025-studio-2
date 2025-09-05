@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
@@ -417,12 +418,13 @@ public class ForestGameArea extends GameArea {
             player,
             PhysicsLayer.OBSTACLE,
             128,
-            Color.GREEN,
-            10f,
-            0f,
+            Color.YELLOW,
+            5f,
+            -90f,
             35f
     );
-    spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
+    securityLight.addComponent(new ConeLightPanningTaskComponent(-135f, -45f, 25f));
+    spawnEntityAt(securityLight, new GridPoint2(15, 20), true, true);
   }
 
   private void playMusic() {

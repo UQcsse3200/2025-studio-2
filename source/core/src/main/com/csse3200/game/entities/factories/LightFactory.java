@@ -101,7 +101,7 @@ public class LightFactory {
         e.getEvents().addListener("targetDetected", (Entity p) ->
                 e.getComponent(ConeLightComponent.class).setColor(Color.RED));
         e.getEvents().addListener("targetLost", (Entity p) ->
-                e.getComponent(ConeLightComponent.class).setColor(Color.GREEN));
+                e.getComponent(ConeLightComponent.class).setColor(Color.YELLOW));
         return e;
     }
 
