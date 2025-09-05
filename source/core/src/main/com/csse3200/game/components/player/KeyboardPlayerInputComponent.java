@@ -32,7 +32,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private final int ENTER_CHEAT_KEY = Keymap.getActionKeyCode("Enter");
   private int[] CHEAT_INPUT_HISTORY = new int[4];
   private int cheatPosition = 0;
-  private boolean cheatsOn = false;
+  private Boolean cheatsOn = false;
 
   public KeyboardPlayerInputComponent() {
     super(5);
@@ -204,7 +204,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     return CHEAT_INPUT_HISTORY;
   }
 
-  public boolean getIsCheatsOn() {
+  public Boolean getIsCheatsOn() {
     return cheatsOn;
   }
   private void enableCheats() {

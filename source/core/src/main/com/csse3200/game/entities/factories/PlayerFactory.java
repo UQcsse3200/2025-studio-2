@@ -10,6 +10,7 @@ import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.components.player.PlayerStatsDisplay;
 import com.csse3200.game.entities.Entity;
