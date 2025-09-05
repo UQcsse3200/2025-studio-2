@@ -12,11 +12,17 @@ public class PhysicsLayer {
   // Tooltip trigger zones and Tooltip colliders
   public static final short TOOLTIP = (1 << 5);
   public static final short ALL = ~0;
+  public static final short PROJECTILE = (1 << 7);
+    public static final short WALL = (1 << 2);
+    public static final short ENEMY = (1 << 3);
+    public static final short TILE = (1 << 6);
 
   public static boolean contains(short filterBits, short layer) {
     return (filterBits & layer) != 0;
   }
-
+    public static final short WALL_BITS = WALL | DEFAULT | PLAYER | ENEMY | NPC | OBSTACLE;
+    public static final short ENEMY_BITS = ENEMY | DEFAULT | PLAYER | WALL | OBSTACLE | TILE | NPC;
+    public static final short TILE_BITS = TILE | DEFAULT | PLAYER | ENEMY;
   private PhysicsLayer() {
     throw new IllegalStateException("Instantiating static util class");
   }

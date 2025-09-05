@@ -19,6 +19,11 @@ import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.components.DisposalComponent;
+import com.csse3200.game.components.projectiles.LaserComponent;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.PhysicsMovementComponent;
+import com.csse3200.game.components.TouchAttackComponent;
 
 /**
  * Factory to create projectile entities like bombs, bullets, etc.
@@ -81,6 +86,36 @@ public class ProjectileFactory {
 
         return bomb;
     }
+
+    public static Entity createLaser(Entity shooter, Vector2 direction, float speed, int damage) {
+        // The factory creates a new Entity, then adds components to it.
+        Entity laser = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new PhysicsMovementComponent())
+                .addComponent(new ColliderComponent().setSensor(true).setLayer(PhysicsLayer.PROJECTILE))
+                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 0f))
+                .addComponent(new CombatStatsComponent(1, damage))
+                .addComponent(new DisposalComponent(5f));
+
+        // Now, add the LaserComponent to the entity to manage its specific behavior.
+        laser.addComponent(new LaserComponent(shooter, speed, damage));
+
+        // Use a TextureRenderComponent for the single image file.
+        // We are using a placeholder since you don't have a laser.png file.
+        laser.addComponent(new TextureRenderComponent("images/laser.png"));
+
+        // Sets initial velocity of the laser body.
+        laser.getComponent(PhysicsComponent.class).getBody().setLinearVelocity(direction.scl(speed));
+
+        // Set the scale to make it look like a laser beam.
+        laser.setScale(0.5f, 0.1f);
+        PhysicsUtils.setScaledCollider(laser, 0.5f, 0.1f);
+
+        ServiceLocator.getEntityService().register(laser);
+
+        return laser;
+    }
+
 
 
     /**
