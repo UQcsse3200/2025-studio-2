@@ -102,6 +102,8 @@ public class Keymap {
    */
   public static void setKeyMapDefaults() {
     // Player keybindings
+    registerAction("PlayerUp", Input.Keys.W, false);
+    registerAction("PlayerDown", Input.Keys.S, false);
     registerAction("PlayerLeft", Input.Keys.A, true);
     registerAction("PlayerRight", Input.Keys.D, true);
     registerAction("PlayerAttack", Input.Keys.Q, true);
@@ -111,6 +113,7 @@ public class Keymap {
     registerAction("PlayerDash", Input.Keys.SHIFT_LEFT, true);
     registerAction("PlayerCrouch", Input.Keys.C, true);
     registerAction("Reset", Input.Keys.R, true);
+    registerAction("Enter", Input.Keys.ENTER, false);
 
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT, false);

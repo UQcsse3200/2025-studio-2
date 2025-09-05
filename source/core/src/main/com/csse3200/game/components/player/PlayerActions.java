@@ -10,6 +10,7 @@ import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.events.listeners.EventListener0;
 import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.*;
@@ -72,6 +73,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+    entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
 
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
@@ -134,9 +136,20 @@ public class PlayerActions extends Component {
     float maxDeltaV = MAX_ACCELERATION * inAirControl * Gdx.graphics.getDeltaTime();
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
+    float impulseY;
 
-    Vector2 impulse = new Vector2(deltaV * body.getMass(), 0);
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+      float deltaVy = desiredVelocity.y - velocity.y;
+      float maxDeltaVy = MAX_ACCELERATION * inAirControl * Gdx.graphics.getDeltaTime();
+      deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
+      impulseY = deltaVy * body.getMass();
+    } else {
+      impulseY = 0f;
+    }
+    Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+
+
 
     /**
     Vector2 impulse =
@@ -333,4 +346,16 @@ public class PlayerActions extends Component {
     return hasDashed;
   }
 
+  /**
+   * Turns the gravity off/on for the player depending if cheats are on
+   */
+  private void toggleGravity() {
+    Body body = physicsComponent.getBody();
+
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+      body.setGravityScale(0f);
+    } else {
+      body.setGravityScale(1f);
+    }
+  }
 }
