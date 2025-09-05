@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.entities.Entity;
@@ -27,22 +28,43 @@ public class ButtonFactory {
      *
      * @return fully configured button entity
      */
-    public static Entity createButton(boolean isPressed, String type) {
+    public static Entity createButton(boolean isPressed, String type, String direction) {
 
         Entity button = new Entity();
 
+        String texture;
         //set texture based on type
         if(type.equals("platform")) {
-            String texture = isPressed ? "images/blue_button_pushed.png" : "images/blue_button.png";
-            button.addComponent(new TextureRenderComponent(texture));
+            texture = isPressed ? "images/blue_button_pushed.png" : "images/blue_button.png";
+           // button.addComponent(new TextureRenderComponent(texture));
         }else if(type.equals("door")) {
-            String texture = isPressed ? "images/red_button_pushed.png" : "images/red_button.png";
-            button.addComponent(new TextureRenderComponent(texture));
+            texture = isPressed ? "images/red_button_pushed.png" : "images/red_button.png";
+           // button.addComponent(new TextureRenderComponent(texture));
         }else {
-            String texture = isPressed ? "images/button_pushed.png" : "images/button.png";
-            button.addComponent(new TextureRenderComponent(texture));
+            texture = isPressed ? "images/button_pushed.png" : "images/button.png";
+            //button.addComponent(new TextureRenderComponent(texture));
         }
+        TextureRenderComponent render = new TextureRenderComponent(texture);
 
+        if(direction != null) {
+            direction = direction.toLowerCase();
+            switch (direction) {
+                case "right":
+                    render.setRotation(180f);
+                    break;
+                case "down":
+                    render.setRotation(90f);
+                    break;
+                case "up":
+                    render.setRotation(270f);
+                    break;
+                case "left":
+                default:
+                    render.setRotation(0f);
+                    break;
+            }
+        }
+        button.addComponent(render);
         //add physics and collider components
         button.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
 
@@ -54,6 +76,7 @@ public class ButtonFactory {
         //add button component and set type
         ButtonComponent buttonComponent = new ButtonComponent();
         buttonComponent.setType(type);
+        buttonComponent.setDirection(direction);
         button.addComponent(buttonComponent);
 
         button.setScale(0.5f, 0.5f);
