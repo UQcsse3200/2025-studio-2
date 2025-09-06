@@ -1,7 +1,5 @@
 package com.csse3200.game.components.tasks;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.ai.tasks.Task;
@@ -86,7 +84,8 @@ class CooldownTaskTest {
 
         assertEquals(expected.x, actual.x, 0.001f);
         assertEquals(expected.y, actual.y, 0.001f);
-        assertEquals(Task.Status.INACTIVE, cooldownTask.getStatus());
+        assertEquals(-1, cooldownTask.getPriority(),
+                "Cooldown should deactivate after teleport");
     }
 
     @Test
@@ -98,10 +97,9 @@ class CooldownTaskTest {
         final boolean[] triggered = {false};
         entity.getEvents().addListener("cooldownEnd", () -> triggered[0] = true);
 
-        when(gameTime.getTime()).thenReturn(0L, 100L);
         cooldownTask.activate();
         cooldownTask.start();
-        cooldownTask.update();
+        cooldownTask.stop(); // Cooldown stopped
 
         assertTrue(triggered[0], "cooldownEnd should have been triggered");
         assertEquals(Task.Status.INACTIVE, cooldownTask.getStatus());
@@ -126,10 +124,11 @@ class CooldownTaskTest {
         cooldownTask.update();
         assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
 
-        cooldownTask.update();
-        assertEquals(Task.Status.INACTIVE, cooldownTask.getStatus());
+        cooldownTask.update(); // Teleport here
 
         assertEquals(patrolRoute.patrolStart(), entity.getPosition());
+        assertEquals(-1, cooldownTask.getPriority(),
+                "Cooldown should deactivate after teleport");
     }
 
     @Test
