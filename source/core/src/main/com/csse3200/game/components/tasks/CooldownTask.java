@@ -90,9 +90,7 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
 
         if (waitTask.getStatus() == Status.FINISHED) {
             owner.getEntity().setPosition(resetPos);
-
             deactivate();
-            stop();
         }
     }
 

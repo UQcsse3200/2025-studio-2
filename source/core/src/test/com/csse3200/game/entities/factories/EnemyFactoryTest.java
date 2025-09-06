@@ -1,7 +1,9 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
@@ -10,8 +12,11 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
 import com.csse3200.game.entities.configs.EnemyConfigs;
+import com.csse3200.game.events.listeners.EventListener0;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.files.FileLoader;
+import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -20,19 +25,26 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
+import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import jdk.jfr.Event;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 public class EnemyFactoryTest {
     private BaseEntityConfig droneConfig;
     private ResourceService rs;
+    private GameTime gameTime;
 
     @BeforeEach
     void setUp() {
@@ -48,6 +60,10 @@ public class EnemyFactoryTest {
         ServiceLocator.registerResourceService(rs);
         rs.loadTextureAtlases(new String[]{"images/drone.atlas"});
         rs.loadAll();
+
+        // Register time source needed for AI tasks
+        gameTime = mock(GameTime.class);
+        ServiceLocator.registerTimeSource(gameTime);
     }
 
     @AfterEach
@@ -271,4 +287,113 @@ public class EnemyFactoryTest {
                 "Drones should have distinct AITaskComponents");
     }
 
+
+    // Tests to verify correct AI task flow
+    @Test
+    void patrolDrone_patrolToChaseFlow() {
+        Entity target = createEntityWithPosition();
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
+
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
+        drone.create();
+
+        List<String> eventLog = new ArrayList<>();
+        drone.getEvents().addListener("patrolStart", () -> eventLog.add("patrolStart"));
+        drone.getEvents().addListener("patrolEnd", () -> eventLog.add("patrolEnd"));
+        drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
+
+        ai.update(); // Patrolling
+        light.getEvents().trigger("targetDetected", target);
+        ai.update(); // Chasing
+
+        assertEquals(List.of("patrolStart", "patrolEnd", "chaseStart"), eventLog);
+    }
+
+    @Test
+    void patrolDrone_chaseToCooldownFlow() {
+        Entity target = createEntityWithPosition();
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
+
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
+        drone.create();
+
+        List<String> eventLog = new ArrayList<>();
+        drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
+        drone.getEvents().addListener("chaseEnd", () -> eventLog.add("chaseEnd"));
+        drone.getEvents().addListener("cooldownStart", () -> eventLog.add("cooldownStart"));
+
+        ai.update(); // Patrolling
+        light.getEvents().trigger("targetDetected", target);
+        ai.update(); // Chasing
+        light.getEvents().trigger("targetLost", target);
+        ai.update(); // Cooldown
+
+        assertEquals(List.of("chaseStart", "chaseEnd", "cooldownStart"), eventLog);
+    }
+
+    @Test
+    void patrolDrone_cooldownToPatrolFlow() {
+        Entity target = createEntityWithPosition();
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
+
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
+        drone.create();
+
+        List<String> eventLog = new ArrayList<>();
+        drone.getEvents().addListener("cooldownStart", () -> eventLog.add("cooldownStart"));
+        drone.getEvents().addListener("cooldownEnd", () -> eventLog.add("cooldownEnd"));
+        drone.getEvents().addListener("patrolStart", () -> eventLog.add("patrolStart"));
+
+        light.getEvents().trigger("targetLost", target);
+
+        when(gameTime.getTime()).thenReturn(0L, 5000L);
+
+        ai.update(); // Cooldown
+        ai.update(); // Finish cooldown
+        ai.update(); // Patrol
+
+        assertEquals(List.of("cooldownStart", "cooldownEnd",  "patrolStart"), eventLog);
+    }
+
+    @Test
+    void patrolDrone_cooldownToChaseFlow() {
+        Entity target = createEntityWithPosition();
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
+
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
+        drone.create();
+
+        List<String> eventLog = new ArrayList<>();
+        drone.getEvents().addListener("cooldownStart", () -> eventLog.add("cooldownStart"));
+        drone.getEvents().addListener("cooldownEnd", () -> eventLog.add("cooldownEnd"));
+        drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
+        drone.getEvents().addListener("patrolStart", () -> eventLog.add("patrolStart"));
+
+        light.getEvents().trigger("targetLost", target);
+        ai.update(); // Cooldown
+
+        // Advance cooldown (but not finished) need time sequence for wait subtask
+        when(gameTime.getTime()).thenReturn(4000L);
+        ai.update(); // Still in cooldown
+
+        light.getEvents().trigger("targetDetected", target);
+        ai.update(); // Chasing
+
+        assertEquals(List.of("cooldownStart", "cooldownEnd", "chaseStart"), eventLog);
+    }
+
+    private Entity createEntityWithPosition() {
+        Entity e = new Entity();
+        e.setPosition(new Vector2(10, 10));
+        e.create();
+        return e;
+    }
 }
