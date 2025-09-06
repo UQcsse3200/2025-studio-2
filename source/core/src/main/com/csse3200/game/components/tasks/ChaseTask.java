@@ -4,21 +4,32 @@ import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.entities.Entity;
 
-/** Chases a target entity */
+/**
+ *  Makes an entity continuously move toward a designated target entity.
+ *  This task is only runnable by AITaskComponent when it has been explicitly activated, which lets
+ *  external systems control when chasing should occur. For example, in EnemyFactory,
+ *  drones listen to 'playerDetected' and 'playerLost' to activate or deactivate the chasing behaviour.
+ *
+ *  getPriority() returns a high priority when the task is active so that the AI scheduler will select it
+ *  over low priority tasks like patrols or idle behaviours. When deactivated, its priority is set to -1 so the
+ *  task is never scheduled.
+ **/
 public class ChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
     private MovementTask movementTask;
     private boolean active = false;
 
     /**
-     * @param target The entity to chase.
+     * Creates a new chase task that will pursue the given target entity
+     * @param target The target entity to be chased
      */
     public ChaseTask(Entity target) {
         this.target = target;
     }
 
     /**
-     * Allows us to externally activate chase task (i.e. playerDetected)
+     * Activate the chase task, making it eligible for scheduling by the AI system.
+     * Typically called in response to a 'playerDetected' event.
      */
     public void activate() {
         if (active) return;
@@ -26,13 +37,17 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     }
 
     /**
-     * Allows us to externally deactivate chase task (i.e. playerLost)
+     * Deactivate the chase task, preventing it from being scheduled.
+     * Typically called in response to a 'playerLost' event.
      */
     public void deactivate() {
         if (!active) return;
         active = false;
     }
 
+    /**
+     * Start the chase behaviour. Early return if the task is not active.
+     */
     @Override
     public void start() {
         super.start();
@@ -49,6 +64,9 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         this.owner.getEntity().getEvents().trigger("chaseStart");
     }
 
+    /**
+     * Update the chase behaviour each frame.
+     */
     @Override
     public void update() {
         if (!active || movementTask == null) return;
@@ -60,6 +78,9 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         }
     }
 
+    /**
+     * Stop the chase behaviour and movement subtask.
+     */
     @Override
     public void stop() {
         if (movementTask != null) movementTask.stop();
@@ -69,6 +90,10 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         this.owner.getEntity().getEvents().trigger("chaseEnd");
     }
 
+    /**
+     * Get the current priority of the task
+     * @return 10 if active, otherwise -1.
+     */
     @Override
     public int getPriority() {
         return active ? 10 : -1;
