@@ -3,10 +3,9 @@ package com.csse3200.game.components.tasks;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
-import com.csse3200.game.ai.tasks.TaskRunner;
+import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.csse3200.game.physics.components.PhysicsComponent;
 
 /**
  * A cooldown task that activates after a chase has ended.
@@ -21,7 +20,7 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     private final float waitTime;
 
     private boolean active = false;
-    private Vector2 startPos;
+    private Vector2 resetPos;
     private WaitTask waitTask;
 
     /**
@@ -34,36 +33,32 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
         this.waitTime = waitTime;
     }
 
-    @Override
-    public void create(TaskRunner taskRunner) {
-        super.create(taskRunner);
-        owner.getEntity().getEvents().addListener("chaseEnd", this::activate);
-        SpawnPositionComponent sp = owner.getEntity().getComponent(SpawnPositionComponent.class);
-        if (sp != null) startPos = new Vector2(sp.getSpawnPos());
-    }
-
     /**
      * Activates the cooldown task. Typically triggered by a
-     * "chaseEnd" event when the drone loses the player.
+     * "playerLost" event.
      */
     public void activate() {
         if (active) return;
         active = true;
     }
 
+    /** Deactivate the cooldown task, preventing it from being scheduled.
+     * Typically called in response to a `playerDetected` event.
+     */
     public void deactivate() {
         if (!active) return;
         active = false;
     }
 
     /**
-     * Starts the cooldown. Resets the timer, stops entity
-     * movement, disables gravity, and triggers a
+     * Starts the cooldown. Starts a wait subtask, disables gravity, and triggers a
      * {@code "cooldownStart"} event for animations TO BE ADDED.
      */
     @Override
     public void start() {
         super.start();
+        if (!active) return;
+        resetPos = computeResetPos();
 
         if (waitTask == null) {
             waitTask = new WaitTask(waitTime);
@@ -71,62 +66,34 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
         }
         waitTask.start();
 
-//        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
-//        if (physics != null) {
-//            physics.getBody().setGravityScale(0f);
-//            physics.getBody().setLinearVelocity(0f, 0f); // stop falling instantly
-//        }
+        // Disable gravity and freeze motion during cooldown
+        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
+        if (physics != null && physics.getBody() != null) {
+            physics.getBody().setGravityScale(0f);
+            physics.getBody().setLinearVelocity(0f, 0f); // stop falling instantly
+        }
 
         // Trigger event so animations/sfx can be implemented
         owner.getEntity().getEvents().trigger("cooldownStart");
     }
 
     /**
-     * Updates the cooldown timer. Once the cooldown has elapsed,
+     * Advance wait task. Once the cooldown wait has elapsed,
      * the entity is teleported back to its patrol start or spawn
-     * position, gravity is restored, and a {@code "cooldownEnd"}
-     * event is fired.
+     * position the cooldown task is stopped.
+     * Calls deactivate() to stop task being runnable.
      */
     @Override
     public void update() {
-        if (waitTask == null) return;
+        if (!active || waitTask == null) return;
         waitTask.update();
 
         if (waitTask.getStatus() == Status.FINISHED) {
-            owner.getEntity().setPosition(startPos);
-            owner.getEntity().getEvents().trigger("cooldownEnd");
-            deactivate();
-        }
+            owner.getEntity().setPosition(resetPos);
 
-//        float delta = com.badlogic.gdx.Gdx.graphics.getDeltaTime();
-//        timer += delta;
-//        if (timer >= waitTime) {
-//            Entity entity = owner.getEntity();
-//            Vector2 resetPos = null;
-//
-//            PatrolRouteComponent patrol = entity.getComponent(PatrolRouteComponent.class);
-//            if (patrol != null) {
-//                resetPos = patrol.patrolStart();
-//            } else {
-//                SpawnPositionComponent spawn = entity.getComponent(SpawnPositionComponent.class);
-//                if (spawn != null) {
-//                    resetPos = spawn.getSpawnPos();
-//                }
-//            }
-//
-//            if (resetPos != null) {
-//                entity.setPosition(resetPos);
-//            }
-//            // Re-enable gravity after teleport
-//            PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-//            if (physics != null) {
-//                physics.getBody().setGravityScale(1f);
-//            }
-//
-//            owner.getEntity().getEvents().trigger("cooldownEnd");
-//
-//            status = Status.FINISHED;
-//            active = false;
+            deactivate();
+            stop();
+        }
     }
 
     /**
@@ -140,9 +107,42 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
         return active ? 5 : -1;
     }
 
+    /**
+     * When the cooldown task is stopped, gravity is restored and a
+     * 'cooldownEnd' event is triggered.
+     */
     @Override
     public void stop() {
         if (waitTask != null) waitTask.stop();
+
+        restoreGravity();
         super.stop();
+        owner.getEntity().getEvents().trigger("cooldownEnd");
+    }
+
+    /** Choose reset position: Patrol start, otherwise spawn pos, fallback to current position */
+    private Vector2 computeResetPos() {
+        // Return first patrol waypoint if entity has a PatrolRouteComponent
+        PatrolRouteComponent patrol = owner.getEntity().getComponent(PatrolRouteComponent.class);
+        if (patrol != null && patrol.numWaypoints() > 0) {
+            return patrol.patrolStart();
+        }
+
+        // Otherwise return the spawn position
+        SpawnPositionComponent spawn = owner.getEntity().getComponent(SpawnPositionComponent.class);
+        if (spawn != null) {
+            return spawn.getSpawnPos();
+        }
+
+        // Return current position as a fallback
+        return new Vector2(owner.getEntity().getPosition());
+    }
+
+    /** Re-enable gravity on the entity's physics body */
+    private void restoreGravity() {
+        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
+        if (physics != null && physics.getBody() != null) {
+            physics.getBody().setGravityScale(1f);
+        }
     }
 }

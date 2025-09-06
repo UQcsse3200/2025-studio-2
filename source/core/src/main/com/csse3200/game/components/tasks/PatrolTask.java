@@ -49,7 +49,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     @Override
     public void start() {
         super.start();
-        // Set "start" patrol conditions
+        // Set "start" patrol conditions (forward direction from first waypoint)
         i = 0;
         forward = true;
 
@@ -102,7 +102,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
         currentTask = null;
         super.stop();
 
-        this.owner.getEntity().getEvents().trigger("patrolStop");
+        this.owner.getEntity().getEvents().trigger("patrolEnd");
     }
 
     /**

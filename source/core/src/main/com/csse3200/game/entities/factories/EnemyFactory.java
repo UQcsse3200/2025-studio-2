@@ -60,8 +60,14 @@ public class EnemyFactory {
         CooldownTask cooldownTask = new CooldownTask(5f);
 
         // FOR LIGHT-GATED ENEMY CHASING
-        securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
-        securityLight.getEvents().addListener("targetLost", entity -> chaseTask.deactivate());
+        securityLight.getEvents().addListener("targetDetected", entity -> {
+            chaseTask.activate();
+            cooldownTask.deactivate();
+        });
+        securityLight.getEvents().addListener("targetLost", entity -> {
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
 
         aiComponent
                 .addTask(chaseTask)

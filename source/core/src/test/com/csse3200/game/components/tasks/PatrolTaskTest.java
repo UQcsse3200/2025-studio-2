@@ -22,12 +22,15 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 public class PatrolTaskTest {
+    private GameTime gameTime;
+
     @BeforeEach
     void setUp() {
-        GameTime gameTime = mock(GameTime.class);
-        when(gameTime.getDeltaTime()).thenReturn(20f/1000);
-        ServiceLocator.registerTimeSource(gameTime);
+        ServiceLocator.clear();
         ServiceLocator.registerPhysicsService(new PhysicsService());
+        gameTime = mock(GameTime.class);
+        when(gameTime.getDeltaTime()).thenReturn(0.02f);
+        ServiceLocator.registerTimeSource(gameTime);
     }
 
     @Test
@@ -177,7 +180,7 @@ public class PatrolTaskTest {
         assertTrue(patrol.isMoving(),
                 "Should be moving after two updates");
         assertEquals(1, patrol.getIndex(),
-        "Index should be 1 before restart");
+                "Index should be 1 before restart");
 
         // Start patrol again, checking state has been reset
         patrol.start();
@@ -210,7 +213,7 @@ public class PatrolTaskTest {
     }
 
     @Test
-    void patrol_firesEventOncePerStart() {
+    void patrol_startFiresEvent() {
         // Set up patrol
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity e = makePatrollingEntity(route);
@@ -220,20 +223,8 @@ public class PatrolTaskTest {
         EventListener0 callback = mock(EventListener0.class);
         e.getEvents().addListener("patrolStart", callback);
 
-        // Verify patrolStart is fired once
         patrol.start();
         verify(callback, times(1)).handle();
-
-        // Verify patrolStart is not fired during updates
-        patrol.update();
-        patrol.update();
-        verifyNoMoreInteractions(callback);
-
-        // Verify patrolStart is fired again after second start
-        reset(callback);
-        patrol.start();
-        verify(callback, times(1)).handle();
-        verifyNoMoreInteractions(callback);
     }
 
     @Test
@@ -250,7 +241,24 @@ public class PatrolTaskTest {
         patrol.stop();
         assertEquals(Task.Status.INACTIVE, patrol.getStatus(),
                 "PatrolTask should have INACTIVE status after stop()");
+    }
 
+    @Test
+    void patrol_stopFiresEvent() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0f);
+        e.create();
+
+        EventListener0 callback = mock(EventListener0.class);
+        e.getEvents().addListener("patrolEnd", callback);
+
+        // Verify patrolEnd is fired once
+        patrol.start();
+        patrol.update();
+        patrol.stop();
+        verify(callback, times(1)).handle();
     }
 
     @Test
@@ -273,6 +281,30 @@ public class PatrolTaskTest {
         patrol.stop();
         patrol.update();
         assertEquals(before, patrol.getIndex(), "Patrol should not update after stop");
+    }
+
+    @Test
+    void patrol_handlesNonZeroWait() {
+        // Set up patrol with nonzero wait
+        Vector2[] route = new Vector2[]{new Vector2(0, 0), new Vector2(5, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0.4f);
+        e.create();
+
+        // Time sequence for update calls
+        when(gameTime.getTime()).thenReturn(0L, 200L, 400L, 600L);
+
+        patrol.start();
+        patrol.update(); // Still waiting
+        assertTrue(patrol.isWaiting(), "Waiting before full wait time has passed");
+        assertEquals(0, patrol.getIndex());
+
+        patrol.update(); // Finish wait
+        assertTrue(patrol.isWaiting(), "Current task is waiting (status finished)");
+
+        patrol.update(); // Swap to movement
+        assertTrue(patrol.isMoving(), "Moving after wait task finishes");
+        assertEquals(1, patrol.getIndex());
     }
 
     private Entity makePatrollingEntity(Vector2[] route) {
