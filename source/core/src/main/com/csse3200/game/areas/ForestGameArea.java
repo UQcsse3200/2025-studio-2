@@ -77,7 +77,8 @@ public class ForestGameArea extends GameArea {
           "images/door_open.png",
           "images/door_closed.png",
           "images/pressure_plate_unpressed.png",
-          "images/pressure_plate_pressed.png"
+          "images/pressure_plate_pressed.png",
+          "images/dash_powerup.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -156,6 +157,8 @@ public class ForestGameArea extends GameArea {
     spawnTraps();
     playMusic();
     spawnDoor();
+
+    spawnUpgrade("dash");
   }
 
   private void createMinimap() {
@@ -377,6 +380,14 @@ public class ForestGameArea extends GameArea {
     Entity key = CollectableFactory.createKey("door");
     key.addComponent(new TooltipSystem.TooltipComponent("Collect the key", TooltipSystem.TooltipStyle.SUCCESS));
     spawnEntityAt(key, new GridPoint2(17,19), true, true);
+  }
+
+  public void spawnUpgrade(String upgradeID) {
+    if (upgradeID == "dash") {
+      Entity powerup = CollectableFactory.createDashUpgrade("dash");
+      powerup.addComponent(new TooltipSystem.TooltipComponent("Collect Powerup", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(powerup, new GridPoint2(15, 19), true, true);
+    }
   }
 
   private void spawnPressurePlates() {

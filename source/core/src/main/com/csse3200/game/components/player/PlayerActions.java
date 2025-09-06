@@ -16,6 +16,7 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.csse3200.game.components.player.InventoryComponent;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -60,7 +61,6 @@ public class PlayerActions extends Component {
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
-    keyboardPlayerInputComponent = entity.getComponent(KeyboardPlayerInputComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
@@ -113,6 +113,9 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       entity.requestReset();
     }
+
+    Gdx.app.log("Inventory", Integer.toString(
+            entity.getComponent(InventoryComponent.class).getTotalItemCount()));
   }
 
   private void updateSpeed() {
@@ -141,7 +144,8 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-    if (entity.getComponent(InputComponent.class) instanceof KeyboardPlayerInputComponent kinput && kinput.getIsCheatsOn()) {
+    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION * inAirControl * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
@@ -355,7 +359,7 @@ public class PlayerActions extends Component {
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
 
-    if (entity.getComponent(InputComponent.class) instanceof KeyboardPlayerInputComponent kinput && kinput.getIsCheatsOn()) {
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       body.setGravityScale(0f);
     } else {
       body.setGravityScale(1f);

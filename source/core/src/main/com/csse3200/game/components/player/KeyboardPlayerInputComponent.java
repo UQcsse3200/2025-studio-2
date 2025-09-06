@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.utils.math.Vector2Utils;
-
+import com.csse3200.game.components.player.InventoryComponent;
 import java.lang.reflect.Array;
 import java.security.Key;
 import java.util.Arrays;
@@ -179,7 +179,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerDashEvent() {
-    entity.getEvents().trigger("dash");
+    if (entity.getComponent(InventoryComponent.class).hasItem("dash")) {
+      entity.getEvents().trigger("dash");
+    }
   }
 
   private void triggerCrouchEvent() {
@@ -196,7 +198,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       keyHistory[position] = input;
     }
 
-    Gdx.app.log("KeyPressed", Integer.toString(input));
+
     return keyHistory;
   }
 
@@ -208,7 +210,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     return cheatsOn;
   }
   private void enableCheats() {
-    Gdx.app.log("INPUTHISTORY", Arrays.toString(CHEAT_INPUT_HISTORY));
     if (Arrays.equals(CHEAT_INPUT_HISTORY, new int[]{UP_KEY, UP_KEY, DOWN_KEY, UP_KEY})){
       cheatsOn = !cheatsOn;
       entity.getEvents().trigger("gravityForPlayerOff");

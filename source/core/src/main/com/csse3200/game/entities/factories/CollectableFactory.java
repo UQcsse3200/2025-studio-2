@@ -2,6 +2,7 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.collectables.KeyComponent;
+import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
@@ -31,5 +32,18 @@ public class CollectableFactory {
         PhysicsUtils.setScaledCollider(key, 0.5f, 0.5f);
 
         return key;
+    }
+
+    public static Entity createDashUpgrade(String upgradeID) {
+        Entity dash = new Entity()
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
+                .addComponent(new UpgradesComponent(upgradeID));
+
+        dash.setScale(0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(dash, 0.5f, 0.5f);
+
+        return dash;
     }
 }
