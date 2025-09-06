@@ -4,14 +4,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.Task;
-import com.csse3200.game.ai.tasks.TaskRunner;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 /**
- * Task that makes an entity move through a sequence of waypoints and pause briefly at each.
+ * Task that makes an entity move through a sequence of waypoints, pausing briefly at each.
  * The entity patrols back and forth along its route, reversing direction when it reaches the end,
  * and repeats this indefinitely.
  * Requires the entity to have a PatrolRouteComponent which defines the set of waypoints to follow.
@@ -44,18 +43,6 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
     @Override
     public int getPriority() {return 1;} // Low priority
 
-    @Override
-    public void create(TaskRunner owner) {
-        super.create(owner);
-
-        route = owner.getEntity().getComponent(PatrolRouteComponent.class);
-
-        waitTask = new WaitTask(waitTime);
-        waitTask.create(owner);
-
-        movementTask = new MovementTask(route.patrolStart());
-        movementTask.create(owner);
-    }
     /**
      * Set up subtasks (wait, movement) and begin moving toward first waypoint.
      */
@@ -66,10 +53,19 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
         i = 0;
         forward = true;
 
-        if (route == null) {
-            route = this.owner.getEntity().getComponent(PatrolRouteComponent.class);
+        if (route == null) route = owner.getEntity().getComponent(PatrolRouteComponent.class);
+
+        if (waitTask == null) {
+            waitTask = new WaitTask(waitTime);
+            waitTask.create(owner);
         }
 
+        if (movementTask == null) {
+            movementTask = new MovementTask(route.patrolStart());
+            movementTask.create(owner);
+        }
+
+        // Entity waits at first waypoint before moving
         waitTask.start();
         currentTask = waitTask;
 
@@ -82,6 +78,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      */
     @Override
     public void update() {
+        if (getStatus() != Status.ACTIVE) return;
         if (currentTask == null) return;
 
         if (currentTask.getStatus() != Status.ACTIVE) {
@@ -96,13 +93,16 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
         currentTask.update();
     }
 
-    /** Stop the current subtasks and deactivate patrol task. */
+    /** Stop the patrol task and its current subtask */
     @Override
     public void stop() {
         if (currentTask != null) {
             currentTask.stop();
         }
+        currentTask = null;
         super.stop();
+
+        this.owner.getEntity().getEvents().trigger("patrolStop");
     }
 
     /**
@@ -154,6 +154,7 @@ public class PatrolTask extends DefaultTask implements PriorityTask {
      * Does nothing for single point patrols.
      */
     private void nextIndex() {
+        // Index does not change for routes with single waypoints
         if (route.numWaypoints() <= 1) return;
 
         if (forward) {
