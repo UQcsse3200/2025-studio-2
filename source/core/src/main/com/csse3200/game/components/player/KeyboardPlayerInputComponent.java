@@ -30,6 +30,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private final int UP_KEY = Keymap.getActionKeyCode("PlayerUp");
   private final int DOWN_KEY = Keymap.getActionKeyCode("PlayerDown");
   private final int ENTER_CHEAT_KEY = Keymap.getActionKeyCode("Enter");
+  private final int GRAPPLE_KEY = Keymap.getActionKeyCode("Grapple");
   private int[] CHEAT_INPUT_HISTORY = new int[4];
   private int cheatPosition = 0;
   private Boolean cheatsOn = false;
@@ -115,6 +116,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       }
     } else if (keycode == ENTER_CHEAT_KEY) {
       enableCheats();
+    } else if (keycode == GRAPPLE_KEY) {
+      triggerGrappleEvent();
     }
 
     return false;
@@ -193,6 +196,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private void triggerGlideEvent(boolean status) {
     if (entity.getComponent(InventoryComponent.class).hasItem("glider")) {
       entity.getEvents().trigger("glide", status);
+    }
+  }
+
+  private void triggerGrappleEvent() {
+    if (entity.getComponent(InventoryComponent.class).hasItem("grappler")) {
+      entity.getEvents().trigger("grapple");
     }
   }
 

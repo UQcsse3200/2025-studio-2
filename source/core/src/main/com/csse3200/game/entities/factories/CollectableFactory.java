@@ -34,6 +34,11 @@ public class CollectableFactory {
         return key;
     }
 
+    /**
+     * Builds a collectable upgrade that enable the dash ability
+     * @return a new upgrade entity
+     * @see UpgradesComponent
+     */
     public static Entity createDashUpgrade() {
         Entity dash = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
@@ -47,6 +52,12 @@ public class CollectableFactory {
         return dash;
     }
 
+    /**
+     * Build a new collectable glider upgrade that enables the glide ability
+     *
+     * @return a new upgrade entity
+     * @see UpgradesComponent
+     */
     public static Entity createGlideUpgrade() {
         Entity glide = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
@@ -58,5 +69,24 @@ public class CollectableFactory {
         PhysicsUtils.setScaledCollider(glide, 0.5f, 0.5f);
 
         return glide;
+    }
+
+    /**
+     * Builds a new collectable grappler upgrade that enables the grapple ability
+     *
+     * @return a new upgrade entity
+     * @see UpgradesComponent
+     */
+    public static Entity createGrappleUpgrade() {
+        Entity grapple = new Entity()
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
+                .addComponent(new UpgradesComponent("grapple"));
+
+        grapple.setScale(0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(grapple, 0.5f, 0.5f);
+
+        return grapple;
     }
 }

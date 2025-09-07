@@ -17,6 +17,7 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.utils.math.Vector2Utils;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -79,6 +80,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
 
     entity.getEvents().addListener("glide", this::glide);
+    entity.getEvents().addListener("grapple", this::grapple);
 
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
@@ -305,6 +307,13 @@ public class PlayerActions extends Component {
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  private void grapple() {
+    Body body = physicsComponent.getBody();
+
+
+    Vector2Utils aimDirection = new Vector2Utils()
   }
 
   /**
