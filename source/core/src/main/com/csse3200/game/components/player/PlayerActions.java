@@ -313,7 +313,7 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
 
 
-    Vector2Utils aimDirection = new Vector2Utils()
+    /*Vector2Utils aimDirection = new Vector2Utils()*/
   }
 
   /**
