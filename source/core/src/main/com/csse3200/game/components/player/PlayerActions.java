@@ -4,17 +4,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.Component;
-import com.csse3200.game.components.StaminaComponent;
-import com.csse3200.game.events.listeners.EventListener0;
-import com.csse3200.game.events.listeners.EventListener1;
+import com.csse3200.game.components.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.physics.components.StandingColliderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.physics.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.utils.math.Vector2Utils;
@@ -32,7 +28,7 @@ public class PlayerActions extends Component {
     private static final Vector2 MAX_SPEED = new Vector2(3f, 3f);
     private static final float   SPRINT_MULT = 2.3f;
 
-  private static final int DASH_SPEED_MULTIPLIER = 15;
+  private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
   private PhysicsComponent physicsComponent;
@@ -44,6 +40,10 @@ public class PlayerActions extends Component {
   private boolean moving = false;
   private boolean adrenaline = false;
   private boolean crouching = false;
+
+  private StandingColliderComponent standingCollider;
+  private CrouchingColliderComponent crouchingCollider;
+
 
   // For Tests (Not Functionality)
   private boolean hasDashed = false;
@@ -63,6 +63,10 @@ public class PlayerActions extends Component {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
+
+    standingCollider = entity.getComponent(StandingColliderComponent.class);
+    crouchingCollider = entity.getComponent(CrouchingColliderComponent.class);
+
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
 
@@ -333,15 +337,23 @@ public class PlayerActions extends Component {
    * Makes the player crouch
    */
   void crouch() {
+    StandingColliderComponent standing = entity.getComponent(StandingColliderComponent.class);
+    CrouchingColliderComponent crouch =
+            entity.getComponent(CrouchingColliderComponent.class);
     if (crouching) {
       crouching = false;
-      updateSpeed();
       //PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
+      //standingCollider.getFixture().setSensor(false);
+      //crouchingCollider.getFixture().setSensor(true);
+      standing.getFixtureRef().setSensor(false);
+      crouch.getFixtureRef().setSensor(true);
     } else {
       crouching = true;
-      updateSpeed();
       //PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
+      standing.getFixtureRef().setSensor(true);
+      crouch.getFixtureRef().setSensor(false);
     }
+    updateSpeed();
   }
 
   public boolean isMoving() {
