@@ -78,6 +78,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
     entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
 
+    entity.getEvents().addListener("glide", this::glide);
+
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
           wantsSprint = true;
@@ -136,10 +138,10 @@ public class PlayerActions extends Component {
 
     // impulse = (desiredVel - currentVel) * mass
     //only update the horizontal impulse
-    float inAirControl = isJumping ? 0.2f : 1f;
+    /*float inAirControl = isJumping ? 0.2f : 1f;*/
 
     float deltaV = desiredVelocity.x - velocity.x;
-    float maxDeltaV = MAX_ACCELERATION * inAirControl * Gdx.graphics.getDeltaTime();
+    float maxDeltaV = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
@@ -147,7 +149,7 @@ public class PlayerActions extends Component {
     Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
-      float maxDeltaVy = MAX_ACCELERATION * inAirControl * Gdx.graphics.getDeltaTime();
+      float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
     } else {
@@ -287,6 +289,22 @@ public class PlayerActions extends Component {
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
     soundPlayed = true;
+  }
+
+  /**
+   * Makes the player glide
+   */
+  private void glide(boolean on) {
+    Body body = physicsComponent.getBody();
+    boolean isOutOfJumps = (isJumping) && (isDoubleJump);
+
+    if (on == true && isOutOfJumps) {
+      if (body.getLinearVelocity().y < 0.1f) {
+        body.setGravityScale(0.1f);
+      }
+    } else {
+      body.setGravityScale(1f);
+    }
   }
 
   /**

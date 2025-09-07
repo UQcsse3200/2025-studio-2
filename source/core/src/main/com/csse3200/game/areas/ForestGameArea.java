@@ -78,7 +78,8 @@ public class ForestGameArea extends GameArea {
           "images/door_closed.png",
           "images/pressure_plate_unpressed.png",
           "images/pressure_plate_pressed.png",
-          "images/dash_powerup.png"
+          "images/dash_powerup.png",
+          "images/glide_powerup.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -137,9 +138,9 @@ public class ForestGameArea extends GameArea {
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset);
 
-    spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    spawnBomberDrone();       // Play with bomber drones
+    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    //spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
 
@@ -158,7 +159,8 @@ public class ForestGameArea extends GameArea {
     playMusic();
     spawnDoor();
 
-    spawnUpgrade("dash");
+    spawnUpgrade("dash", 15, 19);
+    spawnUpgrade("glider", 15, 17);
   }
 
   private void createMinimap() {
@@ -382,11 +384,17 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(key, new GridPoint2(17,19), true, true);
   }
 
-  public void spawnUpgrade(String upgradeID) {
+  public void spawnUpgrade(String upgradeID, int posx, int posy) {
     if (upgradeID == "dash") {
-      Entity powerup = CollectableFactory.createDashUpgrade("dash");
-      powerup.addComponent(new TooltipSystem.TooltipComponent("Collect Powerup", TooltipSystem.TooltipStyle.SUCCESS));
-      spawnEntityAt(powerup, new GridPoint2(15, 19), true, true);
+      Entity upgrade = CollectableFactory.createDashUpgrade();
+      upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+    }
+
+    if (upgradeID == "glider") {
+      Entity upgrade = CollectableFactory.createGlideUpgrade();
+      upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
   }
 

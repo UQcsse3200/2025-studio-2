@@ -34,16 +34,29 @@ public class CollectableFactory {
         return key;
     }
 
-    public static Entity createDashUpgrade(String upgradeID) {
+    public static Entity createDashUpgrade() {
         Entity dash = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
-                .addComponent(new UpgradesComponent(upgradeID));
+                .addComponent(new UpgradesComponent("dash"));
 
         dash.setScale(0.5f, 0.5f);
         PhysicsUtils.setScaledCollider(dash, 0.5f, 0.5f);
 
         return dash;
+    }
+
+    public static Entity createGlideUpgrade() {
+        Entity glide = new Entity()
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
+                .addComponent(new UpgradesComponent("glider"));
+
+        glide.setScale(0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(glide, 0.5f, 0.5f);
+
+        return glide;
     }
 }

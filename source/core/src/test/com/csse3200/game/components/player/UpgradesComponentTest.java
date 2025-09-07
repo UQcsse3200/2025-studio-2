@@ -64,7 +64,7 @@ public class UpgradesComponentTest {
 
     @Test
     void upgradeStartsUncollected() {
-        Entity upgrade = CollectableFactory.createDashUpgrade("dash");
+        Entity upgrade = CollectableFactory.createDashUpgrade();
         upgrade.create();
 
         assertFalse(inv.hasItem("dash"), "Inventory should not contain an upgrade initially");

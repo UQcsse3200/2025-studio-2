@@ -67,6 +67,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
+      triggerGlideEvent(true);
       return true;
     } else if (keycode == LEFT_KEY) {
       walkDirection.add(Vector2Utils.LEFT);
@@ -152,7 +153,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
      } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
               entity.getEvents().trigger("sprintStop");
               return true;
-
+      } else if (keycode == JUMP_KEY) {
+        triggerGlideEvent(false);
       }
 
     return false;
@@ -186,6 +188,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private void triggerCrouchEvent() {
     entity.getEvents().trigger("crouch");
+  }
+
+  private void triggerGlideEvent(boolean status) {
+    if (entity.getComponent(InventoryComponent.class).hasItem("glider")) {
+      entity.getEvents().trigger("glide", status);
+    }
   }
 
   private int[] addToCheatHistory(int[] keyHistory, int position, int input) {
