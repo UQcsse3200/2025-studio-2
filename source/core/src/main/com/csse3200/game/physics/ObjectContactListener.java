@@ -3,7 +3,16 @@ package com.csse3200.game.physics;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
+import com.badlogic.gdx.physics.box2d.*;
+import com.csse3200.game.components.MoveableBoxComponent;
+import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.PressurePlateComponent; // <— import added
+import com.csse3200.game.components.obstacles.TrapComponent;
+import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -40,12 +49,18 @@ public class ObjectContactListener implements ContactListener {
 
         if (a == null || b == null) return;
 
+        a.getEvents().trigger("onCollisionStart", b);
+        b.getEvents().trigger("onCollisionStart", a);
+
         // Set player in range
         setPlayerInRangeOfButton(a, b, true);
         setPlayerInRangeOfButton(b, a, true);
 
         setPlayerInRangeOfBox(a, b, true);
         setPlayerInRangeOfBox(b, a, true);
+
+        setPlayerOnPressurePlate(a, b, true);
+        setPlayerOnPressurePlate(b, a, true);
 
         setPlayerInRangeOfTrap(a, b);
         setPlayerInRangeOfTrap(b, a);
@@ -125,6 +140,8 @@ public class ObjectContactListener implements ContactListener {
         }
     }
 
+
+
     /**
      * Triggers events on entities involved in collisions.
      * This is used for tooltip system and other general collision events.
@@ -158,6 +175,9 @@ public class ObjectContactListener implements ContactListener {
         setPlayerInRangeOfButton(a, b, false);
         setPlayerInRangeOfButton(b, a, false);
 
+        setPlayerOnPressurePlate(a, b, false);
+        setPlayerOnPressurePlate(b, a, false);
+
         setPlayerInRangeOfBox(a, b, false);
         setPlayerInRangeOfBox(b, a, false);
     }
@@ -170,5 +190,16 @@ public class ObjectContactListener implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 
+    }
+
+    private void setPlayerOnPressurePlate(Entity plate, Entity other, boolean inRange) {
+        PressurePlateComponent plateComp = plate.getComponent(PressurePlateComponent.class);
+        PlayerActions player = other.getComponent(PlayerActions.class);
+        if (plateComp != null && player != null) {
+            ColliderComponent collider = inRange
+                    ? other.getComponent(ColliderComponent.class)
+                    : null;
+            plateComp.setPlayerOnPlate(collider);
+        }
     }
 }

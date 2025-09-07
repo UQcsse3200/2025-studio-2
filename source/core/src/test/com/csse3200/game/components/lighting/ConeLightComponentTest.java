@@ -121,7 +121,7 @@ class ConeLightComponentTest {
 
             ConeLight coneMock = coneCons.constructed().getFirst();
             assertDoesNotThrow(comp::dispose);
-            verify(coneMock, atLeastOnce()).dispose();
+            verify(coneMock, atLeastOnce()).remove();
         }
     }
 
