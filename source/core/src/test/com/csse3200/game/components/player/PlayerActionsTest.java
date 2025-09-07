@@ -3,9 +3,12 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.physics.components.StandingColliderComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,8 +38,18 @@ public class PlayerActionsTest {
         when(mockBody.getLinearVelocity()).thenReturn(new Vector2(0, 0));
         when(mockBody.getMass()).thenReturn(1f);
 
+        Fixture standFixture = mock(Fixture.class);
+        Fixture crouchFixture = mock(Fixture.class);
+
+        StandingColliderComponent standing = mock(StandingColliderComponent.class);
+        when(standing.getFixtureRef()).thenReturn(standFixture);
+        CrouchingColliderComponent crouch = mock(CrouchingColliderComponent.class);
+        when(crouch.getFixtureRef()).thenReturn(crouchFixture);
+
         playerEntity = new Entity();
         playerEntity.addComponent(physicsComponent);
+        playerEntity.addComponent(standing);
+        playerEntity.addComponent(crouch);
 
         playerActions = new PlayerActions();
         playerEntity.addComponent(playerActions);

@@ -3,14 +3,9 @@ import com.badlogic.gdx.Gdx;
 
 
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.csse3200.game.components.ButtonComponent;
-import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.StaminaComponent;
+import com.csse3200.game.components.*;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.components.player.PlayerStatsDisplay;
 import com.csse3200.game.entities.Entity;
@@ -19,9 +14,7 @@ import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
-import com.csse3200.game.physics.components.ColliderComponent;
-import com.csse3200.game.physics.components.HitboxComponent;
-import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.physics.components.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -59,7 +52,8 @@ public class PlayerFactory {
             new Entity()
                     .addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))
                     .addComponent(new PhysicsComponent())
-                    .addComponent(new ColliderComponent())
+                    .addComponent(new StandingColliderComponent())
+                    .addComponent(new CrouchingColliderComponent())
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
@@ -93,9 +87,10 @@ public class PlayerFactory {
 
 
 
-    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+    //PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
 
-    player.getComponent(ColliderComponent.class).setDensity(1.5f);
+    player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
+    player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
     player.getComponent(TextureRenderComponent.class).scaleEntity();
 
     // Fixture for Player feet, used to reset jump or handle landing logic
