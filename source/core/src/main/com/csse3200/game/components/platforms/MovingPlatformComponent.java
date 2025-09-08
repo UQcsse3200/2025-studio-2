@@ -48,16 +48,21 @@ public class MovingPlatformComponent extends Component {
         Vector2 currentPos = body.getPosition();
         Vector2 target = forward ? end : start;
 
+        // Check if we're close enough to snap
         if (currentPos.dst2(target) <= epsilon * epsilon) {
+            // Snap exactly to target
             body.setTransform(target, body.getAngle());
+            // Stop movement
             body.setLinearVelocity(Vector2.Zero);
+            // Reverse direction
             forward = !forward;
+            return; // Done for this frame
         }
-        else {
-            // Move toward target
-            Vector2 direction = target.cpy().sub(currentPos).nor();
-            body.setLinearVelocity(direction.scl(speed));
-        }
+
+        // Move toward target
+        Vector2 direction = target.cpy().sub(currentPos).nor();
+        body.setLinearVelocity(direction.scl(speed));
     }
+
 
 }
