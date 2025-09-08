@@ -30,15 +30,21 @@ public class ButtonTriggeredPlatformComponent extends Component {
 
         //Listen for button activation
         entity.getEvents().addListener("activatePlatform", this::onToggle);
+        entity.getEvents().addListener("deactivatePlatform", () -> {
+            enabled = false;
+            active = false;
+        });
     }
 
     private void onToggle() {
         enabled = !enabled;
+        if (enabled) {
+            active = true;
+        }
     }
     @Override
     public void update() {
-        if (!enabled) return;
-        platformLogger.info("Platform update running");
+        if (!enabled || !active) return;
         Body body = physics.getBody();
         Vector2 pos = body.getPosition();
         // Calculate target dynamically from origin + offset
@@ -48,6 +54,7 @@ public class ButtonTriggeredPlatformComponent extends Component {
         if (dir.len()<=epsilon) {
             body.setTransform(target, body.getAngle());
             body.setLinearVelocity(Vector2.Zero);
+            forward = !forward;
             active = false;
         } else {
             dir.nor().scl(speed);
