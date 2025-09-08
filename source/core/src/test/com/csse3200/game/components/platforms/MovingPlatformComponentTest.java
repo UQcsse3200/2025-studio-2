@@ -19,18 +19,17 @@ class MovingPlatformComponentTest {
 
     @BeforeEach
     void setUp() {
-        // Spy on Entity so we can override getPosition()
         platform = spy(new Entity());
 
-        // Mock Body and PhysicsComponent
         mockBody = mock(Body.class);
-        when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
-        when(mockBody.getPosition()).thenReturn(new Vector2(5f, 0f));
+        when(mockBody.getAngle()).thenReturn(0f);
+
         physics = mock(PhysicsComponent.class);
         when(physics.getBody()).thenReturn(mockBody);
 
         platform.addComponent(physics);
 
+        // Use vertical or horizontal offset depending on what you want to test
         component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
         platform.addComponent(component);
     }
@@ -44,7 +43,7 @@ class MovingPlatformComponentTest {
     @Test
     void testPlatformMovesTowardTarget() {
         // Simulate starting at origin
-        doReturn(new Vector2(0f, 0f)).when(platform).getPosition();
+        when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
 
         component.create();
         component.update();
@@ -55,15 +54,15 @@ class MovingPlatformComponentTest {
     @Test
     void testPlatformReversesWhenCloseToTarget() {
         // First call to getPosition() during create() sets origin
-        doReturn(new Vector2(0f, 0f)).when(platform).getPosition();
+        when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
         component.create();
 
         // Now simulate being exactly at the target
-        doReturn(new Vector2(5f, 0f)).when(platform).getPosition();
+        when(mockBody.getPosition()).thenReturn(new Vector2(5f, 0f));
 
         component.update();
 
         verify(mockBody).setTransform(any(Vector2.class), anyFloat());
-        verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(new Vector2(0, 0), 0.0001f)));
+        verify(mockBody).setLinearVelocity(argThat(v -> v.epsilonEquals(Vector2.Zero, 0.0001f)));
     }
 }
