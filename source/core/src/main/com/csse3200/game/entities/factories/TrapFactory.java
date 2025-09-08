@@ -28,14 +28,16 @@ public class TrapFactory {
      * and the trap will be able to be rotated to face up (default), right, down, or left, as a visual
      * effect so it can be used on a variety of platforms and/or walls.
      *
-     * @param position The start position of the trap
      * @param safeSpot Spot to teleport the player once they take damage
+     * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 360}
      * @return the Spike trap Entity created.
      */
-    public static Entity createSpikes(GridPoint2 position, Vector2 safeSpot) {//int length, int rotateClockwise) {
+    public static Entity createSpikes(Vector2 safeSpot, float rotation) {//int length, int rotateClockwise) {
         Entity spikes = new Entity();
         String texture = "images/spikes_sprite.png";
-        spikes.addComponent(new TextureRenderComponent(texture));
+        TextureRenderComponent textureComponent = new TextureRenderComponent(texture);
+        textureComponent.setRotation(rotation);
+        spikes.addComponent(textureComponent);
 
         // Add physics and collider components
         spikes.addComponent(new PhysicsComponent()
@@ -43,19 +45,11 @@ public class TrapFactory {
         ColliderComponent collider = new ColliderComponent();
         spikes.addComponent(collider);
 
-
         // Fix collider to appropriate size
         Vector2 center = collider.getEntity().getScale().scl(0.5f);
         collider.setAsBoxAligned(center, PhysicsComponent.AlignX.CENTER, PhysicsComponent.AlignY.BOTTOM);
 
-        // Add trap component - commented out as position-reset functionality is currently not working.
-//        position.x -= 1;
-//        Vector2 safePosition = terrain.tileToWorldPosition(position);
-//        float tileSize = terrain.getTileSize();
-//        safePosition.x += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().x);
-//        safePosition.y += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().y);
-
-        TrapComponent trapComponent = new TrapComponent(safeSpot);
+        TrapComponent trapComponent = new TrapComponent(safeSpot, (int) (rotation/90));
         spikes.addComponent(trapComponent);
 
         return spikes;

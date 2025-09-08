@@ -8,14 +8,16 @@ import com.csse3200.game.physics.components.ColliderComponent;
 
 public class TrapComponent extends CombatStatsComponent {
     private Vector2 safeSpot;
+    private int rotation;
 
-    public TrapComponent(Vector2 safeSpot) {
-        this(0, 40, safeSpot);
+    public TrapComponent(Vector2 safeSpot, int rotation) {
+        this(0, 40, safeSpot, rotation);
     }
 
-    public TrapComponent(int health, int baseAttack, Vector2 safeSpot) {
+    public TrapComponent(int health, int baseAttack, Vector2 safeSpot, int rotation) {
         super(health, baseAttack);
         this.safeSpot = safeSpot;
+        this.rotation = rotation;
     }
 
 
@@ -58,6 +60,11 @@ public class TrapComponent extends CombatStatsComponent {
     public void damage(ColliderComponent collider) {
         if(collider == null) {
             return;
+        }
+
+        switch (rotation) {
+            case 0:
+                
         }
 
         Entity trap = this.getEntity();
