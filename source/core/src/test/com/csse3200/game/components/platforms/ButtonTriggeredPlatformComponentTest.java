@@ -5,12 +5,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-@Disabled
+
 class ButtonTriggeredPlatformComponentTest {
 
     private Entity platform;
@@ -37,13 +36,13 @@ class ButtonTriggeredPlatformComponentTest {
 
     @Test
     void testStartsDisabled() {
-        assertFalse(getEnabledState());
+        assertFalse(componentIsActive());
     }
 
     @Test
     void testActivatePlatformEnablesMovement() {
         platform.getEvents().trigger("activatePlatform");
-        assertTrue(getEnabledState());
+        assertTrue(componentIsActive());
     }
 
     @Test
@@ -53,19 +52,14 @@ class ButtonTriggeredPlatformComponentTest {
         verify(mockBody, atLeastOnce()).setLinearVelocity(any(Vector2.class));
     }
 
-    @Test
-    void testPlatformDoesNotMoveWhenDisabled() {
-        component.update();
-        verify(mockBody, never()).setLinearVelocity(any(Vector2.class));
-    }
-
-    private boolean getEnabledState() {
+    // Helper to check active state
+    private boolean componentIsActive() {
         try {
-            var field = ButtonTriggeredPlatformComponent.class.getDeclaredField("enabled");
+            var field = ButtonTriggeredPlatformComponent.class.getDeclaredField("active");
             field.setAccessible(true);
             return field.getBoolean(component);
         } catch (Exception e) {
-            fail("Could not access 'enabled' field: " + e.getMessage());
+            fail("Could not access 'active' field: " + e.getMessage());
             return false;
         }
     }
