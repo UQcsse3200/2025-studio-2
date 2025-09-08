@@ -35,7 +35,7 @@ public class MovingPlatformComponent extends Component {
         // After spawnEntityAt has placed the entity, read its actual start position
         Vector2 pos = entity.getPosition().cpy();
         start = new Vector2(pos.x, pos.y);
-        end = new Vector2(pos.x, pos.y + offset.y);
+        end = start.cpy().add(offset);
 
         lastPos = pos.cpy();
 
@@ -44,23 +44,21 @@ public class MovingPlatformComponent extends Component {
     @Override
     public void update() {
         Body body = physics.getBody();
-        Vector2 pos = physics.getBody().getPosition().cpy();
+        Vector2 currentPos = body.getPosition();
         Vector2 target = forward ? end : start;
-        Vector2 dir = target.cpy().sub(pos);
-        if (offset.x == 0) dir.x = 0; // vertical-only
-        if (offset.y == 0) dir.y = 0; // horizontal-only
 
-        if (dir.len() <= epsilon) {
-            // Snap to target and reverse
+        if (currentPos.epsilonEquals(target, epsilon)) {
+            // Snap to target
             body.setTransform(target, body.getAngle());
+            // Stop movement
             body.setLinearVelocity(Vector2.Zero);
+            // Reverse direction
             forward = !forward;
         } else {
-            dir.nor().scl(speed);
-            body.setLinearVelocity(dir);
+            // Move toward target
+            Vector2 direction = target.cpy().sub(currentPos).nor();
+            body.setLinearVelocity(direction.scl(speed));
         }
-
-        lastPos.set(pos);
     }
 
 }
