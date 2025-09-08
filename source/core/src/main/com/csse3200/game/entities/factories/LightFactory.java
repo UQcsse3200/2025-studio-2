@@ -97,7 +97,7 @@ public class LightFactory {
                                              float directionDeg,
                                              float coneDeg) {
         Entity e = createConeLight(rays, color, distance, directionDeg, coneDeg);
-        e.addComponent(new ConeDetectorComponent(target, occluderMask).setDebug(true));
+        e.addComponent(new ConeDetectorComponent(target, occluderMask, "1").setDebug(true));
         e.getEvents().addListener("targetDetected", (Entity p) ->
                 e.getComponent(ConeLightComponent.class).setColor(Color.RED));
         e.getEvents().addListener("targetLost", (Entity p) ->
