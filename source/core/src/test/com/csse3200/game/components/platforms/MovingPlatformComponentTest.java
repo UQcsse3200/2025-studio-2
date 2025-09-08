@@ -29,7 +29,7 @@ class MovingPlatformComponentTest {
 
         platform.addComponent(physics);
 
-        // Use vertical or horizontal offset depending on what you want to test
+        // Use horizontal offset for these tests
         component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
         platform.addComponent(component);
     }
@@ -42,8 +42,11 @@ class MovingPlatformComponentTest {
 
     @Test
     void testPlatformMovesTowardTarget() {
-        // Simulate starting at origin
+        // Stub body position for create() and update()
         when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
+
+        // Also stub entity.getPosition() for create()
+        doReturn(new Vector2(0f, 0f)).when(platform).getPosition();
 
         component.create();
         component.update();
@@ -53,8 +56,10 @@ class MovingPlatformComponentTest {
 
     @Test
     void testPlatformReversesWhenCloseToTarget() {
-        // First call to getPosition() during create() sets origin
+        // Start position for create()
+        doReturn(new Vector2(0f, 0f)).when(platform).getPosition();
         when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
+
         component.create();
 
         // Now simulate being exactly at the target
