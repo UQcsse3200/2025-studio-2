@@ -47,9 +47,9 @@ public class MovingPlatformComponent extends Component {
         Vector2 pos = physics.getBody().getPosition().cpy();
         Vector2 target = forward ? end : start;
         Vector2 dir = target.cpy().sub(pos);
-        dir.x = 0;
-        dir.y = 0;
-
+        if (offset.x == 0) dir.x = 0; // vertical-only
+        if (offset.y == 0) dir.y = 0; // horizontal-only
+        
         if (dir.len() <= epsilon) {
             // Snap to target and reverse
             body.setTransform(target, body.getAngle());
