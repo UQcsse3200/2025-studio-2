@@ -42,7 +42,7 @@ class ConeDetectorComponentTest {
     void shouldRequireConeLightComponentOnSameEntity() {
         Entity e = new Entity();
         Entity target = new Entity();
-        ConeDetectorComponent detector = new ConeDetectorComponent(target);
+        ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
 
         e.addComponent(detector);
         assertThrows(IllegalStateException.class, e::create);
@@ -64,7 +64,7 @@ class ConeDetectorComponentTest {
 
             float dis = 5f, dir = 0f, coneDeg = 45f;
             ConeLightComponent cl = new ConeLightComponent(rh,32, Color.WHITE, dis, dir, coneDeg);
-            ConeDetectorComponent detector = new ConeDetectorComponent(target);
+            ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
             lightEntity.addComponent(cl);
             lightEntity.addComponent(detector);
 
@@ -108,7 +108,7 @@ class ConeDetectorComponentTest {
 
             ConeLightComponent cl = new ConeLightComponent(rh, 32, Color.WHITE, 5f, 0f, 45f);
             lightEntity.addComponent(cl);
-            ConeDetectorComponent detector = new ConeDetectorComponent(target);
+            ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
             lightEntity.addComponent(detector);
 
             when(physics.raycast(any(Vector2.class), any(Vector2.class), eq(PhysicsLayer.OBSTACLE), any())).thenReturn(false);
@@ -146,7 +146,7 @@ class ConeDetectorComponentTest {
             Entity target = new Entity();
 
             ConeLightComponent cl = new ConeLightComponent(rh, 32, Color.WHITE, 5f, 0f, 45f);
-            ConeDetectorComponent detector = new ConeDetectorComponent(target);
+            ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
 
             lightEntity.addComponent(cl);
             lightEntity.addComponent(detector);

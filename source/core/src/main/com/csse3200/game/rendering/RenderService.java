@@ -37,6 +37,27 @@ public class RenderService implements Disposable {
     layer.add(renderable);
   }
 
+  public void renderLayerRange(SpriteBatch batch, int minLayer, int maxLayer) {
+    if (minLayer > maxLayer) return;
+    // iterate layers in order
+    int n = renderables.size();
+    for (int i = 0; i < n; i++) {
+      int layerKey = renderables.getKeyAt(i);
+      if (layerKey < minLayer) continue;
+      if (layerKey > maxLayer) break;
+
+      Array<Renderable> layer = renderables.getValueAt(i);
+      layer.sort();
+      for (Renderable renderable : layer) {
+        renderable.render(batch);
+      }
+    }
+  }
+
+  public void renderLayer(SpriteBatch batch, int layer) {
+    renderLayerRange(batch, layer, layer);
+  }
+
   /**
    * Unregister a renderable.
    *

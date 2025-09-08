@@ -12,6 +12,8 @@ import com.csse3200.game.services.ServiceLocator;
 public abstract class RenderComponent extends Component implements Renderable, Disposable {
   private static final int DEFAULT_LAYER = 1;
 
+  private int layer = DEFAULT_LAYER;
+
   @Override
   public void create() {
     ServiceLocator.getRenderService().register(this);
@@ -34,7 +36,12 @@ public abstract class RenderComponent extends Component implements Renderable, D
 
   @Override
   public int getLayer() {
-    return DEFAULT_LAYER;
+    return layer;
+  }
+
+  public RenderComponent setLayer(int layer) {
+    this.layer = layer;
+    return this;
   }
 
   @Override

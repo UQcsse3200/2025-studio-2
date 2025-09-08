@@ -3,13 +3,17 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
@@ -20,6 +24,7 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
@@ -80,7 +85,7 @@ public class ForestGameArea extends GameArea {
           "images/pressure_plate_pressed.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -416,16 +421,9 @@ public class ForestGameArea extends GameArea {
 
   private void spawnLights() {
     // see the LightFactory class for more details on spawning these
-    Entity securityLight = LightFactory.createSecurityLight(
-            player,
-            PhysicsLayer.OBSTACLE,
-            128,
-            Color.GREEN,
-            10f,
-            0f,
-            35f
-    );
-    spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
+    Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, 20f, "1");
+
+    spawnEntityAt(securityLight, new GridPoint2(12, 16), true, true);
   }
 
   private void playMusic() {

@@ -80,6 +80,18 @@ public class SortedIntMap<V> implements Iterable<V> {
     return values.get(index);
   }
 
+  public int size() {
+    return keys.size;
+  }
+
+  public int getKeyAt(int index) {
+    return keys.get(index);
+  }
+
+  public V getValueAt(int index) {
+    return values.get(index);
+  }
+
   /** Clear the map */
   public void clear() {
     keys.clear();
