@@ -177,7 +177,7 @@ public class ForestGameArea extends GameArea {
     // spawnTrees();
     createMinimap();
     player = spawnPlayer();
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
+//    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
     player.getEvents().addListener("reset", this::reset);
 
 
@@ -482,7 +482,8 @@ public class ForestGameArea extends GameArea {
     d.addComponent(new TooltipSystem.TooltipComponent(
             "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
     d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
-    spawnEntityAt(d, new GridPoint2(3, 10), true, true);
+    d.setScale(1,2);
+    spawnEntityAt(d, new GridPoint2(28, 5), true, true);
     return d;
   }
 
@@ -499,18 +500,6 @@ public class ForestGameArea extends GameArea {
     );
     spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
   }
-
-  private void spawnGate() {
-    /*
-    Creates gate to test
-    */
-    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
-    gate.setScale(1, 2);
-    gate.getComponent(DoorComponent.class).openDoor();
-    spawnEntityAt(gate, gatePos, true, true);
-  }
-
   private void playMusic() {
     Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
     music.setLooping(true);

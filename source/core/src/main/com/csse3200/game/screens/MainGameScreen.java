@@ -106,7 +106,6 @@ public class MainGameScreen extends ScreenAdapter {
 
   private void switchArea(String levelId, GameArea oldArea, Entity player) {
     Gdx.app.postRunnable(() -> {
-      Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
       if (levelId != "") {
         oldArea.dispose();
         TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
@@ -131,12 +130,8 @@ public class MainGameScreen extends ScreenAdapter {
                   "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
           );
           finalNewArea.create();
-//        Entity newPlayer = finalNewArea.getPlayer();
-//        newPlayer.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
         }
       }
-
-
     });
   }
 

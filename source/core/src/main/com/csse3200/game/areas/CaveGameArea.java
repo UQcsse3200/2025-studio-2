@@ -115,7 +115,7 @@ public class CaveGameArea extends GameArea {
     spawnTerrain();
     //spawnTrees();
     player = spawnPlayer();
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
+//    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
