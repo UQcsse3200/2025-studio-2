@@ -19,6 +19,8 @@ public class ConeLightPanningTaskComponent extends Component {
     private static final float angularAccel = 0.2f;
     private float currentVel = 0;
     private final float maxSpeed;
+    private boolean tracking = false;
+    private float dirBeforeTrack;
 
     public ConeLightPanningTaskComponent(float degreeStart, float degreeEnd, float angularVelocity) {
         if (degreeStart < degreeEnd) {
@@ -62,6 +64,14 @@ public class ConeLightPanningTaskComponent extends Component {
         if (!detectorComp.isDetected()) {
             // PANNING MODE
 
+            // return to prev pos
+            if (tracking) {
+                if (Math.abs(dir - dirBeforeTrack) < 0.1f) {
+                    tracking = false;
+                }
+                moveToAngle(dir, dirBeforeTrack, dt);
+                return;
+            }
             animator.setPaused(false);
             currentVel = angularVelocity;
             // change clockwise based off dir
@@ -74,33 +84,40 @@ public class ConeLightPanningTaskComponent extends Component {
             }
 
             // move angle
+            float step = angularVelocity * dt;
             if (clockwise) {
-                coneComp.setDirectionDeg(dir + angularVelocity * dt);
+                coneComp.setDirectionDeg(dir + step);
             } else {
-                coneComp.setDirectionDeg(dir - angularVelocity * dt);
+                coneComp.setDirectionDeg(dir - step);
             }
         } else {
-
+            if (!tracking) {
+                dirBeforeTrack = dir;
+                tracking = true;
+            }
             // TRACKING MODE
             animator.setPaused(true);
 
             // move towards player increasingly fast
             Vector2 toLight = target.getPosition().cpy().sub(entity.getPosition());
-            float toAngle = toLight.angleDeg();
-            float delta = wrapDeg(toAngle - dir);
-            currentVel = Math.min(currentVel + angularVelocity * dt, maxSpeed);
-            float step = currentVel * dt;
-            if (Math.abs(delta) <= step) {
-                coneComp.setDirectionDeg(toAngle);
-                // bleed speed when locked on
-                currentVel = Math.max(currentVel * 0.9f, angularVelocity);
-            } else if (delta > 0){
-                coneComp.setDirectionDeg(dir + step);
-            } else {
-                coneComp.setDirectionDeg(dir - step);
-            }
+            moveToAngle(dir, toLight.angleDeg(), dt);
         }
         // stayInBounds(dir);
+    }
+
+    private void moveToAngle(float dir, float toAngle, float dt) {
+        float delta = wrapDeg(toAngle - dir);
+        currentVel = Math.min(currentVel + angularVelocity * dt, maxSpeed);
+        float step = currentVel * dt;
+        if (Math.abs(delta) <= step) {
+            coneComp.setDirectionDeg(toAngle);
+            // bleed speed when locked on
+            currentVel = Math.max(currentVel * 0.9f, angularVelocity);
+        } else if (delta > 0){
+            coneComp.setDirectionDeg(dir + step);
+        } else {
+            coneComp.setDirectionDeg(dir - step);
+        }
     }
 
     private void stayInBounds(float dir) {

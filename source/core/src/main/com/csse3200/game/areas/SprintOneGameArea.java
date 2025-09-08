@@ -14,6 +14,7 @@ import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -76,7 +77,7 @@ public class SprintOneGameArea extends GameArea {
             "images/bomb.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -122,9 +123,9 @@ public class SprintOneGameArea extends GameArea {
         spawnLights();
         spawnButtons();
         spawnTraps();
-        spawnDrone();
-        spawnPatrollingDrone();
-        spawnBomberDrone();
+        //spawnDrone();
+        //spawnPatrollingDrone();
+        //spawnBomberDrone();
         spawnDoor();
         displayUI();
 
@@ -197,16 +198,8 @@ public class SprintOneGameArea extends GameArea {
 
     private void spawnLights() {
         // see the LightFactory class for more details on spawning these
-        Entity securityLight = LightFactory.createSecurityLight(
-                player,
-                PhysicsLayer.OBSTACLE,
-                128,
-                Color.GREEN,
-                10f,
-                0f,
-                35f
-        );
-        spawnEntityAt(securityLight, new GridPoint2(20, 5), true, true);
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, 30, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
     }
     private void spawnTerrain() {
         // Background terrain
@@ -375,7 +368,7 @@ public class SprintOneGameArea extends GameArea {
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
-        music.setVolume(0.1f);
+        music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
     }
 
