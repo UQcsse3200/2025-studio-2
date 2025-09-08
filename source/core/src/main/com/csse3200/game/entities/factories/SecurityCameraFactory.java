@@ -61,7 +61,6 @@ public class SecurityCameraFactory {
                 e.getComponent(ConeLightComponent.class).setColor(DETECTED_COLOR));
         e.getEvents().addListener("targetLost", (Entity p) ->
                 e.getComponent(ConeLightComponent.class).setColor(NORMAL_COLOR));
-
         return e;
     }
 }

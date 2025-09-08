@@ -43,6 +43,9 @@ public class ConeLightPanningTaskComponent extends Component {
         if (detectorComp == null) {
             throw new IllegalStateException("ConeDetectorComponent must be attached to host entity before panning task");
         }
+
+        coneComp.setDirectionDeg(degreeStart);
+        animator.startAnimation("left-right");
     }
 
     @Override

@@ -2,7 +2,7 @@ security-camera.png
 size:128,256
 repeat:none
 default
-    bounds:2,2,32,32
+    bounds:36,36,32,32
 left-right
     bounds:2,2,32,32
 left-right
