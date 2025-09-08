@@ -16,6 +16,7 @@ import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -40,7 +41,7 @@ public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
-  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 5);
+  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
   private static boolean keySpawned;
   private static final String[] forestTextures = {
@@ -134,7 +135,6 @@ public class ForestGameArea extends GameArea {
   }
 
   private void loadLevel() {
-    keySpawned = false;
     displayUI();
     spawnTerrain();
     // spawnTrees();
@@ -142,13 +142,14 @@ public class ForestGameArea extends GameArea {
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset);
 
-    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    //spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    //spawnBomberDrone();       // Play with bomber drones
+    spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
 
     spawnPlatform(); //Testing platform
+      spawnElevatorPlatform();
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
@@ -327,6 +328,13 @@ public class ForestGameArea extends GameArea {
     longPlatform.setScale(10,0.1f);
     spawnEntityAt(longPlatform, longPlatformPos, false, false);
 
+    float ts = terrain.getTileSize();
+    GridPoint2 movingPos = new GridPoint2(8,6);
+    Vector2 offsetWorld  = new Vector2(6f * ts, 0f);
+    float speed = 2f;
+    Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
+    movingPlatform.setScale(2,1);
+    spawnEntityAt(movingPlatform, movingPos, false, false);
   }
   private void spawnBoxes() {
 
@@ -355,6 +363,32 @@ public class ForestGameArea extends GameArea {
     Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
     Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
     spawnEntityAt(spikes, spawnPos, true,  true);
+  }
+
+  private void spawnElevatorPlatform() {
+      float ts = terrain.getTileSize();
+
+      // Elevator: moves up 4 tiles when triggered
+      Entity elevator = PlatformFactory.createButtonTriggeredPlatform(
+              new Vector2(0, 4f * ts), // offset: 4 tiles up
+              2f                       // speed
+      );
+      spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
+
+      // Button to trigger it
+      Entity button = ButtonFactory.createButton(false, "platform", "left");
+      spawnEntityAt(button, new GridPoint2(10, 7), true, true);
+
+      // Link button to platform
+      button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+        if (isPushed) {
+          logger.info("Button toggled ON — activating elevator");
+          elevator.getEvents().trigger("activatePlatform");
+        } else {
+          logger.info("Button toggled OFF — stopping elevator");
+          elevator.getEvents().trigger("deactivatePlatform");
+        }
+      });
   }
 
   private void spawnButtons() {
@@ -412,11 +446,12 @@ public class ForestGameArea extends GameArea {
   }
 
   private Entity spawnDoor() {
-    Entity d = ObstacleFactory.createDoor("door");
+    Entity d = ObstacleFactory.createDoor("door", this, "sprint1");
     d.addComponent(new TooltipSystem.TooltipComponent(
             "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
     d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
-    spawnEntityAt(d, new GridPoint2(3, 10), true, true);
+    d.setScale(1,2);
+    spawnEntityAt(d, new GridPoint2(28, 5), true, true);
     return d;
   }
 
