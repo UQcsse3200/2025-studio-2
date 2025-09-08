@@ -109,6 +109,18 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createButtonTriggeredPlatform(com.badlogic.gdx.math.Vector2,float)" class="member-name-link">createButtonTriggeredPlatform</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;offsetWorld,
+ float&nbsp;speed)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates button triggered platform, where if the player presses the button, the platform moves</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createMovingPlatform(com.badlogic.gdx.math.Vector2,float)" class="member-name-link">createMovingPlatform</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;offsetWorld,
+ float&nbsp;speed)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a dynamic moving platform entity.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createStaticPlatform()" class="member-name-link">createStaticPlatform</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a static platform entity.</div>
@@ -138,6 +150,35 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>entity</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createMovingPlatform(com.badlogic.gdx.math.Vector2,float)">
+<h3>createMovingPlatform</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createMovingPlatform</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;offsetWorld,
+ float&nbsp;speed)</span></div>
+<div class="block">Creates a dynamic moving platform entity. Movement is based upon the calculation of offsetWorld.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>offsetWorld</code> - the world offset for the platform's movement</dd>
+<dd><code>speed</code> - the speed at which the platform moves</dd>
+<dt>Returns:</dt>
+<dd>entity the created moving platform entity</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createButtonTriggeredPlatform(com.badlogic.gdx.math.Vector2,float)">
+<h3>createButtonTriggeredPlatform</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createButtonTriggeredPlatform</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;offsetWorld,
+ float&nbsp;speed)</span></div>
+<div class="block">Creates button triggered platform, where if the player presses the button, the platform moves</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>offsetWorld</code> - </dd>
+<dd><code>speed</code> - </dd>
+<dt>Returns:</dt>
 </dl>
 </section>
 </li>
