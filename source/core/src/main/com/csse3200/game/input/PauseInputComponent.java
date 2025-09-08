@@ -22,7 +22,6 @@ public class PauseInputComponent extends InputComponent {
         PauseMenuDisplay.Tab tab = null;
         if (keycode == Keymap.getActionKeyCode("PauseSettings")) tab = PauseMenuDisplay.Tab.SETTINGS;
         else if (keycode == Keymap.getActionKeyCode("PauseInventory")) tab = PauseMenuDisplay.Tab.INVENTORY;
-        else if (keycode == Keymap.getActionKeyCode("PauseMap")) tab = PauseMenuDisplay.Tab.MAP;
         else if (keycode == Keymap.getActionKeyCode("PauseUpgrades")) tab = PauseMenuDisplay.Tab.UPGRADES;
         
         if (tab != null) {
