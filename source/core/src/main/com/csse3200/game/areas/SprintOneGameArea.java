@@ -286,7 +286,7 @@ public class SprintOneGameArea extends GameArea {
         Entity moveableBox = BoxFactory.createMoveableBox();
         moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
                 TooltipSystem.TooltipStyle.SUCCESS));
-        spawnEntityAt(moveableBox, new GridPoint2(15,20), true,  true);
+        spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
 
         // Autonomous box
         float startX = 3f;

@@ -417,12 +417,18 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
 
       // Button to trigger it
-      Entity button = ButtonFactory.createButton(false, "activatePlatform");
+      Entity button = ButtonFactory.createButton(false, "platform");
       spawnEntityAt(button, new GridPoint2(10, 7), true, true);
 
       // Link button to platform
-      button.getEvents().addListener("buttonPressed", () -> {
-          elevator.getEvents().trigger("togglePlatform");
+      button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+        if (isPushed) {
+          logger.info("Button toggled ON — activating elevator");
+          elevator.getEvents().trigger("activatePlatform");
+        } else {
+          logger.info("Button toggled OFF — stopping elevator");
+          elevator.getEvents().trigger("deactivatePlatform");
+        }
       });
   }
 
