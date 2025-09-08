@@ -3,7 +3,16 @@ package com.csse3200.game.physics;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
+import com.badlogic.gdx.physics.box2d.*;
+import com.csse3200.game.components.MoveableBoxComponent;
+import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.PressurePlateComponent; // <— import added
+import com.csse3200.game.components.obstacles.TrapComponent;
+import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -49,6 +58,9 @@ public class ObjectContactListener implements ContactListener {
 
         setPlayerInRangeOfBox(a, b, true);
         setPlayerInRangeOfBox(b, a, true);
+
+        setPlayerOnPressurePlate(a, b, true);
+        setPlayerOnPressurePlate(b, a, true);
 
         setPlayerInRangeOfTrap(a, b);
         setPlayerInRangeOfTrap(b, a);
@@ -111,7 +123,8 @@ public class ObjectContactListener implements ContactListener {
         }
     }
 
-    /**
+
+     /*
      * Triggers events on entities involved in collisions.
      * This is used for tooltip system and other general collision events.
      */
@@ -144,6 +157,9 @@ public class ObjectContactListener implements ContactListener {
         setPlayerInRangeOfButton(a, b, false);
         setPlayerInRangeOfButton(b, a, false);
 
+        setPlayerOnPressurePlate(a, b, false);
+        setPlayerOnPressurePlate(b, a, false);
+
         setPlayerInRangeOfBox(a, b, false);
         setPlayerInRangeOfBox(b, a, false);
     }
@@ -159,6 +175,7 @@ public class ObjectContactListener implements ContactListener {
     }
 
 
+
     /**
      * Check if the colliding entities consist of a trap and a player, and if so calls the
      * trap's damage function.
@@ -170,9 +187,20 @@ public class ObjectContactListener implements ContactListener {
         PlayerActions player = colliding.getComponent(PlayerActions.class);
         TrapComponent trapComponent = trap.getComponent(TrapComponent.class);
 
-        if(trapComponent != null && player != null) {
+        if (trapComponent != null && player != null) {
             ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
             trapComponent.damage(collider);
+        }
+    }
+
+    private void setPlayerOnPressurePlate(Entity plate, Entity other, boolean inRange) {
+        PressurePlateComponent plateComp = plate.getComponent(PressurePlateComponent.class);
+        PlayerActions player = other.getComponent(PlayerActions.class);
+        if (plateComp != null && player != null) {
+            ColliderComponent collider = inRange
+                    ? other.getComponent(ColliderComponent.class)
+                    : null;
+
         }
     }
 }

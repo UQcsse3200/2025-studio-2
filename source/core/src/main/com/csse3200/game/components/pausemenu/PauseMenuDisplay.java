@@ -8,30 +8,39 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.GdxGame;
 import com.csse3200.game.screens.MainGameScreen;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 import com.csse3200.game.ui.inventoryscreen.MapTab;
+import com.csse3200.game.ui.inventoryscreen.SettingsTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 
 public class PauseMenuDisplay extends UIComponent {
     private MainGameScreen screen;
     private Table rootTable;
-
+    private final GdxGame game;
     private Texture blackTexture;
     private Table tabBar;
     private Table tabContent;
     private Table bottomButtons;
-
-    private final InventoryTab inventoryTab = new InventoryTab();
+    private Entity player;
+    private final InventoryTab inventoryTab;
     private final UpgradesTab upgradesTab = new UpgradesTab();
+    private final SettingsTab settingsTab = new SettingsTab();
     private final MapTab mapTab = new MapTab();
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay (MainGameScreen screen) {
+    public PauseMenuDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.screen = screen;
+        this.player = player;
+        this.inventoryTab = new InventoryTab(player);
+        this.game = game;
     }
 
     @Override
@@ -66,6 +75,8 @@ public class PauseMenuDisplay extends UIComponent {
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
+        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -77,10 +88,8 @@ public class PauseMenuDisplay extends UIComponent {
     // Tab button helper
     private void addTabButton(String name, Tab tab) {
         TextButton button = new TextButton(name, skin);
-
         button.pad(25);
         button.setWidth(150);
-
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -99,15 +108,10 @@ public class PauseMenuDisplay extends UIComponent {
                 action.run();
             }
         });
-        bottomButtons.add(button).padRight(10);
+        bottomButtons.add(button).padRight(25);
     }
 
-  /**
-   * Switch tabs to the specified tab.
-   *
-   * @param tab the tab to which we should switch.
-   */
-  public void setTab(Tab tab) {
+    public void setTab(Tab tab) {
         this.currentTab = tab;
         updateTabContent();
     }
@@ -117,19 +121,21 @@ public class PauseMenuDisplay extends UIComponent {
         Actor ui = switch (currentTab) {
             case INVENTORY -> inventoryTab.build(skin);
             case UPGRADES -> upgradesTab.build(skin);
+            case SETTINGS -> settingsTab.build(skin);
             case MAP -> mapTab.build(skin);
-            default -> new Label("SETTINGS", skin);
         };
-        tabContent.add(ui).center();
+        // Ensure the returned actor from build() fills the tab content area.
+        tabContent.add(ui).expand().fill();
     }
 
-  /**
-   * Show/hide overlay.
-   *
-   * @param visible true makes the pause menu visible, false sets it to invisible.
-   */
     public void setVisible(boolean visible) {
         rootTable.setVisible(visible);
+
+        Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
+        if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
+            minimapDisplay.setVisible(!visible);
+        }
+
         if (visible) {
             rootTable.toFront();
         }

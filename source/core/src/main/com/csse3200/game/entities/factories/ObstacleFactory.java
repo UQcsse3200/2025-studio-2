@@ -8,6 +8,7 @@ import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.areas.GameArea;
 
 /**
  * Factory to create obstacle entities.
@@ -53,11 +54,11 @@ public class ObstacleFactory {
      * @param keyId the unique key identifier that can unlock this door
      * @return a new door entity bound to {@code keyId}, in the locked state
      */
-  public static Entity createDoor (String keyId) {
+  public static Entity createDoor (String keyId, GameArea area, String levelId) {
 
       Entity door = new Entity()
               .addComponent(new PhysicsComponent().setBodyType(BodyType.StaticBody))
-              .addComponent(new DoorComponent(keyId))
+              .addComponent(new DoorComponent(keyId, area, levelId))
               .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
               .addComponent(new TextureRenderComponent("images/door_closed.png"));
 

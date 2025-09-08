@@ -31,11 +31,10 @@ public class PlatformFactory {
     }
 
     /**
-     * Create a dynamic moving platform entity, movement is based upon the
-     * calculation of offsetWorld
-     * @param offsetWorld
-     * @param speed
-     * @return enity
+     * Creates a dynamic moving platform entity. Movement is based upon the calculation of offsetWorld.
+     * @param offsetWorld the world offset for the platform's movement
+     * @param speed the speed at which the platform moves
+     * @return entity the created moving platform entity
      */
     public static Entity createMovingPlatform(Vector2 offsetWorld, float speed) {
         ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);

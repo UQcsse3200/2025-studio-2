@@ -6,16 +6,22 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
 import com.csse3200.game.services.ResourceService;
@@ -25,14 +31,12 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
   private static final Logger logger = LoggerFactory.getLogger(ForestGameArea.class);
   private static final int NUM_TREES = 7;
   private static final int NUM_GHOSTS = 2;
-  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 5);
+  private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
   private static final float WALL_WIDTH = 0.1f;
   private static boolean keySpawned;
   private static final String[] forestTextures = {
@@ -45,6 +49,9 @@ public class ForestGameArea extends GameArea {
     "images/grass_1.png",
     "images/grass_2.png",
     "images/grass_3.png",
+    "images/key.png",
+    "images/door_open.png",
+    "images/door_closed.png",
     "images/key.png",
     "images/hex_grass_1.png",
     "images/hex_grass_2.png",
@@ -73,11 +80,50 @@ public class ForestGameArea extends GameArea {
     "images/red_button_pushed.png",
     "images/minimap_forest_area.png",
     "images/minimap_player_marker.png",
+    "images/door_open.png",
+    "images/door_closed.png",
+          "images/box_boy_leaf.png",
+          "images/tree.png",
+          "images/ghost_king.png",
+          "images/ghost_1.png",
+          "images/grass_1.png",
+          "images/grass_2.png",
+          "images/grass_3.png",
+          "images/key.png",
+          "images/hex_grass_1.png",
+          "images/hex_grass_2.png",
+          "images/hex_grass_3.png",
+          "images/iso_grass_1.png",
+          "images/iso_grass_2.png",
+          "images/iso_grass_3.png",
+          "images/drone.png",
+          "images/bomb.png",
+          "images/platform.png",
+          "images/gate.png",
+          "images/button.png",
+          "images/button_pushed.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/box_blue.png",
+          "images/box_orange.png",
+          "images/box_red.png",
+          "images/box_white.png",
+          "images/spikes_sprite.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/minimap_forest_area.png",
+          "images/minimap_player_marker.png",
           "images/door_open.png",
-          "images/door_closed.png"
+          "images/door_closed.png",
+          "images/pressure_plate_unpressed.png",
+          "images/pressure_plate_pressed.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -86,8 +132,8 @@ public class ForestGameArea extends GameArea {
 
   private final TerrainFactory terrainFactory;
 
-  private Entity player;
-
+  private Entity door;
+  private Timer.Task doorCloseTask;
   /**
    * Initialise this ForestGameArea to use the provided TerrainFactory.
    * @param terrainFactory TerrainFactory used to create the terrain for the GameArea.
@@ -101,56 +147,89 @@ public class ForestGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
-    PhysicsEngine engine =  ServiceLocator.getPhysicsService().getPhysics();
+    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
+    loadLevel();
+  }
 
+  protected void reset() {
+    // debug
+    // for (Entity entity : areaEntities) {
+    //   System.out.println(entity);
+    // }
+
+    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
+    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+
+    // Delete all entities within the room
+    // Note: Using super's dispose() instead of local as super does not unload assets.
+    super.dispose();
+    loadLevel();
+
+    // transfer all of the retained data
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+  }
+
+  private void loadLevel() {
     displayUI();
     spawnTerrain();
-    //spawnTrees();
-
-    MinimapDisplay minimapDisplay = createMinimap();
-
+    // spawnTrees();
+    createMinimap();
     player = spawnPlayer();
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
+    player.getEvents().addListener("reset", this::reset);
+
 
     spawnDrone();             // Play with idle/chasing drones (unless chasing)
     spawnPatrollingDrone();   // Play with patrolling/chasing drones
     spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
+
     spawnPlatform(); //Testing platform
     spawnElevatorPlatform();
+    spawnDoor();
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons(); //uncomment this method to see and interact with buttons
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
+    door = spawnDoor();
+    spawnPressurePlates();
+
+
     spawnLights(); // uncomment to spawn in lights
-      // spawnKey();
+    // spawnKey();
     spawnTraps();
     playMusic();
-    spawnDoor();
+    //spawnDoor();
   }
 
-  private MinimapDisplay createMinimap() {
+  private void createMinimap() {
     Texture minimapTexture =
-        ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
-
-    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
 
     float tileSize = terrain.getTileSize();
     Vector2 worldSize =
-        new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+            new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
+
+    MinimapDisplay.MinimapOptions options = getMinimapOptions();
+
     MinimapDisplay minimapDisplay =
-        new MinimapDisplay(minimapTexture, new Vector2(), worldSize, 150f, options);
+            new MinimapDisplay(150f, options);
 
     Entity minimapEntity = new Entity();
     minimapEntity.addComponent(minimapDisplay);
     spawnEntity(minimapEntity);
+  }
 
-    return minimapDisplay;
+  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+    return options;
   }
 
   private void displayUI() {
@@ -172,22 +251,23 @@ public class ForestGameArea extends GameArea {
 
     // Left
     spawnEntityAt(
-        ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+            ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y), GridPoint2Utils.ZERO, false, false);
     // Right
     spawnEntityAt(
-        ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y),
-        new GridPoint2(tileBounds.x, 0),
-        false,
-        false);
+            ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y),
+            new GridPoint2(tileBounds.x, 0),
+            false,
+            false);
     // Top
     spawnEntityAt(
-        ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
-        new GridPoint2(0, tileBounds.y),
-        false,
-        false);
+            ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+            new GridPoint2(0, tileBounds.y - 4),
+            false,
+            false);
     // Bottom
-    spawnEntityAt(
-        ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
+    //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
+    spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+            new GridPoint2(0, 4), false, false);
   }
 
   private void spawnTrees() {
@@ -280,7 +360,7 @@ public class ForestGameArea extends GameArea {
     step3.setScale(2,1);
     spawnEntityAt(step3, step3Pos, false, false);
 
-    GridPoint2 step4Pos = new GridPoint2(20,7);
+    GridPoint2 step4Pos = new GridPoint2(20,6);
     Entity step4 = PlatformFactory.createStaticPlatform();
     step4.setScale(2,1);
     spawnEntityAt(step4, step4Pos, false, false);
@@ -300,28 +380,29 @@ public class ForestGameArea extends GameArea {
   }
   private void spawnBoxes() {
 
-      // Static box
-      Entity staticBox = BoxFactory.createStaticBox();
-      staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
-      spawnEntityAt(staticBox, new GridPoint2(10,20), true,  true);
+    // Static box
+    Entity staticBox = BoxFactory.createStaticBox();
+    staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed, you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+    spawnEntityAt(staticBox, new GridPoint2(10,20), true,  true);
 
-      // Moveable box
-      Entity moveableBox = BoxFactory.createMoveableBox();
-      moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
-      spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
+    // Moveable box
+    Entity moveableBox = BoxFactory.createMoveableBox();
+    moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
+    spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
-      // Autonomous box
-      float startX = 3f;
-      float endX = 10f;
-      float y = 17f;
-      float speed = 2f;
+    // Autonomous box
+    float startX = 3f;
+    float endX = 10f;
+    float y = 17f;
+    float speed = 2f;
 
-      Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
-      spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
+    Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+    spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
   }
   private void spawnTraps() {
     GridPoint2 spawnPos =  new GridPoint2(7,15);
-    Entity spikes = TrapFactory.createSpikes(spawnPos);
+    Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
+    Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
     spawnEntityAt(spikes, spawnPos, true,  true);
   }
 
@@ -345,7 +426,7 @@ public class ForestGameArea extends GameArea {
       });
   }
 
-    private void spawnButtons() {
+  private void spawnButtons() {
     Entity button = ButtonFactory.createButton(false, "platform");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
@@ -368,29 +449,66 @@ public class ForestGameArea extends GameArea {
   }
 
   public void spawnKey() {
-      Entity key = CollectableFactory.createKey("door");
-      key.addComponent(new TooltipSystem.TooltipComponent("Collect the key", TooltipSystem.TooltipStyle.SUCCESS));
-      spawnEntityAt(key, new GridPoint2(17,19), true, true);
+    Entity key = CollectableFactory.createKey("door");
+    key.addComponent(new TooltipSystem.TooltipComponent("Collect the key", TooltipSystem.TooltipStyle.SUCCESS));
+    spawnEntityAt(key, new GridPoint2(17,19), true, true);
   }
 
-  public void spawnDoor() {
-      Entity door = ObstacleFactory.createDoor("door");
-      door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
-      spawnEntityAt(door, new GridPoint2(3,10), true, true);
+  private void spawnPressurePlates() {
+    Entity plate = PressurePlateFactory.createPressurePlate();
+    PressurePlateComponent comp = plate.getComponent(PressurePlateComponent.class);
+    comp.setTextures("images/pressure_plate_unpressed.png", "images/pressure_plate_pressed.png");
+
+    plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+      if (door == null) return;
+
+      if (pressed) {
+        if (doorCloseTask != null) { doorCloseTask.cancel(); doorCloseTask = null; }
+        door.getEvents().trigger("openDoor");
+      } else {
+        doorCloseTask = new Timer.Task() {
+          @Override public void run() { door.getEvents().trigger("closeDoor"); doorCloseTask = null; }
+        };
+        Timer.schedule(doorCloseTask, 10f);
+      }
+    });
+
+    GridPoint2 platePos = new GridPoint2(5, terrain.getMapBounds(0).y - 20);
+    spawnEntityAt(plate, platePos, true, true);
+  }
+
+  private Entity spawnDoor() {
+    Entity d = ObstacleFactory.createDoor("door", this, "sprint1");
+    d.addComponent(new TooltipSystem.TooltipComponent(
+            "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+    d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
+    spawnEntityAt(d, new GridPoint2(3, 10), true, true);
+    return d;
   }
 
   private void spawnLights() {
     // see the LightFactory class for more details on spawning these
     Entity securityLight = LightFactory.createSecurityLight(
-              player,
-              PhysicsLayer.OBSTACLE,
-              128,
-              Color.GREEN,
-              10f,
-              0f,
-              35f
-      );
-      spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
+            player,
+            PhysicsLayer.OBSTACLE,
+            128,
+            Color.GREEN,
+            10f,
+            0f,
+            35f
+    );
+    spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
+  }
+
+  private void spawnGate() {
+    /*
+    Creates gate to test
+    */
+    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
+    Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
+    gate.setScale(1, 2);
+    gate.getComponent(DoorComponent.class).openDoor();
+    spawnEntityAt(gate, gatePos, true, true);
   }
 
   private void playMusic() {

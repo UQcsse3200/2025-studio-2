@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.events.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,19 @@ public abstract class GameArea implements Disposable {
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
 
+  private final EventHandler events = new EventHandler();
+
+  public EventHandler getEvents() {
+    return events;
+  }
+
+  public void trigger(String eventName, String keyId, Entity player) {
+    events.trigger(eventName, keyId, player);
+  }
+
+  protected Entity player;
+
+
   protected GameArea() {
     areaEntities = new ArrayList<>();
   }
@@ -27,12 +41,22 @@ public abstract class GameArea implements Disposable {
   /** Create the game area in the world. */
   public abstract void create();
 
+  /** Reset current game area. */
+  protected abstract void reset();
+
+
   /** Dispose of all internal entities in the area */
   public void dispose() {
     for (Entity entity : areaEntities) {
+      // entity.dispose() does not delete the entity object itself.
       entity.dispose();
     }
+
+    // Clear list of entities.
+    areaEntities.clear();
   }
+
+
 
   /**
    * Spawn entity at its current position
@@ -66,5 +90,9 @@ public abstract class GameArea implements Disposable {
 
     entity.setPosition(worldPos);
     spawnEntity(entity);
+  }
+
+  public Entity getPlayer() {
+    return player;
   }
 }
