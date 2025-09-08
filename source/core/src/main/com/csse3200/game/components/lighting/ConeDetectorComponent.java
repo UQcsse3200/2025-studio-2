@@ -55,6 +55,10 @@ public class ConeDetectorComponent extends Component {
         return this;
     }
 
+    public Entity getTarget() {
+        return target;
+    }
+
     @Override
     public void create() {
         physicsEngine = ServiceLocator.getPhysicsService().getPhysics();
