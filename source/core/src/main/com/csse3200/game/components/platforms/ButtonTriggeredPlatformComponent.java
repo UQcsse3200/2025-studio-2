@@ -31,13 +31,17 @@ public class ButtonTriggeredPlatformComponent extends Component {
             active = false;
         });
     }
-
+    private Vector2 start;
+    private Vector2 end;
     private void onToggle() {
         enabled = !enabled;
         if (enabled) {
             active = true;
-            // Ensure no phantom contact
-            physics.getBody().setAwake(true);
+            start = physics.getBody().getPosition().cpy();
+            end = start.cpy().add(offset);
+            // Lock axis
+            if (offset.x == 0) end.x = start.x;
+            if (offset.y == 0) end.y = start.y;
         }
     }
 
@@ -47,11 +51,7 @@ public class ButtonTriggeredPlatformComponent extends Component {
 
         Body body = physics.getBody();
         Vector2 pos = body.getPosition();
-        Vector2 target = forward ? origin.cpy().add(offset) : origin.cpy();
-
-        // Lock axis to prevent diagonal drift
-        if (offset.x == 0) pos.x = origin.x;
-        if (offset.y == 0) pos.y = origin.y;
+        Vector2 target = forward ? end : start;
 
         Vector2 dir = target.cpy().sub(pos);
 
@@ -65,6 +65,7 @@ public class ButtonTriggeredPlatformComponent extends Component {
             body.setLinearVelocity(dir);
         }
     }
+
 
 
 }
