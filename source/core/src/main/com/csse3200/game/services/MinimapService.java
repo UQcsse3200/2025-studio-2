@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
 
 /**
@@ -21,8 +22,7 @@ public class MinimapService implements Disposable {
   private final Texture minimapTexture;
   private final Vector2 worldSize;
   private final Vector2 origin;
-  private final Group minimapMarkerGroup = new Group();
-  private final Group mapMarkerGroup = new Group();
+  private MinimapDisplay minimapDisplay;
 
   /**
    * Creates a new minimap service.
@@ -65,21 +65,19 @@ public class MinimapService implements Disposable {
   }
 
   /**
-   * Gets the minimap marker group.
-   *
-   * @return The marker group with all the markers
+   * Sets the minimap display (to which entities are added).
    */
-  public Group getMinimapMarkerGroup() {
-    return minimapMarkerGroup;
+  public void setDisplay(MinimapDisplay minimapDisplay) {
+    this.minimapDisplay = minimapDisplay;
   }
 
   /**
-   * Gets the map marker group.
+   * Gets the minimap display.
    *
-   * @return The marker group with all the markers
+   * @return The minimap display (to which entities are added).
    */
-  public Group getMapMarkerGroup() {
-    return mapMarkerGroup;
+  public MinimapDisplay getDisplay() {
+    return minimapDisplay;
   }
 
   /**
@@ -91,7 +89,7 @@ public class MinimapService implements Disposable {
   public void trackEntity(Entity entity, Image marker) {
     if (!trackedEntities.containsKey(entity)) {
       trackedEntities.put(entity, marker);
-      minimapMarkerGroup.addActor(marker);
+      minimapDisplay.addMarker(marker);
     }
   }
 
@@ -103,7 +101,7 @@ public class MinimapService implements Disposable {
   public void stopTracking(Entity entity) {
     Image marker = trackedEntities.remove(entity);
     if (marker != null) {
-      minimapMarkerGroup.addActor(marker);
+      minimapDisplay.removeMarker(marker);
     }
   }
 
@@ -111,11 +109,14 @@ public class MinimapService implements Disposable {
    * Updates the marker on the minimap with a new drawable.
    *
    * @param entity The entity whose marker to change.
-   * @param drawable The new drawable for the marker.
+   * @param marker The new drawable for the marker.
    */
-  public void setMarker(Entity entity, Drawable drawable) {
-    Image marker = trackedEntities.get(entity);
-    if (marker != null) marker.setDrawable(drawable);
+  public void setMarker(Entity entity, Image marker) {
+    Image oldMarker = trackedEntities.replace(entity, marker);
+    if (oldMarker != null) {
+      minimapDisplay.removeMarker(oldMarker);
+    }
+    minimapDisplay.addMarker(marker);
   }
 
   /**

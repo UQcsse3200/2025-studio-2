@@ -111,10 +111,6 @@ public class ForestGameArea extends GameArea {
   }
 
   protected void reset() {
-    // debug
-    // for (Entity entity : areaEntities) {
-    //   System.out.println(entity);
-    // }
 
     // Retain all data we want to be transferred across the reset (e.g. player movement direction)
     Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
@@ -122,6 +118,7 @@ public class ForestGameArea extends GameArea {
     // Delete all entities within the room
     // Note: Using super's dispose() instead of local as super does not unload assets.
     super.dispose();
+    loadAssets();
     loadLevel();
 
     // transfer all of the retained data
@@ -132,7 +129,10 @@ public class ForestGameArea extends GameArea {
     displayUI();
     spawnTerrain();
     // spawnTrees();
-    createMinimap();
+
+
+    createMinimap(
+        ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset);
 
@@ -156,31 +156,6 @@ public class ForestGameArea extends GameArea {
     spawnTraps();
     playMusic();
     spawnDoor();
-  }
-
-  private void createMinimap() {
-    Texture minimapTexture =
-            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
-
-    float tileSize = terrain.getTileSize();
-    Vector2 worldSize =
-            new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
-    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
-
-    MinimapDisplay.MinimapOptions options = getMinimapOptions();
-
-    MinimapDisplay minimapDisplay =
-            new MinimapDisplay(150f, options);
-
-    Entity minimapEntity = new Entity();
-    minimapEntity.addComponent(minimapDisplay);
-    spawnEntity(minimapEntity);
-  }
-
-  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
-    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-    return options;
   }
 
   private void displayUI() {
@@ -221,32 +196,10 @@ public class ForestGameArea extends GameArea {
             new GridPoint2(0, 4), false, false);
   }
 
-  private void spawnTrees() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-
-    for (int i = 0; i < NUM_TREES; i++) {
-      GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-      Entity tree = ObstacleFactory.createTree();
-      spawnEntityAt(tree, randomPos, true, false);
-    }
-  }
-
   private Entity spawnPlayer() {
     Entity newPlayer = PlayerFactory.createPlayer();
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     return newPlayer;
-  }
-
-  private void spawnGhosts() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-
-    for (int i = 0; i < NUM_GHOSTS; i++) {
-      GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-      Entity ghost = NPCFactory.createGhost(player);
-      spawnEntityAt(ghost, randomPos, true, true);
-    }
   }
 
   private void spawnDrone() {
@@ -278,14 +231,6 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 
-  private void spawnGhostKing() {
-    GridPoint2 minPos = new GridPoint2(0, 0);
-    GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
-
-    GridPoint2 randomPos = RandomUtils.random(minPos, maxPos);
-    Entity ghostKing = NPCFactory.createGhostKing(player);
-    spawnEntityAt(ghostKing, randomPos, true, true);
-  }
   //Platform spawn in testing
   private void spawnPlatform() {
     /*

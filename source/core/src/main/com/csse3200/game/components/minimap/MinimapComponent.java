@@ -42,22 +42,10 @@ public class MinimapComponent extends Component {
   /**
    * Updates the marker on the minimap with a new drawable.
    *
-   * @param drawable The new drawable for the marker.
+   * @param marker The new drawable for the marker.
    */
-  public void setMarker(Drawable drawable) {
-    ServiceLocator.getMinimapService().setMarker(entity, drawable);
-  }
-
-  /**
-   * Updates the marker on the minimap with a new texture.
-   *
-   * @param markerAsset The path to the new texture for the marker.
-   */
-  public void setMarker(String markerAsset) {
-    Drawable drawable = new TextureRegionDrawable(
-        ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class)
-    );
-    setMarker(drawable);
+  public void setMarker(Image marker) {
+    ServiceLocator.getMinimapService().setMarker(entity, marker);
   }
 
   /**
