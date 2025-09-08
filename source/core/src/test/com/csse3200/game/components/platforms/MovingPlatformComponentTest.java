@@ -24,8 +24,8 @@ class MovingPlatformComponentTest {
 
         // Mock Body and PhysicsComponent
         mockBody = mock(Body.class);
-        when(mockBody.getAngle()).thenReturn(0f);
-
+        when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
+        when(mockBody.getPosition()).thenReturn(new Vector2(5f, 0f));
         physics = mock(PhysicsComponent.class);
         when(physics.getBody()).thenReturn(mockBody);
 
