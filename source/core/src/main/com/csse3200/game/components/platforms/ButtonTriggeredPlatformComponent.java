@@ -21,12 +21,20 @@ public class ButtonTriggeredPlatformComponent extends Component {
         this.offset = offset.cpy();
         this.speed = speed;
     }
-
+    private Vector2 start;
+    private Vector2 end;
     @Override
     public void create() {
         physics = entity.getComponent(PhysicsComponent.class);
         origin = physics.getBody().getPosition().cpy();
+        Body body = physics.getBody();
+        start = body.getPosition().cpy();
+        end = start.cpy().add(offset);
 
+        // Lock axis
+        if (offset.x == 0) end.x = start.x;
+        if (offset.y == 0) end.y = start.y;
+        active = true;
         // Listen for button activation
         entity.getEvents().addListener("activatePlatform", this::onToggle);
         entity.getEvents().addListener("deactivatePlatform", () -> active = false);
