@@ -45,13 +45,18 @@ public class ButtonTriggeredPlatformComponent extends Component {
     @Override
     public void update() {
         if (!enabled || !active) return;
+
         Body body = physics.getBody();
         Vector2 pos = body.getPosition();
-        // Calculate target dynamically from origin + offset
         Vector2 target = forward ? origin.cpy().add(offset) : origin.cpy();
+
+        // Lock axis to prevent diagonal drift
+        if (offset.x == 0) pos.x = origin.x;
+        if (offset.y == 0) pos.y = origin.y;
+
         Vector2 dir = target.cpy().sub(pos);
 
-        if (dir.len()<=epsilon) {
+        if (dir.len() <= epsilon) {
             body.setTransform(target, body.getAngle());
             body.setLinearVelocity(Vector2.Zero);
             forward = !forward;
@@ -61,4 +66,5 @@ public class ButtonTriggeredPlatformComponent extends Component {
             body.setLinearVelocity(dir);
         }
     }
+
 }

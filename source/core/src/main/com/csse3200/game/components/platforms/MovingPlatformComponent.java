@@ -34,10 +34,19 @@ public class MovingPlatformComponent extends Component {
 
         Vector2 pos = entity.getPosition().cpy();
         start = pos.cpy();
-        end = pos.cpy().add(offset); // Use full offset, not just Y
+        end = pos.cpy().add(offset);
+
+        // Force alignment if offset is purely vertical or horizontal
+        if (offset.x == 0) {
+            end.x = start.x; // lock X
+        }
+        if (offset.y == 0) {
+            end.y = start.y; // lock Y
+        }
 
         lastPos = pos.cpy();
     }
+
 
     @Override
     public void update() {
@@ -57,8 +66,12 @@ public class MovingPlatformComponent extends Component {
         }
 
         // Move toward target
-        Vector2 direction = target.cpy().sub(currentPos).nor();
+        Vector2 direction = target.cpy().sub(currentPos);
+        if (Math.abs(direction.x) < 0.0001f) direction.x = 0;
+        if (Math.abs(direction.y) < 0.0001f) direction.y = 0;
+        direction.nor();
         body.setLinearVelocity(direction.scl(speed));
+
     }
 
 
