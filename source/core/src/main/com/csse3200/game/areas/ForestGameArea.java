@@ -134,6 +134,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private void loadLevel() {
+    keySpawned = false;
     displayUI();
     spawnTerrain();
     // spawnTrees();
@@ -366,7 +367,7 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(button2, new GridPoint2(20,5), true,  true);
 
     Entity button3 = ButtonFactory.createButton(false, "nothing", "up");
-    spawnEntityAt(button3, new GridPoint2(15,30), true,  true);
+    spawnEntityAt(button3, new GridPoint2(15,12), true,  true);
 
     Entity button4 = ButtonFactory.createButton(false, "nothing", "down");
     spawnEntityAt(button4, new GridPoint2(15,7), true,  true);

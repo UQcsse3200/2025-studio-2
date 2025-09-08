@@ -32,19 +32,7 @@ public class ButtonFactory {
 
         Entity button = new Entity();
 
-        String texture;
-        //set texture based on type
-        if(type.equals("platform")) {
-            texture = isPressed ? "images/blue_button_pushed.png" : "images/blue_button.png";
-           // button.addComponent(new TextureRenderComponent(texture));
-        }else if(type.equals("door")) {
-            texture = isPressed ? "images/red_button_pushed.png" : "images/red_button.png";
-           // button.addComponent(new TextureRenderComponent(texture));
-        }else {
-            texture = isPressed ? "images/button_pushed.png" : "images/button.png";
-            //button.addComponent(new TextureRenderComponent(texture));
-        }
-        TextureRenderComponent render = new TextureRenderComponent(texture);
+        TextureRenderComponent render = getTextureRenderComponent(isPressed, type);
 
         if(direction != null) {
             direction = direction.toLowerCase();
@@ -82,6 +70,19 @@ public class ButtonFactory {
         button.setScale(0.5f, 0.5f);
 
         return button;
+    }
+
+    private static TextureRenderComponent getTextureRenderComponent(boolean isPressed, String type) {
+        String texture;
+        //set texture based on type
+        if(type.equals("platform")) {
+            texture = isPressed ? "images/blue_button_pushed.png" : "images/blue_button.png";
+        }else if(type.equals("door")) {
+            texture = isPressed ? "images/red_button_pushed.png" : "images/red_button.png";
+        }else {
+            texture = isPressed ? "images/button_pushed.png" : "images/button.png";
+        }
+        return new TextureRenderComponent(texture);
     }
 
     private ButtonFactory() {
