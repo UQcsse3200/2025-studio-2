@@ -14,7 +14,7 @@ import java.util.Set;
 public class MovingPlatformComponent extends Component {
     final Vector2 offset; // relative movement from spawn position (world units)
     final float speed;    // units per second
-    private final float epsilon = 0;
+    private final float epsilon = 0f;
     private final Map<Entity, Vector2> passengerOffsets = new HashMap<>();
     private PhysicsComponent physics;
     private Vector2 start;
