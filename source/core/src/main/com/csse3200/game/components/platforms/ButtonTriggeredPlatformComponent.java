@@ -40,7 +40,7 @@ public class ButtonTriggeredPlatformComponent extends Component {
         if (offset.x == 0) end.x = start.x;
         if (offset.y == 0) end.y = start.y;
 
-        goingOut = !goingOut;
+        goingOut = true;
         active = true;
     }
 
