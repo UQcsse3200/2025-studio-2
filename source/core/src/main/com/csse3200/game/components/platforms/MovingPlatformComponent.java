@@ -34,8 +34,8 @@ public class MovingPlatformComponent extends Component {
 
         // After spawnEntityAt has placed the entity, read its actual start position
         Vector2 pos = entity.getPosition().cpy();
-        start = pos;
-        end = pos.cpy().add(offset);
+        start = new Vector2(pos.x, pos.y);
+        end = new Vector2(pos.x, pos.y + offset.y);
 
         lastPos = pos.cpy();
 
@@ -49,7 +49,7 @@ public class MovingPlatformComponent extends Component {
         Vector2 dir = target.cpy().sub(pos);
         if (offset.x == 0) dir.x = 0; // vertical-only
         if (offset.y == 0) dir.y = 0; // horizontal-only
-        
+
         if (dir.len() <= epsilon) {
             // Snap to target and reverse
             body.setTransform(target, body.getAngle());
