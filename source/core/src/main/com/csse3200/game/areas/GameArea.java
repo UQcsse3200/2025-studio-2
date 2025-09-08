@@ -9,6 +9,7 @@ import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.events.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +23,19 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
+
+  private final EventHandler events = new EventHandler();
+
+  public EventHandler getEvents() {
+    return events;
+  }
+
+  public void trigger(String eventName, String keyId, Entity player) {
+    events.trigger(eventName, keyId, player);
+  }
+
   protected Entity player;
+
 
   protected GameArea() {
     areaEntities = new ArrayList<>();
@@ -46,8 +59,6 @@ public abstract class GameArea implements Disposable {
     areaEntities.clear();
   }
 
-
-  // Returns the Player
   public Entity getPlayer() {
     return player;
   }
