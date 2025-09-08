@@ -44,10 +44,13 @@ public class MovingPlatformComponent extends Component {
     @Override
     public void update() {
         Body body = physics.getBody();
-        Vector2 pos = entity.getPosition().cpy();
+        Vector2 pos = physics.getBody().getPosition().cpy();
         Vector2 target = forward ? end : start;
         Vector2 dir = target.cpy().sub(pos);
-
+        //For vertical movement
+        dir.x = 0;
+        //For horizontal movement
+        dir.y = 0;
         if (dir.len() <= epsilon) {
             // Snap to target and reverse
             body.setTransform(target, body.getAngle());
