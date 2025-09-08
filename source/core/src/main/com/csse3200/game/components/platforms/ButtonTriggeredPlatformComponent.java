@@ -24,11 +24,7 @@ public class ButtonTriggeredPlatformComponent extends Component {
     @Override
     public void create() {
         physics = entity.getComponent(PhysicsComponent.class);
-
-        // After spawnEntityAt has placed the entity, read its origin/spawning coordinates
-        origin = physics.getBody().getPosition().cpy();
-
-        //Listen for button activation
+        origin = physics.getBody().getPosition().cpy(); // true spawn position
         entity.getEvents().addListener("activatePlatform", this::onToggle);
         entity.getEvents().addListener("deactivatePlatform", () -> {
             enabled = false;
@@ -40,8 +36,11 @@ public class ButtonTriggeredPlatformComponent extends Component {
         enabled = !enabled;
         if (enabled) {
             active = true;
+            // Ensure no phantom contact
+            physics.getBody().setAwake(true);
         }
     }
+
     @Override
     public void update() {
         if (!enabled || !active) return;
@@ -66,5 +65,6 @@ public class ButtonTriggeredPlatformComponent extends Component {
             body.setLinearVelocity(dir);
         }
     }
+
 
 }
