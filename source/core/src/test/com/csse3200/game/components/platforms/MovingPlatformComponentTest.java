@@ -30,7 +30,7 @@ class MovingPlatformComponentTest {
         platform.addComponent(physics);
 
         // Use horizontal offset for these tests
-        component = new MovingPlatformComponent(new Vector2(5f, 0f), 2f);
+        component = new MovingPlatformComponent(new Vector2(0f, 5f), 2f);
         platform.addComponent(component);
     }
 
