@@ -32,14 +32,11 @@ public class MovingPlatformComponent extends Component {
     public void create() {
         physics = entity.getComponent(PhysicsComponent.class);
 
-        // After spawnEntityAt has placed the entity, read its actual start position
         Vector2 pos = entity.getPosition().cpy();
-        start = entity.getPosition().cpy();
-        end = start.cpy().add(offset);
-
+        start = pos.cpy();
+        end = pos.cpy().add(offset); // Use full offset, not just Y
 
         lastPos = pos.cpy();
-
     }
 
     @Override
