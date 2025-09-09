@@ -395,6 +395,13 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 
+  private void spawnSelfDestructDrone(){
+    GridPoint2 spawnTile =new GridPoint2(4,11);
+    Vector2 spawnPos= terrain.tileToWorldPosition(spawnTile);
+    Entity selfDrone =EnemyFactory.createSelfDestructionDrone(getPlayer(),spawnPos,securityLight);
+    spawnEntityAt( selfDrone, spawnTile, false, true);
+  }
+
   private void playMusic() {
     Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
     music.setLooping(true);
