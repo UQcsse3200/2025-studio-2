@@ -284,6 +284,7 @@ public class SprintOneGameArea extends GameArea {
                 TooltipSystem.TooltipStyle.SUCCESS));
         spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
 
+        // Autonomous boxes
         BoxFactory.AutonomousBoxBuilder builder = new BoxFactory.AutonomousBoxBuilder();
         Entity platformAutoBox = builder
                 .moveX(1.5f, 6f).moveY(23f, 23f).speed(4f).damage(5).knockback(4).build();
