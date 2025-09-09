@@ -118,7 +118,7 @@ public class SprintOneGameArea extends GameArea {
 
         spawnPlatform();
         spawnElevatorPlatform();
-
+        spawnWalls();
         spawnBoxes();
         playMusic();
         spawnLights();
