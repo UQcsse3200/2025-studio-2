@@ -354,8 +354,8 @@ public class ForestGameArea extends GameArea {
 //    float y = 17f;
 //    float speed = 2f;
 
-    Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 17f, 17f, 2f, 1, 5, 2f);
-    spawnEntityAt(autonomousBox, new GridPoint2((int)3f, (int)17f), true, true);
+//    Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 17f, 17f, 2f, 1, 5, 2f);
+//    spawnEntityAt(autonomousBox, new GridPoint2((int)3f, (int)17f), true, true);
   }
 
   private void spawnTraps() {

@@ -1,13 +1,16 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
@@ -76,43 +79,138 @@ public class BoxFactory {
         return moveableBox;
     }
 
-    /**
-     * Creates a kinematic (autonomous) box entity that can be used as moving game obstacles.
-     * <p>
-     * The box currently displays as an orange square, scaled to half a game unit.
-     * <p>
-     * The box's kinematic nature means it will not fall due to gravity or respond to collision
-     * forces.  It can be set to continuously travel along a horizontal path at a set speed
-     * and for a set distance, reversing direction when reaching each boundary.
-     * @param leftX the left boundary
-     * @param rightX the right boundary
-     * @param speed the current speed
-     * @return A new autonomous box Entity
-     */
-    public static Entity createAutonomousBox(
-            float minMoveX,
-            float maxMoveX,
-            float minMoveY,
-            float maxMoveY,
-            float speed,
-            int boxHealth,
-            int damage,
-            float knockback
-    ) {
-        Entity autonomousBox = new Entity()
-                .addComponent(new TextureRenderComponent("images/box_orange.png"))
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                .addComponent(new CombatStatsComponent(boxHealth, damage))
-                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                .addComponent(new AutonomousBoxComponent());
+//    /**
+//     * Creates a kinematic (autonomous) box entity that can be used as moving game obstacles.
+//     * <p>
+//     * The box currently displays as an orange square, scaled to half a game unit.
+//     * <p>
+//     * The box's kinematic nature means it will not fall due to gravity or respond to collision
+//     * forces.  It can be set to continuously travel along a horizontal path at a set speed
+//     * and for a set distance, reversing direction when reaching each boundary.
+//     * @param leftX the left boundary
+//     * @param rightX the right boundary
+//     * @param speed the current speed
+//     * @return A new autonomous box Entity
+//     */
+//    public static Entity createAutonomousBox(
+//            float minMoveX,
+//            float maxMoveX,
+//            float minMoveY,
+//            float maxMoveY,
+//            float speed,
+//            int boxHealth,
+//            int damage,
+//            float knockback
+//    ) {
+//        Entity autonomousBox = new Entity()
+//                .addComponent(new TextureRenderComponent("images/box_orange.png"))
+//                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+//                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+//                .addComponent(new CombatStatsComponent(boxHealth, damage))
+//                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+//                .addComponent(new AutonomousBoxComponent());
+//
+//        autonomousBox.setScale(0.5f, 0.5f);
+//
+//        AutonomousBoxComponent autonomousBoxComponent
+//                = autonomousBox.getComponent(AutonomousBoxComponent.class);
+//        autonomousBoxComponent.setBounds(minMoveX, maxMoveX, minMoveY, maxMoveY);
+//        autonomousBoxComponent.setSpeed(speed);
+//        return autonomousBox;
+//    }
 
-        autonomousBox.setScale(0.5f, 0.5f);
+    public static class AutonomousBoxBuilder {
+        // Default box movement
+        private float minMoveX = 0f;
+        private float maxMoveX = 0f;
+        private float minMoveY = 0f;
+        private float maxMoveY = 0f;
+        private float speed = 2f;
 
-        AutonomousBoxComponent autonomousBoxComponent
-                = autonomousBox.getComponent(AutonomousBoxComponent.class);
-        autonomousBoxComponent.setBounds(minMoveX, maxMoveX, minMoveY, maxMoveY);
-        autonomousBoxComponent.setSpeed(speed);
-        return autonomousBox;
+        // Other default properties
+        private float spawnX = minMoveX;
+        private float spawnY = minMoveY;
+        private float scaleX = 0.5f;
+        private float scaleY = 0.5f;
+        private int damage = 0;
+        private float knockback = 0f;
+
+        // Tooltip
+        private String tooltipText = "Autonomous Box\nThis box has a fixed path and you cannot "
+                + " push it!";
+        private TooltipSystem.TooltipStyle tooltipStyle = TooltipSystem.TooltipStyle.SUCCESS;
+
+        public AutonomousBoxBuilder moveX(float minX, float maxX) {
+            this.minMoveX = minX;
+            this.maxMoveX = maxX;
+            this.spawnX = minX;
+            return this;
+        }
+
+        public AutonomousBoxBuilder moveY(float minY, float maxY) {
+            this.minMoveY = minY;
+            this.maxMoveY = maxY;
+            this.spawnY = minY;
+            return this;
+        }
+
+        public AutonomousBoxBuilder speed(float speed) {
+            this.speed = speed;
+            return this;
+        }
+
+        public AutonomousBoxBuilder scale(float scaleX, float scaleY) {
+            this.scaleX = scaleX;
+            this.scaleY = scaleY;
+            return this;
+        }
+
+        public AutonomousBoxBuilder damage(int damage) {
+            this.damage = damage;
+            return this;
+        }
+
+        public AutonomousBoxBuilder knockback(int knockback) {
+            this.knockback = knockback;
+            return this;
+        }
+
+        public AutonomousBoxBuilder tooltip(String text, TooltipSystem.TooltipStyle style) {
+            this.tooltipText = text;
+            this.tooltipStyle = style;
+            return this;
+        }
+
+        public float getSpawnX() {
+            return spawnX;
+        }
+
+        public float getSpawnY() {
+            return spawnY;
+        }
+
+        public Entity build() {
+            int boxHealth = 100;
+            Entity autonomousBox = new Entity()
+                    .addComponent(new TextureRenderComponent("images/box_orange.png"))
+                    .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+                    .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                    .addComponent(new HitboxComponent())
+                    .addComponent(new CombatStatsComponent(boxHealth, damage))
+                    .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+                    .addComponent(new AutonomousBoxComponent());
+
+
+
+            AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);
+            autonomousBox.setScale(scaleX, scaleY);
+            autonomousBoxComponent.setBounds(minMoveX, maxMoveX, minMoveY, maxMoveY);
+            autonomousBoxComponent.setSpeed(speed);
+            autonomousBox.getComponent(PhysicsComponent.class).getBody().setTransform(spawnX, spawnY, 0);
+            autonomousBox.addComponent(new TooltipSystem.TooltipComponent(tooltipText, tooltipStyle));
+            return autonomousBox;
+        }
     }
+
+
 }
