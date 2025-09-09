@@ -15,7 +15,6 @@ import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
-import com.csse3200.game.ui.inventoryscreen.MapTab;
 import com.csse3200.game.ui.inventoryscreen.SettingsTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 
@@ -31,9 +30,8 @@ public class PauseMenuDisplay extends UIComponent {
     private final InventoryTab inventoryTab;
     private final UpgradesTab upgradesTab = new UpgradesTab();
     private final SettingsTab settingsTab = new SettingsTab();
-    private final MapTab mapTab = new MapTab();
 
-    public enum Tab {INVENTORY, UPGRADES, SETTINGS, MAP}
+    public enum Tab {INVENTORY, UPGRADES, SETTINGS}
     private Tab currentTab = Tab.INVENTORY;
 
     public PauseMenuDisplay(MainGameScreen screen, Entity player, GdxGame game) {
@@ -69,7 +67,6 @@ public class PauseMenuDisplay extends UIComponent {
         addTabButton("Inventory", Tab.INVENTORY);
         addTabButton("Upgrades", Tab.UPGRADES);
         addTabButton("Settings", Tab.SETTINGS);
-        addTabButton("Map", Tab.MAP);
         stack.add(tabBar);
 
         bottomButtons = new Table();
@@ -122,7 +119,6 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> inventoryTab.build(skin);
             case UPGRADES -> upgradesTab.build(skin);
             case SETTINGS -> settingsTab.build(skin);
-            case MAP -> mapTab.build(skin);
         };
         // Ensure the returned actor from build() fills the tab content area.
         tabContent.add(ui).expand().fill();

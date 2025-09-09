@@ -15,6 +15,7 @@ public class RenderService implements Disposable {
   private static final int INITIAL_LAYER_CAPACITY = 4;
   private static final int INITIAL_CAPACITY = 4;
   private Stage stage;
+  private Renderer renderer;
   private DebugRenderer debugRenderer;
 
   /**
@@ -76,6 +77,22 @@ public class RenderService implements Disposable {
 
   public void setDebug(DebugRenderer debugRenderer) {
     this.debugRenderer = debugRenderer;
+  }
+
+  /**
+   * Sets the current renderer instance
+   * @param renderer the instance to set
+   */
+  public void setRenderer(Renderer renderer) {
+    this.renderer = renderer;
+  }
+
+  /**
+   * Returns the current renderer instance
+   * @return the renderer instance
+   */
+  public Renderer getRenderer() {
+    return renderer;
   }
 
   public DebugRenderer getDebug() {
