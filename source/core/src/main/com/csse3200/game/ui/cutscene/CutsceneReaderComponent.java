@@ -82,7 +82,7 @@ public class CutsceneReaderComponent extends Component {
                 textBoxes.add(new TextBox(line, lastCommand));
                 lastCommand = null;
             } else {
-                lastCommand = line;
+                lastCommand = line.split("#")[1];
             }
 
             lineIndex++;
