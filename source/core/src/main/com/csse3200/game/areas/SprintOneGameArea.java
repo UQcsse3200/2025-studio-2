@@ -15,6 +15,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -200,7 +201,7 @@ public class SprintOneGameArea extends GameArea {
 
     private void spawnLights() {
         // see the LightFactory class for more details on spawning these
-        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, 30, "1");
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
         spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
     }
     private void spawnTerrain() {
