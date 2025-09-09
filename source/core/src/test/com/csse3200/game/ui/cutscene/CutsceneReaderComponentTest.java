@@ -90,4 +90,18 @@ public class CutsceneReaderComponentTest {
         assertEquals("Third text box.", textBoxList.get(2).text());
         assertNull(textBoxList.get(2).background());
     }
+
+    @Test
+    @DisplayName("Empty script file is handled correctly")
+    void emptyFileHandled() {
+        // Content being tested
+        when(mockFileHandle.readString()).thenReturn("");
+
+        // Create reader with dummy path
+        cutsceneReader = new CutsceneReaderComponent(DUMMY_PATH);
+
+        // Ensure exception was caught when created and text box list empty
+        assertDoesNotThrow(() -> cutsceneReader.create());
+        assertTrue(cutsceneReader.getTextBoxes().isEmpty());
+    }
 }
