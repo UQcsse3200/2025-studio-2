@@ -280,7 +280,7 @@ public class SprintOneGameArea extends GameArea {
         float ts = terrain.getTileSize();
 
         // Tall wall on the left
-        GridPoint2 wall1Pos = new GridPoint2(0, 2);
+        GridPoint2 wall1Pos = new GridPoint2(8, 22);
         Entity wall1 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 5f * ts,
@@ -289,7 +289,7 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(wall1, wall1Pos, false, false);
 
         // Shorter wall in the middle
-        GridPoint2 wall2Pos = new GridPoint2(8, 2);
+        GridPoint2 wall2Pos = new GridPoint2(8, 6);
         Entity wall2 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 3f * ts,
@@ -298,7 +298,7 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(wall2, wall2Pos, false, false);
 
         // Another tall wall further right
-        GridPoint2 wall3Pos = new GridPoint2(15, 2);
+        GridPoint2 wall3Pos = new GridPoint2(18, 4);
         Entity wall3 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 6f * ts,
