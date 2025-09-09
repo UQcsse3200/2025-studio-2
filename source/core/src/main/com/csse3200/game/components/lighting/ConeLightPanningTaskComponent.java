@@ -5,7 +5,16 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
 
-
+/**
+ * This component is responsible for the movement of the security camera light. It has two main
+ * tasks, panning mode when the target isn't detected and tracking mode when the target is.
+ * In panning mode it moves at a constant angular velocity defined at creation and within the bounds
+ * defined. Once in tracking mode it moves towards the target gaining speed based on a defined constant
+ * acceleration.
+ * <p>
+ * This component also spawns in a child entity for the camera lens. This allows the lens to move dynamically
+ * and not be defined to a set animation. The component also handles the disposal of the child lens.
+ */
 public class ConeLightPanningTaskComponent extends Component {
     private ConeLightComponent coneComp;
     private ConeDetectorComponent detectorComp;
@@ -14,16 +23,20 @@ public class ConeLightPanningTaskComponent extends Component {
     private float angularVelocity;
     private boolean clockwise = true;
     private Entity target;
-    private static final float angularAccel = 0.225f;
-    private float currentVel = 0;
-    private final float maxSpeed;
-    private boolean tracking = false;
-    private float movSign = 1f;
 
+    private static final float angularAccel = 40f;
+    private float maxSpeed;
+    private float currentVel = 0;
+
+    private float movSign = 1f;
+    private boolean tracking = false;
+
+    // camera lens stuff
     private final Entity cameraLens;
     private static float maxLensMov = 0.3f;
 
     public ConeLightPanningTaskComponent(float degreeStart, float degreeEnd, float angularVelocity) {
+        // just to make calculations easier, normalise all values
         if (degreeStart < degreeEnd) {
             this.degreeStart = wrapDeg(degreeStart);
             this.degreeEnd = wrapDeg(degreeEnd);
@@ -32,18 +45,26 @@ public class ConeLightPanningTaskComponent extends Component {
             this.degreeEnd = wrapDeg(degreeStart);
         }
 
+        // set max speed based on angular vel
         this.angularVelocity = angularVelocity;
         maxSpeed = angularVelocity * 3f;
 
+        // spawn new child entity
         cameraLens = new Entity();
     }
 
+    /**
+     * Gets the created child lens entity
+     *
+     * @return The lens entity
+     */
     public Entity getCameraLens() {
         return cameraLens;
     }
 
     @Override
     public void create() {
+        // centre lens and register it with entity service
         cameraLens.setPosition(entity.getPosition());
         ServiceLocator.getEntityService().register(cameraLens);
 
@@ -56,8 +77,10 @@ public class ConeLightPanningTaskComponent extends Component {
             throw new IllegalStateException("ConeDetectorComponent must be attached to host entity before panning task");
         }
 
+        // set cone to bounds (could be omitted tho)
         coneComp.setDirectionDeg(degreeStart);
         target = detectorComp.getTarget();
+        // scale lens movement bounds with x scale
         maxLensMov *= entity.getScale().x;
     }
 
@@ -70,10 +93,11 @@ public class ConeLightPanningTaskComponent extends Component {
 
         if (!detected) {
             // PANNING MODE
-            // keep going in the same direction
+            // keep going in the same direction after returning to panning mode
             if (tracking) {
                 clockwise = (movSign < 0f);
             }
+            // reset velocity (removes effects from acceleration)
             currentVel = angularVelocity;
 
             // change clockwise based off dir
@@ -92,19 +116,23 @@ public class ConeLightPanningTaskComponent extends Component {
         } else {
             // TRACKING MODE
 
-            // move towards player increasingly fast
+            // get vector from the target to the light
             Vector2 toLight = target.getPosition().cpy().sub(cameraLens.getPosition());
             float targetAng = wrapDeg(toLight.angleDeg());
+            // clamp the target angle so it stays in the bounds
             float aimAng = clampToRange(targetAng, degreeStart, degreeEnd);
 
+            // get different in angles
             float delta = wrapDeg(aimAng - dir);
-            currentVel = Math.min(currentVel + angularVelocity * dt, maxSpeed);
+            // change velocity based on acceleration, clamp to max speed
+            currentVel = Math.min(currentVel + angularAccel * dt, maxSpeed);
             float step = currentVel * dt;
 
+            // if angle is close enough to target then set angle = target (locked on)
             if (Math.abs(delta) <= step) {
                 coneComp.setDirectionDeg(aimAng);
                 // bleed speed when locked on
-                currentVel = Math.max(currentVel * 0.95f, angularVelocity);
+                currentVel = Math.max(currentVel * 0.98f, angularVelocity);
             } else {
                 // move along shortest distance and remember the sign
                 movSign = Math.signum(delta);
@@ -119,6 +147,12 @@ public class ConeLightPanningTaskComponent extends Component {
         tracking = detected;
     }
 
+    /**
+     * Helper method to wrap an angle to be between (-180, 180)
+     *
+     * @param a Angle
+     * @return Wrapped angle within range
+     */
     private static float wrapDeg(float a) {
         a = a % 360f;
         if (a >= 180) a -= 360f;
@@ -126,6 +160,14 @@ public class ConeLightPanningTaskComponent extends Component {
         return a;
     }
 
+    /**
+     * Helper method to clamp angle between a range.
+     *
+     * @param a Angle
+     * @param start Lower bound
+     * @param end Upper bound
+     * @return Clamped angle within range
+     */
     private static float clampToRange(float a, float start, float end) {
         a = wrapDeg(a);
         if (a < start) return start;
@@ -133,8 +175,14 @@ public class ConeLightPanningTaskComponent extends Component {
         return a;
     }
 
+    /**
+     * Set the angular velocity and change max speed based upon new value.
+     *
+     * @param angularVelocity New angular velocity
+     */
     public void setAngularVelocity(float angularVelocity) {
         this.angularVelocity = angularVelocity;
+        this.maxSpeed = angularVelocity * 3f;
     }
 
     public void setDegreeStart (float degreeStart) {
