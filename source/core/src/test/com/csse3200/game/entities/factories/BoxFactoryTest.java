@@ -74,7 +74,7 @@ public class BoxFactoryTest {
 
     @Test
     void createAutonomousBox_hasAllComponents() {
-        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 2f);
+        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 3f, 3f, 2f, 1, 5, 2f);
         assertNotNull(autonomousBox.getComponent(TextureRenderComponent.class),
                 "Autonomous Box should have a TextureRendererComponent");
         assertNotNull(autonomousBox.getComponent(PhysicsComponent.class),
@@ -85,7 +85,7 @@ public class BoxFactoryTest {
 
     @Test
     void createAutonomousBox_isKinematic() {
-        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 2f);
+        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 3f, 3f, 2f, 1, 5, 2f);
         PhysicsComponent physics = autonomousBox.getComponent(PhysicsComponent.class);
         assertEquals(BodyDef.BodyType.KinematicBody, physics.getBody().getType(),
                 "Autonomous Box PhysicsComponent should have a kinematic body type");
@@ -96,7 +96,7 @@ public class BoxFactoryTest {
         float leftX = 3f;
         float rightX = 10f;
         float speed = 2f;
-        Entity autonomousBox = BoxFactory.createAutonomousBox(leftX, rightX, speed);
+        Entity autonomousBox = BoxFactory.createAutonomousBox(3f, 10f, 3f, 3f, 2f, 1, 5, 2f);
         AutonomousBoxComponent component = autonomousBox.getComponent(AutonomousBoxComponent.class);
 
         assertEquals(

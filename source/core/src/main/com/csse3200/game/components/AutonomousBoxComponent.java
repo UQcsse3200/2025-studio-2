@@ -9,8 +9,10 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 public class AutonomousBoxComponent extends Component {
 
     private PhysicsComponent physics;
-    private float leftX;
-    private float rightX;
+    private float minMoveX;
+    private float maxMoveX;
+    private float minMoveY;
+    private float maxMoveY;
     private int direction = 1;
     private float speed = 2f;
 
@@ -53,10 +55,10 @@ public class AutonomousBoxComponent extends Component {
         x += direction * speed * Gdx.graphics.getDeltaTime();
 
         // Reverse direction
-        if (x >= rightX) {
+        if (x >= maxMoveX) {
             direction = -1;
         }
-        if (x <= leftX) {
+        if (x <= minMoveX) {
             direction = 1;
         }
 
@@ -66,12 +68,14 @@ public class AutonomousBoxComponent extends Component {
     /**
      * Sets the horizontal movement bounds for the box.
      *
-     * @param leftX  the left boundary
-     * @param rightX  the right boundary
+     * @param minMoveX  the left boundary
+     * @param maxMoveX  the right boundary
      */
-    public void setBounds(float leftX, float rightX) {
-        this.leftX = leftX;
-        this.rightX = rightX;
+    public void setBounds(float minMoveX, float maxMoveX, float minMoveY, float maxMoveY) {
+        this.minMoveX = minMoveX;
+        this.maxMoveX = maxMoveX;
+        this.minMoveY = minMoveY;
+        this.maxMoveY = maxMoveY;
     }
 
     /**
@@ -89,7 +93,7 @@ public class AutonomousBoxComponent extends Component {
      * @return the left X coordinate
      */
     public float getLeftX() {
-        return leftX;
+        return minMoveX;
     }
 
     /**
@@ -98,7 +102,7 @@ public class AutonomousBoxComponent extends Component {
      * @return the right X coordinate
      */
     public float getRightX() {
-        return rightX;
+        return maxMoveX;
     }
 
     /**

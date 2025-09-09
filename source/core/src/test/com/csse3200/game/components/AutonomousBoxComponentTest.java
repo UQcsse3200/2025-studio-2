@@ -32,7 +32,7 @@ public class AutonomousBoxComponentTest {
         when(component.entity.getComponent(PhysicsComponent.class)).thenReturn(mockPhysics);
 
         component.create();
-        component.setBounds(0f, 10f);
+        component.setBounds(0f, 10f, 2f, 2f);
         component.setSpeed(2f);
     }
 

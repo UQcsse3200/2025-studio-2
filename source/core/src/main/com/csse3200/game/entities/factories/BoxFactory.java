@@ -2,7 +2,9 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
+import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -87,18 +89,29 @@ public class BoxFactory {
      * @param speed the current speed
      * @return A new autonomous box Entity
      */
-    public static Entity createAutonomousBox(float leftX, float rightX, float speed) {
+    public static Entity createAutonomousBox(
+            float minMoveX,
+            float maxMoveX,
+            float minMoveY,
+            float maxMoveY,
+            float speed,
+            int boxHealth,
+            int damage,
+            float knockback
+    ) {
         Entity autonomousBox = new Entity()
                 .addComponent(new TextureRenderComponent("images/box_orange.png"))
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                .addComponent(new CombatStatsComponent(boxHealth, damage))
+                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
                 .addComponent(new AutonomousBoxComponent());
 
         autonomousBox.setScale(0.5f, 0.5f);
 
         AutonomousBoxComponent autonomousBoxComponent
                 = autonomousBox.getComponent(AutonomousBoxComponent.class);
-        autonomousBoxComponent.setBounds(leftX, rightX);
+        autonomousBoxComponent.setBounds(minMoveX, maxMoveX, minMoveY, maxMoveY);
         autonomousBoxComponent.setSpeed(speed);
         return autonomousBox;
     }

@@ -284,16 +284,16 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
 
         // Autonomous box
-        float startX = 1.5f;
-        float endX = 6f;
-        float y = 23f;
-        float speed = 4f;
+//        float startX = 1.5f;
+//        float endX = 6f;
+//        float y = 23f;
+//        float speed = 4f;
 
-        Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
+        Entity autonomousBox = BoxFactory.createAutonomousBox(1.5f, 6f, 23f, 23f, 4f, 1, 5, 2f);
         autonomousBox.addComponent(new TooltipSystem.TooltipComponent("Autonomous Box\nThis box has a fixed path" +
                 " and you cannot push it!", TooltipSystem.TooltipStyle.SUCCESS));
 
-        spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
+        spawnEntityAt(autonomousBox, new GridPoint2((int)1.5f, (int)23f), true, true);
     }
     public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("door", this, "cave");
