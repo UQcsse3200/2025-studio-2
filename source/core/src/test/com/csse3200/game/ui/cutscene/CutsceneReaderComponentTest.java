@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
@@ -29,6 +30,9 @@ public class CutsceneReaderComponentTest {
 
     @BeforeEach
     void setUp() {
+        // Prevents null pointer exception for mockFiles
+        MockitoAnnotations.openMocks(this);
+
         // Mock static Gdx.files field
         Gdx.files = mockFiles;
         // Make internal() return mock file handle
