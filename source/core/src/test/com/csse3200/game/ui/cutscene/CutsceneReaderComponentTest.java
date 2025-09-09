@@ -143,4 +143,24 @@ public class CutsceneReaderComponentTest {
         // Ensure item uses 'images/background2.png'
         assertEquals("images/background2.png", textBoxList.getFirst().background());
     }
+
+    @Test
+    @DisplayName("Script file only containing commands results in empty text box list")
+    void emptyTextBoxListForOnlyCommands() {
+        // Content to be tested
+        String script = String.join(System.lineSeparator(),
+                "#images/background1.png",
+                "#images/background2.png",
+                "#images/background3.png",
+                "#images/background4.png"
+        );
+        mockScriptContent(script);
+
+        // Create reader with dummy path and parse
+        cutsceneReader = new CutsceneReaderComponent(DUMMY_PATH);
+        cutsceneReader.create();
+
+        // Ensure text box list is empty
+        assertTrue(cutsceneReader.getTextBoxes().isEmpty());
+    }
 }
