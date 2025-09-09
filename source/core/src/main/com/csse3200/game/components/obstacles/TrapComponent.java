@@ -69,26 +69,31 @@ public class TrapComponent extends CombatStatsComponent {
         Vector2 playerPos = player.getPosition();
         Vector2 trapPos = trap.getPosition();
 
-        boolean legalDirection = false;
+        boolean legalDirection;
         if (rotation % 2 == 0) { // Avoid side-on collisions
             if (playerPos.x > trapPos.x) {
                 legalDirection = (playerPos.x < (trapPos.x + 0.7f));
             } else {
                 legalDirection = (playerPos.x > (trapPos.x - 0.7f));
             }
+        } else { // Fix the over-enthusiastic lower bound
+            legalDirection = (playerPos.y > (trapPos.y - 1f));
         }
 
         legalDirection &= switch (rotation) {
             case 1 -> // Facing left
-                    (player.getPosition().x < trap.getPosition().x);
+                    (// Must approach from left
+                            player.getPosition().x < trap.getPosition().x);
             case 2 -> // Facing down
                     (// Must approach from beneath & must actually touch
                             (playerPos.y < trapPos.y)
                             && playerPos.y >= (trapPos.y - 0.735f));
             case 3 -> // Facing right
-                    (player.getPosition().x > trap.getPosition().x);
+                    (// Must approach from right
+                            player.getPosition().x > trap.getPosition().x);
             default -> // Facing up
-                    (player.getPosition().y > trap.getPosition().y);
+                    (// Must approach from above
+                            player.getPosition().y > trap.getPosition().y);
         };
         System.out.println("Player " + playerPos);
         System.out.println("Trap " + trapPos);

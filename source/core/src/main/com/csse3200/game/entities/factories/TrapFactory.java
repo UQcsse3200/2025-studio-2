@@ -87,21 +87,20 @@ public class TrapFactory {
         PhysicsComponent.AlignY alignY = PhysicsComponent.AlignY.CENTER;
 
         switch (direction) {
-            case 1: // Facing left
-                center.y *= 3f;
-                alignX = PhysicsComponent.AlignX.RIGHT;
-                break;
-            case 2: // Facing down
-                break;
-            case 3: // Facing right
-                center.y *= 3f;
-                alignY = PhysicsComponent.AlignY.CENTER;
-                alignX = PhysicsComponent.AlignX.LEFT;
-                break;
-            default: // Facing up
+            case 0: // Facing up
                 center.x *= 0.7f;
                 center.y *= 0.5f;
                 alignY = PhysicsComponent.AlignY.BOTTOM;
+            case 1: // Facing left
+                center.x *= 0.3f;
+                alignX = PhysicsComponent.AlignX.RIGHT;
+                break;
+            case 3: // Facing right
+                center.x *= 0.3f;
+                alignX = PhysicsComponent.AlignX.LEFT;
+                break;
+            default: // Facing down
+                break;
         }
 
         System.out.println("Center at" + center);
