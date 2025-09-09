@@ -14,6 +14,7 @@ import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -120,11 +121,11 @@ public class SprintOneGameArea extends GameArea {
         spawnBoxes();
         playMusic();
         spawnLights();
-        spawnButtons();
+//        spawnButtons();
         spawnTraps();
-        spawnDrone();
-        spawnPatrollingDrone();
-        spawnBomberDrone();
+//        spawnDrone();
+//        spawnPatrollingDrone();
+//        spawnBomberDrone();
         spawnDoor();
         displayUI();
 
@@ -167,9 +168,9 @@ public class SprintOneGameArea extends GameArea {
         return minimapDisplay;
     }
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(2,4);
+        GridPoint2 spawnPos =  new GridPoint2(2,7);
         Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
-        Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
+        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 0f, 1f);
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {
@@ -253,24 +254,24 @@ public class SprintOneGameArea extends GameArea {
         ground.setScale(15,1);
         spawnEntityAt(ground, groundPos, false, false);
 
-        GridPoint2 step1Pos = new GridPoint2(7,4);
-        Entity step1 = PlatformFactory.createStaticPlatform();
-        step1.setScale(2,1);
-        spawnEntityAt(step1, step1Pos, false, false);
-
-        float ts = terrain.getTileSize();
-        GridPoint2 movingPos = new GridPoint2(21,2);
-        Vector2 offsetWorld  = new Vector2(2.5f * ts, 8f);
-        float speed = 2f;
-        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
-        movingPlatform.setScale(2,1f);
-        spawnEntityAt(movingPlatform, movingPos, false, false);
-
-        // Platform for patrolling drone
-        GridPoint2 longPlatPos = new GridPoint2(3, 22);
-        Entity longPlatform = PlatformFactory.createStaticPlatform();
-        longPlatform.setScale(5, 0.25f);
-        spawnEntityAt(longPlatform, longPlatPos, false, false);
+//        GridPoint2 step1Pos = new GridPoint2(7,4);
+//        Entity step1 = PlatformFactory.createStaticPlatform();
+//        step1.setScale(2,1);
+//        spawnEntityAt(step1, step1Pos, false, false);
+//
+//        float ts = terrain.getTileSize();
+//        GridPoint2 movingPos = new GridPoint2(21,2);
+//        Vector2 offsetWorld  = new Vector2(2.5f * ts, 8f);
+//        float speed = 2f;
+//        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
+//        movingPlatform.setScale(2,1f);
+//        spawnEntityAt(movingPlatform, movingPos, false, false);
+//
+//        // Platform for patrolling drone
+//        GridPoint2 longPlatPos = new GridPoint2(3, 22);
+//        Entity longPlatform = PlatformFactory.createStaticPlatform();
+//        longPlatform.setScale(5, 0.25f);
+//        spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
     private void spawnBoxes() {
@@ -375,7 +376,7 @@ public class SprintOneGameArea extends GameArea {
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
-        music.setVolume(0.1f);
+        music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
     }
 

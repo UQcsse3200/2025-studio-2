@@ -62,17 +62,14 @@ public class TrapComponent extends CombatStatsComponent {
             return;
         }
 
-        switch (rotation) {
-            case 0:
-                
-        }
-
         Entity trap = this.getEntity();
 
         // Damage player
         Entity player = collider.getEntity();
         if (player.getPosition().y >= trap.getPosition().y) {
             player.getComponent(CombatStatsComponent.class).hit(this);
+            System.out.println("Player" + player.getPosition());
+            System.out.println("Trap" + trap.getPosition());
             player.requestMoveToSafeSpot(safeSpot);
         }
     }
