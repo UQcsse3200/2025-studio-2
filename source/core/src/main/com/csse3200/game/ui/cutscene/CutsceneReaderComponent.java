@@ -37,11 +37,15 @@ public class CutsceneReaderComponent extends Component {
     }
 
     @Override
-    public void create() throws IOException {
+    public void create() {
         // Read contents of the script file into a string
         String scriptContents = Gdx.files.internal(scriptPath).readString();
         logger.debug("Script Contents:\n{}", scriptContents);
-        parseScript(scriptContents);
+        try {
+            parseScript(scriptContents);
+        } catch (IOException e) {
+            logger.error("Failed to parse cutscene script {}", scriptPath, e);
+        }
     }
 
     /**
