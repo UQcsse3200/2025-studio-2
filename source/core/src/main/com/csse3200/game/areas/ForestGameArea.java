@@ -120,7 +120,9 @@ public class ForestGameArea extends GameArea {
           "images/door_open.png",
           "images/door_closed.png",
           "images/pressure_plate_unpressed.png",
-          "images/pressure_plate_pressed.png"
+          "images/pressure_plate_pressed.png",
+          "images/tile.png",
+          "images/wall.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -378,7 +380,38 @@ public class ForestGameArea extends GameArea {
     movingPlatform.setScale(2,1);
     spawnEntityAt(movingPlatform, movingPos, false, false);
   }
-  private void spawnBoxes() {
+  private void spawnWalls() {
+        float ts = terrain.getTileSize();
+
+        // Tall wall on the left
+        GridPoint2 wall1Pos = new GridPoint2(0, 2);
+        Entity wall1 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 5f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall1, wall1Pos, false, false);
+
+        // Shorter wall in the middle
+        GridPoint2 wall2Pos = new GridPoint2(8, 2);
+        Entity wall2 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 3f * ts,
+                "images/tile.png"
+        );
+        spawnEntityAt(wall2, wall2Pos, false, false);
+
+        // Another tall wall further right
+        GridPoint2 wall3Pos = new GridPoint2(15, 2);
+        Entity wall3 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 6f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall3, wall3Pos, false, false);
+    }
+
+    private void spawnBoxes() {
 
     // Static box
     Entity staticBox = BoxFactory.createStaticBox();
