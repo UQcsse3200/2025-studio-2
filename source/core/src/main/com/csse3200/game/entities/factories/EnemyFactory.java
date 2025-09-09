@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
@@ -141,6 +142,41 @@ public class EnemyFactory {
         arc.startAnimation("float");
 
         return drone;
+    }
+
+    public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos, Entity securityLight){
+        BaseEntityConfig config = configs.drone;
+        Entity drone= createBaseEnemy();
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(2.0f);
+        if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
+
+        AnimationRenderComponent animator=
+                new AnimationRenderComponent(
+                        ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
+        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.LOOP);
+        animator.addAnimation("float",0.1f,Animation.PlayMode.LOOP);
+
+        animator.addAnimation("explode",0.08f,Animation.PlayMode.LOOP);
+
+        drone
+                .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
+                .addComponent(animator)
+                .addComponent(new DroneAnimationController())
+                .addComponent(new SelfDestructComponent(target));
+
+        AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
+        ChaseTask chaseTask= new ChaseTask(target,10,3f,4f);
+
+        securityLight.getEvents().addListener("targetDetected", entity->chaseTask.activate());
+
+        aiComponent.addTask(chaseTask);
+
+        AnimationRenderComponent arc= drone.getComponent(AnimationRenderComponent.class);
+        arc.scaleEntity();
+        arc.startAnimation("float");
+        return drone;
+
+
     }
 
     /**
