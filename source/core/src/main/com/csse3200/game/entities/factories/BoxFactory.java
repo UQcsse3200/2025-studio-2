@@ -110,9 +110,8 @@ public class BoxFactory {
         private float knockback = 0f;
 
         // Tooltip
-        private String tooltipText = "Autonomous Box\nThis box has a fixed path and you cannot "
-                + " push it!";
-        private TooltipSystem.TooltipStyle tooltipStyle = TooltipSystem.TooltipStyle.SUCCESS;
+        private String tooltipText = "Autonomous Box\nDanger! Don't touch!";
+        private TooltipSystem.TooltipStyle tooltipStyle = TooltipSystem.TooltipStyle.WARNING;
 
         /**
          * Sets the horizontal movement bounds for the box.
