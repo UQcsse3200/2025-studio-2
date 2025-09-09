@@ -50,7 +50,7 @@ public class TrapFactory {
      * effect so it can be used on a variety of platforms and/or walls.
      *
      * @param safeSpot Spot to teleport the player once they take damage
-     * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 360}. MUST be >= 0 <= 360.
+     * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 270}.
      * @param length The length the trap should be.
      * @return the Spike trap Entity created.
      */
@@ -103,7 +103,6 @@ public class TrapFactory {
                 break;
         }
 
-        System.out.println("Center at" + center);
         collider.setAsBoxAligned(center, alignX, alignY);
     }
 }

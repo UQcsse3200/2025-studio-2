@@ -118,12 +118,12 @@ public class SprintOneGameArea extends GameArea {
 
 
         spawnPlatform();
-//        spawnElevatorPlatform();
+        spawnElevatorPlatform();
 
-//        spawnBoxes();
+        spawnBoxes();
         playMusic();
         spawnLights();
-//        spawnButtons();
+        spawnButtons();
         spawnTraps();
         //spawnDrone();
         //spawnPatrollingDrone();
@@ -170,16 +170,10 @@ public class SprintOneGameArea extends GameArea {
         return minimapDisplay;
     }
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(2,4);
+        GridPoint2 spawnPos =  new GridPoint2(2,5);
         Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
-        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 270f, 1f);
-        Entity skes = TrapFactory.createSpikes(safeSpotPos, 270f, 1f);
-        Entity ss = TrapFactory.createSpikes(safeSpotPos, 270f, 1f);
-        Entity ses = TrapFactory.createSpikes(safeSpotPos, 270f, 1f);
+        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 90f, 1f);
         spawnEntityAt(spikes, spawnPos, true,  true);
-        spawnEntityAt(skes, new GridPoint2(12,7), true,  true);
-        spawnEntityAt(ss, new GridPoint2(17,6), true,  true);
-//        spawnEntityAt(ses, new GridPoint2(7,5), true,  true);
     }
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
@@ -254,24 +248,24 @@ public class SprintOneGameArea extends GameArea {
         ground.setScale(15,1);
         spawnEntityAt(ground, groundPos, false, false);
 
-//        GridPoint2 step1Pos = new GridPoint2(7,4);
-//        Entity step1 = PlatformFactory.createStaticPlatform();
-//        step1.setScale(2,1);
-//        spawnEntityAt(step1, step1Pos, false, false);
-//
-//        float ts = terrain.getTileSize();
-//        GridPoint2 movingPos = new GridPoint2(21,2);
-//        Vector2 offsetWorld  = new Vector2(2.5f * ts, 8f);
-//        float speed = 2f;
-//        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
-//        movingPlatform.setScale(2,1f);
-//        spawnEntityAt(movingPlatform, movingPos, false, false);
-//
-//        // Platform for patrolling drone
-//        GridPoint2 longPlatPos = new GridPoint2(3, 22);
-//        Entity longPlatform = PlatformFactory.createStaticPlatform();
-//        longPlatform.setScale(5, 0.25f);
-//        spawnEntityAt(longPlatform, longPlatPos, false, false);
+        GridPoint2 step1Pos = new GridPoint2(7,4);
+        Entity step1 = PlatformFactory.createStaticPlatform();
+        step1.setScale(2,1);
+        spawnEntityAt(step1, step1Pos, false, false);
+
+        float ts = terrain.getTileSize();
+        GridPoint2 movingPos = new GridPoint2(21,2);
+        Vector2 offsetWorld  = new Vector2(2.5f * ts, 8f);
+        float speed = 2f;
+        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, speed);
+        movingPlatform.setScale(2,1f);
+        spawnEntityAt(movingPlatform, movingPos, false, false);
+
+        // Platform for patrolling drone
+        GridPoint2 longPlatPos = new GridPoint2(3, 22);
+        Entity longPlatform = PlatformFactory.createStaticPlatform();
+        longPlatform.setScale(5, 0.25f);
+        spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
     private void spawnBoxes() {

@@ -95,8 +95,6 @@ public class TrapComponent extends CombatStatsComponent {
                     (// Must approach from above
                             player.getPosition().y > trap.getPosition().y);
         };
-        System.out.println("Player " + playerPos);
-        System.out.println("Trap " + trapPos);
 
         // Damage player
         if (legalDirection) {
