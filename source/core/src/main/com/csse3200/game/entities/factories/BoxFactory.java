@@ -79,55 +79,6 @@ public class BoxFactory {
         return moveableBox;
     }
 
-//    /**
-//     * Creates a kinematic (autonomous) box entity that can be used as moving game obstacles.
-//     * <p>
-//     * The box currently displays as an orange square, scaled to half a game unit.
-//     * <p>
-//     * The box's kinematic nature means it will not fall due to gravity or respond to collision
-//     * forces.  It can be set to continuously travel along a horizontal path at a set speed
-//     * and for a set distance, reversing direction when reaching each boundary.
-//     * @param leftX the left boundary
-//     * @param rightX the right boundary
-//     * @param speed the current speed
-//     * @return A new autonomous box Entity
-//     */
-//    public static Entity createAutonomousBox(
-//            float minMoveX,
-//            float maxMoveX,
-//            float minMoveY,
-//            float maxMoveY,
-//            float speed,
-//            int boxHealth,
-//            int damage,
-//            float knockback
-//    ) {
-//        Entity autonomousBox = new Entity()
-//                .addComponent(new TextureRenderComponent("images/box_orange.png"))
-//                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-//                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-//                .addComponent(new CombatStatsComponent(boxHealth, damage))
-//                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-//                .addComponent(new AutonomousBoxComponent());
-//
-//        autonomousBox.setScale(0.5f, 0.5f);
-//
-//        AutonomousBoxComponent autonomousBoxComponent
-//                = autonomousBox.getComponent(AutonomousBoxComponent.class);
-//        autonomousBoxComponent.setBounds(minMoveX, maxMoveX, minMoveY, maxMoveY);
-//        autonomousBoxComponent.setSpeed(speed);
-//        return autonomousBox;
-//    }
-
-    //    /**
-//     * Creates a kinematic (autonomous) box entity that can be used as moving game obstacles.
-//     * <p>
-//     * The box currently displays as an orange square, scaled to half a game unit.
-//     * <p>
-//     * The box's kinematic nature means it will not fall due to gravity or respond to collision
-//     * forces.  It can be set to continuously travel along a horizontal path at a set speed
-//     * and for a set distance, reversing direction when reaching each boundary.
-
     /**
      * Builder that creates autonomous (kinematic) box entities that can be used as moving game
      * obstacles.
