@@ -30,7 +30,7 @@ public class TrapFactory {
      * effect so it can be used on a variety of platforms and/or walls.
      *
      * @param safeSpot Spot to teleport the player once they take damage
-     * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 360}. MUST be >= 0 <= 360.
+     * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 270}.
      * @return the Spike trap Entity created.
      */
     public static Entity createSpikes(Vector2 safeSpot, float rotation) {
@@ -69,11 +69,27 @@ public class TrapFactory {
         spikes.addComponent(collider);
 
         // Fix collider to appropriate size
+        int direction = (int) (rotation/90);
         Vector2 center = collider.getEntity().getScale().scl(0.25f);
-        center.x *= 0.7f;
-        collider.setAsBoxAligned(center, PhysicsComponent.AlignX.CENTER, PhysicsComponent.AlignY.BOTTOM);
+        PhysicsComponent.AlignX alignX = PhysicsComponent.AlignX.CENTER;
+        PhysicsComponent.AlignY alignY;
+        if (direction % 2 == 0) { // Horizontal trap
+            center.x *= 0.7f;
+            alignY = PhysicsComponent.AlignY.BOTTOM;
+        } else {
+            center.y *= 3f;
+            alignY = PhysicsComponent.AlignY.CENTER;
+            if (direction == 1) { // Left-facing trap
+                alignX = PhysicsComponent.AlignX.RIGHT;
+            } else { // Right-facing trap
+                alignX = PhysicsComponent.AlignX.LEFT;
+            }
+        }
 
-        TrapComponent trapComponent = new TrapComponent(safeSpot, (int) (rotation/90));
+        System.out.println("Center at" + center);
+        collider.setAsBoxAligned(center, alignX, alignY);
+
+        TrapComponent trapComponent = new TrapComponent(safeSpot, direction);
         spikes.addComponent(trapComponent);
 
         return spikes;

@@ -118,7 +118,7 @@ public class SprintOneGameArea extends GameArea {
         spawnPlatform();
         spawnElevatorPlatform();
 
-        spawnBoxes();
+//        spawnBoxes();
         playMusic();
         spawnLights();
 //        spawnButtons();
@@ -168,10 +168,12 @@ public class SprintOneGameArea extends GameArea {
         return minimapDisplay;
     }
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(2,7);
+        GridPoint2 spawnPos =  new GridPoint2(2,4);
         Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
-        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 0f, 1f);
+        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 90f, 1f);
+        Entity skes = TrapFactory.createSpikes(safeSpotPos, 270f, 1f);
         spawnEntityAt(spikes, spawnPos, true,  true);
+        spawnEntityAt(skes, new GridPoint2(12,7), true,  true);
     }
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
