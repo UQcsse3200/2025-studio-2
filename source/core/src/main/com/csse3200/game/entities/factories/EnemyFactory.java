@@ -147,7 +147,7 @@ public class EnemyFactory {
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos, Entity securityLight){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(2.0f);
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
         if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
 
         AnimationRenderComponent animator=
