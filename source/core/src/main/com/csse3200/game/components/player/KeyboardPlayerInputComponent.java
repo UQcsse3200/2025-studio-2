@@ -65,7 +65,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
-
+    Gdx.app.log("Keycode", Integer.toString(keycode));
+    Gdx.app.log("Keybind", Integer.toString(Keymap.getActionKeyCode("Grapple")));
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
       triggerGlideEvent(true);
@@ -93,6 +94,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == RESET_KEY) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
+    } else if (keycode == GRAPPLE_KEY) {
+      Gdx.app.log("Has grappler", "TRUE");
+      triggerGrappleEvent();
     }
     // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
     else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
@@ -116,8 +120,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       }
     } else if (keycode == ENTER_CHEAT_KEY) {
       enableCheats();
-    } else if (keycode == GRAPPLE_KEY) {
-      triggerGrappleEvent();
     }
 
     return false;
@@ -157,7 +159,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
               entity.getEvents().trigger("sprintStop");
               return true;
       } else if (keycode == JUMP_KEY) {
+
         triggerGlideEvent(false);
+      } else if (keycode == GRAPPLE_KEY) {
+
+        triggerDestroyGrappleEvent();
       }
 
     return false;
@@ -200,8 +206,15 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerGrappleEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("grappler")) {
+    Gdx.app.log("GrappleKeyPressed", "TRUE");
+    if (entity.getComponent(InventoryComponent.class).hasItem("grapple")) {
       entity.getEvents().trigger("grapple");
+    }
+  }
+
+  private void triggerDestroyGrappleEvent() {
+    if (entity.getComponent(InventoryComponent.class).hasItem("grapple")) {
+      entity.getEvents().trigger("destroyGrapple");
     }
   }
 

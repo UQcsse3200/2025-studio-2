@@ -3,13 +3,19 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.csse3200.game.components.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
+import com.csse3200.game.physics.raycast.AllHitCallback;
+import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.physics.raycast.SingleHitCallback;
 import com.csse3200.game.services.ServiceLocator;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -57,6 +63,7 @@ public class PlayerActions extends Component {
 
   // Whether player is currently holding sprint (Shift)
   private boolean wantsSprint = false;
+  private Joint grappleJoint;
 
   @Override
   public void create() {
@@ -85,6 +92,7 @@ public class PlayerActions extends Component {
 
     entity.getEvents().addListener("glide", this::glide);
     entity.getEvents().addListener("grapple", this::grapple);
+    entity.getEvents().addListener("destroyGrapple", this::destoryGrapple);
 
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
@@ -121,9 +129,6 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       entity.requestReset();
     }
-
-    Gdx.app.log("Inventory", Integer.toString(
-            entity.getComponent(InventoryComponent.class).getTotalItemCount()));
   }
 
   private void updateSpeed() {
@@ -152,7 +157,6 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
@@ -315,9 +319,54 @@ public class PlayerActions extends Component {
 
   private void grapple() {
     Body body = physicsComponent.getBody();
+    Gdx.app.log("Is Grapple Working", "Grapple on");
+    Vector2 target = new Vector2(Gdx.input.getX(), Gdx.input.getY());
 
+    float maxDistance = 10f;
+    Vector2 playerPos = body.getPosition();
+    Vector2 dir = target.cpy().sub(playerPos);
+    if (dir.len() > maxDistance) {
+      dir.setLength(maxDistance);
+    }
+    Vector2 grappleEnd = playerPos.cpy().add(dir);
 
-    /*Vector2Utils aimDirection = new Vector2Utils()*/
+    //Raycast here
+    RaycastHit callback = new RaycastHit();
+    ServiceLocator.getPhysicsService().getPhysics().raycast(playerPos, grappleEnd, callback);
+
+    Vector2 grappleImpulse = new Vector2(grappleEnd.x * body.getMass() * dir.len() * 10f,
+            grappleEnd.y * body.getMass() * dir.len() * 10f);
+    body.applyLinearImpulse(grappleImpulse, body.getWorldCenter(), true);
+  }
+
+  private void createGrappleJoint(Body player, Fixture target, Vector2 anchor) {
+
+    Body hitBody = target.getBody();
+
+    World world = target.getBody().getWorld();
+
+    if (grappleJoint != null) {
+      world.destroyJoint(grappleJoint);
+      grappleJoint = null;
+    }
+
+    DistanceJointDef jointDef = new DistanceJointDef();
+    jointDef.bodyA = player;
+    jointDef.bodyB = hitBody;
+    jointDef.localAnchorA.set(0, 0);
+    jointDef.localAnchorB.set(hitBody.getLocalPoint(anchor));
+
+    jointDef.length = player.getPosition().dst(anchor);
+
+    grappleJoint = world.createJoint(jointDef);
+
+  }
+
+  private void destoryGrapple() {
+
+    /*World world = physicsComponent.getBody().getWorld();
+    world.destroyJoint(grappleJoint);
+    grappleJoint = null;*/
   }
 
   /**
