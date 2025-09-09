@@ -10,6 +10,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
@@ -36,6 +37,7 @@ class ConeDetectorComponentTest {
         DebugRenderer debug = mock(DebugRenderer.class);
         renderService.setDebug(debug);
         ServiceLocator.registerRenderService(renderService);
+        ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());
     }
 
     @Test

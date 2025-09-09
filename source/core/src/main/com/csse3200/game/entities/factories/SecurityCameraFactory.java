@@ -11,6 +11,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 public class SecurityCameraFactory {
@@ -43,24 +44,25 @@ public class SecurityCameraFactory {
         float frameDuration = Math.abs(END_DEG - START_DEG) / (angularVel * 10f);
 
         Entity e = new Entity();
-        e.addComponent(new ConeLightComponent(rayHandler(),
+        ConeLightPanningTaskComponent pan = new ConeLightPanningTaskComponent(START_DEG, END_DEG, angularVel);
+        e.addComponent(pan);
+        e.addComponent(new TextureRenderComponent("images/camera-body.png"));
+
+        Entity lens = pan.getCameraLens();
+        lens.addComponent(new ConeLightComponent(rayHandler(),
                 DEFAULT_RAYS,
                 NORMAL_COLOR,
                 DEFAULT_DIST,
                 DOWN,
                 DEFAULT_CONE_DEG));
-        AnimationRenderComponent animator = new AnimationRenderComponent(
-                ServiceLocator.getResourceService().getAsset("images/security-camera.atlas", TextureAtlas.class));
-        animator.addAnimation("left-right", frameDuration, Animation.PlayMode.NORMAL);
-        animator.addAnimation("right-left", frameDuration, Animation.PlayMode.NORMAL);
-        //animator.setLayer(4); // set after lights layer
-        e.addComponent(animator);
-        e.addComponent(new ConeDetectorComponent(target, DEFAULT_OCCLUDER, id));
-        e.addComponent(new ConeLightPanningTaskComponent(START_DEG, END_DEG, angularVel));
-        e.getEvents().addListener("targetDetected", (Entity p) ->
-                e.getComponent(ConeLightComponent.class).setColor(DETECTED_COLOR));
-        e.getEvents().addListener("targetLost", (Entity p) ->
-                e.getComponent(ConeLightComponent.class).setColor(NORMAL_COLOR));
+        lens.addComponent(new ConeDetectorComponent(target, DEFAULT_OCCLUDER, id));
+        lens.addComponent(new TextureRenderComponent("images/camera-lens.png").setLayer(2));
+        lens.getEvents().addListener("targetDetected", (Entity p) ->
+                lens.getComponent(ConeLightComponent.class).setColor(DETECTED_COLOR));
+        lens.getEvents().addListener("targetLost", (Entity p) ->
+                lens.getComponent(ConeLightComponent.class).setColor(NORMAL_COLOR));
+
+
         return e;
     }
 }

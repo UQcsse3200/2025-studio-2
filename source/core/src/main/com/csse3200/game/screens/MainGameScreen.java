@@ -23,6 +23,7 @@ import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
@@ -83,6 +84,9 @@ public class MainGameScreen extends ScreenAdapter {
     LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
     ServiceLocator.registerLightingService(lightingService);
     lightingEngine = lightingService.getEngine();
+
+    // Registering a new security camera service
+    ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());
 
     loadAssets();
 

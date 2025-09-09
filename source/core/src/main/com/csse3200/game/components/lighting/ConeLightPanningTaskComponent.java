@@ -3,7 +3,6 @@ package com.csse3200.game.components.lighting;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 
@@ -14,107 +13,123 @@ public class ConeLightPanningTaskComponent extends Component {
     private float degreeEnd;
     private float angularVelocity;
     private boolean clockwise = true;
-    private AnimationRenderComponent animator;
     private Entity target;
-    private static final float angularAccel = 0.2f;
+    private static final float angularAccel = 0.225f;
     private float currentVel = 0;
     private final float maxSpeed;
+    private boolean tracking = false;
+    private float movSign = 1f;
+
+    private final Entity cameraLens;
+    private static float maxLensMov = 0.3f;
 
     public ConeLightPanningTaskComponent(float degreeStart, float degreeEnd, float angularVelocity) {
         if (degreeStart < degreeEnd) {
-            this.degreeStart = degreeStart;
-            this.degreeEnd = degreeEnd;
+            this.degreeStart = wrapDeg(degreeStart);
+            this.degreeEnd = wrapDeg(degreeEnd);
         } else {
-            this.degreeStart = degreeEnd;
-            this.degreeEnd = degreeStart;
+            this.degreeStart = wrapDeg(degreeEnd);
+            this.degreeEnd = wrapDeg(degreeStart);
         }
 
         this.angularVelocity = angularVelocity;
-        maxSpeed = angularVelocity * 2.5f;
+        maxSpeed = angularVelocity * 3f;
 
+        cameraLens = new Entity();
+    }
+
+    public Entity getCameraLens() {
+        return cameraLens;
     }
 
     @Override
     public void create() {
-        this.coneComp = entity.getComponent(ConeLightComponent.class);
+        cameraLens.setPosition(entity.getPosition());
+        ServiceLocator.getEntityService().register(cameraLens);
+
+        this.coneComp = cameraLens.getComponent(ConeLightComponent.class);
         if (coneComp == null) {
             throw new IllegalStateException("ConeLightComponent must be attached to host entity before panning task");
         }
-        this.animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator == null) {
-            throw new IllegalStateException("AnimationRenderComponent must be attached to host entity before panning task");
-        }
-        this.detectorComp = entity.getComponent(ConeDetectorComponent.class);
+        this.detectorComp = cameraLens.getComponent(ConeDetectorComponent.class);
         if (detectorComp == null) {
             throw new IllegalStateException("ConeDetectorComponent must be attached to host entity before panning task");
         }
 
         coneComp.setDirectionDeg(degreeStart);
-        animator.startAnimation("left-right");
         target = detectorComp.getTarget();
+        maxLensMov *= entity.getScale().x;
     }
 
     @Override
     public void update() {
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
-        float dir = coneComp.getLight().getDirection();
+        float dir = wrapDeg(coneComp.getLight().getDirection());
+        boolean detected = detectorComp.isDetected();
+        float lensCentre = entity.getPosition().x;
 
-        if (!detectorComp.isDetected()) {
+        if (!detected) {
             // PANNING MODE
-
-            animator.setPaused(false);
+            // keep going in the same direction
+            if (tracking) {
+                clockwise = (movSign < 0f);
+            }
             currentVel = angularVelocity;
+
             // change clockwise based off dir
             if (dir >= degreeEnd) {
-                clockwise = false;
-                animator.startAnimation("right-left");
-            } else if (dir <= degreeStart) {
                 clockwise = true;
-                animator.startAnimation("left-right");
+                // move left
+            } else if (dir <= degreeStart) {
+                clockwise = false;
+                // move right
             }
 
             // move angle
-            if (clockwise) {
-                coneComp.setDirectionDeg(dir + angularVelocity * dt);
-            } else {
-                coneComp.setDirectionDeg(dir - angularVelocity * dt);
-            }
-        } else {
+            float step = angularVelocity * dt;
+            coneComp.setDirectionDeg(clockwise ? dir - step : dir + step);
 
+        } else {
             // TRACKING MODE
-            animator.setPaused(true);
 
             // move towards player increasingly fast
-            Vector2 toLight = target.getPosition().cpy().sub(entity.getPosition());
-            float toAngle = toLight.angleDeg();
-            float delta = wrapDeg(toAngle - dir);
+            Vector2 toLight = target.getPosition().cpy().sub(cameraLens.getPosition());
+            float targetAng = wrapDeg(toLight.angleDeg());
+            float aimAng = clampToRange(targetAng, degreeStart, degreeEnd);
+
+            float delta = wrapDeg(aimAng - dir);
             currentVel = Math.min(currentVel + angularVelocity * dt, maxSpeed);
             float step = currentVel * dt;
+
             if (Math.abs(delta) <= step) {
-                coneComp.setDirectionDeg(toAngle);
+                coneComp.setDirectionDeg(aimAng);
                 // bleed speed when locked on
-                currentVel = Math.max(currentVel * 0.9f, angularVelocity);
-            } else if (delta > 0){
-                coneComp.setDirectionDeg(dir + step);
+                currentVel = Math.max(currentVel * 0.95f, angularVelocity);
             } else {
-                coneComp.setDirectionDeg(dir - step);
+                // move along shortest distance and remember the sign
+                movSign = Math.signum(delta);
+                coneComp.setDirectionDeg(dir + movSign * step);
             }
         }
-        // stayInBounds(dir);
-    }
 
-    private void stayInBounds(float dir) {
-        if (dir > degreeEnd) {
-            coneComp.setDirectionDeg(degreeEnd);
-        } else if (dir < degreeStart) {
-            coneComp.setDirectionDeg(degreeStart);
-        }
+        // rescale lens x pos based off of the cone degree bounds and current dir
+        float lensX = lensCentre + (maxLensMov / (degreeEnd - degreeStart)) * (dir + 90);
+        cameraLens.setPosition(lensX, entity.getPosition().y);
+        // remember tracking state
+        tracking = detected;
     }
 
     private static float wrapDeg(float a) {
         a = a % 360f;
         if (a >= 180) a -= 360f;
         if (a < -180) a += 360f;
+        return a;
+    }
+
+    private static float clampToRange(float a, float start, float end) {
+        a = wrapDeg(a);
+        if (a < start) return start;
+        if (a > end) return end;
         return a;
     }
 
@@ -128,5 +143,11 @@ public class ConeLightPanningTaskComponent extends Component {
 
     public void setDegreeEnd (float degreeEnd) {
         this.degreeEnd = degreeEnd;
+    }
+
+    @Override
+    public void dispose() {
+        cameraLens.dispose();
+        ServiceLocator.getEntityService().unregister(cameraLens);
     }
 }

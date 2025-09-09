@@ -74,7 +74,9 @@ public class SprintOneGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
-            "images/bomb.png"
+            "images/bomb.png",
+            "images/camera-body.png",
+            "images/camera-lens.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -123,9 +125,9 @@ public class SprintOneGameArea extends GameArea {
         spawnLights();
 //        spawnButtons();
         spawnTraps();
-//        spawnDrone();
-//        spawnPatrollingDrone();
-//        spawnBomberDrone();
+        //spawnDrone();
+        //spawnPatrollingDrone();
+        //spawnBomberDrone();
         spawnDoor();
         displayUI();
 
@@ -204,16 +206,8 @@ public class SprintOneGameArea extends GameArea {
 
     private void spawnLights() {
         // see the LightFactory class for more details on spawning these
-        Entity securityLight = LightFactory.createSecurityLight(
-                player,
-                PhysicsLayer.OBSTACLE,
-                128,
-                Color.GREEN,
-                10f,
-                0f,
-                35f
-        );
-        spawnEntityAt(securityLight, new GridPoint2(20, 5), true, true);
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, 30, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
     }
     private void spawnTerrain() {
         // Background terrain

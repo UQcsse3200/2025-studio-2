@@ -68,6 +68,8 @@ public class ConeDetectorComponent extends Component {
         if (coneComp == null) {
             throw new IllegalStateException("ConeDetectorComponent requires a ConeLightComponent on the same entity.");
         }
+
+        ServiceLocator.getSecurityCamRetrievalService().registerCamera(id, entity);
     }
 
     @Override
