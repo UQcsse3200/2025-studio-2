@@ -104,4 +104,19 @@ public class CutsceneReaderComponentTest {
         assertDoesNotThrow(() -> cutsceneReader.create());
         assertTrue(cutsceneReader.getTextBoxes().isEmpty());
     }
+
+    @Test
+    @DisplayName("First line not command is handled correctly")
+    void firstLineNotCommandHandled() {
+        // Content being tested
+        String script = "Not a command.";
+        mockScriptContent(script);
+
+        // Create reader with dummy path
+        cutsceneReader = new CutsceneReaderComponent(DUMMY_PATH);
+
+        // Ensure exception was caught when created and text box list empty
+        assertDoesNotThrow(() -> cutsceneReader.create());
+        assertTrue(cutsceneReader.getTextBoxes().isEmpty());
+    }
 }
