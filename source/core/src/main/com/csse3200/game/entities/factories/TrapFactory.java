@@ -57,46 +57,54 @@ public class TrapFactory {
     public static Entity createSpikes(Vector2 safeSpot, float rotation, float length)  {
         Entity spikes = new Entity();
         spikes.scaleWidth(length);
+
+        // Set up texture
         String texture = "images/spikes_sprite.png";
         TextureRenderComponent textureComponent = new TextureRenderComponent(texture);
         textureComponent.setRotation(rotation);
         spikes.addComponent(textureComponent);
 
-        // Add physics and collider components
+        // Add physics component
         spikes.addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.StaticBody));
+
+        // Set up damage collider
+        int direction = (int) (rotation/90);
         ColliderComponent collider = new ColliderComponent();
         spikes.addComponent(collider);
-
-        // Fix collider to appropriate size
-        int direction = (int) (rotation/90);
-        Vector2 center = collider.getEntity().getScale().scl(0.25f);
-        PhysicsComponent.AlignX alignX = PhysicsComponent.AlignX.CENTER;
-        PhysicsComponent.AlignY alignY;
-        if (direction % 2 == 0) { // Horizontal trap
-            if (direction == 0) {
-                center.x *= 0.7f;
-                alignY = PhysicsComponent.AlignY.BOTTOM;
-            } else {
-                center.y *= 0.8f;
-                alignY = PhysicsComponent.AlignY.TOP;
-            }
-        } else {
-            center.y *= 3f;
-            alignY = PhysicsComponent.AlignY.CENTER;
-            if (direction == 1) { // Left-facing trap
-                alignX = PhysicsComponent.AlignX.RIGHT;
-            } else { // Right-facing trap
-                alignX = PhysicsComponent.AlignX.LEFT;
-            }
-        }
-
-        System.out.println("Center at" + center);
-        collider.setAsBoxAligned(center, alignX, alignY);
+        setupDamageCollider(collider, direction);
 
         TrapComponent trapComponent = new TrapComponent(safeSpot, direction);
         spikes.addComponent(trapComponent);
 
         return spikes;
+    }
+
+    private static void setupDamageCollider(ColliderComponent collider, int direction) {
+        Vector2 center = collider.getEntity().getScale();
+        center.x *= 0.8f;
+        PhysicsComponent.AlignX alignX = PhysicsComponent.AlignX.CENTER;
+        PhysicsComponent.AlignY alignY = PhysicsComponent.AlignY.CENTER;
+
+        switch (direction) {
+            case 1: // Facing left
+                center.y *= 3f;
+                alignX = PhysicsComponent.AlignX.RIGHT;
+                break;
+            case 2: // Facing down
+                break;
+            case 3: // Facing right
+                center.y *= 3f;
+                alignY = PhysicsComponent.AlignY.CENTER;
+                alignX = PhysicsComponent.AlignX.LEFT;
+                break;
+            default: // Facing up
+                center.x *= 0.7f;
+                center.y *= 0.5f;
+                alignY = PhysicsComponent.AlignY.BOTTOM;
+        }
+
+        System.out.println("Center at" + center);
+        collider.setAsBoxAligned(center, alignX, alignY);
     }
 }
