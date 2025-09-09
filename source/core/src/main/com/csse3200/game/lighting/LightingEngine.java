@@ -15,6 +15,8 @@ public class LightingEngine implements Disposable {
     private final RayHandler rayHandler;
     private final CameraComponent camera;
 
+    private float ambientLight = 0.35f;
+
     /**
      * Constructor method for the lighting engine. This is where some of the rayHandler's
      * global variables are set and can be changed.
@@ -26,7 +28,7 @@ public class LightingEngine implements Disposable {
         this.camera = camera;
         rayHandler = new RayHandler(world);
 
-        rayHandler.setAmbientLight(0.75f);
+        rayHandler.setAmbientLight(ambientLight);
         rayHandler.setBlur(true);
     }
 
@@ -43,6 +45,10 @@ public class LightingEngine implements Disposable {
 
     public RayHandler getRayHandler() {
         return rayHandler;
+    }
+
+    public void setAmbientLight(float ambientLight) {
+        this.ambientLight = ambientLight;
     }
 
     /**

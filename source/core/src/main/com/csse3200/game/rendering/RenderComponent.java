@@ -39,6 +39,15 @@ public abstract class RenderComponent extends Component implements Renderable, D
     return layer;
   }
 
+  /**
+   * Set the render layer of a renderable component. Higher render layer means
+   * it is rendered on top of lower numbers.
+   * <p>
+   * Note: The layer number is restricted by the max layers in {@code RenderService}.
+   *
+   * @param layer Render layer
+   * @return The RenderComponent
+   */
   public RenderComponent setLayer(int layer) {
     this.layer = layer;
     return this;
