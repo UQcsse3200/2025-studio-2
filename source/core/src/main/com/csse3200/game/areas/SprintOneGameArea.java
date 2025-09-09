@@ -284,10 +284,10 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
 
         // Autonomous box
-        float startX = 3f;
-        float endX = 10f;
-        float y = 25f;
-        float speed = 2f;
+        float startX = 1.5f;
+        float endX = 6f;
+        float y = 23f;
+        float speed = 4f;
 
         Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
         autonomousBox.addComponent(new TooltipSystem.TooltipComponent("Autonomous Box\nThis box has a fixed path" +
