@@ -139,6 +139,7 @@ public class ForestGameArea extends GameArea {
     //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
+    spawnSelfDestructDrone();
 
     spawnPlatform(); //Testing platform
 
