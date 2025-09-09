@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
+import static org.junit.jupiter.api.Assertions.*;
 
 import static org.mockito.Mockito.when;
 
@@ -52,5 +53,41 @@ public class CutsceneReaderComponentTest {
      */
     private void mockScriptContent(String content) {
         when(mockFileHandle.readString()).thenReturn(content);
+    }
+
+    @Test
+    @DisplayName("Valid script file is correctly parsed")
+    void validScriptParsesCorrectly() {
+        // Content to be tested
+        String script = String.join(System.lineSeparator(),
+                "#images/background1.png",
+                "Hello, world!",
+                "#images/background2.png",
+                "Second text box.",
+                "Third text box."
+        );
+        mockScriptContent(script);
+
+        // Create reader with dummy path and parse
+        cutsceneReader = new CutsceneReaderComponent(DUMMY_PATH);
+        cutsceneReader.create();
+        List<CutsceneReaderComponent.TextBox> textBoxList = cutsceneReader.getTextBoxes();
+
+        // There should be items inside text box list
+        assertNotNull(textBoxList);
+        // There should be three items inside text box list
+        assertEquals(3, textBoxList.size());
+
+        // First item in list
+        assertEquals("Hello, world!", textBoxList.getFirst().text());
+        assertEquals("images/background1.png", textBoxList.getFirst().background());
+
+        // Second item in list
+        assertEquals("Second text box.", textBoxList.get(1).text());
+        assertEquals("images/background2.png", textBoxList.get(1).background());
+
+        // Third item in list
+        assertEquals("Third text box.", textBoxList.get(2).text());
+        assertNull(textBoxList.get(2).background());
     }
 }
