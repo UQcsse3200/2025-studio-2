@@ -119,4 +119,28 @@ public class CutsceneReaderComponentTest {
         assertDoesNotThrow(() -> cutsceneReader.create());
         assertTrue(cutsceneReader.getTextBoxes().isEmpty());
     }
+
+    @Test
+    @DisplayName("Text box uses most recently set background")
+    void textBoxUsesMostRecentBackground() {
+        // Content to be tested
+        String script = String.join(System.lineSeparator(),
+                "#images/background1.png",
+                "#images/background2.png",
+                "Text box."
+        );
+        mockScriptContent(script);
+
+        // Create reader with dummy path and parse
+        cutsceneReader = new CutsceneReaderComponent(DUMMY_PATH);
+        cutsceneReader.create();
+        List<CutsceneReaderComponent.TextBox> textBoxList = cutsceneReader.getTextBoxes();
+
+        // Ensure text box list contains items, and only contains one item
+        assertNotNull(textBoxList);
+        assertEquals(1, textBoxList.size());
+
+        // Ensure item uses 'images/background2.png'
+        assertEquals("images/background2.png", textBoxList.getFirst().background());
+    }
 }
