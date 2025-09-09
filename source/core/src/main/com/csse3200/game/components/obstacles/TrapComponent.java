@@ -9,6 +9,7 @@ import com.csse3200.game.physics.components.ColliderComponent;
 public class TrapComponent extends CombatStatsComponent {
     private Vector2 safeSpot;
     private int rotation;
+    int i = 0;
 
     public TrapComponent(Vector2 safeSpot, int rotation) {
         this(0, 40, safeSpot, rotation);
@@ -65,11 +66,13 @@ public class TrapComponent extends CombatStatsComponent {
         Entity trap = this.getEntity();
         Entity player = collider.getEntity();
 
+        System.out.println("colliding" + ++i);
+
         boolean legalDirection = switch (rotation) {
             case 1 -> // Facing left
                     (player.getPosition().x < trap.getPosition().x);
             case 2 -> // Facing down
-                    (player.getPosition().y < trap.getPosition().y);
+                    (player.getPosition().y < (trap.getPosition().y));
             case 3 -> // Facing right
                     (player.getPosition().x > trap.getPosition().x);
             default -> // Facing up

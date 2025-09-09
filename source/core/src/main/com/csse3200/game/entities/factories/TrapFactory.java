@@ -74,8 +74,13 @@ public class TrapFactory {
         PhysicsComponent.AlignX alignX = PhysicsComponent.AlignX.CENTER;
         PhysicsComponent.AlignY alignY;
         if (direction % 2 == 0) { // Horizontal trap
-            center.x *= 0.7f;
-            alignY = PhysicsComponent.AlignY.BOTTOM;
+            if (direction == 0) {
+                center.x *= 0.7f;
+                alignY = PhysicsComponent.AlignY.BOTTOM;
+            } else {
+                center.y *= 0.8f;
+                alignY = PhysicsComponent.AlignY.TOP;
+            }
         } else {
             center.y *= 3f;
             alignY = PhysicsComponent.AlignY.CENTER;
