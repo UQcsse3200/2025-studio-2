@@ -1,141 +1,101 @@
 package com.csse3200.game.components.tasks;
 
-import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.raycast.RaycastHit;
-import com.csse3200.game.rendering.DebugRenderer;
-import com.csse3200.game.services.ServiceLocator;
 
-/** Chases a target entity until they get too far away or line of sight is lost */
+/**
+ *  Makes an entity continuously move toward a designated target entity.
+ *  This task is only runnable by AITaskComponent when it has been explicitly activated, which lets
+ *  external systems control when chasing should occur. For example, in EnemyFactory,
+ *  drones listen to 'playerDetected' and 'playerLost' to activate or deactivate the chasing behaviour.
+ *
+ *  getPriority() returns a high priority when the task is active so that the AI scheduler will select it
+ *  over low priority tasks like patrols or idle behaviours. When deactivated, its priority is set to -1 so the
+ *  task is never scheduled.
+ **/
 public class ChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
-    private final int priority;
-    private final float viewDistance;
-    private final float maxChaseDistance;
-    private final PhysicsEngine physics;
-    private final DebugRenderer debugRenderer;
-    private final RaycastHit hit = new RaycastHit();
     private MovementTask movementTask;
     private boolean active = false;
-    private boolean triggerMaxChase = false; // whether we start enforcing maxChaseDistance
-    private final float triggerDistance = 4f; // distance at which maxChaseDistance starts counting
-
 
     /**
-     * @param target The entity to chase.
-     * @param priority Task priority when chasing (0 when not chasing).
-     * @param viewDistance Maximum distance from the entity at which chasing can start.
-     * @param maxChaseDistance Maximum distance from the entity while chasing before giving up.
+     * Creates a new chase task that will pursue the given target entity
+     * @param target The target entity to be chased
      */
-    public ChaseTask(Entity target, int priority, float viewDistance, float maxChaseDistance) {
+    public ChaseTask(Entity target) {
         this.target = target;
-        this.priority = priority;
-        this.viewDistance = viewDistance;
-        this.maxChaseDistance = maxChaseDistance;
-        physics = ServiceLocator.getPhysicsService().getPhysics();
-        debugRenderer = ServiceLocator.getRenderService().getDebug();
     }
+
+    /**
+     * Activate the chase task, making it eligible for scheduling by the AI system.
+     * Typically called in response to a 'playerDetected' event.
+     */
     public void activate() {
+        if (active) return;
         active = true;
-        triggerMaxChase = false; // reset so first chase ignores distance
-        if (status != Status.ACTIVE) {
-            status = Status.INACTIVE;
-        }
-
-
     }
 
+    /**
+     * Deactivate the chase task, preventing it from being scheduled.
+     * Typically called in response to a 'playerLost' event.
+     */
     public void deactivate() {
-
+        if (!active) return;
         active = false;
-        owner.getEntity().getEvents().trigger("chaseEnd");
     }
 
+    /**
+     * Start the chase behaviour. Early return if the task is not active.
+     */
     @Override
     public void start() {
         super.start();
-        movementTask = new MovementTask(target.getPosition());
-        movementTask.create(owner);
-        movementTask.start();
+        if (!active) return;
 
+        if (movementTask == null) {
+            movementTask = new MovementTask(target.getPosition());
+            movementTask.create(owner);
+        } else {
+            movementTask.setTarget(target.getPosition());
+        }
+        movementTask.start();
 
         this.owner.getEntity().getEvents().trigger("chaseStart");
     }
 
+    /**
+     * Update the chase behaviour each frame.
+     */
     @Override
     public void update() {
+        if (!active || movementTask == null) return;
+
         movementTask.setTarget(target.getPosition());
         movementTask.update();
         if (movementTask.getStatus() != Status.ACTIVE) {
             movementTask.start();
         }
-
     }
 
+    /**
+     * Stop the chase behaviour and movement subtask.
+     */
     @Override
     public void stop() {
+        if (movementTask != null) movementTask.stop();
+        deactivate();
         super.stop();
-        movementTask.stop();
+
+        this.owner.getEntity().getEvents().trigger("chaseEnd");
     }
 
+    /**
+     * Get the current priority of the task
+     * @return 10 if active, otherwise -1.
+     */
     @Override
     public int getPriority() {
-        if (status == Status.ACTIVE) {
-            return getActivePriority();
-        }
-        return getInactivePriority();
-    }
-
-
-    // Calculates the current distance between the drone and its target
-    private float getDistanceToTarget() {
-        return target.getPosition().dst(owner.getEntity().getPosition());
-    }
-
-    // In getInactivePriority, only return priority if active
-    private int getInactivePriority() {
-        if (active) {
-            // Activated by security light, start chasing
-            return priority;
-        }
-        return -1; // Not active, don't chase
-    }
-
-    // In getActivePriority, also check active
-    private int getActivePriority() {
-        if (!active) return -1;
-
-        float dst = getDistanceToTarget();
-
-        // Check if we are close enough to start enforcing maxChaseDistance
-        if (!triggerMaxChase && dst <= triggerDistance) {
-            triggerMaxChase = true;
-        }
-
-        // Only stop chasing if we are enforcing maxChaseDistance
-        if (triggerMaxChase && dst > maxChaseDistance) {
-            deactivate();
-            return -1;
-        }
-
-        // Otherwise keep chasing
-        return priority;
-    }
-
-    private boolean isTargetVisible() {
-        Vector2 from = owner.getEntity().getCenterPosition();
-        Vector2 to = target.getCenterPosition();
-
-        // If there is an obstacle in the path to the player, not visible.
-        if (physics.raycast(from, to, PhysicsLayer.OBSTACLE, hit)) {
-            debugRenderer.drawLine(from, hit.point);
-            return false;
-        }
-        debugRenderer.drawLine(from, to);
-        return true;
+        return active ? 10 : -1;
     }
 }
