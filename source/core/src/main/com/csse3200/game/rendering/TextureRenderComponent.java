@@ -8,6 +8,7 @@ import com.csse3200.game.services.ServiceLocator;
 /** Render a static texture. */
 public class TextureRenderComponent extends RenderComponent {
   private Texture texture;
+  private float rotation = 0f;
 
   /**
    * @param texturePath Internal path of static texture to render.
@@ -19,6 +20,10 @@ public class TextureRenderComponent extends RenderComponent {
 
   public void setTexture(String texture) {
     this.texture = ServiceLocator.getResourceService().getAsset(texture, Texture.class);
+  }
+
+  public void setRotation(float rotation) {
+    this.rotation = rotation;
   }
 
   /** @param texture Static texture to render. Will be scaled to the entity's scale. */
@@ -35,6 +40,22 @@ public class TextureRenderComponent extends RenderComponent {
   protected void draw(SpriteBatch batch) {
     Vector2 position = entity.getPosition();
     Vector2 scale = entity.getScale();
-    batch.draw(texture, position.x, position.y, scale.x, scale.y);
+
+    if (rotation == 0f) {
+      batch.draw(texture, position.x, position.y, scale.x, scale.y);
+    } else {
+      float originX = scale.x / 2f;
+      float originY = scale.y / 2f;
+
+      batch.draw(texture,
+              position.x, position.y,
+              originX, originY,
+              scale.x, scale.y,
+              1f, 1f,
+              rotation,
+              0, 0,
+              texture.getWidth(), texture.getHeight(),
+              false, false);
+    }
   }
 }

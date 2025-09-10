@@ -14,6 +14,8 @@ import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -73,7 +75,9 @@ public class SprintOneGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
-            "images/bomb.png"
+            "images/bomb.png",
+            "images/camera-body.png",
+            "images/camera-lens.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -155,11 +159,11 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {
-        Entity button2 = ButtonFactory.createButton(false, "door");
+        Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
 
-        Entity button3 = ButtonFactory.createButton(false, "nothing");
+        Entity button3 = ButtonFactory.createButton(false, "nothing", "left");
         spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
 
         //listener to spawn key when door button pushed
@@ -179,16 +183,8 @@ public class SprintOneGameArea extends GameArea {
 
     private void spawnLights() {
         // see the LightFactory class for more details on spawning these
-        Entity securityLight = LightFactory.createSecurityLight(
-                player,
-                PhysicsLayer.OBSTACLE,
-                128,
-                Color.GREEN,
-                10f,
-                0f,
-                35f
-        );
-        spawnEntityAt(securityLight, new GridPoint2(20, 5), true, true);
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
     }
     private void spawnTerrain() {
         // Background terrain
@@ -332,7 +328,7 @@ public class SprintOneGameArea extends GameArea {
         logger.info("Elevator spawned at {}", elevatorPos);
 
         // Button with tooltip
-        Entity button = ButtonFactory.createButton(false, "platform");
+        Entity button = ButtonFactory.createButton(false, "platform", "left");
         button.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
@@ -357,7 +353,7 @@ public class SprintOneGameArea extends GameArea {
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
-        music.setVolume(0.1f);
+        music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
     }
 

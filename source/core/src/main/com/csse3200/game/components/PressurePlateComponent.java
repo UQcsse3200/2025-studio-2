@@ -24,7 +24,7 @@ public class PressurePlateComponent extends Component {
     }
 
     private void onCollisionStart(Object me, Object other) {
-        System.out.println("Pressure plate collision with: " + other);
+        // System.out.println("Pressure plate collision with: " + other);
         if (isPressed) {
             return; // Already pressed; ignore further collisions
         }

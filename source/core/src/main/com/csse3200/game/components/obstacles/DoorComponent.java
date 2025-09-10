@@ -46,7 +46,7 @@ public class DoorComponent extends Component {
      */
     private void onCollisionStart(Entity other) {
         HitboxComponent cc = other.getComponent(HitboxComponent.class);
-        if ((cc.getLayer() != PhysicsLayer.PLAYER)) return;
+        if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
 
 
         if (locked) {
