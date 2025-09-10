@@ -173,6 +173,11 @@ implements <a href="Renderable.html" title="interface in com.csse3200.game.rende
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Render the renderable.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="RenderComponent.html" title="class in com.csse3200.game.rendering">RenderComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setLayer(int)" class="member-name-link">setLayer</a><wbr>(int&nbsp;layer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Set the render layer of a renderable component.</div>
+</div>
 </div>
 </div>
 </div>
@@ -269,6 +274,22 @@ implements <a href="Renderable.html" title="interface in com.csse3200.game.rende
 <dd><code><a href="Renderable.html#getLayer()">getLayer</a></code>&nbsp;in interface&nbsp;<code><a href="Renderable.html" title="interface in com.csse3200.game.rendering">Renderable</a></code></dd>
 <dt>Returns:</dt>
 <dd>layer</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setLayer(int)">
+<h3>setLayer</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="RenderComponent.html" title="class in com.csse3200.game.rendering">RenderComponent</a></span>&nbsp;<span class="element-name">setLayer</span><wbr><span class="parameters">(int&nbsp;layer)</span></div>
+<div class="block">Set the render layer of a renderable component. Higher render layer means
+ it is rendered on top of lower numbers.
+ <p>
+ Note: The layer number is restricted by the max layers in <code>RenderService</code>.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>layer</code> - Render layer</dd>
+<dt>Returns:</dt>
+<dd>The RenderComponent</dd>
 </dl>
 </section>
 </li>

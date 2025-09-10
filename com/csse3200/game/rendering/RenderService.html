@@ -145,6 +145,19 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="block">Trigger rendering on the given batch.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderLayer(com.badlogic.gdx.graphics.g2d.SpriteBatch,int)" class="member-name-link">renderLayer</a><wbr>(com.badlogic.gdx.graphics.g2d.SpriteBatch&nbsp;batch,
+ int&nbsp;layer)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Trigger rendering on the given batch only on the given layer.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#renderLayerRange(com.badlogic.gdx.graphics.g2d.SpriteBatch,int,int)" class="member-name-link">renderLayerRange</a><wbr>(com.badlogic.gdx.graphics.g2d.SpriteBatch&nbsp;batch,
+ int&nbsp;minLayer,
+ int&nbsp;maxLayer)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Trigger rendering on the given batch within the given layer range.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDebug(com.csse3200.game.rendering.DebugRenderer)" class="member-name-link">setDebug</a><wbr>(<a href="DebugRenderer.html" title="class in com.csse3200.game.rendering">DebugRenderer</a>&nbsp;debugRenderer)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
@@ -194,6 +207,39 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>renderable</code> - new renderable.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="renderLayerRange(com.badlogic.gdx.graphics.g2d.SpriteBatch,int,int)">
+<h3>renderLayerRange</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderLayerRange</span><wbr><span class="parameters">(com.badlogic.gdx.graphics.g2d.SpriteBatch&nbsp;batch,
+ int&nbsp;minLayer,
+ int&nbsp;maxLayer)</span></div>
+<div class="block">Trigger rendering on the given batch within the given layer range.
+ This should be called only from the main renderer.
+ <p>
+ This method will only render layers within the possible range of the IntMap,
+ as such <code>Integer.MIN_VALUE</code> and <code>Integer.MAX_VALUE</code> can be used as bounds.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>batch</code> - batch to render to</dd>
+<dd><code>minLayer</code> - render layer lower bound</dd>
+<dd><code>maxLayer</code> - render layer upper bound</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="renderLayer(com.badlogic.gdx.graphics.g2d.SpriteBatch,int)">
+<h3>renderLayer</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">renderLayer</span><wbr><span class="parameters">(com.badlogic.gdx.graphics.g2d.SpriteBatch&nbsp;batch,
+ int&nbsp;layer)</span></div>
+<div class="block">Trigger rendering on the given batch only on the given layer.
+ This should be called only from the main renderer.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>batch</code> - batch to render to</dd>
+<dd><code>layer</code> - render layer to be rendered</dd>
 </dl>
 </section>
 </li>
