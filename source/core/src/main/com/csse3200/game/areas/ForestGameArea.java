@@ -406,7 +406,7 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
 
       // Button to trigger it
-      Entity button = ButtonFactory.createButton(false, "platform");
+      Entity button = ButtonFactory.createButton(false, "platform","left");
       spawnEntityAt(button, new GridPoint2(10, 7), true, true);
 
       // Link button to platform
@@ -422,16 +422,19 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnButtons() {
-    Entity button = ButtonFactory.createButton(false, "platform");
+    Entity button = ButtonFactory.createButton(false, "platform","left");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
 
-    Entity button2 = ButtonFactory.createButton(false, "door");
+    Entity button2 = ButtonFactory.createButton(false, "door","right");
     button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
 
-    Entity button3 = ButtonFactory.createButton(false, "nothing");
+    Entity button3 = ButtonFactory.createButton(false, "nothing","up");
     spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+
+    Entity button4 = ButtonFactory.createButton(false, "nothing","down");
+    spawnEntityAt(button4, new GridPoint2(15,7), true,  true);
 
     //listener to spawn key when door button pushed
     button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {

@@ -173,11 +173,11 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {
-        Entity button2 = ButtonFactory.createButton(false, "door");
+        Entity button2 = ButtonFactory.createButton(false, "door","left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
 
-        Entity button3 = ButtonFactory.createButton(false, "nothing");
+        Entity button3 = ButtonFactory.createButton(false, "nothing","left");
         spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
 
         //listener to spawn key when door button pushed
@@ -351,7 +351,7 @@ public class SprintOneGameArea extends GameArea {
         logger.info("Elevator spawned at {}", elevatorPos);
 
         // Button with tooltip
-        Entity button = ButtonFactory.createButton(false, "platform");
+        Entity button = ButtonFactory.createButton(false, "platform","left");
         button.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
