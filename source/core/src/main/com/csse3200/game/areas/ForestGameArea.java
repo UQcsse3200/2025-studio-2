@@ -159,9 +159,9 @@ public class ForestGameArea extends GameArea {
     playMusic();
     spawnDoor();
 
-    spawnUpgrade("dash", 15, 19);
-    spawnUpgrade("glider", 15, 17);
-    spawnUpgrade("grappler", 15, 15);
+    spawnUpgrade("dash", 9, 6);
+    spawnUpgrade("glider", 7, 6);
+    spawnUpgrade("grappler", 5, 6);
   }
 
   private void createMinimap() {
