@@ -23,6 +23,7 @@ public class ConeDetectorComponent extends Component {
     private DebugRenderer debug;
     private ConeLightComponent coneComp;
     private final RaycastHit hit = new RaycastHit();
+    private final String id;
 
     private boolean detected = false;
     private boolean debugLines = false;
@@ -33,13 +34,15 @@ public class ConeDetectorComponent extends Component {
      *
      * @param target the target entity to be detected
      */
-    public ConeDetectorComponent(Entity target) {
+    public ConeDetectorComponent(Entity target, String id) {
         this.target = target;
+        this.id = id;
     }
 
-    public ConeDetectorComponent(Entity target, short occluderMask) {
+    public ConeDetectorComponent(Entity target, short occluderMask, String id) {
         this.target = target;
         this.occluderMask = occluderMask;
+        this.id = id;
     }
 
     public ConeDetectorComponent setDebug(boolean enabled) {
@@ -52,6 +55,10 @@ public class ConeDetectorComponent extends Component {
         return this;
     }
 
+    public Entity getTarget() {
+        return target;
+    }
+
     @Override
     public void create() {
         physicsEngine = ServiceLocator.getPhysicsService().getPhysics();
@@ -61,6 +68,8 @@ public class ConeDetectorComponent extends Component {
         if (coneComp == null) {
             throw new IllegalStateException("ConeDetectorComponent requires a ConeLightComponent on the same entity.");
         }
+
+        ServiceLocator.getSecurityCamRetrievalService().registerCamera(id, entity);
     }
 
     @Override
