@@ -96,6 +96,7 @@ public class ForestGameArea extends GameArea {
           "images/iso_grass_2.png",
           "images/iso_grass_3.png",
           "images/drone.png",
+          "images/SelfDestructionDrone.png",
           "images/bomb.png",
           "images/platform.png",
           "images/gate.png",
@@ -122,7 +123,7 @@ public class ForestGameArea extends GameArea {
           "images/pressure_plate_pressed.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas","images/SelfDestructionDrone.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -303,6 +304,7 @@ public class ForestGameArea extends GameArea {
     Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute, securityLight);
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
   }
+
 
   private void spawnBomberDrone() {
     GridPoint2 spawnTile = new GridPoint2(2, 11);

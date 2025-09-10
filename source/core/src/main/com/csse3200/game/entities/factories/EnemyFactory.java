@@ -46,12 +46,22 @@ public class EnemyFactory {
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos)); // For resets
 
-        AnimationRenderComponent animator =
-                new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+        TextureAtlas droneAtlas = ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class);
+        TextureAtlas SelfDestructAtlas = ServiceLocator.getResourceService().getAsset("images/SelfDestructDrone.atlas", TextureAtlas.class);
+
+        if (droneAtlas != null) {
+            throw new RuntimeException("drone.atlas not loaded");
+        }
+        else if (SelfDestructAtlas != null && SelfDestructAtlas.findRegion("self_destruct")!=null) {
+            throw new RuntimeException("SelfDestruct.atlas not loaded");
+        }
+        AnimationRenderComponent animator = new AnimationRenderComponent(droneAtlas);
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
 
+        if (SelfDestructAtlas != null && SelfDestructAtlas.findRegion("self_destruct")!=null ) {
+            animator.addAnimation("self_destruct", 0.1f, Animation.PlayMode.NORMAL);
+        }
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
@@ -155,9 +165,14 @@ public class EnemyFactory {
         drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
         if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
 
-        AnimationRenderComponent animator=
-                new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
+
+         TextureAtlas SelfDestructAtlas = ServiceLocator.getResourceService().getAsset("images/SelfDestructDrone.atlas",TextureAtlas.class);
+
+         if(SelfDestructAtlas == null){
+             throw new RuntimeException("SelfDestructDrone.atlas not loaded");
+         }
+
+         AnimationRenderComponent animator = new AnimationRenderComponent(SelfDestructAtlas);
         animator.addAnimation("angry_float",0.1f,Animation.PlayMode.LOOP);
         animator.addAnimation("float",0.1f,Animation.PlayMode.LOOP);
 
@@ -170,7 +185,7 @@ public class EnemyFactory {
                 .addComponent(new SelfDestructComponent(target));
 
         AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask= new ChaseTask(target,10,3f,4f);
+        ChaseTask chaseTask= new ChaseTask(target);
 
         securityLight.getEvents().addListener("targetDetected", entity->chaseTask.activate());
 

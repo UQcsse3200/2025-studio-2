@@ -32,7 +32,7 @@ class ExplosionFactoryTest {
         ServiceLocator.registerResourceService(rs);
 
         // Load assets required by ExplosionFactory
-        String[] textures = {"images/drone.atlas"};
+        String[] textures = {"images/drone.atlas","images/SelfDestructionDrone.atlas"};
         rs.loadTextureAtlases(textures);
         rs.loadAll();
     }
@@ -40,7 +40,7 @@ class ExplosionFactoryTest {
     @AfterEach
     void cleanUp() {
         // Unload assets and clear services
-        rs.unloadAssets(new String[]{"images/drone.atlas"});
+        rs.unloadAssets(new String[]{"images/drone.atlas","images/SelfDestructionDrone.atlas"});
         rs.dispose();
         ServiceLocator.clear();
     }

@@ -70,7 +70,7 @@ public class CaveGameArea extends GameArea {
           "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" , "images/drone.atlas"
+    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" ,"images/SelfDestructionDrone.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
