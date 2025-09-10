@@ -139,6 +139,7 @@ public class ForestGameArea extends GameArea {
     //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
+    spawnSelfDestructDrone();
 
     spawnPlatform(); //Testing platform
 
@@ -393,6 +394,13 @@ public class ForestGameArea extends GameArea {
 
     Entity bomberDrone = EnemyFactory.createBomberDrone(getPlayer(), spawnWorldPos, securityLight);
     spawnEntityAt(bomberDrone, spawnTile, true, true);
+  }
+
+  private void spawnSelfDestructDrone(){
+    GridPoint2 spawnTile =new GridPoint2(4,11);
+    Vector2 spawnPos= terrain.tileToWorldPosition(spawnTile);
+    Entity selfDrone =EnemyFactory.createSelfDestructionDrone(getPlayer(),spawnPos,securityLight);
+    spawnEntityAt( selfDrone, spawnTile, false, true);
   }
 
   private void playMusic() {
