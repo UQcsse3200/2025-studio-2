@@ -3,6 +3,7 @@ package com.csse3200.game.components.lighting;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -21,12 +22,13 @@ public class ConeLightPanningTaskComponent extends Component {
     private float degreeStart;
     private float degreeEnd;
     private float angularVelocity;
-    private boolean clockwise = true;
+    private boolean clockwise = false;
     private Entity target;
 
-    private static final float angularAccel = 40f;
+    private float angularAccel = LightingDefaults.ANGULAR_ACC;
+    private float currentVel   = LightingDefaults.ANGULAR_VEL;
     private float maxSpeed;
-    private float currentVel = 0;
+
 
     private float movSign = 1f;
     private boolean tracking = false;
@@ -70,11 +72,11 @@ public class ConeLightPanningTaskComponent extends Component {
 
         this.coneComp = cameraLens.getComponent(ConeLightComponent.class);
         if (coneComp == null) {
-            throw new IllegalStateException("ConeLightComponent must be attached to host entity before panning task");
+            throw new IllegalStateException("ConeLightComponent must be attached to lens entity");
         }
         this.detectorComp = cameraLens.getComponent(ConeDetectorComponent.class);
         if (detectorComp == null) {
-            throw new IllegalStateException("ConeDetectorComponent must be attached to host entity before panning task");
+            throw new IllegalStateException("ConeDetectorComponent must be attached to lens entity");
         }
 
         // set cone to bounds (could be omitted tho)
@@ -183,6 +185,10 @@ public class ConeLightPanningTaskComponent extends Component {
     public void setAngularVelocity(float angularVelocity) {
         this.angularVelocity = angularVelocity;
         this.maxSpeed = angularVelocity * 3f;
+    }
+
+    public void setAngularAccel(float angularAccel) {
+        this.angularAccel = angularAccel;
     }
 
     public void setDegreeStart (float degreeStart) {

@@ -15,7 +15,7 @@ public class LightingEngine implements Disposable {
     private final RayHandler rayHandler;
     private final CameraComponent camera;
 
-    private float ambientLight = 0.35f;
+    private float ambientLight = LightingDefaults.AMBIENT_LIGHT;
 
     /**
      * Constructor method for the lighting engine. This is where some of the rayHandler's
@@ -30,6 +30,7 @@ public class LightingEngine implements Disposable {
 
         rayHandler.setAmbientLight(ambientLight);
         rayHandler.setBlur(true);
+        rayHandler.setBlurNum(LightingDefaults.BLUR_NUM);
     }
 
     /**
