@@ -139,6 +139,10 @@ public class SprintOneGameArea extends GameArea {
 
     }
 
+    public void loadLevel() {
+
+    }
+
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Sprint one demo level"));
