@@ -66,6 +66,11 @@ class DoorComponentTest {
             protected void reset() {
 
             }
+
+            @Override
+            protected void loadLevel() {
+
+            }
         };
     }
 
