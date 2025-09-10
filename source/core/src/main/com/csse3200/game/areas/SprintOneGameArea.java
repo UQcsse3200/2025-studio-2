@@ -126,9 +126,9 @@ public class SprintOneGameArea extends GameArea {
         spawnLights();
         spawnButtons();
         spawnTraps();
-        //spawnDrone();
-        //spawnPatrollingDrone();
-        //spawnBomberDrone();
+        spawnDrone();
+        spawnPatrollingDrone();
+        spawnBomberDrone();
         spawnDoor();
         displayUI();
 
