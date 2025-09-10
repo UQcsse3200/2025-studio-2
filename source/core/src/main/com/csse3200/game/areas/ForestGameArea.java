@@ -9,9 +9,12 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -29,6 +32,8 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -109,14 +114,17 @@ public class ForestGameArea extends GameArea {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
+
+    // level must be loaded first as this loads terrain
     loadLevel();
+
+    player = spawnPlayer();
+    player.getEvents().addListener("reset", this::reset);
+    saveComponents(player.getComponent(CombatStatsComponent.class),
+            player.getComponent(InventoryComponent.class));
   }
 
   protected void reset() {
-    // debug
-    // for (Entity entity : areaEntities) {
-    //   System.out.println(entity);
-    // }
 
     // Retain all data we want to be transferred across the reset (e.g. player movement direction)
     Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
@@ -126,17 +134,25 @@ public class ForestGameArea extends GameArea {
     super.dispose();
     loadLevel();
 
+    // Components such as health, upgrades and items we want to revert to how they were at
+    // the start of the level. Copies are used in order to not break the original components.
+    player = spawnPlayer(getComponents());
+    player.getEvents().addListener("reset", this::reset);
+
     // transfer all of the retained data
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
   }
 
-  private void loadLevel() {
+  /**
+   * Load the level.
+   * Player is created separately.
+   * Assets are loaded separately.
+   */
+  protected void loadLevel() {
     displayUI();
     spawnTerrain();
     // spawnTrees();
     createMinimap();
-    player = spawnPlayer();
-    player.getEvents().addListener("reset", this::reset);
 
     //spawnDrone();             // Play with idle/chasing drones (unless chasing)
     //spawnPatrollingDrone();   // Play with patrolling/chasing drones
@@ -151,7 +167,6 @@ public class ForestGameArea extends GameArea {
 
     door = spawnDoor();
     spawnPressurePlates();
-
 
     spawnLights(); // uncomment to spawn in lights
     // spawnKey();
@@ -240,6 +255,12 @@ public class ForestGameArea extends GameArea {
 
   private Entity spawnPlayer() {
     Entity newPlayer = PlayerFactory.createPlayer();
+    spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    return newPlayer;
+  }
+
+  private Entity spawnPlayer(List<Component> componentList) {
+    Entity newPlayer = PlayerFactory.createPlayer(componentList);
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     return newPlayer;
   }

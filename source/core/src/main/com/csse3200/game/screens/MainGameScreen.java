@@ -82,8 +82,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
     gameArea = new ForestGameArea(terrainFactory);
-    //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
-    //caveGameArea.create();
+//    gameArea = new CaveGameArea(terrainFactory);
     gameArea.create();
 
     // Have to createUI after the game area is created since createUI

@@ -203,6 +203,42 @@ public class Entity {
     return this;
   }
 
+
+  /**
+   * Remove a component from the entity.
+   * Can only be called before the entity is registered in the world.
+   *
+   * @param component The component to remove.
+   * @return This entity.
+   */
+  public Entity removeComponent(Component component) {
+    if (created) {
+      logger.error("Attempted to remove a component after the class was created. Not supported.");
+      return this;
+    }
+    ComponentType componentType = ComponentType.getFrom(component.getClass());
+    if (!components.containsKey(componentType.getId())) {
+      logger.error("Attempted to remove a component that does not exist within this entity.");
+      return this;
+    }
+
+    components.remove(componentType.getId()); // Hopefully no extra steps have to be taken
+
+    return this;
+  }
+
+  /**
+   * Replace a component in the current entity.
+   *
+   * @param component - the component to replace
+   * @return This entity.
+   */
+  public Entity replaceComponent(Component component) {
+    removeComponent(component);
+    addComponent(component);
+    return this;
+  }
+
   /** Dispose of the entity. This will dispose of all components on this entity. */
   public void dispose() {
     for (Component component : createdComponents) {
@@ -254,16 +290,16 @@ public class Entity {
       component.triggerUpdate();
     }
 
-    if (resetRequested) {
-      getEvents().trigger("reset");
-      resetRequested = false;
-    }
-
     if (safeSpotRequested) {
       System.out.println(this.getPosition());
       this.setPosition(safeSpotPosition);
       safeSpotRequested = false;
       System.out.println(this.getPosition());
+    }
+
+    if (resetRequested) {
+      getEvents().trigger("reset");
+      resetRequested = false;
     }
   }
 

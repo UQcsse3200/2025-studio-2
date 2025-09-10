@@ -9,6 +9,8 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -40,7 +42,8 @@ public class CaveGameArea extends GameArea {
     "images/hex_grass_3.png",
     "images/iso_grass_1.png",
     "images/iso_grass_2.png",
-    "images/iso_grass_3.png"
+    "images/iso_grass_3.png",
+    "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas"
@@ -66,7 +69,23 @@ public class CaveGameArea extends GameArea {
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
   @Override
   public void create() {
+    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+    engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
+
+    loadLevel();
+
+    player = spawnPlayer();
+    player.getEvents().addListener("reset", this::reset);
+
+  }
+
+  public void createWithPlayer(Entity player) {
+    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+    engine.getWorld().setContactListener(new ObjectContactListener());
+    loadAssets();
+    this.player = player;
+    player.getEvents().addListener("reset", this::reset);
     loadLevel();
   }
 
@@ -82,7 +101,7 @@ public class CaveGameArea extends GameArea {
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
   }
 
-  private void loadLevel() {
+  protected void loadLevel() {
     displayUI();
 
     spawnTerrain();
