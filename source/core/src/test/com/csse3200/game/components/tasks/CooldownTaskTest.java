@@ -1,13 +1,13 @@
 package com.csse3200.game.components.tasks;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.ai.tasks.Task;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.services.GameTime;
+import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,13 +17,13 @@ import static org.mockito.Mockito.*;
 class CooldownTaskTest {
     private Entity entity;
     private PatrolRouteComponent patrolRoute;
-    private Graphics graphics;
+    private GameTime gameTime;
 
     @BeforeEach
     void setUp() {
-        graphics = mock(Graphics.class);
-        Gdx.graphics = graphics;
-        when(graphics.getDeltaTime()).thenReturn(0.1f); // simulate 0.1s per update
+        gameTime = mock(GameTime.class);
+        ServiceLocator.registerTimeSource(gameTime);
+        when(gameTime.getDeltaTime()).thenReturn(0.1f); // simulate 0.1s per update
 
         // --- Setup entity and components ---
         entity = new Entity();
@@ -38,7 +38,22 @@ class CooldownTaskTest {
     }
 
     @Test
-    void testCooldownStartEventTriggered() {
+    void cooldown_activeStartEventTriggered() {
+        AITaskComponent ai = entity.getComponent(AITaskComponent.class);
+        CooldownTask cooldownTask = new CooldownTask(0.2f);
+        ai.addTask(cooldownTask);
+
+        final boolean[] triggered = {false};
+        entity.getEvents().addListener("cooldownStart", () -> triggered[0] = true);
+
+        cooldownTask.activate();
+        cooldownTask.start();
+        assertTrue(triggered[0], "cooldownStart should have been triggered");
+        assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
+    }
+
+    @Test
+    void cooldown_inactiveStartNoEventTriggered() {
         AITaskComponent ai = entity.getComponent(AITaskComponent.class);
         CooldownTask cooldownTask = new CooldownTask(0.2f);
         ai.addTask(cooldownTask);
@@ -47,32 +62,34 @@ class CooldownTaskTest {
         entity.getEvents().addListener("cooldownStart", () -> triggered[0] = true);
 
         cooldownTask.start();
-        assertTrue(triggered[0], "cooldownStart should have been triggered");
-        assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
+        assertFalse(triggered[0], "cooldownStart should not have been triggered while inactive");
     }
 
     @Test
-    void testTeleportAfterWait() {
+    void cooldown_teleportAfterWait() {
         AITaskComponent ai = entity.getComponent(AITaskComponent.class);
         CooldownTask cooldownTask = new CooldownTask(0.1f);
         ai.addTask(cooldownTask);
 
         entity.setPosition(new Vector2(20f, 20f));
-        cooldownTask.start();
 
-        // Single update uses mocked delta time
-        cooldownTask.update();
+        // Time sequence for update calls (Wait task uses GameTime.getTime)
+        when(gameTime.getTime()).thenReturn(0L, 100L);
+        cooldownTask.activate();
+        cooldownTask.start(); // Start waiting
+        cooldownTask.update(); // Finishes wait, resets position
 
         Vector2 expected = patrolRoute.patrolStart();
         Vector2 actual = entity.getPosition();
 
         assertEquals(expected.x, actual.x, 0.001f);
         assertEquals(expected.y, actual.y, 0.001f);
-        assertEquals(Task.Status.FINISHED, cooldownTask.getStatus());
+        assertEquals(-1, cooldownTask.getPriority(),
+                "Cooldown should deactivate after teleport");
     }
 
     @Test
-    void testCooldownEndEventTriggered() {
+    void cooldown_endEventTriggered() {
         AITaskComponent ai = entity.getComponent(AITaskComponent.class);
         CooldownTask cooldownTask = new CooldownTask(0.1f);
         ai.addTask(cooldownTask);
@@ -80,68 +97,58 @@ class CooldownTaskTest {
         final boolean[] triggered = {false};
         entity.getEvents().addListener("cooldownEnd", () -> triggered[0] = true);
 
+        cooldownTask.activate();
         cooldownTask.start();
-        cooldownTask.update();
+        cooldownTask.stop(); // Cooldown stopped
 
         assertTrue(triggered[0], "cooldownEnd should have been triggered");
-        assertEquals(Task.Status.FINISHED, cooldownTask.getStatus());
+        assertEquals(Task.Status.INACTIVE, cooldownTask.getStatus());
     }
 
     @Test
-    void testIncrementalUpdate() {
+    void cooldown_testIncrementalUpdate() {
         AITaskComponent ai = entity.getComponent(AITaskComponent.class);
         CooldownTask cooldownTask = new CooldownTask(0.3f);
         ai.addTask(cooldownTask);
 
         entity.setPosition(new Vector2(50f, 50f));
+
+        when(gameTime.getTime()).thenReturn(0L, 100L, 200L, 300L);
+        cooldownTask.activate();
         cooldownTask.start();
 
-        // Call update multiple times (each = 0.1f delta)
-        cooldownTask.update(); // +0.1
+        // Call update multiple times
+        cooldownTask.update();
         assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
 
-        cooldownTask.update(); // +0.1 (total 0.2)
+        cooldownTask.update();
         assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
 
-        cooldownTask.update(); // +0.1 (total 0.3 = waitTime)
-        assertEquals(Task.Status.FINISHED, cooldownTask.getStatus());
+        cooldownTask.update(); // Teleport here
 
         assertEquals(patrolRoute.patrolStart(), entity.getPosition());
+        assertEquals(-1, cooldownTask.getPriority(),
+                "Cooldown should deactivate after teleport");
     }
 
     @Test
-    void testPriorityActivation() {
+    void cooldown_priorityReflectsActivation() {
         AITaskComponent ai = entity.getComponent(AITaskComponent.class);
         CooldownTask cd = new CooldownTask(0.1f);
+        ai.addTask(cd);
+
         assertEquals(-1, cd.getPriority());
 
         cd.activate();
-        assertEquals(2, cd.getPriority());
+        assertEquals(5, cd.getPriority());
 
-        ai.addTask(cd);
-
-        cd.start();
-        cd.update();
-
+        cd.deactivate();
         assertEquals(-1, cd.getPriority());
     }
 
-    @Test
-    void stop_resetsTimer() {
-        AITaskComponent ai = entity.getComponent(AITaskComponent.class);
-        CooldownTask cd = new CooldownTask(0.2f);
-        ai.addTask(cd);
-
-        cd.start(); // timer 0
-        cd.update(); // + 0.1
-        cd.stop(); // timer reset
-        cd.start(); // timer 0
-        cd.update(); // + 0.1
-        assertEquals(Task.Status.ACTIVE, cd.getStatus());
-    }
 
     @Test
-    void teleportsToSpawn_whenNoPatrol() {
+    void cooldown_teleportsToSpawn_whenNoPatrol() {
         Vector2 spawn = new Vector2(2, 2);
         Entity e = new Entity()
                 .addComponent(new SpawnPositionComponent(spawn))
@@ -151,6 +158,9 @@ class CooldownTaskTest {
         CooldownTask cd = new CooldownTask(0.1f);
         e.getComponent(AITaskComponent.class).addTask(cd);
         e.setPosition(new Vector2(5, 5));
+
+        when(gameTime.getTime()).thenReturn(0L, 100L);
+        cd.activate();
         cd.start();
         cd.update();
         assertEquals(spawn, e.getPosition());

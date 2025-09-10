@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.SelfDestructComponent;
@@ -57,15 +58,19 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        ChaseTask chaseTask = new ChaseTask(target);
+        CooldownTask cooldownTask = new CooldownTask(5f);
 
-        // SECURITY LIGHT INTEGRATION
-        // When security light detects player, activate chasing
-        securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
+        // FOR LIGHT-GATED ENEMY CHASING
+        securityLight.getEvents().addListener("targetDetected", entity -> {
+            chaseTask.activate();
+            cooldownTask.deactivate();
+        });
+        securityLight.getEvents().addListener("targetLost", entity -> {
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
 
-        // When chase ends, activate cooldown
-        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
         aiComponent
                 .addTask(chaseTask)
                 .addTask(cooldownTask);
@@ -123,7 +128,7 @@ public class EnemyFactory {
 
         BombChaseTask chaseTask = new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f);
         BombDropTask dropTask = new BombDropTask(target, 15, 1.5f, 2f, 3f);
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        CooldownTask cooldownTask = new CooldownTask(3);
 
         // SECURITY LIGHT INTEGRATION
         // When security light detects player, activate the chase task
@@ -195,6 +200,11 @@ public class EnemyFactory {
                         .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
+
+        // No gravity so that drones can fly
+        PhysicsComponent phys = enemy.getComponent(PhysicsComponent.class);
+        Body body = phys.getBody();
+        body.setGravityScale(0f);
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
