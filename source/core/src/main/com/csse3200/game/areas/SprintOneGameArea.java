@@ -107,7 +107,10 @@ public class SprintOneGameArea extends GameArea {
         loadAssets();
 
         spawnTerrain();
-        createMinimap();
+
+        createMinimap(
+            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class)
+        );
         player = spawnPlayer();
         player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
         player.getEvents().addListener("reset", this::reset);
@@ -145,30 +148,9 @@ public class SprintOneGameArea extends GameArea {
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
-    private MinimapDisplay createMinimap() {
-        Texture minimapTexture =
-                ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
-
-        MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-        options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-
-        float tileSize = terrain.getTileSize();
-        Vector2 worldSize =
-                new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
-        ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
-
-        MinimapDisplay minimapDisplay =
-                new MinimapDisplay(150f, options);
-
-        Entity minimapEntity = new Entity();
-        minimapEntity.addComponent(minimapDisplay);
-        spawnEntity(minimapEntity);
-
-        return minimapDisplay;
-    }
     private void spawnTraps() {
         GridPoint2 spawnPos =  new GridPoint2(2,4);
-        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
+        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2f)+2, ((spawnPos.y)/2f)+2);
         Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
