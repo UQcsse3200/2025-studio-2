@@ -5,7 +5,6 @@ import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.physics.components.PhysicsComponent;
 
 /**
  * A cooldown task that activates after a chase has ended.
@@ -66,13 +65,6 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
         }
         waitTask.start();
 
-        // Disable gravity and freeze motion during cooldown
-        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
-        if (physics != null && physics.getBody() != null) {
-            physics.getBody().setGravityScale(0f);
-            physics.getBody().setLinearVelocity(0f, 0f); // stop falling instantly
-        }
-
         // Trigger event so animations/sfx can be implemented
         owner.getEntity().getEvents().trigger("cooldownStart");
     }
@@ -113,7 +105,6 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     public void stop() {
         if (waitTask != null) waitTask.stop();
 
-        restoreGravity();
         super.stop();
         owner.getEntity().getEvents().trigger("cooldownEnd");
     }
@@ -134,13 +125,5 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
 
         // Return current position as a fallback
         return new Vector2(owner.getEntity().getPosition());
-    }
-
-    /** Re-enable gravity on the entity's physics body */
-    private void restoreGravity() {
-        PhysicsComponent physics = owner.getEntity().getComponent(PhysicsComponent.class);
-        if (physics != null && physics.getBody() != null) {
-            physics.getBody().setGravityScale(1f);
-        }
     }
 }

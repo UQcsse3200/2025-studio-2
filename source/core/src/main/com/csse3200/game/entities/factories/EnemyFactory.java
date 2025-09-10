@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
@@ -163,6 +164,11 @@ public class EnemyFactory {
                         .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
+
+        // No gravity so that drones can fly
+        PhysicsComponent phys = enemy.getComponent(PhysicsComponent.class);
+        Body body = phys.getBody();
+        body.setGravityScale(0f);
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
