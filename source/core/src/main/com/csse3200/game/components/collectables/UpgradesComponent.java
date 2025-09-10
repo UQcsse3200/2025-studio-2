@@ -15,7 +15,9 @@ public class UpgradesComponent extends CollectableComponent {
 
         InventoryComponent inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
-            inventory.addItem(upgradeId);
+            if (!inventory.hasItem(upgradeId)) {
+                inventory.addItem(upgradeId);
+            }
             return true;
         }
 
