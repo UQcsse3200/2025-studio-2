@@ -1,5 +1,7 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.obstacles.TrapComponent;
@@ -18,8 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class TrapComponentTest {
     private Entity spikeTrap;
@@ -32,10 +33,14 @@ public class TrapComponentTest {
         // Register PhysicsService to initialise a trap's physics body during tests
         ServiceLocator.registerPhysicsService(new PhysicsService());
 
-        // Mock ResourceService so Texture assets won't throw exceptions
+        // Mock services so assets won't throw exceptions
         ResourceService mockResourceService = mock(ResourceService.class);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
         ServiceLocator.registerResourceService(mockResourceService);
+        Graphics mockGraphics = mock(Graphics.class);
+        when(mockGraphics.getFrameId()).thenReturn(1L);
+        Gdx.graphics = mockGraphics;
+
 
         // Create the trap entity
         spikeTrap = TrapFactory.createSpikes(new Vector2(0, 0), 0f);
@@ -57,13 +62,12 @@ public class TrapComponentTest {
 
     @Test
     void testDamage() {
-        // THIS METHOD CRASHES BECAUSE THERE'S NO INSTANTIATED UI.
-//        int playerInitHealth = player.getComponent(CombatStatsComponent.class).getHealth();
-//        trapComponent.damage(playerCollider);
-//        System.out.println(player.getComponent(CombatStatsComponent.class).getHealth());
-//        System.out.println(playerInitHealth - trapComponent.getBaseAttack());
-//        System.out.println(player.getPosition());
-//        System.out.println(spikeTrap.getPosition());
-//        assert player.getComponent(CombatStatsComponent.class).getHealth() == playerInitHealth - trapComponent.getBaseAttack();
+        int playerInitHealth = player.getComponent(CombatStatsComponent.class).getHealth();
+        trapComponent.damage(playerCollider);
+        System.out.println(player.getComponent(CombatStatsComponent.class).getHealth());
+        System.out.println(playerInitHealth - trapComponent.getBaseAttack());
+        System.out.println(player.getPosition());
+        System.out.println(spikeTrap.getPosition());
+        assert player.getComponent(CombatStatsComponent.class).getHealth() == playerInitHealth - trapComponent.getBaseAttack();
     }
 }
