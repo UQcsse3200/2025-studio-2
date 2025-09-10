@@ -1,5 +1,6 @@
 package com.csse3200.game.areas;
 
+
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,7 @@ import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.WallComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -200,8 +202,7 @@ public class ForestGameArea extends GameArea {
 
     door = spawnDoor();
     spawnPressurePlates();
-
-
+    spawnWalls();
     spawnLights(); // uncomment to spawn in lights
     // spawnKey();
     spawnTraps();
@@ -383,17 +384,8 @@ public class ForestGameArea extends GameArea {
   private void spawnWalls() {
         float ts = terrain.getTileSize();
 
-        // Tall wall on the left
-        GridPoint2 wall1Pos = new GridPoint2(4, 5);
-        Entity wall1 = WallFactory.createWall(
-                0f, 0f,
-                1f * ts, 5f * ts,
-                "images/walls.png"
-        );
-        spawnEntityAt(wall1, wall1Pos, false, false);
-
         // Shorter wall in the middle
-        GridPoint2 wall2Pos = new GridPoint2(8, 6);
+        GridPoint2 wall2Pos = new GridPoint2(10, 11);
         Entity wall2 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 3f * ts,
@@ -402,7 +394,7 @@ public class ForestGameArea extends GameArea {
         spawnEntityAt(wall2, wall2Pos, false, false);
 
         // Another tall wall further right
-        GridPoint2 wall3Pos = new GridPoint2(25, 5);
+        GridPoint2 wall3Pos = new GridPoint2(22, 13);
         Entity wall3 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 6f * ts,
