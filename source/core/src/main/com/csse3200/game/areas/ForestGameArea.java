@@ -200,7 +200,8 @@ public class ForestGameArea extends GameArea {
     //spawnDoor();
 
     spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    spawnPatrollingDrone();// Play with patrolling/chasing drones
+    spawnSelfDestructionDrone(); //Play with SelfDestructionDrone
     //spawnBomberDrone();       // Play with bomber drones
   }
 
@@ -305,6 +306,15 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
   }
 
+  private void spawnSelfDestructionDrone(){
+      GridPoint2 spawnTile = new GridPoint2(7,11);
+      Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+      Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(player,spawnWorldPos,securityLight);
+
+      spawnEntityAt(SelfDestructDrone, spawnTile, false, false);
+
+  }
 
   private void spawnBomberDrone() {
     GridPoint2 spawnTile = new GridPoint2(2, 11);
