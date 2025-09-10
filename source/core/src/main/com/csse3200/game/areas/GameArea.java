@@ -10,6 +10,7 @@ import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.events.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,17 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
+
+  private final EventHandler events = new EventHandler();
+
+  public EventHandler getEvents() {
+    return events;
+  }
+
+  public void trigger(String eventName, String keyId, Entity player) {
+    events.trigger(eventName, keyId, player);
+  }
+
   protected Entity player;
 
   // Components we want to keep in between levels, new list for every GameArea
@@ -75,10 +87,7 @@ public abstract class GameArea implements Disposable {
     areaEntities.clear();
   }
 
-  // Returns the Player
-  public Entity getPlayer() {
-    return player;
-  }
+
 
   /**
    * Spawn entity at its current position
@@ -112,5 +121,9 @@ public abstract class GameArea implements Disposable {
 
     entity.setPosition(worldPos);
     spawnEntity(entity);
+  }
+
+  public Entity getPlayer() {
+    return player;
   }
 }

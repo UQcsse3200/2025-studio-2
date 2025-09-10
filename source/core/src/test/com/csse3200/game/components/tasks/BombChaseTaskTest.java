@@ -31,8 +31,7 @@ public class BombChaseTaskTest {
         ServiceLocator.registerTimeSource(gameTime);
         ServiceLocator.registerPhysicsService(new PhysicsService());
     }
-
-    /**
+/*
     @Test
     void shouldMoveTowardsTarget() {
         Entity target = new Entity();
@@ -53,7 +52,7 @@ public class BombChaseTaskTest {
 
         Entity entity = makePhysicsEntity().addComponent(ai);
         entity.create();
-        entity.setPosition(0f, 0f);
+        entity.setPosition(1f, 0f);
 
         float initialDistance = entity.getPosition()
                 .dst(target.getPosition().cpy().add(0f, hoverHeight));
@@ -68,8 +67,8 @@ public class BombChaseTaskTest {
                 .dst(target.getPosition().cpy().add(0f, hoverHeight));
 
         assertTrue(newDistance < initialDistance, "Entity should move closer to target");
-    }*/
-
+    }
+*/
     @Test
     void onlyChaseOnConditions() {
         Entity target = new Entity();
