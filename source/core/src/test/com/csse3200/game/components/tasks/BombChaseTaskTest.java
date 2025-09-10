@@ -14,48 +14,47 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(GameExtension.class)
 public class BombChaseTaskTest {
+
     @BeforeEach
     void beforeEach() {
         RenderService renderService = new RenderService();
         renderService.setDebug(mock(DebugRenderer.class));
         ServiceLocator.registerRenderService(renderService);
+
         GameTime gameTime = mock(GameTime.class);
         when(gameTime.getDeltaTime()).thenReturn(20f / 1000);
         ServiceLocator.registerTimeSource(gameTime);
+
         ServiceLocator.registerPhysicsService(new PhysicsService());
     }
 
     @Test
-    void shouldMoveTowardsTarget() {
+    void shouldMoveTowardsTargetWhenActivated() {
         Entity target = new Entity();
         target.setPosition(2f, 2f);
-
-        // Hover 3 unit above the target
         float hoverHeight = 3f;
 
-        AITaskComponent ai = new AITaskComponent().addTask(new BombChaseTask(
-                target,
-                10,
-                5f,
-                10f,
-                hoverHeight,
-                1f,
-                2f
-        ));
+        BombChaseTask task = new BombChaseTask(
+                target, 10, 5f, 10f, hoverHeight, 1f, 2f
+        );
 
-        Entity entity = makePhysicsEntity().addComponent(ai);
+        Entity entity = makePhysicsEntity();
+        entity.addComponent(new AITaskComponent().addTask(task));
         entity.create();
         entity.setPosition(0f, 0f);
 
-        float initialDistance = entity.getPosition()
-                .dst(target.getPosition().cpy().add(0f, hoverHeight));
+        // Activate chase via light trigger
+        task.create(() -> entity);
+        task.activate();
+        task.start();
+
+        float initialDistance = entity.getPosition().dst(target.getPosition().cpy().add(0f, hoverHeight));
 
         for (int i = 0; i < 3; i++) {
             entity.earlyUpdate();
@@ -63,51 +62,71 @@ public class BombChaseTaskTest {
             ServiceLocator.getPhysicsService().getPhysics().update();
         }
 
-        float newDistance = entity.getPosition()
-                .dst(target.getPosition().cpy().add(0f, hoverHeight));
-
-        assertTrue(newDistance < initialDistance, "Entity should move closer to target");
+        float newDistance = entity.getPosition().dst(target.getPosition().cpy().add(0f, hoverHeight));
+        assertTrue(newDistance < initialDistance, "Entity should move closer to target after activation");
     }
 
     @Test
-    void onlyChaseOnConditions() {
+    void shouldNotChaseBeforeActivation() {
         Entity target = new Entity();
-        target.setPosition(0f, 6f);
+        target.setPosition(0f, 4f);
+
         Entity entity = makePhysicsEntity();
         entity.create();
         entity.setPosition(0f, 0f);
 
         BombChaseTask task = new BombChaseTask(
-                target,
-                /*priority*/ 10,
-                /*viewDistance*/ 5f,
-                /*maxChaseDistance*/ 10f,
-                /*hoverHeight*/ 2f,
-                /*dropRange*/ 1f,
-                /*minHeight*/ 3f
+                target, 10, 5f, 10f, 2f, 1f, 3f
         );
         task.create(() -> entity);
 
-        // Not currently active, target is too far, negative priority
-        assertTrue(task.getPriority() < 0);
+        // Not activated, priority must be negative
+        assertTrue(task.getPriority() < 0, "Task should not chase before activation");
+    }
 
-        // Inside view distance, positive priority
-        target.setPosition(0f, 4f);
-        assertEquals(10, task.getPriority());
+    @Test
+    void shouldStopChasingAfterExceedingMaxDistance() {
+        Entity target = new Entity();
+        target.setPosition(0f, 0f);
 
-        // Active within chase distance, stays active
-        target.setPosition(0f, 8f);
+        Entity entity = makePhysicsEntity();
+        entity.create();
+        entity.setPosition(0f, 0f);
+
+        BombChaseTask task = new BombChaseTask(
+                target, 10, 5f, 5f, 2f, 1f, 3f
+        );
+        task.create(() -> entity);
+        task.activate();
         task.start();
-        assertEquals(10, task.getPriority());
 
-        // Active and beyond max chase distance, stops chasing
-        target.setPosition(0f, 12f);
-        assertTrue(task.getPriority() < 0);
+        // Move target within view distance, chase is active
+        target.setPosition(0f, 3f);
+        assertEquals(10, task.getPriority(), "Task should chase within view distance");
 
-        // Drop zone condition: drone high enough above target and horizontally aligned
-        entity.setPosition(0f, 10f);
+        // Move target beyond max chase distance
+        target.setPosition(0f, 10f);
+        assertTrue(task.getPriority() < 0, "Task should stop chasing beyond max chase distance");
+    }
+
+    @Test
+    void shouldStopChasingInDropZone() {
+        Entity target = new Entity();
         target.setPosition(0f, 6f);
-        assertTrue(task.getPriority() < 0);
+
+        Entity entity = makePhysicsEntity();
+        entity.create();
+        entity.setPosition(0f, 10f); // Drone above target
+
+        BombChaseTask task = new BombChaseTask(
+                target, 10, 5f, 10f, 2f, 1.5f, 3f
+        );
+        task.create(() -> entity);
+        task.activate();
+        task.start();
+
+        // Horizontally aligned and above target: drop zone triggers
+        assertTrue(task.getPriority() < 0, "Task should stop chasing when target in bomb drop zone");
     }
 
     private Entity makePhysicsEntity() {

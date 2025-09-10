@@ -20,6 +20,10 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
     private final DebugRenderer debugRenderer;
     private final RaycastHit hit = new RaycastHit();
     private MovementTask movementTask;
+    private boolean active = false;
+    private boolean triggerMaxChase = false; // whether we start enforcing maxChaseDistance
+    private final float triggerDistance = 4f; // distance at which maxChaseDistance starts counting
+
 
     /**
      * @param target The entity to chase.
@@ -35,6 +39,21 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         physics = ServiceLocator.getPhysicsService().getPhysics();
         debugRenderer = ServiceLocator.getRenderService().getDebug();
     }
+    public void activate() {
+        active = true;
+        triggerMaxChase = false; // reset so first chase ignores distance
+        if (status != Status.ACTIVE) {
+            status = Status.INACTIVE;
+        }
+
+
+    }
+
+    public void deactivate() {
+
+        active = false;
+        owner.getEntity().getEvents().trigger("chaseEnd");
+    }
 
     @Override
     public void start() {
@@ -42,6 +61,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         movementTask = new MovementTask(target.getPosition());
         movementTask.create(owner);
         movementTask.start();
+
 
         this.owner.getEntity().getEvents().trigger("chaseStart");
     }
@@ -53,6 +73,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         if (movementTask.getStatus() != Status.ACTIVE) {
             movementTask.start();
         }
+
     }
 
     @Override
@@ -66,39 +87,43 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         if (status == Status.ACTIVE) {
             return getActivePriority();
         }
-
         return getInactivePriority();
     }
 
 
-    //updated this function to stop chasing once the player is in threshold
+    // Calculates the current distance between the drone and its target
     private float getDistanceToTarget() {
-        Vector2 target_position=target.getPosition();
-        Vector2 curr_position=owner.getEntity().getPosition();
-        float distance= target_position.dst(curr_position);
-        float threshold=0.5f;
-        if(distance < threshold){
-            return 0f;
-        }
-        return distance;
-
+        return target.getPosition().dst(owner.getEntity().getPosition());
     }
 
-    private int getActivePriority() {
-        float dst = getDistanceToTarget();
-        if (dst > maxChaseDistance || !isTargetVisible()) {
-            owner.getEntity().getEvents().trigger("chaseEnd");
-            return -1; // Too far, stop chasing
-        }
-        return priority;
-    }
-
+    // In getInactivePriority, only return priority if active
     private int getInactivePriority() {
-        float dst = getDistanceToTarget();
-        if (dst < viewDistance && isTargetVisible()) {
+        if (active) {
+            // Activated by security light, start chasing
             return priority;
         }
-        return -1;
+        return -1; // Not active, don't chase
+    }
+
+    // In getActivePriority, also check active
+    private int getActivePriority() {
+        if (!active) return -1;
+
+        float dst = getDistanceToTarget();
+
+        // Check if we are close enough to start enforcing maxChaseDistance
+        if (!triggerMaxChase && dst <= triggerDistance) {
+            triggerMaxChase = true;
+        }
+
+        // Only stop chasing if we are enforcing maxChaseDistance
+        if (triggerMaxChase && dst > maxChaseDistance) {
+            deactivate();
+            return -1;
+        }
+
+        // Otherwise keep chasing
+        return priority;
     }
 
     private boolean isTargetVisible() {

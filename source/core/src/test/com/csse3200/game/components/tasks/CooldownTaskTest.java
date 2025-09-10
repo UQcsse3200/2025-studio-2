@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.ai.tasks.Task;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
+import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.entities.Entity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -107,4 +108,53 @@ class CooldownTaskTest {
 
         assertEquals(patrolRoute.patrolStart(), entity.getPosition());
     }
+
+    @Test
+    void testPriorityActivation() {
+        AITaskComponent ai = entity.getComponent(AITaskComponent.class);
+        CooldownTask cd = new CooldownTask(0.1f);
+        assertEquals(-1, cd.getPriority());
+
+        cd.activate();
+        assertEquals(2, cd.getPriority());
+
+        ai.addTask(cd);
+
+        cd.start();
+        cd.update();
+
+        assertEquals(-1, cd.getPriority());
+    }
+
+    @Test
+    void stop_resetsTimer() {
+        AITaskComponent ai = entity.getComponent(AITaskComponent.class);
+        CooldownTask cd = new CooldownTask(0.2f);
+        ai.addTask(cd);
+
+        cd.start(); // timer 0
+        cd.update(); // + 0.1
+        cd.stop(); // timer reset
+        cd.start(); // timer 0
+        cd.update(); // + 0.1
+        assertEquals(Task.Status.ACTIVE, cd.getStatus());
+    }
+
+    @Test
+    void teleportsToSpawn_whenNoPatrol() {
+        Vector2 spawn = new Vector2(2, 2);
+        Entity e = new Entity()
+                .addComponent(new SpawnPositionComponent(spawn))
+                .addComponent(new AITaskComponent());
+        e.create();
+
+        CooldownTask cd = new CooldownTask(0.1f);
+        e.getComponent(AITaskComponent.class).addTask(cd);
+        e.setPosition(new Vector2(5, 5));
+        cd.start();
+        cd.update();
+        assertEquals(spawn, e.getPosition());
+    }
+
+
 }
