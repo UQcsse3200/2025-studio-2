@@ -32,7 +32,7 @@ public abstract class CollectableComponent extends Component {
      */
     private void onCollisionStart(Entity player) {
         HitboxComponent cc = player.getComponent(HitboxComponent.class);
-        if ((cc == null || cc.getLayer() != PhysicsLayer.PLAYER) || collected) return;
+        if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER) || collected) return;
 
         collected = onCollect(player);
         if (collected) {

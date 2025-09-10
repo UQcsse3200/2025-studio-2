@@ -3,6 +3,8 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.ContactListener;
@@ -11,7 +13,9 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -24,6 +28,7 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.utils.math.RandomUtils;
@@ -45,92 +50,50 @@ public class ForestGameArea extends GameArea {
   private static final float WALL_WIDTH = 0.1f;
   private static boolean keySpawned;
   private static final String[] forestTextures = {
-    "images/box_boy_leaf.png",
-    "images/box_white.png",
-    "images/box_blue.png",
-    "images/tree.png",
-    "images/ghost_king.png",
-    "images/ghost_1.png",
-    "images/grass_1.png",
-    "images/grass_2.png",
-    "images/grass_3.png",
-    "images/key.png",
-    "images/door_open.png",
-    "images/door_closed.png",
-    "images/key.png",
-    "images/hex_grass_1.png",
-    "images/hex_grass_2.png",
-    "images/hex_grass_3.png",
-    "images/iso_grass_1.png",
-    "images/iso_grass_2.png",
-    "images/iso_grass_3.png",
-    "images/drone.png",
-    "images/bomb.png",
-    "images/platform.png",
-    "images/gate.png",
-    "images/button.png",
-    "images/button_pushed.png",
-    "images/blue_button.png",
-    "images/blue_button_pushed.png",
-    "images/red_button.png",
-    "images/red_button_pushed.png",
-    "images/box_blue.png",
-    "images/box_orange.png",
-    "images/box_red.png",
-    "images/box_white.png",
-    "images/spikes_sprite.png",
-    "images/blue_button.png",
-    "images/blue_button_pushed.png",
-    "images/red_button.png",
-    "images/red_button_pushed.png",
-    "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png",
-    "images/door_open.png",
-    "images/door_closed.png",
-    "images/box_boy_leaf.png",
-    "images/tree.png",
-    "images/ghost_king.png",
-    "images/ghost_1.png",
-    "images/grass_1.png",
-    "images/grass_2.png",
-    "images/grass_3.png",
-    "images/key.png",
-    "images/hex_grass_1.png",
-    "images/hex_grass_2.png",
-    "images/hex_grass_3.png",
-    "images/iso_grass_1.png",
-    "images/iso_grass_2.png",
-    "images/iso_grass_3.png",
-    "images/drone.png",
-    "images/bomb.png",
-    "images/platform.png",
-    "images/gate.png",
-    "images/button.png",
-    "images/button_pushed.png",
-    "images/blue_button.png",
-    "images/blue_button_pushed.png",
-    "images/red_button.png",
-    "images/red_button_pushed.png",
-    "images/box_blue.png",
-    "images/box_orange.png",
-    "images/box_red.png",
-    "images/box_white.png",
-    "images/spikes_sprite.png",
-    "images/blue_button.png",
-    "images/blue_button_pushed.png",
-    "images/red_button.png",
-    "images/red_button_pushed.png",
-    "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png",
-    "images/door_open.png",
-    "images/door_closed.png",
-    "images/pressure_plate_unpressed.png",
-    "images/pressure_plate_pressed.png",
-    "images/dash_powerup.png",
-    "images/glide_powerup.png"
+          "images/box_boy_leaf.png",
+          "images/tree.png",
+          "images/ghost_king.png",
+          "images/ghost_1.png",
+          "images/grass_1.png",
+          "images/grass_2.png",
+          "images/grass_3.png",
+          "images/key.png",
+          "images/hex_grass_1.png",
+          "images/hex_grass_2.png",
+          "images/hex_grass_3.png",
+          "images/iso_grass_1.png",
+          "images/iso_grass_2.png",
+          "images/iso_grass_3.png",
+          "images/drone.png",
+          "images/bomb.png",
+          "images/platform.png",
+          "images/gate.png",
+          "images/button.png",
+          "images/button_pushed.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/box_blue.png",
+          "images/box_orange.png",
+          "images/box_red.png",
+          "images/box_white.png",
+          "images/spikes_sprite.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/minimap_forest_area.png",
+          "images/minimap_player_marker.png",
+          "images/door_open.png",
+          "images/door_closed.png",
+          "images/pressure_plate_unpressed.png",
+          "images/pressure_plate_pressed.png",
+          "images/dash_powerup.png",
+          "images/glide_powerup.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -205,9 +168,6 @@ public class ForestGameArea extends GameArea {
 
     spawnPlatform(); //Testing platform
     spawnElevatorPlatform();
-    spawnDoor();
-    spawnBoxes();  // uncomment this method when you want to play with boxes
-    spawnButtons(); //uncomment this method to see and interact with buttons
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
@@ -443,7 +403,7 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(elevator, new GridPoint2(10, 8), false, false);
 
       // Button to trigger it
-      Entity button = ButtonFactory.createButton(false, "platform");
+      Entity button = ButtonFactory.createButton(false, "platform", "left");
       spawnEntityAt(button, new GridPoint2(10, 7), true, true);
 
       // Link button to platform
@@ -459,16 +419,19 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnButtons() {
-    Entity button = ButtonFactory.createButton(false, "platform");
+    Entity button = ButtonFactory.createButton(false, "platform", "left");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-    spawnEntityAt(button, new GridPoint2(25,15), true,  true);
+    spawnEntityAt(button, new GridPoint2(26,4), true,  true);
 
-    Entity button2 = ButtonFactory.createButton(false, "door");
+    Entity button2 = ButtonFactory.createButton(false, "door", "right");
     button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-    spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
+    spawnEntityAt(button2, new GridPoint2(20,5), true,  true);
 
-    Entity button3 = ButtonFactory.createButton(false, "nothing");
-    spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+    Entity button3 = ButtonFactory.createButton(false, "nothing", "up");
+    spawnEntityAt(button3, new GridPoint2(15,12), true,  true);
+
+    Entity button4 = ButtonFactory.createButton(false, "nothing", "down");
+    spawnEntityAt(button4, new GridPoint2(15,7), true,  true);
 
     //listener to spawn key when door button pushed
     button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -539,16 +502,9 @@ public class ForestGameArea extends GameArea {
 
   private void spawnLights() {
     // see the LightFactory class for more details on spawning these
-    Entity securityLight = LightFactory.createSecurityLight(
-            player,
-            PhysicsLayer.OBSTACLE,
-            128,
-            Color.GREEN,
-            10f,
-            0f,
-            35f
-    );
-    spawnEntityAt(securityLight, new GridPoint2(0, 15), true, true);
+    Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, 20f, "1");
+
+    spawnEntityAt(securityLight, new GridPoint2(12, 16), true, true);
   }
 
   private void playMusic() {
