@@ -26,6 +26,7 @@ public class BoxFactory {
     /**
      * Private constructor to prevent instantiation of non-static box instances and remove gradle
      * warnings about missing constructor in this class.
+     * @throws UnsupportedOperationException
      */
     private BoxFactory() {
         throw new UnsupportedOperationException("Cannot instantiate BoxFactory");
