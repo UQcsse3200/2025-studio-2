@@ -70,6 +70,7 @@ public class PlayerFactory {
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
+                    .addComponent(new ColliderComponent()) // temporary fix
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
@@ -106,7 +107,7 @@ public class PlayerFactory {
 
 
 
-    //PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);

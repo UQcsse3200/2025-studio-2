@@ -122,8 +122,8 @@ public class PlayerActions extends Component {
       entity.requestReset();
     }
 
-    Gdx.app.log("Inventory", Integer.toString(
-            entity.getComponent(InventoryComponent.class).getTotalItemCount()));
+//    Gdx.app.log("Inventory", Integer.toString(
+//            entity.getComponent(InventoryComponent.class).getTotalItemCount()));
   }
 
   private void updateSpeed() {
@@ -152,7 +152,7 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
+//    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();

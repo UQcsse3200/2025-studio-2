@@ -150,6 +150,7 @@ public class CaveGameArea extends GameArea {
 
     // Get walk direction
     Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+//    System.out.println("Old direction: " + walkDirection);
     // player must be spawned before enemies as they require a player to target
     player = spawnPlayer(getComponents());
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
