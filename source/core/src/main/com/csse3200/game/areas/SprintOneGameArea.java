@@ -127,9 +127,9 @@ public class SprintOneGameArea extends GameArea {
         spawnLights();
         spawnButtons();
         spawnTraps();
-        spawnDrone();
+        //spawnDrone();
         spawnPatrollingDrone();
-        //spawnBomberDrone();
+        //spawnBomberDrone(); //WIP
         spawnDoor();
         displayUI();
 
@@ -204,6 +204,9 @@ public class SprintOneGameArea extends GameArea {
         // see the LightFactory class for more details on spawning these
         Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
         spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
+
+        Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "2");
+        spawnEntityAt(securityLight2, new GridPoint2(5, 26), true, true);
     }
     private void spawnTerrain() {
         // Background terrain
@@ -264,9 +267,9 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(movingPlatform, movingPos, false, false);
 
         // Platform for patrolling drone
-        GridPoint2 longPlatPos = new GridPoint2(3, 22);
+        GridPoint2 longPlatPos = new GridPoint2(0, 22);
         Entity longPlatform = PlatformFactory.createStaticPlatform();
-        longPlatform.setScale(5, 0.25f);
+        longPlatform.setScale(6.5f, 0.25f);
         spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
@@ -315,20 +318,30 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(3, 22);
-
+        GridPoint2 spawnTile = new GridPoint2(3, 10);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(7, 22)),
-                terrain.tileToWorldPosition(new GridPoint2(11, 22))
+                terrain.tileToWorldPosition(new GridPoint2(11, 10)),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13)),
+                terrain.tileToWorldPosition(new GridPoint2(3, 13)),
+                terrain.tileToWorldPosition(spawnTile)
         };
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
                         .addComponent(new ActivationComponent("1")); // Link enemy to security camera
         spawnEntityAt(patrolDrone, spawnTile, true, true);
+
+        GridPoint2 spawnTile2 = new GridPoint2(1, 22);
+        Vector2[] patrolRoute2 = {
+                terrain.tileToWorldPosition(spawnTile2),
+                terrain.tileToWorldPosition(new GridPoint2(7, 22))
+        };
+        Entity patrolDrone2 = EnemyFactory.createPatrollingDrone(player, patrolRoute2)
+                        .addComponent(new ActivationComponent("2"));
+        spawnEntityAt(patrolDrone2, spawnTile2, true, true);
     }
 
     private void spawnBomberDrone() {
-        GridPoint2 spawnTile = new GridPoint2(3, 15);
+        GridPoint2 spawnTile = new GridPoint2(3, 13);
         Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
         Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos)
