@@ -100,6 +100,25 @@ public class CutsceneReaderComponent extends Component {
     }
 
     /**
+     * Method that returns a string array containing all background asset paths read.
+     * @return A string array containing all background assets.
+     */
+    public String[] getBackgrounds() {
+        // Temp list for storing non-null backgrounds in each text box
+        List<String> backgrounds = new ArrayList<>();
+
+        // Get non-null backgrounds in each text box
+        for (TextBox textBox : textBoxes) {
+            if (textBox.background != null) {
+                backgrounds.add(textBox.background);
+            }
+        }
+
+        // Return temp list as an array
+        return backgrounds.toArray(new String[0]);
+    }
+
+    /**
      * Record object that represents information about a text box.
      *
      * @param text       The text to be drawn inside the text box.
