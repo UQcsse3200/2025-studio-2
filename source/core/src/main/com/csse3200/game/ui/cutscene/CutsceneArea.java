@@ -1,11 +1,10 @@
-package com.csse3200.game.areas;
+package com.csse3200.game.ui.cutscene;
 
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.ui.cutscene.CutsceneDisplay;
-import com.csse3200.game.ui.cutscene.CutsceneReaderComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
