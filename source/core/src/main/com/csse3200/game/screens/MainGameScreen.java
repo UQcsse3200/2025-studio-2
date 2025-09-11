@@ -11,6 +11,7 @@ import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
@@ -95,7 +96,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    gameArea = new CaveGameArea(terrainFactory);
+    gameArea = new ForestGameArea(terrainFactory);
     gameArea.create();
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
@@ -136,6 +137,7 @@ public class MainGameScreen extends ScreenAdapter {
           finalNewArea.getEvents().addListener(
                   "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
           );
+          System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           finalNewArea.createWithPlayer(player);
           oldArea.dispose();
           oldArea = null;

@@ -119,71 +119,12 @@ public class CaveGameArea extends GameArea {
     this.terrainFactory = terrainFactory;
   }
 
-  /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
-  @Override
-  public void create() {
-    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ObjectContactListener());
-    loadAssets();
-
-    loadPrerequisites();
-
-    player = spawnPlayer();
-    saveComponents(player.getComponent(CombatStatsComponent.class),
-            player.getComponent(InventoryComponent.class));
-
-    loadEntities();
-  }
-
-  /**
-   * Create the game area using components from a different player entity.
-   */
-  public void createWithPlayer(Entity oldPlayer) {
-    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ObjectContactListener());
-    loadAssets();
-
-    loadPrerequisites();
-
-    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
-            oldPlayer.getComponent(InventoryComponent.class));
-
-    // Get walk direction
-    Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-//    System.out.println("Old direction: " + walkDirection);
-    // player must be spawned before enemies as they require a player to target
-    player = spawnPlayer(getComponents());
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-
-    loadEntities();
-  }
-
-  protected void reset() {
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-    System.out.println(walkDirection);
-
-    // Delete all entities within the room
-    super.dispose();
-
-    loadAssets();
-
-    loadPrerequisites();
-
-    player = spawnPlayer(getComponents());
-
-    // transfer all of the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-
-    loadEntities();
-  }
-
   /**
    * Load terrain, UI, music. Must be done before spawning entities.
    * Assets are loaded separately.
    * Entities spawned separately.
    */
-  private void loadPrerequisites() {
+  protected void loadPrerequisites() {
     displayUI();
 
     spawnTerrain();
@@ -197,7 +138,7 @@ public class CaveGameArea extends GameArea {
    * Load entities. Terrain must be loaded beforehand.
    * Player must be spawned beforehand if spawning enemies.
    */
-  private void loadEntities() {
+  protected void loadEntities() {
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
@@ -277,14 +218,14 @@ public class CaveGameArea extends GameArea {
     }
   }
 
-  private Entity spawnPlayer() {
+  protected Entity spawnPlayer() {
     Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
-  private Entity spawnPlayer(List<Component> componentList) {
+  protected Entity spawnPlayer(List<Component> componentList) {
     Entity newPlayer = PlayerFactory.createPlayer(componentList);
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     newPlayer.getEvents().addListener("reset", this::reset);
@@ -365,7 +306,7 @@ public class CaveGameArea extends GameArea {
     music.play();
   }
 
-  private void loadAssets() {
+  protected void loadAssets() {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(caveTextures);

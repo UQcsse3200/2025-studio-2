@@ -122,79 +122,12 @@ public class ForestGameArea extends GameArea {
     this.terrainFactory = terrainFactory;
   }
 
-  /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
-  @Override
-  public void create() {
-    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ObjectContactListener());
-    loadAssets();
-
-    // Terrain must be loaded first in order to spawn entities
-    loadPrerequisites();
-
-    // player must be spawned before enemies as they require a player to target
-    player = spawnPlayer();
-    // Save this new player's components
-    saveComponents(player.getComponent(CombatStatsComponent.class),
-            player.getComponent(InventoryComponent.class));
-
-    // load remaining entities
-    loadEntities();
-  }
-
-  /**
-   * Create the game area using components from a different player entity.
-   */
-  public void createWithPlayer(Entity oldPlayer) {
-    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ObjectContactListener());
-    loadAssets();
-
-    // Terrain must be loaded first in order to spawn entities
-    loadPrerequisites();
-
-    // Save the old player's combat stats and inventory
-    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
-            oldPlayer.getComponent(InventoryComponent.class));
-
-    // Get walk direction
-    Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-//    System.out.println("Old direction: " + walkDirection);
-    // player must be spawned before enemies as they require a player to target
-    player = spawnPlayer(getComponents());
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-
-    // load remaining entities
-    loadEntities();
-  }
-
-  protected void reset() {
-
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
-    // Delete all entities within the room
-    // Note: Using super's dispose() instead of local as super does not unload assets.
-    super.dispose();
-
-    loadPrerequisites();
-
-    // Components such as health, upgrades and items we want to revert to how they were at
-    // the start of the level. Copies are used in order to not break the original components.
-    player = spawnPlayer(getComponents());
-
-    // transfer all of the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-
-    loadEntities();
-  }
-
   /**
    * Load terrain, UI, music. Must be done before spawning entities.
    * Assets are loaded separately.
    * Entities spawned separately.
    */
-  private void loadPrerequisites() {
+  protected void loadPrerequisites() {
     displayUI();
     spawnTerrain();
     // spawnTrees();
@@ -206,7 +139,7 @@ public class ForestGameArea extends GameArea {
    * Load entities. Terrain must be loaded beforehand.
    * Player must be spawned beforehand if spawning enemies.
    */
-  private void loadEntities() {
+  protected void loadEntities() {
     //spawnDrone();             // Play with idle/chasing drones (unless chasing)
     //spawnPatrollingDrone();   // Play with patrolling/chasing drones
     //spawnBomberDrone();       // Play with bomber drones
@@ -306,14 +239,14 @@ public class ForestGameArea extends GameArea {
     }
   }
 
-  private Entity spawnPlayer() {
+  protected Entity spawnPlayer() {
     Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
-  private Entity spawnPlayer(List<Component> componentList) {
+  protected Entity spawnPlayer(List<Component> componentList) {
     Entity newPlayer = PlayerFactory.createPlayer(componentList);
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
     newPlayer.getEvents().addListener("reset", this::reset);
@@ -573,7 +506,7 @@ public class ForestGameArea extends GameArea {
     music.play();
   }
 
-  private void loadAssets() {
+  protected void loadAssets() {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(forestTextures);
