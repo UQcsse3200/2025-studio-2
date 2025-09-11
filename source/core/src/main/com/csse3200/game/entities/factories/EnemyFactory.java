@@ -158,6 +158,7 @@ public class EnemyFactory {
         AnimationRenderComponent animator=
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
+
         animator.addAnimation("angry_float",0.1f,Animation.PlayMode.LOOP);
         animator.addAnimation("float",0.1f,Animation.PlayMode.LOOP);
 
@@ -170,7 +171,7 @@ public class EnemyFactory {
                 .addComponent(new SelfDestructComponent(target));
 
         AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask= new ChaseTask(target,10,3f,4f);
+        ChaseTask chaseTask= new ChaseTask(target);
 
         securityLight.getEvents().addListener("targetDetected", entity->chaseTask.activate());
 

@@ -226,11 +226,11 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
-            ServiceLocator.getEntityService().register(bomberDrone);
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        ServiceLocator.getEntityService().register(bomberDrone);
 
-            assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
-                    "Drone should have AnimationController");
+        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                "Drone should have AnimationController");
     }
 
     @Test
@@ -280,7 +280,6 @@ public class EnemyFactoryTest {
         assertNotSame(ai_a, ai_b,
                 "Drones should have distinct AITaskComponents");
     }
-
 
     // Tests to verify correct AI task flow
     @Test
