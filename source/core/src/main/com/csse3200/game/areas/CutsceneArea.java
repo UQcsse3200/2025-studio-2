@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.cutscene.CutsceneReaderComponent;
@@ -40,6 +41,9 @@ public class CutsceneArea extends GameArea {
 
         // Load background assets from script
         loadAssets();
+
+        // Create dummy player
+        player = PlayerFactory.createPlayer();
     }
 
     private void spawnCutsceneEntity() {
@@ -60,6 +64,9 @@ public class CutsceneArea extends GameArea {
         // Get reader component, and send background asset paths to resource service
         CutsceneReaderComponent reader = cutscene.getComponent(CutsceneReaderComponent.class);
         resourceService.loadTextures(reader.getBackgrounds());
+
+        // Need to load some dummy assets to prevent crashing
+        resourceService.loadTextures(new String[] {"images/box_boy_leaf.png", "images/minimap_player_marker.png"});
 
         // Show loading progress in logs
         while (!resourceService.loadForMillis(10)) {
@@ -88,5 +95,8 @@ public class CutsceneArea extends GameArea {
     public void dispose() {
         super.dispose();
         unloadAssets();
+
+        // Remove dummy player
+        player.dispose();
     }
 }
