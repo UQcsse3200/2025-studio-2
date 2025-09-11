@@ -101,6 +101,7 @@ public class CutsceneReaderComponent extends Component {
 
     /**
      * Method that returns a string array containing all background asset paths read.
+     *
      * @return A string array containing all background assets.
      */
     public String[] getBackgrounds() {
