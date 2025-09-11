@@ -1,0 +1,45 @@
+security-camera.png
+size:128,256
+repeat:none
+default
+    bounds:36,36,32,32
+left-right
+    bounds:2,2,32,32
+left-right
+    bounds:36,2,32,32
+left-right
+    bounds:70,2,32,32
+left-right
+    bounds:2,36,32,32
+left-right
+    bounds:36,36,32,32
+left-right
+    bounds:70,36,32,32
+left-right
+    bounds:2,70,32,32
+left-right
+    bounds:36,70,32,32
+left-right
+    bounds:70,70,32,32
+left-right
+    bounds:2,104,32,32
+right-left
+    bounds:2,104,32,32
+right-left
+    bounds:70,70,32,32
+right-left
+    bounds:36,70,32,32
+right-left
+    bounds:2,70,32,32
+right-left
+    bounds:70,36,32,32
+right-left
+    bounds:36,36,32,32
+right-left
+    bounds:2,36,32,32
+right-left
+    bounds:70,2,32,32
+right-left
+    bounds:36,2,32,32
+right-left
+    bounds:2,2,32,32

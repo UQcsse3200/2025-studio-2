@@ -38,6 +38,45 @@ public class RenderService implements Disposable {
   }
 
   /**
+   * Trigger rendering on the given batch within the given layer range.
+   * This should be called only from the main renderer.
+   * <p>
+   * This method will only render layers within the possible range of the IntMap,
+   * as such {@code Integer.MIN_VALUE} and {@code Integer.MAX_VALUE} can be used as bounds.
+   *
+   * @param batch batch to render to
+   * @param minLayer render layer lower bound
+   * @param maxLayer render layer upper bound
+   */
+  public void renderLayerRange(SpriteBatch batch, int minLayer, int maxLayer) {
+    if (minLayer > maxLayer) return;
+    // iterate layers in order
+    int n = renderables.size();
+    for (int i = 0; i < n; i++) {
+      int layerKey = renderables.getKeyAt(i);
+      if (layerKey < minLayer) continue;
+      if (layerKey > maxLayer) break;
+
+      Array<Renderable> layer = renderables.getValueAt(i);
+      layer.sort();
+      for (Renderable renderable : layer) {
+        renderable.render(batch);
+      }
+    }
+  }
+
+  /**
+   * Trigger rendering on the given batch only on the given layer.
+   * This should be called only from the main renderer.
+   *
+   * @param batch batch to render to
+   * @param layer render layer to be rendered
+   */
+  public void renderLayer(SpriteBatch batch, int layer) {
+    renderLayerRange(batch, layer, layer);
+  }
+
+  /**
    * Unregister a renderable.
    *
    * @param renderable renderable to unregister.

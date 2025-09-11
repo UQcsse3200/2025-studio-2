@@ -2,6 +2,7 @@ package com.csse3200.game.services;
 
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.input.InputService;
+import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.lighting.LightingService;
@@ -26,8 +27,11 @@ public class ServiceLocator {
   private static ResourceService resourceService;
   private static LightingService lightingService;
   private static MinimapService minimapService;
+  private static SecurityCamRetrievalService securityCamRetrievalService;
 
   public static LightingService getLightingService() { return lightingService; }
+
+  public static SecurityCamRetrievalService getSecurityCamRetrievalService() { return securityCamRetrievalService; }
 
   public static EntityService getEntityService() {
     return entityService;
@@ -60,6 +64,11 @@ public class ServiceLocator {
   public static void registerLightingService(LightingService service) {
     logger.debug("Registering lighting service {}", service);
     lightingService = service;
+  }
+
+  public static void registerSecurityCamRetrievalService(SecurityCamRetrievalService service) {
+    logger.debug("Registering security camera retrieval service {}", service);
+    securityCamRetrievalService = service;
   }
 
   public static void registerEntityService(EntityService service) {
