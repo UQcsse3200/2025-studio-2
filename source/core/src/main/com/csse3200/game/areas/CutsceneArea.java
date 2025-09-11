@@ -4,6 +4,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.PlayerFactory;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.cutscene.CutsceneDisplay;
 import com.csse3200.game.ui.cutscene.CutsceneReaderComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,7 @@ public class CutsceneArea extends GameArea {
         // Establish entity and add components
         cutscene = new Entity();
         cutscene.addComponent(new CutsceneReaderComponent(scriptPath));
+        cutscene.addComponent(new CutsceneDisplay(cutscene.getComponent(CutsceneReaderComponent.class).getTextBoxes()));
 
         // Add to list of entities in area and register
         spawnEntity(cutscene);
