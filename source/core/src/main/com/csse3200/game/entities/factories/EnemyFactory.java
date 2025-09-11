@@ -105,6 +105,7 @@ public class EnemyFactory {
      * @return a patrolling drone enemy entity
      */
     public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute, Entity securityLight) {
+        if (patrolRoute == null) patrolRoute = new Vector2[0];
         Vector2 spawnPos = (patrolRoute.length>0) ? patrolRoute[0] : null;
         Entity drone = createDrone(target, spawnPos, securityLight);
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
@@ -174,14 +175,8 @@ public class EnemyFactory {
 
         TextureAtlas SelfDestructAtlas = ServiceLocator.getResourceService().getAsset("images/SelfDestructDrone.atlas",TextureAtlas.class);
 
-         if(SelfDestructAtlas == null){
-             throw new RuntimeException("SelfDestructDrone.atlas not loaded");
-         }
-         if (SelfDestructAtlas.findRegion("flying")==null) {
-             throw new RuntimeException("flying animation in SelfDestructDrone.atlas is not found");
-         }
-        if (SelfDestructAtlas.findRegion("self_destruct")==null) {
-            throw new RuntimeException("self_destruct animation in SelfDestructDrone.atlas is not found");
+         if((SelfDestructAtlas == null) || (SelfDestructAtlas.findRegion("flying")==null) || (SelfDestructAtlas.findRegion("self_destruct")==null)) {
+            throw new RuntimeException("SelfDestructDrone.atlas missing required animation");
         }
 
          AnimationRenderComponent animator = new AnimationRenderComponent(SelfDestructAtlas);
