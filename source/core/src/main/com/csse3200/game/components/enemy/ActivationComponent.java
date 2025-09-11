@@ -10,42 +10,63 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This component links an enemy to a security camera by ID.
- * When the camera detects/loses the target, it triggers the enemy's activation events.
- * To avoid spawn order race, attempts to link camera in create and update.
+ * When the camera detects/loses the target, it triggers "enemyActivated"/"enemyDeactivated" on the owner entity.
+ * If the camera isn't spawned yet, the component retries linking in update().
  */
 public class ActivationComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(ActivationComponent.class);
 
     private final String cameraId;
     private Entity cam;
+    private boolean linked = false;
 
+    /**
+     * Create an ActivationComponent for a specific camera
+     * @param cameraId Unique camera identified to link to to (e.g. "1")
+     */
     public ActivationComponent(String cameraId) {
         this.cameraId = cameraId;
     }
 
+    /**
+     * Attempts to link immediately.
+     * Retries in update() if camera isn't ready (no spawn race).
+     */
     @Override
     public void create() {
         super.create();
         linkCamera();
     }
 
+    /**
+     * Retries linking if unsuccessful during create().
+     */
     @Override
     public void update() {
-        if (cam == null) {
+        if (!linked) {
             linkCamera();
         }
     }
 
+    /**
+     * Clean up.
+     */
     @Override
     public void dispose() {
         cam = null;
+        linked = false;
         super.dispose();
     }
 
+    /**
+     * Locate the camera and attach listeners exactly once.
+     */
     private void linkCamera() {
-        Entity cam = ServiceLocator.getSecurityCamRetrievalService().getSecurityCam(cameraId);
-        if (cam == null) {
-            logger.debug ("No security camera found with id '{}'", cameraId);
+        if (linked) return;
+
+        this.cam = ServiceLocator.getSecurityCamRetrievalService().getSecurityCam(cameraId);
+        if (this.cam == null) {
+            logger.debug ("ActivationComponent: camera '{}' not found yet; will retry.", cameraId);
             return;
         }
 
@@ -56,6 +77,15 @@ public class ActivationComponent extends Component {
             entity.getEvents().trigger("enemyDeactivated");
         });
 
+        linked = true;
         logger.debug("Linked entity {} to security camera {}", entity, cameraId);
+    }
+
+    /**
+     * Getter to check camera is linked to entity
+     * @return true if linked, otherwise false.
+     */
+    public boolean isLinked() {
+        return linked;
     }
 }
