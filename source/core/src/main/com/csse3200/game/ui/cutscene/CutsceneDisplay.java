@@ -5,10 +5,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.cutscene.CutsceneReaderComponent.TextBox;
 import com.github.tommyettinger.textra.TypingLabel;
@@ -27,11 +29,15 @@ public class CutsceneDisplay extends UIComponent {
     /**
      * Root table to be rendered
      */
-    private Table rootTable;
+    private Stack rootStack;
     /**
      * Text table inside of root table
      */
     private Table textTable;
+    /**
+     * Table to hold background image inside of root table
+     */
+    private Table imageTable;
     /**
      * Texture for background behind the text
      */
@@ -39,14 +45,15 @@ public class CutsceneDisplay extends UIComponent {
     /**
      * Reference to the game area the entity this component is attached to is inside of
      */
-    private GameArea area;
+    private final GameArea area;
     /**
      * ID of the next game area to load after cutscene finishes
      */
-    private String nextAreaID;
+    private final String nextAreaID;
 
     /**
      * Initialises display with text box information
+     *
      * @param textBoxList A list of all text boxes created from a CutsceneRenderComponent
      */
     public CutsceneDisplay(List<TextBox> textBoxList, GameArea area, String nextAreaID) {
@@ -59,32 +66,43 @@ public class CutsceneDisplay extends UIComponent {
     public void create() {
         super.create();
 
-        // Create root table - fills screen
-        rootTable = new Table();
-        rootTable.setFillParent(true);
-        rootTable.bottom();
+        // Create root stack - fills screen
+        rootStack = new Stack();
+        rootStack.setFillParent(true);
 
-        // Create table for text box
-        Table textBox = new Table();
+        // Create background layer
+        imageTable = new Table();
+        Image background =
+                new Image(ServiceLocator.getResourceService().getAsset(textBoxList.getFirst().background(), Texture.class));
+        imageTable.add(background).grow();
+        rootStack.add(imageTable);
 
-        // Add text table to text box
-        textTable = new Table();
-        textBox.add(textTable).expandX().fillX().pad(20f);
+        // Create UI table
+        Table uiTable = new Table();
+        uiTable.bottom();
+        rootStack.add(uiTable);
 
-        // Create button and add to text box
-        TextButton progressButton = new TextButton("Next", skin);
-        rootTable.add(progressButton).pad(20f);
+        // Create text box container
+        Table textBoxContainer = new Table();
 
-        // Create texture for background behind text
+        // Create transparent background for text box
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0, 0, 0, 0.5f);
         pixmap.fill();
         textBgTexture = new Texture(pixmap);
         pixmap.dispose();
-        textBox.setBackground(new Image(textBgTexture).getDrawable());
+        textBoxContainer.setBackground(new Image(textBgTexture).getDrawable());
 
-        // Add text box to root table
-        rootTable.add(textBox).expandX().fillX().pad(10f);
+        // Add text table to text container
+        textTable = new Table();
+        textBoxContainer.add(textTable).expandX().fillX().pad(20f);
+
+        // Add button to text container
+        TextButton progressButton = new TextButton("Next", skin);
+        textBoxContainer.add(progressButton).pad(20f);
+
+        // Add text box container to UI table
+        uiTable.add(textBoxContainer).expandX().fillX().pad(20f);
 
         // Create listener for progress button
         progressButton.addListener(
@@ -104,8 +122,8 @@ public class CutsceneDisplay extends UIComponent {
         // Draw the first text box
         setTextBox();
 
-        // Add table to scene
-        stage.addActor(rootTable);
+        // Add stack to scene
+        stage.addActor(rootStack);
     }
 
     private void setTextBox() {
@@ -120,6 +138,16 @@ public class CutsceneDisplay extends UIComponent {
         TypingLabel text = new TypingLabel(textBox.text(), skin);
         // Add label to text table
         textTable.add(text).expandX().fillX().pad(15f);
+
+        // If background associated with new text box is null, don't change
+        if (textBox.background() != null) {
+            imageTable.clear();
+            Image background =
+                    new Image(ServiceLocator.getResourceService().getAsset(textBox.background(),
+                            Texture.class));
+            background.setFillParent(true);
+            imageTable.addActor(background);
+        }
     }
 
     private void nextTextBox() {
@@ -135,8 +163,9 @@ public class CutsceneDisplay extends UIComponent {
     @Override
     public void dispose() {
         super.dispose();
-        if (rootTable != null) {
-            rootTable.remove();
+
+        if (rootStack != null) {
+            rootStack.remove();
         }
         if (textBgTexture != null) {
             textBgTexture.dispose();
