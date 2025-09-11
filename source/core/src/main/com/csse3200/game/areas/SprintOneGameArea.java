@@ -77,10 +77,12 @@ public class SprintOneGameArea extends GameArea {
             "images/drone.png",
             "images/bomb.png",
             "images/camera-body.png",
-            "images/camera-lens.png"
+            "images/camera-lens.png",
+            "images/PLAYER.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images" +
+            "/ghostKing.atlas", "images/drone.atlas", "images/PLAYER.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
