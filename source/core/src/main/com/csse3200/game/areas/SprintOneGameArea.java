@@ -27,6 +27,8 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
@@ -291,6 +293,25 @@ public class SprintOneGameArea extends GameArea {
                 .moveX(1.5f, 6f).moveY(23f, 23f).speed(4f).damage(5).knockback(4).build();
         spawnEntityAt(platformAutoBox, new GridPoint2(
                 (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
+
+        BoxFactory.AutonomousBoxBuilder verticalBuilder1 = new BoxFactory.AutonomousBoxBuilder();
+        Entity verticalBox1 = verticalBuilder1
+                .moveX(17f, 17f).moveY(5f, 10f).speed(2f).damage(5).knockback(4).build();
+        spawnEntityAt(verticalBox1, new GridPoint2(
+                (int) verticalBuilder1.getSpawnX(), (int) verticalBuilder1.getSpawnY()), true, true);
+
+        BoxFactory.AutonomousBoxBuilder verticalBuilder2 = new BoxFactory.AutonomousBoxBuilder();
+        Entity verticalBox2 = verticalBuilder2
+                .moveX(15f, 15f).moveY(5f, 10f).speed(4f).damage(5).knockback(4).build();
+        spawnEntityAt(verticalBox2, new GridPoint2(
+                (int) verticalBuilder2.getSpawnX(), (int) verticalBuilder2.getSpawnY()), true, true);
+
+        BoxFactory.AutonomousBoxBuilder diagonalBuilder1 = new BoxFactory.AutonomousBoxBuilder();
+        Entity diagonalBox1 = diagonalBuilder1
+                .moveX(10f, 13f).moveY(5f, 10f).speed(6f).damage(5).knockback(4).build();
+        spawnEntityAt(diagonalBox1, new GridPoint2(
+                (int) diagonalBuilder1.getSpawnX(), (int) diagonalBuilder1.getSpawnY()), true, true);
+
     }
 
     public void spawnDoor() {
