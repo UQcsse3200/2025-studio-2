@@ -1,0 +1,6 @@
+#images/grass_2.png
+This is the second demonstration cutscene.
+This is a sentence also has some funky effects.
+#images/grass_3.png
+This text box is associated with a new background.
+Now we load into the next scene.

@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.cutscene.CutsceneReaderComponent.TextBox;
 import com.github.tommyettinger.textra.TypingLabel;
@@ -36,13 +36,23 @@ public class CutsceneDisplay extends UIComponent {
      * Texture for background behind the text
      */
     private Texture textBgTexture;
+    /**
+     * Reference to the game area the entity this component is attached to is inside of
+     */
+    private GameArea area;
+    /**
+     * ID of the next game area to load after cutscene finishes
+     */
+    private String nextAreaID;
 
     /**
      * Initialises display with text box information
      * @param textBoxList A list of all text boxes created from a CutsceneRenderComponent
      */
-    public CutsceneDisplay(List<TextBox> textBoxList) {
+    public CutsceneDisplay(List<TextBox> textBoxList, GameArea area, String nextAreaID) {
         this.textBoxList = textBoxList;
+        this.area = area;
+        this.nextAreaID = nextAreaID;
     }
 
     @Override
@@ -83,9 +93,10 @@ public class CutsceneDisplay extends UIComponent {
                     public void changed(ChangeEvent event, Actor actor) {
                         // Do nothing for now if we are on last index
                         if (curTextBox == textBoxList.size() - 1) {
-                            return;
+                            area.trigger("cutsceneFinished", nextAreaID, null);
+                        } else {
+                            nextTextBox();
                         }
-                        nextTextBox();
                     }
                 }
         );

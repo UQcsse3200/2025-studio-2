@@ -33,13 +33,18 @@ public class CutsceneArea extends GameArea {
             "images/box_boy_leaf.png",
             "images/minimap_player_marker.png"
     };
+    /**
+     * The ID of the next area to load after cutscene finishes
+     */
+    private final String nextAreaID;
 
     /**
      * Constructor that initialises game area. Creates cutscene entity using a provided script file.
      * @param scriptPath The path to the cutscene script file relative to the resources root.
      */
-    public CutsceneArea(String scriptPath) {
+    public CutsceneArea(String scriptPath, String nextAreaID) {
         this.scriptPath = scriptPath;
+        this.nextAreaID = nextAreaID;
     }
 
     @Override
@@ -58,7 +63,7 @@ public class CutsceneArea extends GameArea {
         // Establish entity and add components
         cutscene = new Entity();
         cutscene.addComponent(new CutsceneReaderComponent(scriptPath));
-        cutscene.addComponent(new CutsceneDisplay(cutscene.getComponent(CutsceneReaderComponent.class).getTextBoxes()));
+        cutscene.addComponent(new CutsceneDisplay(cutscene.getComponent(CutsceneReaderComponent.class).getTextBoxes(), this, nextAreaID));
 
         // Add to list of entities in area and register
         spawnEntity(cutscene);
@@ -106,10 +111,10 @@ public class CutsceneArea extends GameArea {
 
     @Override
     public void dispose() {
-        super.dispose();
-        unloadAssets();
-
         // Remove dummy player
-        player.dispose();
+        ServiceLocator.getEntityService().unregister(player);
+
+        unloadAssets();
+        super.dispose();
     }
 }

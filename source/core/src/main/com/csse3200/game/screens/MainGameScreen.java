@@ -6,10 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.CaveGameArea;
-import com.csse3200.game.areas.ForestGameArea;
-import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.areas.SprintOneGameArea;
+import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
@@ -91,17 +88,19 @@ public class MainGameScreen extends ScreenAdapter {
     loadAssets();
 
     logger.debug("Initialising main game screen entities");
-    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    gameArea = new SprintOneGameArea(terrainFactory);
+    gameArea = new CutsceneArea("cutscene-scripts/cutscene1.txt", "cutscene2");
     gameArea.create();
-
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", keyId, player);
       switchArea(keyId, gameArea, player);
     });
 
+    gameArea.getEvents().addListener("cutsceneFinished", (String keyId, Entity player) -> {
+        logger.info("Switching to area with key {}", keyId);
+        switchArea(keyId, gameArea, player);
+    });
 
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
@@ -125,6 +124,12 @@ public class MainGameScreen extends ScreenAdapter {
         } else if ("cave".equals(levelId)) {
           newArea = new CaveGameArea(terrainFactory);
           newLevel = "forest";
+        } else if ("cutscene1".equals(levelId)) {
+            newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt", "cutscene2");
+            newLevel = "cutscene2";
+        } else if ("cutscene2".equals(levelId)) {
+            newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt", "sprint1");
+            newLevel = "sprint1";
         }
 
         if (newArea != null) {
@@ -132,6 +137,9 @@ public class MainGameScreen extends ScreenAdapter {
           String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
                   "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
+          );
+          finalNewArea.getEvents().addListener(
+                  "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
           );
           finalNewArea.create();
         }
