@@ -70,8 +70,7 @@ public class EnemyFactoryTest {
     @Test
     void createDrone_hasBaseEnemyComponents() {
         Entity player = new Entity();
-        Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         assertNotNull(drone.getComponent(PhysicsComponent.class), "Drone should have a PhysicsComponent");
@@ -85,8 +84,7 @@ public class EnemyFactoryTest {
     @Test
     void createDrone_hasCorrectCombatStats() {
         Entity player = new Entity();
-        Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
         CombatStatsComponent stats = drone.getComponent(CombatStatsComponent.class);
         assertNotNull(stats, "Drone should have a CombatStatsComponent");
@@ -97,8 +95,7 @@ public class EnemyFactoryTest {
     @Test
     void createDrone_hasAnimations() {
         Entity player = new Entity();
-        Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         AnimationRenderComponent anim = drone.getComponent(AnimationRenderComponent.class);
@@ -110,8 +107,7 @@ public class EnemyFactoryTest {
     @Test
     void createDrone_hasAnimationController() {
         Entity player = new Entity();
-        Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity drone = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
         assertNotNull(drone.getComponent(DroneAnimationController.class), "Drone should have AnimationController");
     }
@@ -121,8 +117,8 @@ public class EnemyFactoryTest {
         Entity securityLight = new Entity();
         Entity player = new Entity();
 
-        Entity a = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
-        Entity b = EnemyFactory.createDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity a = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
+        Entity b = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
 
         assertNotSame(a, b, "Drones should be distinct");
         assertNotSame(a.getComponent(AITaskComponent.class), b.getComponent(AITaskComponent.class), "Drones should have distinct AITaskComponents");
@@ -131,7 +127,7 @@ public class EnemyFactoryTest {
     @Test
     void createDrone_addsSpawnPosition() {
         Vector2 start = new Vector2(0, 0);
-        Entity drone = EnemyFactory.createDrone(new Entity(), start, new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), start);
         SpawnPositionComponent sp = drone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
         assertEquals(start, sp.getSpawnPos(),
@@ -140,7 +136,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_doesNotAddNullSpawnPos() {
-        Entity drone = EnemyFactory.createDrone(new Entity(), null, new Entity());
+        Entity drone = EnemyFactory.createDrone(new Entity(), null);
         assertNull(drone.getComponent(SpawnPositionComponent.class),
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
@@ -149,8 +145,7 @@ public class EnemyFactoryTest {
     void patrollingDroneHasPatrolRouteComponent() {
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(
                 new Entity(),
-                new Vector2[]{new Vector2(5f, 5f)},
-                new Entity()
+                new Vector2[]{new Vector2(5f, 5f)}
         );
         assertNotNull(patrolDrone.getComponent(PatrolRouteComponent.class),
                 "Patrolling drone should have a PatrolRouteComponent");
@@ -163,8 +158,7 @@ public class EnemyFactoryTest {
         Entity drone = assertDoesNotThrow(
                 () -> EnemyFactory.createPatrollingDrone(
                         player,
-                        new Vector2[]{new Vector2(0f, 0f)},
-                        securityLight
+                        new Vector2[]{new Vector2(0f, 0f)}
                 ), "Factory should not throw when steps array is empty");
         assertNotNull(drone);
     }
@@ -172,7 +166,7 @@ public class EnemyFactoryTest {
     @Test
     void patrollingDrone_storesWaypointsInOrder() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 1), new Vector2(2, 2)};
-        Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route, new Entity());
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route);
         PatrolRouteComponent pr = patrolDrone.getComponent(PatrolRouteComponent.class);
         assertNotNull(pr);
 
@@ -186,7 +180,7 @@ public class EnemyFactoryTest {
     @Test
     void patrollingDrone_hasSpawnPosition() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 1)};
-        Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route, new Entity());
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(new Entity(), route);
 
         SpawnPositionComponent sp = patrolDrone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
@@ -195,7 +189,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasBaseEnemyComponents() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(bomberDrone);
 
         assertNotNull(bomberDrone.getComponent(PhysicsComponent.class),
@@ -214,7 +208,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimations() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(bomberDrone);
 
         AnimationRenderComponent anim = bomberDrone.getComponent(AnimationRenderComponent.class);
@@ -226,16 +220,16 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
-        ServiceLocator.getEntityService().register(bomberDrone);
+            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
+            ServiceLocator.getEntityService().register(bomberDrone);
 
-        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
-                "Drone should have AnimationController");
+            assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                    "Drone should have AnimationController");
     }
 
     @Test
     void bomberDrone_startsOnFloatAnim() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
         AnimationRenderComponent arc = bomberDrone.getComponent(AnimationRenderComponent.class);
         assertEquals("float", arc.getCurrentAnimation());
         assertTrue(arc.hasAnimation("float"));
@@ -243,7 +237,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasCorrectCombatStats() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(bomberDrone);
 
         CombatStatsComponent stats = bomberDrone.getComponent(CombatStatsComponent.class);
@@ -255,7 +249,7 @@ public class EnemyFactoryTest {
     @Test
     void createBomberDrone_addsSpawnPosition() {
         Vector2 start = new Vector2(0, 0);
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), start, new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), start);
         SpawnPositionComponent sp = bomberDrone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
         assertEquals(start, sp.getSpawnPos(),
@@ -264,15 +258,15 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_doesNotAddNullSpawnPos() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), null, new Entity());
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), null);
         assertNull(bomberDrone.getComponent(SpawnPositionComponent.class),
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
 
     @Test
     void createBomberDrone_returnsDistinct() {
-        Entity a = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
-        Entity b = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), new Entity());
+        Entity a = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
+        Entity b = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
         assertNotSame(a, b, "Drones should be distinct");
 
         AITaskComponent ai_a = a.getComponent(AITaskComponent.class);
@@ -281,6 +275,7 @@ public class EnemyFactoryTest {
                 "Drones should have distinct AITaskComponents");
     }
 
+
     // Tests to verify correct AI task flow
     @Test
     void patrolDrone_patrolToChaseFlow() {
@@ -288,7 +283,7 @@ public class EnemyFactoryTest {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity light = new Entity();
 
-        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
         drone.create();
 
@@ -298,7 +293,9 @@ public class EnemyFactoryTest {
         drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
 
         ai.update(); // Patrolling
-        light.getEvents().trigger("targetDetected", target);
+
+        // Simulate camera -> enemy activation
+        drone.getEvents().trigger("enemyActivated");
         ai.update(); // Chasing
 
         assertEquals(List.of("patrolStart", "patrolEnd", "chaseStart"), eventLog);
@@ -310,7 +307,7 @@ public class EnemyFactoryTest {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity light = new Entity();
 
-        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
         drone.create();
 
@@ -320,9 +317,9 @@ public class EnemyFactoryTest {
         drone.getEvents().addListener("cooldownStart", () -> eventLog.add("cooldownStart"));
 
         ai.update(); // Patrolling
-        light.getEvents().trigger("targetDetected", target);
+        drone.getEvents().trigger("enemyActivated");
         ai.update(); // Chasing
-        light.getEvents().trigger("targetLost", target);
+        drone.getEvents().trigger("enemyDeactivated");
         ai.update(); // Cooldown
 
         assertEquals(List.of("chaseStart", "chaseEnd", "cooldownStart"), eventLog);
@@ -334,7 +331,7 @@ public class EnemyFactoryTest {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity light = new Entity();
 
-        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
         drone.create();
 
@@ -343,7 +340,7 @@ public class EnemyFactoryTest {
         drone.getEvents().addListener("cooldownEnd", () -> eventLog.add("cooldownEnd"));
         drone.getEvents().addListener("patrolStart", () -> eventLog.add("patrolStart"));
 
-        light.getEvents().trigger("targetLost", target);
+        drone.getEvents().trigger("enemyDeactivated");
 
         when(gameTime.getTime()).thenReturn(0L, 5000L);
 
@@ -360,7 +357,7 @@ public class EnemyFactoryTest {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity light = new Entity();
 
-        Entity drone = EnemyFactory.createPatrollingDrone(target, route, light);
+        Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
         drone.create();
 
@@ -370,14 +367,14 @@ public class EnemyFactoryTest {
         drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
         drone.getEvents().addListener("patrolStart", () -> eventLog.add("patrolStart"));
 
-        light.getEvents().trigger("targetLost", target);
+        drone.getEvents().trigger("enemyDeactivated");
         ai.update(); // Cooldown
 
         // Advance cooldown (but not finished) need time sequence for wait subtask
         when(gameTime.getTime()).thenReturn(4000L);
         ai.update(); // Still in cooldown
 
-        light.getEvents().trigger("targetDetected", target);
+        drone.getEvents().trigger("enemyActivated");
         ai.update(); // Chasing
 
         assertEquals(List.of("cooldownStart", "cooldownEnd", "chaseStart"), eventLog);

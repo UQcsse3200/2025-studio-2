@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Renderer implements Disposable {
   private static final float GAME_SCREEN_WIDTH = 20f;
+  private static final int AFTER_LIGHTS_LAYER = 4;
   private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
 
   private CameraComponent camera;
@@ -122,13 +123,18 @@ public class Renderer implements Disposable {
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     batch.begin();
-    renderService.render(batch);
+    renderService.renderLayerRange(batch, Integer.MIN_VALUE, AFTER_LIGHTS_LAYER);
     batch.end();
 
     //renderLightingHelper(lightingEngine);
     if (lightingEngine != null) {
       lightingEngine.render();
     }
+
+    // draw after lights layer
+    batch.begin();
+    renderService.renderLayer(batch, AFTER_LIGHTS_LAYER);
+    batch.end();
 
     debugRenderer.render(projMatrix);
 
