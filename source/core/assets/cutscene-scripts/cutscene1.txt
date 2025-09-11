@@ -1,6 +1,6 @@
 #images/grass_2.png
 This is a demonstration cutscene.
-This is a sentence with cool effects.
+{SICK}This is a sentence with cool effects.{ENDSICK}
 #images/grass_3.png
-This text box is associated with a new background.
-This text box retains that background.
+This text box is associated with a {RAINBOW}new background{ENDRAINBOW}.
+{EASE}This text box retains that background{ENDEASE}.
