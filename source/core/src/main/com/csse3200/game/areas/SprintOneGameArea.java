@@ -149,7 +149,7 @@ public class SprintOneGameArea extends GameArea {
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
-    private MinimapDisplay createMinimap() {
+    private void createMinimap() {
         Texture minimapTexture =
                 ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
 
@@ -167,8 +167,6 @@ public class SprintOneGameArea extends GameArea {
         Entity minimapEntity = new Entity();
         minimapEntity.addComponent(minimapDisplay);
         spawnEntity(minimapEntity);
-
-        return minimapDisplay;
     }
     private void spawnTraps() {
         GridPoint2 spawnPos =  new GridPoint2(2,4);
