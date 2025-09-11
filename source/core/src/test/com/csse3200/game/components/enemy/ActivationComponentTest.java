@@ -99,6 +99,7 @@ public class ActivationComponentTest {
     @Test
     void activation_triggersEnemyDeactivate() {
         Entity camera = new Entity();
+        camera.create();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
         Entity e = new Entity();
@@ -110,5 +111,35 @@ public class ActivationComponentTest {
 
         camera.getEvents().trigger("targetLost", e);
         verify(onDeactivated, times(1)).handle();
+    }
+
+    @Test
+    void activation_noDupListeners() {
+        Entity camera = new Entity();
+        camera.create();
+        when(camService.getSecurityCam("1")).thenReturn(camera);
+
+        Entity e = new Entity();
+        e.addComponent(new ActivationComponent("1"));
+        e.create();
+
+        // Spam updates
+        for (int i = 0; i < 10; i++) {
+            e.update();
+        }
+
+        // Check listeners
+        EventListener0 onActivated = mock(EventListener0.class);
+        e.getEvents().addListener("enemyActivated", onActivated);
+
+        // One camera trigger -> one activation
+        camera.getEvents().trigger("targetDetected", e);
+        verify(onActivated, times(1)).handle();
+
+        // Second trigger
+        camera.getEvents().trigger("targetDetected", e);
+        verify(onActivated, times(2)).handle();
+
+        verifyNoMoreInteractions(onActivated);
     }
 }
