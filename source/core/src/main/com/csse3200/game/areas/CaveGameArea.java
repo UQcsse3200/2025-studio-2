@@ -67,7 +67,9 @@ public class CaveGameArea extends GameArea {
           "images/red_button.png",
           "images/red_button_pushed.png",
           "images/minimap_forest_area.png",
-          "images/minimap_player_marker.png"
+          "images/minimap_player_marker.png",
+          "images/camera-body.png",
+          "images/camera-lens.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" , "images/drone.atlas"

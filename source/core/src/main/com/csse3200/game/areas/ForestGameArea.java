@@ -83,7 +83,9 @@ public class ForestGameArea extends GameArea {
           "images/door_open.png",
           "images/door_closed.png",
           "images/pressure_plate_unpressed.png",
-          "images/pressure_plate_pressed.png"
+          "images/pressure_plate_pressed.png",
+          "images/camera-body.png",
+          "images/camera-lens.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
