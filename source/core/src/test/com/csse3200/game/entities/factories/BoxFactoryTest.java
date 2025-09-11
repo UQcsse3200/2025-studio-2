@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -19,8 +20,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import javax.swing.*;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.security.Provider;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
@@ -35,6 +41,16 @@ public class BoxFactoryTest {
         ResourceService mockResourceService = mock(ResourceService.class);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
         ServiceLocator.registerResourceService(mockResourceService);
+    }
+
+    @Test
+    void privateConstructor_throwsException() throws Exception {
+        Constructor<BoxFactory> constructor = BoxFactory.class.getDeclaredConstructor();
+        constructor.setAccessible(true);
+
+        InvocationTargetException e = assertThrows(InvocationTargetException.class, constructor::newInstance);
+
+        assertInstanceOf(UnsupportedOperationException.class, e.getCause(), "Constructor should throw UnsupportedOperationException");
     }
 
     @Test
@@ -123,6 +139,8 @@ public class BoxFactoryTest {
                 "Autonomous Box PhysicsComponent should have a kinematic body type");
     }
 
+
+
     @Test
     void autonomousBoxBuilder_setsBoundsAndSpeed() {
         float minX = 3f;
@@ -159,7 +177,8 @@ public class BoxFactoryTest {
                 .tooltip(tooltipText, tooltipStyle)
                 .build();
 
-        TooltipSystem.TooltipComponent tooltip = autonomousBox.getComponent(TooltipSystem.TooltipComponent.class);
+        TooltipSystem.TooltipComponent tooltip
+                = autonomousBox.getComponent(TooltipSystem.TooltipComponent.class);
         assertNotNull(
                 tooltip,
                 "Autonomous Box should have a TooltipComponent");
@@ -171,5 +190,51 @@ public class BoxFactoryTest {
                 tooltipStyle,
                 tooltip.getStyle(),
                 "Tooltip style should match value set in builder");
+    }
+
+    @Test
+    void autonomousBoxBuilder_scaleSetsCorrectValues() {
+        Entity autonomousBox = new BoxFactory.AutonomousBoxBuilder()
+                .scale(2f, 3f)
+                .build();
+
+        float scaleX = autonomousBox.getScale().x;
+        float scaleY = autonomousBox.getScale().y;
+
+        assertEquals(2f, scaleX, 0.001f,
+                "Scale X should match value set in builder");
+        assertEquals(3f, scaleY, 0.001f,
+                "Scale Y should match value set in builder");
+    }
+
+    @Test
+    void autonomousBoxBuilder_getSpawnCoordinates() {
+        float minX = 4f;
+        float minY = 7f;
+        BoxFactory.AutonomousBoxBuilder builder = new BoxFactory.AutonomousBoxBuilder().moveX(minX, 10f).moveY(minY, 12f);
+
+        assertEquals(minX, builder.getSpawnX(), 0.001f,
+                "Spawn X should match minimum X set in moveX()");
+        assertEquals(minY, builder.getSpawnY(), 0.001f,
+                "Spawn Y should match minimum X set in moveX()");
+    }
+
+    @Test
+    void autonomousBoxBuilder_setsCustomTexture() {
+        Texture dummyTexture = mock(Texture.class);
+        ResourceService mockResourceService = ServiceLocator.getResourceService();
+        when(mockResourceService.getAsset(
+                eq("images/box_green.png"),
+                eq(Texture.class))).thenReturn(dummyTexture);
+
+        Entity autonomousBox = new BoxFactory.AutonomousBoxBuilder()
+                .texture("images/box_green.png").build();
+
+        TextureRenderComponent textureComponent
+                = autonomousBox.getComponent(TextureRenderComponent.class);
+        assertNotNull(textureComponent,
+                "Autonomous Box should have a TextureRenderComponent");
+        assertSame(dummyTexture, textureComponent.getTexture(),
+                "TextureRenderComponent should have a loaded Texture");
     }
 }

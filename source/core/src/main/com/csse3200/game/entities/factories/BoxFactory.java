@@ -28,7 +28,7 @@ public class BoxFactory {
      * warnings about missing constructor in this class.
      */
     private BoxFactory() {
-        // Intentionally blank
+        throw new UnsupportedOperationException("Cannot instantiate BoxFactory");
     }
 
     /**
@@ -101,11 +101,14 @@ public class BoxFactory {
         private float maxMoveY = 0f;
         private float speed = 2f;
 
+        // Appearance
+        private String texturePath = "images/box_orange.png";
+        private float scaleX = 0.5f;
+        private float scaleY = 0.5f;
+
         // Other default properties
         private float spawnX = minMoveX;
         private float spawnY = minMoveY;
-        private float scaleX = 0.5f;
-        private float scaleY = 0.5f;
         private int damage = 0;
         private float knockback = 0f;
 
@@ -190,6 +193,17 @@ public class BoxFactory {
         }
 
         /**
+         * Sets a custom texture for the box.
+         *
+         * @param texturePath path to the image file
+         * @return the builder for chaining the texture image
+         */
+        public AutonomousBoxBuilder texture(String texturePath) {
+            this.texturePath = texturePath;
+            return this;
+        }
+
+        /**
          * Sets a tooltip for the box
          *
          * @param text The tooltip text
@@ -222,17 +236,16 @@ public class BoxFactory {
 
         /**
          * Builds and returns the autonomous box entity with all its properties configured.
-         *
+
          * @return The constructed autonomous box entity
          */
         public Entity build() {
-            int boxHealth = 100;
             Entity autonomousBox = new Entity()
-                    .addComponent(new TextureRenderComponent("images/box_orange.png"))
+                    .addComponent(new TextureRenderComponent(texturePath))
                     .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                     .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
                     .addComponent(new HitboxComponent())
-                    .addComponent(new CombatStatsComponent(boxHealth, damage))
+                    .addComponent(new CombatStatsComponent(1, damage))
                     .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
                     .addComponent(new AutonomousBoxComponent());
 
