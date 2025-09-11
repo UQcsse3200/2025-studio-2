@@ -95,6 +95,10 @@ public class EnemyFactoryTest {
     }
 
     @Test
+    void SelfDestructDrone_hasAnimation(){
+        Entity drone = EnemyFactory.create
+    }
+    @Test
     void createDrone_hasAnimations() {
         Entity player = new Entity();
         Entity securityLight = new Entity();
@@ -163,7 +167,7 @@ public class EnemyFactoryTest {
         Entity drone = assertDoesNotThrow(
                 () -> EnemyFactory.createPatrollingDrone(
                         player,
-                        new Vector2[]{new Vector2(0f, 0f)},
+                        new Vector2[]{},
                         securityLight
                 ), "Factory should not throw when steps array is empty");
         assertNotNull(drone);

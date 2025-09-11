@@ -149,6 +149,7 @@ public class ForestGameArea extends GameArea {
   public void create() {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
+    EnemyFactory.loadAssets();
     loadAssets();
     loadLevel();
   }
@@ -312,7 +313,7 @@ public class ForestGameArea extends GameArea {
 
       Entity SelfDestructDrone = EnemyFactory.createSelfDestructDrone(player,spawnWorldPos,securityLight);
 
-      spawnEntityAt(SelfDestructDrone, spawnTile, false, false);
+      spawnEntityAt(SelfDestructDrone, spawnTile, true, true);
 
   }
 
