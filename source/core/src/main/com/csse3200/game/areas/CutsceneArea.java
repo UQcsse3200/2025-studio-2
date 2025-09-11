@@ -25,6 +25,13 @@ public class CutsceneArea extends GameArea {
      * Cutscene backgrounds
      */
     private String[] backgrounds;
+    /**
+     * Dummy assets that need to be loaded in a GameArea
+     */
+    private static final String[] dummyAssets = {
+            "images/box_boy_leaf.png",
+            "images/minimap_player_marker.png"
+    };
 
     /**
      * Constructor that initialises game area. Creates cutscene entity using a provided script file.
@@ -66,7 +73,7 @@ public class CutsceneArea extends GameArea {
         resourceService.loadTextures(reader.getBackgrounds());
 
         // Need to load some dummy assets to prevent crashing
-        resourceService.loadTextures(new String[] {"images/box_boy_leaf.png", "images/minimap_player_marker.png"});
+        resourceService.loadTextures(dummyAssets);
 
         // Show loading progress in logs
         while (!resourceService.loadForMillis(10)) {
@@ -83,6 +90,10 @@ public class CutsceneArea extends GameArea {
         // Unload background assets from reader component
         CutsceneReaderComponent reader = cutscene.getComponent(CutsceneReaderComponent.class);
         resourceService.unloadAssets(reader.getBackgrounds());
+
+        // Unload dummy assets
+        resourceService.unloadAssets(dummyAssets);
+
     }
 
 
