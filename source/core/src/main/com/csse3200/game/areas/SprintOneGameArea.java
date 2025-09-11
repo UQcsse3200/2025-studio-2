@@ -132,7 +132,7 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         spawnBomberDrone();
         spawnDoor();
-        spawnDeathZone();
+        //spawnDeathZone();
         displayUI();
 
     }

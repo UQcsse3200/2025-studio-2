@@ -120,6 +120,7 @@ public class CaveGameArea extends GameArea {
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
     spawnGate(); //Testing gate
+    spawnDeathZone();
 
     playMusic();
   }
@@ -202,17 +203,22 @@ public class CaveGameArea extends GameArea {
     /*
     Creates floor and several steps to test jumping
     */
-    GridPoint2 groundPos = new GridPoint2(0, 2);
+    GridPoint2 groundPos = new GridPoint2(0, 3);
     Entity ground = PlatformFactory.createStaticPlatform();
-    ground.setScale(15,1);
+    ground.setScale(8,0.5f);
     spawnEntityAt(ground, groundPos, false, false);
 
-    GridPoint2 step1Pos = new GridPoint2(5,3);
+    GridPoint2 ground2Pos = new GridPoint2(20, 3);
+    Entity ground2 = PlatformFactory.createStaticPlatform();
+    ground2.setScale(5,0.5f);
+    spawnEntityAt(ground2, ground2Pos, false, false);
+
+    GridPoint2 step1Pos = new GridPoint2(5,5);
     Entity step1 = PlatformFactory.createStaticPlatform();
     step1.setScale(2,1);
     spawnEntityAt(step1, step1Pos, false, false);
 
-    GridPoint2 step2Pos = new GridPoint2(10,4);
+    GridPoint2 step2Pos = new GridPoint2(10,6);
     Entity step2 = PlatformFactory.createStaticPlatform();
     step2.setScale(2,1);
     spawnEntityAt(step2, step2Pos, false, false);
@@ -220,17 +226,27 @@ public class CaveGameArea extends GameArea {
     GridPoint2 step3Pos = new GridPoint2(16,5);
     Entity step3 = PlatformFactory.createStaticPlatform();
     step3.setScale(2,1);
-    spawnEntityAt(step3, step3Pos, false, false);
+    //spawnEntityAt(step3, step3Pos, false, false);
 
     GridPoint2 step4Pos = new GridPoint2(20,7);
     Entity step4 = PlatformFactory.createStaticPlatform();
     step4.setScale(2,1);
-    spawnEntityAt(step4, step4Pos, false, false);
+    //spawnEntityAt(step4, step4Pos, false, false);
 
     GridPoint2 longPlatformPos = new GridPoint2(0,11);
     Entity longPlatform = PlatformFactory.createStaticPlatform();
     longPlatform.setScale(10,0.1f);
     spawnEntityAt(longPlatform, longPlatformPos, false, false);
+
+    GridPoint2 wallPos = new GridPoint2(15, 1);
+    Entity wall = PlatformFactory.createStaticPlatform();
+    wall.setScale(0.5f,1.5f);
+    spawnEntityAt(wall, wallPos, false, false);
+
+    GridPoint2 wall2Pos = new GridPoint2(20, 1);
+    Entity wall2 = PlatformFactory.createStaticPlatform();
+    wall2.setScale(0.5f,1.5f);
+    spawnEntityAt(wall2, wall2Pos, false, false);
 
   }
 
@@ -243,6 +259,12 @@ public class CaveGameArea extends GameArea {
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
+  }
+
+  private void spawnDeathZone() {
+    GridPoint2 spawnPos =  new GridPoint2(18,0);
+    Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+    spawnEntityAt(deathZone, spawnPos, true,  true);
   }
 
   private void playMusic() {
