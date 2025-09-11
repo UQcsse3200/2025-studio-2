@@ -96,7 +96,12 @@ public class ForestGameArea extends GameArea {
           "images/camera-lens.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
+          "images/terrain_iso_grass.atlas",
+          "images/ghost.atlas",
+          "images/ghostKing.atlas",
+          "images/drone.atlas",
+          "images/security-camera.atlas",
+          "images/PLAYER.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -213,13 +218,13 @@ public class ForestGameArea extends GameArea {
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
-    door = spawnDoor();
+//    door = spawnDoor();
     spawnPressurePlates() ;
 
     spawnLights(); // uncomment to spawn in lights
     // spawnKey();
     spawnTraps();
-//    spawnGate();
+    spawnGate();
 
     spawnUpgrade("dash", 15, 19);
     spawnUpgrade("glider", 15, 17);

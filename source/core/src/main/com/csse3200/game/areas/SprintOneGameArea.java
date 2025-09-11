@@ -142,8 +142,6 @@ public class SprintOneGameArea extends GameArea {
         player = spawnPlayer(getComponents());
         player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
-        player = spawnPlayer(getComponents());
-
         loadEntities();
 
 //        oldPlayer.dispose(); // testing shit
@@ -158,7 +156,9 @@ public class SprintOneGameArea extends GameArea {
 
         loadAssets();
 
-        spawnPlayer(getComponents());
+        loadPrerequisites();
+
+        player = spawnPlayer(getComponents());
 
         // transfer all of the retained data
         player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);

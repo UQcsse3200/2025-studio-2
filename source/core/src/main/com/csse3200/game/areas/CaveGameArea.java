@@ -95,7 +95,11 @@ public class CaveGameArea extends GameArea {
     "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" , "images/drone.atlas"
+    "images/terrain_iso_grass.atlas",
+          "images/ghost.atlas",
+          "images/ghostKing.atlas",
+          "images/drone.atlas",
+          "images/PLAYER.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -150,21 +154,22 @@ public class CaveGameArea extends GameArea {
     player = spawnPlayer(getComponents());
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
-    player = spawnPlayer(getComponents());
-
     loadEntities();
   }
 
   protected void reset() {
     // Retain all data we want to be transferred across the reset (e.g. player movement direction)
     Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+    System.out.println(walkDirection);
 
     // Delete all entities within the room
     super.dispose();
 
     loadAssets();
 
-    spawnPlayer(getComponents());
+    loadPrerequisites();
+
+    player = spawnPlayer(getComponents());
 
     // transfer all of the retained data
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
