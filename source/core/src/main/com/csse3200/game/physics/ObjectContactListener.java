@@ -174,8 +174,6 @@ public class ObjectContactListener implements ContactListener {
 
     }
 
-
-
     /**
      * Check if the colliding entities consist of a trap and a player, and if so calls the
      * trap's damage function.
