@@ -22,6 +22,15 @@ public class TextureRenderComponent extends RenderComponent {
     this.texture = ServiceLocator.getResourceService().getAsset(texture, Texture.class);
   }
 
+  /**
+   * Returns the texture image path
+   *
+   * @return the image path
+   */
+  public Texture getTexture() {
+      return texture;
+  }
+
   public void setRotation(float rotation) {
     this.rotation = rotation;
   }
