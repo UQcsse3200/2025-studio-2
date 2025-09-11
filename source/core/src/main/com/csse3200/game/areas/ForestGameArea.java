@@ -145,7 +145,7 @@ public class ForestGameArea extends GameArea {
 
     spawnDrone();             // Play with idle/chasing drones (unless chasing)
     spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    //spawnBomberDrone();       // Play with bomber drones
+    spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
 
@@ -157,6 +157,7 @@ public class ForestGameArea extends GameArea {
 
     door = spawnDoor();
     spawnPressurePlates();
+
 
 
     spawnLights(); // uncomment to spawn in lights
