@@ -52,7 +52,7 @@ public class EnemyFactoryTest {
 
         rs = new ResourceService();
         ServiceLocator.registerResourceService(rs);
-        rs.loadTextureAtlases(new String[]{"images/drone.atlas","images/SelfDestructionDrone.atlas"});
+        rs.loadTextureAtlases(new String[]{"images/drone.atlas","images/SelfDestructDrone.atlas"});
         rs.loadAll();
 
         // Register time source needed for AI tasks
@@ -62,7 +62,7 @@ public class EnemyFactoryTest {
 
     @AfterEach
     void cleanUp() {
-        rs.unloadAssets(new String[]{"images/drone.atlas","images/SelfDestructionDrone.atlas"});
+        rs.unloadAssets(new String[]{"images/drone.atlas","images/SelfDestructDrone.atlas"});
         rs.dispose();
         ServiceLocator.clear();
     }

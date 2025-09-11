@@ -50,6 +50,7 @@ public class CaveGameArea extends GameArea {
           "images/iso_grass_2.png",
           "images/iso_grass_3.png",
           "images/drone.png",
+          "images/SelfDestructDrone.png",
           "images/bomb.png",
           "images/button.png",
           "images/button_pushed.png",
@@ -70,7 +71,7 @@ public class CaveGameArea extends GameArea {
           "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" ,"images/SelfDestructionDrone.atlas", "images/drone.atlas"
+    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" ,"images/SelfDestructDrone.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};

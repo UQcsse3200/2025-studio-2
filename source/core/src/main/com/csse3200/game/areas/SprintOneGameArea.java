@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -73,10 +74,11 @@ public class SprintOneGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
+            "images/SelfDestructDrone.png",
             "images/bomb.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas","images/SelfDestructionDrone.atlas", "images/drone.atlas"
+            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas","images/SelfDestructDrone.atlas", "images/drone.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -124,6 +126,7 @@ public class SprintOneGameArea extends GameArea {
         spawnTraps();
         spawnDrone();
         spawnPatrollingDrone();
+        spawnSelfDestructDrone();
         //spawnBomberDrone();
         spawnDoor();
         displayUI();
@@ -327,6 +330,15 @@ public class SprintOneGameArea extends GameArea {
         };
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute, securityLight);
         spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+    }
+    private void spawnSelfDestructDrone(){
+        GridPoint2 spawnTile = new GridPoint2(7,11);
+        Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructDrone(player,spawnWorldPos,securityLight);
+
+        spawnEntityAt(SelfDestructDrone, spawnTile, false, false);
+
     }
 
     private void spawnBomberDrone() {

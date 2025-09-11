@@ -96,7 +96,7 @@ public class ForestGameArea extends GameArea {
           "images/iso_grass_2.png",
           "images/iso_grass_3.png",
           "images/drone.png",
-          "images/SelfDestructionDrone.png",
+          "images/SelfDestructDrone.png",
           "images/bomb.png",
           "images/platform.png",
           "images/gate.png",
@@ -123,7 +123,7 @@ public class ForestGameArea extends GameArea {
           "images/pressure_plate_pressed.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas","images/SelfDestructionDrone.atlas", "images/drone.atlas"
+          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas","images/SelfDestructDrone.atlas", "images/drone.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -201,7 +201,7 @@ public class ForestGameArea extends GameArea {
 
     spawnDrone();             // Play with idle/chasing drones (unless chasing)
     spawnPatrollingDrone();// Play with patrolling/chasing drones
-    spawnSelfDestructionDrone(); //Play with SelfDestructionDrone
+    spawnSelfDestructDrone(); //Play with SelfDestructDrone
     //spawnBomberDrone();       // Play with bomber drones
   }
 
@@ -306,11 +306,11 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
   }
 
-  private void spawnSelfDestructionDrone(){
+  private void spawnSelfDestructDrone(){
       GridPoint2 spawnTile = new GridPoint2(7,11);
       Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-      Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(player,spawnWorldPos,securityLight);
+      Entity SelfDestructDrone = EnemyFactory.createSelfDestructDrone(player,spawnWorldPos,securityLight);
 
       spawnEntityAt(SelfDestructDrone, spawnTile, false, false);
 

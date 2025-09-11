@@ -23,6 +23,7 @@ import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -33,6 +34,19 @@ import com.csse3200.game.services.ServiceLocator;
 public class EnemyFactory {
     private static final EnemyConfigs configs =
             FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
+
+    public static void loadAssets(){
+        ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.loadTextureAtlases(new String[]{
+                "images/SelfDestructDrone.atlas"
+        });
+    }
+
+    public static void unloadAssets(){
+        ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.unloadAssets(new String[]{"images/SelfDestructDrone.atlas"});
+    }
+
 
     /**
      * Creates a drone enemy that remains idle unless chasing its target.
@@ -159,14 +173,12 @@ public class EnemyFactory {
         return drone;
     }
 
-    public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos, Entity securityLight){
+    public static Entity createSelfDestructDrone(Entity target, Vector2 spawnPos, Entity securityLight){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
         drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
         if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
-
-
-         TextureAtlas SelfDestructAtlas = ServiceLocator.getResourceService().getAsset("images/SelfDestructDrone.atlas",TextureAtlas.class);
+        TextureAtlas SelfDestructAtlas = ServiceLocator.getResourceService().getAsset("images/SelfDestructDrone.atlas",TextureAtlas.class);
 
          if(SelfDestructAtlas == null){
              throw new RuntimeException("SelfDestructDrone.atlas not loaded");
