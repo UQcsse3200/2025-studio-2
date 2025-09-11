@@ -23,7 +23,7 @@ class GameAreaTest {
           @Override
           public void create() {}
           public void reset() {}
-          public void loadLevel() {}
+          public void createWithPlayer(Entity player) {}
         };
 
     ServiceLocator.registerEntityService(new EntityService());

@@ -60,17 +60,12 @@ class DoorComponentTest {
 
         game = new GameArea() {
             @Override
-            public void create() { }
+            public void create() {}
 
             @Override
-            protected void reset() {
+            protected void reset() {}
 
-            }
-
-            @Override
-            protected void loadLevel() {
-
-            }
+            public void createWithPlayer(Entity player) {}
         };
     }
 

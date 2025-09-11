@@ -7,9 +7,12 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -25,6 +28,9 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -89,8 +95,6 @@ public class SprintOneGameArea extends GameArea {
 
     private final TerrainFactory terrainFactory;
 
-    private Entity player;
-
     /**
      * Initialise this ForestGameArea to use the provided TerrainFactory.
      * @param terrainFactory TerrainFactory used to create the terrain for the GameArea.
@@ -104,25 +108,87 @@ public class SprintOneGameArea extends GameArea {
     /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
     @Override
     public void create() {
-
         PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
         engine.getWorld().setContactListener(new ObjectContactListener());
-        keySpawned = false;
         loadAssets();
 
-        spawnTerrain();
-        createMinimap();
+        loadPrerequisites();
+
         player = spawnPlayer();
-        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
-        player.getEvents().addListener("reset", this::reset);
+        saveComponents(player.getComponent(CombatStatsComponent.class),
+                player.getComponent(InventoryComponent.class));
 
+        loadEntities();
+    }
 
+    /**
+     * Create the game area using components from a different player entity.
+     */
+    public void createWithPlayer(Entity oldPlayer) {
+        PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+        engine.getWorld().setContactListener(new ObjectContactListener());
+        loadAssets();
 
+        loadPrerequisites();
+
+        saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
+                oldPlayer.getComponent(InventoryComponent.class));
+
+        // Get walk direction
+        Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+        // player must be spawned before enemies as they require a player to target
+        player = spawnPlayer(getComponents());
+        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+        player = spawnPlayer(getComponents());
+
+        loadEntities();
+
+//        oldPlayer.dispose(); // testing shit
+    }
+
+    protected void reset() {
+        // Retain all data we want to be transferred across the reset (e.g. player movement direction)
+        Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+
+        // Delete all entities within the room
+        super.dispose();
+
+        loadAssets();
+
+        spawnPlayer(getComponents());
+
+        // transfer all of the retained data
+        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+        loadEntities();
+    }
+
+    /**
+     * Load terrain, UI, music. Must be done before spawning entities.
+     * Assets are loaded separately.
+     * Entities spawned separately.
+     */
+    private void loadPrerequisites() {
+        displayUI();
+
+        spawnTerrain();
+        //spawnTrees();
+        createMinimap();
+
+        playMusic();
+
+        keySpawned = false;
+    }
+
+    /**
+     * Load entities. Terrain must be loaded beforehand.
+     * Player must be spawned beforehand if spawning enemies.
+     */
+    private void loadEntities() {
         spawnPlatform();
         spawnElevatorPlatform();
-
         spawnBoxes();
-        playMusic();
         spawnLights();
         spawnButtons();
         spawnTraps();
@@ -130,21 +196,6 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         spawnBomberDrone();
         spawnDoor();
-        displayUI();
-
-    }
-    @Override
-    public Entity getPlayer() {
-        return player;
-    }
-
-    @Override
-    protected void reset() {
-
-    }
-
-    public void loadLevel() {
-
     }
 
     private void displayUI() {
@@ -239,10 +290,19 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private Entity spawnPlayer() {
-        Entity newPlayer = PlayerFactory.createPlayer();
+        Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+
+    private Entity spawnPlayer(List<Component> componentList) {
+        Entity newPlayer = PlayerFactory.createPlayer(componentList);
+        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
+        return newPlayer;
+    }
+
     //Platform spawn in testing
     private void spawnPlatform() {
     /*

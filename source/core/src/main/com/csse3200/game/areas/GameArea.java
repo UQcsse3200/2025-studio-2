@@ -48,10 +48,10 @@ public abstract class GameArea implements Disposable {
   /** Create the game area in the world. */
   public abstract void create();
 
+  public abstract void createWithPlayer(Entity player);
+
   /** Reset current game area. */
   protected abstract void reset();
-
-  protected abstract void loadLevel();
 
   /**
    * Get copies all of the player components we want to transfer in between resets/levels.

@@ -39,6 +39,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
@@ -90,7 +91,9 @@ public class ForestGameArea extends GameArea {
           "images/pressure_plate_unpressed.png",
           "images/pressure_plate_pressed.png",
           "images/dash_powerup.png",
-          "images/glide_powerup.png"
+          "images/glide_powerup.png",
+          "images/camera-body.png",
+          "images/camera-lens.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
@@ -121,13 +124,42 @@ public class ForestGameArea extends GameArea {
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
 
-    // level must be loaded first as this loads terrain
-    loadLevel();
+    // Terrain must be loaded first in order to spawn entities
+    loadPrerequisites();
 
+    // player must be spawned before enemies as they require a player to target
     player = spawnPlayer();
-    player.getEvents().addListener("reset", this::reset);
+    // Save this new player's components
     saveComponents(player.getComponent(CombatStatsComponent.class),
             player.getComponent(InventoryComponent.class));
+
+    // load remaining entities
+    loadEntities();
+  }
+
+  /**
+   * Create the game area using components from a different player entity.
+   */
+  public void createWithPlayer(Entity oldPlayer) {
+    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
+    engine.getWorld().setContactListener(new ObjectContactListener());
+    loadAssets();
+
+    // Terrain must be loaded first in order to spawn entities
+    loadPrerequisites();
+
+    // Save the old player's combat stats and inventory
+    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
+            oldPlayer.getComponent(InventoryComponent.class));
+
+    // Get walk direction
+    Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+    // player must be spawned before enemies as they require a player to target
+    player = spawnPlayer(getComponents());
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+    // load remaining entities
+    loadEntities();
   }
 
   protected void reset() {
@@ -138,28 +170,37 @@ public class ForestGameArea extends GameArea {
     // Delete all entities within the room
     // Note: Using super's dispose() instead of local as super does not unload assets.
     super.dispose();
-    loadLevel();
+
+    loadPrerequisites();
 
     // Components such as health, upgrades and items we want to revert to how they were at
     // the start of the level. Copies are used in order to not break the original components.
     player = spawnPlayer(getComponents());
-    player.getEvents().addListener("reset", this::reset);
 
     // transfer all of the retained data
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+    loadEntities();
   }
 
   /**
-   * Load the level.
-   * Player is created separately.
+   * Load terrain, UI, music. Must be done before spawning entities.
    * Assets are loaded separately.
+   * Entities spawned separately.
    */
-  protected void loadLevel() {
+  private void loadPrerequisites() {
     displayUI();
     spawnTerrain();
     // spawnTrees();
     createMinimap();
+    playMusic();
+  }
 
+  /**
+   * Load entities. Terrain must be loaded beforehand.
+   * Player must be spawned beforehand if spawning enemies.
+   */
+  private void loadEntities() {
     //spawnDrone();             // Play with idle/chasing drones (unless chasing)
     //spawnPatrollingDrone();   // Play with patrolling/chasing drones
     //spawnBomberDrone();       // Play with bomber drones
@@ -173,13 +214,12 @@ public class ForestGameArea extends GameArea {
     spawnButtons();
 
     door = spawnDoor();
-    spawnPressurePlates();
+    spawnPressurePlates() ;
 
     spawnLights(); // uncomment to spawn in lights
     // spawnKey();
     spawnTraps();
-    playMusic();
-    spawnDoor();
+//    spawnGate();
 
     spawnUpgrade("dash", 15, 19);
     spawnUpgrade("glider", 15, 17);
@@ -261,14 +301,16 @@ public class ForestGameArea extends GameArea {
   }
 
   private Entity spawnPlayer() {
-    Entity newPlayer = PlayerFactory.createPlayer();
+    Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
   private Entity spawnPlayer(List<Component> componentList) {
     Entity newPlayer = PlayerFactory.createPlayer(componentList);
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
@@ -505,6 +547,17 @@ public class ForestGameArea extends GameArea {
     Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, 20f, "1");
 
     spawnEntityAt(securityLight, new GridPoint2(12, 16), true, true);
+  }
+
+  private void spawnGate() {
+    /*
+    Creates gate to test
+    */
+    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
+    Entity gate = ObstacleFactory.createDoor("door", this, "cave");
+    gate.setScale(1, 2);
+    gate.getComponent(DoorComponent.class).openDoor();
+    spawnEntityAt(gate, gatePos, true, true);
   }
 
   private void playMusic() {

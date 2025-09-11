@@ -291,10 +291,10 @@ public class Entity {
     }
 
     if (safeSpotRequested) {
-      System.out.println(this.getPosition());
+//      System.out.println(this.getPosition());
       this.setPosition(safeSpotPosition);
       safeSpotRequested = false;
-      System.out.println(this.getPosition());
+//      System.out.println(this.getPosition());
     }
 
     if (resetRequested) {

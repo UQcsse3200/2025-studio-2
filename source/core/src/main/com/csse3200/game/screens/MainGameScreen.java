@@ -60,6 +60,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
   private GameArea gameArea;
+  private TerrainFactory terrainFactory;
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -92,28 +93,28 @@ public class MainGameScreen extends ScreenAdapter {
     loadAssets();
 
     logger.debug("Initialising main game screen entities");
-    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+    terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    gameArea = new SprintOneGameArea(terrainFactory);
+    gameArea = new CaveGameArea(terrainFactory);
     gameArea.create();
-
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", keyId, player);
-      switchArea(keyId, gameArea, player);
+      switchArea(keyId, player);
     });
-
 
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
     createUI();
   }
 
-  private void switchArea(String levelId, GameArea oldArea, Entity player) {
+  private void switchArea(String levelId, Entity player) {
     Gdx.app.postRunnable(() -> {
-      if (levelId != "") {
-        oldArea.dispose();
-        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+      if (!levelId.isEmpty()) {
+  //        System.out.println("Area switched to " + levelId);
+        GameArea oldArea = gameArea;
+
+  //        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
         GameArea newArea = null;
         String newLevel = "";
@@ -130,11 +131,14 @@ public class MainGameScreen extends ScreenAdapter {
 
         if (newArea != null) {
           GameArea finalNewArea = newArea; // effectively final
+          gameArea = finalNewArea;
           String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
+                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
           );
-          finalNewArea.create();
+          finalNewArea.createWithPlayer(player);
+          oldArea.dispose();
+          oldArea = null;
         }
       }
     });

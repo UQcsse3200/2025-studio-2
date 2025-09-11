@@ -1,17 +1,23 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -19,6 +25,9 @@ import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.csse3200.game.components.obstacles.DoorComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class CaveGameArea extends GameArea {
@@ -113,20 +122,37 @@ public class CaveGameArea extends GameArea {
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
 
-    loadLevel();
+    loadPrerequisites();
 
     player = spawnPlayer();
-    player.getEvents().addListener("reset", this::reset);
+    saveComponents(player.getComponent(CombatStatsComponent.class),
+            player.getComponent(InventoryComponent.class));
 
+    loadEntities();
   }
 
-  public void createWithPlayer(Entity player) {
+  /**
+   * Create the game area using components from a different player entity.
+   */
+  public void createWithPlayer(Entity oldPlayer) {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
-    this.player = player;
-    player.getEvents().addListener("reset", this::reset);
-    loadLevel();
+
+    loadPrerequisites();
+
+    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
+            oldPlayer.getComponent(InventoryComponent.class));
+
+    // Get walk direction
+    Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
+    // player must be spawned before enemies as they require a player to target
+    player = spawnPlayer(getComponents());
+    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+    player = spawnPlayer(getComponents());
+
+    loadEntities();
   }
 
   protected void reset() {
@@ -135,25 +161,41 @@ public class CaveGameArea extends GameArea {
 
     // Delete all entities within the room
     super.dispose();
-    loadLevel();
+
+    loadAssets();
+
+    spawnPlayer(getComponents());
 
     // transfer all of the retained data
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
+
+    loadEntities();
   }
 
-  protected void loadLevel() {
+  /**
+   * Load terrain, UI, music. Must be done before spawning entities.
+   * Assets are loaded separately.
+   * Entities spawned separately.
+   */
+  private void loadPrerequisites() {
     displayUI();
 
     spawnTerrain();
     //spawnTrees();
-    player = spawnPlayer();
-//    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
+    createMinimap();
+
+    playMusic();
+  }
+
+  /**
+   * Load entities. Terrain must be loaded beforehand.
+   * Player must be spawned beforehand if spawning enemies.
+   */
+  private void loadEntities() {
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
     spawnGate(); //Testing gate
-
-    playMusic();
   }
 
   private void displayUI() {
@@ -193,6 +235,31 @@ public class CaveGameArea extends GameArea {
         ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
   }
 
+  private void createMinimap() {
+    Texture minimapTexture =
+            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
+
+    float tileSize = terrain.getTileSize();
+    Vector2 worldSize =
+            new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
+
+    MinimapDisplay.MinimapOptions options = getMinimapOptions();
+
+    MinimapDisplay minimapDisplay =
+            new MinimapDisplay(150f, options);
+
+    Entity minimapEntity = new Entity();
+    minimapEntity.addComponent(minimapDisplay);
+    spawnEntity(minimapEntity);
+  }
+
+  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+    return options;
+  }
+
   private void spawnTrees() {
     GridPoint2 minPos = new GridPoint2(0, 0);
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
@@ -205,8 +272,16 @@ public class CaveGameArea extends GameArea {
   }
 
   private Entity spawnPlayer() {
-    Entity newPlayer = PlayerFactory.createPlayer();
+    Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
+    return newPlayer;
+  }
+
+  private Entity spawnPlayer(List<Component> componentList) {
+    Entity newPlayer = PlayerFactory.createPlayer(componentList);
+    spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
@@ -271,7 +346,7 @@ public class CaveGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
+    Entity gate = ObstacleFactory.createDoor("door", this, "forest");
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
