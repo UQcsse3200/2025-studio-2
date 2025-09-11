@@ -34,9 +34,7 @@ public class ExplosionFactory {
         AnimationRenderComponent animator = new AnimationRenderComponent(droneAtlas);
         // Add bomb_effect animation, set to Animation.PlayMode.NORMAL to make sure it plays only once
         animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
-
-        AnimationRenderComponent SelfDestructAnim = new AnimationRenderComponent(SelfDestructAtlas);
-        SelfDestructAnim.addAnimation("self_destruct", 0.08f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("self_destruct", 0.08f, Animation.PlayMode.NORMAL);
 
         Entity explosion = new Entity()
                 .addComponent(animator)
