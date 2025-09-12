@@ -10,13 +10,14 @@ public class ButtonManagerComponent extends Component {
     private float puzzleTimer = 0f;
     private boolean puzzleActive = false;
     private static final float PUZZLE_TIME_LIMIT = 15f;
+    private boolean puzzleCompleted = false;
 
     public void addButton(ButtonComponent button) {
         buttons.add(button);
     }
 
     public void onButtonPressed() {
-        if(!puzzleActive) {
+        if (!puzzleActive) {
             puzzleActive = true;
             puzzleTimer = PUZZLE_TIME_LIMIT;
         }
@@ -28,24 +29,43 @@ public class ButtonManagerComponent extends Component {
 
         puzzleTimer -= ServiceLocator.getTimeSource().getDeltaTime();
 
-        boolean allPressed = true;
+        boolean allPressedNow = true;
         for (ButtonComponent button : buttons) {
             if (!button.isPushed()) {
-                allPressed = false;
+                allPressedNow = false;
                 break;
             }
         }
 
-        if (allPressed) {
-            System.out.println("Puzzle completed!");
-            puzzleActive = false;
-            entity.getEvents().trigger("puzzleCompleted");
+        if (allPressedNow) {
+            if (!puzzleCompleted) {
+                puzzleCompleted = true;
+                puzzleActive = false;
+                entity.getEvents().trigger("puzzleCompleted");
+            }
         } else if (puzzleTimer <= 0f) {
-            System.out.println("Puzzle failed. Resetting buttons.");
             puzzleActive = false;
             for (ButtonComponent button : buttons) {
-                button.setPushed(false);
+                button.forceUnpress();
             }
         }
+    }
+
+    public boolean isPuzzleCompleted() {
+        return !puzzleCompleted;
+    }
+
+    public void resetPuzzle() {
+        puzzleActive = false;
+        puzzleCompleted = false;
+        puzzleTimer = 0f;
+        for (ButtonComponent button : buttons) {
+            button.forceUnpress();
+        }
+    }
+
+    public float getTimeLeft() {
+        if(!puzzleActive) return 0f;
+        return Math.max(0, puzzleTimer);
     }
 }

@@ -194,14 +194,21 @@ public class SprintOneGameArea extends GameArea {
         Entity button4 = ButtonFactory.createButton(false, "nothing", "up");
         spawnEntityAt(button4, new GridPoint2(20,4), true,  true);
 
+        Entity button5 = ButtonFactory.createButton(false, "nothing", "up");
+        spawnEntityAt(button5, new GridPoint2(23,4), true,  true);
+
         ButtonComponent btn = button.getComponent(ButtonComponent.class);
-        ButtonComponent btn4 = button.getComponent(ButtonComponent.class);
+        ButtonComponent btn4 = button5.getComponent(ButtonComponent.class);
+        ButtonComponent btn5 = button4.getComponent(ButtonComponent.class);
 
         btn.setPuzzleManager(manager);
         btn4.setPuzzleManager(manager);
+        btn5.setPuzzleManager(manager);
+
 
         manager.addButton(btn);
         manager.addButton(btn4);
+        manager.addButton(btn5);
 
 
         //listener to spawn key when door button pushed

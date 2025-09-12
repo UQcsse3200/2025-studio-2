@@ -37,7 +37,7 @@ public class ButtonComponent extends Component {
      */
     @Override
     public void update() {
-        if (isTiming) {
+        if (isTiming && isPushed && (puzzleManager == null || puzzleManager.isPuzzleCompleted())) {
             unpressTimer -= ServiceLocator.getTimeSource().getDeltaTime();
 
             if (unpressTimer <= 0f) {
@@ -131,9 +131,13 @@ public class ButtonComponent extends Component {
 
         // set button texture based on its type
 
-        if(!"platform".equals(type) && !"door".equals(type) && isPushed) {
-            unpressTimer = AUTO_UNPRESS_TIME;
-            isTiming = true;
+        if(isPushed) {
+            if(puzzleManager == null || puzzleManager.isPuzzleCompleted()) {
+                if(!"platform".equals(type) && !"door".equals(type) && isPushed) {
+                    unpressTimer = AUTO_UNPRESS_TIME;
+                    isTiming = true;
+                }
+            }
         }
 
         if (puzzleManager != null && isPushed) {
@@ -167,6 +171,22 @@ public class ButtonComponent extends Component {
         } else {
             this.direction = direction.toLowerCase();
         }
+    }
+
+    public void forceUnpress() {
+        if (!isPushed) {
+            return;
+        }
+        isPushed = false;
+        isTiming = false;
+        unpressTimer = 0f;
+
+        String texture = "images/button.png";
+        TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+        if (render != null) {
+            render.setTexture(texture);
+        }
+        entity.getEvents().trigger("buttonToggled", false);
     }
 
     public void setPuzzleManager(ButtonManagerComponent puzzleManager) {
