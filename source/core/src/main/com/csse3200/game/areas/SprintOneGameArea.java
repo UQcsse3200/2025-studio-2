@@ -121,9 +121,6 @@ public class SprintOneGameArea extends GameArea {
         createMinimap(
             ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class)
         );
-        player = spawnPlayer();
-        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
-        player.getEvents().addListener("reset", this::reset);
 
         playMusic();
 
