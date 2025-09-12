@@ -92,7 +92,7 @@ public class TemplateGameArea extends GameArea {
     protected void loadPrerequisites() {
         displayUI();
         spawnTerrain();
-        createMinimap();
+        createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
     }
     protected void loadEntities() {

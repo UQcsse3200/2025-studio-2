@@ -139,8 +139,9 @@ public class ForestGameArea extends GameArea {
     displayUI();
     spawnTerrain();
     // spawnTrees();
-    createMinimap();
-    playMusic();
+
+      createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
+      playMusic();
   }
 
   /**
@@ -171,31 +172,6 @@ public class ForestGameArea extends GameArea {
     spawnUpgrade("dash", 15, 19);
     spawnUpgrade("glider", 15, 17);
     spawnUpgrade("grappler", 15, 15);
-  }
-
-  private void createMinimap() {
-    Texture minimapTexture =
-            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
-
-    float tileSize = terrain.getTileSize();
-    Vector2 worldSize =
-            new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
-    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
-
-    MinimapDisplay.MinimapOptions options = getMinimapOptions();
-
-    MinimapDisplay minimapDisplay =
-            new MinimapDisplay(150f, options);
-
-    Entity minimapEntity = new Entity();
-    minimapEntity.addComponent(minimapDisplay);
-    spawnEntity(minimapEntity);
-  }
-
-  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
-    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-    return options;
   }
 
   private void displayUI() {

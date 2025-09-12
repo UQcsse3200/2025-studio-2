@@ -33,6 +33,7 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.maingame.MainGameExitDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.input.PauseInputComponent;
+import com.csse3200.game.ui.cutscene.CutsceneArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +61,8 @@ public class MainGameScreen extends ScreenAdapter {
 
   private GameArea gameArea;
   private TerrainFactory terrainFactory;
+
+  private PauseInputComponent pauseInput;
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -100,7 +103,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", keyId, player);
-      switchArea(keyId, player);
+      switchArea("cutscene1", player);
     });
 
     // Have to createUI after the game area is created since createUI
@@ -120,13 +123,19 @@ public class MainGameScreen extends ScreenAdapter {
         String newLevel = "";
         if ("forest".equals(levelId)) {
           newArea = new ForestGameArea(terrainFactory);
-          newLevel = "cave";
+          newLevel = "cutscene1";
         } else if ("sprint1".equals(levelId)) {
           newArea = new SprintOneGameArea(terrainFactory);
-          newLevel = "forest";
+          newLevel = "cutscene2";
         } else if ("cave".equals(levelId)) {
           newArea = new CaveGameArea(terrainFactory);
           newLevel = "forest";
+        } else if ("cutscene1".equals(levelId)) {
+          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
+          newLevel = "sprint1";
+        } else if ("cutscene2".equals(levelId)) {
+          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
+          newLevel = "cave";
         }
 
         if (newArea != null) {
@@ -135,6 +144,9 @@ public class MainGameScreen extends ScreenAdapter {
           String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
                   "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
+          );
+          finalNewArea.getEvents().addListener(
+                  "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, player)
           );
           System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           finalNewArea.createWithPlayer(player);
@@ -287,6 +299,7 @@ public class MainGameScreen extends ScreenAdapter {
       throw new IllegalStateException("GameArea has a null player");
     }
     pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
+    pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
@@ -295,8 +308,15 @@ public class MainGameScreen extends ScreenAdapter {
         .addComponent(new MainGameActions(this.game))
         .addComponent(new MainGameExitDisplay())
         .addComponent(pauseMenuDisplay)
-        .addComponent(new PauseInputComponent(this));
+        .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
+  }
+
+  // Set last keycode for inventory when tab is clicked
+  public void reflectPauseTabClick(PauseMenuDisplay.Tab tab) {
+    if (pauseInput != null) {
+      pauseInput.setLastKeycodeForTab(tab);
+    }
   }
 }

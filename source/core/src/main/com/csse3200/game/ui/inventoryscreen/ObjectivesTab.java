@@ -11,7 +11,7 @@ import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
 
 
-public class UpgradesTab implements InventoryTabInterface {
+public class ObjectivesTab implements InventoryTabInterface {
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
 
   private static final float BASE_W = 770f;
@@ -25,7 +25,7 @@ public class UpgradesTab implements InventoryTabInterface {
     float canvasW = canvasH * BASE_ASPECT;
 
     PixelPerfectPlacer placer = new PixelPerfectPlacer(
-        new Texture(Gdx.files.internal("inventory-screen/upgrades-selected.png"))
+        new Texture(Gdx.files.internal("inventory-screen/objectives-selected.png"))
     );
     placer.setSize(canvasW, canvasH);
 

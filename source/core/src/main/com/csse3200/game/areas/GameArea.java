@@ -1,15 +1,17 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ServiceLocator;
@@ -159,7 +161,9 @@ public abstract class GameArea implements Disposable {
     areaEntities.clear();
   }
 
-
+  public Entity getPlayer() {
+    return player;
+  }
 
   /**
    * Spawn entity at its current position
@@ -195,7 +199,26 @@ public abstract class GameArea implements Disposable {
     spawnEntity(entity);
   }
 
-  public Entity getPlayer() {
-    return player;
+  /**
+   * Creates and adds the minimap display to the given game area.
+   *
+   * @param minimapTexture the texture to use as minimap background
+   */
+  protected void createMinimap(Texture minimapTexture) {
+    float tileSize = terrain.getTileSize();
+    GridPoint2 bounds = terrain.getMapBounds(0);
+    Vector2 worldSize = new Vector2(bounds.x * tileSize, bounds.y * tileSize);
+
+    MinimapService minimapService = new MinimapService(minimapTexture, worldSize, new Vector2());
+    ServiceLocator.registerMinimapService(minimapService);
+
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+    MinimapDisplay minimapDisplay = new MinimapDisplay(150f, options);
+    minimapService.setDisplay(minimapDisplay);
+
+    Entity minimapEntity = new Entity();
+    minimapEntity.addComponent(minimapDisplay);
+    spawnEntity(minimapEntity);
   }
 }

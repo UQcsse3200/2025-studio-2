@@ -370,6 +370,25 @@ public class InputService implements InputProcessor, GestureDetector.GestureList
     return false;
   }
 
+    /**
+     * Iterates over registered input handlers in descending priority and stops as soon as the input is
+     * processed
+     *
+     * @return whether the input was processed
+     * @see GestureDetector.GestureListener#touchCancelled(int, int, int, int)
+     */
+  @Override
+  public boolean touchCancelled(int x, int y, int pointer, int button) {
+    for (InputComponent inputHandler : inputHandlers) {
+      if (inputHandler.touchCancelled(x, y, pointer, button)) {
+        logger.debug("touchCancelled (gesture) input handled by {}", inputHandler);
+        return true;
+      }
+    }
+    logger.debug("touchCancelled input was not handled");
+    return false;
+  }
+
   /**
    * Iterates over registered input handlers in descending priority and stops as soon as the input is
    * processed

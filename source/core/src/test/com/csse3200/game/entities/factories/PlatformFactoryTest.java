@@ -7,8 +7,7 @@ import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
-
+import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +35,7 @@ public class PlatformFactoryTest {
     void createStaticPlatform_hasAllComponents() {
         Entity staticPlatform = PlatformFactory.createStaticPlatform();
 
-        assertNotNull(staticPlatform.getComponent(TextureRenderComponent.class),
+        assertNotNull(staticPlatform.getComponent(TiledPlatformComponent.class),
                 "Static platform should have a TextureRendererComponent");
         assertNotNull(staticPlatform.getComponent(PhysicsComponent.class),
                 "Static platform should have a PhysicsComponent");
