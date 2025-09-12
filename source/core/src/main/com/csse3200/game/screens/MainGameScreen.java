@@ -130,10 +130,10 @@ public class MainGameScreen extends ScreenAdapter {
           newArea = new CaveGameArea(terrainFactory);
           newLevel = "forest";
         } else if ("cutscene1".equals(levelId)) {
-          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt", "");
+          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
           newLevel = "sprint1";
         } else if ("cutscene2".equals(levelId)) {
-          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt", "");
+          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
           newLevel = "cave";
         }
 

@@ -46,8 +46,6 @@ public class CutsceneDisplayTest {
     private CutsceneDisplay cutsceneDisplay;
     // Text boxes to be used in component
     private List<TextBox> textBoxes;
-    // String for next area to send player to
-    private final String nextArea = "next_level";
 
 
     /**
@@ -80,7 +78,7 @@ public class CutsceneDisplayTest {
         );
 
         // Set up component
-        cutsceneDisplay = new CutsceneDisplay(textBoxes, gameArea, nextArea);
+        cutsceneDisplay = new CutsceneDisplay(textBoxes, gameArea);
     }
 
     @Test
@@ -165,7 +163,7 @@ public class CutsceneDisplayTest {
         }
 
         // Verify the event for finishing the cutscene was triggered
-        verify(gameArea).trigger("cutsceneFinished", nextArea, null);
+        verify(gameArea).trigger("cutsceneFinished", null, null);
     }
 
     /**
