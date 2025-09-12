@@ -66,7 +66,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
     Gdx.app.log("Keycode", Integer.toString(keycode));
-    Gdx.app.log("Keybind", Integer.toString(Keymap.getActionKeyCode("Grapple")));
+
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
       triggerGlideEvent(true);
@@ -94,8 +94,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == RESET_KEY) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
-    } else if (keycode == GRAPPLE_KEY) {
-      Gdx.app.log("Has grappler", "TRUE");
+    } else if (keycode == /*GRAPPLE_KEY*/34) {
+
       triggerGrappleEvent();
     }
     // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
@@ -206,7 +206,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerGrappleEvent() {
-    Gdx.app.log("GrappleKeyPressed", "TRUE");
+
     if (entity.getComponent(InventoryComponent.class).hasItem("grapple")) {
       entity.getEvents().trigger("grapple");
     }
