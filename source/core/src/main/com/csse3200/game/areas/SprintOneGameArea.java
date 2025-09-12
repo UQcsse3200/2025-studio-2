@@ -298,23 +298,21 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(platformAutoBox, new GridPoint2(
                 (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
 
-        BoxFactory.AutonomousBoxBuilder verticalBuilder1 = new BoxFactory.AutonomousBoxBuilder();
-        Entity verticalBox1 = verticalBuilder1
-                .moveX(17f, 17f).moveY(5f, 10f).speed(2f).damage(5).knockback(4).build();
-        spawnEntityAt(verticalBox1, new GridPoint2(
-                (int) verticalBuilder1.getSpawnX(), (int) verticalBuilder1.getSpawnY()), true, true);
+        Entity verticalBat1 = builder
+                .moveX(17f, 17f).moveY(5f, 10f).texture("images/flying_bat.atlas")
+                .speed(2f).damage(5).knockback(4).build();
+        spawnEntityAt(verticalBat1, new GridPoint2(
+                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
 
-        BoxFactory.AutonomousBoxBuilder verticalBuilder2 = new BoxFactory.AutonomousBoxBuilder();
-        Entity verticalBox2 = verticalBuilder2
-                .moveX(15f, 15f).moveY(5f, 10f).speed(4f).damage(5).knockback(4).build();
-        spawnEntityAt(verticalBox2, new GridPoint2(
-                (int) verticalBuilder2.getSpawnX(), (int) verticalBuilder2.getSpawnY()), true, true);
+        Entity verticalBat2 = builder
+                .moveX(15f, 15f).moveY(5f, 10f).texture("images/flying_bat.atlas").speed(4f).damage(5).knockback(4).build();
+        spawnEntityAt(verticalBat2, new GridPoint2(
+                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
 
-        BoxFactory.AutonomousBoxBuilder diagonalBuilder1 = new BoxFactory.AutonomousBoxBuilder();
-        Entity diagonalBox1 = diagonalBuilder1
-                .moveX(10f, 13f).moveY(5f, 10f).speed(6f).damage(5).knockback(4).build();
-        spawnEntityAt(diagonalBox1, new GridPoint2(
-                (int) diagonalBuilder1.getSpawnX(), (int) diagonalBuilder1.getSpawnY()), true, true);
+        Entity diagonalBat1 = builder
+                .moveX(10f, 13f).moveY(5f, 10f).texture("images/flying_bat.atlas").speed(6f).damage(5).knockback(4).build();
+        spawnEntityAt(diagonalBat1, new GridPoint2(
+                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
 
         // Bats
         BoxFactory.AutonomousBoxBuilder horizontalBatBuilder = new BoxFactory.AutonomousBoxBuilder();
