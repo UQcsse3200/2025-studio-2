@@ -1,5 +1,6 @@
 package com.csse3200.game.areas;
 
+
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -17,6 +18,7 @@ import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.WallComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -85,7 +87,9 @@ public class ForestGameArea extends GameArea {
           "images/door_open.png",
           "images/door_closed.png",
           "images/pressure_plate_unpressed.png",
-          "images/pressure_plate_pressed.png"
+          "images/pressure_plate_pressed.png",
+          "images/tile.png",
+          "images/wall.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
@@ -158,8 +162,7 @@ public class ForestGameArea extends GameArea {
 
     door = spawnDoor();
     spawnPressurePlates();
-
-
+    spawnWalls();
     spawnLights(); // uncomment to spawn in lights
     // spawnKey();
     spawnTraps();
@@ -338,7 +341,29 @@ public class ForestGameArea extends GameArea {
     movingPlatform.setScale(2,1);
     spawnEntityAt(movingPlatform, movingPos, false, false);
   }
-  private void spawnBoxes() {
+  private void spawnWalls() {
+        float ts = terrain.getTileSize();
+
+        // Shorter wall in the middle
+        GridPoint2 wall2Pos = new GridPoint2(10, 11);
+        Entity wall2 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 3f * ts,
+                "images/tile.png"
+        );
+        spawnEntityAt(wall2, wall2Pos, false, false);
+
+        // Another tall wall further right
+        GridPoint2 wall3Pos = new GridPoint2(22, 13);
+        Entity wall3 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 6f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall3, wall3Pos, false, false);
+    }
+
+    private void spawnBoxes() {
 
     // Static box
     Entity staticBox = BoxFactory.createStaticBox();
