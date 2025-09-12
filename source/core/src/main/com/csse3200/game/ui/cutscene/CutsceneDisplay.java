@@ -32,10 +32,6 @@ public class CutsceneDisplay extends UIComponent {
      */
     private final GameArea area;
     /**
-     * ID of the next game area to load after cutscene finishes
-     */
-    private final String nextAreaID;
-    /**
      * A reference to what text box is currently being displayed
      */
     private int curTextBox = 0;
@@ -63,12 +59,10 @@ public class CutsceneDisplay extends UIComponent {
      *                    CutsceneReaderComponent ideally
      * @param area        The instance of the GameArea the entity this component is attached to
      *                    is apart of
-     * @param nextAreaID  The ID of the next GameArea to load after the cutscene is finished
      */
-    public CutsceneDisplay(List<TextBox> textBoxList, GameArea area, String nextAreaID) {
+    public CutsceneDisplay(List<TextBox> textBoxList, GameArea area) {
         this.textBoxList = textBoxList;
         this.area = area;
-        this.nextAreaID = nextAreaID;
     }
 
     /**
@@ -127,7 +121,7 @@ public class CutsceneDisplay extends UIComponent {
                     public void changed(ChangeEvent event, Actor actor) {
                         // Do nothing for now if we are on last index
                         if (curTextBox == textBoxList.size() - 1) {
-                            area.trigger("cutsceneFinished", nextAreaID, null);
+                            area.trigger("cutsceneFinished", null, null);
                         } else {
                             nextTextBox();
                         }

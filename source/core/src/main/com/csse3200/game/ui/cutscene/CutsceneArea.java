@@ -26,10 +26,6 @@ public class CutsceneArea extends GameArea {
      */
     private final String scriptPath;
     /**
-     * The ID of the next area to load after cutscene finishes
-     */
-    private final String nextAreaID;
-    /**
      * Reader entity that can read a script file
      */
     private Entity reader;
@@ -47,11 +43,9 @@ public class CutsceneArea extends GameArea {
     /**
      * Constructor for creating the game area representing cutscene.
      * @param scriptPath The file path to the cutscene script to be given to the reader component
-     * @param nextAreaID The ID for the next game area to redirect to after cutscene finishes
      */
-    public CutsceneArea(String scriptPath, String nextAreaID) {
+    public CutsceneArea(String scriptPath) {
         this.scriptPath = scriptPath;
-        this.nextAreaID = nextAreaID;
     }
 
     /**
@@ -78,7 +72,7 @@ public class CutsceneArea extends GameArea {
 
         // Create cutscene UI
         Entity cutscene = new Entity();
-        cutscene.addComponent(new CutsceneDisplay(reader.getComponent(CutsceneReaderComponent.class).getTextBoxes(), this, nextAreaID));
+        cutscene.addComponent(new CutsceneDisplay(reader.getComponent(CutsceneReaderComponent.class).getTextBoxes(), this));
         spawnEntity(cutscene);
     }
 
@@ -120,7 +114,7 @@ public class CutsceneArea extends GameArea {
      * Unloads previously created dummy assets and backgrounds from the resource service
      */
     private void unloadAssets() {
-        logger.debug("Attempting to unload background assets");
+        logger.debug("Attempting to unload background assets and dummy assets");
 
         // Get resource service
         ResourceService resourceService = ServiceLocator.getResourceService();
