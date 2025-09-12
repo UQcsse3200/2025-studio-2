@@ -12,8 +12,6 @@ import com.badlogic.gdx.utils.Array;
  * The component handles dynamic scaling, ensuring that overlays remain correctly positioned when resizing
  */
 public class PixelPerfectPlacer extends Stack {
-
-  private final Texture backgroundTexture;
   private final Image backgroundImage;
   private final Group overlayGroup;
   private final Array<OverlayConstraint> overlays = new Array<>();
@@ -33,10 +31,9 @@ public class PixelPerfectPlacer extends Stack {
    * @param texture The background texture to use.
    */
   public PixelPerfectPlacer(Texture texture) {
-    this.backgroundTexture = texture;
-    textureWidth = backgroundTexture.getWidth();
-    textureHeight = backgroundTexture.getHeight();
-    this.backgroundImage = new Image(backgroundTexture);
+    textureWidth = texture.getWidth();
+    textureHeight = texture.getHeight();
+    this.backgroundImage = new Image(texture);
     this.overlayGroup = new Group();
 
     this.add(backgroundImage);
