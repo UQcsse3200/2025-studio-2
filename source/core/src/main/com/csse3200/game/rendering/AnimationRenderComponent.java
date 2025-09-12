@@ -150,11 +150,11 @@ public class AnimationRenderComponent extends RenderComponent {
     return true;
   }
 
-    /**
-     * Flips the entity horizontally by adjusting its X scale.
-     *
-     * @param flip whether to flip the entity horizontally
-     */
+  /**
+   * Flips the entity horizontally by adjusting its X scale.
+   *
+   * @param flip whether to flip the entity horizontally
+   */
   public void setFlipX(boolean flip) {
       Vector2 scale = entity.getScale();
       entity.setScale(flip ? -Math.abs(scale.x) : Math.abs(scale.x), scale.y);
