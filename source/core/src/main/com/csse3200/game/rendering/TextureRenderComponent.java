@@ -53,11 +53,14 @@ public class TextureRenderComponent extends RenderComponent {
     if (rotation == 0f) {
       batch.draw(texture, position.x, position.y, scale.x, scale.y);
     } else {
+      float drawX = position.x - scale.x / 2f;
+      float drawY = position.y - scale.y / 2f;
+
       float originX = scale.x / 2f;
       float originY = scale.y / 2f;
 
       batch.draw(texture,
-              position.x, position.y,
+              drawX, drawY,
               originX, originY,
               scale.x, scale.y,
               1f, 1f,

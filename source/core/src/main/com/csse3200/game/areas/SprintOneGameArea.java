@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
@@ -9,7 +8,6 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -18,16 +16,12 @@ import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.swing.*;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -124,14 +118,14 @@ public class SprintOneGameArea extends GameArea {
         spawnPlatform();
         spawnElevatorPlatform();
 
-        spawnBoxes();
+        //spawnBoxes();
         playMusic();
         spawnLights();
         spawnButtons();
         spawnTraps();
-        spawnDrone();
-        spawnPatrollingDrone();
-        spawnBomberDrone();
+        //spawnDrone();
+        //spawnPatrollingDrone();
+       // spawnBomberDrone();
         spawnDoor();
         displayUI();
 
@@ -364,7 +358,7 @@ public class SprintOneGameArea extends GameArea {
         logger.info("Elevator spawned at {}", elevatorPos);
 
         // Button with tooltip
-        Entity button = ButtonFactory.createButton(false, "platform", "left");
+        Entity button = ButtonFactory.createButton(false, "platform", "right");
         button.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
@@ -383,6 +377,25 @@ public class SprintOneGameArea extends GameArea {
                 elevator.getEvents().trigger("deactivatePlatform");
             }
         });
+
+        /*
+        Entity button2 = ButtonFactory.createButton(false, "platform", "left");
+        button2.addComponent(new TooltipSystem.TooltipComponent(
+                "Return Button\nPress E to go down",
+                TooltipSystem.TooltipStyle.DEFAULT
+        ));
+
+        GridPoint2 topButton = new GridPoint2(17, 21);
+        spawnEntityAt(button2, topButton, true, true);
+        logger.info("Top elevator button spawned at {}", topButton);
+        
+        button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed) {
+                logger.info("Top button toggled ON — returning elevator down");
+                elevator.getEvents().trigger("deactivatePlatform");
+            }
+        });
+         */
     }
 
 

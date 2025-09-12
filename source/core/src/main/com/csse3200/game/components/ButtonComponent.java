@@ -79,7 +79,7 @@ public class ButtonComponent extends Component {
         System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
         switch (direction) {
             case "left":
-                if (dx < -0.5f && Math.abs(dy) < 0.5f) {
+                if (dx < -0.03f && Math.abs(dy) < 0.5f) {
                     toggleButton();
                 }
                 break;
@@ -89,12 +89,12 @@ public class ButtonComponent extends Component {
                 }
                 break;
             case "down":
-                if (dy < -0.5f && Math.abs(dx) < 0.5f) {
+                if (dy < -0.03f && Math.abs(dx) < 0.5f) {
                     toggleButton();
                 }
                 break;
             case "up":
-                if (dy > 0.5f && Math.abs(dx) < 0.5f) {
+                if (dy > 0.03f && Math.abs(dx) < 0.5f) {
                     toggleButton();
                 }
                 break;
