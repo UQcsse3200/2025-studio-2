@@ -4,8 +4,6 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.math.Vector2;
 
-import javax.xml.namespace.QName;
-
 /**
  * component for self destruction drones
  */

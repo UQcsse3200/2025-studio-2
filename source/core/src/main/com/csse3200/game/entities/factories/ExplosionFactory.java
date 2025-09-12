@@ -27,7 +27,8 @@ public class ExplosionFactory {
         if (droneAtlas == null) {
             throw new RuntimeException("drone.atlas not loaded");
         }
-        else if (SelfDestructAtlas == null || SelfDestructAtlas.findRegion("self_destruct")==null) {
+
+        if (SelfDestructAtlas == null || SelfDestructAtlas.findRegion("self_destruct")==null) {
             throw new RuntimeException("SelfDestruct.atlas not loaded");
         }
 
