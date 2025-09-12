@@ -6,6 +6,8 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
@@ -174,6 +176,11 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
     private void spawnButtons() {
+        Entity puzzleEntity = new Entity();
+        ButtonManagerComponent manager = new ButtonManagerComponent();
+        puzzleEntity.addComponent(manager);
+        ServiceLocator.getEntityService().register(puzzleEntity);
+
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
@@ -186,6 +193,16 @@ public class SprintOneGameArea extends GameArea {
 
         Entity button4 = ButtonFactory.createButton(false, "nothing", "up");
         spawnEntityAt(button4, new GridPoint2(20,4), true,  true);
+
+        ButtonComponent btn = button.getComponent(ButtonComponent.class);
+        ButtonComponent btn4 = button.getComponent(ButtonComponent.class);
+
+        btn.setPuzzleManager(manager);
+        btn4.setPuzzleManager(manager);
+
+        manager.addButton(btn);
+        manager.addButton(btn4);
+
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {

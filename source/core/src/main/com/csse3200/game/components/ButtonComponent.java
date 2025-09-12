@@ -1,7 +1,6 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -21,6 +20,11 @@ public class ButtonComponent extends Component {
     private boolean addToPlayer = false;
     private String direction = "left";
 
+    private float unpressTimer = 0f;
+    private boolean isTiming = false;
+    private static final float AUTO_UNPRESS_TIME = 15f;
+    private ButtonManagerComponent puzzleManager;
+
     /**
      * Creates the button
      */
@@ -33,6 +37,22 @@ public class ButtonComponent extends Component {
      */
     @Override
     public void update() {
+        if (isTiming) {
+            unpressTimer -= ServiceLocator.getTimeSource().getDeltaTime();
+
+            if (unpressTimer <= 0f) {
+                isTiming = false;
+                isPushed = false;
+
+                String texture = "images/button.png";
+                TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+                if (render != null) {
+                    render.setTexture(texture);
+                }
+
+                entity.getEvents().trigger("buttonToggled", false);
+            }
+        }
     }
 
     /**
@@ -76,7 +96,7 @@ public class ButtonComponent extends Component {
         float dx = playerPos.x - buttonPos.x;
         float dy = playerPos.y - buttonPos.y;
 
-        System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
+        //System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
         switch (direction) {
             case "left":
                 if (dx < -0.3f && Math.abs(dy) < 0.6f) {
@@ -110,6 +130,16 @@ public class ButtonComponent extends Component {
         entity.getEvents().trigger("buttonToggled", isPushed);
 
         // set button texture based on its type
+
+        if(!"platform".equals(type) && !"door".equals(type) && isPushed) {
+            unpressTimer = AUTO_UNPRESS_TIME;
+            isTiming = true;
+        }
+
+        if (puzzleManager != null && isPushed) {
+            puzzleManager.onButtonPressed();
+        }
+
         if("platform".equals(type)) {
             String texture = isPushed ? "images/blue_button_pushed.png" : "images/blue_button.png";
             TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
@@ -137,6 +167,10 @@ public class ButtonComponent extends Component {
         } else {
             this.direction = direction.toLowerCase();
         }
+    }
+
+    public void setPuzzleManager(ButtonManagerComponent puzzleManager) {
+        this.puzzleManager = puzzleManager;
     }
 
     /**
