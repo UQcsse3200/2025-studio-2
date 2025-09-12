@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -77,7 +78,9 @@ public class SprintOneGameArea extends GameArea {
             "images/drone.png",
             "images/bomb.png",
             "images/camera-body.png",
-            "images/camera-lens.png"
+            "images/camera-lens.png",
+            "images/tile.png",
+            "images/wall.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
@@ -120,7 +123,7 @@ public class SprintOneGameArea extends GameArea {
 
         spawnPlatform();
         spawnElevatorPlatform();
-
+        spawnWalls();
         spawnBoxes();
         playMusic();
         spawnLights();
@@ -130,6 +133,7 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         spawnBomberDrone();
         spawnDoor();
+        //spawnDeathZone();
         displayUI();
 
     }
@@ -174,6 +178,13 @@ public class SprintOneGameArea extends GameArea {
         Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
+
+    private void spawnDeathZone() {
+        GridPoint2 spawnPos =  new GridPoint2(15,5);
+        Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        spawnEntityAt(deathZone, spawnPos, true,  true);
+    }
+
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
@@ -267,6 +278,38 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
+
+    private void spawnWalls() {
+        float ts = terrain.getTileSize();
+
+        // Tall wall on the left
+        GridPoint2 wall1Pos = new GridPoint2(8, 22);
+        Entity wall1 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 5f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall1, wall1Pos, false, false);
+
+        // Shorter wall in the middle
+        GridPoint2 wall2Pos = new GridPoint2(8, 6);
+        Entity wall2 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 3f * ts,
+                "images/tile.png"
+        );
+        spawnEntityAt(wall2, wall2Pos, false, false);
+
+        // Another tall wall further right
+        GridPoint2 wall3Pos = new GridPoint2(18, 4);
+        Entity wall3 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 6f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall3, wall3Pos, false, false);
+    }
+
     private void spawnBoxes() {
 
         // Static box
