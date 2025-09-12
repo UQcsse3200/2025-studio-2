@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -20,6 +21,7 @@ public class InventoryTab implements InventoryTabInterface {
   private final Texture emptySlotTexture = new Texture(Gdx.files.internal("inventory-screen/empty_item.png"));
 
   private static final Rect GRID_PX = new Rect(371, 247, 586, 661);
+  private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
 
   private static final int GRID_ROWS = 4;
   private static final int GRID_COLS = 4;
@@ -32,6 +34,18 @@ public class InventoryTab implements InventoryTabInterface {
   @Override
   public Actor build(Skin skin) {
     PixelPerfectPlacer placer = new PixelPerfectPlacer(bgTex);
+    Button closeButton = new Button(new Button.ButtonStyle());
+    // Button closeButton = new Button(skin); // Makes this button visible
+
+    closeButton.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        Gdx.app.exit();
+      }
+    });
+
+    placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
+
     Table gridTable = new Table();
     placer.addOverlay(gridTable, GRID_PX);
     populateGrid(gridTable);
