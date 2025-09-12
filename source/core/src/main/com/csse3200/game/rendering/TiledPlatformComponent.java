@@ -18,9 +18,9 @@ public class TiledPlatformComponent extends RenderComponent {
   /**
    * Creates a new TiledPlatformComponent.
    *
-   * @param leftEdge The texture region for the left edge of the platform.
-   * @param middleTile An array of texture regions for the middle sections, used for variation.
-   * @param rightEdge The texture region for the right edge of the platform.
+   * @param leftEdge The texture for the left edge.
+   * @param middleTile The middle region texture.
+   * @param rightEdge The texture for the right edge.
    */
   public TiledPlatformComponent(TextureRegion leftEdge, TextureRegion middleTile, TextureRegion rightEdge) {
     this.leftEdge = leftEdge;
