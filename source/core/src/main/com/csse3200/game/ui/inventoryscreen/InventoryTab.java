@@ -18,7 +18,7 @@ public class InventoryTab implements InventoryTabInterface {
   // Background texture
   private final Texture bgTex = new Texture(Gdx.files.internal("inventory-screen/inventory-selected.png"));
   // empty item
-  private final Texture emptySlotTexture = new Texture(Gdx.files.internal("inventory-screen/empty_item.png"));
+  private final Texture emptySlotTexture = new Texture(Gdx.files.internal("inventory-screen/empty-item.png"));
 
   private static final Rect GRID_PX = new Rect(371, 247, 586, 661);
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
