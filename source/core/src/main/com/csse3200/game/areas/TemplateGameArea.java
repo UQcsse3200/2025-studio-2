@@ -4,8 +4,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -26,6 +30,8 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.naming.spi.ResolveResult;
 
 public class TemplateGameArea extends GameArea {
     private static final float WALL_WIDTH = 0.1f;
@@ -74,6 +80,7 @@ public class TemplateGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(TemplateGameArea.class);
     private final TerrainFactory terrainFactory;
+
     public TemplateGameArea(TerrainFactory terrainFactory) {
         super();
         this.terrainFactory = terrainFactory;
@@ -128,7 +135,8 @@ public class TemplateGameArea extends GameArea {
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
         // Background terrain
-        terrain = terrainFactory.createTerrain(TerrainType.DEFAULT_ORTHO);
+//        terrain = terrainFactory.createTerrain(TerrainType.DEFAULT_ORTHO, new GridPoint2(80,60));
+        terrain = createDefaultTerrain(new GridPoint2(80,20) );
         spawnEntity(new Entity().addComponent(terrain));
 
         // Terrain walls
@@ -155,6 +163,22 @@ public class TemplateGameArea extends GameArea {
         //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
         spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
                 new GridPoint2(0, 4), false, false);
+    }
+    private TerrainComponent createDefaultTerrain(GridPoint2 mapSize) {
+        TextureRegion variant1, variant2, variant3, baseTile;
+        final ResourceService resourceService = ServiceLocator.getResourceService();
+
+        baseTile =
+                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
+        variant1 =
+                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
+        variant2 =
+                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
+        variant3 =
+                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
+        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
+        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
     private void createMinimap() {
         Texture minimapTexture =

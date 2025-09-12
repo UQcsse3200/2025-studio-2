@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.renderers.HexagonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.IsometricTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent.TerrainOrientation;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.utils.math.RandomUtils;
@@ -59,6 +60,26 @@ public class TerrainFactory {
     // Call the overloaded method with a default mapSize
     return createTerrain(terrainType, MAP_SIZE);
   }
+
+  /**
+   * Used to generate TerrainComponent within game areas
+   * @param tileWorldSize
+   * @param tiledMap
+   * @param tilePixelSize
+   * @return
+   */
+  public TerrainComponent createFromTileMap(float tileWorldSize, TiledMap tiledMap, GridPoint2 tilePixelSize) {
+    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
+    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
+  }
+
+  /**
+   * Used to generate terrainComponent within a game area. This method is now not apart of the control flow for
+   * generating terrains. Should you createFromTileMap() within the game areas
+   * @param terrainType
+   * @param mapSize
+   * @return
+   */
   public TerrainComponent createTerrain(TerrainType terrainType, GridPoint2 mapSize) {
     ResourceService resourceService = ServiceLocator.getResourceService();
     TextureRegion variant1, variant2, variant3, baseTile;
@@ -118,7 +139,7 @@ public class TerrainFactory {
     }
   }
 
-  private TerrainComponent createForestDemoTerrain(
+  public TerrainComponent createForestDemoTerrain(
       float tileWorldSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks) {
     GridPoint2 tilePixelSize = new GridPoint2(grass.getRegionWidth(), grass.getRegionHeight());
     TiledMap tiledMap = createForestDemoTiles(tilePixelSize, grass, grassTuft, rocks);
@@ -143,7 +164,6 @@ public class TerrainFactory {
     TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
-
   private TerrainComponent createDefaultTerrain(
           float tileWorldSize,
           TextureRegion baseTile,
@@ -156,8 +176,6 @@ public class TerrainFactory {
     TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
-
-
   private TiledMapRenderer createRenderer(TiledMap tiledMap, float tileScale) {
     switch (orientation) {
       case ORTHOGONAL:
@@ -232,7 +250,17 @@ public class TerrainFactory {
     return tiledMap;
   }
 
-  private TiledMap createDefaultTiles(
+  /**
+   * Used to create/set ordering of background tiles with variants
+   * @param tileSize
+   * @param base
+   * @param variant1
+   * @param variant2
+   * @param variant3
+   * @param mapSize
+   * @return
+   */
+  public TiledMap createDefaultTiles(
           GridPoint2 tileSize,
           TextureRegion base,
           TextureRegion variant1,
@@ -284,6 +312,9 @@ public class TerrainFactory {
    * This enum should contain the different terrains in your game, e.g. forest, cave, home, all with
    * the same oerientation. But for demonstration purposes, the base code has the same level in 3
    * different orientations.
+   */
+  /**
+   * Enum for different game areas to specify specific requirements
    */
   public enum TerrainType {
     FOREST_DEMO,
