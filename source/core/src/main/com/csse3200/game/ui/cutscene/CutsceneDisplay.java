@@ -91,9 +91,6 @@ public class CutsceneDisplay extends UIComponent {
 
         // Create background layer
         imageTable = new Table();
-        Image background =
-                new Image(ServiceLocator.getResourceService().getAsset(textBoxList.getFirst().background(), Texture.class));
-        imageTable.add(background).grow();
         rootStack.add(imageTable);
 
         // Create UI table
