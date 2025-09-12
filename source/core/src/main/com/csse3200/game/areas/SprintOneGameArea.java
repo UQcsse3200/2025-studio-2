@@ -7,9 +7,12 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -25,6 +28,9 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -77,10 +83,12 @@ public class SprintOneGameArea extends GameArea {
             "images/drone.png",
             "images/bomb.png",
             "images/camera-body.png",
-            "images/camera-lens.png"
+            "images/camera-lens.png",
+            "images/PLAYER.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images" +
+            "/ghostKing.atlas", "images/drone.atlas", "images/PLAYER.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -88,8 +96,6 @@ public class SprintOneGameArea extends GameArea {
     private static final String[] forestMusic = {backgroundMusic};
 
     private final TerrainFactory terrainFactory;
-
-    private Entity player;
 
     /**
      * Initialise this ForestGameArea to use the provided TerrainFactory.
@@ -101,16 +107,16 @@ public class SprintOneGameArea extends GameArea {
         this.terrainFactory = terrainFactory;
     }
 
-    /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
-    @Override
-    public void create() {
-
-        PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-        engine.getWorld().setContactListener(new ObjectContactListener());
-        keySpawned = false;
-        loadAssets();
+    /**
+     * Load terrain, UI, music. Must be done before spawning entities.
+     * Assets are loaded separately.
+     * Entities spawned separately.
+     */
+    protected void loadPrerequisites() {
+        displayUI();
 
         spawnTerrain();
+        //spawnTrees();
 
         createMinimap(
             ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class)
@@ -119,13 +125,19 @@ public class SprintOneGameArea extends GameArea {
         player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.Zero.cpy());
         player.getEvents().addListener("reset", this::reset);
 
+        playMusic();
 
+        keySpawned = false;
+    }
 
+    /**
+     * Load entities. Terrain must be loaded beforehand.
+     * Player must be spawned beforehand if spawning enemies.
+     */
+    protected void loadEntities() {
         spawnPlatform();
         spawnElevatorPlatform();
-
         spawnBoxes();
-        playMusic();
         spawnLights();
         spawnButtons();
         spawnTraps();
@@ -133,17 +145,6 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         spawnBomberDrone();
         spawnDoor();
-        displayUI();
-
-    }
-    @Override
-    public Entity getPlayer() {
-        return player;
-    }
-
-    @Override
-    protected void reset() {
-
     }
 
     private void displayUI() {
@@ -216,11 +217,20 @@ public class SprintOneGameArea extends GameArea {
                 ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
     }
 
-    private Entity spawnPlayer() {
-        Entity newPlayer = PlayerFactory.createPlayer();
+    protected Entity spawnPlayer() {
+        Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+
+    protected Entity spawnPlayer(List<Component> componentList) {
+        Entity newPlayer = PlayerFactory.createPlayer(componentList);
+        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
+        return newPlayer;
+    }
+
     //Platform spawn in testing
     private void spawnPlatform() {
     /*
@@ -357,7 +367,7 @@ public class SprintOneGameArea extends GameArea {
         music.play();
     }
 
-    private void loadAssets() {
+    protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(gameTextures);

@@ -31,7 +31,7 @@ public class BombChaseTaskTest {
         ServiceLocator.registerTimeSource(gameTime);
         ServiceLocator.registerPhysicsService(new PhysicsService());
     }
-/*
+
     @Test
     void shouldMoveTowardsTarget() {
         Entity target = new Entity();
@@ -68,7 +68,7 @@ public class BombChaseTaskTest {
 
         assertTrue(newDistance < initialDistance, "Entity should move closer to target");
     }
-*/
+
     @Test
     void onlyChaseOnConditions() {
         Entity target = new Entity();

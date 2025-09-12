@@ -6,11 +6,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.*;
+import com.csse3200.game.areas.CaveGameArea;
+import com.csse3200.game.areas.ForestGameArea;
+import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -30,7 +35,6 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.maingame.MainGameExitDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.input.PauseInputComponent;
-import com.csse3200.game.ui.cutscene.CutsceneArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +61,8 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
   private GameArea gameArea;
+  private TerrainFactory terrainFactory;
+
   public MainGameScreen(GdxGame game) {
     this.game = game;
 
@@ -88,18 +94,14 @@ public class MainGameScreen extends ScreenAdapter {
     loadAssets();
 
     logger.debug("Initialising main game screen entities");
+    terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    gameArea = new CutsceneArea("cutscene-scripts/cutscene1.txt", "cutscene2");
+    gameArea = new ForestGameArea(terrainFactory);
     gameArea.create();
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", keyId, player);
-      switchArea(keyId, gameArea, player);
-    });
-
-    gameArea.getEvents().addListener("cutsceneFinished", (String keyId, Entity player) -> {
-        logger.info("Switching to area with key {}", keyId);
-        switchArea(keyId, gameArea, player);
+      switchArea(keyId, player);
     });
 
     // Have to createUI after the game area is created since createUI
@@ -107,11 +109,13 @@ public class MainGameScreen extends ScreenAdapter {
     createUI();
   }
 
-  private void switchArea(String levelId, GameArea oldArea, Entity player) {
+  private void switchArea(String levelId, Entity player) {
     Gdx.app.postRunnable(() -> {
-      if (levelId != "") {
-        oldArea.dispose();
-        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+      if (!levelId.isEmpty()) {
+  //        System.out.println("Area switched to " + levelId);
+        GameArea oldArea = gameArea;
+
+  //        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
         GameArea newArea = null;
         String newLevel = "";
@@ -124,24 +128,19 @@ public class MainGameScreen extends ScreenAdapter {
         } else if ("cave".equals(levelId)) {
           newArea = new CaveGameArea(terrainFactory);
           newLevel = "forest";
-        } else if ("cutscene1".equals(levelId)) {
-            newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt", "cutscene2");
-            newLevel = "cutscene2";
-        } else if ("cutscene2".equals(levelId)) {
-            newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt", "sprint1");
-            newLevel = "sprint1";
         }
 
         if (newArea != null) {
           GameArea finalNewArea = newArea; // effectively final
+          gameArea = finalNewArea;
           String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
+                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
           );
-          finalNewArea.getEvents().addListener(
-                  "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, finalNewArea, player)
-          );
-          finalNewArea.create();
+          System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
+          finalNewArea.createWithPlayer(player);
+          oldArea.dispose();
+          oldArea = null;
         }
       }
     });
