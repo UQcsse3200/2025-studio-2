@@ -1,5 +1,8 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.csse3200.game.components.AutonomousBoxComponent;
@@ -12,7 +15,11 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
+
+import java.security.Provider;
 
 /**
  * Factory class for creating box entities in the game.
@@ -241,14 +248,24 @@ public class BoxFactory {
          * @return The constructed autonomous box entity
          */
         public Entity build() {
-            Entity autonomousBox = new Entity()
-                    .addComponent(new TextureRenderComponent(texturePath))
-                    .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                    .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                    .addComponent(new HitboxComponent())
-                    .addComponent(new CombatStatsComponent(1, damage))
-                    .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                    .addComponent(new AutonomousBoxComponent());
+            Entity autonomousBox = new Entity();
+                    if (texturePath.endsWith(".atlas")) {
+                        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
+                        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+                        animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
+                        animator.startAnimation("flying_bat");
+                        autonomousBox.addComponent(animator);
+                    } else {
+                        autonomousBox.addComponent(new TextureRenderComponent(texturePath));
+                    }
+
+                    autonomousBox
+                            .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+                            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                            .addComponent(new HitboxComponent())
+                            .addComponent(new CombatStatsComponent(1, damage))
+                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+                            .addComponent(new AutonomousBoxComponent());
 
             AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);
             autonomousBox.setScale(scaleX, scaleY);

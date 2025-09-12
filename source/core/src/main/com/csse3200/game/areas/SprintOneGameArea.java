@@ -83,7 +83,11 @@ public class SprintOneGameArea extends GameArea {
             "images/camera-lens.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+            "images/terrain_iso_grass.atlas",
+            "images/ghost.atlas",
+            "images/ghostKing.atlas",
+            "images/drone.atlas",
+            "images/flying_bat.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -129,9 +133,9 @@ public class SprintOneGameArea extends GameArea {
         spawnLights();
         spawnButtons();
         spawnTraps();
-        spawnDrone();
-        spawnPatrollingDrone();
-        spawnBomberDrone();
+//        spawnDrone();
+//        spawnPatrollingDrone();
+//        spawnBomberDrone();
         spawnDoor();
         displayUI();
 
@@ -311,6 +315,14 @@ public class SprintOneGameArea extends GameArea {
                 .moveX(10f, 13f).moveY(5f, 10f).speed(6f).damage(5).knockback(4).build();
         spawnEntityAt(diagonalBox1, new GridPoint2(
                 (int) diagonalBuilder1.getSpawnX(), (int) diagonalBuilder1.getSpawnY()), true, true);
+
+        // Bats
+        BoxFactory.AutonomousBoxBuilder horizontalBatBuilder = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalBat = horizontalBatBuilder
+                .moveX(1.5f, 6f).moveY(6f, 6f).texture("images/flying_bat.atlas")
+                .speed(2f).damage(5).knockback(4).build();
+        spawnEntityAt(horizontalBat, new GridPoint2(
+                (int) horizontalBatBuilder.getSpawnX(), (int) horizontalBatBuilder.getSpawnY()), true, true);
 
     }
 
