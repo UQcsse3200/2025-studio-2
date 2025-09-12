@@ -7,7 +7,7 @@ public final class LightingDefaults {
     private LightingDefaults() {} // do not initialise
 
     // Lighting Engine Defaults
-    public static final float AMBIENT_LIGHT = 0.3f;
+    public static final float AMBIENT_LIGHT = 1f; //0.3f;
     public static final int   BLUR_NUM      = 3;
 
     // Light Defaults

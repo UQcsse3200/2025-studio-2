@@ -156,7 +156,7 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(2,4);
+        GridPoint2 spawnPos =  new GridPoint2(0,4);
         Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2f)+2, ((spawnPos.y)/2f)+2);
         Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
         spawnEntityAt(spikes, spawnPos, true,  true);

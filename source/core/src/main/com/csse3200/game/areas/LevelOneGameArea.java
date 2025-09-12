@@ -37,9 +37,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LevelOneGameArea extends GameArea {
-    private static final GridPoint2 mapSize = new GridPoint2(80,20);
+    private static final GridPoint2 mapSize = new GridPoint2(80,60);
     private static final float WALL_WIDTH = 0.1f;
-    private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
+    private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -75,6 +75,7 @@ public class LevelOneGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
+            "images/wall.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -97,6 +98,40 @@ public class LevelOneGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        spawnPlatforms();
+        spawnDeathZone();
+        spawnWalls();
+    }
+
+    private void spawnDeathZone() {
+
+    }
+    private void spawnWalls(){
+        GridPoint2 leftWallPos = new GridPoint2(25,4);
+        Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
+        leftWall.setScale(1,10);
+        spawnEntityAt(leftWall, leftWallPos, false, false);
+    }
+    private void spawnPlatforms(){
+        GridPoint2 groundPos1 = new GridPoint2(0, 0);
+        Entity ground1 = PlatformFactory.createStaticPlatform();
+        ground1.setScale(5,2);
+        spawnEntityAt(ground1, groundPos1, false, false);
+
+        GridPoint2 groundPos2 = new GridPoint2(15, 0);
+        Entity ground2 = PlatformFactory.createStaticPlatform();
+        ground2.setScale(25f,2f);
+        spawnEntityAt(ground2, groundPos2, false, false);
+
+        GridPoint2 groundPos3 = new GridPoint2(70, 0);
+        Entity ground3 = PlatformFactory.createStaticPlatform();
+        ground3.setScale(5,2);
+        spawnEntityAt(ground3, groundPos3, false, false);
+
+        GridPoint2 step1Pos = new GridPoint2(19,6);
+        Entity step1 = PlatformFactory.createStaticPlatform();
+        step1.setScale(4,0.5f);
+        spawnEntityAt(step1, step1Pos,false, false);
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
@@ -124,8 +159,6 @@ public class LevelOneGameArea extends GameArea {
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
-        // Background terrain
-//        terrain = terrainFactory.createTerrain(TerrainType.DEFAULT_ORTHO, new GridPoint2(80,60));
         terrain = createDefaultTerrain(mapSize);
         spawnEntity(new Entity().addComponent(terrain));
 
@@ -150,9 +183,8 @@ public class LevelOneGameArea extends GameArea {
                 false,
                 false);
         // Bottom
-        //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
         spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
-                new GridPoint2(0, 4), false, false);
+                new GridPoint2(0, 0), false, false);
     }
     private TerrainComponent createDefaultTerrain(GridPoint2 mapSize) {
         TextureRegion variant1, variant2, variant3, baseTile;
