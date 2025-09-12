@@ -1,0 +1,82 @@
+package com.csse3200.game.ui;
+
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.utils.Array;
+
+/**
+ * A layout component that allows placing actors at precise pixel coordinates relative to a background image.
+ * The component handles dynamic scaling, ensuring that overlays remain correctly positioned when resizing
+ */
+public class PixelPerfectPlacer extends Stack {
+
+  private final Texture backgroundTexture;
+  private final Image backgroundImage;
+  private final Group overlayGroup;
+  private final Array<OverlayConstraint> overlays = new Array<>();
+  final int textureWidth;
+  final int textureHeight;
+
+  /**
+   * Helper class to store the actor and its pixel-based layout constraints.
+   */
+  private record OverlayConstraint(Actor actor, Rect rect) {}
+
+  public record Rect(int x, int y, int width, int height) {}
+
+  /**
+   * Creates a new PixelPerfectPlacer with a specified background image.
+   *
+   * @param texture The background texture to use.
+   */
+  public PixelPerfectPlacer(Texture texture) {
+    this.backgroundTexture = texture;
+    textureWidth = backgroundTexture.getWidth();
+    textureHeight = backgroundTexture.getHeight();
+    this.backgroundImage = new Image(backgroundTexture);
+    this.overlayGroup = new Group();
+
+    this.add(backgroundImage);
+    this.add(overlayGroup);
+  }
+
+
+  /**
+   * Adds an actor to be placed on top of the background image.
+   *
+   * @param actor The actor to place (e.g., a Table, Button, etc.).
+   * @param rect the box with x,y corresponding to top left corner of the box taken from the top left corner of the
+   *            image (using gimp) and its width and height
+   */
+  public void addOverlay(Actor actor, Rect rect) {
+    final Rect transformedPosition =
+        new Rect(rect.x, textureHeight -  (rect.y + rect.height), rect.width, rect.height);
+    System.out.println("Transformed position: " + transformedPosition);
+    overlays.add(new OverlayConstraint(actor, transformedPosition));
+    overlayGroup.addActor(actor);
+    // WidgetGroup's comment says to call this
+    super.invalidate();
+  }
+
+  /**
+   * This method is called by Scene2D's layout manager whenever the table's size or children change.
+   * It calculates and applies the correct on-screen positions and sizes for all overlay actors.
+   */
+  @Override
+  public void layout() {
+    super.layout();
+
+    float scaleX = backgroundImage.getWidth() / textureWidth;
+    float scaleY = backgroundImage.getHeight() / textureHeight;
+
+    for (OverlayConstraint constraint : overlays) {
+      constraint.actor.setBounds(
+          constraint.rect.x * scaleX, constraint.rect.y * scaleY,
+          constraint.rect.width * scaleX, constraint.rect.height * scaleY
+      );
+    }
+  }
+}
