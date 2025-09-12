@@ -16,162 +16,167 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class ChaseTaskTest {
+    private AtomicLong nowMs;
 
-  @BeforeEach
-  void beforeEach() {
-    // Mock rendering, physics, and game time
-    RenderService renderService = new RenderService();
-    renderService.setDebug(mock(DebugRenderer.class));
-    ServiceLocator.registerRenderService(renderService);
+    @BeforeEach
+    void beforeEach() {
+        // Mock rendering, physics, and game time
+        RenderService renderService = new RenderService();
+        renderService.setDebug(mock(DebugRenderer.class));
+        ServiceLocator.registerRenderService(renderService);
 
-    GameTime gameTime = mock(GameTime.class);
-    when(gameTime.getDeltaTime()).thenReturn(20f / 1000);
-    ServiceLocator.registerTimeSource(gameTime);
+        GameTime gameTime = mock(GameTime.class);
+        nowMs = new AtomicLong(0L);
+        when(gameTime.getDeltaTime()).thenReturn(20f / 1000);
+        when(gameTime.getTime()).thenAnswer(inv -> nowMs.get());
+        ServiceLocator.registerTimeSource(gameTime);
 
-    ServiceLocator.registerPhysicsService(new PhysicsService());
-  }
+        ServiceLocator.registerPhysicsService(new PhysicsService());
+    }
 
-  @Test
-  void chase_priorityReflectsActivation() {
-      ChaseTask chase = new ChaseTask(new Entity());
-      assertEquals(-1, chase.getPriority(),
-              "Chase has default -1 priority (inactive)");
+    @Test
+    void chase_priorityReflectsActivation() {
+        Entity target = createTarget(new Vector2(0, 0));
+        Entity e = makePhysicsEntity(new Vector2(10, 10));
+        AITaskComponent ai = new AITaskComponent();
+        ChaseTask chase = new ChaseTask(target, 10f);
+        ai.addTask(chase);
+        e.addComponent(ai);
+        e.create();
 
-      chase.activate();
-      assertEquals(10, chase.getPriority(),
-              "Activating chase makes priority 10");
+        assertEquals(-1, chase.getPriority(),
+                "Chase has default -1 priority (inactive)");
 
-      chase.deactivate();
-      assertEquals(-1, chase.getPriority(),
-              "Deactivating chase makes priority -1");
-  }
+        chase.activate();
+        assertEquals(10, chase.getPriority(),
+                "Activating chase makes priority 10");
 
-  @Test
-  void chase_start_activeFiresEvent() {
-      Entity target = createEntityWithPosition();
-      Entity e = makePhysicsEntity();
-      AITaskComponent ai = new AITaskComponent();
-      ChaseTask chase = new ChaseTask(target);
-      ai.addTask(chase);
-      e.addComponent(ai);
-      e.create();
+        chase.deactivate();
+        assertEquals(-1, chase.getPriority(),
+                "Deactivating chase makes priority -1");
+    }
 
-      EventListener0 callback = mock(EventListener0.class);
-      e.getEvents().addListener("chaseStart", callback);
+    @Test
+    void chase_start_activeFiresEvent() {
+        Entity target = createTarget(new Vector2(0, 0));
+        Entity e = makePhysicsEntity(new Vector2(10, 10));
+        AITaskComponent ai = new AITaskComponent();
+        ChaseTask chase = new ChaseTask(target, 10f);
+        ai.addTask(chase);
+        e.addComponent(ai);
+        e.create();
 
-      chase.activate();
-      chase.start();
-      verify(callback, times(1)).handle();
-  }
+        EventListener0 callback = mock(EventListener0.class);
+        e.getEvents().addListener("chaseStart", callback);
 
-  @Test
-  void chase_start_inactiveDoesNotFireEvent() {
-      Entity target = createEntityWithPosition();
-      Entity e = makePhysicsEntity();
-      AITaskComponent ai = new AITaskComponent();
-      ChaseTask chase = new ChaseTask(target);
-      ai.addTask(chase);
-      e.addComponent(ai);
-      e.create();
+        chase.activate();
+        chase.start();
+        verify(callback, times(1)).handle();
+    }
 
-      EventListener0 callback = mock(EventListener0.class);
-      e.getEvents().addListener("chaseStart", callback);
+    @Test
+    void chase_start_inactiveDoesNotFireEvent() {
+        Entity target = createTarget(new Vector2(0, 0));
+        Entity e = makePhysicsEntity(new Vector2(10, 10));
+        AITaskComponent ai = new AITaskComponent();
+        ChaseTask chase = new ChaseTask(target, 10f);
+        ai.addTask(chase);
+        e.addComponent(ai);
+        e.create();
 
-      chase.start();
-      verify(callback, times(0)).handle();
-  }
+        EventListener0 callback = mock(EventListener0.class);
+        e.getEvents().addListener("chaseStart", callback);
 
-  @Test
-  void chase_stopFiresEvent() {
-      Entity target = createEntityWithPosition();
-      Entity e = makePhysicsEntity();
-      AITaskComponent ai = new AITaskComponent();
-      ChaseTask chase = new ChaseTask(target);
-      ai.addTask(chase);
-      e.addComponent(ai);
-      e.create();
+        chase.start();
+        verify(callback, times(0)).handle();
+    }
 
-      EventListener0 callback = mock(EventListener0.class);
-      e.getEvents().addListener("chaseEnd", callback);
+    @Test
+    void chase_stopFiresEvent() {
+        Entity target = createTarget(new Vector2(0, 0));
+        Entity e = makePhysicsEntity(new Vector2(10, 10));
+        AITaskComponent ai = new AITaskComponent();
+        ChaseTask chase = new ChaseTask(target, 10f);
+        ai.addTask(chase);
+        e.addComponent(ai);
+        e.create();
 
-      chase.activate();
-      chase.start();
-      chase.stop();
-      verify(callback, times(1)).handle();
-  }
+        EventListener0 callback = mock(EventListener0.class);
+        e.getEvents().addListener("chaseEnd", callback);
 
-  @Test
-  void chase_shouldMoveTowardsTarget() {
-      Entity target = createEntityWithPosition();
-      Entity e = makePhysicsEntity();
-      AITaskComponent ai = new AITaskComponent();
-      ChaseTask chase = new ChaseTask(target);
-      ai.addTask(chase);
-      e.addComponent(ai);
-      e.create();
-      e.setPosition(0, 0);
+        chase.activate();
+        chase.start();
+        chase.stop();
+        verify(callback, times(1)).handle();
+    }
 
-      chase.activate();
-      chase.start();
+    @Test
+    void chase_shouldMoveTowardsTarget() {
+        Entity target = createTarget(new Vector2(0, 0));
+        Entity e = makePhysicsEntity(new Vector2(10, 10));
+        AITaskComponent ai = new AITaskComponent();
+        ChaseTask chase = new ChaseTask(target, 100f);
+        ai.addTask(chase);
+        e.addComponent(ai);
+        e.create();
 
-      float initialDistance = e.getPosition().dst(target.getPosition());
+        chase.activate();
+        chase.start();
 
-      for (int i = 0; i < 3; i++) {
-        e.earlyUpdate();
-        e.update();
-        ServiceLocator.getPhysicsService().getPhysics().update();
-      }
+        float initialDistance = e.getPosition().dst(target.getPosition());
 
-      float newDistance = e.getPosition().dst(target.getPosition());
-      assertTrue(newDistance < initialDistance, "Entity should move closer when chasing");
-  }
+        for (int i = 0; i < 3; i++) {
+            e.earlyUpdate();
+            e.update();
+            ServiceLocator.getPhysicsService().getPhysics().update();
+            nowMs.addAndGet(20L);
+        }
 
+        float newDistance = e.getPosition().dst(target.getPosition());
+        assertTrue(newDistance < initialDistance, "Entity should move closer when chasing");
+    }
 
-  private Entity createEntityWithPosition() {
-      Entity e = new Entity();
-      e.setPosition(new Vector2(1, 1));
-      e.create();
-      return e;
-  }
+    @Test
+    void chase_endsAfterGracePeriod() {
+        Entity target = createTarget(new Vector2(0, 0));
+        Entity e = makePhysicsEntity(new Vector2(1000, 1000)); // Far away
 
-  private Entity makePhysicsEntity() {
-      return new Entity()
-              .addComponent(new PhysicsComponent())
-              .addComponent(new PhysicsMovementComponent());
-  }
+        AITaskComponent ai = new AITaskComponent();
+        ChaseTask chase = new ChaseTask(target, 1f);
+        ai.addTask(chase);
+        e.addComponent(ai);
+        e.create();
 
-//  Commented out since current chase is based on player detection in light (no proximity)
-//  @Test
-//  void shouldStopChasingAfterExceedingMaxChaseDistance() {
-//    Entity target = new Entity();
-//    target.setPosition(0f, 0f); // start at origin
-//
-//    Entity entity = new Entity()
-//            .addComponent(new PhysicsComponent())
-//            .addComponent(new PhysicsMovementComponent());
-//    entity.create();
-//    entity.setPosition(0f, 0f);
-//
-//    ChaseTask chaseTask = new ChaseTask(target, 10, 5, 10);
-//    chaseTask.create(() -> entity);
-//
-//    // Activate the task
-//    chaseTask.activate();
-//    chaseTask.start();
-//
-//    // Move entity within triggerDistance (2f) to enable maxChaseDistance enforcement
-//    entity.setPosition(1f, 1f); // distance ~1.4, less than triggerDistance
-//    assertEquals(10, chaseTask.getPriority(), "Should chase within triggerDistance");
-//
-//    // Move target far away now
-//    target.setPosition(50f, 50f);
-//    assertTrue(chaseTask.getPriority() < 0, "Should stop chasing after exceeding maxChaseDistance");
-//  }
+        chase.activate();
+        assertEquals(10, chase.getPriority(), "Within grace: end conditions ignored");
 
+        nowMs.addAndGet(2000L);
+        assertEquals(10, chase.getPriority(), "Still within grace: keep chasing");
+
+        nowMs.addAndGet(1500L);
+        assertEquals(-1, chase.getPriority(), "After grace: Too far, ends chase");
+    }
+
+    private Entity createTarget(Vector2 pos) {
+        Entity e = new Entity();
+        e.setPosition(pos);
+        e.create();
+        return e;
+    }
+
+    private Entity makePhysicsEntity(Vector2 pos) {
+        Entity e = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new PhysicsMovementComponent());
+        e.setPosition(pos);
+        return e;
+    }
 }

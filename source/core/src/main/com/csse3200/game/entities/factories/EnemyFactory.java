@@ -57,17 +57,13 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target);
-        CooldownTask cooldownTask = new CooldownTask(5f);
+        ChaseTask chaseTask = new ChaseTask(target, 4f);
+        CooldownTask cooldownTask = new CooldownTask(3f);
 
         // ENEMY ACTIVATION
         drone.getEvents().addListener("enemyActivated", () -> {
-            chaseTask.activate();
-            cooldownTask.deactivate();
-        });
-        drone.getEvents().addListener("enemyDeactivated", () -> {
-            chaseTask.deactivate();
-            cooldownTask.activate();
+            chaseTask.activate(); // Priority 10
+            cooldownTask.activate(); // Priority 5, so chase > cooldown
         });
 
         aiComponent
