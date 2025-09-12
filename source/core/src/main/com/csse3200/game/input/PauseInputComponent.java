@@ -16,6 +16,17 @@ public class PauseInputComponent extends InputComponent {
         //this.pauseMenuDisplay = pauseMenuDisplay;
     }
 
+    // Set last keycode for inventory Tabs
+    public void setLastKeycodeForTab(PauseMenuDisplay.Tab tab) {
+        int code = switch (tab) {
+            case SETTINGS   -> Keymap.getActionKeyCode("PauseSettings");
+            case INVENTORY  -> Keymap.getActionKeyCode("PauseInventory");
+            case UPGRADES   -> Keymap.getActionKeyCode("PauseUpgrades");
+            case OBJECTIVES -> Keymap.getActionKeyCode("PauseObjectives");
+        };
+        this.lastKeycode = code;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         // Check each pause action dynamically
