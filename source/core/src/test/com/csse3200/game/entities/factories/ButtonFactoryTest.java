@@ -30,7 +30,7 @@ public class ButtonFactoryTest {
 
     @Test
     void createPlatformButton_hasAllComponents() {
-        Entity button = ButtonFactory.createButton(false, "platform");
+        Entity button = ButtonFactory.createButton(false, "platform", "left");
 
         assertNotNull(button.getComponent(TextureRenderComponent.class),
                 "Platform button should have a TextureRenderComponent");
@@ -44,7 +44,7 @@ public class ButtonFactoryTest {
 
     @Test
     void createDoorButton_hasAllComponents() {
-        Entity button = ButtonFactory.createButton(true, "door");
+        Entity button = ButtonFactory.createButton(true, "door", "left");
 
         assertNotNull(button.getComponent(TextureRenderComponent.class),
                 "Door button should have a TextureRenderComponent");
@@ -58,7 +58,7 @@ public class ButtonFactoryTest {
 
     @Test
     void createStandardButton_hasAllComponents() {
-        Entity button = ButtonFactory.createButton(false, "standard");
+        Entity button = ButtonFactory.createButton(false, "standard", "left");
 
         assertNotNull(button.getComponent(TextureRenderComponent.class),
                 "Standard button should have a TextureRenderComponent");
@@ -72,7 +72,7 @@ public class ButtonFactoryTest {
 
     @Test
     void createButton_hasStaticPhysicsBody() {
-        Entity button = ButtonFactory.createButton(false, "platform");
+        Entity button = ButtonFactory.createButton(false, "platform", "left");
 
         PhysicsComponent physics = button.getComponent(PhysicsComponent.class);
         assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
@@ -81,7 +81,7 @@ public class ButtonFactoryTest {
 
     @Test
     void createButton_colliderIsObstacle() {
-        Entity button = ButtonFactory.createButton(false, "door");
+        Entity button = ButtonFactory.createButton(false, "door", "left");
 
         ColliderComponent collider = button.getComponent(ColliderComponent.class);
         assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),

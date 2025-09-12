@@ -138,6 +138,7 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       entity.requestReset();
     }
+
   }
 
   private void updateSpeed() {
@@ -166,6 +167,10 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
+<<<<<<< HEAD
+=======
+//    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
+>>>>>>> 32e454331aa8598e9089ca92af26d19a110b889a
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();

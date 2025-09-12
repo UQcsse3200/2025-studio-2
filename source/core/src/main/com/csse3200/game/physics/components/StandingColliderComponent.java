@@ -15,7 +15,7 @@ public class StandingColliderComponent extends ColliderComponent {
         Body body = entity.getComponent(PhysicsComponent.class).getBody();
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.4f, 0.7f, OFFSET, 0f);
+        shape.setAsBox(0.4f, 0.5f, OFFSET, 0f);
 
         FixtureDef def = new FixtureDef();
         def.shape = shape;

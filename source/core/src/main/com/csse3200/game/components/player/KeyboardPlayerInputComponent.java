@@ -39,23 +39,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     super(5);
   }
 
-  /**
-   * Return current walk direction.
-   * (Only current use is for transfers between resets.)
-   * @return walkDirection
-   */
-  public Vector2 getWalkDirection() {
-    return walkDirection;
-  }
 
-  /**
-   * Set current walk direction.
-   * (Only current use is for transfers between resets.)
-   * @param walkDirection - walkDirection to set.
-   */
-  public void setWalkDirection(Vector2 walkDirection) {
-    this.walkDirection.set(walkDirection);
-  }
+
+
 
   /**
    * Triggers player events on specific keycodes.
@@ -178,6 +164,24 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   /**
+   * Return current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @return walkDirection
+   */
+  public Vector2 getWalkDirection() {
+    return walkDirection;
+  }
+  /**
+   * Set current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @param walkDirection - walkDirection to set.
+   */
+
+  public void setWalkDirection(Vector2 walkDirection) {
+    this.walkDirection.set(walkDirection);
+  }
+
+  /**
    * Use this to start a jump event
    */
   private void triggerJumpEvent() {
@@ -197,6 +201,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private void triggerCrouchEvent() {
     entity.getEvents().trigger("crouch");
+
   }
 
   private void triggerGlideEvent(boolean status) {

@@ -2,11 +2,15 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Gdx;
 
 
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.*;
 import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.components.player.PlayerAnimationController;
 import com.csse3200.game.components.player.PlayerStatsDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.PlayerConfig;
@@ -17,8 +21,11 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.*;
 import com.badlogic.gdx.physics.box2d.*;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+
+import java.util.List;
 
 /**
  * Factory to create a player entity.
@@ -45,9 +52,18 @@ public class PlayerFactory {
    * Create a player entity.
    * @return entity
    */
-  public static Entity createPlayer() {
+    public static Entity createPlayer(List<Component> componentList) {
     InputComponent inputComponent =
             ServiceLocator.getInputService().getInputFactory().createForPlayer();
+
+    AnimationRenderComponent animator =
+            new AnimationRenderComponent(
+                    ServiceLocator.getResourceService().getAsset("images" +
+                            "/PLAYER.atlas", TextureAtlas.class));
+    animator.addAnimation("CROUCHING", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("JUMP", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("LEFT", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("RIGHT", 0.1f, Animation.PlayMode.LOOP);
 
     Entity player =
             new Entity()
@@ -55,6 +71,7 @@ public class PlayerFactory {
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
+                    .addComponent(new ColliderComponent()) // temporary fix
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
@@ -64,6 +81,9 @@ public class PlayerFactory {
                     .addComponent(new CameraComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
+    player
+            .addComponent(animator)
+            .addComponent(new PlayerAnimationController());
 
     // --- Stamina: add component, wire sprint, and TEMP logging ---
     StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
@@ -89,7 +109,7 @@ public class PlayerFactory {
 
 
 
-    //PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
@@ -109,6 +129,11 @@ public class PlayerFactory {
     footFixture.setUserData("foot");
 
     footHitbox.dispose();
+
+    // replace components with existing counterparts
+    for (Component component : componentList) {
+      player.replaceComponent(component);
+    }
 
     return player;
   }
