@@ -33,6 +33,16 @@ public class CutsceneArea extends GameArea {
      * Reader entity that can read a script file
      */
     private Entity reader;
+    /**
+     * Dummy assets that need to be loaded for the game area (sadly)
+     */
+    private static final String[] dummyTextures = {
+            "images/box_boy_leaf.png",
+            "images/minimap_player_marker.png"
+    };
+    private static final String[] dummyAtlases = {
+            "images/PLAYER.atlas"
+    };
 
     /**
      * Constructor for creating the game area representing cutscene.
@@ -81,7 +91,9 @@ public class CutsceneArea extends GameArea {
         // Get resource service
         ResourceService resourceService = ServiceLocator.getResourceService();
 
-        // Do nothing for now, might need to load some dummy assets here
+        // Load in the dummy assets
+        resourceService.loadTextures(dummyTextures);
+        resourceService.loadTextureAtlases(dummyAtlases);
 
         // Show loading progress in logs
         while (!resourceService.loadForMillis(10)) {
@@ -117,7 +129,9 @@ public class CutsceneArea extends GameArea {
         CutsceneReaderComponent readerComp = reader.getComponent(CutsceneReaderComponent.class);
         resourceService.unloadAssets(readerComp.getBackgrounds());
 
-        // May also need to unload dummy assets if added
+        // Unload dummy assets
+        resourceService.unloadAssets(dummyTextures);
+        resourceService.unloadAssets(dummyAtlases);
     }
 
     /**
