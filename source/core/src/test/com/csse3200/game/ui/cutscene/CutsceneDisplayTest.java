@@ -133,6 +133,41 @@ public class CutsceneDisplayTest {
         inOrder.verify(resourceService).getAsset(eq("images/test2.png"), eq(Texture.class));
     }
 
+    @Test
+    @DisplayName("Clicking button on last text box should finish cutscene")
+    void buttonClickFinishesCutscene() {
+        cutsceneDisplay.create();
+
+        // Capture the actor (stack) added to stage
+        ArgumentCaptor<Actor> captor = ArgumentCaptor.forClass(Actor.class);
+        verify(stage).addActor(captor.capture());
+        Actor ui = captor.getValue();
+
+        // Mimic frame update
+        ui.act(0f);
+
+        // Find button
+        TextButton button = findButton(ui);
+        // Check button exists
+        assertNotNull(button);
+
+        // Click button enough times to get to the end of the cutscene
+        for (int i = 0; i < textBoxes.size(); i++) {
+            boolean listenerFired = false;
+            for (EventListener listener : button.getListeners()) {
+                if (listener instanceof ChangeListener) {
+                    listener.handle(new ChangeListener.ChangeEvent());
+                    listenerFired = true;
+                    break;
+                }
+            }
+            assertTrue(listenerFired);
+        }
+
+        // Verify the event for finishing the cutscene was triggered
+        verify(gameArea).trigger("cutsceneFinished", nextArea, null);
+    }
+
     /**
      * Helper method that recursively searches an actor hierarchy until a TextButton is found
      * @param actor The root actor to search from
