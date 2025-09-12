@@ -12,11 +12,14 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.WallComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
@@ -37,6 +40,9 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class ForestGameArea extends GameArea {
@@ -91,10 +97,19 @@ public class ForestGameArea extends GameArea {
           "images/pressure_plate_unpressed.png",
           "images/pressure_plate_pressed.png",
           "images/tile.png",
-          "images/wall.png"
+          "images/wall.png",
+          "images/dash_powerup.png",
+          "images/glide_powerup.png",
+          "images/camera-body.png",
+          "images/camera-lens.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
+          "images/terrain_iso_grass.atlas",
+          "images/ghost.atlas",
+          "images/ghostKing.atlas",
+          "images/drone.atlas",
+          "images/security-camera.atlas",
+          "images/PLAYER.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -115,61 +130,47 @@ public class ForestGameArea extends GameArea {
     this.terrainFactory = terrainFactory;
   }
 
-  /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
-  @Override
-  public void create() {
-    PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-    engine.getWorld().setContactListener(new ObjectContactListener());
-    loadAssets();
-    loadLevel();
-  }
-
-  protected void reset() {
-    // debug
-    // for (Entity entity : areaEntities) {
-    //   System.out.println(entity);
-    // }
-
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
-    // Delete all entities within the room
-    // Note: Using super's dispose() instead of local as super does not unload assets.
-    super.dispose();
-    loadLevel();
-
-    // transfer all of the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-  }
-
-  private void loadLevel() {
+  /**
+   * Load terrain, UI, music. Must be done before spawning entities.
+   * Assets are loaded separately.
+   * Entities spawned separately.
+   */
+  protected void loadPrerequisites() {
     displayUI();
     spawnTerrain();
     // spawnTrees();
     createMinimap();
-    player = spawnPlayer();
-    player.getEvents().addListener("reset", this::reset);
+    playMusic();
+  }
 
-    spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    spawnBomberDrone();       // Play with bomber drones
+  /**
+   * Load entities. Terrain must be loaded beforehand.
+   * Player must be spawned beforehand if spawning enemies.
+   */
+  protected void loadEntities() {
+    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
+    //spawnPatrollingDrone();   // Play with patrolling/chasing drones
+    //spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
 
     spawnPlatform(); //Testing platform
-      spawnElevatorPlatform();
+    spawnElevatorPlatform();
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
 
     door = spawnDoor();
-    spawnPressurePlates();
     spawnWalls();
+    spawnPressurePlates() ;
     spawnLights(); // uncomment to spawn in lights
     // spawnKey();
     spawnTraps();
-    playMusic();
-    spawnDoor();
+    spawnGate();
+
+    spawnUpgrade("dash", 15, 19);
+    spawnUpgrade("glider", 15, 17);
+    spawnUpgrade("grappler", 15, 15);
   }
 
   private void createMinimap() {
@@ -246,9 +247,17 @@ public class ForestGameArea extends GameArea {
     }
   }
 
-  private Entity spawnPlayer() {
-    Entity newPlayer = PlayerFactory.createPlayer();
+  protected Entity spawnPlayer() {
+    Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
+    return newPlayer;
+  }
+
+  protected Entity spawnPlayer(List<Component> componentList) {
+    Entity newPlayer = PlayerFactory.createPlayer(componentList);
+    spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
@@ -451,6 +460,24 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(key, new GridPoint2(17,19), true, true);
   }
 
+  public void spawnUpgrade(String upgradeID, int posx, int posy) {
+    if (upgradeID == "dash") {
+      Entity upgrade = CollectableFactory.createDashUpgrade();
+      upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+    }
+
+    if (upgradeID == "glider") {
+      Entity upgrade = CollectableFactory.createGlideUpgrade();
+      upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+      spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+    }
+    if (upgradeID == "grappler") {
+      Entity upgrade = CollectableFactory.createGrappleUpgrade();
+      spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+    }
+  }
+
   private void spawnPressurePlates() {
     Entity plate = PressurePlateFactory.createPressurePlate();
     PressurePlateComponent comp = plate.getComponent(PressurePlateComponent.class);
@@ -491,6 +518,17 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(securityLight, new GridPoint2(12, 16), true, true);
   }
 
+  private void spawnGate() {
+    /*
+    Creates gate to test
+    */
+    GridPoint2 gatePos = new GridPoint2((int) 28, 5);
+    Entity gate = ObstacleFactory.createDoor("door", this, "cave");
+    gate.setScale(1, 2);
+    gate.getComponent(DoorComponent.class).openDoor();
+    spawnEntityAt(gate, gatePos, true, true);
+  }
+
   private void playMusic() {
     Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
     music.setLooping(true);
@@ -498,7 +536,7 @@ public class ForestGameArea extends GameArea {
     music.play();
   }
 
-  private void loadAssets() {
+  protected void loadAssets() {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(forestTextures);

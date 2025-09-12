@@ -1,15 +1,23 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -17,6 +25,9 @@ import com.csse3200.game.utils.math.RandomUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.csse3200.game.components.obstacles.DoorComponent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /** Forest area for the demo game with trees, a player, and some enemies. */
 public class CaveGameArea extends GameArea {
@@ -30,47 +41,65 @@ public class CaveGameArea extends GameArea {
     "images/cave_2.png",
     "images/platform.png",
     "images/gate.png",
-          "images/box_boy_leaf.png",
-          "images/box_white.png",
-          "images/box_blue.png",
-          "images/tree.png",
-          "images/ghost_king.png",
-          "images/ghost_1.png",
-          "images/grass_1.png",
-          "images/grass_2.png",
-          "images/grass_3.png",
-          "images/key.png",
-          "images/door_open.png",
-          "images/door_closed.png",
-          "images/key.png",
-          "images/hex_grass_1.png",
-          "images/hex_grass_2.png",
-          "images/hex_grass_3.png",
-          "images/iso_grass_1.png",
-          "images/iso_grass_2.png",
-          "images/iso_grass_3.png",
-          "images/drone.png",
-          "images/bomb.png",
-          "images/button.png",
-          "images/button_pushed.png",
-          "images/blue_button.png",
-          "images/blue_button_pushed.png",
-          "images/red_button.png",
-          "images/red_button_pushed.png",
-          "images/box_blue.png",
-          "images/box_orange.png",
-          "images/box_red.png",
-          "images/box_white.png",
-          "images/spikes_sprite.png",
-          "images/blue_button.png",
-          "images/blue_button_pushed.png",
-          "images/red_button.png",
-          "images/red_button_pushed.png",
-          "images/minimap_forest_area.png",
-          "images/minimap_player_marker.png"
+    "images/box_boy_leaf.png",
+    "images/box_white.png",
+    "images/box_blue.png",
+    "images/tree.png",
+    "images/ghost_king.png",
+    "images/ghost_1.png",
+    "images/grass_1.png",
+    "images/grass_2.png",
+    "images/grass_3.png",
+    "images/key.png",
+    "images/door_open.png",
+    "images/door_closed.png",
+    "images/key.png",
+    "images/hex_grass_1.png",
+    "images/hex_grass_2.png",
+    "images/hex_grass_3.png",
+    "images/iso_grass_1.png",
+    "images/iso_grass_2.png",
+    "images/iso_grass_3.png",
+    "images/drone.png",
+    "images/bomb.png",
+    "images/button.png",
+    "images/button_pushed.png",
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/box_blue.png",
+    "images/box_orange.png",
+    "images/box_red.png",
+    "images/box_white.png",
+    "images/spikes_sprite.png",
+    "images/blue_button.png",
+    "images/blue_button_pushed.png",
+    "images/red_button.png",
+    "images/red_button_pushed.png",
+    "images/minimap_forest_area.png",
+    "images/minimap_player_marker.png",
+    "images/box_boy_leaf.png",
+    "images/tree.png",
+    "images/ghost_king.png",
+    "images/ghost_1.png",
+    "images/grass_1.png",
+    "images/grass_2.png",
+    "images/grass_3.png",
+    "images/hex_grass_1.png",
+    "images/hex_grass_2.png",
+    "images/hex_grass_3.png",
+    "images/iso_grass_1.png",
+    "images/iso_grass_2.png",
+    "images/iso_grass_3.png",
+    "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
-    "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas" , "images/drone.atlas"
+    "images/terrain_iso_grass.atlas",
+          "images/ghost.atlas",
+          "images/ghostKing.atlas",
+          "images/drone.atlas",
+          "images/PLAYER.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -90,39 +119,31 @@ public class CaveGameArea extends GameArea {
     this.terrainFactory = terrainFactory;
   }
 
-  /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
-  @Override
-  public void create() {
-    loadAssets();
-    loadLevel();
-  }
-
-  protected void reset() {
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
-    // Delete all entities within the room
-    super.dispose();
-    loadLevel();
-
-    // transfer all of the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-  }
-
-  private void loadLevel() {
+  /**
+   * Load terrain, UI, music. Must be done before spawning entities.
+   * Assets are loaded separately.
+   * Entities spawned separately.
+   */
+  protected void loadPrerequisites() {
     displayUI();
 
     spawnTerrain();
     //spawnTrees();
-    player = spawnPlayer();
-//    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(Vector2.X);
+    createMinimap();
+
+    playMusic();
+  }
+
+  /**
+   * Load entities. Terrain must be loaded beforehand.
+   * Player must be spawned beforehand if spawning enemies.
+   */
+  protected void loadEntities() {
     //spawnGhosts();
     //spawnGhostKing();
     spawnPlatform(); //Testing platform
     spawnGate(); //Testing gate
     spawnDeathZone();
-
-    playMusic();
   }
 
   private void displayUI() {
@@ -162,6 +183,31 @@ public class CaveGameArea extends GameArea {
         ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
   }
 
+  private void createMinimap() {
+    Texture minimapTexture =
+            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
+
+    float tileSize = terrain.getTileSize();
+    Vector2 worldSize =
+            new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
+    ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
+
+    MinimapDisplay.MinimapOptions options = getMinimapOptions();
+
+    MinimapDisplay minimapDisplay =
+            new MinimapDisplay(150f, options);
+
+    Entity minimapEntity = new Entity();
+    minimapEntity.addComponent(minimapDisplay);
+    spawnEntity(minimapEntity);
+  }
+
+  private static MinimapDisplay.MinimapOptions getMinimapOptions() {
+    MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
+    options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
+    return options;
+  }
+
   private void spawnTrees() {
     GridPoint2 minPos = new GridPoint2(0, 0);
     GridPoint2 maxPos = terrain.getMapBounds(0).sub(2, 2);
@@ -173,9 +219,17 @@ public class CaveGameArea extends GameArea {
     }
   }
 
-  private Entity spawnPlayer() {
-    Entity newPlayer = PlayerFactory.createPlayer();
+  protected Entity spawnPlayer() {
+    Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
     spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
+    return newPlayer;
+  }
+
+  protected Entity spawnPlayer(List<Component> componentList) {
+    Entity newPlayer = PlayerFactory.createPlayer(componentList);
+    spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+    newPlayer.getEvents().addListener("reset", this::reset);
     return newPlayer;
   }
 
@@ -285,7 +339,7 @@ public class CaveGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "sprint1");
+    Entity gate = ObstacleFactory.createDoor("door", this, "forest");
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
@@ -304,7 +358,7 @@ public class CaveGameArea extends GameArea {
     music.play();
   }
 
-  private void loadAssets() {
+  protected void loadAssets() {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(caveTextures);

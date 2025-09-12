@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -32,6 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.naming.spi.ResolveResult;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TemplateGameArea extends GameArea {
     private static final float WALL_WIDTH = 0.1f;
@@ -70,13 +73,14 @@ public class TemplateGameArea extends GameArea {
             "images/drone.png",
             "images/bomb.png",
             "images/camera-body.png",
-            "images/camera-lens.png",
+            "images/camera-lens.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/chimesound.mp3"};
     private static final String[] gameTextureAtlases = {
+            "images/PLAYER.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(TemplateGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -85,35 +89,14 @@ public class TemplateGameArea extends GameArea {
         super();
         this.terrainFactory = terrainFactory;
     }
-    @Override
-    public void create() {
-
-        PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
-        engine.getWorld().setContactListener(new ObjectContactListener());
-        loadAssets();
-        loadLevel();
-    }
-    @Override
-    protected void reset() {
-        // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-        Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
-        // Delete all entities within the room
-        // Note: Using super's dispose() instead of local as super does not unload assets.
-        super.dispose();
-        loadLevel();
-
-        // transfer all of the retained data
-        player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-    }
-    private void loadLevel() {
-        //Spawn functions
+    protected void loadPrerequisites() {
         displayUI();
         spawnTerrain();
         createMinimap();
-        player = spawnPlayer();
-        player.getEvents().addListener("reset", this::reset);
         playMusic();
+    }
+    protected void loadEntities() {
+
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
@@ -121,9 +104,16 @@ public class TemplateGameArea extends GameArea {
         music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
     }
-    private Entity spawnPlayer() {
-        Entity newPlayer = PlayerFactory.createPlayer();
+    protected Entity spawnPlayer() {
+        Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
+        return newPlayer;
+    }
+    protected Entity spawnPlayer(List<Component> componentList) {
+        Entity newPlayer = PlayerFactory.createPlayer(componentList);
+        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
     private void displayUI() {
@@ -200,7 +190,7 @@ public class TemplateGameArea extends GameArea {
         minimapEntity.addComponent(minimapDisplay);
         spawnEntity(minimapEntity);
     }
-    private void loadAssets() {
+    protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(gameTextures);
