@@ -188,28 +188,14 @@ public class SprintOneGameArea extends GameArea {
         Entity button3 = ButtonFactory.createButton(false, "nothing", "left");
         spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
 
-        Entity button = ButtonFactory.createButton(false, "nothing", "down");
+        Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "down", manager);
         spawnEntityAt(button, new GridPoint2(15,7), true,  true);
 
-        Entity button4 = ButtonFactory.createButton(false, "nothing", "up");
+        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "up", manager);
         spawnEntityAt(button4, new GridPoint2(20,4), true,  true);
 
-        Entity button5 = ButtonFactory.createButton(false, "nothing", "up");
+        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "up", manager);
         spawnEntityAt(button5, new GridPoint2(23,4), true,  true);
-
-        ButtonComponent btn = button.getComponent(ButtonComponent.class);
-        ButtonComponent btn4 = button5.getComponent(ButtonComponent.class);
-        ButtonComponent btn5 = button4.getComponent(ButtonComponent.class);
-
-        btn.setPuzzleManager(manager);
-        btn4.setPuzzleManager(manager);
-        btn5.setPuzzleManager(manager);
-
-
-        manager.addButton(btn);
-        manager.addButton(btn4);
-        manager.addButton(btn5);
-
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -217,6 +203,10 @@ public class SprintOneGameArea extends GameArea {
                 spawnKey();
                 keySpawned = true;
             }
+        });
+
+        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
+            //what to do when puzzle completed, probably player upgrade but depends
         });
 
     }

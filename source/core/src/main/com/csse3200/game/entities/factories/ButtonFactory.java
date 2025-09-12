@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -68,6 +69,18 @@ public class ButtonFactory {
         button.addComponent(buttonComponent);
 
         button.setScale(0.5f, 0.5f);
+
+        return button;
+    }
+
+    public static Entity createPuzzleButton(boolean isPressed, String type, String direction, ButtonManagerComponent manager) {
+        Entity button = createButton(isPressed, type, direction);
+
+        ButtonComponent buttonComp = button.getComponent(ButtonComponent.class);
+        if (buttonComp != null && manager != null) {
+            buttonComp.setPuzzleManager(manager);
+            manager.addButton(buttonComp);
+        }
 
         return button;
     }

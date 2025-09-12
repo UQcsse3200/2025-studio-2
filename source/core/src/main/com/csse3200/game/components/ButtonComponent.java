@@ -22,7 +22,7 @@ public class ButtonComponent extends Component {
 
     private float unpressTimer = 0f;
     private boolean isTiming = false;
-    private static final float AUTO_UNPRESS_TIME = 15f;
+    private static final float AUTO_UNPRESS_TIME = 5f;
     private ButtonManagerComponent puzzleManager;
 
     /**
