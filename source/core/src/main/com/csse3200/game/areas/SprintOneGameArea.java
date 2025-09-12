@@ -181,6 +181,12 @@ public class SprintOneGameArea extends GameArea {
         Entity button3 = ButtonFactory.createButton(false, "nothing", "left");
         spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
 
+        Entity button = ButtonFactory.createButton(false, "nothing", "down");
+        spawnEntityAt(button, new GridPoint2(15,7), true,  true);
+
+        Entity button4 = ButtonFactory.createButton(false, "nothing", "up");
+        spawnEntityAt(button4, new GridPoint2(20,4), true,  true);
+
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed && !keySpawned) {
