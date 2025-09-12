@@ -15,6 +15,11 @@ public class TiledPlatformComponent extends RenderComponent {
   private final TextureRegion rightEdge;
   private final float tileAspectRatio;
 
+  // Pre-calculated regions for the merged tile to avoid object creation in the draw loop.
+  private final TextureRegion leftEdgeHalf;
+  private final TextureRegion rightEdgeHalf;
+
+
   /**
    * Creates a new TiledPlatformComponent.
    *
@@ -26,7 +31,16 @@ public class TiledPlatformComponent extends RenderComponent {
     this.leftEdge = leftEdge;
     this.middleTile = middleTile;
     this.rightEdge = rightEdge;
-    this.tileAspectRatio = (float) leftEdge.getRegionWidth() / leftEdge.getRegionHeight();
+
+    final int w = leftEdge.getRegionWidth();
+    final int h = leftEdge.getRegionHeight();
+    this.tileAspectRatio = ((float) w) / ((float) h);
+
+    assert(w == middleTile.getRegionWidth() && h == middleTile.getRegionHeight());
+    assert(w == rightEdge.getRegionWidth() && h == rightEdge.getRegionHeight());
+
+    this.leftEdgeHalf = new TextureRegion(leftEdge, 0, 0, w / 2, h);
+    this.rightEdgeHalf = new TextureRegion(rightEdge, w / 2, 0, w / 2, h);
   }
 
   @Override
@@ -35,34 +49,28 @@ public class TiledPlatformComponent extends RenderComponent {
     final Vector2 scale = entity.getScale();
     final float tileHeightWorld = scale.y;
     final float tileWidthWorld = tileHeightWorld * tileAspectRatio;
+    final int totalTilesToDraw = MathUtils.ceil(scale.x / tileWidthWorld);
 
-    if (tileWidthWorld <= 0) return;
-
-    // Platform is narrower than a single tile.
-    if (scale.x < tileWidthWorld) {
-      throw new IllegalStateException("Attempted to draw a tiled platform too narrow!");
-    }
+    if (totalTilesToDraw == 0) return;
 
     // Platform is narrower than two tiles.
-    if (scale.x < 2 * tileWidthWorld) {
-      batch.draw(leftEdge, position.x, position.y, scale.x / 2f, tileHeightWorld);
-      batch.draw(rightEdge, position.x + scale.x / 2f, position.y, scale.x / 2f, tileHeightWorld);
+    if (totalTilesToDraw < 2) {
+      batch.draw(leftEdgeHalf, position.x, position.y, scale.x / 2f, tileHeightWorld);
+      batch.draw(rightEdgeHalf, position.x + scale.x / 2f, position.y, scale.x / 2f, tileHeightWorld);
       return;
     }
 
     // Normal tiling
-    batch.draw(leftEdge, position.x, position.y, tileWidthWorld, tileHeightWorld);
+    final float stretchedTileWidth = scale.x / totalTilesToDraw;
+    final int numMiddleTiles = totalTilesToDraw - 2;
 
-    final float middleSectionWidth = scale.x - 2 * tileWidthWorld;
-    final int numMiddleTiles = MathUtils.ceil(middleSectionWidth / tileWidthWorld);
-    final float stretchedMiddleTileWidth = middleSectionWidth / numMiddleTiles;
-    float currentX = position.x + tileWidthWorld;
-
+    float currentX = position.x;
+    batch.draw(leftEdge, currentX, position.y, stretchedTileWidth, tileHeightWorld);
+    currentX += stretchedTileWidth;
     for (int i = 0; i < numMiddleTiles; i++) {
-      batch.draw(middleTile, currentX, position.y, stretchedMiddleTileWidth, tileHeightWorld);
-      currentX += stretchedMiddleTileWidth;
+      batch.draw(middleTile, currentX, position.y, stretchedTileWidth, tileHeightWorld);
+      currentX += stretchedTileWidth;
     }
-
-    batch.draw(rightEdge, position.x + scale.x - tileWidthWorld, position.y, tileWidthWorld, tileHeightWorld);
+    batch.draw(rightEdge, currentX, position.y, stretchedTileWidth, tileHeightWorld);
   }
 }
