@@ -64,6 +64,8 @@ public class MainGameScreen extends ScreenAdapter {
   private GameArea gameArea;
   private TerrainFactory terrainFactory;
 
+  private PauseInputComponent pauseInput;
+
   public MainGameScreen(GdxGame game) {
     this.game = game;
 
@@ -298,6 +300,7 @@ public class MainGameScreen extends ScreenAdapter {
       throw new IllegalStateException("GameArea has a null player");
     }
     pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
+    pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
@@ -306,8 +309,15 @@ public class MainGameScreen extends ScreenAdapter {
         .addComponent(new MainGameActions(this.game))
         .addComponent(new MainGameExitDisplay())
         .addComponent(pauseMenuDisplay)
-        .addComponent(new PauseInputComponent(this));
+        .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
+  }
+
+  // Set last keycode for inventory when tab is clicked
+  public void reflectPauseTabClick(PauseMenuDisplay.Tab tab) {
+    if (pauseInput != null) {
+      pauseInput.setLastKeycodeForTab(tab);
+    }
   }
 }

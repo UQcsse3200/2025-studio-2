@@ -94,6 +94,7 @@ public class PauseMenuDisplay extends UIComponent {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 setTab(tab);
+                screen.reflectPauseTabClick(tab);
             }
         });
 
