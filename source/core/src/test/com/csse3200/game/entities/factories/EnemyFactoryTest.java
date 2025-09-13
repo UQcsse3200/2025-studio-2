@@ -57,7 +57,7 @@ public class EnemyFactoryTest {
         rs.loadTextureAtlases(new String[]{"images/drone.atlas"});
         rs.loadAll();
 
-        // Mock time source needed for AI tasks
+        // Register time source needed for AI tasks
         gameTime = mock(GameTime.class);
         ServiceLocator.registerTimeSource(gameTime);
     }
@@ -116,6 +116,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createDrone_returnsDistinct() {
+        Entity securityLight = new Entity();
         Entity player = new Entity();
 
         Entity a = EnemyFactory.createDrone(player, new Vector2(0f, 0f));
@@ -155,6 +156,7 @@ public class EnemyFactoryTest {
     @Test
     void createPatrollingDrone_emptySteps() {
         Entity player = new Entity();
+        Entity securityLight = new Entity();
         Entity drone = assertDoesNotThrow(
                 () -> EnemyFactory.createPatrollingDrone(
                         player,
@@ -281,6 +283,7 @@ public class EnemyFactoryTest {
     void patrolDrone_patrolToChaseFlow() {
         Entity target = createEntityWithPosition();
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
 
         Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
@@ -304,6 +307,7 @@ public class EnemyFactoryTest {
     void patrolDrone_chaseToCooldownFlow() {
         Entity target = createEntityWithPosition();
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
 
         Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
@@ -327,6 +331,7 @@ public class EnemyFactoryTest {
     void patrolDrone_cooldownToPatrolFlow() {
         Entity target = createEntityWithPosition();
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
 
         Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
@@ -352,6 +357,7 @@ public class EnemyFactoryTest {
     void patrolDrone_cooldownToChaseFlow() {
         Entity target = createEntityWithPosition();
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity light = new Entity();
 
         Entity drone = EnemyFactory.createPatrollingDrone(target, route);
         AITaskComponent ai = drone.getComponent(AITaskComponent.class);
