@@ -220,11 +220,11 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
-            ServiceLocator.getEntityService().register(bomberDrone);
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
+        ServiceLocator.getEntityService().register(bomberDrone);
 
-            assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
-                    "Drone should have AnimationController");
+        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                "Drone should have AnimationController");
     }
 
     @Test
