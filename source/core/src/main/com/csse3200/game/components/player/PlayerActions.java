@@ -72,6 +72,9 @@ public class PlayerActions extends Component {
   private int jetpackFuel = FUEL_CAPACITY;
   private boolean isJetpackOn = false;
 
+  private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
+          "sounds/Impact4.ogg", Sound.class);
+
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
@@ -129,9 +132,9 @@ public class PlayerActions extends Component {
     if (moving || isJetpackOn) {
       updateSpeed();
     }
-    Gdx.app.log("JETPACK FUEL", Integer.toString(jetpackFuel));
+
     if (jetpackFuel <= 0) {
-      isJetpackOn = false;
+      jetpackOff();
     }
 
     if (isJetpackOn) {
@@ -347,10 +350,13 @@ public class PlayerActions extends Component {
 
   private void jetpackOn() {
     isJetpackOn = true;
+    isJumping = true;
+    jetpackSound.loop();
   }
 
   private void jetpackOff() {
     isJetpackOn = false;
+    jetpackSound.pause();
   }
 
 
