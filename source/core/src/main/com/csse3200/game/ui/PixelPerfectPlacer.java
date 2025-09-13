@@ -49,6 +49,7 @@ public class PixelPerfectPlacer extends Stack {
    *            image (using gimp) and its width and height
    */
   public void addOverlay(Actor actor, Rect rect) {
+    if (actor == null) throw new IllegalArgumentException("actor cannot be null");
     final Rect transformedPosition =
         new Rect(rect.x, textureHeight -  (rect.y + rect.height), rect.width, rect.height);
     System.out.println("Transformed position: " + transformedPosition);
