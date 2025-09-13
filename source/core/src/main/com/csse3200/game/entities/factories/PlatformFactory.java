@@ -6,11 +6,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.components.platforms.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.platforms.MovingPlatformComponent;
+import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TiledPlatformComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
  * Factory to create Platform entities.
@@ -79,4 +81,24 @@ public class PlatformFactory {
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
     return platform;
   }
+
+  /**
+   * Creates volatile platform, where if the player stands on it for more than lifetime, the platform disappears.
+   * Platform respawns after respawnDelay.
+   *
+   * @param lifetime
+   * @param respawnDelay
+   * @return
+   */
+  public static Entity createVolatilePlatform(float lifetime, float respawnDelay) {
+    Entity platform = new Entity()
+            .addComponent(new TextureRenderComponent("images/platform.png"))
+            .addComponent(new PhysicsComponent())
+            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+            .addComponent(new VolatilePlatformComponent(lifetime, respawnDelay));
+
+    platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
+    return platform;
+  }
+
 }
