@@ -1,30 +1,20 @@
 package com.csse3200.game.areas;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.physics.ObjectContactListener;
-import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -32,7 +22,6 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.naming.spi.ResolveResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,9 +103,9 @@ public class LevelOneGameArea extends GameArea {
         //spawnEntityAt(deathZone2, spawn2Pos, true,  true);
     }
     private void spawnWalls(){
-        GridPoint2 leftWallPos = new GridPoint2(25,8);
+        GridPoint2 leftWallPos = new GridPoint2(25,4);
         Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
-        leftWall.setScale(1,10);
+        leftWall.setScale(1,4.5f);
         spawnEntityAt(leftWall, leftWallPos, false, false);
     }
     private void spawnPlatforms(){
@@ -135,10 +124,62 @@ public class LevelOneGameArea extends GameArea {
         ground3.setScale(5,2);
         spawnEntityAt(ground3, groundPos3, false, false);
 
-        GridPoint2 step1Pos = new GridPoint2(19,6);
+        GridPoint2 step1Pos = new GridPoint2(21,6);
         Entity step1 = PlatformFactory.createStaticPlatform();
-        step1.setScale(4,0.5f);
+        step1.setScale(2,0.5f);
         spawnEntityAt(step1, step1Pos,false, false);
+
+        GridPoint2 step2Pos = new GridPoint2(15,9);
+        Entity step2 = PlatformFactory.createStaticPlatform();
+        step2.setScale(1.5f,0.5f);
+        spawnEntityAt(step2, step2Pos,false, false);
+
+        GridPoint2 step3Pos = new GridPoint2(22,12);
+        Entity step3 = PlatformFactory.createStaticPlatform();
+        step3.setScale(1.8f,0.5f);
+        spawnEntityAt(step3, step3Pos,false, false);
+
+        GridPoint2 step4Pos = new GridPoint2(45,6);
+        Entity step4 = PlatformFactory.createStaticPlatform();
+        step4.setScale(1.8f,0.5f);
+        spawnEntityAt(step4, step4Pos,false, false);
+
+//        GridPoint2 step5Pos = new GridPoint2(50,9);
+//        Entity step5 = PlatformFactory.createStaticPlatform();
+//        step5.setScale(1.8f,0.5f);
+//        spawnEntityAt(step5, step5Pos,false, false);
+
+        GridPoint2 step6Pos = new GridPoint2(45,12);
+        Entity step6 = PlatformFactory.createStaticPlatform();
+        step6.setScale(1.8f,0.5f);
+        spawnEntityAt(step6, step6Pos,false, false);
+
+        GridPoint2 step7Pos = new GridPoint2(45,18);
+        Entity step7 = PlatformFactory.createStaticPlatform();
+        step7.setScale(3.5f,0.5f);
+        spawnEntityAt(step7, step7Pos,false, false);
+
+//      LEFT PATH
+        GridPoint2 volatile1Pos = new GridPoint2(38,21);
+        Entity volatile1 = PlatformFactory.createStaticPlatform();
+        volatile1.setScale(2f,0.5f);
+        spawnEntityAt(volatile1, volatile1Pos,false, false);
+
+        GridPoint2 volatile2Pos = new GridPoint2(32,24);
+        Entity volatile2 = PlatformFactory.createStaticPlatform();
+        volatile2.setScale(1.8f,0.5f);
+        spawnEntityAt(volatile2, volatile2Pos,false, false);
+
+//        GridPoint2 moving1Pos = new GridPoint2(38,29);
+//        Entity moving1 = PlatformFactory.createMovingPlatform(3,3);
+//        moving1.setScale(2f,0.5f);
+//        spawnEntityAt(moving1, moving1Pos,false, false);
+
+//        RIGHT PATH
+        GridPoint2 step8Pos = new GridPoint2(58,18);
+        Entity step8 = PlatformFactory.createStaticPlatform();
+        step8.setScale(2f,0.5f);
+        spawnEntityAt(step8, step8Pos,false, false);
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);

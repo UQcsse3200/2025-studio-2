@@ -39,7 +39,7 @@ public class CameraComponent extends Component {
   public void resize(int screenWidth, int screenHeight, float gameWidth) {
     float ratio = (float) screenHeight / screenWidth;
     //for level creation, easier to see entire level at once
-    float zoom = 1f;
+    float zoom = 1.2f;
     camera.viewportWidth = gameWidth * zoom;
     camera.viewportHeight = gameWidth * ratio*zoom;
     camera.update();
