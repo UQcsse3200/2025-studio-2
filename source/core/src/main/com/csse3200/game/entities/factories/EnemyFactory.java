@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -155,16 +156,16 @@ public class EnemyFactory {
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(4.8f);
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
         if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
 
         AnimationRenderComponent animator=
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
-        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.LOOP);
-        animator.addAnimation("float",0.1f,Animation.PlayMode.LOOP);
+        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.NORMAL);
+        animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
 
-        animator.addAnimation("explode",0.08f,Animation.PlayMode.LOOP);
+        animator.addAnimation("explode",0.08f,Animation.PlayMode.NORMAL);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
@@ -176,6 +177,7 @@ public class EnemyFactory {
         ChaseTask chaseTask= new ChaseTask(target);
 
         aiComponent.addTask(chaseTask);
+        chaseTask.activate();
 
         AnimationRenderComponent arc= drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
