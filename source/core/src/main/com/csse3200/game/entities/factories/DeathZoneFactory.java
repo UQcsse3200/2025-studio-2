@@ -30,7 +30,7 @@ public class DeathZoneFactory {
     public static Entity createDeathZone(GridPoint2 position, Vector2 resetPos) {//int length, int rotateClockwise) {
         Entity deathZone = new Entity();
         String texture = "images/gate.png";
-        //deathZone.addComponent(new TextureRenderComponent(texture));
+        //deathZone.addComponent(new TextureRenderComponent(texture)); <-- Uncomment to make them temporarily visible
 
         // Add physics and collider components
         deathZone.addComponent(new PhysicsComponent()
@@ -39,7 +39,8 @@ public class DeathZoneFactory {
         deathZone.addComponent(collider);
 
         // Fix collider to appropriate size
-        deathZone.setScale(3.1f,1);
+        //deathZone.setScale(3.1f,1); <-- Uncomment for smaller death zones
+        deathZone.setScale(90,0.5f);
         collider.setAsBoxAligned(deathZone.getScale().scl(0.8f),
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
