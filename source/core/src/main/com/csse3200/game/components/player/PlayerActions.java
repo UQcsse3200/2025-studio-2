@@ -1,7 +1,6 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -79,9 +78,6 @@ public class PlayerActions extends Component {
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
     cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
-
-    Graphics.DisplayMode displayMode = Gdx.graphics.getDisplayMode();
-    cameraComponent.resize(displayMode.width, displayMode.height, 15f);
 
     standingCollider = entity.getComponent(StandingColliderComponent.class);
     crouchingCollider = entity.getComponent(CrouchingColliderComponent.class);
