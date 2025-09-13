@@ -294,7 +294,7 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
     }
 
-    public void spawnPlatformBat() {
+    private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder horizontalPlatformBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalPlatformBat = horizontalPlatformBuilder
                 .moveX(1.5f, 6f).moveY(23f, 23f)
@@ -306,7 +306,7 @@ public class SprintOneGameArea extends GameArea {
                 (int) horizontalPlatformBuilder.getSpawnX(), (int) horizontalPlatformBuilder.getSpawnY()), true, true);
     }
 
-    public void spawnLevelOneBatRoom() {
+    private void spawnLevelOneBatRoom() {
 
         int offsetX = 0;
         int offsetY = 3;
