@@ -75,13 +75,13 @@ public class UpgradesComponentTest {
 
     @Test
     void upgradeCollectMarksAsCollected() {
-        Entity upgrade = CollectableFactory.createGrappleUpgrade();
+        Entity upgrade = CollectableFactory.createJetpackUpgrade();
         upgrade.create();
         assertFalse(inv.hasItem("grappler"));
 
         upgrade.getEvents().trigger("onCollisionStart", player);
 
-        assertTrue(inv.hasItem("grapple"), "Inventory should contain the grappler upgrade");
+        assertTrue(inv.hasItem("jetpack"), "Inventory should contain the grappler upgrade");
     }
 
     @Test
@@ -102,19 +102,19 @@ public class UpgradesComponentTest {
     void canCollectMultipleDifferentUpgrades() {
         Entity dash = CollectableFactory.createDashUpgrade();
         Entity glider = CollectableFactory.createGlideUpgrade();
-        Entity grappler = CollectableFactory.createGrappleUpgrade();
+        Entity jetpack = CollectableFactory.createJetpackUpgrade();
 
         dash.create();
         glider.create();
-        grappler.create();
+        jetpack.create();
 
         dash.getEvents().trigger("onCollisionStart", player);
         glider.getEvents().trigger("onCollisionStart", player);
-        grappler.getEvents().trigger("onCollisionStart", player);
+        jetpack.getEvents().trigger("onCollisionStart", player);
 
         assertEquals(3, inv.getTotalItemCount());
         assertTrue(inv.hasItem("dash"), "Inventory should contain the dash upgrade");
         assertTrue(inv.hasItem("glider"), "Inventory should contain the glide upgrade");
-        assertTrue(inv.hasItem("grapple"), "Inventory should contain the grapple upgrade");
+        assertTrue(inv.hasItem("jetpack"), "Inventory should contain the grapple upgrade");
     }
 }

@@ -42,6 +42,8 @@ public class PlayerActions extends Component {
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
+  private static final int FUEL_CAPACITY = 100;
+
   private PhysicsComponent physicsComponent;
   private StaminaComponent stamina;
   private CameraComponent cameraComponent;
@@ -68,7 +70,8 @@ public class PlayerActions extends Component {
 
   // Whether player is currently holding sprint (Shift)
   private boolean wantsSprint = false;
-  private Joint grappleJoint;
+  private int jetpackFuel = FUEL_CAPACITY;
+  private boolean isJetpackOn = false;
 
   @Override
   public void create() {
@@ -100,8 +103,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
 
     entity.getEvents().addListener("glide", this::glide);
-    entity.getEvents().addListener("grapple", this::grapple);
-    //entity.getEvents().addListener("destroyGrapple", this::destoryGrapple);
+    entity.getEvents().addListener("jetpackOn", this::jetpackOn);
+    entity.getEvents().addListener("jetpackOff", this::jetpackOff);
 
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
@@ -124,11 +127,24 @@ public class PlayerActions extends Component {
 
   @Override
   public void update() {
-    if (moving) {
-      updateSpeed();
-    }
 
     Body body = physicsComponent.getBody();
+
+    if (moving || isJetpackOn) {
+      updateSpeed();
+    }
+    Gdx.app.log("JETPACK FUEL", Integer.toString(jetpackFuel));
+    if (jetpackFuel <= 0) {
+      isJetpackOn = false;
+    }
+
+    if (isJetpackOn) {
+      jetpackFuel--;
+      body.setGravityScale(0f); //for impulse to act upwards
+    } else if (jetpackFuel < FUEL_CAPACITY) {
+      jetpackFuel++;
+      body.setGravityScale(1f);
+    }
 
     if (body.getLinearVelocity().y < 0) {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
@@ -167,18 +183,20 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-<<<<<<< HEAD
-=======
-//    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
->>>>>>> 32e454331aa8598e9089ca92af26d19a110b889a
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
-      deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
+      if (deltaVy > maxDeltaVy) deltaVy = maxDeltaVy;
+      if (deltaVy < -maxDeltaVy) deltaVy = -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
+
+    } else if (isJetpackOn) {
+
+      impulseY = 1.1f * 1.2f * body.getMass();
     } else {
-      impulseY = 0f;
+        impulseY = 0f;
     }
+
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
 
@@ -331,30 +349,12 @@ public class PlayerActions extends Component {
     }
   }
 
-  private void grapple() {
-    Body body = physicsComponent.getBody();
+  private void jetpackOn() {
+    isJetpackOn = true;
+  }
 
-    Vector2 mousePos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-    Vector2 playerPos = body.getPosition().cpy();
-    Gdx.app.log("Mouse Input Pixels", Float.toString(mousePos.x));
-    Gdx.app.log("Player Position Units", Float.toString(playerPos.x));
-
-
-   /* float maxDistance = 10f;
-    Vector2 cameraPosition = new Vector2(cameraComponent.getCamera().position.x, cameraComponent.getCamera().position.y);
-
-    Gdx.app.log("Player position", Float.toString(playerPos.x) + " " + Float.toString(playerPos.y));
-
-    Vector2 impulseDir = target.sub(playerPos);
-
-    //Raycast here
-    RaycastHit callback = new RaycastHit();
-    ServiceLocator.getPhysicsService().getPhysics().raycast(playerPos, impulseDir, callback);
-
-    Gdx.app.log("Direction of grapple", Float.toString(impulseDir.x));
-    Vector2 grappleImpulse = impulseDir.scl(10f);
-
-    body.applyLinearImpulse(grappleImpulse, body.getWorldCenter(), true);*/
+  private void jetpackOff() {
+    isJetpackOn = false;
   }
 
 

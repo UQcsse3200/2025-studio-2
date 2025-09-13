@@ -80,22 +80,22 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == RESET_KEY) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
-    } else if (keycode == /*GRAPPLE_KEY*/34) {
-
-      triggerGrappleEvent();
     }
     // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
     else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
       entity.getEvents().trigger("sprintStart");
       return true;
     } else if (keycode == UP_KEY) {
-
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
       cheatPosition++;
+
+      triggerJetpackEvent();
+
       if (cheatsOn) {
         walkDirection.add(Vector2Utils.UP);
-        triggerWalkEvent();
       }
+
+      triggerWalkEvent();
     } else if (keycode == DOWN_KEY) {
 
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
@@ -128,6 +128,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
       } else if (keycode == UP_KEY) {
+        triggerJetpackOffEvent();
         if (cheatsOn) {
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
@@ -147,9 +148,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       } else if (keycode == JUMP_KEY) {
 
         triggerGlideEvent(false);
-      } else if (keycode == GRAPPLE_KEY) {
-
-        triggerDestroyGrappleEvent();
       }
 
     return false;
@@ -210,17 +208,16 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
   }
 
-  private void triggerGrappleEvent() {
+  private void triggerJetpackEvent() {
 
-    if (entity.getComponent(InventoryComponent.class).hasItem("grapple")) {
-      entity.getEvents().trigger("grapple");
+    if (entity.getComponent(InventoryComponent.class).hasItem("jetpack")) {
+      entity.getEvents().trigger("jetpackOn");
     }
   }
 
-  private void triggerDestroyGrappleEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("grapple")) {
-      entity.getEvents().trigger("destroyGrapple");
-    }
+  private void triggerJetpackOffEvent() {
+
+    entity.getEvents().trigger("jetpackOff");
   }
 
   private int[] addToCheatHistory(int[] keyHistory, int position, int input) {

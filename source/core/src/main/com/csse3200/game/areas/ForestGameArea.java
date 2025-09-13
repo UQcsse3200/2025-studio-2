@@ -162,7 +162,7 @@ public class ForestGameArea extends GameArea {
 
     spawnUpgrade("dash", 9, 6);
     spawnUpgrade("glider", 7, 6);
-    spawnUpgrade("grappler", 5, 6);
+    spawnUpgrade("jetpack", 5, 6);
   }
 
   private void createMinimap() {
@@ -442,8 +442,8 @@ public class ForestGameArea extends GameArea {
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-    if (upgradeID == "grappler") {
-      Entity upgrade = CollectableFactory.createGrappleUpgrade();
+    if (upgradeID == "jetpack") {
+      Entity upgrade = CollectableFactory.createJetpackUpgrade();
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
   }

@@ -77,16 +77,16 @@ public class CollectableFactory {
      * @return a new upgrade entity
      * @see UpgradesComponent
      */
-    public static Entity createGrappleUpgrade() {
-        Entity grapple = new Entity()
+    public static Entity createJetpackUpgrade() {
+        Entity jetpack = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
-                .addComponent(new UpgradesComponent("grapple"));
+                .addComponent(new UpgradesComponent("jetpack"));
 
-        grapple.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(grapple, 0.5f, 0.5f);
+        jetpack.setScale(0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(jetpack, 0.5f, 0.5f);
 
-        return grapple;
+        return jetpack;
     }
 }
