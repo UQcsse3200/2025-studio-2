@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * A layout component that allows placing actors at precise pixel coordinates relative to a background image.
- * The component handles dynamic scaling, ensuring that overlays remain correctly positioned when resizing
  */
 public class PixelPerfectPlacer extends Stack {
   private final Image backgroundImage;
@@ -18,11 +17,11 @@ public class PixelPerfectPlacer extends Stack {
   final int textureWidth;
   final int textureHeight;
 
-  /**
-   * Helper class to store the actor and its pixel-based layout constraints.
-   */
   private record OverlayConstraint(Actor actor, Rect rect) {}
 
+  /**
+   * Helper record to store the actor's pixel-based layout constraints.
+   */
   public record Rect(int x, int y, int width, int height) {}
 
   /**
@@ -39,7 +38,6 @@ public class PixelPerfectPlacer extends Stack {
     this.add(backgroundImage);
     this.add(overlayGroup);
   }
-
 
   /**
    * Adds an actor to be placed on top of the background image.
@@ -61,7 +59,7 @@ public class PixelPerfectPlacer extends Stack {
 
   /**
    * This method is called by Scene2D's layout manager whenever the table's size or children change.
-   * It calculates and applies the correct on-screen positions and sizes for all overlay actors.
+   * It calculates and applies the correct on-screen positions and sizes for all overlaid actors.
    */
   @Override
   public void layout() {
