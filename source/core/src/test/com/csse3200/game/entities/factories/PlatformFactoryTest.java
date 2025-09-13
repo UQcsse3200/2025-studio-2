@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 public class PlatformFactoryTest {
+    private ResourceService rs;
     @BeforeEach
     void setupGameServices() {
 
@@ -32,6 +33,13 @@ public class PlatformFactoryTest {
         when(mockTexture.getWidth()).thenReturn(100);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(mockTexture);
         ServiceLocator.registerResourceService(mockResourceService);
+
+        // Resource Service for loading atlases
+        rs = new ResourceService();
+        ServiceLocator.registerResourceService(rs);
+        rs.loadTextureAtlases(new String[]{"images/volatile_platform.atlas"});
+        rs.loadTextures(new String[]{"images/platform.png"});
+        rs.loadAll();
     }
 
     @Test
