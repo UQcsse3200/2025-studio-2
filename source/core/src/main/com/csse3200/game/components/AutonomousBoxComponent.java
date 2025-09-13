@@ -105,9 +105,11 @@ public class AutonomousBoxComponent extends Component {
         y += directionY * speed * deltaTime;
 
         if (y >= maxMoveY){
+            y = maxMoveY;
             directionY = -1;
         }
         if (y <= minMoveY){
+            y = minMoveY;
             directionY = 1;
         }
 

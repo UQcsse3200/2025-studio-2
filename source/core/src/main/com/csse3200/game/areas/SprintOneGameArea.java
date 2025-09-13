@@ -87,6 +87,7 @@ public class SprintOneGameArea extends GameArea {
             "images/ghost.atlas",
             "images/ghostKing.atlas",
             "images/drone.atlas",
+            // Bat sprites from https://todemann.itch.io/bat
             "images/flying_bat.atlas"
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
@@ -128,7 +129,8 @@ public class SprintOneGameArea extends GameArea {
         spawnPlatform();
         spawnElevatorPlatform();
 
-        spawnBoxes();
+        spawnPlatformBat();
+        spawnLevelOneBatRoom();
         playMusic();
         spawnLights();
         spawnButtons();
@@ -279,49 +281,76 @@ public class SprintOneGameArea extends GameArea {
     private void spawnBoxes() {
 
         // Static box
-        Entity staticBox = BoxFactory.createStaticBox();
-
-        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
-                " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(staticBox, new GridPoint2(12,4), true,  true);
+//        Entity staticBox = BoxFactory.createStaticBox();
+//
+//        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
+//                " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+//        spawnEntityAt(staticBox, new GridPoint2(12,4), true,  true);
 
         // Moveable box
-        Entity moveableBox = BoxFactory.createMoveableBox();
-        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
-                TooltipSystem.TooltipStyle.SUCCESS));
-        spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
+//        Entity moveableBox = BoxFactory.createMoveableBox();
+//        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
+//                TooltipSystem.TooltipStyle.SUCCESS));
+//        spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
 
-        // Autonomous boxes
-        BoxFactory.AutonomousBoxBuilder builder = new BoxFactory.AutonomousBoxBuilder();
-        Entity platformAutoBox = builder
-                .moveX(1.5f, 6f).moveY(23f, 23f).speed(4f).damage(5).knockback(4).build();
-        spawnEntityAt(platformAutoBox, new GridPoint2(
-                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
+    }
 
-        Entity verticalBat1 = builder
-                .moveX(17f, 17f).moveY(5f, 10f).texture("images/flying_bat.atlas")
+    public void spawnPlatformBat() {
+        BoxFactory.AutonomousBoxBuilder horizontalPlatformBuilder = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalPlatformBat = horizontalPlatformBuilder
+                .moveX(1.5f, 6f).moveY(23f, 23f)
+                .texture("images/flying_bat.atlas")
+                .speed(3f).damage(5).knockback(4).build();
+        spawnEntityAt(horizontalPlatformBat, new GridPoint2(
+                (int) horizontalPlatformBuilder.getSpawnX(), (int) horizontalPlatformBuilder.getSpawnY()), true, true);
+    }
+
+
+    public void spawnLevelOneBatRoom() {
+
+        int offsetX = 0;
+        int offsetY = 3;
+
+        BoxFactory.AutonomousBoxBuilder batBuilder1 = new BoxFactory.AutonomousBoxBuilder();
+        Entity lowHorizontalBat = batBuilder1
+                .moveX(1f + offsetX, 5f + offsetX).moveY(4f + offsetY, 4f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .tooltip("Beware! These bats bite and knock you back. Stay clear!", TooltipSystem.TooltipStyle.WARNING)
+                .speed(4f).damage(5).knockback(4).build();
+        spawnEntityAt(lowHorizontalBat, new GridPoint2(
+                (int) batBuilder1.getSpawnX() + offsetX,
+                (int) batBuilder1.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder2 = new BoxFactory.AutonomousBoxBuilder();
+        Entity highHorizontalBat2 = batBuilder2
+                .moveX(1f + offsetX, 5f + offsetX).moveY(14f + offsetY, 14f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(3f).damage(5).knockback(4).build();
+        spawnEntityAt(highHorizontalBat2, new GridPoint2(
+                (int) batBuilder2.getSpawnX() + offsetX,
+                (int) batBuilder2.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder3 = new BoxFactory.AutonomousBoxBuilder();
+        Entity rightZigzagBat1 = batBuilder3
+                .moveX(3f + offsetX, 5f + offsetX).moveY(4f + offsetY, 7f + offsetY)
+                .texture("images/flying_bat.atlas")
                 .speed(2f).damage(5).knockback(4).build();
-        spawnEntityAt(verticalBat1, new GridPoint2(
-                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
+        spawnEntityAt(rightZigzagBat1, new GridPoint2(
+                (int) batBuilder3.getSpawnX() + offsetX,
+                (int) batBuilder3.getSpawnY() + offsetY),
+                true, true);
 
-        Entity verticalBat2 = builder
-                .moveX(15f, 15f).moveY(5f, 10f).texture("images/flying_bat.atlas").speed(4f).damage(5).knockback(4).build();
-        spawnEntityAt(verticalBat2, new GridPoint2(
-                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
-
-        Entity diagonalBat1 = builder
-                .moveX(10f, 13f).moveY(5f, 10f).texture("images/flying_bat.atlas").speed(6f).damage(5).knockback(4).build();
-        spawnEntityAt(diagonalBat1, new GridPoint2(
-                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
-
-        // Bats
-        BoxFactory.AutonomousBoxBuilder horizontalBatBuilder = new BoxFactory.AutonomousBoxBuilder();
-        Entity horizontalBat = horizontalBatBuilder
-                .moveX(1.5f, 6f).moveY(6f, 6f).texture("images/flying_bat.atlas")
-                .speed(2f).damage(5).knockback(4).build();
-        spawnEntityAt(horizontalBat, new GridPoint2(
-                (int) horizontalBatBuilder.getSpawnX(), (int) horizontalBatBuilder.getSpawnY()), true, true);
-
+        BoxFactory.AutonomousBoxBuilder batBuilder4 = new BoxFactory.AutonomousBoxBuilder();
+        Entity leftZigzagBat2 = batBuilder4
+                .moveX(1f + offsetX, 3f + offsetX).moveY(2f + offsetY, 7f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(3f).damage(5).knockback(4).build();
+        spawnEntityAt(leftZigzagBat2, new GridPoint2(
+                        (int) batBuilder4.getSpawnX() + offsetX,
+                        (int) batBuilder4.getSpawnY() + offsetY),
+                true, true);
     }
 
     public void spawnDoor() {

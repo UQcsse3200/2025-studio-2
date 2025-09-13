@@ -121,7 +121,7 @@ public class BoxFactory {
         private float knockback = 0f;
 
         // Tooltip
-        private String tooltipText = "Autonomous Box\nDanger! Don't touch!";
+        private String tooltipText = "";
         private TooltipSystem.TooltipStyle tooltipStyle = TooltipSystem.TooltipStyle.WARNING;
 
         /**

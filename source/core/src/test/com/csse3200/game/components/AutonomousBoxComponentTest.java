@@ -165,5 +165,4 @@ public class AutonomousBoxComponentTest {
         component.update();
         verify(mockAnimator).setFlipX(false);
     }
-
 }
