@@ -1,9 +1,12 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.npc.VolatilePlatformAnimationController;
 import com.csse3200.game.components.platforms.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.platforms.MovingPlatformComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
@@ -11,8 +14,10 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * Factory to create Platform entities.
@@ -91,11 +96,20 @@ public class PlatformFactory {
    * @return
    */
   public static Entity createVolatilePlatform(float lifetime, float respawnDelay) {
+    AnimationRenderComponent animator =
+            new AnimationRenderComponent(
+                    ServiceLocator.getResourceService().getAsset("images/volatile_platform.atlas", TextureAtlas.class));
+    //10 is number of frames in sprite
+    animator.addAnimation("break", lifetime/11, Animation.PlayMode.NORMAL);
+    animator.addAnimation("blank",0.1f,Animation.PlayMode.NORMAL);
+
     Entity platform = new Entity()
             .addComponent(new TextureRenderComponent("images/platform.png"))
             .addComponent(new PhysicsComponent())
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-            .addComponent(new VolatilePlatformComponent(lifetime, respawnDelay));
+            .addComponent(new VolatilePlatformComponent(lifetime, respawnDelay))
+            .addComponent(new VolatilePlatformAnimationController())
+            .addComponent(animator);
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;

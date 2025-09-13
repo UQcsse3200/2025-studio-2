@@ -82,7 +82,9 @@ public class LevelOneGameArea extends GameArea {
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/chimesound.mp3"};
     private static final String[] gameTextureAtlases = {
-            "images/PLAYER.atlas"
+            "images/PLAYER.atlas",
+            "images/drone.atlas",
+            "images/volatile_platform.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
