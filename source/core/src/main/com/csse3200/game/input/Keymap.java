@@ -114,7 +114,6 @@ public class Keymap {
     registerAction("PlayerCrouch", Input.Keys.C, true);
     registerAction("Reset", Input.Keys.R, true);
     registerAction("Enter", Input.Keys.ENTER, false);
-    registerAction("Grapple", Input.Keys.F, true);
 
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT, false);

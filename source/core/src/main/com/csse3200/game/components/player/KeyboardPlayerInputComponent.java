@@ -51,6 +51,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
+    Gdx.app.log("Keycode", Integer.toString(keycode));
 
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
@@ -85,13 +86,16 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("sprintStart");
       return true;
     } else if (keycode == UP_KEY) {
-
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
       cheatPosition++;
+
+      triggerJetpackEvent();
+
       if (cheatsOn) {
         walkDirection.add(Vector2Utils.UP);
-        triggerWalkEvent();
       }
+
+      triggerWalkEvent();
     } else if (keycode == DOWN_KEY) {
 
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
@@ -102,8 +106,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       }
     } else if (keycode == ENTER_CHEAT_KEY) {
       enableCheats();
-    } else if (keycode == GRAPPLE_KEY) {
-      triggerGrappleEvent();
     }
 
     return false;
@@ -126,6 +128,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
       } else if (keycode == UP_KEY) {
+        triggerJetpackOffEvent();
         if (cheatsOn) {
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
@@ -143,6 +146,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
               entity.getEvents().trigger("sprintStop");
               return true;
       } else if (keycode == JUMP_KEY) {
+
         triggerGlideEvent(false);
       }
 
@@ -204,10 +208,16 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
   }
 
-  private void triggerGrappleEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("grappler")) {
-      entity.getEvents().trigger("grapple");
+  private void triggerJetpackEvent() {
+
+    if (entity.getComponent(InventoryComponent.class).hasItem("jetpack")) {
+      entity.getEvents().trigger("jetpackOn");
     }
+  }
+
+  private void triggerJetpackOffEvent() {
+
+    entity.getEvents().trigger("jetpackOff");
   }
 
   private int[] addToCheatHistory(int[] keyHistory, int position, int input) {

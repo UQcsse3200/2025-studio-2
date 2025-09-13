@@ -3,17 +3,27 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
+import com.csse3200.game.physics.raycast.AllHitCallback;
+import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.physics.raycast.SingleHitCallback;
+import com.csse3200.game.rendering.RenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.utils.math.Vector2Utils;
+
+import java.awt.*;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -31,9 +41,11 @@ public class PlayerActions extends Component {
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 12.5f;
 
+  private static final int FUEL_CAPACITY = 100;
+
   private PhysicsComponent physicsComponent;
   private StaminaComponent stamina;
-  private KeyboardPlayerInputComponent keyboardPlayerInputComponent;
+  private CameraComponent cameraComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
   private Vector2 jumpDirection = Vector2.Zero.cpy();
@@ -57,11 +69,14 @@ public class PlayerActions extends Component {
 
   // Whether player is currently holding sprint (Shift)
   private boolean wantsSprint = false;
+  private int jetpackFuel = FUEL_CAPACITY;
+  private boolean isJetpackOn = false;
 
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
+    cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
 
     standingCollider = entity.getComponent(StandingColliderComponent.class);
@@ -84,7 +99,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
 
     entity.getEvents().addListener("glide", this::glide);
-    entity.getEvents().addListener("grapple", this::grapple);
+    entity.getEvents().addListener("jetpackOn", this::jetpackOn);
+    entity.getEvents().addListener("jetpackOff", this::jetpackOff);
 
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
@@ -107,11 +123,24 @@ public class PlayerActions extends Component {
 
   @Override
   public void update() {
-    if (moving) {
-      updateSpeed();
-    }
 
     Body body = physicsComponent.getBody();
+
+    if (moving || isJetpackOn) {
+      updateSpeed();
+    }
+    Gdx.app.log("JETPACK FUEL", Integer.toString(jetpackFuel));
+    if (jetpackFuel <= 0) {
+      isJetpackOn = false;
+    }
+
+    if (isJetpackOn) {
+      jetpackFuel--;
+      body.setGravityScale(0f); //for impulse to act upwards
+    } else if (jetpackFuel < FUEL_CAPACITY) {
+      jetpackFuel++;
+      body.setGravityScale(1f);
+    }
 
     if (body.getLinearVelocity().y < 0) {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
@@ -122,8 +151,6 @@ public class PlayerActions extends Component {
       entity.requestReset();
     }
 
-//    Gdx.app.log("Inventory", Integer.toString(
-//            entity.getComponent(InventoryComponent.class).getTotalItemCount()));
   }
 
   private void updateSpeed() {
@@ -152,15 +179,20 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-//    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
-      deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
+      if (deltaVy > maxDeltaVy) deltaVy = maxDeltaVy;
+      if (deltaVy < -maxDeltaVy) deltaVy = -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
+
+    } else if (isJetpackOn) {
+
+      impulseY = 1.1f * 1.2f * body.getMass();
     } else {
-      impulseY = 0f;
+        impulseY = 0f;
     }
+
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
 
@@ -304,7 +336,7 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
     boolean isOutOfJumps = (isJumping) && (isDoubleJump);
 
-    if (on == true && isOutOfJumps) {
+    if (on && isOutOfJumps) {
       if (body.getLinearVelocity().y < 0.1f) {
         body.setGravityScale(0.1f);
       }
@@ -313,12 +345,14 @@ public class PlayerActions extends Component {
     }
   }
 
-  private void grapple() {
-    Body body = physicsComponent.getBody();
-
-
-    /*Vector2Utils aimDirection = new Vector2Utils()*/
+  private void jetpackOn() {
+    isJetpackOn = true;
   }
+
+  private void jetpackOff() {
+    isJetpackOn = false;
+  }
+
 
   /**
    * Called when a collision involving the players starts
