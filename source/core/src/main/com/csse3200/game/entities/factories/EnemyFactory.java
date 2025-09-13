@@ -165,7 +165,7 @@ public class EnemyFactory {
         animator.addAnimation("angry_float",0.1f,Animation.PlayMode.NORMAL);
         animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
 
-        animator.addAnimation("explode",0.08f,Animation.PlayMode.NORMAL);
+        animator.addAnimation("bomb_effect",0.08f,Animation.PlayMode.NORMAL);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
@@ -179,10 +179,10 @@ public class EnemyFactory {
         aiComponent.addTask(chaseTask);
         chaseTask.activate();
 
-        AnimationRenderComponent arc= drone.getComponent(AnimationRenderComponent.class);
-        arc.scaleEntity();
-        arc.startAnimation("float");
+        animator.scaleEntity();
+        animator.startAnimation("float");
         return drone;
+
 
 
     }

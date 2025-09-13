@@ -19,14 +19,9 @@ public class SelfDestructComponent extends Component {
     }
 
     @Override
-    public void create() {
-        super.create();
-        this.spawnPosition = new Vector2(entity.getPosition());
-    }
-
-    @Override
     public void update(){
         if(exploded) return;
+        if(target==null) return;
 
         if(entity.getCenterPosition().dst(target.getCenterPosition()) <1f){
             explode();
@@ -34,32 +29,18 @@ public class SelfDestructComponent extends Component {
     }
 
     private void explode(){
+        if(exploded) return;
         exploded=true;
 
         AnimationRenderComponent animator=entity.getComponent(AnimationRenderComponent.class);
         if(animator!=null){
-            animator.startAnimation("explode");
-        }
+            animator.startAnimation("bomb_effect");
+            entity.getEvents().addListener("animationFinished-bomb_effect", entity::dispose);
 
+        }
         target.getEvents().trigger("takeDamage",20);
 
-        //reset after explosion animation duration
-        float animationDuration =1f; //Replace with actual duration if needed
-        entity.getEvents().trigger("SelfDestructComplete");
-        resetAfterExplosion();
     }
 
-    private void resetAfterExplosion(){
-        //reset drone Position
-        if(spawnPosition!=null){
-            entity.setPosition(spawnPosition.cpy());
-        }
-        exploded =false;
 
-        //reset animation to flying
-        AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null) {
-            animator.startAnimation("flying");
-        }
-    }
 }
