@@ -1,11 +1,115 @@
 PLAYER.png
-size:2048,2048
-repeat:none
-CROUCHING
-bounds:796,2,792,1000
+	size: 256, 256
+	repeat: none
+CROUCH
+	bounds: 2, 88, 32, 48
 JUMP
-bounds:2,2,792,1000
+	index: 6
+	bounds: 2, 88, 32, 48
+DASH
+	index: 5
+	bounds: 104, 204, 32, 32
+DASH
+	index: 2
+	bounds: 70, 86, 32, 32
+DASH
+	index: 7
+	bounds: 138, 170, 32, 32
+DASH
+	index: 4
+	bounds: 172, 170, 32, 32
+DASH
+	index: 1
+	bounds: 172, 136, 32, 32
+DASH
+	index: 6
+	bounds: 172, 136, 32, 32
+DASH
+	index: 3
+	bounds: 206, 68, 32, 32
+HURT
+	index: 4
+	bounds: 70, 154, 32, 32
+HURT
+	index: 1
+	bounds: 138, 204, 32, 32
+HURT
+	index: 3
+	bounds: 104, 102, 32, 32
+HURT
+	index: 0
+	bounds: 206, 204, 32, 32
+HURT
+	index: 5
+	bounds: 206, 170, 32, 32
+HURT
+	index: 2
+	bounds: 172, 68, 32, 32
+IDLE
+	bounds: 70, 120, 32, 32
+JUMP
+	index: 2
+	bounds: 2, 188, 32, 48
+JUMP
+	index: 7
+	bounds: 2, 138, 32, 48
+JUMP
+	index: 4
+	bounds: 36, 188, 32, 48
+JUMP
+	index: 1
+	bounds: 36, 138, 32, 48
+JUMP
+	index: 3
+	bounds: 70, 188, 32, 48
+JUMP
+	index: 5
+	bounds: 2, 38, 32, 48
 LEFT
-bounds:796,1004,792,1000
+	index: 1
+	bounds: 2, 4, 32, 32
+LEFT
+	index: 6
+	bounds: 104, 170, 32, 32
+LEFT
+	index: 3
+	bounds: 104, 136, 32, 32
+LEFT
+	index: 8
+	bounds: 70, 52, 32, 32
+LEFT
+	index: 5
+	bounds: 104, 68, 32, 32
+LEFT
+	index: 2
+	bounds: 138, 68, 32, 32
+LEFT
+	index: 7
+	bounds: 206, 136, 32, 32
+LEFT
+	index: 4
+	bounds: 36, 2, 32, 32
 RIGHT
-bounds:2,1004,792,1000
+	index: 4
+	bounds: 36, 104, 32, 32
+RIGHT
+	index: 1
+	bounds: 36, 70, 32, 32
+RIGHT
+	index: 6
+	bounds: 36, 36, 32, 32
+RIGHT
+	index: 3
+	bounds: 172, 204, 32, 32
+RIGHT
+	index: 8
+	bounds: 138, 136, 32, 32
+RIGHT
+	index: 5
+	bounds: 138, 102, 32, 32
+RIGHT
+	index: 2
+	bounds: 172, 102, 32, 32
+RIGHT
+	index: 7
+	bounds: 206, 102, 32, 32
