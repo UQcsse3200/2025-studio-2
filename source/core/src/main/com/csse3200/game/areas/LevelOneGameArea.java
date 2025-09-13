@@ -104,10 +104,17 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
+        GridPoint2 spawnPos =  new GridPoint2(12,0);
+        Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        spawnEntityAt(deathZone, spawnPos, true,  true);
 
+        //Uncomment with deathzonefactory changes for a second small deathzone over second gap
+        //GridPoint2 spawn2Pos =  new GridPoint2(67,0);
+        //Entity deathZone2 = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        //spawnEntityAt(deathZone2, spawn2Pos, true,  true);
     }
     private void spawnWalls(){
-        GridPoint2 leftWallPos = new GridPoint2(25,4);
+        GridPoint2 leftWallPos = new GridPoint2(25,8);
         Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
         leftWall.setScale(1,10);
         spawnEntityAt(leftWall, leftWallPos, false, false);
