@@ -18,7 +18,7 @@ import com.csse3200.game.services.ServiceLocator;
  *  - The target is farther than maxChaseDistance
  *  - Line of sight is broken for more than LOS_GRACE_MS after initial sighting
  *  To prevent the task from finishing immediately if the entity starts far away/out of LOS, these end conditions
- *  are only applicable after an initial ACTIVE_GRACE_MS period ends.
+ *  are only applicable after an initial active grace period ends.
  *  Re-activate chase via new calls to activate() only.
  **/
 public class ChaseTask extends DefaultTask implements PriorityTask {
@@ -34,7 +34,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
 
     // Activation
     private boolean active = false;
-    private static final long ACTIVE_GRACE_MS = 3000L; // Ignore end conditions for 3s
+    private final float activeGracePeriod; // Ignore end conditions for x seconds
     private long endGracePeriod;
 
     // Avoid LOS flickering: Must be out of LOS for > 250ms after first sighting
@@ -47,10 +47,12 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
      * Creates a new chase task that will pursue the given target entity
      * @param target entity to chase
      * @param maxChaseDistance threshold where chase ends
+     * @param activeGracePeriod time in seconds that entity chases before end conditions apply
      */
-    public ChaseTask(Entity target, float maxChaseDistance) {
+    public ChaseTask(Entity target, float maxChaseDistance, float activeGracePeriod) {
         this.target = target;
         this.maxChaseDistance = maxChaseDistance;
+        this.activeGracePeriod = activeGracePeriod;
         physics = ServiceLocator.getPhysicsService().getPhysics();
         debugRenderer = ServiceLocator.getRenderService().getDebug();
         timeSource = ServiceLocator.getTimeSource();
@@ -64,7 +66,7 @@ public class ChaseTask extends DefaultTask implements PriorityTask {
         if (active) return;
         active = true;
         long now = timeSource.getTime();
-        endGracePeriod = now + ACTIVE_GRACE_MS;
+        endGracePeriod = now + (long)(activeGracePeriod * 1000);
         lastVisibleAt = now;
         hasSeenTarget = false;
     }

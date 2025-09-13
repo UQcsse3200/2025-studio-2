@@ -34,7 +34,7 @@ public class EnemyFactory {
             FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
 
     /**
-     * Creates a drone enemy that remains idle unless chasing its target.
+     * Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
      * Has drone-specific animation, combat stats and chase task.
      * @param target that drone pursues when chasing
      * @param spawnPos the starting world position of the enemy
@@ -57,7 +57,7 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target, 4f);
+        ChaseTask chaseTask = new ChaseTask(target, 4f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
 
         // ENEMY ACTIVATION
@@ -78,7 +78,7 @@ public class EnemyFactory {
     }
 
     /**
-     * Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.
+     * Same as basic drone enemy but patrols a given route, alternatively chasing a target when activated.
      * @param target that drone pursues when chasing
      * @param patrolRoute contains list of waypoints in patrol route
      * @return a patrolling drone enemy entity

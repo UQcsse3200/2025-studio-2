@@ -46,7 +46,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(10, 10));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 10f);
+        ChaseTask chase = new ChaseTask(target, 10f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -69,7 +69,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(10, 10));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 10f);
+        ChaseTask chase = new ChaseTask(target, 10f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -88,7 +88,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(10, 10));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 10f);
+        ChaseTask chase = new ChaseTask(target, 10f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -106,7 +106,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(10, 10));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 10f);
+        ChaseTask chase = new ChaseTask(target, 10f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -126,7 +126,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(10, 10));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 100f);
+        ChaseTask chase = new ChaseTask(target, 100f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -152,7 +152,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(1000, 1000)); // Far away
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 1f);
+        ChaseTask chase = new ChaseTask(target, 1f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -180,7 +180,7 @@ class ChaseTaskTest {
         e.setPosition(new Vector2(5, 5));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 50f);
+        ChaseTask chase = new ChaseTask(target, 50f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -213,7 +213,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(10, 0)); // 10 away
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 10f);
+        ChaseTask chase = new ChaseTask(target, 10f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -239,7 +239,7 @@ class ChaseTaskTest {
         Entity e = new Entity(); e.setPosition(5,5);
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 50f);
+        ChaseTask chase = new ChaseTask(target, 50f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
@@ -255,7 +255,7 @@ class ChaseTaskTest {
         Entity e = makePhysicsEntity(new Vector2(1000, 1000));
 
         AITaskComponent ai = new AITaskComponent();
-        ChaseTask chase = new ChaseTask(target, 1f);
+        ChaseTask chase = new ChaseTask(target, 1f, 3f);
         ai.addTask(chase);
         e.addComponent(ai);
         e.create();
