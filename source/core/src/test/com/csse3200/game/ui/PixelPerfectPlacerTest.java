@@ -133,7 +133,6 @@ class PixelPerfectPlacerTest {
     // Expected: x=10*1.5, y=540*1.5, w=30*1.5, h=40*1.5
     verify(mockActor1).setBounds(15f, 810f, 45f, 60f);
 
-    // Verify Actor 2
     // Transformed Y = 600 - (300 + 60) = 240
     // Expected: x=200*1.5, y=240*1.5, w=50*1.5, h=60*1.5
     verify(mockActor2).setBounds(300f, 360f, 75f, 90f);
