@@ -87,8 +87,7 @@ public class SprintOneGameArea extends GameArea {
             "images/ghost.atlas",
             "images/ghostKing.atlas",
             "images/drone.atlas",
-            // Bat sprites from https://todemann.itch.io/bat
-            "images/flying_bat.atlas"
+            "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -278,21 +277,21 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
+
     private void spawnBoxes() {
 
         // Static box
-//        Entity staticBox = BoxFactory.createStaticBox();
-//
-//        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
-//                " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
-//        spawnEntityAt(staticBox, new GridPoint2(12,4), true,  true);
+        Entity staticBox = BoxFactory.createStaticBox();
+
+        staticBox.addComponent(new TooltipSystem.TooltipComponent("Static Box\nThis box is fixed," +
+                " you cannot push it!", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(staticBox, new GridPoint2(12,4), true,  true);
 
         // Moveable box
-//        Entity moveableBox = BoxFactory.createMoveableBox();
-//        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
-//                TooltipSystem.TooltipStyle.SUCCESS));
-//        spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
-
+        Entity moveableBox = BoxFactory.createMoveableBox();
+        moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
+                TooltipSystem.TooltipStyle.SUCCESS));
+        spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
     }
 
     public void spawnPlatformBat() {
@@ -300,11 +299,12 @@ public class SprintOneGameArea extends GameArea {
         Entity horizontalPlatformBat = horizontalPlatformBuilder
                 .moveX(1.5f, 6f).moveY(23f, 23f)
                 .texture("images/flying_bat.atlas")
-                .speed(3f).damage(5).knockback(4).build();
+                .tooltip("Beware! Bats bite and knock you back. Stay clear!",
+                        TooltipSystem.TooltipStyle.WARNING)
+                .build();
         spawnEntityAt(horizontalPlatformBat, new GridPoint2(
                 (int) horizontalPlatformBuilder.getSpawnX(), (int) horizontalPlatformBuilder.getSpawnY()), true, true);
     }
-
 
     public void spawnLevelOneBatRoom() {
 
@@ -315,8 +315,7 @@ public class SprintOneGameArea extends GameArea {
         Entity lowHorizontalBat = batBuilder1
                 .moveX(1f + offsetX, 5f + offsetX).moveY(4f + offsetY, 4f + offsetY)
                 .texture("images/flying_bat.atlas")
-                .tooltip("Beware! These bats bite and knock you back. Stay clear!", TooltipSystem.TooltipStyle.WARNING)
-                .speed(4f).damage(5).knockback(4).build();
+                .speed(4f).build();
         spawnEntityAt(lowHorizontalBat, new GridPoint2(
                 (int) batBuilder1.getSpawnX() + offsetX,
                 (int) batBuilder1.getSpawnY() + offsetY),
@@ -326,7 +325,7 @@ public class SprintOneGameArea extends GameArea {
         Entity highHorizontalBat2 = batBuilder2
                 .moveX(1f + offsetX, 5f + offsetX).moveY(14f + offsetY, 14f + offsetY)
                 .texture("images/flying_bat.atlas")
-                .speed(3f).damage(5).knockback(4).build();
+                .build();
         spawnEntityAt(highHorizontalBat2, new GridPoint2(
                 (int) batBuilder2.getSpawnX() + offsetX,
                 (int) batBuilder2.getSpawnY() + offsetY),
@@ -336,7 +335,7 @@ public class SprintOneGameArea extends GameArea {
         Entity rightZigzagBat1 = batBuilder3
                 .moveX(3f + offsetX, 5f + offsetX).moveY(4f + offsetY, 7f + offsetY)
                 .texture("images/flying_bat.atlas")
-                .speed(2f).damage(5).knockback(4).build();
+                .speed(2f).build();
         spawnEntityAt(rightZigzagBat1, new GridPoint2(
                 (int) batBuilder3.getSpawnX() + offsetX,
                 (int) batBuilder3.getSpawnY() + offsetY),
@@ -346,7 +345,7 @@ public class SprintOneGameArea extends GameArea {
         Entity leftZigzagBat2 = batBuilder4
                 .moveX(1f + offsetX, 3f + offsetX).moveY(2f + offsetY, 7f + offsetY)
                 .texture("images/flying_bat.atlas")
-                .speed(3f).damage(5).knockback(4).build();
+                .build();
         spawnEntityAt(leftZigzagBat2, new GridPoint2(
                         (int) batBuilder4.getSpawnX() + offsetX,
                         (int) batBuilder4.getSpawnY() + offsetY),

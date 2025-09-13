@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
@@ -107,7 +106,7 @@ public class BoxFactory {
         private float maxMoveX = 0f;
         private float minMoveY = 0f;
         private float maxMoveY = 0f;
-        private float speed = 2f;
+        private float speed = 3f;
 
         // Appearance
         private String texturePath = "images/box_orange.png";
@@ -117,8 +116,8 @@ public class BoxFactory {
         // Other default properties
         private float spawnX = minMoveX;
         private float spawnY = minMoveY;
-        private int damage = 0;
-        private float knockback = 0f;
+        private int damage = 5;
+        private float knockback = 4f;
 
         // Tooltip
         private String tooltipText = "";

@@ -86,7 +86,13 @@ public class ForestGameArea extends GameArea {
           "images/pressure_plate_pressed.png"
   };
   private static final String[] forestTextureAtlases = {
-          "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas", "images/security-camera.atlas"
+          "images/terrain_iso_grass.atlas",
+          "images/ghost.atlas",
+          "images/ghostKing.atlas",
+          "images/drone.atlas",
+          "images/security-camera.atlas",
+          // Bat sprites from https://todemann.itch.io/bat
+          "images/flying_bat.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -142,9 +148,9 @@ public class ForestGameArea extends GameArea {
     player = spawnPlayer();
     player.getEvents().addListener("reset", this::reset);
 
-    spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    spawnBomberDrone();       // Play with bomber drones
+//    spawnDrone();             // Play with idle/chasing drones (unless chasing)
+//    spawnPatrollingDrone();   // Play with patrolling/chasing drones
+//    spawnBomberDrone();       // Play with bomber drones
     //spawnGhosts();
     //spawnGhostKing();
 
