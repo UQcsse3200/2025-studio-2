@@ -2,11 +2,14 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -50,5 +53,36 @@ public class PlatformFactoryTest {
         PhysicsComponent physics = staticPlatform.getComponent(PhysicsComponent.class);
         assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
                 "Static Platform PhysicsComponent should have a static body type");
+    }
+
+    @Test
+    void createVolatilePlatform_hasAllComponents() {
+        Entity volatilePlatform = PlatformFactory.createVolatilePlatform(2,3);
+        assertNotNull(volatilePlatform.getComponent(TextureRenderComponent.class),
+                "Volatile platform should have a TextureRendererComponent");
+        assertNotNull(volatilePlatform.getComponent(PhysicsComponent.class),
+                "Volatile platform should have a PhysicsComponent");
+        assertNotNull(volatilePlatform.getComponent(ColliderComponent.class),
+                "Volatile platform should have a ColliderComponent");
+        assertNotNull(volatilePlatform.getComponent(VolatilePlatformComponent.class),
+                "Volatile platform should have a VolatilePlatformComponent");
+    }
+
+    @Test
+    void createVolatilePlatform_isStatic() {
+        Entity volatilePlatform = PlatformFactory.createVolatilePlatform(2,2);
+
+        PhysicsComponent physics = volatilePlatform.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
+                "Volatile Platform PhysicsComponent should have a static body type");
+    }
+
+    @Test
+    void createVolatilePlatform_isOnObstacleLayer() {
+        Entity volatilePlatform = PlatformFactory.createVolatilePlatform(2,2);
+
+        ColliderComponent collider = volatilePlatform.getComponent(ColliderComponent.class);
+        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
+                "Volatile Platform ColliderComponent should be on OBSTACLE layer");
     }
 }
