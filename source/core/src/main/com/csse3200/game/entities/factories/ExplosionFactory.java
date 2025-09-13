@@ -22,19 +22,14 @@ public class ExplosionFactory {
     public static Entity createExplosion(Vector2 position, float radius) {
         // Get the drone picture album because the explosion animation is inside
         TextureAtlas droneAtlas = ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class);
-        TextureAtlas SelfDestructAtlas = ServiceLocator.getResourceService().getAsset("images/SelfDestructDrone.atlas", TextureAtlas.class);
 
         if (droneAtlas == null) {
             throw new RuntimeException("drone.atlas not loaded");
-        }
-        else if (SelfDestructAtlas == null || SelfDestructAtlas.findRegion("self_destruct")==null) {
-            throw new RuntimeException("SelfDestruct.atlas not loaded");
         }
 
         AnimationRenderComponent animator = new AnimationRenderComponent(droneAtlas);
         // Add bomb_effect animation, set to Animation.PlayMode.NORMAL to make sure it plays only once
         animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
-        animator.addAnimation("self_destruct", 0.08f, Animation.PlayMode.NORMAL);
 
         Entity explosion = new Entity()
                 .addComponent(animator)
