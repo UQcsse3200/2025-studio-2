@@ -62,6 +62,7 @@ public class LevelOneGameArea extends GameArea {
             "images/TechWallVariant2.png",
             "images/TechWallVariant3.png",
             "images/platform.png",
+            "images/Empty.png",
             "images/gate.png",
             "images/door_open.png",
             "images/door_closed.png",
@@ -97,6 +98,7 @@ public class LevelOneGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        spawnVolatilePlatform();
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
@@ -189,6 +191,12 @@ public class LevelOneGameArea extends GameArea {
         Entity minimapEntity = new Entity();
         minimapEntity.addComponent(minimapDisplay);
         spawnEntity(minimapEntity);
+    }
+    private void spawnVolatilePlatform(){
+        GridPoint2 platformPos = new GridPoint2(5, 8);
+        Entity volplatform = PlatformFactory.createVolatilePlatform(2,2);
+        volplatform.setScale(3,1);
+        spawnEntityAt(volplatform, platformPos, true, true);
     }
     protected void loadAssets() {
         logger.debug("Loading assets");
