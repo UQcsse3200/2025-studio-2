@@ -40,40 +40,40 @@ self_destruct
     xy:2,2
     size: 50,48
     orig:50,50
-    offset :0,1
+    offset :96,96
     index:0
 self_destruct
     rotate :false
     xy :54,2
     size:50,48
     orig :50,50
-    offset:0,1
+    offset:96,96
     index:1
 self_destruct
     rotate:false
     xy:106,2
     size:60,55
     orig:60,60
-    offset:0,5
+    offset:96,96
     index:2
 self_destruct
     rotate:false
     xy:168,2
     size:70,65
     orig:70,70
-    offset:0,5
+    offset:96,96
     index:3
 self_destruct
     rotate:false
     xy:240,2
     size:80,75
     orig:80,80
-    offset:0,5
+    offset:96,96
     index:4
 self_destruct
     rotate:false
     xy:322,2
     size:100,95
     orig:100,100
-    offset:0,5
+    offset:96,96
     index:5

@@ -5,6 +5,7 @@ import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.npc.SelfDestructionDroneAnimation;
 import com.csse3200.game.entities.Entity;
@@ -378,7 +379,7 @@ public class EnemyFactoryTest {
     void SelfDestructDrone_hasBaseEnemyComponent(){
         Entity player = new Entity();
         Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createSelfDestructDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity drone = EnemyFactory.createSelfDestructDrone(player, new Vector2(0f, 0f));
         ServiceLocator.getEntityService().register(drone);
 
         assertNotNull(drone.getComponent(PhysicsComponent.class), "SelfDestructDrone should have a PhysicsComponent");
@@ -392,7 +393,7 @@ public class EnemyFactoryTest {
     void createSelfDestructDrone_hasAnimations(){
         Entity player = new Entity();
         Entity securityLight = new Entity();
-        Entity drone =EnemyFactory.createSelfDestructDrone(player,new  Vector2(0f, 0f), securityLight);
+        Entity drone =EnemyFactory.createSelfDestructDrone(player,new  Vector2(0f, 0f));
 
         AnimationRenderComponent anim = drone.getComponent(AnimationRenderComponent.class);
         assertNotNull(anim, "AnimationRenderComponent should have a AnimationRenderComponent.class");
@@ -403,14 +404,14 @@ public class EnemyFactoryTest {
     void createSelfDestructDrone_hasAnimationController(){
         Entity Player = new Entity();
         Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createSelfDestructDrone(Player,new  Vector2(0f, 0f), securityLight);
+        Entity drone = EnemyFactory.createSelfDestructDrone(Player,new  Vector2(0f, 0f));
 
         assertNotNull(drone.getComponent(AnimationRenderComponent.class), "AnimationRenderComponent should have a AnimationRenderComponent.class");
     }
     @Test
     void createSelfDestructDrone_addsSpawnPosition(){
         Vector2 spawnPos = new Vector2(5f,5f);
-        Entity drone = EnemyFactory.createSelfDestructDrone(new Entity(),spawnPos,new Entity());
+        Entity drone = EnemyFactory.createSelfDestructDrone(new Entity(),spawnPos);
 
         SpawnPositionComponent sp = drone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp, "SpawnPositionComponent should have a SpawnPositionComponent.class");
@@ -418,15 +419,15 @@ public class EnemyFactoryTest {
     }
     @Test
     void createSelfDestructDrone_doesNotAddNullSpawnPos(){
-        Entity drone = EnemyFactory.createSelfDestructDrone(new Entity(),new Vector2(0f,0f),null);
+        Entity drone = EnemyFactory.createSelfDestructDrone(new Entity(),new Vector2(0f,0f));
         assertNull(drone.getComponent(SpawnPositionComponent.class),"No SpawnPositionComponent when initialized with null spawnPos");
     }
     @Test
     void CreateSelfDestructDrone_returnsDistinct(){
         Entity player = new Entity();
         Entity securityLight = new Entity();
-        Entity droneA = EnemyFactory.createSelfDestructDrone(player,new Vector2(0f, 0f), securityLight);
-        Entity droneB = EnemyFactory.createSelfDestructDrone(player, new Vector2(0f, 0f), securityLight);
+        Entity droneA = EnemyFactory.createSelfDestructDrone(player,new Vector2(0f, 0f));
+        Entity droneB = EnemyFactory.createSelfDestructDrone(player, new Vector2(0f, 0f));
 
         assertNotSame(droneA,droneB,"Each SelfDestructDrone instance should be distinct");
         assertNotSame(droneA.getComponent(AITaskComponent.class),droneB.getComponent(AITaskComponent.class),"Each AITaskComponent should be distinct");
@@ -435,20 +436,20 @@ public class EnemyFactoryTest {
     void SelfDestructDrone_hasSelfDestructComponent(){
         Entity player = new Entity();
         Entity securityLight = new Entity();
-        Entity drone = EnemyFactory.createSelfDestructDrone(player,new Vector2(0f,0f),securityLight);
+        Entity drone = EnemyFactory.createSelfDestructDrone(player,new Vector2(0f,0f));
         assertNotNull(drone.getComponent(SelfDestructComponent.class),"SelfDestructDone should have a SelfDestructComponent");
     }
     @Test
     void drones_haveCorrectPhysicsProperties(){
         //base drone
-        Entity baseDrone  = EnemyFactory.createDrone(new Entity(),new Vector2(0f,0f),new Entity());
+        Entity baseDrone  = EnemyFactory.createDrone(new Entity(),new Vector2(0f,0f));
         PhysicsMovementComponent pmc = baseDrone.getComponent(PhysicsMovementComponent.class);
         assertEquals(1.4f,pmc.getMaxSpeed(),0.01,"Base drone max speed");
         PhysicsComponent phy = baseDrone.getComponent(PhysicsComponent.class);
         assertEquals(0f,phy.getBody().getGravityScale(),0.01,"Base drone gravity scale");
 
         //self destruct drone
-        Entity SelfDestruct = EnemyFactory.createSelfDestructDrone(new Entity(),new Vector2(0f,0f),new Entity());
+        Entity SelfDestruct = EnemyFactory.createSelfDestructDrone(new Entity(),new Vector2(0f,0f));
         pmc = SelfDestruct.getComponent(PhysicsMovementComponent.class);
         assertEquals(1.8f,pmc.getMaxSpeed(),0.01f,"SelfDestructDrone max speed");
         phy = SelfDestruct.getComponent(PhysicsComponent.class);
