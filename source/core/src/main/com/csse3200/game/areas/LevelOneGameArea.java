@@ -9,8 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.DoorControlComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -228,9 +230,10 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(gatePlatform, gatePlatformPos,false, false);
     }
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this, "cave");
+        Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+        door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
     }
     private void playMusic() {
@@ -301,26 +304,6 @@ public class LevelOneGameArea extends GameArea {
         GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
         TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
         return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
-    private void createMinimap() {
-        Texture minimapTexture =
-                ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png",
-                        Texture.class);
-
-        float tileSize = terrain.getTileSize();
-        Vector2 worldSize =
-                new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
-        ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
-
-        MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-        options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-
-        MinimapDisplay minimapDisplay =
-                new MinimapDisplay(150f, options);
-
-        Entity minimapEntity = new Entity();
-        minimapEntity.addComponent(minimapDisplay);
-        spawnEntity(minimapEntity);
     }
     private void spawnVolatilePlatform(){
 //        GridPoint2 platformPos = new GridPoint2(5, 8);
