@@ -1,0 +1,6 @@
+#images/cutscene_test3.png
+This is a demonstration cutscene{SPEED=0.33}...{NORMAL} again.
+This sentence also has some {WAVE}funky{ENDWAVE} effects.
+#images/cutscene_test4.png
+{FADE}This text box is associated with a new background.{ENDFADE}
+{SHRINK}Now we load into the next scene.{ENDSHRINK}

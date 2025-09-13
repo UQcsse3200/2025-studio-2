@@ -35,14 +35,14 @@ class ButtonTriggeredPlatformComponentTest {
     }
 
     @Test
-    void testStartsDisabled() {
-        assertFalse(componentIsActive());
+    void testStartsIdleAtStart() {
+        assertEquals(getState(), "IDLE_AT_START");
     }
 
     @Test
-    void testActivatePlatformEnablesMovement() {
+    void testFirstActivationMovesToEnd() {
         platform.getEvents().trigger("activatePlatform");
-        assertTrue(componentIsActive());
+        assertEquals(getState(), "MOVING_TO_END");
     }
 
     @Test
@@ -52,15 +52,45 @@ class ButtonTriggeredPlatformComponentTest {
         verify(mockBody, atLeastOnce()).setLinearVelocity(any(Vector2.class));
     }
 
-    // Helper to check active state
-    private boolean componentIsActive() {
+    @Test
+    void testArrivalAtEndStopsMovement() {
+        platform.getEvents().trigger("activatePlatform");
+        // Simulate being at target
+        when(mockBody.getPosition()).thenReturn(new Vector2(0, 3f));
+        component.update();
+        assertEquals(getState(), "IDLE_AT_END");
+    }
+
+    @Test
+    void testSecondActivationMovesToStart() {
+        // First trip to end
+        platform.getEvents().trigger("activatePlatform");
+        when(mockBody.getPosition()).thenReturn(new Vector2(0, 3f));
+        component.update();
+
+        // Second trip back
+        platform.getEvents().trigger("activatePlatform");
+        assertEquals(getState(), "MOVING_TO_START");
+    }
+
+    @Test
+    void testButtonIgnoredWhileMoving() {
+        platform.getEvents().trigger("activatePlatform");
+        String stateBefore = getState();
+        platform.getEvents().trigger("activatePlatform"); // press again mid-trip
+        assertEquals(stateBefore, getState()); // state unchanged
+    }
+
+    // Helper to read private 'state' enum as string
+    private String getState() {
         try {
-            var field = ButtonTriggeredPlatformComponent.class.getDeclaredField("active");
+            var field = ButtonTriggeredPlatformComponent.class.getDeclaredField("state");
             field.setAccessible(true);
-            return field.getBoolean(component);
+            Object stateValue = field.get(component);
+            return stateValue.toString();
         } catch (Exception e) {
-            fail("Could not access 'active' field: " + e.getMessage());
-            return false;
+            fail("Could not access 'state' field: " + e.getMessage());
+            return null;
         }
     }
 }

@@ -16,14 +16,25 @@ public class PauseInputComponent extends InputComponent {
         //this.pauseMenuDisplay = pauseMenuDisplay;
     }
 
+    // Set last keycode for inventory Tabs
+    public void setLastKeycodeForTab(PauseMenuDisplay.Tab tab) {
+        int code = switch (tab) {
+            case SETTINGS   -> Keymap.getActionKeyCode("PauseSettings");
+            case INVENTORY  -> Keymap.getActionKeyCode("PauseInventory");
+            case UPGRADES   -> Keymap.getActionKeyCode("PauseUpgrades");
+            case OBJECTIVES -> Keymap.getActionKeyCode("PauseObjectives");
+        };
+        this.lastKeycode = code;
+    }
+
     @Override
     public boolean keyDown(int keycode) {
         // Check each pause action dynamically
         PauseMenuDisplay.Tab tab = null;
         if (keycode == Keymap.getActionKeyCode("PauseSettings")) tab = PauseMenuDisplay.Tab.SETTINGS;
         else if (keycode == Keymap.getActionKeyCode("PauseInventory")) tab = PauseMenuDisplay.Tab.INVENTORY;
-        else if (keycode == Keymap.getActionKeyCode("PauseMap")) tab = PauseMenuDisplay.Tab.MAP;
         else if (keycode == Keymap.getActionKeyCode("PauseUpgrades")) tab = PauseMenuDisplay.Tab.UPGRADES;
+        else if (keycode == Keymap.getActionKeyCode("PauseObjectives")) tab = PauseMenuDisplay.Tab.OBJECTIVES;
         
         if (tab != null) {
             if (lastKeycode == keycode || !gameScreen.isPaused()) {

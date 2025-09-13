@@ -1,28 +1,41 @@
 package com.csse3200.game.components.minimap;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
+import net.dermetfan.utils.Pair;
+
 import java.util.Map;
 
 /**
  * A UI component for displaying a minimap.
  */
 public class MinimapDisplay extends UIComponent {
-  private final Texture minimapTexture;
-  private final Vector2 worldSizeRemapFactor;
-  private final Vector2 origin;
+  private final Camera camera;
+  private float minimapScaleFactor;
+  private final Map<Entity, Image> trackedEntities;
+  private final Vector2 textureBottomLeft;
+  private final Vector2 textureTopRight;
+  private final Vector2 fullMapSize;
   private final float displaySize;
   private final MinimapOptions options;
+  private Cell<?> contentCell;
+  private Cell<?> rootCell;
   private Table rootTable;
+  private Image minimapImage;
+  private final Group markers = new Group();
 
   /**
    * Dictate where the Minimap will be drawn
@@ -38,7 +51,7 @@ public class MinimapDisplay extends UIComponent {
    * Used to specify the options for drawing the minimap.
    */
   public static class MinimapOptions {
-    public MinimapPosition position;
+    public MinimapPosition position = MinimapPosition.BOTTOM_RIGHT;
   }
 
   /**
@@ -48,26 +61,39 @@ public class MinimapDisplay extends UIComponent {
    * @param options Options for the minimap shape and position.
    */
   public MinimapDisplay(float displaySize, MinimapOptions options) {
-    MinimapService minimapService = ServiceLocator.getMinimapService();
-    if (minimapService == null) {
-      throw new IllegalStateException("MinimapService must be registered before creating a MinimapDisplay.");
-    }
-    this.minimapTexture = minimapService.getMinimapTexture();
-    Vector2 worldSize = minimapService.getWorldSize();
-    this.worldSizeRemapFactor = new Vector2(displaySize / worldSize.x, displaySize / worldSize.y);
-    this.origin = minimapService.getOrigin();
+    camera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
+
+    MinimapService service = ServiceLocator.getMinimapService();
+    trackedEntities = service.getTrackedEntities();
+    textureTopRight = service.getTextureTopRight();
+    this.textureBottomLeft = service.getTextureBottomLeft();
+    fullMapSize = textureTopRight.cpy().sub(textureBottomLeft);
     this.options = options;
     this.displaySize = displaySize;
+  }
+
+  /**
+   * Adds the given marker to the markers group.
+   *
+   * @param marker the marker image to be added to the group.
+   */
+  public void addMarker(Image marker) {
+    markers.addActor(marker);
+  }
+
+  /**
+   * Removes the given marker form the group
+   *
+   * @param marker the marker image to removed.
+   */
+  public void removeMarker(Image marker) {
+    markers.removeActor(marker);
   }
 
   @Override
   public void create() {
     super.create();
     addActors();
-
-    // Linking to its actor for easy look-up later
-    rootTable.setUserObject(this);
-    rootTable.setName("minimap");
   }
 
   private void addActors() {
@@ -82,19 +108,26 @@ public class MinimapDisplay extends UIComponent {
     }
     rootTable.pad(10f);
 
-    Image minimapImage = new Image(minimapTexture);
+    final MinimapService service = ServiceLocator.getMinimapService();
+    minimapImage = new Image(service.getMinimapTexture());
 
-    Stack contentStack = new Stack();
-    contentStack.add(minimapImage);
-    contentStack.add(ServiceLocator.getMinimapService().getMinimapMarkerGroup());
+    Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+    pixmap.setColor(new Color(0, 0, 0, 0.55f)); // Black with 60% opacity
+    pixmap.fill();
+    Texture backgroundTexture = new Texture(pixmap);
+    pixmap.dispose();
+    Image background = new Image(backgroundTexture);
 
-    Table minimapContainer = new Table();
-    minimapContainer.add(contentStack).size(displaySize);
+    Stack stack = new Stack();
+    stack.addActor(background);
+    stack.add(markers);
+    stack.clipBegin();
 
-    Stack finalStack = new Stack();
-    finalStack.add(minimapContainer);
+    markers.addActor(minimapImage);
 
-    rootTable.add(finalStack).size(displaySize);
+    Table content = new Table();
+    contentCell = content.add(stack).size(displaySize);
+    rootCell = rootTable.add(content.clip());
     stage.addActor(rootTable);
   }
 
@@ -102,22 +135,28 @@ public class MinimapDisplay extends UIComponent {
   public void update() {
     if (!rootTable.isVisible()) return;
 
-    for (Map.Entry<Entity, Image> entry : ServiceLocator.getMinimapService().getTrackedEntities().entrySet()) {
-      Entity entity = entry.getKey();
-      Image marker = entry.getValue();
+    minimapScaleFactor = displaySize / camera.viewportHeight;
+    minimapImage.setSize(fullMapSize.x * minimapScaleFactor, fullMapSize.y * minimapScaleFactor);
+    final float width = minimapScaleFactor * camera.viewportWidth;
+    rootCell.width(width);
+    contentCell.width(width);
 
-      Vector2 minimapCoords = worldToMinimapCoordinates(entity.getPosition());
-      marker.setPosition(
-          minimapCoords.x - marker.getWidth() / 2f,
-          minimapCoords.y - marker.getHeight() / 2f
-      );
+    final Vector2 cameraOrigin =
+        new Vector2(camera.viewportWidth / 2 - camera.position.x, camera.viewportHeight / 2 - camera.position.y);
+    final Vector2 cameraMinimapOrigin = worldToMinimapCoordinates(cameraOrigin);
+    minimapImage.setPosition(cameraMinimapOrigin.x, cameraMinimapOrigin.y);
+
+    for (Map.Entry<Entity, Image> entry : ServiceLocator.getMinimapService().getTrackedEntities().entrySet()) {
+      final Vector2 minimapCoords = worldToMinimapCoordinates(entry.getKey().getPosition());
+      Image marker = entry.getValue();
+      marker.setPosition(cameraMinimapOrigin.x + minimapCoords.x, cameraMinimapOrigin.y + minimapCoords.y);
     }
   }
 
   private Vector2 worldToMinimapCoordinates(Vector2 worldPos) {
-    float minimapX = (worldPos.x - this.origin.x) * worldSizeRemapFactor.x;
-    float minimapY = (worldPos.y - this.origin.y) * worldSizeRemapFactor.y;
-    return new Vector2(minimapX, minimapY);
+    float mapX = (worldPos.x - textureBottomLeft.x) * minimapScaleFactor;
+    float mapY = (worldPos.y - textureBottomLeft.y) * minimapScaleFactor;
+    return new Vector2(mapX, mapY);
   }
 
   @Override
@@ -148,13 +187,5 @@ public class MinimapDisplay extends UIComponent {
    */
   public void setVisible(boolean visible) {
     rootTable.setVisible(visible);
-    if (visible) syncMarkers();
-  }
-
-  private void syncMarkers() {
-    Group markerGroup = ServiceLocator.getMinimapService().getMinimapMarkerGroup();
-    for (Map.Entry<Entity, Image> serviceEntry : ServiceLocator.getMinimapService().getTrackedEntities().entrySet()) {
-      markerGroup.addActor(serviceEntry.getValue());
-    }
   }
 }
