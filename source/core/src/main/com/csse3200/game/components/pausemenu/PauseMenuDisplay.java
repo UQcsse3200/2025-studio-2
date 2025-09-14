@@ -54,6 +54,9 @@ public class PauseMenuDisplay extends UIComponent {
         // Initialize the navigation component
         navigationComponent = new InventoryNavigationComponent(inventoryTab);
         entity.addComponent(navigationComponent);
+        
+        // Wire up the navigation component with the inventory tab
+        inventoryTab.setNavigationComponent(navigationComponent);
 
         // Add event listeners for navigation
         entity.getEvents().addListener("refreshInventoryGrid", () -> refreshInventoryGrid());
@@ -127,7 +130,7 @@ public class PauseMenuDisplay extends UIComponent {
     public void setTab(Tab tab) {
         // Disable navigation on the old tab
         if (currentTab == Tab.INVENTORY) {
-            inventoryTab.disableNavigation();
+            navigationComponent.disableNavigation();
             // Only unregister if the menu is visible (input component was registered)
             if (rootTable.isVisible()) {
                 ServiceLocator.getInputService().unregister(navigationComponent);
@@ -139,7 +142,7 @@ public class PauseMenuDisplay extends UIComponent {
         
         // Enable navigation on the new tab if it's inventory
         if (currentTab == Tab.INVENTORY) {
-            inventoryTab.enableNavigation();
+            navigationComponent.enableNavigation();
             // Only register if the menu is visible
             if (rootTable.isVisible()) {
                 ServiceLocator.getInputService().register(navigationComponent);
@@ -171,12 +174,12 @@ public class PauseMenuDisplay extends UIComponent {
             rootTable.toFront();
             // Enable navigation and register input component when the pause menu becomes visible
             if (currentTab == Tab.INVENTORY) {
-                inventoryTab.enableNavigation();
+                navigationComponent.enableNavigation();
                 ServiceLocator.getInputService().register(navigationComponent);
             }
         } else {
             // Disable navigation and unregister input component when the pause menu is hidden
-            inventoryTab.disableNavigation();
+            navigationComponent.disableNavigation();
             ServiceLocator.getInputService().unregister(navigationComponent);
         }
     }

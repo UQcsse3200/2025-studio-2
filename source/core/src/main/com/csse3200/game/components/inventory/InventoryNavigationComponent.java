@@ -7,14 +7,57 @@ import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 
 /**
  * Input component for handling keyboard navigation within the inventory screen.
- * Handles arrow key input to move selection around the inventory grid.
+ * Handles arrow key input to move selection around the inventory grid and manages
+ * all selection state and tooltip display.
  */
 public class InventoryNavigationComponent extends InputComponent {
     private InventoryTab inventoryTab;
+    
+    // Selection state
+    private int selectedRow = 0;
+    private int selectedCol = 0;
+    private boolean navigationEnabled = false;
+    
+    private static final int GRID_ROWS = 4;
+    private static final int GRID_COLS = 4;
 
     public InventoryNavigationComponent(InventoryTab inventoryTab) {
         this.inventoryTab = inventoryTab;
     }
+
+    /**
+     * Enables navigation and shows initial tooltip
+     */
+    public void enableNavigation() {
+        this.navigationEnabled = true;
+        selectedRow = 0;
+        selectedCol = 0;
+        // Refresh the grid to show the initial selection highlight
+        entity.getEvents().trigger("refreshInventoryGrid");
+        showTooltipForSelectedSlot();
+    }
+
+    /**
+     * Disables navigation and hides tooltip
+     */
+    public void disableNavigation() {
+        this.navigationEnabled = false;
+        TooltipSystem.TooltipManager.hideTooltip();
+    }
+
+    /**
+     * Gets the currently selected slot index (0-based, row-major order)
+     */
+    public int getSelectedSlotIndex() {
+        return selectedRow * GRID_COLS + selectedCol;
+    }
+
+    /**
+     * Gets the current selection coordinates for the UI to highlight
+     */
+    public int getSelectedRow() { return selectedRow; }
+    public int getSelectedCol() { return selectedCol; }
+    public boolean isNavigationEnabled() { return navigationEnabled; }
 
     /**
      * Triggers player events on specific keycodes.
@@ -25,31 +68,38 @@ public class InventoryNavigationComponent extends InputComponent {
      */
     @Override
     public boolean keyDown(int keycode) {
+        if (!navigationEnabled) {
+            return false;
+        }
+        
         switch (keycode) {
             case Input.Keys.UP:
-                inventoryTab.moveSelectionUp();
-                entity.getEvents().trigger("refreshInventoryGrid");
-                showTooltipForSelectedSlot(); // Show tooltip after navigation
+                if (selectedRow > 0) {
+                    selectedRow--;
+                    entity.getEvents().trigger("refreshInventoryGrid");
+                    showTooltipForSelectedSlot();
+                }
                 return true;
             case Input.Keys.DOWN:
-                inventoryTab.moveSelectionDown();
-                entity.getEvents().trigger("refreshInventoryGrid");
-                showTooltipForSelectedSlot(); // Show tooltip after navigation
+                if (selectedRow < GRID_ROWS - 1) {
+                    selectedRow++;
+                    entity.getEvents().trigger("refreshInventoryGrid");
+                    showTooltipForSelectedSlot();
+                }
                 return true;
             case Input.Keys.LEFT:
-                inventoryTab.moveSelectionLeft();
-                entity.getEvents().trigger("refreshInventoryGrid");
-                showTooltipForSelectedSlot(); // Show tooltip after navigation
+                if (selectedCol > 0) {
+                    selectedCol--;
+                    entity.getEvents().trigger("refreshInventoryGrid");
+                    showTooltipForSelectedSlot();
+                }
                 return true;
             case Input.Keys.RIGHT:
-                inventoryTab.moveSelectionRight();
-                entity.getEvents().trigger("refreshInventoryGrid");
-                showTooltipForSelectedSlot(); // Show tooltip after navigation
-                return true;
-            case Input.Keys.ENTER:
-            case Input.Keys.SPACE:
-                // Future: Handle item selection/use
-                entity.getEvents().trigger("selectInventoryItem", inventoryTab.getSelectedSlotIndex());
+                if (selectedCol < GRID_COLS - 1) {
+                    selectedCol++;
+                    entity.getEvents().trigger("refreshInventoryGrid");
+                    showTooltipForSelectedSlot();
+                }
                 return true;
             default:
                 return false;
@@ -57,13 +107,20 @@ public class InventoryNavigationComponent extends InputComponent {
     }
 
     /**
-     * Shows a tooltip for the currently selected inventory slot
+     * Shows a tooltip for the currently selected inventory slot (only if it contains an item)
      */
     private void showTooltipForSelectedSlot() {
-        String itemDescription = inventoryTab.getSelectedItemDescription();
+        // Check if the selected slot has an item
+        String itemId = inventoryTab.getItemAt(getSelectedSlotIndex());
         
-        // Use the tooltip system to display the item description
-        TooltipSystem.TooltipManager.showTooltip(itemDescription, TooltipSystem.TooltipStyle.DEFAULT);
+        if (itemId != null) {
+            // Only show tooltip if there's an item in the slot
+            String itemDescription = inventoryTab.getItemDescriptionAt(getSelectedSlotIndex());
+            TooltipSystem.TooltipManager.showTooltip(itemDescription, TooltipSystem.TooltipStyle.DEFAULT);
+        } else {
+            // Hide tooltip for empty slots
+            TooltipSystem.TooltipManager.hideTooltip();
+        }
     }
 
     /**

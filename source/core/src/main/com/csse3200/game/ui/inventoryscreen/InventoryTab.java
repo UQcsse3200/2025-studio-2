@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
@@ -50,12 +49,9 @@ public class InventoryTab implements InventoryTabInterface {
   private static final int GRID_COLS = 4;
   private static final float SLOT_PADDING = 10f;
 
-  // Selection state for keyboard navigation
-  private int selectedRow = 0;
-  private int selectedCol = 0;
-  private boolean navigationEnabled = false;
   private Table currentGridTable; // Store reference for refreshing
   private java.util.List<String> currentInstanceIds = new java.util.ArrayList<>(); // Track current slot contents
+  private com.csse3200.game.components.inventory.InventoryNavigationComponent navigationComponent;
 
   /**
    * Creates an Inventory tab bound to the given main game screen.
@@ -72,77 +68,34 @@ public class InventoryTab implements InventoryTabInterface {
   }
 
   /**
-   * Enables keyboard navigation for this inventory tab
+   * Gets the item description for a specific slot index
+   * @param slotIndex the slot index (0-based, row-major order)
+   * @return the item description or "Empty Slot" if no item
    */
-  public void enableNavigation() {
-    this.navigationEnabled = true;
-    // Refresh the grid to show initial selection
-    if (currentGridTable != null) {
-      populateGrid(currentGridTable);
+  public String getItemDescriptionAt(int slotIndex) {
+    String itemId = getItemAt(slotIndex);
+    if (itemId == null) {
+      return "Empty Slot\nNo item in this slot";
     }
-    // Show tooltip for initially selected slot (0,0)
-    showTooltipForCurrentSlot();
+    
+    // Provide detailed descriptions for each item type
+    return switch (itemId) {
+      case "key" -> "Key\nUnlocks doors and barriers";
+      case "door" -> "Door Key\nUnlocks specific doors";  
+      case "dash" -> "Dash Upgrade\nGrants dash ability for quick movement";
+      case "glider" -> "Glider Upgrade\nAllows gliding through the air";
+      case "grapple" -> "Grapple Upgrade\nEnables grappling to distant objects";
+      default -> itemId.substring(0, 1).toUpperCase() + itemId.substring(1) + "\nUnknown item type";
+    };
   }
 
   /**
-   * Disables keyboard navigation for this inventory tab
+   * Gets the item ID at a specific slot index
+   * @param slotIndex the slot index (0-based, row-major order)
+   * @return the item ID or null if slot is empty
    */
-  public void disableNavigation() {
-    this.navigationEnabled = false;
-    // Hide tooltip when navigation is disabled
-    TooltipSystem.TooltipManager.hideTooltip();
-  }
-
-  /**
-   * Moves the selection up (decreases row)
-   */
-  public void moveSelectionUp() {
-    if (navigationEnabled && selectedRow > 0) {
-      selectedRow--;
-    }
-  }
-
-  /**
-   * Moves the selection down (increases row)
-   */
-  public void moveSelectionDown() {
-    if (navigationEnabled && selectedRow < GRID_ROWS - 1) {
-      selectedRow++;
-    }
-  }
-
-  /**
-   * Moves the selection left (decreases column)
-   */
-  public void moveSelectionLeft() {
-    if (navigationEnabled && selectedCol > 0) {
-      selectedCol--;
-    }
-  }
-
-  /**
-   * Moves the selection right (increases column)
-   */
-  public void moveSelectionRight() {
-    if (navigationEnabled && selectedCol < GRID_COLS - 1) {
-      selectedCol++;
-    }
-  }
-
-  /**
-   * Gets the currently selected slot index (0-based, row-major order)
-   */
-  public int getSelectedSlotIndex() {
-    return selectedRow * GRID_COLS + selectedCol;
-  }
-
-  /**
-   * Gets the item ID in the currently selected slot
-   * @return the item ID (base ID like "key", "dash", etc.) or null if slot is empty
-   */
-  public String getSelectedItemId() {
-    int slotIndex = getSelectedSlotIndex();
-    if (slotIndex < currentInstanceIds.size()) {
+  public String getItemAt(int slotIndex) {
+    if (slotIndex >= 0 && slotIndex < currentInstanceIds.size()) {
       return currentInstanceIds.get(slotIndex);
     }
     return null; // Empty slot
@@ -166,32 +119,10 @@ public class InventoryTab implements InventoryTabInterface {
   }
 
   /**
-   * Checks if the currently selected slot is empty
-   * @return true if the selected slot is empty, false if it contains an item
+   * Sets the navigation component that provides selection state
    */
-  public boolean isSelectedSlotEmpty() {
-    return getSelectedItemId() == null;
-  }
-
-  /**
-   * Gets a human-readable description of the currently selected item
-   * @return item description or "Empty slot" if no item
-   */
-  public String getSelectedItemDescription() {
-    String itemId = getSelectedItemId();
-    if (itemId == null) {
-      return "Empty Slot\nNo item in this slot";
-    }
-    
-    // Provide detailed descriptions for each item type
-    return switch (itemId) {
-      case "key" -> "Key\nUnlocks doors and barriers";
-      case "door" -> "Door Key\nUnlocks specific doors";  
-      case "dash" -> "Dash Upgrade\nGrants dash ability for quick movement";
-      case "glider" -> "Glider Upgrade\nAllows gliding through the air";
-      case "grapple" -> "Grapple Upgrade\nEnables grappling to distant objects";
-      default -> itemId.substring(0, 1).toUpperCase() + itemId.substring(1) + "\nUnknown item type";
-    };
+  public void setNavigationComponent(com.csse3200.game.components.inventory.InventoryNavigationComponent navigationComponent) {
+    this.navigationComponent = navigationComponent;
   }
 
   /**
@@ -212,14 +143,6 @@ public class InventoryTab implements InventoryTabInterface {
     if (currentGridTable != null) {
       populateGrid(currentGridTable);
     }
-  }
-
-  /**
-   * Shows a tooltip for the currently selected slot
-   */
-  public void showTooltipForCurrentSlot() {
-    String itemDescription = getSelectedItemDescription();
-    TooltipSystem.TooltipManager.showTooltip(itemDescription, TooltipSystem.TooltipStyle.DEFAULT);
   }
 
   /**
@@ -303,7 +226,10 @@ public class InventoryTab implements InventoryTabInterface {
     for (int i = 0; i < totalSlots; i++) {
       int currentRow = i / GRID_COLS;
       int currentCol = i % GRID_COLS;
-      boolean isSelected = navigationEnabled && (currentRow == selectedRow && currentCol == selectedCol);
+      boolean isSelected = navigationComponent != null && 
+                          navigationComponent.isNavigationEnabled() && 
+                          (currentRow == navigationComponent.getSelectedRow() && 
+                           currentCol == navigationComponent.getSelectedCol());
       
       if (i < instanceIds.size()) {
         // FILLED: slot border + item image (if available)
