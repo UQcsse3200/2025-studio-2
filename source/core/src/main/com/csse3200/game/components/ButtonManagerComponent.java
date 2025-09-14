@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -25,7 +26,9 @@ public class ButtonManagerComponent extends Component {
 
     @Override
     public void update() {
-        if (!puzzleActive) return;
+        if (!puzzleActive) {
+            return;
+        }
 
         puzzleTimer -= ServiceLocator.getTimeSource().getDeltaTime();
 
@@ -52,7 +55,7 @@ public class ButtonManagerComponent extends Component {
     }
 
     public boolean isPuzzleCompleted() {
-        return !puzzleCompleted;
+        return puzzleCompleted;
     }
 
     public void resetPuzzle() {
@@ -65,7 +68,13 @@ public class ButtonManagerComponent extends Component {
     }
 
     public float getTimeLeft() {
-        if(!puzzleActive) return 0f;
+        if(!puzzleActive) {
+            return 0f;
+        }
         return Math.max(0, puzzleTimer);
+    }
+
+    public List<ButtonComponent> getButtons() {
+        return buttons;
     }
 }

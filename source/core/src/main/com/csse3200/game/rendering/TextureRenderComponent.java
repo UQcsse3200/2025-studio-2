@@ -70,4 +70,9 @@ public class TextureRenderComponent extends RenderComponent {
               false, false);
     }
   }
+
+    public double getRotation() {
+      return rotation;
+    }
+
 }
