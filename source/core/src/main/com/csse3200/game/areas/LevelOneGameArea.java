@@ -379,12 +379,12 @@ public class LevelOneGameArea extends GameArea {
         Vector2 safeSpotStart = new Vector2(2, 3);
 
         Entity spikesLeft1 = TrapFactory.createSpikes(safeSpotStart, 90f);
-        spawnEntityAt(spikesLeft1, new GridPoint2(25,11), true,  true);
+        spawnEntityAt(spikesLeft1, new GridPoint2(24,10), true,  true);
         Entity spikesLeft2 = TrapFactory.createSpikes(safeSpotStart, 90f);
-        spawnEntityAt(spikesLeft2, new GridPoint2(25,9), true,  true);
+        spawnEntityAt(spikesLeft2, new GridPoint2(24,8), true,  true);
 
         Entity spikesDown = TrapFactory.createSpikes(safeSpotStart, 180f);
-        spawnEntityAt(spikesDown, new GridPoint2(17,9), true,  true);
+        spawnEntityAt(spikesDown, new GridPoint2(16,8), true,  true);
 
         Vector2 safeSpotCamera = new Vector2(24, 10);
 
@@ -392,7 +392,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(spikesUp, new GridPoint2(54,19), true,  true);
 
         Entity spikesRight = TrapFactory.createSpikes(safeSpotCamera, 270f);
-        spawnEntityAt(spikesRight, new GridPoint2(33,35), true,  true);
+        spawnEntityAt(spikesRight, new GridPoint2(32,34), true,  true);
     }
     private void spawnButtons() {
         Entity puzzleEntity = new Entity();
