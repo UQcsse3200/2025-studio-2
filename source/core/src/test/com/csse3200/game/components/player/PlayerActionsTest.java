@@ -40,6 +40,15 @@ public class PlayerActionsTest {
         when(mockBody.getLinearVelocity()).thenReturn(new Vector2(0, 0));
         when(mockBody.getMass()).thenReturn(1f);
 
+        ServiceLocator serviceLocator = mock(ServiceLocator.class);
+        ServiceLocator.clear();
+
+        ResourceService mockResourceService = mock(ResourceService.class);
+        ServiceLocator.registerResourceService(mockResourceService);
+        Sound mockSound = mock(Sound.class);
+        when(mockResourceService.getAsset(anyString(), eq(Sound.class))).thenReturn(mockSound);
+
+
         KeyboardPlayerInputComponent mockInput = mock(KeyboardPlayerInputComponent.class);
         when(mockInput.getIsCheatsOn()).thenReturn(false);
 
@@ -60,11 +69,6 @@ public class PlayerActionsTest {
         playerActions = new PlayerActions();
         playerEntity.addComponent(playerActions);
         playerEntity.create();
-
-        ResourceService mockResourceService = mock(ResourceService.class);
-        ServiceLocator.registerResourceService(mockResourceService);
-        Sound mockSound = mock(Sound.class);
-        when(mockResourceService.getAsset(anyString(), eq(Sound.class))).thenReturn(mockSound);
     }
 
     @Test

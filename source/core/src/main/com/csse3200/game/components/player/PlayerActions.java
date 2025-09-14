@@ -315,7 +315,6 @@ public class PlayerActions extends Component {
     // Unscale the direction vector to ensure player does not infinitely dash in one direction
     this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
 
-
   }
 
   /**
@@ -345,7 +344,7 @@ public class PlayerActions extends Component {
     boolean isOutOfJumps = (isJumping) && (isDoubleJump);
 
     if (on && isOutOfJumps) {
-      if (body.getLinearVelocity().y < 0.1f) {
+      if (body.getLinearVelocity().y < 0.5f) {
         body.setGravityScale(0.1f);
       }
     } else {
