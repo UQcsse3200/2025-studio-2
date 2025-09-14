@@ -291,6 +291,9 @@ public class TooltipSystem {
             
             // Add table to root table instead of directly to stage
             rootTable.add(tooltipTable);
+            
+            // Ensure tooltip appears on top of all other UI elements (including pause menu)
+            rootTable.toFront();
         }
         
         @Override
