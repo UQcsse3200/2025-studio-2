@@ -13,7 +13,7 @@ public class ButtonManagerComponent extends Component {
     private List<ButtonComponent> buttons = new ArrayList<>();
     private float puzzleTimer = 0f;
     private boolean puzzleActive = false;
-    private static final float PUZZLE_TIME_LIMIT = 5f;
+    private static final float PUZZLE_TIME_LIMIT = 15f;
     private boolean puzzleCompleted = false;
 
     /**
