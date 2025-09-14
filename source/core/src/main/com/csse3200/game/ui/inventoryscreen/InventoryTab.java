@@ -1,6 +1,7 @@
 package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -37,6 +38,9 @@ public class InventoryTab implements InventoryTabInterface {
 
   private final Texture itemSlotTexture = new Texture(Gdx.files.internal("inventory-screen/item-slot.png"));
   private final Texture keyTexture = new Texture(Gdx.files.internal("images/key.png"));
+  
+  // Create a simple selection highlight texture (will be created programmatically)
+  private final Texture selectionHighlight;
 
   private static final Rect GRID_PX = new Rect(371, 247, 586, 661);
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
@@ -44,6 +48,12 @@ public class InventoryTab implements InventoryTabInterface {
   private static final int GRID_ROWS = 4;
   private static final int GRID_COLS = 4;
   private static final float SLOT_PADDING = 10f;
+
+  // Selection state for keyboard navigation
+  private int selectedRow = 0;
+  private int selectedCol = 0;
+  private boolean navigationEnabled = false;
+  private Table currentGridTable; // Store reference for refreshing
 
   /**
    * Creates an Inventory tab bound to the given main game screen.
@@ -54,6 +64,90 @@ public class InventoryTab implements InventoryTabInterface {
   public InventoryTab(Entity player, MainGameScreen gameScreen) {
     this.player = player;
     this.screen = gameScreen;
+    
+    // Create a simple highlight texture programmatically
+    this.selectionHighlight = createSelectionHighlightTexture();
+  }
+
+  /**
+   * Enables keyboard navigation for this inventory tab
+   */
+  public void enableNavigation() {
+    this.navigationEnabled = true;
+    // Refresh the grid to show initial selection
+    if (currentGridTable != null) {
+      populateGrid(currentGridTable);
+    }
+  }
+
+  /**
+   * Disables keyboard navigation for this inventory tab
+   */
+  public void disableNavigation() {
+    this.navigationEnabled = false;
+  }
+
+  /**
+   * Moves the selection up (decreases row)
+   */
+  public void moveSelectionUp() {
+    if (navigationEnabled && selectedRow > 0) {
+      selectedRow--;
+    }
+  }
+
+  /**
+   * Moves the selection down (increases row)
+   */
+  public void moveSelectionDown() {
+    if (navigationEnabled && selectedRow < GRID_ROWS - 1) {
+      selectedRow++;
+    }
+  }
+
+  /**
+   * Moves the selection left (decreases column)
+   */
+  public void moveSelectionLeft() {
+    if (navigationEnabled && selectedCol > 0) {
+      selectedCol--;
+    }
+  }
+
+  /**
+   * Moves the selection right (increases column)
+   */
+  public void moveSelectionRight() {
+    if (navigationEnabled && selectedCol < GRID_COLS - 1) {
+      selectedCol++;
+    }
+  }
+
+  /**
+   * Gets the currently selected slot index (0-based, row-major order)
+   */
+  public int getSelectedSlotIndex() {
+    return selectedRow * GRID_COLS + selectedCol;
+  }
+
+  /**
+   * Refreshes the grid display to update selection highlighting
+   */
+  public void refreshGrid(Table gridTable) {
+    if (gridTable != null) {
+      populateGrid(gridTable);
+    } else if (currentGridTable != null) {
+      populateGrid(currentGridTable);
+    }
+  }
+
+  /**
+   * Refreshes the current grid display
+   */
+  public void refreshGrid() {
+    if (currentGridTable != null) {
+      populateGrid(currentGridTable);
+    }
   }
 
   /**
@@ -90,6 +184,7 @@ public class InventoryTab implements InventoryTabInterface {
     placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
 
     Table gridTable = new Table();
+    this.currentGridTable = gridTable; // Store reference for refreshing
     placer.addOverlay(gridTable, GRID_PX);
     populateGrid(gridTable);
 
@@ -131,6 +226,10 @@ public class InventoryTab implements InventoryTabInterface {
 
     // Fill grid: first all instances, then empty cells
     for (int i = 0; i < totalSlots; i++) {
+      int currentRow = i / GRID_COLS;
+      int currentCol = i % GRID_COLS;
+      boolean isSelected = navigationEnabled && (currentRow == selectedRow && currentCol == selectedCol);
+      
       if (i < instanceIds.size()) {
         // FILLED: slot border + item image (if available)
         Stack stack = new Stack();
@@ -149,12 +248,30 @@ public class InventoryTab implements InventoryTabInterface {
           Gdx.app.log("InventoryTab", "No sprite for item '" + instanceIds.get(i) + "'; showing border-only slot.");
         }
 
+        // Add selection highlight if this slot is selected
+        if (isSelected) {
+          Image highlight = new Image(selectionHighlight);
+          highlight.setScaling(Scaling.fit);
+          stack.addActor(highlight);
+        }
+
         gridTable.add(stack);
       } else {
         // Empty item slot
+        Stack stack = new Stack();
+        
         Image emptySlotImage = new Image(emptySlotTexture);
         emptySlotImage.setScaling(Scaling.fit);
-        gridTable.add(emptySlotImage);
+        stack.addActor(emptySlotImage);
+        
+        // Add selection highlight if this empty slot is selected
+        if (isSelected) {
+          Image highlight = new Image(selectionHighlight);
+          highlight.setScaling(Scaling.fit);
+          stack.addActor(highlight);
+        }
+        
+        gridTable.add(stack);
       }
 
       if ((i + 1) % GRID_COLS == 0) {
@@ -196,6 +313,41 @@ public class InventoryTab implements InventoryTabInterface {
   }
 
   /**
+   * Creates a selection highlight texture programmatically.
+   * This creates a semi-transparent yellow border overlay.
+   */
+  private Texture createSelectionHighlightTexture() {
+    int size = 64; // Size of the highlight texture
+    Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+    
+    // Create a yellow border with transparency
+    pixmap.setColor(1f, 1f, 0f, 0.8f); // Yellow with 80% opacity
+    
+    // Draw border (outline only)
+    int borderWidth = 4;
+    
+    // Top and bottom borders
+    for (int x = 0; x < size; x++) {
+      for (int y = 0; y < borderWidth; y++) {
+        pixmap.drawPixel(x, y); // Top border
+        pixmap.drawPixel(x, size - 1 - y); // Bottom border
+      }
+    }
+    
+    // Left and right borders
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < borderWidth; x++) {
+        pixmap.drawPixel(x, y); // Left border
+        pixmap.drawPixel(size - 1 - x, y); // Right border
+      }
+    }
+    
+    Texture texture = new Texture(pixmap);
+    pixmap.dispose();
+    return texture;
+  }
+
+  /**
    * Disposes all textures owned by this tab
    */
   public void dispose() {
@@ -203,5 +355,6 @@ public class InventoryTab implements InventoryTabInterface {
     emptySlotTexture.dispose();
     itemSlotTexture.dispose();
     keyTexture.dispose();
+    selectionHighlight.dispose();
   }
 }
