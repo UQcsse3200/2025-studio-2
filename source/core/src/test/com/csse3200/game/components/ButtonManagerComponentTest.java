@@ -62,7 +62,6 @@ public class ButtonManagerComponentTest {
 
         final boolean[] triggered = {false};
         manager.getEntity().getEvents().addListener("puzzleCompleted", () -> triggered[0] = true);
-
         manager.onButtonPressed();
         manager.update();
 
@@ -79,7 +78,6 @@ public class ButtonManagerComponentTest {
 
         manager.addButton(btn1);
         manager.addButton(btn2);
-
         manager.onButtonPressed();
 
         when(mockTime.getDeltaTime()).thenReturn(6f);
@@ -97,7 +95,6 @@ public class ButtonManagerComponentTest {
         manager.addButton(btn);
         manager.onButtonPressed();
         manager.update();
-
         manager.resetPuzzle();
 
         assertEquals(0f, manager.getTimeLeft());

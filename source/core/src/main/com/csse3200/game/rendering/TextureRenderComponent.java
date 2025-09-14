@@ -31,8 +31,20 @@ public class TextureRenderComponent extends RenderComponent {
       return texture;
   }
 
+  /**
+   * Sets rotation of the texture
+   *
+   * @param rotation What to rotate by (0-360 degrees)
+   */
   public void setRotation(float rotation) {
     this.rotation = rotation;
+  }
+
+  /**
+   * @return Rotation degree of texture
+   */
+  public double getRotation() {
+    return rotation;
   }
 
   /** @param texture Static texture to render. Will be scaled to the entity's scale. */
@@ -70,9 +82,4 @@ public class TextureRenderComponent extends RenderComponent {
               false, false);
     }
   }
-
-    public double getRotation() {
-      return rotation;
-    }
-
 }

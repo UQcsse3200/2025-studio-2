@@ -22,7 +22,7 @@ public class ButtonComponent extends Component {
 
     private float unpressTimer = 0f;
     private boolean isTiming = false;
-    private static final float AUTO_UNPRESS_TIME = 5f;
+    private static final float AUTO_UNPRESS_TIME = 5f; //buttons unpress after 5 seconds
     private ButtonManagerComponent puzzleManager;
 
     /**
@@ -33,7 +33,8 @@ public class ButtonComponent extends Component {
     }
 
     /**
-     * Updates the button
+     * Updates the button. If it is a timing button and the time runs out, button
+     *  will unpress and return to original texture
      */
     @Override
     public void update() {
@@ -122,6 +123,8 @@ public class ButtonComponent extends Component {
 
     /**
      * Toggles the buttons state and updates its texture based on its type
+     * If the puzzle manager isn't active or puzzle isn't completed, buttons will automatically unpress
+     *  after set amount of time (standard time only)
      * Triggers buttonToggled event that can be listened for so events can be implemented on push
      */
     private void toggleButton() {
@@ -164,6 +167,12 @@ public class ButtonComponent extends Component {
         }
     }
 
+    /**
+     * Sets the direction the button will face, for both texture and pressing logic
+     * Automatically left unless otherwise specified (right, up, down)
+     *
+     * @param direction The direction string to set
+     */
     public void setDirection(String direction) {
         if (direction == null) {
             this.direction = "left";
@@ -172,6 +181,10 @@ public class ButtonComponent extends Component {
         }
     }
 
+    /**
+     * Forces the button to unpress immediately regardless of current state or timer
+     * Resets texture, stops timer and triggers buttonToggled event (with false as unpressed)
+     */
     public void forceUnpress() {
         if (!isPushed) {
             return;
@@ -188,6 +201,11 @@ public class ButtonComponent extends Component {
         entity.getEvents().trigger("buttonToggled", false);
     }
 
+    /**
+     * Assigns a puzzle manager to the button, so manager can be notified when its pressed
+     *
+     * @param puzzleManager the ButtonManagerComponent managing this button
+     */
     public void setPuzzleManager(ButtonManagerComponent puzzleManager) {
         this.puzzleManager = puzzleManager;
     }

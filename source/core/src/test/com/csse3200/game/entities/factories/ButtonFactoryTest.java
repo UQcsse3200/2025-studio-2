@@ -82,8 +82,8 @@ public class ButtonFactoryTest {
     @Test
     void createButton_hasStaticPhysicsBody() {
         Entity button = ButtonFactory.createButton(false, "platform", "left");
-
         PhysicsComponent physics = button.getComponent(PhysicsComponent.class);
+
         assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
                 "Button PhysicsComponent should be static");
     }
@@ -91,8 +91,8 @@ public class ButtonFactoryTest {
     @Test
     void createButton_colliderIsObstacle() {
         Entity button = ButtonFactory.createButton(false, "door", "left");
-
         ColliderComponent collider = button.getComponent(ColliderComponent.class);
+
         assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
                 "Button ColliderComponent should be in OBSTACLE layer");
     }
@@ -109,10 +109,7 @@ public class ButtonFactoryTest {
 
     @Test
     void createButton_setsCorrectTextureForDoorType() {
-        // Act: Create a pressed door button
         ButtonFactory.createButton(true, "door", "left");
-
-        // Assert: Check the correct texture was requested from ResourceService
         verify(mockResourceService).getAsset("images/red_button_pushed.png", Texture.class);
     }
 
@@ -139,8 +136,8 @@ public class ButtonFactoryTest {
     @Test
     void createButton_setsCorrectScale() {
         Entity button = ButtonFactory.createButton(false, "door", "left");
-
         Vector2 scale = button.getScale();
+
         assertEquals(0.5f, scale.x, 0.001f, "Button X scale should be 0.5");
         assertEquals(0.5f, scale.y, 0.001f, "Button Y scale should be 0.5");
     }
@@ -148,7 +145,6 @@ public class ButtonFactoryTest {
     @Test
     void createPuzzleButton_registersToManager() {
         ButtonManagerComponent manager = new ButtonManagerComponent();
-
         Entity button = ButtonFactory.createPuzzleButton(false, "door", "left", manager);
         ButtonComponent buttonComp = button.getComponent(ButtonComponent.class);
 
