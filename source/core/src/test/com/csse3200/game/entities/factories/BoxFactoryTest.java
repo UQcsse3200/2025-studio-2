@@ -1,7 +1,9 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
@@ -12,6 +14,7 @@ import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 import com.csse3200.game.services.ResourceService;
@@ -236,5 +239,25 @@ public class BoxFactoryTest {
                 "Autonomous Box should have a TextureRenderComponent");
         assertSame(dummyTexture, textureComponent.getTexture(),
                 "TextureRenderComponent should have a loaded Texture");
+    }
+
+    @Test
+    void autonomousBoxBuilder_addsAnimationRenderComponentForAtlas() {
+        TextureAtlas mockAtlas = mock(TextureAtlas.class);
+        // Add mock region to avoid null exception
+        TextureAtlas.AtlasRegion mockRegion = mock(TextureAtlas.AtlasRegion.class);
+        Array<TextureAtlas.AtlasRegion> regions = new Array<>();
+        regions.add(mockRegion);
+        when(mockAtlas.findRegions("flying_bat")).thenReturn(regions);
+
+        ResourceService mockResourceService = ServiceLocator.getResourceService();
+        when(mockResourceService.getAsset(anyString(), eq(TextureAtlas.class))).thenReturn(mockAtlas);
+
+        Entity autonomousBox = new BoxFactory.AutonomousBoxBuilder().texture("flying_bat.atlas").build();
+
+        AnimationRenderComponent animator = autonomousBox.getComponent(AnimationRenderComponent.class);
+        assertNotNull(animator, "Autonomous Box should have an AnimationRenderComponent");
+
+        assertEquals("flying_bat", animator.getCurrentAnimation(), "AnimationRenderComponent should start 'flying_bat', animation");
     }
 }

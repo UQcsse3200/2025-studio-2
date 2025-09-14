@@ -1,12 +1,12 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -147,5 +147,22 @@ public class AutonomousBoxComponentTest {
         assertEquals(1, component.getDirectionY());
     }
 
+    @Test
+    void testAnimationFlipX() {
+        component.setBounds(0f, 1f, 0f, 0f);
+        component.setSpeed(10f);
 
+        AnimationRenderComponent mockAnimator = mock(AnimationRenderComponent.class);
+        when(component.entity.getComponent(AnimationRenderComponent.class)).thenReturn(mockAnimator);
+
+        // Flips to -1 at right boundary
+        when(mockBody.getPosition()).thenReturn(new Vector2(1f, 0f));
+        component.update();
+        verify(mockAnimator).setFlipX(true);
+
+        // Flips to 1 at left boundary
+        when(mockBody.getPosition()).thenReturn(new Vector2(0f, 0f));
+        component.update();
+        verify(mockAnimator).setFlipX(false);
+    }
 }

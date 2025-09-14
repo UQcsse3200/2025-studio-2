@@ -1,7 +1,9 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 
 /**
  * Component for a box that moves autonomously along a specified path at a specified speed.
@@ -9,6 +11,7 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 public class AutonomousBoxComponent extends Component {
 
     private PhysicsComponent physics;
+
     private float minMoveX;
     private float maxMoveX;
     private float minMoveY;
@@ -51,6 +54,12 @@ public class AutonomousBoxComponent extends Component {
         y = updateVerticalPosition(y, deltaTime);
 
         physics.getBody().setTransform(x, y, 0);
+
+        // Flips image left when moving horizontally right to left
+        AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
+        if (animator != null) {
+            animator.setFlipX(directionX < 0);
+        }
     }
 
     /**
@@ -96,9 +105,11 @@ public class AutonomousBoxComponent extends Component {
         y += directionY * speed * deltaTime;
 
         if (y >= maxMoveY){
+            y = maxMoveY;
             directionY = -1;
         }
         if (y <= minMoveY){
+            y = minMoveY;
             directionY = 1;
         }
 

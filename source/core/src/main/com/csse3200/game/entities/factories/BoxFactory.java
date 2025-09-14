@@ -1,7 +1,9 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.scenes.scene2d.ui.Tooltip;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
@@ -12,7 +14,11 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
+
+import java.security.Provider;
 
 /**
  * Factory class for creating box entities in the game.
@@ -100,7 +106,7 @@ public class BoxFactory {
         private float maxMoveX = 0f;
         private float minMoveY = 0f;
         private float maxMoveY = 0f;
-        private float speed = 2f;
+        private float speed = 3f;
 
         // Appearance
         private String texturePath = "images/box_orange.png";
@@ -110,11 +116,11 @@ public class BoxFactory {
         // Other default properties
         private float spawnX = minMoveX;
         private float spawnY = minMoveY;
-        private int damage = 0;
-        private float knockback = 0f;
+        private int damage = 5;
+        private float knockback = 4f;
 
         // Tooltip
-        private String tooltipText = "Autonomous Box\nDanger! Don't touch!";
+        private String tooltipText = "";
         private TooltipSystem.TooltipStyle tooltipStyle = TooltipSystem.TooltipStyle.WARNING;
 
         /**
@@ -241,14 +247,24 @@ public class BoxFactory {
          * @return The constructed autonomous box entity
          */
         public Entity build() {
-            Entity autonomousBox = new Entity()
-                    .addComponent(new TextureRenderComponent(texturePath))
-                    .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                    .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                    .addComponent(new HitboxComponent())
-                    .addComponent(new CombatStatsComponent(1, damage))
-                    .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                    .addComponent(new AutonomousBoxComponent());
+            Entity autonomousBox = new Entity();
+                    if (texturePath.endsWith(".atlas")) {
+                        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
+                        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+                        animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
+                        animator.startAnimation("flying_bat");
+                        autonomousBox.addComponent(animator);
+                    } else {
+                        autonomousBox.addComponent(new TextureRenderComponent(texturePath));
+                    }
+
+                    autonomousBox
+                            .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+                            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                            .addComponent(new HitboxComponent())
+                            .addComponent(new CombatStatsComponent(1, damage))
+                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+                            .addComponent(new AutonomousBoxComponent());
 
             AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);
             autonomousBox.setScale(scaleX, scaleY);

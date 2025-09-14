@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +11,7 @@ import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -18,12 +20,16 @@ import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
 
 public class SprintOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(SprintOneGameArea.class);
@@ -79,7 +85,11 @@ public class SprintOneGameArea extends GameArea {
             "images/camera-lens.png"
     };
     private static final String[] forestTextureAtlases = {
-            "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images/ghostKing.atlas", "images/drone.atlas"
+            "images/terrain_iso_grass.atlas",
+            "images/ghost.atlas",
+            "images/ghostKing.atlas",
+            "images/drone.atlas",
+            "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
             "/chimesound.mp3"};
@@ -120,14 +130,15 @@ public class SprintOneGameArea extends GameArea {
         spawnPlatform();
         spawnElevatorPlatform();
 
-        //spawnBoxes();
+        spawnPlatformBat();
+        spawnLevelOneBatRoom();
         playMusic();
         spawnLights();
         spawnButtons();
         spawnTraps();
-        //spawnDrone();
-        //spawnPatrollingDrone();
-       // spawnBomberDrone();
+//        spawnDrone();
+//        spawnPatrollingDrone();
+//        spawnBomberDrone();
         spawnDoor();
         displayUI();
 
@@ -300,32 +311,64 @@ public class SprintOneGameArea extends GameArea {
         moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!",
                 TooltipSystem.TooltipStyle.SUCCESS));
         spawnEntityAt(moveableBox, new GridPoint2(5,30), true,  true);
+    }
 
-        // Autonomous boxes
-        BoxFactory.AutonomousBoxBuilder builder = new BoxFactory.AutonomousBoxBuilder();
-        Entity platformAutoBox = builder
-                .moveX(1.5f, 6f).moveY(23f, 23f).speed(4f).damage(5).knockback(4).build();
-        spawnEntityAt(platformAutoBox, new GridPoint2(
-                (int) builder.getSpawnX(), (int) builder.getSpawnY()), true, true);
+    private void spawnPlatformBat() {
+        BoxFactory.AutonomousBoxBuilder horizontalPlatformBuilder = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalPlatformBat = horizontalPlatformBuilder
+                .moveX(1.5f, 6f).moveY(23f, 23f)
+                .texture("images/flying_bat.atlas")
+                .tooltip("Beware! Bats bite and knock you back. Stay clear!",
+                        TooltipSystem.TooltipStyle.WARNING)
+                .build();
+        spawnEntityAt(horizontalPlatformBat, new GridPoint2(
+                (int) horizontalPlatformBuilder.getSpawnX(), (int) horizontalPlatformBuilder.getSpawnY()), true, true);
+    }
 
-        BoxFactory.AutonomousBoxBuilder verticalBuilder1 = new BoxFactory.AutonomousBoxBuilder();
-        Entity verticalBox1 = verticalBuilder1
-                .moveX(17f, 17f).moveY(5f, 10f).speed(2f).damage(5).knockback(4).build();
-        spawnEntityAt(verticalBox1, new GridPoint2(
-                (int) verticalBuilder1.getSpawnX(), (int) verticalBuilder1.getSpawnY()), true, true);
+    private void spawnLevelOneBatRoom() {
 
-        BoxFactory.AutonomousBoxBuilder verticalBuilder2 = new BoxFactory.AutonomousBoxBuilder();
-        Entity verticalBox2 = verticalBuilder2
-                .moveX(15f, 15f).moveY(5f, 10f).speed(4f).damage(5).knockback(4).build();
-        spawnEntityAt(verticalBox2, new GridPoint2(
-                (int) verticalBuilder2.getSpawnX(), (int) verticalBuilder2.getSpawnY()), true, true);
+        int offsetX = 0;
+        int offsetY = 3;
 
-        BoxFactory.AutonomousBoxBuilder diagonalBuilder1 = new BoxFactory.AutonomousBoxBuilder();
-        Entity diagonalBox1 = diagonalBuilder1
-                .moveX(10f, 13f).moveY(5f, 10f).speed(6f).damage(5).knockback(4).build();
-        spawnEntityAt(diagonalBox1, new GridPoint2(
-                (int) diagonalBuilder1.getSpawnX(), (int) diagonalBuilder1.getSpawnY()), true, true);
+        BoxFactory.AutonomousBoxBuilder batBuilder1 = new BoxFactory.AutonomousBoxBuilder();
+        Entity lowHorizontalBat = batBuilder1
+                .moveX(1f + offsetX, 5f + offsetX).moveY(4f + offsetY, 4f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(4f).build();
+        spawnEntityAt(lowHorizontalBat, new GridPoint2(
+                (int) batBuilder1.getSpawnX() + offsetX,
+                (int) batBuilder1.getSpawnY() + offsetY),
+                true, true);
 
+        BoxFactory.AutonomousBoxBuilder batBuilder2 = new BoxFactory.AutonomousBoxBuilder();
+        Entity highHorizontalBat2 = batBuilder2
+                .moveX(1f + offsetX, 5f + offsetX).moveY(14f + offsetY, 14f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .build();
+        spawnEntityAt(highHorizontalBat2, new GridPoint2(
+                (int) batBuilder2.getSpawnX() + offsetX,
+                (int) batBuilder2.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder3 = new BoxFactory.AutonomousBoxBuilder();
+        Entity rightZigzagBat1 = batBuilder3
+                .moveX(3f + offsetX, 5f + offsetX).moveY(4f + offsetY, 7f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(2f).build();
+        spawnEntityAt(rightZigzagBat1, new GridPoint2(
+                (int) batBuilder3.getSpawnX() + offsetX,
+                (int) batBuilder3.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder4 = new BoxFactory.AutonomousBoxBuilder();
+        Entity leftZigzagBat2 = batBuilder4
+                .moveX(1f + offsetX, 3f + offsetX).moveY(2f + offsetY, 7f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .build();
+        spawnEntityAt(leftZigzagBat2, new GridPoint2(
+                        (int) batBuilder4.getSpawnX() + offsetX,
+                        (int) batBuilder4.getSpawnY() + offsetY),
+                true, true);
     }
 
     public void spawnDoor() {
@@ -378,7 +421,7 @@ public class SprintOneGameArea extends GameArea {
         logger.info("Elevator spawned at {}", elevatorPos);
 
         // Button with tooltip
-        Entity button = ButtonFactory.createButton(false, "platform", "right");
+        Entity button = ButtonFactory.createButton(false, "platform", "left");
         button.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
@@ -408,7 +451,7 @@ public class SprintOneGameArea extends GameArea {
         GridPoint2 topButton = new GridPoint2(17, 21);
         spawnEntityAt(button2, topButton, true, true);
         logger.info("Top elevator button spawned at {}", topButton);
-        
+
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed) {
                 logger.info("Top button toggled ON — returning elevator down");
