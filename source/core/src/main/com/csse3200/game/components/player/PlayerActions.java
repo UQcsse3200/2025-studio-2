@@ -151,20 +151,20 @@ public class PlayerActions extends Component {
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
-
 //    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
+      entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
+
     } else {
+      //entity.getEvents().trigger("gravityForPlayerOn");
       impulseY = 0f;
     }
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-
-
 
     /**
     Vector2 impulse =
@@ -397,11 +397,16 @@ public class PlayerActions extends Component {
    */
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
+    body.setGravityScale(0f);
+    //if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+    //  body.setGravityScale(0f);
+    //} else {
+    //  body.setGravityScale(1f);
+    //}
+  }
 
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
-      body.setGravityScale(0f);
-    } else {
+  private void gravityOn() {
+      Body body = physicsComponent.getBody();
       body.setGravityScale(1f);
-    }
   }
 }
