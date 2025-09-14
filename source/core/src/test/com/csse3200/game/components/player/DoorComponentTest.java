@@ -2,6 +2,7 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.CollectableFactory;
@@ -22,6 +23,8 @@ import com.csse3200.game.areas.GameArea;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -59,13 +62,11 @@ class DoorComponentTest {
         ServiceLocator.registerEntityService(es);
 
         game = new GameArea() {
-            @Override
-            public void create() { }
-
-            @Override
-            protected void reset() {
-
-            }
+            protected void loadPrerequisites() {}
+            protected void loadEntities() {}
+            protected Entity spawnPlayer() {return null;}
+            protected Entity spawnPlayer(List<Component> componentList) {return null;}
+            protected void loadAssets() {}
         };
     }
 

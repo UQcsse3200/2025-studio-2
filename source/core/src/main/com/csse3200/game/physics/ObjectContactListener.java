@@ -1,18 +1,11 @@
 package com.csse3200.game.physics;
 
 import com.badlogic.gdx.physics.box2d.*;
-import com.csse3200.game.components.MoveableBoxComponent;
-import com.csse3200.game.components.ButtonComponent;
-import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.*;
 import com.csse3200.game.components.obstacles.TrapComponent;
-import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.PressurePlateComponent; // <— import added
-import com.csse3200.game.components.obstacles.TrapComponent;
-import com.csse3200.game.components.player.PlayerActions;
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -64,6 +57,9 @@ public class ObjectContactListener implements ContactListener {
 
         setPlayerInRangeOfTrap(a, b);
         setPlayerInRangeOfTrap(b, a);
+
+        setPlayerInRangeOfDeathZone(a, b);
+        setPlayerInRangeOfDeathZone(b, a);
     }
 
     /**
@@ -190,6 +186,16 @@ public class ObjectContactListener implements ContactListener {
         if (trapComponent != null && player != null) {
             ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
             trapComponent.damage(collider);
+        }
+    }
+
+    private void setPlayerInRangeOfDeathZone(Entity colliding, Entity deathZone) {
+        PlayerActions player = colliding.getComponent(PlayerActions.class);
+        DeathZoneComponent deathZoneComponent = deathZone.getComponent(DeathZoneComponent.class);
+
+        if (deathZoneComponent != null && player != null) {
+            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
+            deathZoneComponent.damage(collider);
         }
     }
 
