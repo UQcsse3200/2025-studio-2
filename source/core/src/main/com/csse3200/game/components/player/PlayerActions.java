@@ -142,6 +142,9 @@ public class PlayerActions extends Component {
       body.setGravityScale(0f); //for impulse to act upwards
     } else if (jetpackFuel < FUEL_CAPACITY) {
       jetpackFuel++;
+    }
+
+    if (!isJetpackOn) {
       body.setGravityScale(1f);
     }
 
