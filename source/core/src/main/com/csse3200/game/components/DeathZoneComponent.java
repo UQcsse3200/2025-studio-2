@@ -63,7 +63,7 @@ public class DeathZoneComponent extends CombatStatsComponent {
         Entity player = collider.getEntity();
         if (player.getPosition().y >= deathZone.getPosition().y) {
             player.getComponent(CombatStatsComponent.class).hit(this);
-            player.requestMoveToSafeSpot(resetPos); //While no death is implemented
+            //player.requestMoveToSafeSpot(resetPos); //While no death is implemented
         }
     }
 }

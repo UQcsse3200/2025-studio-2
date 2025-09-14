@@ -24,6 +24,13 @@ public class CombatStatsComponent extends Component {
     setBaseAttack(baseAttack);
   }
 
+  // Copy constructor
+  public CombatStatsComponent(CombatStatsComponent other) {
+    this.health = other.health;
+    this.baseAttack = other.baseAttack;
+    this.lastHitFrame = other.lastHitFrame;
+  }
+
   /**
    * Returns true if the entity's has 0 health, otherwise false.
    *
