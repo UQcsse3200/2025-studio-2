@@ -98,7 +98,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         spawnSecurityCams();
         spawnButtons();
-        //spawnTraps();
+        spawnTraps();
         spawnPlatformBat();
         spawnLevelOneBatRoom();
     }
@@ -376,10 +376,23 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(volatile3, volatile3Pos,false, false);
     }
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(2,5);
-        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
-        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 90f, 1f);
-        spawnEntityAt(spikes, spawnPos, true,  true);
+        Vector2 safeSpotStart = new Vector2(2, 3);
+
+        Entity spikesLeft1 = TrapFactory.createSpikes(safeSpotStart, 90f);
+        spawnEntityAt(spikesLeft1, new GridPoint2(25,11), true,  true);
+        Entity spikesLeft2 = TrapFactory.createSpikes(safeSpotStart, 90f);
+        spawnEntityAt(spikesLeft2, new GridPoint2(25,9), true,  true);
+
+        Entity spikesDown = TrapFactory.createSpikes(safeSpotStart, 180f);
+        spawnEntityAt(spikesDown, new GridPoint2(17,9), true,  true);
+
+        Vector2 safeSpotCamera = new Vector2(24, 10);
+
+        Entity spikesUp = TrapFactory.createSpikes(safeSpotCamera, 0f);
+        spawnEntityAt(spikesUp, new GridPoint2(54,19), true,  true);
+
+        Entity spikesRight = TrapFactory.createSpikes(safeSpotCamera, 270f);
+        spawnEntityAt(spikesRight, new GridPoint2(33,35), true,  true);
     }
     private void spawnButtons() {
         Entity puzzleEntity = new Entity();

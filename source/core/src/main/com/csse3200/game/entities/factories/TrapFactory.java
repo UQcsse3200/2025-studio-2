@@ -25,43 +25,20 @@ public class TrapFactory {
      * entity by 1, and resets their position to a safe location nearby.
      * Spikes are NOT classified as an obstacle the player can hide behind, because they are very short
      *
-     * In a future update, the width will configurable based on a provided length parameter,
-     * and the trap will be able to be rotated to face up (default), right, down, or left, as a visual
-     * effect so it can be used on a variety of platforms and/or walls.
+     * In a future update, the width will configurable based on a provided length parameter.
      *
      * @param safeSpot Spot to teleport the player once they take damage
      * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 270}.
      * @return the Spike trap Entity created.
      */
     public static Entity createSpikes(Vector2 safeSpot, float rotation) {
-        return createSpikes(safeSpot, rotation, 1f);
-    }
-
-    /**
-     * Creates a basic Spike trap with configurable length and rotation.
-     * <p>
-     * The Spike trap displays in 16-pixel high x 16-pixel wide units of sprite spikes_sprite.png.
-     * It is immovable and cannot be destroyed. On collision with player (or enemy), it damages the colliding
-     * entity by 1, and resets their position to a safe location nearby.
-     * Spikes are NOT classified as an obstacle the player can hide behind, because they are very short
-     *
-     * In a future update, the width will configurable based on a provided length parameter,
-     * and the trap will be able to be rotated to face up (default), right, down, or left, as a visual
-     * effect so it can be used on a variety of platforms and/or walls.
-     *
-     * @param safeSpot Spot to teleport the player once they take damage
-     * @param rotation The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 270}.
-     * @param length The length the trap should be.
-     * @return the Spike trap Entity created.
-     */
-    public static Entity createSpikes(Vector2 safeSpot, float rotation, float length)  {
         Entity spikes = new Entity();
-        spikes.scaleWidth(length);
 
         // Set up texture
         String texture = "images/spikes_sprite.png";
         TextureRenderComponent textureComponent = new TextureRenderComponent(texture);
         textureComponent.setRotation(rotation);
+        textureComponent.setLayer(0);
         spikes.addComponent(textureComponent);
 
         // Add physics component
@@ -91,8 +68,8 @@ public class TrapFactory {
                 center.x *= 0.7f;
                 center.y *= 0.5f;
                 alignY = PhysicsComponent.AlignY.BOTTOM;
+                break;
             case 1: // Facing left
-                center.x *= 0.3f;
                 alignX = PhysicsComponent.AlignX.RIGHT;
                 break;
             case 3: // Facing right
@@ -100,6 +77,8 @@ public class TrapFactory {
                 alignX = PhysicsComponent.AlignX.LEFT;
                 break;
             default: // Facing down
+                center.y *= 0.5f;
+                alignY = PhysicsComponent.AlignY.BOTTOM;
                 break;
         }
 
