@@ -20,8 +20,7 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("crouch", this::animateCrouching);
         entity.getEvents().addListener("landed", this::animateStop);
         entity.getEvents().addListener("walkStop", this::animateStop);
-
-
+        entity.getEvents().addListener("dash", this::animateDash);
     }
 
     void animateStop() {
@@ -56,5 +55,9 @@ public class PlayerAnimationController extends Component {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
+    }
+
+    void animateDash() {
+        // DO STUFF HERE
     }
 }
