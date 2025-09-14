@@ -238,32 +238,38 @@ implements com.badlogic.gdx.InputProcessor, com.badlogic.gdx.input.GestureDetect
  int&nbsp;button)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchDown(float,float,int,int)" class="member-name-link">touchDown</a><wbr>(float&nbsp;x,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchCancelled(int,int,int,int)" class="member-name-link">touchCancelled</a><wbr>(int&nbsp;screenX,
+ int&nbsp;screenY,
+ int&nbsp;pointer,
+ int&nbsp;button)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchDown(float,float,int,int)" class="member-name-link">touchDown</a><wbr>(float&nbsp;x,
  float&nbsp;y,
  int&nbsp;pointer,
  int&nbsp;button)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchDown(int,int,int,int)" class="member-name-link">touchDown</a><wbr>(int&nbsp;screenX,
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchDown(int,int,int,int)" class="member-name-link">touchDown</a><wbr>(int&nbsp;screenX,
  int&nbsp;screenY,
  int&nbsp;pointer,
  int&nbsp;button)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchDragged(int,int,int)" class="member-name-link">touchDragged</a><wbr>(int&nbsp;screenX,
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchDragged(int,int,int)" class="member-name-link">touchDragged</a><wbr>(int&nbsp;screenX,
  int&nbsp;screenY,
  int&nbsp;pointer)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchUp(int,int,int,int)" class="member-name-link">touchUp</a><wbr>(int&nbsp;screenX,
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#touchUp(int,int,int,int)" class="member-name-link">touchUp</a><wbr>(int&nbsp;screenX,
  int&nbsp;screenY,
  int&nbsp;pointer,
  int&nbsp;button)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#zoom(float,float)" class="member-name-link">zoom</a><wbr>(float&nbsp;initialDistance,
- float&nbsp;distance)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#zoom(float,float)" class="member-name-link">zoom</a><wbr>(float&nbsp;initialDistance,
+ float&nbsp;distance)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -495,6 +501,25 @@ implements com.badlogic.gdx.InputProcessor, com.badlogic.gdx.input.GestureDetect
 <dd>
 <ul class="tag-list-long">
 <li><code>InputProcessor.touchUp(int, int, int, int)</code></li>
+</ul>
+</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="touchCancelled(int,int,int,int)">
+<h3>touchCancelled</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">touchCancelled</span><wbr><span class="parameters">(int&nbsp;screenX,
+ int&nbsp;screenY,
+ int&nbsp;pointer,
+ int&nbsp;button)</span></div>
+<dl class="notes">
+<dt>Specified by:</dt>
+<dd><code>touchCancelled</code>&nbsp;in interface&nbsp;<code>com.badlogic.gdx.InputProcessor</code></dd>
+<dt>See Also:</dt>
+<dd>
+<ul class="tag-list-long">
+<li><code>InputProcessor.touchCancelled(int, int, int, int)</code></li>
 </ul>
 </dd>
 </dl>

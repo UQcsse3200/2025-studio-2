@@ -107,7 +107,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="TerrainFactory.TerrainType.html" class="type-name-link" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">This enum should contain the different terrains in your game, e.g.</div>
+<div class="block">Enum for different game areas to specify specific requirements</div>
 </div>
 </div>
 </section>
@@ -143,10 +143,39 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createTerrain(com.csse3200.game.areas.terrain.TerrainFactory.TerrainType)" class="member-name-link">createTerrain</a><wbr>(<a href="TerrainFactory.TerrainType.html" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a>&nbsp;terrainType)</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.maps.tiled.TiledMap</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createDefaultTiles(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.math.GridPoint2)" class="member-name-link">createDefaultTiles</a><wbr>(com.badlogic.gdx.math.GridPoint2&nbsp;tileSize,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;base,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;variant1,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;variant2,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;variant3,
+ com.badlogic.gdx.math.GridPoint2&nbsp;mapSize)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Used to create/set ordering of background tiles with variants</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createForestDemoTerrain(float,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion)" class="member-name-link">createForestDemoTerrain</a><wbr>(float&nbsp;tileWorldSize,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;grass,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;grassTuft,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;rocks)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createFromTileMap(float,com.badlogic.gdx.maps.tiled.TiledMap,com.badlogic.gdx.math.GridPoint2)" class="member-name-link">createFromTileMap</a><wbr>(float&nbsp;tileWorldSize,
+ com.badlogic.gdx.maps.tiled.TiledMap&nbsp;tiledMap,
+ com.badlogic.gdx.math.GridPoint2&nbsp;tilePixelSize)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Used to generate TerrainComponent within game areas</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createTerrain(com.csse3200.game.areas.terrain.TerrainFactory.TerrainType)" class="member-name-link">createTerrain</a><wbr>(<a href="TerrainFactory.TerrainType.html" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a>&nbsp;terrainType)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Create a terrain of the given type, using the orientation of the factory.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#createTerrain(com.csse3200.game.areas.terrain.TerrainFactory.TerrainType,com.badlogic.gdx.math.GridPoint2)" class="member-name-link">createTerrain</a><wbr>(<a href="TerrainFactory.TerrainType.html" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a>&nbsp;terrainType,
+ com.badlogic.gdx.math.GridPoint2&nbsp;mapSize)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Used to generate terrainComponent within a game area.</div>
 </div>
 </div>
 </div>
@@ -208,6 +237,68 @@ loadScripts(document, 'script');</script>
 <dd><code>terrainType</code> - Terrain to create</dd>
 <dt>Returns:</dt>
 <dd>Terrain component which renders the terrain</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createFromTileMap(float,com.badlogic.gdx.maps.tiled.TiledMap,com.badlogic.gdx.math.GridPoint2)">
+<h3>createFromTileMap</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></span>&nbsp;<span class="element-name">createFromTileMap</span><wbr><span class="parameters">(float&nbsp;tileWorldSize,
+ com.badlogic.gdx.maps.tiled.TiledMap&nbsp;tiledMap,
+ com.badlogic.gdx.math.GridPoint2&nbsp;tilePixelSize)</span></div>
+<div class="block">Used to generate TerrainComponent within game areas</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tileWorldSize</code> - </dd>
+<dd><code>tiledMap</code> - </dd>
+<dd><code>tilePixelSize</code> - </dd>
+<dt>Returns:</dt>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createTerrain(com.csse3200.game.areas.terrain.TerrainFactory.TerrainType,com.badlogic.gdx.math.GridPoint2)">
+<h3>createTerrain</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></span>&nbsp;<span class="element-name">createTerrain</span><wbr><span class="parameters">(<a href="TerrainFactory.TerrainType.html" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a>&nbsp;terrainType,
+ com.badlogic.gdx.math.GridPoint2&nbsp;mapSize)</span></div>
+<div class="block">Used to generate terrainComponent within a game area. This method is now not apart of the control flow for
+ generating terrains. Should you createFromTileMap() within the game areas</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>terrainType</code> - </dd>
+<dd><code>mapSize</code> - </dd>
+<dt>Returns:</dt>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createForestDemoTerrain(float,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion)">
+<h3>createForestDemoTerrain</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></span>&nbsp;<span class="element-name">createForestDemoTerrain</span><wbr><span class="parameters">(float&nbsp;tileWorldSize,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;grass,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;grassTuft,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;rocks)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="createDefaultTiles(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.math.GridPoint2)">
+<h3>createDefaultTiles</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.maps.tiled.TiledMap</span>&nbsp;<span class="element-name">createDefaultTiles</span><wbr><span class="parameters">(com.badlogic.gdx.math.GridPoint2&nbsp;tileSize,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;base,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;variant1,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;variant2,
+ com.badlogic.gdx.graphics.g2d.TextureRegion&nbsp;variant3,
+ com.badlogic.gdx.math.GridPoint2&nbsp;mapSize)</span></div>
+<div class="block">Used to create/set ordering of background tiles with variants</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>tileSize</code> - </dd>
+<dd><code>base</code> - </dd>
+<dd><code>variant1</code> - </dd>
+<dd><code>variant2</code> - </dd>
+<dd><code>variant3</code> - </dd>
+<dd><code>mapSize</code> - </dd>
+<dt>Returns:</dt>
 </dl>
 </section>
 </li>

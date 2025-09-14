@@ -109,8 +109,8 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.badlogic.gdx.graphics.Texture,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2)" class="member-name-link">MinimapService</a><wbr>(com.badlogic.gdx.graphics.Texture&nbsp;minimapTexture,
- com.badlogic.gdx.math.Vector2&nbsp;worldSize,
- com.badlogic.gdx.math.Vector2&nbsp;origin)</code></div>
+ com.badlogic.gdx.math.Vector2&nbsp;textureTopRight,
+ com.badlogic.gdx.math.Vector2&nbsp;textureBottomLeft)</code></div>
 <div class="col-last even-row-color">
 <div class="block">Creates a new minimap service.</div>
 </div>
@@ -131,39 +131,35 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dispose()" class="member-name-link">dispose</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.scenes.scene2d.Group</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMapMarkerGroup()" class="member-name-link">getMapMarkerGroup</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../components/minimap/MinimapDisplay.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getDisplay()" class="member-name-link">getDisplay</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the map marker group.</div>
+<div class="block">Gets the minimap display.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.scenes.scene2d.Group</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMinimapMarkerGroup()" class="member-name-link">getMinimapMarkerGroup</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.graphics.Texture</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMinimapTexture()" class="member-name-link">getMinimapTexture</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the minimap marker group.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.graphics.Texture</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMinimapTexture()" class="member-name-link">getMinimapTexture</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets the texture to use for the minimap background.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.math.Vector2</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTextureBottomLeft()" class="member-name-link">getTextureBottomLeft</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.math.Vector2</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getOrigin()" class="member-name-link">getOrigin</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the position that origin of the texture will have in the world.</div>
-</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTextureTopRight()" class="member-name-link">getTextureTopRight</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>,<wbr>com.badlogic.gdx.scenes.scene2d.ui.Image&gt;</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTrackedEntities()" class="member-name-link">getTrackedEntities</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Gets a read-only view of the currently tracked entities.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.math.Vector2</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getWorldSize()" class="member-name-link">getWorldSize</a>()</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDisplay(com.csse3200.game.components.minimap.MinimapDisplay)" class="member-name-link">setDisplay</a><wbr>(<a href="../components/minimap/MinimapDisplay.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay</a>&nbsp;minimapDisplay)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the size of the game world the texture represents.</div>
+<div class="block">Sets the minimap display (to which entities are added).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMarker(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.utils.Drawable)" class="member-name-link">setMarker</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.scenes.scene2d.utils.Drawable&nbsp;drawable)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setMarker(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.ui.Image)" class="member-name-link">setMarker</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
+ com.badlogic.gdx.scenes.scene2d.ui.Image&nbsp;marker)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Updates the marker on the minimap with a new drawable.</div>
 </div>
@@ -205,14 +201,14 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <section class="detail" id="&lt;init&gt;(com.badlogic.gdx.graphics.Texture,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2)">
 <h3>MinimapService</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">MinimapService</span><wbr><span class="parameters">(com.badlogic.gdx.graphics.Texture&nbsp;minimapTexture,
- com.badlogic.gdx.math.Vector2&nbsp;worldSize,
- com.badlogic.gdx.math.Vector2&nbsp;origin)</span></div>
+ com.badlogic.gdx.math.Vector2&nbsp;textureTopRight,
+ com.badlogic.gdx.math.Vector2&nbsp;textureBottomLeft)</span></div>
 <div class="block">Creates a new minimap service.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>minimapTexture</code> - The texture to use for the minimap background.</dd>
-<dd><code>worldSize</code> - The size of the game world the texture represents. (Top Right corner)</dd>
-<dd><code>origin</code> - The position that origin of the texture will have in the world. (Bottom Left corner)</dd>
+<dd><code>textureTopRight</code> - Where texture's top right corner would be located in the world.</dd>
+<dd><code>textureBottomLeft</code> - Where texture's bottom left corner would be located in the world.</dd>
 </dl>
 </section>
 </li>
@@ -236,46 +232,40 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="getWorldSize()">
-<h3>getWorldSize</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.Vector2</span>&nbsp;<span class="element-name">getWorldSize</span>()</div>
-<div class="block">Gets the size of the game world the texture represents.</div>
+<section class="detail" id="getTextureTopRight()">
+<h3>getTextureTopRight</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.Vector2</span>&nbsp;<span class="element-name">getTextureTopRight</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>The size of the game world the texture represents.</dd>
+<dd>The position of texture's top right corner.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getOrigin()">
-<h3>getOrigin</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.Vector2</span>&nbsp;<span class="element-name">getOrigin</span>()</div>
-<div class="block">Gets the position that origin of the texture will have in the world.</div>
+<section class="detail" id="getTextureBottomLeft()">
+<h3>getTextureBottomLeft</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.Vector2</span>&nbsp;<span class="element-name">getTextureBottomLeft</span>()</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>The position that origin of the texture will have in the world.</dd>
+<dd>The position of texture's bottom left corner.</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getMinimapMarkerGroup()">
-<h3>getMinimapMarkerGroup</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.scenes.scene2d.Group</span>&nbsp;<span class="element-name">getMinimapMarkerGroup</span>()</div>
-<div class="block">Gets the minimap marker group.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>The marker group with all the markers</dd>
-</dl>
+<section class="detail" id="setDisplay(com.csse3200.game.components.minimap.MinimapDisplay)">
+<h3>setDisplay</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setDisplay</span><wbr><span class="parameters">(<a href="../components/minimap/MinimapDisplay.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay</a>&nbsp;minimapDisplay)</span></div>
+<div class="block">Sets the minimap display (to which entities are added).</div>
 </section>
 </li>
 <li>
-<section class="detail" id="getMapMarkerGroup()">
-<h3>getMapMarkerGroup</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.scenes.scene2d.Group</span>&nbsp;<span class="element-name">getMapMarkerGroup</span>()</div>
-<div class="block">Gets the map marker group.</div>
+<section class="detail" id="getDisplay()">
+<h3>getDisplay</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../components/minimap/MinimapDisplay.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay</a></span>&nbsp;<span class="element-name">getDisplay</span>()</div>
+<div class="block">Gets the minimap display.</div>
 <dl class="notes">
 <dt>Returns:</dt>
-<dd>The marker group with all the markers</dd>
+<dd>The minimap display (to which entities are added).</dd>
 </dl>
 </section>
 </li>
@@ -304,15 +294,15 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="setMarker(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.utils.Drawable)">
+<section class="detail" id="setMarker(com.csse3200.game.entities.Entity,com.badlogic.gdx.scenes.scene2d.ui.Image)">
 <h3>setMarker</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setMarker</span><wbr><span class="parameters">(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
- com.badlogic.gdx.scenes.scene2d.utils.Drawable&nbsp;drawable)</span></div>
+ com.badlogic.gdx.scenes.scene2d.ui.Image&nbsp;marker)</span></div>
 <div class="block">Updates the marker on the minimap with a new drawable.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>entity</code> - The entity whose marker to change.</dd>
-<dd><code>drawable</code> - The new drawable for the marker.</dd>
+<dd><code>marker</code> - The new drawable for the marker.</dd>
 </dl>
 </section>
 </li>

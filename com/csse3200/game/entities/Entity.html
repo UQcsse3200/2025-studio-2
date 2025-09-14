@@ -186,6 +186,16 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hashCode()" class="member-name-link">hashCode</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeComponent(com.csse3200.game.components.Component)" class="member-name-link">removeComponent</a><wbr>(<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&nbsp;component)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Remove a component from the entity.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#replaceComponent(com.csse3200.game.components.Component)" class="member-name-link">replaceComponent</a><wbr>(<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&nbsp;component)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Replace a component in the current entity.</div>
+</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#requestMoveToSafeSpot(com.badlogic.gdx.math.Vector2)" class="member-name-link">requestMoveToSafeSpot</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -431,6 +441,33 @@ loadScripts(document, 'script');</script>
 <dd><code>component</code> - The component to add. Only one component of a type can be added to an entity.</dd>
 <dt>Returns:</dt>
 <dd>Itself</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="removeComponent(com.csse3200.game.components.Component)">
+<h3>removeComponent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">removeComponent</span><wbr><span class="parameters">(<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&nbsp;component)</span></div>
+<div class="block">Remove a component from the entity.
+ Can only be called before the entity is registered in the world.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>component</code> - The component to remove.</dd>
+<dt>Returns:</dt>
+<dd>This entity.</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="replaceComponent(com.csse3200.game.components.Component)">
+<h3>replaceComponent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">replaceComponent</span><wbr><span class="parameters">(<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&nbsp;component)</span></div>
+<div class="block">Replace a component in the current entity.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>component</code> - - the component to replace</dd>
+<dt>Returns:</dt>
+<dd>This entity.</dd>
 </dl>
 </section>
 </li>
