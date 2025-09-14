@@ -87,7 +87,8 @@ public class SprintOneGameArea extends GameArea {
             "images/camera-lens.png",
             "images/tile.png",
             "images/wall.png",
-            "images/PLAYER.png"
+            "images/PLAYER.png",
+            "images/ladder.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images" +
@@ -146,6 +147,7 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         spawnBomberDrone();
         spawnDoor();
+        spawnLadder();
     }
 
     private void displayUI() {
@@ -398,6 +400,18 @@ public class SprintOneGameArea extends GameArea {
                 elevator.getEvents().trigger("deactivatePlatform");
             }
         });
+    }
+
+    private void spawnLadder() {
+        int x = 13;
+        int y = 4;
+        int height = 8;
+        for (int i = 0; i < height; i++) {
+            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            Entity ladder = LadderFactory.createStaticLadder();
+            ladder.setScale(1, 1);
+            spawnEntityAt(ladder, ladderPos, false, false);
+        }
     }
 
 
