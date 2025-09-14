@@ -434,8 +434,8 @@ public class LevelOneGameArea extends GameArea {
     }
     private void spawnSecurityCams() {
         // see the LightFactory class for more details on spawning these
-        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
-        spawnEntityAt(securityLight, new GridPoint2(48, 17), true, true);
+        Entity securityLight1 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        spawnEntityAt(securityLight1, new GridPoint2(48, 17), true, true);
     }
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();

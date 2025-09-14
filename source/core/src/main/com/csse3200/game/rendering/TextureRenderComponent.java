@@ -9,6 +9,7 @@ import com.csse3200.game.services.ServiceLocator;
 public class TextureRenderComponent extends RenderComponent {
   private Texture texture;
   private float rotation = 0f;
+  private final Vector2 origin  = new Vector2(0, 0);
 
   /**
    * @param texturePath Internal path of static texture to render.
@@ -47,6 +48,10 @@ public class TextureRenderComponent extends RenderComponent {
     return rotation;
   }
 
+  public void setOrigin(float x, float y) {
+    origin.set(x, y);
+  }
+
   /** @param texture Static texture to render. Will be scaled to the entity's scale. */
   public TextureRenderComponent(Texture texture) {
     this.texture = texture;
@@ -62,18 +67,17 @@ public class TextureRenderComponent extends RenderComponent {
     Vector2 position = entity.getPosition();
     Vector2 scale = entity.getScale();
 
+    if (origin.equals(new Vector2(0, 0))) {
+      origin.set(scale.x / 2f, scale.y / 2f);
+    }
+
     if (rotation == 0f) {
       batch.draw(texture, position.x, position.y, scale.x, scale.y);
     } else {
-      float drawX = position.x - scale.x / 2f;
-      float drawY = position.y - scale.y / 2f;
-
-      float originX = scale.x / 2f;
-      float originY = scale.y / 2f;
 
       batch.draw(texture,
-              drawX, drawY,
-              originX, originY,
+              position.x, position.y,
+              origin.x, origin.y,
               scale.x, scale.y,
               1f, 1f,
               rotation,
