@@ -157,25 +157,31 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Activates the cooldown task.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPriority()" class="member-name-link">getPriority</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#deactivate()" class="member-name-link">deactivate</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Deactivate the cooldown task, preventing it from being scheduled.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPriority()" class="member-name-link">getPriority</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the priority of this task.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#start()" class="member-name-link">start</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#start()" class="member-name-link">start</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Starts the cooldown.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stop()" class="member-name-link">stop</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Stops the cooldown task.</div>
-</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stop()" class="member-name-link">stop</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Updates the cooldown timer.</div>
+<div class="block">When the cooldown task is stopped, gravity is restored and a
+ 'cooldownEnd' event is triggered.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Advance wait task.</div>
 </div>
 </div>
 </div>
@@ -225,15 +231,22 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <h3>activate</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">activate</span>()</div>
 <div class="block">Activates the cooldown task. Typically triggered by a
- "chaseEnd" event when the drone loses the player.</div>
+ "playerLost" event.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="deactivate()">
+<h3>deactivate</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">deactivate</span>()</div>
+<div class="block">Deactivate the cooldown task, preventing it from being scheduled.
+ Typically called in response to a `playerDetected` event.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="start()">
 <h3>start</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">start</span>()</div>
-<div class="block">Starts the cooldown. Resets the timer, stops entity
- movement, disables gravity, and triggers a
+<div class="block">Starts the cooldown. Starts a wait subtask, disables gravity, and triggers a
  <code>"cooldownStart"</code> event for animations TO BE ADDED.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
@@ -247,10 +260,10 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <section class="detail" id="update()">
 <h3>update</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()</div>
-<div class="block">Updates the cooldown timer. Once the cooldown has elapsed,
+<div class="block">Advance wait task. Once the cooldown wait has elapsed,
  the entity is teleported back to its patrol start or spawn
- position, gravity is restored, and a <code>"cooldownEnd"</code>
- event is fired.</div>
+ position the cooldown task is stopped.
+ Calls deactivate() to stop task being runnable.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../../ai/tasks/Task.html#update()">update</a></code>&nbsp;in interface&nbsp;<code><a href="../../ai/tasks/Task.html" title="interface in com.csse3200.game.ai.tasks">Task</a></code></dd>
@@ -264,12 +277,12 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <h3>getPriority</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getPriority</span>()</div>
 <div class="block">Returns the priority of this task. The cooldown is only
- considered runnable while <code>active</code> is true.</div>
+ considered runnable while active is true.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../../ai/tasks/PriorityTask.html#getPriority()">getPriority</a></code>&nbsp;in interface&nbsp;<code><a href="../../ai/tasks/PriorityTask.html" title="interface in com.csse3200.game.ai.tasks">PriorityTask</a></code></dd>
 <dt>Returns:</dt>
-<dd>priority 2 when active, otherwise -1 (disabled)</dd>
+<dd>priority 5 when active, otherwise -1 (disabled)</dd>
 </dl>
 </section>
 </li>
@@ -277,8 +290,8 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <section class="detail" id="stop()">
 <h3>stop</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stop</span>()</div>
-<div class="block">Stops the cooldown task. Resets the timer so the task
- can be cleanly restarted later.</div>
+<div class="block">When the cooldown task is stopped, gravity is restored and a
+ 'cooldownEnd' event is triggered.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../../ai/tasks/Task.html#stop()">stop</a></code>&nbsp;in interface&nbsp;<code><a href="../../ai/tasks/Task.html" title="interface in com.csse3200.game.ai.tasks">Task</a></code></dd>

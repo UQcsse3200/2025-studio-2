@@ -119,13 +119,13 @@ loadScripts(document, 'script');</script>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a drone enemy that remains idle unless chasing its target.</div>
+<div class="block">Creates a drone enemy that starts idle.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createPatrollingDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2%5B%5D)" class="member-name-link">createPatrollingDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  com.badlogic.gdx.math.Vector2[]&nbsp;patrolRoute)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.</div>
+<div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when activated.</div>
 </div>
 </div>
 </div>
@@ -149,7 +149,7 @@ loadScripts(document, 'script');</script>
 <h3>createDrone</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</span></div>
-<div class="block">Creates a drone enemy that remains idle unless chasing its target.
+<div class="block">Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
  Has drone-specific animation, combat stats and chase task.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -165,7 +165,7 @@ loadScripts(document, 'script');</script>
 <h3>createPatrollingDrone</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createPatrollingDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  com.badlogic.gdx.math.Vector2[]&nbsp;patrolRoute)</span></div>
-<div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.</div>
+<div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when activated.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>target</code> - that drone pursues when chasing</dd>

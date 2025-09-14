@@ -98,7 +98,7 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">PatrolTask</span>
 <span class="extends-implements">extends <a href="../../ai/tasks/DefaultTask.html" title="class in com.csse3200.game.ai.tasks">DefaultTask</a>
 implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.csse3200.game.ai.tasks">PriorityTask</a></span></div>
-<div class="block">Task that makes an entity move through a sequence of waypoints and pause briefly at each.
+<div class="block">Task that makes an entity move through a sequence of waypoints, pausing briefly at each.
  The entity patrols back and forth along its route, reversing direction when it reaches the end,
  and repeats this indefinitely.
  Requires the entity to have a PatrolRouteComponent which defines the set of waypoints to follow.
@@ -191,7 +191,7 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stop()" class="member-name-link">stop</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Stop the current subtasks and deactivate patrol task.</div>
+<div class="block">Stop the patrol task and its current subtask</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
@@ -282,7 +282,7 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <section class="detail" id="stop()">
 <h3>stop</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stop</span>()</div>
-<div class="block">Stop the current subtasks and deactivate patrol task.</div>
+<div class="block">Stop the patrol task and its current subtask</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../../ai/tasks/Task.html#stop()">stop</a></code>&nbsp;in interface&nbsp;<code><a href="../../ai/tasks/Task.html" title="interface in com.csse3200.game.ai.tasks">Task</a></code></dd>

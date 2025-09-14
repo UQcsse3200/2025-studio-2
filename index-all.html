@@ -54,9 +54,25 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="com/csse3200/game/files/FileLoader.Location.html#ABSOLUTE" class="member-name-link">ABSOLUTE</a> - Enum constant in enum class com.csse3200.game.files.<a href="com/csse3200/game/files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/tasks/BombChaseTask.html#activate()" class="member-name-link">activate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/BombChaseTask.html" title="class in com.csse3200.game.components.tasks">BombChaseTask</a></dt>
+<dd>
+<div class="block">Activate the chase task for light triggered activation</div>
+</dd>
+<dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#activate()" class="member-name-link">activate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
+<dd>
+<div class="block">Activate the chase task, making it eligible for scheduling.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/tasks/CooldownTask.html#activate()" class="member-name-link">activate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/CooldownTask.html" title="class in com.csse3200.game.components.tasks">CooldownTask</a></dt>
 <dd>
 <div class="block">Activates the cooldown task.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/enemy/ActivationComponent.html" class="type-name-link" title="class in com.csse3200.game.components.enemy">ActivationComponent</a> - Class in <a href="com/csse3200/game/components/enemy/package-summary.html">com.csse3200.game.components.enemy</a></dt>
+<dd>
+<div class="block">This component links an enemy to a security camera by ID.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/enemy/ActivationComponent.html#%3Cinit%3E(java.lang.String)" class="member-name-link">ActivationComponent(String)</a> - Constructor for class com.csse3200.game.components.enemy.<a href="com/csse3200/game/components/enemy/ActivationComponent.html" title="class in com.csse3200.game.components.enemy">ActivationComponent</a></dt>
+<dd>
+<div class="block">Create an ActivationComponent for a specific camera</div>
 </dd>
 <dt><a href="com/csse3200/game/ai/tasks/Task.Status.html#ACTIVE" class="member-name-link">ACTIVE</a> - Enum constant in enum class com.csse3200.game.ai.tasks.<a href="com/csse3200/game/ai/tasks/Task.Status.html" title="enum class in com.csse3200.game.ai.tasks">Task.Status</a></dt>
 <dd>&nbsp;</dd>
@@ -303,10 +319,12 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/tasks/ChaseTask.html" class="type-name-link" title="class in com.csse3200.game.components.tasks">ChaseTask</a> - Class in <a href="com/csse3200/game/components/tasks/package-summary.html">com.csse3200.game.components.tasks</a></dt>
 <dd>
-<div class="block">Chases a target entity until they get too far away or line of sight is lost</div>
+<div class="block">Event-activated chase behaviour.</div>
 </dd>
-<dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#%3Cinit%3E(com.csse3200.game.entities.Entity,int,float,float)" class="member-name-link">ChaseTask(Entity, int, float, float)</a> - Constructor for class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#%3Cinit%3E(com.csse3200.game.entities.Entity,float,float)" class="member-name-link">ChaseTask(Entity, float, float)</a> - Constructor for class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
+<dd>
+<div class="block">Creates a new chase task that will pursue the given target entity</div>
+</dd>
 <dt><a href="com/csse3200/game/files/FileLoader.Location.html#CLASSPATH" class="member-name-link">CLASSPATH</a> - Enum constant in enum class com.csse3200.game.files.<a href="com/csse3200/game/files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/services/ServiceLocator.html#clear()" class="member-name-link">clear()</a> - Static method in class com.csse3200.game.services.<a href="com/csse3200/game/services/ServiceLocator.html" title="class in com.csse3200.game.services">ServiceLocator</a></dt>
@@ -533,6 +551,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/DoorControlComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/DoorControlComponent.html" title="class in com.csse3200.game.components">DoorControlComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/enemy/ActivationComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.enemy.<a href="com/csse3200/game/components/enemy/ActivationComponent.html" title="class in com.csse3200.game.components.enemy">ActivationComponent</a></dt>
+<dd>
+<div class="block">Attempts to link immediately.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/FPSDisplay.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/FPSDisplay.html" title="class in com.csse3200.game.components">FPSDisplay</a></dt>
 <dd>
 <div class="block">Creates all widgets to be drawn.</div>
@@ -657,8 +679,6 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/physics/PhysicsEngine.html#createBody(com.badlogic.gdx.physics.box2d.BodyDef)" class="member-name-link">createBody(BodyDef)</a> - Method in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/PhysicsEngine.html" title="class in com.csse3200.game.physics">PhysicsEngine</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/csse3200/game/entities/factories/ProjectileFactory.html#createBomb(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,float,float,int)" class="member-name-link">createBomb(Entity, Vector2, float, float, int)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/ProjectileFactory.html" title="class in com.csse3200.game.entities.factories">ProjectileFactory</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/entities/factories/ProjectileFactory.html#createBomb(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,float,int)" class="member-name-link">createBomb(Entity, Vector2, Vector2, float, float, int)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/ProjectileFactory.html" title="class in com.csse3200.game.entities.factories">ProjectileFactory</a></dt>
 <dd>
 <div class="block">Creates a bomb entity that falls from source position toward target</div>
@@ -700,7 +720,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/entities/factories/EnemyFactory.html#createDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createDrone(Entity, Vector2)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/EnemyFactory.html" title="class in com.csse3200.game.entities.factories">EnemyFactory</a></dt>
 <dd>
-<div class="block">Creates a drone enemy that remains idle unless chasing its target.</div>
+<div class="block">Creates a drone enemy that starts idle.</div>
 </dd>
 <dt><a href="com/csse3200/game/entities/factories/ExplosionFactory.html#createExplosion(com.badlogic.gdx.math.Vector2,float)" class="member-name-link">createExplosion(Vector2, float)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/ExplosionFactory.html" title="class in com.csse3200.game.entities.factories">ExplosionFactory</a></dt>
 <dd>
@@ -766,7 +786,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/entities/factories/EnemyFactory.html#createPatrollingDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2%5B%5D)" class="member-name-link">createPatrollingDrone(Entity, Vector2[])</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/EnemyFactory.html" title="class in com.csse3200.game.entities.factories">EnemyFactory</a></dt>
 <dd>
-<div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.</div>
+<div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when activated.</div>
 </dd>
 <dt><a href="com/csse3200/game/entities/factories/PlayerFactoryTest.html#createPlayer()" class="member-name-link">createPlayer()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/PlayerFactoryTest.html" title="class in com.csse3200.game.entities.factories">PlayerFactoryTest</a></dt>
 <dd>
@@ -889,6 +909,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Sets whether a player is in interaction range of this button
  Adds the player to the "interact" event the first time</div>
 </dd>
+<dt><a href="com/csse3200/game/components/tasks/BombChaseTask.html#deactivate()" class="member-name-link">deactivate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/BombChaseTask.html" title="class in com.csse3200.game.components.tasks">BombChaseTask</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#deactivate()" class="member-name-link">deactivate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
+<dd>
+<div class="block">Deactivate the chase task, preventing it from being scheduled.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/tasks/CooldownTask.html#deactivate()" class="member-name-link">deactivate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/CooldownTask.html" title="class in com.csse3200.game.components.tasks">CooldownTask</a></dt>
+<dd>
+<div class="block">Deactivate the cooldown task, preventing it from being scheduled.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/DeathZoneComponent.html" class="type-name-link" title="class in com.csse3200.game.components">DeathZoneComponent</a> - Class in <a href="com/csse3200/game/components/package-summary.html">com.csse3200.game.components</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/DeathZoneComponent.html#%3Cinit%3E(int,int,com.badlogic.gdx.math.Vector2)" class="member-name-link">DeathZoneComponent(int, int, Vector2)</a> - Constructor for class com.csse3200.game.components.<a href="com/csse3200/game/components/DeathZoneComponent.html" title="class in com.csse3200.game.components">DeathZoneComponent</a></dt>
@@ -967,6 +997,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/components/Component.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/Component.html" title="class in com.csse3200.game.components">Component</a></dt>
 <dd>
 <div class="block">Called when the component is disposed.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/enemy/ActivationComponent.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.components.enemy.<a href="com/csse3200/game/components/enemy/ActivationComponent.html" title="class in com.csse3200.game.components.enemy">ActivationComponent</a></dt>
+<dd>
+<div class="block">Clean up.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/FPSDisplay.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/FPSDisplay.html" title="class in com.csse3200.game.components">FPSDisplay</a></dt>
 <dd>
@@ -1463,6 +1497,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the event handler attached to this entity.</div>
 </dd>
+<dt><a href="com/csse3200/game/entities/factories/ExplosionFactory.html#getExplosionPosition(com.badlogic.gdx.math.Vector2,float)" class="member-name-link">getExplosionPosition(Vector2, float)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/ExplosionFactory.html" title="class in com.csse3200.game.entities.factories">ExplosionFactory</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/components/ColliderComponent.html#getFixture()" class="member-name-link">getFixture()</a> - Method in class com.csse3200.game.physics.components.<a href="com/csse3200/game/physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/components/CrouchingColliderComponent.html#getFixtureRef()" class="member-name-link">getFixtureRef()</a> - Method in class com.csse3200.game.physics.components.<a href="com/csse3200/game/physics/components/CrouchingColliderComponent.html" title="class in com.csse3200.game.physics.components">CrouchingColliderComponent</a></dt>
@@ -1621,7 +1657,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Computes scheduling priority</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#getPriority()" class="member-name-link">getPriority()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Get the current priority of the task.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/tasks/CooldownTask.html#getPriority()" class="member-name-link">getPriority()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/CooldownTask.html" title="class in com.csse3200.game.components.tasks">CooldownTask</a></dt>
 <dd>
 <div class="block">Returns the priority of this task.</div>
@@ -2008,6 +2046,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/components/MoveableBoxComponent.html#isLifted()" class="member-name-link">isLifted()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/MoveableBoxComponent.html" title="class in com.csse3200.game.components">MoveableBoxComponent</a></dt>
 <dd>
 <div class="block">Checks if the box is currently lifted by the player.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/enemy/ActivationComponent.html#isLinked()" class="member-name-link">isLinked()</a> - Method in class com.csse3200.game.components.enemy.<a href="com/csse3200/game/components/enemy/ActivationComponent.html" title="class in com.csse3200.game.components.enemy">ActivationComponent</a></dt>
+<dd>
+<div class="block">Getter to check camera is linked to entity</div>
 </dd>
 <dt><a href="com/csse3200/game/components/obstacles/DoorComponent.html#isLocked()" class="member-name-link">isLocked()</a> - Method in class com.csse3200.game.components.obstacles.<a href="com/csse3200/game/components/obstacles/DoorComponent.html" title="class in com.csse3200.game.components.obstacles">DoorComponent</a></dt>
 <dd>
@@ -2572,7 +2614,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/PatrolTask.html" class="type-name-link" title="class in com.csse3200.game.components.tasks">PatrolTask</a> - Class in <a href="com/csse3200/game/components/tasks/package-summary.html">com.csse3200.game.components.tasks</a></dt>
 <dd>
-<div class="block">Task that makes an entity move through a sequence of waypoints and pause briefly at each.</div>
+<div class="block">Task that makes an entity move through a sequence of waypoints, pausing briefly at each.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/PatrolTask.html#%3Cinit%3E(float)" class="member-name-link">PatrolTask(float)</a> - Constructor for class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/PatrolTask.html" title="class in com.csse3200.game.components.tasks">PatrolTask</a></dt>
 <dd>
@@ -3553,7 +3595,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Start drone attack and trigger a dropStart event on owner entity</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#start()" class="member-name-link">start()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Initialise and start movement towards target.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/tasks/CooldownTask.html#start()" class="member-name-link">start()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/CooldownTask.html" title="class in com.csse3200.game.components.tasks">CooldownTask</a></dt>
 <dd>
 <div class="block">Starts the cooldown.</div>
@@ -3599,16 +3643,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Stop attack task</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#stop()" class="member-name-link">stop()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Stop the chase behaviour and movement subtask.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/tasks/CooldownTask.html#stop()" class="member-name-link">stop()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/CooldownTask.html" title="class in com.csse3200.game.components.tasks">CooldownTask</a></dt>
 <dd>
-<div class="block">Stops the cooldown task.</div>
+<div class="block">When the cooldown task is stopped, gravity is restored and a
+ 'cooldownEnd' event is triggered.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/MovementTask.html#stop()" class="member-name-link">stop()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/MovementTask.html" title="class in com.csse3200.game.components.tasks">MovementTask</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/tasks/PatrolTask.html#stop()" class="member-name-link">stop()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/PatrolTask.html" title="class in com.csse3200.game.components.tasks">PatrolTask</a></dt>
 <dd>
-<div class="block">Stop the current subtasks and deactivate patrol task.</div>
+<div class="block">Stop the patrol task and its current subtask</div>
 </dd>
 <dt><a href="com/csse3200/game/rendering/AnimationRenderComponent.html#stopAnimation()" class="member-name-link">stopAnimation()</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/AnimationRenderComponent.html" title="class in com.csse3200.game.rendering">AnimationRenderComponent</a></dt>
 <dd>
@@ -3992,6 +4039,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/components/DisposalComponent.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/DisposalComponent.html" title="class in com.csse3200.game.components">DisposalComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/enemy/ActivationComponent.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.enemy.<a href="com/csse3200/game/components/enemy/ActivationComponent.html" title="class in com.csse3200.game.components.enemy">ActivationComponent</a></dt>
+<dd>
+<div class="block">Retries linking if unsuccessful during create().</div>
+</dd>
 <dt><a href="com/csse3200/game/components/FPSDisplay.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/FPSDisplay.html" title="class in com.csse3200.game.components">FPSDisplay</a></dt>
 <dd>
 <div class="block">Resets the text inside the FPS label to be current FPS.</div>
@@ -4035,10 +4086,12 @@ loadScripts(document, 'script');</script>
 <div class="block">Advance attack sequence when attack</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/ChaseTask.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/ChaseTask.html" title="class in com.csse3200.game.components.tasks">ChaseTask</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Update the chase behaviour each frame.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/tasks/CooldownTask.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/CooldownTask.html" title="class in com.csse3200.game.components.tasks">CooldownTask</a></dt>
 <dd>
-<div class="block">Updates the cooldown timer.</div>
+<div class="block">Advance wait task.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/tasks/MovementTask.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/MovementTask.html" title="class in com.csse3200.game.components.tasks">MovementTask</a></dt>
 <dd>&nbsp;</dd>
