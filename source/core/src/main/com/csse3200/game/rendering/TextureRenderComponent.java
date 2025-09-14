@@ -22,8 +22,29 @@ public class TextureRenderComponent extends RenderComponent {
     this.texture = ServiceLocator.getResourceService().getAsset(texture, Texture.class);
   }
 
+  /**
+   * Returns the texture image path
+   *
+   * @return the image path
+   */
+  public Texture getTexture() {
+      return texture;
+  }
+
+  /**
+   * Sets rotation of the texture
+   *
+   * @param rotation What to rotate by (0-360 degrees)
+   */
   public void setRotation(float rotation) {
     this.rotation = rotation;
+  }
+
+  /**
+   * @return Rotation degree of texture
+   */
+  public double getRotation() {
+    return rotation;
   }
 
   /** @param texture Static texture to render. Will be scaled to the entity's scale. */
@@ -44,11 +65,14 @@ public class TextureRenderComponent extends RenderComponent {
     if (rotation == 0f) {
       batch.draw(texture, position.x, position.y, scale.x, scale.y);
     } else {
+      float drawX = position.x - scale.x / 2f;
+      float drawY = position.y - scale.y / 2f;
+
       float originX = scale.x / 2f;
       float originY = scale.y / 2f;
 
       batch.draw(texture,
-              position.x, position.y,
+              drawX, drawY,
               originX, originY,
               scale.x, scale.y,
               1f, 1f,

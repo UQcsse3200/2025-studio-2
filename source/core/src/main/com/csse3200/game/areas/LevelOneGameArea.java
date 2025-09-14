@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.DoorControlComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -17,6 +18,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -31,7 +33,7 @@ public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
     private static final float WALL_WIDTH = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-
+    private static boolean keySpawned;
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -76,7 +78,8 @@ public class LevelOneGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
-            "images/volatile_platform.atlas"
+            "images/volatile_platform.atlas",
+            "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -97,6 +100,11 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnLights();
+        spawnButtons();
+        spawnTraps();
+        spawnPlatformBat();
+        spawnLevelOneBatRoom();
     }
 
     private void spawnDeathZone() {
@@ -328,6 +336,126 @@ public class LevelOneGameArea extends GameArea {
         volatile3.setScale(1.8f,0.5f);
         spawnEntityAt(volatile3, volatile3Pos,false, false);
     }
+    private void spawnTraps() {
+        GridPoint2 spawnPos =  new GridPoint2(2,5);
+        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
+        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 90f, 1f);
+        spawnEntityAt(spikes, spawnPos, true,  true);
+    }
+    private void spawnButtons() {
+        Entity puzzleEntity = new Entity();
+        ButtonManagerComponent manager = new ButtonManagerComponent();
+        puzzleEntity.addComponent(manager);
+        ServiceLocator.getEntityService().register(puzzleEntity);
+
+        Entity button2 = ButtonFactory.createButton(false, "door", "left");
+        button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
+
+        Entity button3 = ButtonFactory.createButton(false, "nothing", "left");
+        spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
+
+        Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "down", manager);
+        spawnEntityAt(button, new GridPoint2(15,7), true,  true);
+
+        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "up", manager);
+        spawnEntityAt(button4, new GridPoint2(20,4), true,  true);
+
+        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "up", manager);
+        spawnEntityAt(button5, new GridPoint2(23,4), true,  true);
+
+        //listener to spawn key when door button pushed
+        button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed && !keySpawned) {
+                spawnKey();
+                keySpawned = true;
+            }
+        });
+
+        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
+            //what to do when puzzle completed, probably player upgrade but depends
+        });
+
+    }
+    public void spawnKey() {
+        Entity key = CollectableFactory.createKey("door");
+        spawnEntityAt(key, new GridPoint2(13,17), true, true);
+    }
+    private void spawnLights() {
+        // see the LightFactory class for more details on spawning these
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
+    }
+    private void spawnPlatformBat() {
+        BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalPlatformBat = platformBatBuilder
+                .moveX(15f, 22f).moveY(4f, 4f)
+                .texture("images/flying_bat.atlas")
+                .tooltip("Beware! Bats bite and knock you back. Stay clear!",
+                        TooltipSystem.TooltipStyle.WARNING)
+                .build();
+        spawnEntityAt(horizontalPlatformBat, new GridPoint2(
+                (int) platformBatBuilder.getSpawnX(),
+                (int) platformBatBuilder.getSpawnY()), true, true);
+    }
+    private void spawnLevelOneBatRoom() {
+        int offsetX = 0;
+        int offsetY = 0;
+
+        BoxFactory.AutonomousBoxBuilder batBuilder1 = new BoxFactory.AutonomousBoxBuilder();
+        Entity lowHorizontalBat = batBuilder1
+                .moveX(3f + offsetX, 10f + offsetX).moveY(36f + offsetY, 36f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(4f).build();
+        spawnEntityAt(lowHorizontalBat, new GridPoint2(
+                        (int) batBuilder1.getSpawnX() + offsetX,
+                        (int) batBuilder1.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder2 = new BoxFactory.AutonomousBoxBuilder();
+        Entity highHorizontalBat1 = batBuilder2
+                .moveX(1f + offsetX, 10f + offsetX).moveY(46f + offsetY, 46f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .build();
+        spawnEntityAt(highHorizontalBat1, new GridPoint2(
+                        (int) batBuilder2.getSpawnX() + offsetX,
+                        (int) batBuilder2.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder3 = new BoxFactory.AutonomousBoxBuilder();
+        Entity highHorizontalBat2 = batBuilder3
+                .moveX(1f + offsetX, 10f + offsetX).moveY(53f + offsetY, 53f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(6f)
+                .build();
+        spawnEntityAt(highHorizontalBat2, new GridPoint2(
+                        (int) batBuilder3.getSpawnX() + offsetX,
+                        (int) batBuilder3.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder4 = new BoxFactory.AutonomousBoxBuilder();
+        Entity diagonalBat1 = batBuilder4
+                .moveX(5f + offsetX, 10f + offsetX).moveY(19f + offsetY, 25f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(4f)
+                .build();
+        spawnEntityAt(diagonalBat1, new GridPoint2(
+                        (int) batBuilder4.getSpawnX() + offsetX,
+                        (int) batBuilder4.getSpawnY() + offsetY),
+                true, true);
+
+        BoxFactory.AutonomousBoxBuilder batBuilder5 = new BoxFactory.AutonomousBoxBuilder();
+        Entity verticalBat1 = batBuilder5
+                .moveX(3f + offsetX, 3f + offsetX).moveY(19f + offsetY, 25f + offsetY)
+                .texture("images/flying_bat.atlas")
+                .speed(4f)
+                .build();
+        spawnEntityAt(verticalBat1, new GridPoint2(
+                        (int) batBuilder5.getSpawnX() + offsetX,
+                        (int) batBuilder5.getSpawnY() + offsetY),
+                true, true);
+    }
+
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
