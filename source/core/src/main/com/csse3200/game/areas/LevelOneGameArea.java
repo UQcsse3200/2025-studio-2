@@ -100,9 +100,9 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-        spawnLights();
+        spawnSecurityCams();
         spawnButtons();
-        spawnTraps();
+        //spawnTraps();
         spawnPlatformBat();
         spawnLevelOneBatRoom();
     }
@@ -381,10 +381,10 @@ public class LevelOneGameArea extends GameArea {
         Entity key = CollectableFactory.createKey("door");
         spawnEntityAt(key, new GridPoint2(13,17), true, true);
     }
-    private void spawnLights() {
+    private void spawnSecurityCams() {
         // see the LightFactory class for more details on spawning these
         Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
-        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
+        spawnEntityAt(securityLight, new GridPoint2(48, 17), true, true);
     }
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
