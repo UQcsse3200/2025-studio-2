@@ -24,7 +24,7 @@ public class PlayerAnimationController extends Component {
     }
 
     void animateStop() {
-        animator.stopAnimation();
+        animator.startAnimation("IDLE");
     }
 
     void animateJump() {
@@ -41,9 +41,9 @@ public class PlayerAnimationController extends Component {
 
     void animateCrouching() {
         if (actions.getIsCrouching()) {
-            animator.startAnimation("CROUCHING");
+            animator.startAnimation("CROUCH");
         } else {
-            animator.stopAnimation();
+            animator.startAnimation("IDLE");
         }
     }
 

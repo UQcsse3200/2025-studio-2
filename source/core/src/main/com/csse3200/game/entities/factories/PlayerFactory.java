@@ -52,22 +52,23 @@ public class PlayerFactory {
    * Create a player entity.
    * @return entity
    */
-  public static Entity createPlayer() {
+  public static Entity createPlayer(List<Component> componentList) {
     InputComponent inputComponent =
             ServiceLocator.getInputService().getInputFactory().createForPlayer();
 
     AnimationRenderComponent animator =
             new AnimationRenderComponent(
-                    ServiceLocator.getResourceService().getAsset("images" +
-                            "/PLAYER.atlas", TextureAtlas.class));
-    animator.addAnimation("CROUCHING", 0.1f, Animation.PlayMode.LOOP);
+                    ServiceLocator.getResourceService().getAsset("images/PLAYER.atlas", TextureAtlas.class));
+    animator.addAnimation("CROUCH", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("JUMP", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("LEFT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("RIGHT", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("IDLE", 0.2f, Animation.PlayMode.LOOP);
+
 
     Entity player =
             new Entity()
-                    .addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))
+                    /*.addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))*/
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
@@ -84,72 +85,6 @@ public class PlayerFactory {
     player
             .addComponent(animator)
             .addComponent(new PlayerAnimationController());
-
-    // --- Stamina: add component, wire sprint, and TEMP logging ---
-    StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
-    player.addComponent(stamina);
-
-// Wire sprint toggle (expects your input component to emit sprintStart/sprintStop)
-    player.getEvents().addListener("sprintStart", () -> {
-      if (!stamina.isExhausted() && stamina.getCurrentStamina() > 0) {
-        stamina.setSprinting(true);
-      }
-    });
-    player.getEvents().addListener("sprintStop", () -> stamina.setSprinting(false));
-
-// TEMP: Console logs to verify behaviour (remove before merging)
-    player.getEvents().addListener("staminaUpdate", (Integer cur, Integer max) -> {
-      Gdx.app.log("STAM", cur + "/" + max + (stamina.isExhausted() ? " (EXHAUSTED)" : ""));
-    });
-    player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
-    player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
-// --- end stamina block ---
-
-
-
-
-
-    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
-
-    player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
-    player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
-    player.getComponent(TextureRenderComponent.class).scaleEntity();
-
-    // Fixture for Player feet, used to reset jump or handle landing logic
-    Body body = player.getComponent(PhysicsComponent.class).getBody();
-
-    PolygonShape footHitbox = new PolygonShape();
-    footHitbox.setAsBox(FOOT_HITBOX_WIDTH, FOOT_HITBOX_HEIGHT, FOOT_HITBOX_OFFSET, FOOT_HITBOX_ANGLE);
-
-    FixtureDef footFixtureDef = new FixtureDef();
-    footFixtureDef.shape = footHitbox;
-    footFixtureDef.isSensor = true;
-
-    Fixture footFixture = body.createFixture(footFixtureDef);
-    footFixture.setUserData("foot");
-
-    footHitbox.dispose();
-
-    return player;
-  }
-
-  public static Entity createPlayer(List<Component> componentList) {
-    InputComponent inputComponent =
-            ServiceLocator.getInputService().getInputFactory().createForPlayer();
-
-    Entity player =
-            new Entity()
-                    .addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))
-                    .addComponent(new PhysicsComponent())
-                    .addComponent(new StandingColliderComponent())
-                    .addComponent(new CrouchingColliderComponent())
-                    .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
-                    .addComponent(new PlayerActions())
-                    .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
-                    .addComponent(new InventoryComponent())
-                    .addComponent(inputComponent)
-                    .addComponent(new PlayerStatsDisplay())
-                    .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
     for (Component component : componentList) {
       player.replaceComponent(component);
@@ -183,7 +118,11 @@ public class PlayerFactory {
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
-    player.getComponent(TextureRenderComponent.class).scaleEntity();
+    //player.getComponent(TextureRenderComponent.class).scaleEntity();
+    player.setScale(1f, (float) 1000/792);
+    AnimationRenderComponent arc =
+            player.getComponent(AnimationRenderComponent.class);
+    arc.startAnimation("IDLE");
 
     // Fixture for Player feet, used to reset jump or handle landing logic
     Body body = player.getComponent(PhysicsComponent.class).getBody();
