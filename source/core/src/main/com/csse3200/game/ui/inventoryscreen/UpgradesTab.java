@@ -7,17 +7,46 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
 
 
 public class UpgradesTab implements InventoryTabInterface {
+  // Pixel-accurate position and size for the invisible close button
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
 
+  // Base artwork height/width in pixels used to compute aspect ratio for scaling
   private static final float BASE_W = 770f;
   private static final float BASE_H = 768f;
+  // Aspect ratio of the objectives background
   private static final float BASE_ASPECT = BASE_W / BASE_H;
 
+  private final MainGameScreen screen;
+  private Entity player;
+
+  /**
+   * Creates an Upgrades tab bound to the given main game screen.
+   *
+   * @param player entity holding upgrades information
+   * @param gameScreen main game screen used to unpause and hide the pause menu
+   */
+  public UpgradesTab (Entity player, MainGameScreen gameScreen) {
+    this.screen = gameScreen;
+    this.player = player;
+  }
+
+  /**
+   * Builds the UI actor tree for the upgrades tab
+   * The background is placed using a pixel-perfect placer and scaled to two thirds
+   * of the current screen height while preserving aspect ratio. An invisible button
+   * is overlaid at a fixed pixel rectangle to act as the close hotspot
+   *
+   * @param skin UI skin used for widget construction
+   * @return a root table containing the objectives content
+   */
   @Override
   public Actor build(Skin skin) {
     float screenH = Gdx.graphics.getHeight();
@@ -27,18 +56,22 @@ public class UpgradesTab implements InventoryTabInterface {
     PixelPerfectPlacer placer = new PixelPerfectPlacer(
         new Texture(Gdx.files.internal("inventory-screen/upgrades-selected.png"))
     );
-    placer.setSize(canvasW, canvasH);
-
     Button closeButton = new Button(new Button.ButtonStyle());
-    // Button closeButton = new Button(skin); // Makes this button visible
-
     closeButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        Gdx.app.exit();
+        if (screen != null) {
+          if (screen.isPaused()) {
+            screen.togglePaused(); // unpause
+          }
+          // Update pause menu visibility to reflect paused=false (this hides it)
+          screen.togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
+        } else {
+          // No screen available: do nothing (or log)
+          Gdx.app.log("InventoryTab", "MainGameScreen was null; close ignored.");
+        }
       }
     });
-
     placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
 
     final Table root = new Table();
