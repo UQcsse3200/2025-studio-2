@@ -3,126 +3,164 @@ PLAYER.png
 	repeat: none
 DASH
 	index: 5
-	bounds: 104, 202, 32, 32
+	bounds: 70, 70, 32, 32
 DASH
 	index: 2
-	bounds: 36, 34, 32, 32
+	bounds: 138, 152, 32, 32
 DASH
 	index: 7
-	bounds: 104, 134, 32, 32
+	bounds: 206, 220, 32, 32
 DASH
 	index: 4
-	bounds: 138, 134, 32, 32
+	bounds: 138, 84, 32, 32
 DASH
 	index: 1
-	bounds: 138, 100, 32, 32
+	bounds: 206, 118, 32, 32
 DASH
 	index: 6
-	bounds: 138, 100, 32, 32
+	bounds: 206, 118, 32, 32
 DASH
 	index: 3
-	bounds: 206, 100, 32, 32
+	bounds: 138, 16, 32, 32
 HURT
 	index: 4
-	bounds: 70, 152, 32, 32
+	bounds: 36, 20, 32, 32
 HURT
 	index: 1
-	bounds: 104, 168, 32, 32
+	bounds: 70, 36, 32, 32
 HURT
 	index: 3
-	bounds: 70, 50, 32, 32
+	bounds: 172, 152, 32, 32
 HURT
 	index: 0
-	bounds: 172, 168, 32, 32
+	bounds: 206, 152, 32, 32
 HURT
 	index: 5
-	bounds: 172, 134, 32, 32
+	bounds: 206, 84, 32, 32
 HURT
 	index: 2
-	bounds: 206, 134, 32, 32
+	bounds: 104, 18, 32, 32
 IDLE
 	index: 4
-	bounds: 2, 186, 32, 48
+	bounds: 2, 154, 32, 48
 CROUCH
-	bounds: 2, 186, 32, 48
+	bounds: 2, 154, 32, 48
 JUMP
 	index: 6
-	bounds: 2, 186, 32, 48
+	bounds: 2, 154, 32, 48
 IDLE
 	index: 1
-	bounds: 36, 186, 32, 48
+	bounds: 36, 154, 32, 48
 IDLE
 	index: 2
-	bounds: 36, 186, 32, 48
+	bounds: 36, 154, 32, 48
 IDLE
 	index: 3
-	bounds: 36, 186, 32, 48
+	bounds: 36, 154, 32, 48
 JUMP
 	index: 1
-	bounds: 36, 186, 32, 48
+	bounds: 36, 154, 32, 48
+IDLELEFT
+	index: 1
+	bounds: 70, 204, 32, 48
+IDLELEFT
+	index: 3
+	bounds: 70, 204, 32, 48
+IDLELEFT
+	index: 2
+	bounds: 70, 204, 32, 48
+JUMPLEFT
+	index: 1
+	bounds: 70, 204, 32, 48
 JUMP
 	index: 2
-	bounds: 2, 136, 32, 48
+	bounds: 36, 204, 32, 48
 JUMP
 	index: 7
-	bounds: 2, 86, 32, 48
+	bounds: 2, 54, 32, 48
 IDLE
 	index: 5
-	bounds: 2, 86, 32, 48
+	bounds: 2, 54, 32, 48
 JUMP
 	index: 4
-	bounds: 36, 136, 32, 48
+	bounds: 36, 104, 32, 48
 JUMP
 	index: 3
-	bounds: 70, 186, 32, 48
+	bounds: 36, 54, 32, 48
 JUMP
 	index: 5
-	bounds: 2, 36, 32, 48
+	bounds: 104, 154, 32, 48
+JUMPLEFT
+	index: 6
+	bounds: 2, 204, 32, 48
+CROUCHLEFT
+	bounds: 2, 204, 32, 48
+IDLELEFT
+	index: 4
+	bounds: 2, 204, 32, 48
+JUMPLEFT
+	index: 3
+	bounds: 2, 104, 32, 48
+JUMPLEFT
+	index: 5
+	bounds: 70, 154, 32, 48
+JUMPLEFT
+	index: 2
+	bounds: 104, 204, 32, 48
+JUMPLEFT
+	index: 7
+	bounds: 2, 4, 32, 48
+IDLELEFT
+	index: 5
+	bounds: 2, 4, 32, 48
+JUMPLEFT
+	index: 4
+	bounds: 70, 104, 32, 48
 LEFT
 	index: 1
-	bounds: 2, 2, 32, 32
+	bounds: 104, 120, 32, 32
 LEFT
 	index: 6
-	bounds: 70, 118, 32, 32
+	bounds: 172, 220, 32, 32
 LEFT
 	index: 3
-	bounds: 70, 84, 32, 32
+	bounds: 172, 186, 32, 32
 LEFT
 	index: 8
-	bounds: 172, 202, 32, 32
+	bounds: 138, 118, 32, 32
 LEFT
 	index: 5
-	bounds: 206, 202, 32, 32
+	bounds: 172, 118, 32, 32
 LEFT
 	index: 2
-	bounds: 206, 168, 32, 32
+	bounds: 138, 50, 32, 32
 LEFT
 	index: 7
-	bounds: 172, 100, 32, 32
+	bounds: 206, 50, 32, 32
 LEFT
 	index: 4
-	bounds: 206, 66, 32, 32
+	bounds: 172, 16, 32, 32
 RIGHT
 	index: 4
-	bounds: 36, 102, 32, 32
+	bounds: 138, 220, 32, 32
 RIGHT
 	index: 1
-	bounds: 36, 68, 32, 32
+	bounds: 138, 186, 32, 32
 RIGHT
 	index: 6
-	bounds: 138, 202, 32, 32
+	bounds: 104, 86, 32, 32
 RIGHT
 	index: 3
-	bounds: 138, 168, 32, 32
+	bounds: 104, 52, 32, 32
 RIGHT
 	index: 8
-	bounds: 104, 100, 32, 32
+	bounds: 206, 186, 32, 32
 RIGHT
 	index: 5
-	bounds: 104, 66, 32, 32
+	bounds: 172, 84, 32, 32
 RIGHT
 	index: 2
-	bounds: 138, 66, 32, 32
+	bounds: 172, 50, 32, 32
 RIGHT
 	index: 7
-	bounds: 172, 66, 32, 32
+	bounds: 70, 2, 32, 32

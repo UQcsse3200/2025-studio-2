@@ -8,7 +8,7 @@ public class PlayerAnimationController extends Component {
     AnimationRenderComponent animator;
     PlayerActions actions;
     private String currentAnimation = "";
-    private Vector2 direction;
+    private int xDirection = 1;
 
     @Override
     public void create() {
@@ -24,24 +24,38 @@ public class PlayerAnimationController extends Component {
     }
 
     void animateStop() {
-        animator.startAnimation("IDLE");
+        if (xDirection == 1) {
+            animator.startAnimation("IDLE");
+        } else if (xDirection == -1) {
+            animator.startAnimation("IDLELEFT");
+        }
     }
 
     void animateJump() {
-        setAnimation("JUMP");
+        if (xDirection == 1) {
+            setAnimation("JUMP");
+        } else if (xDirection == -1) {
+            setAnimation("JUMPLEFT");
+        }
     }
 
     void animateWalk(Vector2 direction) {
         if (direction.x > 0f) {
             setAnimation("RIGHT");
+            xDirection = 1;
         } else if (direction.x < 0f) {
             setAnimation("LEFT");
+            xDirection = -1;
         }
     }
 
     void animateCrouching() {
         if (actions.getIsCrouching()) {
-            animator.startAnimation("CROUCH");
+            if (xDirection == 1) {
+                animator.startAnimation("CROUCH");
+            } else if (xDirection == -1) {
+                animator.startAnimation("CROUCHLEFT");
+            }
         } else {
             animator.startAnimation("IDLE");
         }
