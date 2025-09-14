@@ -12,7 +12,6 @@ import javax.xml.namespace.QName;
 public class SelfDestructComponent extends Component {
     private final Entity target;
     private boolean exploded =false;
-    private Vector2 spawnPosition;
 
     public SelfDestructComponent(Entity target){
         this.target=target;
