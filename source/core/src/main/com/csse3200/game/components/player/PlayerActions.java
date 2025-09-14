@@ -432,6 +432,8 @@ public class PlayerActions extends Component {
     return hasDashed;
   }
 
+  public int getJetpackFuel(){return jetpackFuel;};
+
   /**
    * Turns the gravity off/on for the player depending if cheats are on
    */
