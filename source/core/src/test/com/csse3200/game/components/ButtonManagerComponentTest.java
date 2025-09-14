@@ -49,7 +49,7 @@ public class ButtonManagerComponentTest {
     void onButtonPressed_startsTimer() {
         manager.onButtonPressed();
         manager.update();
-        assertTrue(manager.getTimeLeft() < 5f, "Puzzle timer should have started and decremented");
+        assertTrue(manager.getTimeLeft() < 15f, "Puzzle timer should have started and decremented");
     }
 
     @Test
@@ -80,7 +80,7 @@ public class ButtonManagerComponentTest {
         manager.addButton(btn2);
         manager.onButtonPressed();
 
-        when(mockTime.getDeltaTime()).thenReturn(6f);
+        when(mockTime.getDeltaTime()).thenReturn(16f);
         manager.update();
 
         verify(btn1).forceUnpress();
