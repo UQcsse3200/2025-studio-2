@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
@@ -54,6 +55,7 @@ public class InventoryTab implements InventoryTabInterface {
   private int selectedCol = 0;
   private boolean navigationEnabled = false;
   private Table currentGridTable; // Store reference for refreshing
+  private java.util.List<String> currentInstanceIds = new java.util.ArrayList<>(); // Track current slot contents
 
   /**
    * Creates an Inventory tab bound to the given main game screen.
@@ -78,6 +80,8 @@ public class InventoryTab implements InventoryTabInterface {
     if (currentGridTable != null) {
       populateGrid(currentGridTable);
     }
+    // Show tooltip for initially selected slot (0,0)
+    showTooltipForCurrentSlot();
   }
 
   /**
@@ -85,6 +89,8 @@ public class InventoryTab implements InventoryTabInterface {
    */
   public void disableNavigation() {
     this.navigationEnabled = false;
+    // Hide tooltip when navigation is disabled
+    TooltipSystem.TooltipManager.hideTooltip();
   }
 
   /**
@@ -131,6 +137,64 @@ public class InventoryTab implements InventoryTabInterface {
   }
 
   /**
+   * Gets the item ID in the currently selected slot
+   * @return the item ID (base ID like "key", "dash", etc.) or null if slot is empty
+   */
+  public String getSelectedItemId() {
+    int slotIndex = getSelectedSlotIndex();
+    if (slotIndex < currentInstanceIds.size()) {
+      return currentInstanceIds.get(slotIndex);
+    }
+    return null; // Empty slot
+  }
+
+  /**
+   * Gets the item ID in a specific slot
+   * @param row the row index (0-3)
+   * @param col the column index (0-3)
+   * @return the item ID or null if slot is empty or coordinates are invalid
+   */
+  public String getItemAt(int row, int col) {
+    if (row < 0 || row >= GRID_ROWS || col < 0 || col >= GRID_COLS) {
+      return null; // Invalid coordinates
+    }
+    int slotIndex = row * GRID_COLS + col;
+    if (slotIndex < currentInstanceIds.size()) {
+      return currentInstanceIds.get(slotIndex);
+    }
+    return null; // Empty slot
+  }
+
+  /**
+   * Checks if the currently selected slot is empty
+   * @return true if the selected slot is empty, false if it contains an item
+   */
+  public boolean isSelectedSlotEmpty() {
+    return getSelectedItemId() == null;
+  }
+
+  /**
+   * Gets a human-readable description of the currently selected item
+   * @return item description or "Empty slot" if no item
+   */
+  public String getSelectedItemDescription() {
+    String itemId = getSelectedItemId();
+    if (itemId == null) {
+      return "Empty Slot\nNo item in this slot";
+    }
+    
+    // Provide detailed descriptions for each item type
+    return switch (itemId) {
+      case "key" -> "Key\nUnlocks doors and barriers";
+      case "door" -> "Door Key\nUnlocks specific doors";  
+      case "dash" -> "Dash Upgrade\nGrants dash ability for quick movement";
+      case "glider" -> "Glider Upgrade\nAllows gliding through the air";
+      case "grapple" -> "Grapple Upgrade\nEnables grappling to distant objects";
+      default -> itemId.substring(0, 1).toUpperCase() + itemId.substring(1) + "\nUnknown item type";
+    };
+  }
+
+  /**
    * Refreshes the grid display to update selection highlighting
    */
   public void refreshGrid(Table gridTable) {
@@ -148,6 +212,14 @@ public class InventoryTab implements InventoryTabInterface {
     if (currentGridTable != null) {
       populateGrid(currentGridTable);
     }
+  }
+
+  /**
+   * Shows a tooltip for the currently selected slot
+   */
+  public void showTooltipForCurrentSlot() {
+    String itemDescription = getSelectedItemDescription();
+    TooltipSystem.TooltipManager.showTooltip(itemDescription, TooltipSystem.TooltipStyle.DEFAULT);
   }
 
   /**
@@ -223,6 +295,9 @@ public class InventoryTab implements InventoryTabInterface {
         instanceIds.add(baseId);
       }
     }
+
+    // Store the current slot contents for navigation access
+    this.currentInstanceIds = new java.util.ArrayList<>(instanceIds);
 
     // Fill grid: first all instances, then empty cells
     for (int i = 0; i < totalSlots; i++) {

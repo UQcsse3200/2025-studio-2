@@ -1,6 +1,7 @@
 package com.csse3200.game.components.inventory;
 
 import com.badlogic.gdx.Input;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 
@@ -28,18 +29,22 @@ public class InventoryNavigationComponent extends InputComponent {
             case Input.Keys.UP:
                 inventoryTab.moveSelectionUp();
                 entity.getEvents().trigger("refreshInventoryGrid");
+                showTooltipForSelectedSlot(); // Show tooltip after navigation
                 return true;
             case Input.Keys.DOWN:
                 inventoryTab.moveSelectionDown();
                 entity.getEvents().trigger("refreshInventoryGrid");
+                showTooltipForSelectedSlot(); // Show tooltip after navigation
                 return true;
             case Input.Keys.LEFT:
                 inventoryTab.moveSelectionLeft();
                 entity.getEvents().trigger("refreshInventoryGrid");
+                showTooltipForSelectedSlot(); // Show tooltip after navigation
                 return true;
             case Input.Keys.RIGHT:
                 inventoryTab.moveSelectionRight();
                 entity.getEvents().trigger("refreshInventoryGrid");
+                showTooltipForSelectedSlot(); // Show tooltip after navigation
                 return true;
             case Input.Keys.ENTER:
             case Input.Keys.SPACE:
@@ -49,6 +54,16 @@ public class InventoryNavigationComponent extends InputComponent {
             default:
                 return false;
         }
+    }
+
+    /**
+     * Shows a tooltip for the currently selected inventory slot
+     */
+    private void showTooltipForSelectedSlot() {
+        String itemDescription = inventoryTab.getSelectedItemDescription();
+        
+        // Use the tooltip system to display the item description
+        TooltipSystem.TooltipManager.showTooltip(itemDescription, TooltipSystem.TooltipStyle.DEFAULT);
     }
 
     /**
