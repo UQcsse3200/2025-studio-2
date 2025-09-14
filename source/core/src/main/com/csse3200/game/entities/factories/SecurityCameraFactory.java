@@ -49,8 +49,9 @@ public class SecurityCameraFactory {
                 LightingDefaults.START_DEG, LightingDefaults.END_DEG, angularVel);
         e.addComponent(pan);
         TextureRenderComponent tex = new TextureRenderComponent("images/camera-body.png");
+        tex.setLayer(2);
         e.addComponent(tex);
-        tex.scaleEntity();
+        e.setScale(1f, 22f / 28f);
 
 
         // panning component creates a child entity for the lens
@@ -64,7 +65,7 @@ public class SecurityCameraFactory {
                 LightingDefaults.CONE_DEG));
         lens.addComponent(new ConeDetectorComponent(target, LightingDefaults.OCCLUDER, id));
         // ensures the lens is rendered on top of the body (layer 1 by default)
-        lens.addComponent(new TextureRenderComponent("images/camera-lens.png").setLayer(2));
+        lens.addComponent(new TextureRenderComponent("images/camera-lens.png").setLayer(3));
         // change the color of the lens based off of the detection status
         lens.getEvents().addListener("targetDetected", (Entity p) ->
                 lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.DETECTED_COLOR));
@@ -82,8 +83,9 @@ public class SecurityCameraFactory {
         e.addComponent(pan);
         TextureRenderComponent tex = new TextureRenderComponent("images/camera-body.png");
         tex.setRotation(rotation);
+        tex.setLayer(2);
         e.addComponent(tex);
-        tex.scaleEntity();
+        e.setScale(1f, 22f / 28f);
 
         // panning component creates a child entity for the lens
         // the light component is added to the lens allowing it to move when the lens does
@@ -97,7 +99,7 @@ public class SecurityCameraFactory {
         lens.addComponent(new ConeDetectorComponent(target, LightingDefaults.OCCLUDER, id));
         // ensures the lens is rendered on top of the body (layer 1 by default)
         TextureRenderComponent lensTex = new TextureRenderComponent("images/camera-lens.png");
-        lensTex.setLayer(2);
+        lensTex.setLayer(3);
         lens.addComponent(lensTex);
 
         // change the color of the lens based off of the detection status
