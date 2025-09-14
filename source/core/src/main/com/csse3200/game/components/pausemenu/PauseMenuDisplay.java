@@ -29,9 +29,9 @@ public class PauseMenuDisplay extends UIComponent {
     private Table bottomButtons;
     private Entity player;
     private final InventoryTab inventoryTab;
-    private final UpgradesTab upgradesTab = new UpgradesTab();
+    private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
-    private final ObjectivesTab objectivesTab = new ObjectivesTab();
+    private final ObjectivesTab objectivesTab;
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
     private Tab currentTab = Tab.INVENTORY;
@@ -39,7 +39,9 @@ public class PauseMenuDisplay extends UIComponent {
     public PauseMenuDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.screen = screen;
         this.player = player;
-        this.inventoryTab = new InventoryTab(player);
+        this.inventoryTab = new InventoryTab(player, screen);
+        this.upgradesTab = new UpgradesTab(player, screen);
+        this.objectivesTab = new ObjectivesTab(screen);
         this.game = game;
     }
 

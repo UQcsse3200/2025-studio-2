@@ -19,15 +19,20 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for InventoryTab's grid population
- * Detect empty slots by counting Image nodes that use the slot texture
- * Filled slots are blank Containers (no Image)
+ * Tests for InventoryTab's grid population with per-instance rendering:
+ * each instance of an item occupies one filled slot (border + optional item image).
+ *
+ * We detect:
+ * - Empty slots by counting Image nodes that use the empty-slot texture
+ * - Filled slots by counting Image nodes that use the item-slot border texture
  */
 @ExtendWith(GameExtension.class)
 @ExtendWith(MockitoExtension.class)
@@ -40,78 +45,132 @@ public class InventoryTabTest {
     @Mock InventoryComponent inventory;
 
     private Texture fakeBg;
-    private Texture fakeSlot;
+    private Texture fakeEmptySlot;
+    private Texture fakeItemSlot;
+    private Texture fakeKey;
 
     @BeforeEach
     void setup() throws Exception {
-        // Default: player has an inventory
         when(player.getComponent(InventoryComponent.class)).thenReturn(inventory);
 
-        // Build tiny 2x2 RGBA textures for bg and empty slot
+        // Tiny 2x2 RGBA textures so tests don't touch disk
         fakeBg = makeTinyTex();
-        fakeSlot = makeTinyTex();
+        fakeEmptySlot = makeTinyTex();
+        fakeItemSlot = makeTinyTex();
+        fakeKey = makeTinyTex();
     }
 
     @AfterEach
     void tearDown() {
         if (fakeBg != null) fakeBg.dispose();
-        if (fakeSlot != null) fakeSlot.dispose();
+        if (fakeEmptySlot != null) fakeEmptySlot.dispose();
+        if (fakeItemSlot != null) fakeItemSlot.dispose();
+        if (fakeKey != null) fakeKey.dispose();
     }
 
     @Test
-    @DisplayName("No inventory, all 16 cells are empty images")
+    @DisplayName("Empty inventory -> all 16 empty slots")
     void emptyInventoryShowsAllEmptySlots() throws Exception {
-        when(inventory.getTotalItemCount()).thenReturn(0);
+        when(inventory.getItemsView()).thenReturn(Collections.emptyMap());
 
-        InventoryTab tab = new InventoryTab(player);
-        replacePrivateTextures(tab, fakeBg, fakeSlot);
+        InventoryTab tab = new InventoryTab(player, /*screen*/ null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(/*skin*/ null);
 
-        int emptyImages = countImagesUsingTexture(root, fakeSlot);
-        assertEquals(TOTAL_SLOTS, emptyImages, "All slots should be empty images");
+        assertEquals(TOTAL_SLOTS, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals(0, countImagesUsingTexture(root, fakeItemSlot));
     }
 
     @Test
-    @DisplayName("Partial inventory")
+    @DisplayName("Partial inventory per-instance: 5 keys -> 5 filled, 11 empty")
     void partiallyFilledInventoryCountsCorrectly() throws Exception {
-        when(inventory.getTotalItemCount()).thenReturn(5); // 5 filled, 11 empty
+        when(inventory.getItemsView()).thenReturn(Map.of("key",5));
 
-        InventoryTab tab = new InventoryTab(player);
-        replacePrivateTextures(tab, fakeBg, fakeSlot);
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
 
-        int emptyImages = countImagesUsingTexture(root, fakeSlot);
-        assertEquals(11, emptyImages, "Empty image count should be TOTAL - filled");
+        assertEquals(11, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals(5, countImagesUsingTexture(root, fakeItemSlot));
     }
 
     @Test
-    @DisplayName("Full or overflow inventory")
+    @DisplayName("Overflow inventory is clamped: 100 keys -> 16 filled, 0 empty")
     void fullInventoryShowsNoEmptySlots() throws Exception {
-        when(inventory.getTotalItemCount()).thenReturn(100); // clamped to 16
+        when(inventory.getItemsView()).thenReturn(Map.of("key", 100));
 
-        InventoryTab tab = new InventoryTab(player);
-        replacePrivateTextures(tab, fakeBg, fakeSlot);
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
 
-        int emptyImages = countImagesUsingTexture(root, fakeSlot);
-        assertEquals(0, emptyImages, "No empty images when all slots are filled");
+        assertEquals(0, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals(TOTAL_SLOTS, countImagesUsingTexture(root, fakeItemSlot));
     }
 
     @Test
-    @DisplayName("Null inventory component, all 16 cells are empty images")
+    @DisplayName("Null inventory component -> all 16 empty slots")
     void nullInventoryGracefullyShowsEmpties() throws Exception {
         when(player.getComponent(InventoryComponent.class)).thenReturn(null);
 
-        InventoryTab tab = new InventoryTab(player);
-        replacePrivateTextures(tab, fakeBg, fakeSlot);
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
 
-        int emptyImages = countImagesUsingTexture(root, fakeSlot);
-        assertEquals(TOTAL_SLOTS, emptyImages);
+        assertEquals(TOTAL_SLOTS, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals(0, countImagesUsingTexture(root, fakeItemSlot));
+    }
+
+    @Test
+    @DisplayName("Multiple item types flatten correctly: key=2, door=1 -> 3 filled, 13 empty")
+    void multipleItemsFlattenPerInstance() throws Exception {
+        // door maps to key texture in InventoryTab#getItemTexture
+        when(inventory.getItemsView()).thenReturn(Map.of("key", 2, "door", 1));
+
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
+
+        Actor root = tab.build(null);
+
+        assertEquals(13, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals( 3, countImagesUsingTexture(root, fakeItemSlot));
+    }
+
+    @Test
+    @DisplayName("Unknown item ids still show border-only filled slots")
+    void unknownItemsShowBorderOnly() throws Exception {
+        when(inventory.getItemsView()).thenReturn(Map.of("mystery", 3));
+
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
+
+        Actor root = tab.build(null);
+
+        // 3 filled (border), 13 empty; item image may be missing but border must be present
+        assertEquals(13, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals( 3, countImagesUsingTexture(root, fakeItemSlot));
+
+        // Optional: check that the key sprite wasn't used for unknown items
+        assertEquals(0, countImagesUsingTexture(root, fakeKey));
+    }
+
+    @Test
+    @DisplayName("Qualified ids use base id: 'key:door'=2 -> 2 key slots")
+    void qualifiedIdsUseBaseId() throws Exception {
+        when(inventory.getItemsView()).thenReturn(Map.of("key:door", 2));
+
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
+
+        Actor root = tab.build(null);
+
+        assertEquals(14, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals( 2, countImagesUsingTexture(root, fakeItemSlot));
+        // Two actual key images are expected as well
+        assertEquals( 2, countImagesUsingTexture(root, fakeKey));
     }
 
     // Helpers
@@ -126,20 +185,26 @@ public class InventoryTabTest {
         return t;
     }
 
-    // Swap InventoryTab's private bg/slot textures with in memory ones
-    // Uses reflection to set the final fields 'bgTex' and 'slotTx'
-    private static void replacePrivateTextures(InventoryTab tab, Texture bgTex, Texture slotTex) throws Exception {
-        setFinalField(tab, "bgTex", bgTex);
-        setFinalField(tab, "emptySlotTexture", slotTex);
+    /**
+     * Swap InventoryTab's private textures with in-memory ones so tests don't hit disk.
+     */
+    private static void replacePrivateTextures(InventoryTab tab, Texture bgTex,
+            Texture emptySlotTex, Texture itemSlotTex, Texture keyTex) throws Exception {
+        setPrivateField(tab, "bgTex", bgTex);
+        setPrivateField(tab, "emptySlotTexture", emptySlotTex);
+        setPrivateField(tab, "itemSlotTexture", itemSlotTex);
+        setPrivateField(tab, "keyTexture", keyTex);
     }
 
-    private static void setFinalField(Object target, String fieldName, Object value) throws Exception {
+    private static void setPrivateField(Object target, String fieldName, Object value) throws Exception {
         Field f = InventoryTab.class.getDeclaredField(fieldName);
         f.setAccessible(true);
         f.set(target, value);
     }
 
-    // Count Image nodes by the provided texture
+    /**
+     * Count Image nodes that use the given Texture (match by object identity).
+     */
     private static int countImagesUsingTexture(Actor root, Texture tex) {
         List<Image> images = new ArrayList<>();
         collectImages(root, images);
@@ -162,7 +227,9 @@ public class InventoryTabTest {
             out.add((Image) a);
         }
         if (a instanceof Group g) {
-            for (Actor c : g.getChildren()) collectImages(c, out);
+            for (Actor c : g.getChildren()) {
+                collectImages(c, out);
+            }
         }
     }
 }
