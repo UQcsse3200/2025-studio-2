@@ -185,9 +185,10 @@ public class SprintOneGameArea extends GameArea {
         puzzleEntity.addComponent(manager);
         ServiceLocator.getEntityService().register(puzzleEntity);
 
+
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button2, new GridPoint2(6,5), true,  true);
+        spawnEntityAt(button2, new GridPoint2(39/2 ,9/2), true,  true);
 
         Entity button3 = ButtonFactory.createButton(false, "nothing", "left");
         spawnEntityAt(button3, new GridPoint2(29,8), true,  true);
@@ -455,12 +456,12 @@ public class SprintOneGameArea extends GameArea {
         logger.info("Elevator spawned at {}", elevatorPos);
 
         // Button with tooltip
-        Entity button = ButtonFactory.createButton(false, "platform", "left");
+        Entity button = ButtonFactory.createButton(false, "platform", "down");
         button.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonPos = new GridPoint2(17, 4);
+        GridPoint2 buttonPos = new GridPoint2(25/2,11/2);
         spawnEntityAt(button, buttonPos, true, true);
         logger.info("Elevator button spawned at {}", buttonPos);
 

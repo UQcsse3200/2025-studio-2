@@ -168,7 +168,7 @@ public class ButtonComponentTest {
     void update_autoUnpressAfterTimeExpires() {
         GameTime gameTime = mock(GameTime.class);
         ServiceLocator.registerTimeSource(gameTime);
-        when(gameTime.getDeltaTime()).thenReturn(6f);
+        when(gameTime.getDeltaTime()).thenReturn(16f);
 
         buttonComponent.setType("standard");
         buttonComponent.setPuzzleManager(null);
