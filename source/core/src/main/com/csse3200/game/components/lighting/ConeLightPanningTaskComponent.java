@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -36,6 +37,15 @@ public class ConeLightPanningTaskComponent extends Component {
     // camera lens stuff
     private final Entity cameraLens;
     private static float maxLensMov = 0.3f;
+    private float rotation = 0f;
+    private Vector2 lensInitPos;
+    private Vector2 uBodyX;
+    private Vector2 lensNeutralCenter;
+
+    private static final float bodyW = 1f;
+    private static final float bodyH = 22f / 28f;
+    private static final float lensW = 9f / 28f * bodyW;
+    private static final float lensH = 9f / 22f * bodyH;
 
     public ConeLightPanningTaskComponent(float degreeStart, float degreeEnd, float angularVelocity) {
         // just to make calculations easier, normalise all values
@@ -67,8 +77,16 @@ public class ConeLightPanningTaskComponent extends Component {
     @Override
     public void create() {
         // centre lens and register it with entity service
-        cameraLens.setPosition(entity.getPosition());
+        centreLens();
+        lensInitPos = cameraLens.getPosition().cpy();
         ServiceLocator.getEntityService().register(cameraLens);
+
+        // compute rotation + local x axis once
+        rotation = (float) entity.getComponent(TextureRenderComponent.class).getRotation();
+        uBodyX = new Vector2(1f, 0f).rotateDeg(rotation);
+
+        // use the centered position as the neutral centre
+        lensNeutralCenter = lensInitPos.cpy().add(lensW / 2f, lensH / 2f);
 
         this.coneComp = cameraLens.getComponent(ConeLightComponent.class);
         if (coneComp == null) {
@@ -86,12 +104,35 @@ public class ConeLightPanningTaskComponent extends Component {
         maxLensMov *= entity.getScale().x;
     }
 
+    private void centreLens() {
+        cameraLens.setScale(lensW, lensH);
+
+        float anchorX = 0.5f;
+        float anchorY = 0.3f;
+
+        Vector2 p = entity.getPosition();
+
+        float rotDeg = 0f;
+        TextureRenderComponent tex = entity.getComponent(TextureRenderComponent.class);
+        if (tex != null) {
+            rotDeg = (float) tex.getRotation();
+        }
+        Vector2 bodyCenter = new Vector2(p.x + bodyW / 2f, p.y + bodyH / 2f);
+        Vector2 localFromCenter = new Vector2(
+                (anchorX - 0.5f) * bodyW,
+                (anchorY - 0.5f) * bodyH
+        );
+        localFromCenter.rotateDeg(rotDeg);
+        Vector2 center = bodyCenter.cpy().add(localFromCenter);
+
+        cameraLens.setPosition(center.x - lensW / 2f, center.y - lensH / 2f);
+    }
+
     @Override
     public void update() {
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
         float dir = wrapDeg(coneComp.getLight().getDirection());
         boolean detected = detectorComp.isDetected();
-        float lensCentre = entity.getPosition().x;
 
         if (!detected) {
             // PANNING MODE
@@ -143,8 +184,17 @@ public class ConeLightPanningTaskComponent extends Component {
         }
 
         // rescale lens x pos based off of the cone degree bounds and current dir
-        float lensX = lensCentre + (maxLensMov / (degreeEnd - degreeStart)) * (dir + 90);
-        cameraLens.setPosition(lensX, entity.getPosition().y);
+        // map current dir int [0..1] across the panning span, then to [-max..+max]
+        float span = degreeEnd - degreeStart;
+        float t = (dir - degreeStart) / span;
+        t = Math.max(0f, Math.min(1f, t)); // clamp to [0..1]
+
+        // slide amount along the body's local x axis
+        float slideAmount = (t - 0.5f) * maxLensMov;
+
+        // project along local x
+        Vector2 center = lensNeutralCenter.cpy().add(uBodyX.cpy().scl(slideAmount));
+        cameraLens.setPosition(center.x - lensW / 2f, center.y - lensH / 2f);
         // remember tracking state
         tracking = detected;
     }
