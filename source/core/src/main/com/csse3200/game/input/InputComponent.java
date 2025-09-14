@@ -104,6 +104,12 @@ public abstract class InputComponent extends Component
     return false;
   }
 
+  /** @see InputProcessor#touchCancelled */
+  @Override
+  public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+      return false;
+  }
+
   /**
    * Below methods are for supporting touch gestures.
    */

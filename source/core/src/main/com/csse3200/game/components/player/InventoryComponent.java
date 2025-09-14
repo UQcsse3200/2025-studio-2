@@ -15,6 +15,10 @@ public class InventoryComponent extends Component {
         this.inventory = new HashMap<>();
     }
 
+    public InventoryComponent(InventoryComponent other) {
+        this.inventory = other.inventory;
+    }
+
     /**
      * Adds an item to the inventory
      * <p>

@@ -1,0 +1,11 @@
+PLAYER.png
+size:2048,2048
+repeat:none
+CROUCHING
+bounds:796,2,792,1000
+JUMP
+bounds:2,2,792,1000
+LEFT
+bounds:796,1004,792,1000
+RIGHT
+bounds:2,1004,792,1000

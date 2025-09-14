@@ -57,7 +57,7 @@ public class KeymapTest {
     assertFalse(Keymap.setActionKeyCode("PlayerRight", Keymap.getActionKeyCode("PlayerLeft")));
 
     // Update action with valid key code
-    assertTrue(Keymap.setActionKeyCode("PlayerRight", Input.Keys.W));
+    assertTrue(Keymap.setActionKeyCode("PlayerRight", Input.Keys.DPAD_UP));
   }
 
   @Test
