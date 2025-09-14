@@ -311,9 +311,11 @@ public class PlayerActions extends Component {
 
     // Scale the direction vector to increase speed
     this.walkDirection.scl(DASH_SPEED_MULTIPLIER);
-    body.applyLinearImpulse(this.walkDirection, body.getWorldCenter(), true);
+    body.applyLinearImpulse(new Vector2(this.walkDirection.x, 0f), body.getWorldCenter(), true);
     // Unscale the direction vector to ensure player does not infinitely dash in one direction
     this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
+
+
   }
 
   /**
