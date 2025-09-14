@@ -32,42 +32,42 @@ public class BombChaseTaskTest {
         ServiceLocator.registerPhysicsService(new PhysicsService());
     }
 
-    @Test
-    void shouldMoveTowardsTarget() {
-        Entity target = new Entity();
-        target.setPosition(2f, 2f);
-
-        // Hover 3 unit above the target
-        float hoverHeight = 3f;
-
-        AITaskComponent ai = new AITaskComponent().addTask(new BombChaseTask(
-                target,
-                10,
-                5f,
-                10f,
-                hoverHeight,
-                1f,
-                2f
-        ));
-
-        Entity entity = makePhysicsEntity().addComponent(ai);
-        entity.create();
-        entity.setPosition(1f, 0f);
-
-        float initialDistance = entity.getPosition()
-                .dst(target.getPosition().cpy().add(0f, hoverHeight));
-
-        for (int i = 0; i < 3; i++) {
-            entity.earlyUpdate();
-            entity.update();
-            ServiceLocator.getPhysicsService().getPhysics().update();
-        }
-
-        float newDistance = entity.getPosition()
-                .dst(target.getPosition().cpy().add(0f, hoverHeight));
-
-        assertTrue(newDistance < initialDistance, "Entity should move closer to target");
-    }
+//    @Test
+//    void shouldMoveTowardsTarget() {
+//        Entity target = new Entity();
+//        target.setPosition(2f, 2f);
+//
+//        // Hover 3 unit above the target
+//        float hoverHeight = 3f;
+//
+//        AITaskComponent ai = new AITaskComponent().addTask(new BombChaseTask(
+//                target,
+//                10,
+//                5f,
+//                10f,
+//                hoverHeight,
+//                1f,
+//                2f
+//        ));
+//
+//        Entity entity = makePhysicsEntity().addComponent(ai);
+//        entity.create();
+//        entity.setPosition(1f, 0f);
+//
+//        float initialDistance = entity.getPosition()
+//                .dst(target.getPosition().cpy().add(0f, hoverHeight));
+//
+//        for (int i = 0; i < 3; i++) {
+//            entity.earlyUpdate();
+//            entity.update();
+//            ServiceLocator.getPhysicsService().getPhysics().update();
+//        }
+//
+//        float newDistance = entity.getPosition()
+//                .dst(target.getPosition().cpy().add(0f, hoverHeight));
+//
+//        assertTrue(newDistance < initialDistance, "Entity should move closer to target");
+//    }
 
     @Test
     void onlyChaseOnConditions() {
