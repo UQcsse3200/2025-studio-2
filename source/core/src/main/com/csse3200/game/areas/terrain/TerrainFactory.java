@@ -82,20 +82,10 @@ public class TerrainFactory {
    */
   public TerrainComponent createTerrain(TerrainType terrainType, GridPoint2 mapSize) {
     ResourceService resourceService = ServiceLocator.getResourceService();
-    TextureRegion variant1, variant2, variant3, baseTile;
+    TextureRegion variant1, variant2, variant3, base;
     switch (terrainType) {
-      case DEFAULT_ORTHO:
-        baseTile =
-                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
-        variant1 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        variant2 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        variant3 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        return createDefaultTerrain(0.5f, baseTile, variant1, variant2, variant3, mapSize);
       case SPRINT_ONE_ORTHO:
-        baseTile =
+        base =
                 new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
         variant1 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
@@ -103,7 +93,7 @@ public class TerrainFactory {
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
         variant3 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        return createSprintOneTerrain(0.5f, baseTile, variant1, variant2, variant3);
+        return createSprintOneTerrain(0.5f, base, variant1, variant2, variant3);
       case CAVE_ORTHO:
         TextureRegion orthoCave =
                 new TextureRegion(resourceService.getAsset("images/cave_1.png", Texture.class));
@@ -134,23 +124,12 @@ public class TerrainFactory {
         TextureRegion hexRocks =
             new TextureRegion(resourceService.getAsset("images/hex_grass_3.png", Texture.class));
         return createForestDemoTerrain(1f, hexGrass, hexTuft, hexRocks);
-      case TEXTURE_TEST:
-        TextureRegion wall =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
-        TextureRegion wall1 =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
-        TextureRegion wall2 =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
-        TextureRegion wall3 =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
-        return createTextureTestTerrain(0.5f, wall, wall1, wall2, wall3);
-
       default:
         return null;
     }
   }
 
-  public TerrainComponent createForestDemoTerrain(
+  private TerrainComponent createForestDemoTerrain(
       float tileWorldSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks) {
     GridPoint2 tilePixelSize = new GridPoint2(grass.getRegionWidth(), grass.getRegionHeight());
     TiledMap tiledMap = createForestDemoTiles(tilePixelSize, grass, grassTuft, rocks);
@@ -176,42 +155,7 @@ public class TerrainFactory {
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
 
-  private TerrainComponent createTextureTestTerrain(
-      float tileWorldSize, TextureRegion wall,
-      TextureRegion wall1,
-      TextureRegion wall2,
-      TextureRegion wall3) {
-    GridPoint2 tilePixelSize = new GridPoint2(wall.getRegionWidth(), wall.getRegionHeight());
-    TiledMap tiledMap = createTextureTestTiles(tilePixelSize, wall, wall1, wall2, wall3);
-    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
-    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
-  }
 
-
-  private TerrainComponent createDefaultTerrain(
-          float tileWorldSize,
-          TextureRegion baseTile,
-          TextureRegion variant1,
-          TextureRegion variant2,
-          TextureRegion variant3,
-          GridPoint2 mapSize) {
-    GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-    TiledMap tiledMap = createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
-    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
-  }
-  private TerrainComponent createDefaultTerrain(
-          float tileWorldSize,
-          TextureRegion baseTile,
-          TextureRegion variant1,
-          TextureRegion variant2,
-          TextureRegion variant3,
-          GridPoint2 mapSize) {
-    GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-    TiledMap tiledMap = createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
-    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
-  }
   private TiledMapRenderer createRenderer(TiledMap tiledMap, float tileScale) {
     switch (orientation) {
       case ORTHOGONAL:
@@ -223,6 +167,42 @@ public class TerrainFactory {
       default:
         return null;
     }
+  }
+
+  /**
+   * Used to create/set ordering of background tiles with variants
+   * @param tileSize
+   * @param base
+   * @param variant1
+   * @param variant2
+   * @param variant3
+   * @param mapSize
+   * @return
+   */
+  public TiledMap createDefaultTiles(
+      GridPoint2 tileSize,
+      TextureRegion base,
+      TextureRegion variant1,
+      TextureRegion variant2,
+      TextureRegion variant3,
+      GridPoint2 mapSize) {
+    TiledMap tiledMap = new TiledMap();
+    TerrainTile baseTile = new TerrainTile(base);
+    TerrainTile variant1Tile = new TerrainTile(variant1);
+    TerrainTile variant2Tile = new TerrainTile(variant2);
+    TerrainTile variant3Tile = new TerrainTile(variant3);
+    TiledMapTileLayer layer = new TiledMapTileLayer(mapSize.x, mapSize.y, tileSize.x, tileSize.y);
+
+    // Create base grass
+    fillTiles(layer, mapSize, baseTile);
+
+    // Add some grass and rocks
+    fillTilesAtRandom(layer, mapSize, variant1Tile, VARIANT_TILE_COUNT);
+    fillTilesAtRandom(layer, mapSize, variant2Tile, VARIANT_TILE_COUNT);
+    fillTilesAtRandom(layer, mapSize, variant3Tile, VARIANT_TILE_COUNT);
+
+    tiledMap.getLayers().add(layer);
+    return tiledMap;
   }
 
   private TiledMap createForestDemoTiles(
@@ -286,103 +266,6 @@ public class TerrainFactory {
     return tiledMap;
   }
 
-  /**
-   * Used to create/set ordering of background tiles with variants
-   * @param tileSize
-   * @param base
-   * @param variant1
-   * @param variant2
-   * @param variant3
-   * @param mapSize
-   * @return
-   */
-  public TiledMap createDefaultTiles(
-          GridPoint2 tileSize,
-          TextureRegion base,
-          TextureRegion variant1,
-          TextureRegion variant2,
-          TextureRegion variant3,
-          GridPoint2 mapSize) {
-    TiledMap tiledMap = new TiledMap();
-    TerrainTile baseTile = new TerrainTile(base);
-    TerrainTile variant1Tile = new TerrainTile(variant1);
-    TerrainTile variant2Tile = new TerrainTile(variant2);
-    TerrainTile variant3Tile = new TerrainTile(variant3);
-    TiledMapTileLayer layer = new TiledMapTileLayer(mapSize.x, mapSize.y, tileSize.x, tileSize.y);
-
-    // Create base grass
-    fillTiles(layer, mapSize, baseTile);
-
-    // Add some grass and rocks
-    fillTilesAtRandom(layer, mapSize, variant1Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, mapSize, variant2Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, mapSize, variant3Tile, VARIANT_TILE_COUNT);
-
-    tiledMap.getLayers().add(layer);
-    return tiledMap;
-  }
-
-  /**
-   * Used to create/set ordering of background tiles with variants
-   * @param tileSize
-   * @param base
-   * @param variant1
-   * @param variant2
-   * @param variant3
-   * @param mapSize
-   * @return
-   */
-  public TiledMap createDefaultTiles(
-          GridPoint2 tileSize,
-          TextureRegion base,
-          TextureRegion variant1,
-          TextureRegion variant2,
-          TextureRegion variant3,
-          GridPoint2 mapSize) {
-    TiledMap tiledMap = new TiledMap();
-    TerrainTile baseTile = new TerrainTile(base);
-    TerrainTile variant1Tile = new TerrainTile(variant1);
-    TerrainTile variant2Tile = new TerrainTile(variant2);
-    TerrainTile variant3Tile = new TerrainTile(variant3);
-    TiledMapTileLayer layer = new TiledMapTileLayer(mapSize.x, mapSize.y, tileSize.x, tileSize.y);
-
-    // Create base grass
-    fillTiles(layer, mapSize, baseTile);
-
-    // Add some grass and rocks
-    fillTilesAtRandom(layer, mapSize, variant1Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, mapSize, variant2Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, mapSize, variant3Tile, VARIANT_TILE_COUNT);
-
-    tiledMap.getLayers().add(layer);
-    return tiledMap;
-  }
-
-  private TiledMap createTextureTestTiles(
-      GridPoint2 tileSize,
-      TextureRegion wall,
-      TextureRegion variant1,
-      TextureRegion variant2,
-      TextureRegion variant3) {
-    TiledMap tiledMap = new TiledMap();
-    TerrainTile baseTile = new TerrainTile(wall);
-    TerrainTile variant1Tile = new TerrainTile(variant1);
-    TerrainTile variant2Tile = new TerrainTile(variant2);
-    TerrainTile variant3Tile = new TerrainTile(variant3);
-    TiledMapTileLayer layer = new TiledMapTileLayer(MAP_SIZE.x, MAP_SIZE.y, tileSize.x, tileSize.y);
-
-    // Create base grass
-    fillTiles(layer, MAP_SIZE, baseTile);
-
-    // Add some grass and rocks
-    fillTilesAtRandom(layer, MAP_SIZE, variant1Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, MAP_SIZE, variant2Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, MAP_SIZE, variant3Tile, VARIANT_TILE_COUNT);
-
-    tiledMap.getLayers().add(layer);
-    return tiledMap;
-  }
-
   private static void fillTilesAtRandom(
       TiledMapTileLayer layer, GridPoint2 mapSize, TerrainTile tile, int amount) {
     GridPoint2 min = new GridPoint2(0, 0);
@@ -410,16 +293,11 @@ public class TerrainFactory {
    * the same oerientation. But for demonstration purposes, the base code has the same level in 3
    * different orientations.
    */
-  /**
-   * Enum for different game areas to specify specific requirements
-   */
   public enum TerrainType {
     FOREST_DEMO,
     FOREST_DEMO_ISO,
     FOREST_DEMO_HEX,
     CAVE_ORTHO,
-    SPRINT_ONE_ORTHO,
-    DEFAULT_ORTHO,
-    TEXTURE_TEST
+    SPRINT_ONE_ORTHO
   }
 }

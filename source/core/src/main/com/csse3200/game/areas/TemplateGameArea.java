@@ -157,7 +157,6 @@ public class TemplateGameArea extends GameArea {
     private TerrainComponent createDefaultTerrain(GridPoint2 mapSize) {
         TextureRegion variant1, variant2, variant3, baseTile;
         final ResourceService resourceService = ServiceLocator.getResourceService();
-
         baseTile =
                 new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
         variant1 =
