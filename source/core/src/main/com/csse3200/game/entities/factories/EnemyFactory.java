@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
@@ -33,7 +34,7 @@ public class EnemyFactory {
             FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
 
     /**
-     * Creates a drone enemy that remains idle unless chasing its target.
+     * Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
      * Has drone-specific animation, combat stats and chase task.
      * @param target that drone pursues when chasing
      * @param spawnPos the starting world position of the enemy
@@ -42,7 +43,7 @@ public class EnemyFactory {
     public static Entity createDrone(Entity target, Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
-        if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos)); // For resets
+        if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
@@ -56,11 +57,15 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
+        ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
 
-        // When chase ends, activate cooldown
-        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+        // ENEMY ACTIVATION
+        drone.getEvents().addListener("enemyActivated", () -> {
+            chaseTask.activate(); // Priority 10
+            cooldownTask.activate(); // Priority 5, so chase > cooldown
+        });
+
         aiComponent
                 .addTask(chaseTask)
                 .addTask(cooldownTask);
@@ -73,7 +78,7 @@ public class EnemyFactory {
     }
 
     /**
-     * Same as basic drone enemy but patrols a given route, alternatively chasing a target when in range.
+     * Same as basic drone enemy but patrols a given route, alternatively chasing a target when activated.
      * @param target that drone pursues when chasing
      * @param patrolRoute contains list of waypoints in patrol route
      * @return a patrolling drone enemy entity
@@ -113,15 +118,24 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
 
+        // AI setup
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
 
         BombChaseTask chaseTask = new BombChaseTask(target, 10, 4f, 7f, 3f, 1.5f, 2f);
         BombDropTask dropTask = new BombDropTask(target, 15, 1.5f, 2f, 3f);
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        CooldownTask cooldownTask = new CooldownTask(3);
 
-        // When chase ends, activate cooldown
-        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+        // ENEMY ACTIVATION
+        drone.getEvents().addListener("enemyActivated", () -> {
+            chaseTask.activate();
+            cooldownTask.deactivate();
+        });
+        drone.getEvents().addListener("enemyDeactivated", () -> {
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
 
+        // Add tasks to AI
         aiComponent
                 .addTask(chaseTask)
                 .addTask(dropTask)
@@ -150,6 +164,11 @@ public class EnemyFactory {
                         .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
+
+        // No gravity so that drones can fly
+        PhysicsComponent phys = enemy.getComponent(PhysicsComponent.class);
+        Body body = phys.getBody();
+        body.setGravityScale(0f);
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;

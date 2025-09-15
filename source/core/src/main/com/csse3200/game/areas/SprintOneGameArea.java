@@ -10,6 +10,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -142,9 +143,9 @@ public class SprintOneGameArea extends GameArea {
         spawnLights();
         spawnButtons();
         spawnTraps();
-        spawnDrone();
+        //spawnDrone();
         spawnPatrollingDrone();
-        spawnBomberDrone();
+        //spawnBomberDrone();  // WIP do not use
         spawnDoor();
     }
 
@@ -340,21 +341,22 @@ public class SprintOneGameArea extends GameArea {
         GridPoint2 spawnTile = new GridPoint2(27, 25);
         Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-        Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
+        Entity drone = EnemyFactory.createDrone(player, spawnWorldPos)
+                        .addComponent(new ActivationComponent("1"));
         spawnEntityAt(drone, spawnTile, true, true);
 
     }
 
     private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(3, 22);
+        GridPoint2 spawnTile = new GridPoint2(3, 13);
 
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(7, 22)),
-                terrain.tileToWorldPosition(new GridPoint2(11, 22))
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
         };
-        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
-        spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
+                        .addComponent(new ActivationComponent("1"));
+        spawnEntityAt(patrolDrone, spawnTile, true, true);
     }
 
     private void spawnBomberDrone() {
