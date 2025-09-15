@@ -82,39 +82,6 @@ public class ProjectileFactory {
         return bomb;
     }
 
-    public static Entity createBomb(Entity source, Vector2 targetPosition,
-                                    float explosionDelay, float explosionRadius, int damage) {
-        Entity bomb = new Entity()
-                .addComponent(new PhysicsComponent())
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
-                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                .addComponent(new CombatStatsComponent(1, damage))
-                .addComponent(new BombComponent(explosionDelay, explosionRadius, PhysicsLayer.PLAYER))
-                .addComponent(new TextureRenderComponent("images/bomb.png")); // Use a simple texture
-
-        // Position bomb above target (will fall down)
-        Vector2 bombStartPos = targetPosition.cpy();
-        bombStartPos.y += 5f; // Start 5 units above target
-        bomb.setPosition(bombStartPos);
-
-        // Set physics for falling
-        bomb.getComponent(PhysicsComponent.class).setBodyType(BodyDef.BodyType.DynamicBody);
-        PhysicsComponent physicsComponent = bomb.getComponent(PhysicsComponent.class);
-
-        // Apply downward velocity for falling effect
-        bomb.getComponent(PhysicsComponent.class).getBody().setLinearVelocity(0, -3f);
-
-        // Set collision properties
-        bomb.getComponent(ColliderComponent.class)
-                .setSensor(false)  // Should collide with ground
-                .setDensity(2f);    // Make it heavy
-
-        // Scale the bomb
-        bomb.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(bomb, 0.5f, 0.5f);
-
-        return bomb;
-    }
 
     /**
      * Creates a simple projectile (for potential future use)
