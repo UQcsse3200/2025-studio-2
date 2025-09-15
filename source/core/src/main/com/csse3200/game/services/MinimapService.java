@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
 
 /**
@@ -19,22 +20,21 @@ import com.csse3200.game.entities.Entity;
 public class MinimapService implements Disposable {
   private final Map<Entity, Image> trackedEntities = new HashMap<>();
   private final Texture minimapTexture;
-  private final Vector2 worldSize;
-  private final Vector2 origin;
-  private final Group minimapMarkerGroup = new Group();
-  private final Group mapMarkerGroup = new Group();
+  private final Vector2 textureTopRight;
+  private final Vector2 textureBottomLeft;
+  private MinimapDisplay minimapDisplay;
 
   /**
    * Creates a new minimap service.
    *
    * @param minimapTexture The texture to use for the minimap background.
-   * @param worldSize The size of the game world the texture represents. (Top Right corner)
-   * @param origin The position that origin of the texture will have in the world. (Bottom Left corner)
+   * @param textureTopRight Where texture's top right corner would be located in the world.
+   * @param textureBottomLeft Where texture's bottom left corner would be located in the world.
    */
-  public MinimapService(Texture minimapTexture, Vector2 worldSize, Vector2 origin) {
+  public MinimapService(Texture minimapTexture, Vector2 textureTopRight, Vector2 textureBottomLeft) {
     this.minimapTexture = minimapTexture;
-    this.worldSize = worldSize;
-    this.origin = origin;
+    this.textureTopRight = textureTopRight;
+    this.textureBottomLeft = textureBottomLeft;
   }
 
   /**
@@ -47,39 +47,33 @@ public class MinimapService implements Disposable {
   }
 
   /**
-   * Gets the size of the game world the texture represents.
-   *
-   * @return The size of the game world the texture represents.
+   * @return The position of texture's top right corner.
    */
-  public Vector2 getWorldSize() {
-    return worldSize;
+  public Vector2 getTextureTopRight() {
+    return textureTopRight.cpy();
   }
 
   /**
-   * Gets the position that origin of the texture will have in the world.
-   *
-   * @return The position that origin of the texture will have in the world.
+   * @return The position of texture's bottom left corner.
    */
-  public Vector2 getOrigin() {
-    return origin;
+  public Vector2 getTextureBottomLeft() {
+    return textureBottomLeft.cpy();
   }
 
   /**
-   * Gets the minimap marker group.
-   *
-   * @return The marker group with all the markers
+   * Sets the minimap display (to which entities are added).
    */
-  public Group getMinimapMarkerGroup() {
-    return minimapMarkerGroup;
+  public void setDisplay(MinimapDisplay minimapDisplay) {
+    this.minimapDisplay = minimapDisplay;
   }
 
   /**
-   * Gets the map marker group.
+   * Gets the minimap display.
    *
-   * @return The marker group with all the markers
+   * @return The minimap display (to which entities are added).
    */
-  public Group getMapMarkerGroup() {
-    return mapMarkerGroup;
+  public MinimapDisplay getDisplay() {
+    return minimapDisplay;
   }
 
   /**
@@ -91,7 +85,7 @@ public class MinimapService implements Disposable {
   public void trackEntity(Entity entity, Image marker) {
     if (!trackedEntities.containsKey(entity)) {
       trackedEntities.put(entity, marker);
-      minimapMarkerGroup.addActor(marker);
+      minimapDisplay.addMarker(marker);
     }
   }
 
@@ -103,7 +97,7 @@ public class MinimapService implements Disposable {
   public void stopTracking(Entity entity) {
     Image marker = trackedEntities.remove(entity);
     if (marker != null) {
-      minimapMarkerGroup.addActor(marker);
+      minimapDisplay.removeMarker(marker);
     }
   }
 
@@ -111,11 +105,14 @@ public class MinimapService implements Disposable {
    * Updates the marker on the minimap with a new drawable.
    *
    * @param entity The entity whose marker to change.
-   * @param drawable The new drawable for the marker.
+   * @param marker The new drawable for the marker.
    */
-  public void setMarker(Entity entity, Drawable drawable) {
-    Image marker = trackedEntities.get(entity);
-    if (marker != null) marker.setDrawable(drawable);
+  public void setMarker(Entity entity, Image marker) {
+    Image oldMarker = trackedEntities.replace(entity, marker);
+    if (oldMarker != null) {
+      minimapDisplay.removeMarker(oldMarker);
+    }
+    minimapDisplay.addMarker(marker);
   }
 
   /**

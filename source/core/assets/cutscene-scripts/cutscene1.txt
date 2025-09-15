@@ -1,0 +1,6 @@
+#images/cutscene_test1.png
+This is a demonstration cutscene.
+{SICK}This is a sentence with cool effects.{ENDSICK}
+#images/cutscene_test2.png
+This text box is associated with a {RAINBOW}new background{ENDRAINBOW}.
+{EASE}This text box retains that background{ENDEASE}.

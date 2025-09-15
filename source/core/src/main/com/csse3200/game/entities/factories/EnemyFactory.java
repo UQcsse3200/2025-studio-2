@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -36,7 +37,7 @@ public class EnemyFactory {
             FileLoader.readClass(EnemyConfigs.class, "configs/enemies.json");
 
     /**
-     * Creates a drone enemy that remains idle unless chasing its target.
+     * Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
      * Has drone-specific animation, combat stats and chase task.
      * @param target that drone pursues when chasing
      * @param spawnPos the starting world position of the enemy
@@ -59,16 +60,14 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target);
+
+        ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
 
+        // ENEMY ACTIVATION
         drone.getEvents().addListener("enemyActivated", () -> {
-            chaseTask.activate();
-            cooldownTask.deactivate();
-        });
-        drone.getEvents().addListener("enemyDeactivated", () -> {
-            chaseTask.deactivate();
-            cooldownTask.activate();
+            chaseTask.activate(); // Priority 10
+            cooldownTask.activate(); // Priority 5, so chase > cooldown
         });
 
         // SECURITY LIGHT INTEGRATION
@@ -137,10 +136,16 @@ public class EnemyFactory {
         BombDropTask dropTask = new BombDropTask(target, 15, 1.5f, 2f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
 
-        // SECURITY LIGHT INTEGRATION
-        // When security light detects player, activate the chase task
-        // When chase ends, activate cooldown
-        drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
+        // ENEMY ACTIVATION
+        drone.getEvents().addListener("enemyActivated", () -> {
+            chaseTask.activate();
+            cooldownTask.deactivate();
+        });
+        drone.getEvents().addListener("enemyDeactivated", () -> {
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
+
         // Add tasks to AI
         aiComponent
                 .addTask(chaseTask)
@@ -205,6 +210,10 @@ public class EnemyFactory {
                         .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
+
+        PhysicsComponent phys = enemy.getComponent(PhysicsComponent.class);
+        Body body = phys.getBody();
+        body.setGravityScale(0f);
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
