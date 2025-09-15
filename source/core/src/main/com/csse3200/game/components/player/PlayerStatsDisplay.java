@@ -31,6 +31,10 @@ public class PlayerStatsDisplay extends UIComponent {
    * Progress bar used to visually show stamina
    */
   private ProgressBar staminaBar;
+  /**
+   * Image icon used in stamina bar
+   */
+  private Image staminaImage;
 
   /**
    * Creates reusable ui styles and adds actors to the stage.
@@ -49,19 +53,12 @@ public class PlayerStatsDisplay extends UIComponent {
    * @see Table for positioning options
    */
   private void addActors() {
-    Table root = new Table();
-    root.top().left();
-    root.setFillParent(true);
-
     // Create health table
     createHealthTable();
-    root.addActor(healthTable);
-
+    stage.addActor(healthTable);
     // Create stamina table
     createStaminaTable();
-    root.addActor(staminaTable);
-
-    stage.addActor(root);
+    stage.addActor(staminaTable);
   }
 
   /**
@@ -76,6 +73,10 @@ public class PlayerStatsDisplay extends UIComponent {
     staminaTable.setName("stamina");
     staminaTable.setUserObject(entity);
 
+    // Stamina image
+    float staminaSideLength = 30f;
+    staminaImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/stamina.png", Texture.class));
+
     // Stamina label
     staminaLabel = new Label("Stamina: ", skin, "large");
 
@@ -85,7 +86,8 @@ public class PlayerStatsDisplay extends UIComponent {
     staminaBar.setValue((float) staminaComp.getCurrentStamina());
 
     // Add actors to stamina table
-    staminaTable.add(staminaLabel).padLeft(5f);
+    staminaTable.add(staminaImage).size(staminaSideLength).pad(5);
+    staminaTable.add(staminaLabel);
     staminaTable.add(staminaBar);
   }
 
@@ -103,7 +105,7 @@ public class PlayerStatsDisplay extends UIComponent {
 
     // Heart image
     float heartSideLength = 30f;
-    heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/heart.png", Texture.class));
+    heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
 
     // Health text
     int health = entity.getComponent(CombatStatsComponent.class).getHealth();
@@ -143,5 +145,6 @@ public class PlayerStatsDisplay extends UIComponent {
     healthLabel.remove();
     staminaLabel.remove();
     staminaBar.remove();
+    staminaImage.remove();
   }
 }
