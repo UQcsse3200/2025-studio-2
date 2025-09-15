@@ -232,7 +232,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(gatePlatform, gatePlatformPos,false, false);
     }
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
+        Entity door = ObstacleFactory.createDoor("door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         door.getComponent(DoorComponent.class).openDoor();
