@@ -88,6 +88,7 @@ public class Renderer implements Disposable {
 
     renderService.setStage(stage);
     renderService.setDebug(debugRenderer);
+    renderService.setRenderer(this);
     resizeCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
   }
 
