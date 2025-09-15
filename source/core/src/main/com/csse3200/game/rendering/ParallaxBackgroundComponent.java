@@ -10,15 +10,19 @@ import java.util.List;
 public class ParallaxBackgroundComponent extends RenderComponent {
     private List<ParallaxLayer> layers;
     private Camera camera;
+    private float mapWidth;
+    private float mapHeight;
 
-    public ParallaxBackgroundComponent(Camera camera) {
+    public ParallaxBackgroundComponent(Camera camera, float mapWidth, float mapHeight) {
         this.camera = camera;
         this.layers = new ArrayList<>();
-        setLayer(-100); // Render behind everything
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
+        setLayer(0); // Render behind everything
     }
 
     public void addLayer(Texture texture, float factor) {
-        layers.add(new ParallaxLayer(texture, camera, factor));
+        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight));
     }
 
     @Override

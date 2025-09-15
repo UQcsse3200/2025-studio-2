@@ -9,27 +9,44 @@ public class ParallaxLayer {
     private Texture texture;
     private Camera camera;
     private float factor;
+    private float mapWidth;
+    private float mapHeight;
 
-    public ParallaxLayer(Texture texture, Camera camera, float factor) {
+    public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight) {
         this.texture = texture;
         this.camera = camera;
         this.factor = factor;
+        this.mapWidth = mapWidth;
+        this.mapHeight = mapHeight;
     }
 
     public void render(SpriteBatch batch) {
-        // Calculate parallax offset
-        float offsetX = camera.position.x * factor;
-        float offsetY = camera.position.y * factor;
+        float offsetX = (camera.position.x * factor) + 1;
+        float offsetY = (camera.position.y * factor) - 1.8f;
 
-        // Get screen dimensions
-        float screenWidth = camera.viewportWidth;
-        float screenHeight = camera.viewportHeight;
+        // Get current viewport dimensions
+        float viewportWidth = camera.viewportWidth;
+        float viewportHeight = camera.viewportHeight;
 
-        // Calculate where to draw (center the background on camera with offset)
-        float drawX = camera.position.x - screenWidth / 2 - offsetX;
-        float drawY = camera.position.y - screenHeight / 2 - offsetY;
+        // Get texture dimensions
+        float textureWidth = texture.getWidth();
+        float textureHeight = texture.getHeight();
 
-        // Draw the texture scaled to fill the entire screen
-        batch.draw(texture, drawX, drawY, screenWidth, screenHeight);
+        // Calculate scale
+        float scaleX = viewportWidth / textureWidth;
+        float scaleY = viewportHeight / textureHeight;
+
+        // Use the larger scale to ensure the texture covers the entire viewport
+        float scale = Math.max(scaleX, scaleY) * 1.5f;
+
+        // Calculate final dimensions after scaling
+        float scaledWidth = textureWidth * scale;
+        float scaledHeight = textureHeight * scale;
+
+        // Center the image on the camera
+        float drawX = camera.position.x - scaledWidth / 2 - offsetX;
+        float drawY = camera.position.y - scaledHeight / 2 - offsetY;
+
+        batch.draw(texture, drawX, drawY, scaledWidth, scaledHeight);
     }
 }
