@@ -70,6 +70,7 @@ public class TrapFactory {
                 alignY = PhysicsComponent.AlignY.BOTTOM;
                 break;
             case 1: // Facing left
+                center.x *= 0.3f;
                 alignX = PhysicsComponent.AlignX.RIGHT;
                 break;
             case 3: // Facing right
