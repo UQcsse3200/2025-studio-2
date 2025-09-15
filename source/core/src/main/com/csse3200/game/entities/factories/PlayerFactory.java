@@ -60,7 +60,9 @@ public class PlayerFactory {
             new AnimationRenderComponent(
                     ServiceLocator.getResourceService().getAsset("images/PLAYER.atlas", TextureAtlas.class));
     animator.addAnimation("CROUCH", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("CROUCHMOVE", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("CROUCHLEFT", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("CROUCHMOVELEFT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("JUMP", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("JUMPLEFT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("LEFT", 0.1f, Animation.PlayMode.LOOP);

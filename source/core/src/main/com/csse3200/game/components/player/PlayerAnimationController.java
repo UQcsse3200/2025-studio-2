@@ -30,9 +30,17 @@ public class PlayerAnimationController extends Component {
 
     void animateStop() {
         if (xDirection == 1) {
-            animator.startAnimation("IDLE");
+            if (actions.getIsCrouching()) {
+                setAnimation("CROUCHMOVE");
+            } else {
+                animator.startAnimation("IDLE");
+            }
         } else if (xDirection == -1) {
-            animator.startAnimation("IDLELEFT");
+            if (actions.getIsCrouching()) {
+                setAnimation("CROUCHMOVELEFT");
+            } else {
+                animator.startAnimation("IDLELEFT");
+            }
         }
     }
 
@@ -46,23 +54,35 @@ public class PlayerAnimationController extends Component {
 
     void animateWalk(Vector2 direction) {
         if (direction.x > 0f) {
-            setAnimation("RIGHT");
+            if (actions.getIsCrouching()) {
+                setAnimation("CROUCHMOVE");
+            } else {
+                setAnimation("RIGHT");
+            }
             xDirection = 1;
         } else if (direction.x < 0f) {
-            setAnimation("LEFT");
+            if (actions.getIsCrouching()) {
+                setAnimation("CROUCHMOVELEFT");
+            } else {
+                setAnimation("LEFT");
+            }
             xDirection = -1;
         }
     }
 
     void animateCrouching() {
-        if (actions.getIsCrouching()) {
+        if (!actions.getIsCrouching()) {
             if (xDirection == 1) {
                 setAnimation("CROUCH");
             } else if (xDirection == -1) {
                 setAnimation("CROUCHLEFT");
             }
         } else {
-            setAnimation("IDLE");
+            if (xDirection == 1) {
+                setAnimation("IDLE");
+            } else if (xDirection == -1) {
+                setAnimation("IDLELEFT");
+            }
         }
     }
 
