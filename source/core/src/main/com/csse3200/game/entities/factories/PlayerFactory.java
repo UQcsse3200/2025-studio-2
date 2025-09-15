@@ -81,6 +81,10 @@ public class PlayerFactory {
                     .addComponent(new PlayerEffectComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
+    // Added test key to inventory for testing tooltip system (safe to remove)
+    InventoryComponent inventory = player.getComponent(InventoryComponent.class);
+    inventory.addItem("key");
+
     player
             .addComponent(animator)
             .addComponent(new PlayerAnimationController());

@@ -93,6 +93,12 @@ public class BombComponent extends Component {
             }
             logger.debug("Bomb landed, starting countdown");
         }
+
+        // Bomb has hit the player
+        if (PhysicsLayer.contains(PhysicsLayer.PLAYER, other.getFilterData().categoryBits)) {
+            // explode right away
+            explode();
+        }
     }
 
     /** Toggle visibility for blinking effect */

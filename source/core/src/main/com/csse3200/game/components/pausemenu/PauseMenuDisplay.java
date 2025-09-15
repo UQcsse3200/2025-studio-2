@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.screens.MainGameScreen;
@@ -32,6 +33,7 @@ public class PauseMenuDisplay extends UIComponent {
     private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
     private final ObjectivesTab objectivesTab;
+    private InventoryNavigationComponent navigationComponent;
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
     private Tab currentTab = Tab.INVENTORY;
@@ -48,6 +50,16 @@ public class PauseMenuDisplay extends UIComponent {
     @Override
     public void create() {
         super.create();
+
+        // Initialize the navigation component
+        navigationComponent = new InventoryNavigationComponent(inventoryTab);
+        entity.addComponent(navigationComponent);
+        
+        // Wire up the navigation component with the inventory tab
+        inventoryTab.setNavigationComponent(navigationComponent);
+
+        // Add event listeners for navigation
+        entity.getEvents().addListener("refreshInventoryGrid", () -> refreshInventoryGrid());
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -116,8 +128,26 @@ public class PauseMenuDisplay extends UIComponent {
     }
 
     public void setTab(Tab tab) {
+        // Disable navigation on the old tab
+        if (currentTab == Tab.INVENTORY) {
+            navigationComponent.disableNavigation();
+            // Only unregister if the menu is visible (input component was registered)
+            if (rootTable.isVisible()) {
+                ServiceLocator.getInputService().unregister(navigationComponent);
+            }
+        }
+        
         this.currentTab = tab;
         updateTabContent();
+        
+        // Enable navigation on the new tab if it's inventory
+        if (currentTab == Tab.INVENTORY) {
+            navigationComponent.enableNavigation();
+            // Only register if the menu is visible
+            if (rootTable.isVisible()) {
+                ServiceLocator.getInputService().register(navigationComponent);
+            }
+        }
     }
 
     private void updateTabContent() {
@@ -142,6 +172,24 @@ public class PauseMenuDisplay extends UIComponent {
 
         if (visible) {
             rootTable.toFront();
+            // Enable navigation and register input component when the pause menu becomes visible
+            if (currentTab == Tab.INVENTORY) {
+                navigationComponent.enableNavigation();
+                ServiceLocator.getInputService().register(navigationComponent);
+            }
+        } else {
+            // Disable navigation and unregister input component when the pause menu is hidden
+            navigationComponent.disableNavigation();
+            ServiceLocator.getInputService().unregister(navigationComponent);
+        }
+    }
+
+    /**
+     * Refreshes the inventory grid to update selection highlighting
+     */
+    private void refreshInventoryGrid() {
+        if (currentTab == Tab.INVENTORY) {
+            inventoryTab.refreshGrid();
         }
     }
 

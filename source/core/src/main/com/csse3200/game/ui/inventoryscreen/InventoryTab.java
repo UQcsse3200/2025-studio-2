@@ -1,6 +1,7 @@
 package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -37,6 +38,9 @@ public class InventoryTab implements InventoryTabInterface {
 
   private final Texture itemSlotTexture = new Texture(Gdx.files.internal("inventory-screen/item-slot.png"));
   private final Texture keyTexture = new Texture(Gdx.files.internal("images/key.png"));
+  
+  // Create a simple selection highlight texture (will be created programmatically)
+  private final Texture selectionHighlight;
 
   private static final Rect GRID_PX = new Rect(371, 247, 586, 661);
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
@@ -44,6 +48,10 @@ public class InventoryTab implements InventoryTabInterface {
   private static final int GRID_ROWS = 4;
   private static final int GRID_COLS = 4;
   private static final float SLOT_PADDING = 10f;
+
+  private Table currentGridTable; // Store reference for refreshing
+  private java.util.List<String> currentInstanceIds = new java.util.ArrayList<>(); // Track current slot contents
+  private com.csse3200.game.components.inventory.InventoryNavigationComponent navigationComponent;
 
   /**
    * Creates an Inventory tab bound to the given main game screen.
@@ -54,6 +62,87 @@ public class InventoryTab implements InventoryTabInterface {
   public InventoryTab(Entity player, MainGameScreen gameScreen) {
     this.player = player;
     this.screen = gameScreen;
+    
+    // Create a simple highlight texture programmatically
+    this.selectionHighlight = createSelectionHighlightTexture();
+  }
+
+  /**
+   * Gets the item description for a specific slot index
+   * @param slotIndex the slot index (0-based, row-major order)
+   * @return the item description or "Empty Slot" if no item
+   */
+  public String getItemDescriptionAt(int slotIndex) {
+    String itemId = getItemAt(slotIndex);
+    if (itemId == null) {
+      return "Empty Slot\nNo item in this slot";
+    }
+    
+    // Provide detailed descriptions for each item type
+    return switch (itemId) {
+      case "key" -> "Key\nUnlocks doors and barriers";
+      case "door" -> "Door Key\nUnlocks specific doors";  
+      case "dash" -> "Dash Upgrade\nGrants dash ability for quick movement";
+      case "glider" -> "Glider Upgrade\nAllows gliding through the air";
+      case "grapple" -> "Grapple Upgrade\nEnables grappling to distant objects";
+      default -> itemId.substring(0, 1).toUpperCase() + itemId.substring(1) + "\nUnknown item type";
+    };
+  }
+
+  /**
+   * Gets the item ID at a specific slot index
+   * @param slotIndex the slot index (0-based, row-major order)
+   * @return the item ID or null if slot is empty
+   */
+  public String getItemAt(int slotIndex) {
+    if (slotIndex >= 0 && slotIndex < currentInstanceIds.size()) {
+      return currentInstanceIds.get(slotIndex);
+    }
+    return null; // Empty slot
+  }
+
+  /**
+   * Gets the item ID in a specific slot
+   * @param row the row index (0-3)
+   * @param col the column index (0-3)
+   * @return the item ID or null if slot is empty or coordinates are invalid
+   */
+  public String getItemAt(int row, int col) {
+    if (row < 0 || row >= GRID_ROWS || col < 0 || col >= GRID_COLS) {
+      return null; // Invalid coordinates
+    }
+    int slotIndex = row * GRID_COLS + col;
+    if (slotIndex < currentInstanceIds.size()) {
+      return currentInstanceIds.get(slotIndex);
+    }
+    return null; // Empty slot
+  }
+
+  /**
+   * Sets the navigation component that provides selection state
+   */
+  public void setNavigationComponent(com.csse3200.game.components.inventory.InventoryNavigationComponent navigationComponent) {
+    this.navigationComponent = navigationComponent;
+  }
+
+  /**
+   * Refreshes the grid display to update selection highlighting
+   */
+  public void refreshGrid(Table gridTable) {
+    if (gridTable != null) {
+      populateGrid(gridTable);
+    } else if (currentGridTable != null) {
+      populateGrid(currentGridTable);
+    }
+  }
+
+  /**
+   * Refreshes the current grid display
+   */
+  public void refreshGrid() {
+    if (currentGridTable != null) {
+      populateGrid(currentGridTable);
+    }
   }
 
   /**
@@ -90,6 +179,7 @@ public class InventoryTab implements InventoryTabInterface {
     placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
 
     Table gridTable = new Table();
+    this.currentGridTable = gridTable; // Store reference for refreshing
     placer.addOverlay(gridTable, GRID_PX);
     populateGrid(gridTable);
 
@@ -129,8 +219,18 @@ public class InventoryTab implements InventoryTabInterface {
       }
     }
 
+    // Store the current slot contents for navigation access
+    this.currentInstanceIds = new java.util.ArrayList<>(instanceIds);
+
     // Fill grid: first all instances, then empty cells
     for (int i = 0; i < totalSlots; i++) {
+      int currentRow = i / GRID_COLS;
+      int currentCol = i % GRID_COLS;
+      boolean isSelected = navigationComponent != null && 
+                          navigationComponent.isNavigationEnabled() && 
+                          (currentRow == navigationComponent.getSelectedRow() && 
+                           currentCol == navigationComponent.getSelectedCol());
+      
       if (i < instanceIds.size()) {
         // FILLED: slot border + item image (if available)
         Stack stack = new Stack();
@@ -149,12 +249,30 @@ public class InventoryTab implements InventoryTabInterface {
           Gdx.app.log("InventoryTab", "No sprite for item '" + instanceIds.get(i) + "'; showing border-only slot.");
         }
 
+        // Add selection highlight if this slot is selected
+        if (isSelected) {
+          Image highlight = new Image(selectionHighlight);
+          highlight.setScaling(Scaling.fit);
+          stack.addActor(highlight);
+        }
+
         gridTable.add(stack);
       } else {
         // Empty item slot
+        Stack stack = new Stack();
+        
         Image emptySlotImage = new Image(emptySlotTexture);
         emptySlotImage.setScaling(Scaling.fit);
-        gridTable.add(emptySlotImage);
+        stack.addActor(emptySlotImage);
+        
+        // Add selection highlight if this empty slot is selected
+        if (isSelected) {
+          Image highlight = new Image(selectionHighlight);
+          highlight.setScaling(Scaling.fit);
+          stack.addActor(highlight);
+        }
+        
+        gridTable.add(stack);
       }
 
       if ((i + 1) % GRID_COLS == 0) {
@@ -196,6 +314,41 @@ public class InventoryTab implements InventoryTabInterface {
   }
 
   /**
+   * Creates a selection highlight texture programmatically.
+   * This creates a semi-transparent yellow border overlay.
+   */
+  private Texture createSelectionHighlightTexture() {
+    int size = 64; // Size of the highlight texture
+    Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+    
+    // Create a yellow border with transparency
+    pixmap.setColor(1f, 1f, 0f, 0.8f); // Yellow with 80% opacity
+    
+    // Draw border (outline only)
+    int borderWidth = 4;
+    
+    // Top and bottom borders
+    for (int x = 0; x < size; x++) {
+      for (int y = 0; y < borderWidth; y++) {
+        pixmap.drawPixel(x, y); // Top border
+        pixmap.drawPixel(x, size - 1 - y); // Bottom border
+      }
+    }
+    
+    // Left and right borders
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < borderWidth; x++) {
+        pixmap.drawPixel(x, y); // Left border
+        pixmap.drawPixel(size - 1 - x, y); // Right border
+      }
+    }
+    
+    Texture texture = new Texture(pixmap);
+    pixmap.dispose();
+    return texture;
+  }
+
+  /**
    * Disposes all textures owned by this tab
    */
   public void dispose() {
@@ -203,5 +356,6 @@ public class InventoryTab implements InventoryTabInterface {
     emptySlotTexture.dispose();
     itemSlotTexture.dispose();
     keyTexture.dispose();
+    selectionHighlight.dispose();
   }
 }
