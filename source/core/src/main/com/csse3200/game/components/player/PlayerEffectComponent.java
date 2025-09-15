@@ -6,8 +6,7 @@ import com.crashinvaders.vfx.VfxManager;
 import com.crashinvaders.vfx.effects.ChromaticAberrationEffect;
 
 /**
- * Adds a screen-wide glitch effect when the player toggles their adrenaline ability.
- * The effect is temporary and will be removed after a short duration.
+ * Adds a screen-wide effect applied depending on player's event listeners.
  */
 public class PlayerEffectComponent extends Component {
   private final ChromaticAberrationEffect chromaticAberration = new ChromaticAberrationEffect(7);
@@ -23,6 +22,17 @@ public class PlayerEffectComponent extends Component {
     VfxManager vfxService = ServiceLocator.getVfxService();
 
     vfxService.addEffect(chromaticAberration);
+
+    // To make this time based for eg, you can use
+    // Timer.schedule(new Timer.Task() {
+    //   @Override
+    //   public void run() {
+    //     vfxService.removeEffect(chromaticAberration);
+    //   }
+    // }, duration);
+    // But do note that you will need to cancel this timer in some way if
+    // this function is called again, otherwise the effect's duaration will
+    // NOT be extended.
   }
 
   @Override
