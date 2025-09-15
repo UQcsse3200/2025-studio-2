@@ -59,8 +59,6 @@ public class MainGameScreen extends ScreenAdapter {
   private final LightingEngine lightingEngine;
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
-  private Entity player = null;
-  private CombatStatsComponent combatStatsComponent = null;
 
   // Camera follow parameters
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
@@ -163,8 +161,6 @@ public class MainGameScreen extends ScreenAdapter {
           oldArea.dispose();
           oldArea = null;
         }
-
-        updatePlayerEntity();
       }
     });
   }
@@ -190,15 +186,14 @@ public class MainGameScreen extends ScreenAdapter {
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
-  private void updatePlayerEntity() {
+  private Entity getPlayer() {
     Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
     for (Entity entity : entities) {
       if (entity.getComponent(PlayerActions.class) != null) {
-        player = entity;
-        combatStatsComponent = player.getComponent(CombatStatsComponent.class);
-        break;
+        return entity;
       }
     }
+    return null;
   }
 
   /**
@@ -206,10 +201,8 @@ public class MainGameScreen extends ScreenAdapter {
    * The camera only moves when the player is near the edge of the screen.
    */
   private void updateCameraFollow() {
-    if (player == null || combatStatsComponent == null || combatStatsComponent.isDead()) {
-      updatePlayerEntity();
-      if (player == null) return;
-    }
+    Entity player = getPlayer();
+    if (player == null) return;
 
     final Camera camera = renderer.getCamera().getCamera();
     final Vector2 playerPosition = player.getPosition();
