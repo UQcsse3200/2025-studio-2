@@ -1,8 +1,10 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.SelfDestructComponent;
@@ -40,7 +42,7 @@ public class EnemyFactory {
      * @param spawnPos the starting world position of the enemy
      * @return drone enemy entity
      */
-    public static Entity createDrone(Entity target, Vector2 spawnPos, Entity securityLight) {
+    public static Entity createDrone(Entity target, Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos)); // For resets
@@ -57,12 +59,20 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target, 10, 3f, 4f);
+        ChaseTask chaseTask = new ChaseTask(target);
         CooldownTask cooldownTask = new CooldownTask(3f);
+
+        drone.getEvents().addListener("enemyActivated", () -> {
+            chaseTask.activate();
+            cooldownTask.deactivate();
+        });
+        drone.getEvents().addListener("enemyDeactivated", () -> {
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
 
         // SECURITY LIGHT INTEGRATION
         // When security light detects player, activate chasing
-        securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
 
         // When chase ends, activate cooldown
         drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
@@ -83,13 +93,15 @@ public class EnemyFactory {
      * @param patrolRoute contains list of waypoints in patrol route
      * @return a patrolling drone enemy entity
      */
-    public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute, Entity securityLight) {
-        Entity drone = createDrone(target, patrolRoute[0], securityLight);
+    public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
+        Entity drone = createDrone(target, patrolRoute[0] );
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
 
         aiComponent.addTask(new PatrolTask(1f));
+
+
 
         return drone;
     }
@@ -101,7 +113,7 @@ public class EnemyFactory {
      * @param spawnPos the starting world position of the enemy
      * @return a bomber drone entity
      */
-    public static Entity createBomberDrone(Entity target, Vector2 spawnPos, Entity securityLight) {
+    public static Entity createBomberDrone(Entity target, Vector2 spawnPos) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
@@ -127,8 +139,6 @@ public class EnemyFactory {
 
         // SECURITY LIGHT INTEGRATION
         // When security light detects player, activate the chase task
-        securityLight.getEvents().addListener("targetDetected", entity -> chaseTask.activate());
-
         // When chase ends, activate cooldown
         drone.getEvents().addListener("chaseEnd", cooldownTask::activate);
         // Add tasks to AI
@@ -144,7 +154,7 @@ public class EnemyFactory {
         return drone;
     }
 
-    public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos, Entity securityLight){
+    public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
         drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
@@ -153,10 +163,10 @@ public class EnemyFactory {
         AnimationRenderComponent animator=
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
-        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.LOOP);
-        animator.addAnimation("float",0.1f,Animation.PlayMode.LOOP);
+        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.NORMAL);
+        animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
 
-        animator.addAnimation("explode",0.08f,Animation.PlayMode.LOOP);
+        animator.addAnimation("bomb_effect",0.08f,Animation.PlayMode.NORMAL);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
@@ -165,19 +175,19 @@ public class EnemyFactory {
                 .addComponent(new SelfDestructComponent(target));
 
         AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask= new ChaseTask(target,10,3f,4f);
-
-        securityLight.getEvents().addListener("targetDetected", entity->chaseTask.activate());
+        ChaseTask chaseTask= new ChaseTask(target);
 
         aiComponent.addTask(chaseTask);
+        chaseTask.activate();
 
-        AnimationRenderComponent arc= drone.getComponent(AnimationRenderComponent.class);
-        arc.scaleEntity();
-        arc.startAnimation("float");
+        animator.scaleEntity();
+        animator.startAnimation("float");
         return drone;
 
 
+
     }
+
 
     /**
      * Creates a base enemy entity with a minimal, reusable set of components that all enemies share

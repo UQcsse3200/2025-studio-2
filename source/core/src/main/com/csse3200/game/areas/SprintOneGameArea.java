@@ -128,10 +128,12 @@ public class SprintOneGameArea extends GameArea {
         spawnButtons();
         spawnTraps();
         spawnDrone();
+        spawnSelfDestructDrone();
         spawnPatrollingDrone();
         //spawnBomberDrone();
         spawnDoor();
         displayUI();
+
 
     }
     @Override
@@ -312,6 +314,12 @@ public class SprintOneGameArea extends GameArea {
                         .addComponent(new ActivationComponent("1")); // Link enemy to security camera
         spawnEntityAt(drone, spawnTile, true, true);
 
+    }
+    private void spawnSelfDestructDrone(){
+        GridPoint2 spawnTile =new GridPoint2(7,10);
+        Vector2 spawnPos= terrain.tileToWorldPosition(spawnTile);
+        Entity selfDrone =EnemyFactory.createSelfDestructionDrone(getPlayer(),spawnPos);
+        spawnEntityAt( selfDrone, spawnTile, false, true);
     }
 
     private void spawnPatrollingDrone() {

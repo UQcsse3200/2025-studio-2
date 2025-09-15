@@ -320,16 +320,19 @@ public class ForestGameArea extends GameArea {
   }
 
   private void spawnButtons() {
-    Entity button = ButtonFactory.createButton(false, "platform");
+    Entity button = ButtonFactory.createButton(false, "platform","left");
     button.addComponent(new TooltipSystem.TooltipComponent("Platform Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button, new GridPoint2(25,15), true,  true);
 
-    Entity button2 = ButtonFactory.createButton(false, "door");
+    Entity button2 = ButtonFactory.createButton(false, "door","right");
     button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
     spawnEntityAt(button2, new GridPoint2(15,15), true,  true);
 
-    Entity button3 = ButtonFactory.createButton(false, "nothing");
+    Entity button3 = ButtonFactory.createButton(false, "nothing", "up");
     spawnEntityAt(button3, new GridPoint2(25,23), true,  true);
+
+    Entity button4 = ButtonFactory.createButton(false, "nothing", "down");
+    spawnEntityAt(button4, new GridPoint2(15,7), true,  true);
 
     //listener to spawn key when door button pushed
     button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -348,7 +351,7 @@ public class ForestGameArea extends GameArea {
   }
 
   public void spawnDoor() {
-      Entity door = ObstacleFactory.createDoor("door");
+      Entity door = ObstacleFactory.createDoor("door",this,"sprint1");
       door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
       spawnEntityAt(door, new GridPoint2(3,10), true, true);
   }
@@ -371,7 +374,7 @@ public class ForestGameArea extends GameArea {
     GridPoint2 spawnTile = new GridPoint2(2, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity drone = EnemyFactory.createDrone(getPlayer(), spawnWorldPos,securityLight ); // pass world pos here
+    Entity drone = EnemyFactory.createDrone(getPlayer(), spawnWorldPos ); // pass world pos here
     spawnEntityAt(drone, spawnTile, true, true);
 
   }
@@ -384,7 +387,7 @@ public class ForestGameArea extends GameArea {
             terrain.tileToWorldPosition(new GridPoint2(6, 11)),
             terrain.tileToWorldPosition(new GridPoint2(8, 11))
     };
-    Entity patrolDrone = EnemyFactory.createPatrollingDrone(getPlayer(), patrolRoute, securityLight);
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(getPlayer(), patrolRoute);
     spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
   }
 
@@ -392,15 +395,11 @@ public class ForestGameArea extends GameArea {
     GridPoint2 spawnTile = new GridPoint2(3, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity bomberDrone = EnemyFactory.createBomberDrone(getPlayer(), spawnWorldPos, securityLight);
+    Entity bomberDrone = EnemyFactory.createBomberDrone(getPlayer(), spawnWorldPos);
     spawnEntityAt(bomberDrone, spawnTile, true, true);
   }
 
-  private void spawnSelfDestructDrone(){
-    GridPoint2 spawnTile =new GridPoint2(4,11);
-    Vector2 spawnPos= terrain.tileToWorldPosition(spawnTile);
-    Entity selfDrone =EnemyFactory.createSelfDestructionDrone(getPlayer(),spawnPos,securityLight);
-    spawnEntityAt( selfDrone, spawnTile, false, true);
+  private void spawnSelfDestructDrone() {
   }
 
   private void playMusic() {
