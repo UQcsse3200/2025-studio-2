@@ -32,7 +32,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private final int UP_KEY = Keymap.getActionKeyCode("PlayerUp");
   private final int DOWN_KEY = Keymap.getActionKeyCode("PlayerDown");
   private final int ENTER_CHEAT_KEY = Keymap.getActionKeyCode("Enter");
-  private final int GRAPPLE_KEY = Keymap.getActionKeyCode("Grapple");
+  private final int GLIDE_KEY = Keymap.getActionKeyCode("Glide");
   private int[] CHEAT_INPUT_HISTORY = new int[4];
   private int cheatPosition = 0;
   private Boolean cheatsOn = false;
@@ -57,7 +57,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
-      triggerGlideEvent(true);
       return true;
     } else if (keycode == LEFT_KEY) {
       walkDirection.add(Vector2Utils.LEFT);
@@ -82,6 +81,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == RESET_KEY) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
+    } else if (keycode == GLIDE_KEY) {
+      triggerGlideEvent(true);
     }
     // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
     else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
@@ -147,7 +148,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
      } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
               entity.getEvents().trigger("sprintStop");
               return true;
-      } else if (keycode == JUMP_KEY) {
+      } else if (keycode == GLIDE_KEY) {
 
         triggerGlideEvent(false);
       }
