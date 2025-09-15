@@ -72,10 +72,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       triggerGlideEvent(true);
       return true;
     } else if (keycode == LEFT_KEY) {
-      walkDirection.add(Vector2Utils.LEFT);
-      triggerWalkEvent();
+        this.onLadder = false;
+        walkDirection.add(Vector2Utils.LEFT);
+        triggerWalkEvent();
       return true;
     } else if (keycode == RIGHT_KEY) {
+        this.onLadder = false;
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
       return true;
@@ -298,10 +300,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private Boolean inFrontOfLadder(Array<Entity> ladders) {
     for (Entity ladder : ladders) {
-      if (ladder.getPosition().x - entity.getPosition().x <= 0.5f
-              && ladder.getPosition().x - entity.getPosition().x >= -0.5f
-              && ladder.getPosition().y - entity.getPosition().y <= 0.5f
-              && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
+      if (ladder.getPosition().x - entity.getPosition().x <= 0.25f
+              && ladder.getPosition().x - entity.getPosition().x >= -0.25f
+              && ladder.getPosition().y - entity.getPosition().y <= 0.25f
+              && ladder.getPosition().y - entity.getPosition().y >= -0.25f) {
         this.onLadder = true;
         entity.getEvents().trigger("gravityForPlayerOff");
         return true;
@@ -313,5 +315,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   public Boolean getOnLadder() {
     return this.onLadder;
+  }
+
+  public void setOnLadder (boolean set) {
+      this.onLadder = set;
   }
 }

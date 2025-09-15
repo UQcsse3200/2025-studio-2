@@ -18,6 +18,7 @@ import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.ObjectContactListener;
@@ -409,7 +410,7 @@ public class SprintOneGameArea extends GameArea {
         for (int i = 0; i < height; i++) {
             GridPoint2 ladderPos = new GridPoint2(x, (y + i));
             Entity ladder = LadderFactory.createStaticLadder();
-            ladder.setScale(1, 1);
+            ladder.setScale(0.5f, 1);
             spawnEntityAt(ladder, ladderPos, false, false);
         }
     }
