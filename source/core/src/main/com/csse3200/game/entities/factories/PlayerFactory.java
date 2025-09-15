@@ -67,6 +67,9 @@ public class PlayerFactory {
     animator.addAnimation("RIGHT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("IDLE", 0.2f, Animation.PlayMode.LOOP);
     animator.addAnimation("IDLELEFT", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("DASH", 0.2f, Animation.PlayMode.LOOP);
+    // Uncomment when Bruce adds DASHLEFT to the atlas
+//    animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
 
 
     Entity player =

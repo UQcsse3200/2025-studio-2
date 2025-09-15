@@ -72,6 +72,14 @@ public class PlayerAnimationController extends Component {
     }
 
     void animateDash() {
-        // DO STUFF HERE
+        if (xDirection == 1) {
+            animator.startAnimation("DASH");
+        } else {
+            // Make DASHLEFT when bruce adds it to the atlas
+            animator.startAnimation("DASH");
+//            animator.startAnimation("DASHLEFT");
+        }
+
+        animator.startAnimation("IDLE");
     }
 }
