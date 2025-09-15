@@ -163,6 +163,11 @@ public class LevelOneGameArea extends GameArea {
         Entity gateFloor = FloorFactory.createStaticFloor();
         gateFloor.setScale(5f, 0.8f);
         spawnEntityAt(gateFloor, gateFloorPos, false, false);
+
+        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
+        Entity puzzleGround = FloorFactory.createStaticFloor();
+        puzzleGround.setScale(16,2);
+        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
     }
 
 
@@ -324,10 +329,10 @@ public class LevelOneGameArea extends GameArea {
         moving1.setScale(2f,0.5f);
         spawnEntityAt(moving1, moving1Pos,false, false);
 
-        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
-        Entity puzzleGround = PlatformFactory.createStaticPlatform();
-        puzzleGround.setScale(16,2);
-        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
+//        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
+//        Entity puzzleGround = PlatformFactory.createStaticPlatform();
+//        puzzleGround.setScale(16,2);
+//        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
 
         GridPoint2 removeThis1 = new GridPoint2(48,35);
         Entity removeThis = PlatformFactory.createStaticPlatform();
