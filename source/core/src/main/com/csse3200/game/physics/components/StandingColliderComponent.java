@@ -9,13 +9,15 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 public class StandingColliderComponent extends ColliderComponent {
     private Fixture fixture;
     private static Vector2 OFFSET = new Vector2(0.9f, 0.5f);
+    private final float BOX_WIDTH = 0.3f;
+    private final float BOX_HEIGHT = 0.5f;
 
     @Override
     public void create() {
         Body body = entity.getComponent(PhysicsComponent.class).getBody();
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.3f, 0.5f, OFFSET, 0f);
+        shape.setAsBox(BOX_WIDTH, BOX_HEIGHT, OFFSET, 0f);
 
         FixtureDef def = new FixtureDef();
         def.shape = shape;
@@ -28,6 +30,9 @@ public class StandingColliderComponent extends ColliderComponent {
         shape.dispose();
     }
 
+    /**
+     * Allows the player's collision fixture to be retrieved
+     */
     public Fixture getFixtureRef() {
         return fixture;
     }
