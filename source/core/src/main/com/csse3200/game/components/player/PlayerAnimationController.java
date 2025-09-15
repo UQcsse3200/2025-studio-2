@@ -28,7 +28,10 @@ public class PlayerAnimationController extends Component {
         oldPlayerHealth = entity.getComponent(CombatStatsComponent.class).getHealth();
     }
 
-    void animateStop() {
+    /**
+     * stop the player's current animation and return to idle
+     */
+    public void animateStop() {
         if (xDirection == 1) {
             if (actions.getIsCrouching()) {
                 setAnimation("CROUCHMOVE");
@@ -44,7 +47,10 @@ public class PlayerAnimationController extends Component {
         }
     }
 
-    void animateJump() {
+    /**
+     * starts the player's jump animation
+     */
+    public void animateJump() {
         if (xDirection == 1) {
             setAnimation("JUMP");
         } else if (xDirection == -1) {
@@ -52,7 +58,10 @@ public class PlayerAnimationController extends Component {
         }
     }
 
-    void animateWalk(Vector2 direction) {
+    /**
+     * starts the player's walk animation
+     */
+    public void animateWalk(Vector2 direction) {
         if (direction.x > 0f) {
             if (actions.getIsCrouching()) {
                 setAnimation("CROUCHMOVE");
@@ -70,7 +79,10 @@ public class PlayerAnimationController extends Component {
         }
     }
 
-    void animateCrouching() {
+    /**
+     * starts the player's crouching animation
+     */
+    public void animateCrouching() {
         if (!actions.getIsCrouching()) {
             if (xDirection == 1) {
                 setAnimation("CROUCH");
@@ -96,7 +108,10 @@ public class PlayerAnimationController extends Component {
         }
     }
 
-    void animateDash() {
+    /**
+     * starts the player's dash animation
+     */
+    public void animateDash() {
         if (xDirection == 1) {
             setAnimation("DASH");
         } else {
@@ -109,7 +124,10 @@ public class PlayerAnimationController extends Component {
 //        animator.startAnimation("IDLE");
     }
 
-    void animateHurt() {
+    /**
+     * starts the player's hurt animation
+     */
+    public void animateHurt() {
         if (xDirection == 1) {
             setAnimation("HURT");
         } else {
