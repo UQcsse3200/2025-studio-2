@@ -4,8 +4,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 
@@ -13,9 +15,22 @@ import com.csse3200.game.ui.UIComponent;
  * A ui component for displaying player stats, e.g. health.
  */
 public class PlayerStatsDisplay extends UIComponent {
-  Table table;
+  Table healthTable;
   private Image heartImage;
   private Label healthLabel;
+
+  /**
+   * Table used for storing all UI actors related to stamina bar
+   */
+  private Table staminaTable;
+  /**
+   * Stamina label
+   */
+  private Label staminaLabel;
+  /**
+   * Progress bar used to visually show stamina
+   */
+  private ProgressBar staminaBar;
 
   /**
    * Creates reusable ui styles and adds actors to the stage.
@@ -34,12 +49,57 @@ public class PlayerStatsDisplay extends UIComponent {
    * @see Table for positioning options
    */
   private void addActors() {
-    table = new Table();
-    table.top().left();
-    table.setFillParent(true);
-    table.padTop(45f).padLeft(5f);
-    table.setName("health");
-    table.setUserObject(entity);
+    Table root = new Table();
+    root.top().left();
+    root.setFillParent(true);
+
+    // Create health table
+    createHealthTable();
+    root.addActor(healthTable);
+
+    // Create stamina table
+    createStaminaTable();
+    root.addActor(staminaTable);
+
+    stage.addActor(root);
+  }
+
+  /**
+   * Helper method that creates and sets up the initial stamina table
+   */
+  private void createStaminaTable() {
+    // Create stamina table
+    staminaTable = new Table();
+    staminaTable.top().left();
+    staminaTable.setFillParent(true);
+    staminaTable.padTop(90f).padLeft(5f);
+    staminaTable.setName("stamina");
+    staminaTable.setUserObject(entity);
+
+    // Stamina label
+    staminaLabel = new Label("Stamina: ", skin, "large");
+
+    // Stamina bar
+    StaminaComponent staminaComp = entity.getComponent(StaminaComponent.class);
+    staminaBar = new ProgressBar(0f, (float) staminaComp.getMaxStamina(), 1f, false, skin);
+    staminaBar.setValue((float) staminaComp.getCurrentStamina());
+
+    // Add actors to stamina table
+    staminaTable.add(staminaLabel).padLeft(5f);
+    staminaTable.add(staminaBar);
+  }
+
+  /**
+   * Helper method that creates and sets up the initial health table
+   */
+  private void createHealthTable() {
+    // Create health table
+    healthTable = new Table();
+    healthTable.top().left();
+    healthTable.setFillParent(true);
+    healthTable.padTop(45f).padLeft(5f);
+    healthTable.setName("health");
+    healthTable.setUserObject(entity);
 
     // Heart image
     float heartSideLength = 30f;
@@ -50,9 +110,8 @@ public class PlayerStatsDisplay extends UIComponent {
     CharSequence healthText = String.format("Health: %d", health);
     healthLabel = new Label(healthText, skin, "large");
 
-    table.add(heartImage).size(heartSideLength).pad(5);
-    table.add(healthLabel);
-    stage.addActor(table);
+    healthTable.add(heartImage).size(heartSideLength).pad(5);
+    healthTable.add(healthLabel);
   }
 
   @Override
@@ -82,5 +141,7 @@ public class PlayerStatsDisplay extends UIComponent {
     super.dispose();
     heartImage.remove();
     healthLabel.remove();
+    staminaLabel.remove();
+    staminaBar.remove();
   }
 }
