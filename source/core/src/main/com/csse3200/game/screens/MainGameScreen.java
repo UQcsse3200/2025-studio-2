@@ -6,14 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.CaveGameArea;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -60,7 +58,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
   private GameArea gameArea;
-  private TerrainFactory terrainFactory;
+  private final TerrainFactory terrainFactory;
 
   private PauseInputComponent pauseInput;
 
@@ -124,34 +122,37 @@ public class MainGameScreen extends ScreenAdapter {
         GameArea newArea = null;
         String newLevel = "";
 
-        if ("cutscene1".equals(levelId)) {
-          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-          newLevel = "level2";
-        } else if ("level2".equals(levelId)) {
-          newArea = new LevelTwoGameArea(terrainFactory);
-          newLevel = "cutscene2";
-        } else if ("cutscene2".equals(levelId)) {
-          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-          newLevel = "sprint1";
-        } else if ("sprint1".equals(levelId)) {
-          newArea = new SprintOneGameArea(terrainFactory);
-          newLevel = "level2";
-        }
+          switch (levelId) {
+              case "cutscene1" -> {
+                  newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
+                  newLevel = "level2";
+              }
+              case "level2" -> {
+                  newArea = new LevelTwoGameArea(terrainFactory);
+                  newLevel = "cutscene2";
+              }
+              case "cutscene2" -> {
+                  newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
+                  newLevel = "sprint1";
+              }
+              case "sprint1" -> {
+                  newArea = new SprintOneGameArea(terrainFactory);
+                  newLevel = "level2";
+              }
+          }
 
         if (newArea != null) {
-          GameArea finalNewArea = newArea; // effectively final
-          gameArea = finalNewArea;
+          gameArea = newArea;
           String finalNewLevel = newLevel;
-          finalNewArea.getEvents().addListener(
+          newArea.getEvents().addListener(
                   "doorEntered", (Entity play) -> switchArea(finalNewLevel, player)
           );
-          finalNewArea.getEvents().addListener(
+          newArea.getEvents().addListener(
                   "cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player)
           );
           System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-          finalNewArea.createWithPlayer(player);
+          newArea.createWithPlayer(player);
           oldArea.dispose();
-          oldArea = null;
         }
       }
     });

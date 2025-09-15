@@ -1,19 +1,15 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.math.Vector2;
+
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.DeathZoneComponent;
-import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
- * Factory to create trap entities (objects that damage the player (and possibly enemies)).
+ * Factory to create DeathZone entities (objects that kill the player (and possibly enemies)).
  *
- * <p>Each trap entity type should have a creation method that returns a corresponding entity.
  */
 public class DeathZoneFactory {
 
@@ -23,13 +19,11 @@ public class DeathZoneFactory {
      * It is immovable and cannot be destroyed. On collision with player (or enemy), it fully damages the colliding
      * entity, effectively killing them and resetting their position.
      *
-     * @param position The start position of the death zone
-     * @param resetPos Spot to teleport the player once they take damage
-     * @return the Spike trap Entity created.
+     * @return the DeathZone Entity created.
      */
-    public static Entity createDeathZone(GridPoint2 position, Vector2 resetPos) {//int length, int rotateClockwise) {
+    public static Entity createDeathZone() {
         Entity deathZone = new Entity();
-        String texture = "images/gate.png";
+        //String texture = "images/gate.png";                          <--
         //deathZone.addComponent(new TextureRenderComponent(texture)); <-- Uncomment to make them temporarily visible
 
         // Add physics and collider components
@@ -45,9 +39,17 @@ public class DeathZoneFactory {
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
 
-        DeathZoneComponent deathZoneComponent = new DeathZoneComponent(resetPos);
+        DeathZoneComponent deathZoneComponent = new DeathZoneComponent();
         deathZone.addComponent(deathZoneComponent);
 
         return deathZone;
     }
+
+    /**
+     * Factory Initialisation
+     */
+    private DeathZoneFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
+
 }

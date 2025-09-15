@@ -5,6 +5,9 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
+/**
+ * Button Triggered Platform Component for platforms with buttons to trigger movement
+ */
 public class ButtonTriggeredPlatformComponent extends Component {
     private enum State {
         IDLE_AT_START,
@@ -25,6 +28,11 @@ public class ButtonTriggeredPlatformComponent extends Component {
 
     private State state = State.IDLE_AT_START;
 
+    /**
+     * Sets the offset (direction) and speed of the platform to be moved
+     * @param offset
+     * @param speed
+     */
     public ButtonTriggeredPlatformComponent(Vector2 offset, float speed) {
         this.offset = offset.cpy();
         this.speed = speed;

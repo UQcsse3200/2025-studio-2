@@ -322,7 +322,7 @@ public class CaveGameArea extends GameArea {
 
   private void spawnDeathZone() {
     GridPoint2 spawnPos =  new GridPoint2(18,0);
-    Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+    Entity deathZone = DeathZoneFactory.createDeathZone();
     spawnEntityAt(deathZone, spawnPos, true,  true);
   }
 

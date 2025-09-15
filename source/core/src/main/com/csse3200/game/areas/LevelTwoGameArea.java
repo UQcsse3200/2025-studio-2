@@ -26,7 +26,7 @@ import java.util.List;
 
 public class LevelTwoGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,70);
-    private static final float WALL_WIDTH = 0.1f;
+    private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
 
     private static final String[] gameTextures = {
@@ -96,7 +96,7 @@ public class LevelTwoGameArea extends GameArea {
     }
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(5,0);
-        Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
     private void spawnWalls(){
@@ -273,7 +273,7 @@ public class LevelTwoGameArea extends GameArea {
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
-        terrain = createDefaultTerrain(mapSize);
+        terrain = createDefaultTerrain();
         spawnEntity(new Entity().addComponent(terrain));
 
         // Terrain walls
@@ -283,24 +283,24 @@ public class LevelTwoGameArea extends GameArea {
 
         // Left
         spawnEntityAt(
-                ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
         // Right
         spawnEntityAt(
-                ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y),
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
                 new GridPoint2(tileBounds.x, 0),
                 false,
                 false);
         // Top
         spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, tileBounds.y - 4),
                 false,
                 false);
         // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, 0), false, false);
     }
-    private TerrainComponent createDefaultTerrain(GridPoint2 mapSize) {
+    private TerrainComponent createDefaultTerrain() {
         TextureRegion variant1, variant2, variant3, baseTile;
         final ResourceService resourceService = ServiceLocator.getResourceService();
 
@@ -341,6 +341,7 @@ public class LevelTwoGameArea extends GameArea {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(gameTextures);
+        resourceService.loadMusic(musics);
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadSounds(gameSounds);
         resourceService.loadMusic(musics);
