@@ -136,13 +136,13 @@ public class TerrainFactory {
         return createForestDemoTerrain(1f, hexGrass, hexTuft, hexRocks);
       case TEXTURE_TEST:
         TextureRegion wall =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavewalltest.png", Texture.class));
+            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
         TextureRegion wall1 =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavewalltest.png", Texture.class));
+            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
         TextureRegion wall2 =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavewalltest.png", Texture.class));
+            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
         TextureRegion wall3 =
-            new TextureRegion(resourceService.getAsset("images/cavelevel/cavewalltest.png", Texture.class));
+            new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
         return createTextureTestTerrain(0.5f, wall, wall1, wall2, wall3);
 
       default:
