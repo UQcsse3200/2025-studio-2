@@ -26,6 +26,11 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     private final float dropRange;
     private final float minHeight;
 
+// for light activation
+    private boolean active = false;
+    private boolean triggerMaxChase = false;
+    private final float triggerDistance = 2f;
+
     /**
      * Creates a chase task for a bomber-style enemy.
      *
@@ -48,6 +53,18 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         this.minHeight = minHeight;
         physics = ServiceLocator.getPhysicsService().getPhysics();
         debugRenderer = ServiceLocator.getRenderService().getDebug();
+    }
+
+    /** Activate the chase task for light triggered activation */
+    public void activate() {
+        active = true;
+        triggerMaxChase = false; // reset enforcement
+        if (status != Status.ACTIVE) status = Status.INACTIVE;
+    }
+
+    public void deactivate() {
+        active = false;
+        owner.getEntity().getEvents().trigger("chaseEnd");
     }
 
     /**
@@ -118,9 +135,17 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
             return -1;
         }
 
+        // Don't chase until light is activated
+        if (!active) {
+            return -1;
+        }
+
+        // Active task
         if (status == Status.ACTIVE) {
             return getActivePriority();
         }
+
+        // Inactive task (activated but not started yet)
         return getInactivePriority();
     }
 

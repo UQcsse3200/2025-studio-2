@@ -22,146 +22,215 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 public class PatrolTaskTest {
+    private GameTime gameTime;
+
     @BeforeEach
     void setUp() {
-        GameTime gameTime = mock(GameTime.class);
-        when(gameTime.getDeltaTime()).thenReturn(20f/1000);
-        ServiceLocator.registerTimeSource(gameTime);
+        ServiceLocator.clear();
         ServiceLocator.registerPhysicsService(new PhysicsService());
+        gameTime = mock(GameTime.class);
+        when(gameTime.getDeltaTime()).thenReturn(0.02f);
+        ServiceLocator.registerTimeSource(gameTime);
     }
 
     @Test
-    void startsMovingToFirstWaypoint() {
+    void patrol_startsWithWait() {
+        // Set up patrol
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-
         Entity e = makePatrollingEntity(route);
-        PatrolTask patrol = addPatrol(e, 0.5f);
+        PatrolTask patrol = addPatrol(e, 0f);
         e.create();
         Vector2[] waypoints = getWaypoints(e);
 
         patrol.start();
 
-        // After start: Index at 0, entity is moving towards waypoints[0]
+        // Assert that entity is waiting at first waypoint when a patrol starts
+        assertTrue(patrol.isWaiting(),
+                "Patrol should start with a wait");
         assertEquals(0, patrol.getIndex(),
-                "Waypoint index should be 0 after PatrolTask starts");
+                "Index should start at 0");
         assertEquals(waypoints[0], patrol.getTargetWaypoint(),
-                "Target should be first waypoint");
-        assertTrue(patrol.isMoving(),
-                "Entity should be moving after PatrolTask starts");
-        assertFalse(patrol.isWaiting(),
-                "Entity should not be waiting after PatrolTask starts");
+                "Target waypoint should be be the waypoint at index 0");
     }
 
     @Test
-    void swapsToWaitAfterMovement() {
-        Vector2[] route = {new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(1, 0)};
-
+    void patrol_swapsToMoveAfterFirstWait() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity e = makePatrollingEntity(route);
-        PatrolTask patrol = addPatrol(e, 0);
+        PatrolTask patrol = addPatrol(e, 0f);
         e.create();
         Vector2[] waypoints = getWaypoints(e);
 
+        // Start the patrol and finish waiting
         patrol.start();
-
-        assertTrue(patrol.isMoving());
-        assertEquals(0, patrol.getIndex());
-        assertEquals(waypoints[0], patrol.getTargetWaypoint());
-
-        // Finish movement to wp[0] and start waiting
-        e.setPosition(patrol.getTargetWaypoint());
-        patrol.update(); // Movement finishes
-        patrol.update(); // Starts waiting
-        assertTrue(patrol.isWaiting());
-        assertEquals(0, patrol.getIndex());
-        assertEquals(waypoints[0], patrol.getTargetWaypoint());
-
-        // Finish waiting and advance to next waypoint
         patrol.update();
-        assertTrue(patrol.isMoving());
-        assertEquals(1, patrol.getIndex());
-        assertEquals(waypoints[1], patrol.getTargetWaypoint());
+
+        assertTrue(patrol.isWaiting(),
+                "Current subtask should be waiting but finished");
+
+        // Transition to movement in next update
+        patrol.update();
+
+        // Assert that entity is now moving toward waypoint[1]
+        assertTrue(patrol.isMoving(),
+                "Should be moving after initial wait ends");
+        assertEquals(1, patrol.getIndex(),
+                "Index should be at 1");
+        assertEquals(waypoints[1], patrol.getTargetWaypoint(),
+                "Target waypoint should be the waypoint at index 1");
     }
 
     @Test
-    void pingPongAtEnds() {
-        Vector2[] route = {new Vector2(0, 0), new Vector2(0.5f, 0), new Vector2(1, 0)};
-
+    void patrol_pingPongsAtEnds() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0), new Vector2(2, 0)};
         Entity e = makePatrollingEntity(route);
-        PatrolTask patrol = addPatrol(e, 0);
+        PatrolTask patrol = addPatrol(e, 0f);
         e.create();
 
+        // Start patrol and update to first movement task
         patrol.start();
+        patrol.update();
+        patrol.update();
+        assertTrue(patrol.isMoving(),
+                "Should be moving after first two updates");
+        assertEquals(1, patrol.getIndex(),
+                "Index should be 1");
 
+        // Store the walked waypoints as indexes and direction of movement
         int[] walked = new int[6];
         boolean[] directions = new boolean[6];
+
         int i = 0;
         walked[i] = patrol.getIndex();
         directions[i] = patrol.isMovingForward();
         i++;
+
         while (i < walked.length) {
             e.setPosition(patrol.getTargetWaypoint());
             patrol.update(); // Finish movement
-            patrol.update(); // Swap to wait (wait time = 0)
+            patrol.update(); // Swap to wait, finishes immediately (wait=0)
             patrol.update(); // Swap to movement
             walked[i] = patrol.getIndex();
             directions[i] = patrol.isMovingForward();
             i++;
         }
 
-        assertArrayEquals(new int[]{0, 1, 2, 1, 0, 1}, walked,
+        assertArrayEquals(new int[]{1, 2, 1, 0, 1, 2}, walked,
                 "Should ping-pong indices across ends");
-        assertArrayEquals(new boolean[]{true, true, true, false, false, true}, directions,
+        assertArrayEquals(new boolean[]{true, true, false, false, true, true}, directions,
                 "Direction should flip at first/last waypoints");
     }
 
     @Test
-    void handlesSingleStepPatrol() {
-        Vector2[] route = {new Vector2(0, 0)};
+    void patrol_twoWaypointPingPong() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0f);
+        e.create();
 
+        // Start patrol and update to first movement task
+        patrol.start();
+        patrol.update();
+        patrol.update();
+        assertTrue(patrol.isMoving(),
+                "Should be moving after first two updates");
+        assertEquals(1, patrol.getIndex(),
+                "Index should be 1");
+
+        // Store the walked waypoints as indexes and direction of movement
+        int[] walked = new int[6];
+        boolean[] directions = new boolean[6];
+
+        int i = 0;
+        walked[i] = patrol.getIndex();
+        directions[i] = patrol.isMovingForward();
+        i++;
+
+        while (i < walked.length) {
+            e.setPosition(patrol.getTargetWaypoint());
+            patrol.update(); // Finish movement
+            patrol.update(); // Swap to wait, finishes immediately (wait=0)
+            patrol.update(); // Swap to movement
+            walked[i] = patrol.getIndex();
+            directions[i] = patrol.isMovingForward();
+            i++;
+        }
+
+        assertArrayEquals(new int[]{1, 0, 1, 0, 1, 0}, walked,
+                "Should ping-pong indices across ends");
+        assertArrayEquals(new boolean[]{true, false, true, false, true, false}, directions,
+                "Direction should flip at first/last waypoints");
+    }
+
+    @Test
+    void patrol_handlesSecondStart() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0f);
+        e.create();
+
+        // Start patrol
+        patrol.start();  // Waiting
+        patrol.update(); // Wait finishes
+        patrol.update(); // Swap to movement
+        assertTrue(patrol.isMoving(),
+                "Should be moving after two updates");
+        assertEquals(1, patrol.getIndex(),
+                "Index should be 1 before restart");
+
+        // Start patrol again, checking state has been reset
+        patrol.start();
+        assertTrue(patrol.isWaiting(),
+                "Second start should reset patrol to waiting");
+        assertEquals(0, patrol.getIndex(),
+                "Target index should be 0 after second start");
+    }
+
+    @Test
+    void patrol_handlesSingleWaypoint() {
+        // Set up patrol with single waypoint
+        Vector2[] route = {new Vector2(0, 0)};
         Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
 
         patrol.start();
-
-        e.setPosition(patrol.getTargetWaypoint());
-        patrol.update();
-        assertTrue(patrol.isMoving(),
-                "Movement task is FINISHED but still the currentTask");
+        patrol.update(); // Finish wait
 
         for (int k = 0; k < 5; k++) {
-            patrol.update();
-            assertTrue(patrol.isWaiting(),
-                    "CurrentTask should be WaitTask");
+            patrol.update(); // Swap to movement, finishes (single waypoint)
+            assertTrue(patrol.isMoving(), "Current task is moving");
+            assertEquals(0, patrol.getIndex(), "Index 0 for single waypoint");
+            assertEquals(new Vector2(0, 0), patrol.getTargetWaypoint(), "Always targets first waypoint");
 
-            patrol.update();
-            assertEquals(0, patrol.getIndex(),
-                    "Single waypoint: Index stays at zero");
-            assertTrue(patrol.isMoving(),
-                    "CurrentTask should be MovementTask");
+            patrol.update(); // Swap to wait, finishes (wait = 0)
+            assertTrue(patrol.isWaiting(), "Current task is waiting");
         }
     }
 
     @Test
-    void shouldTriggerEvent() {
-        Vector2[] route = {new Vector2(0, 0)};
-
+    void patrol_startFiresEvent() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
         Entity e = makePatrollingEntity(route);
-        PatrolTask patrol = addPatrol(e, 0);
+        PatrolTask patrol = addPatrol(e, 0f);
         e.create();
 
         EventListener0 callback = mock(EventListener0.class);
         e.getEvents().addListener("patrolStart", callback);
 
         patrol.start();
-
-        verify(callback).handle();
+        verify(callback, times(1)).handle();
     }
 
     @Test
-    void stop_makesTaskInactive() {
+    void patrol_stopMakesTaskInactive() {
+        // Set up patrol
         Vector2[] route = {new Vector2(0, 0)};
-
         Entity e = makePatrollingEntity(route);
         PatrolTask patrol = addPatrol(e, 0);
         e.create();
@@ -172,14 +241,70 @@ public class PatrolTaskTest {
         patrol.stop();
         assertEquals(Task.Status.INACTIVE, patrol.getStatus(),
                 "PatrolTask should have INACTIVE status after stop()");
-
     }
 
     @Test
-    void hasLowPriority() {
+    void patrol_stopFiresEvent() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0f);
+        e.create();
+
+        EventListener0 callback = mock(EventListener0.class);
+        e.getEvents().addListener("patrolEnd", callback);
+
+        // Verify patrolEnd is fired once
+        patrol.start();
+        patrol.update();
+        patrol.stop();
+        verify(callback, times(1)).handle();
+    }
+
+    @Test
+    void patrol_hasLowPriority() {
         PatrolTask patrol = new PatrolTask(0);
         assertEquals(1, patrol.getPriority(),
                 "PatrolTask should have priority 1");
+    }
+
+    @Test
+    void patrol_noUpdateIfStopped() {
+        // Set up patrol
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0);
+        e.create();
+        patrol.start();
+
+        int before = patrol.getIndex();
+        patrol.stop();
+        patrol.update();
+        assertEquals(before, patrol.getIndex(), "Patrol should not update after stop");
+    }
+
+    @Test
+    void patrol_handlesNonZeroWait() {
+        // Set up patrol with nonzero wait
+        Vector2[] route = new Vector2[]{new Vector2(0, 0), new Vector2(5, 0)};
+        Entity e = makePatrollingEntity(route);
+        PatrolTask patrol = addPatrol(e, 0.4f);
+        e.create();
+
+        // Time sequence for update calls
+        when(gameTime.getTime()).thenReturn(0L, 200L, 400L, 600L);
+
+        patrol.start();
+        patrol.update(); // Still waiting
+        assertTrue(patrol.isWaiting(), "Waiting before full wait time has passed");
+        assertEquals(0, patrol.getIndex());
+
+        patrol.update(); // Finish wait
+        assertTrue(patrol.isWaiting(), "Current task is waiting (status finished)");
+
+        patrol.update(); // Swap to movement
+        assertTrue(patrol.isMoving(), "Moving after wait task finishes");
+        assertEquals(1, patrol.getIndex());
     }
 
     private Entity makePatrollingEntity(Vector2[] route) {
