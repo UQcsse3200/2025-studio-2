@@ -65,7 +65,8 @@ public class LevelOneGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
-            "images/wall.png"
+            "images/wall.png",
+            "images/glide_powerup.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -425,6 +426,8 @@ public class LevelOneGameArea extends GameArea {
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
             //what to do when puzzle completed, probably player upgrade
             //if you want to spawn on platform before door spawn at (46, 56)
+            Entity upgrade = CollectableFactory.createGlideUpgrade();
+            spawnEntityAt(upgrade, new GridPoint2(46 ,56), true,  true);
         });
 
     }
@@ -436,6 +439,9 @@ public class LevelOneGameArea extends GameArea {
         // see the LightFactory class for more details on spawning these
         Entity securityLight1 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
         spawnEntityAt(securityLight1, new GridPoint2(48, 17), true, true);
+
+        Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 270f, "2");
+        spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
     }
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
@@ -446,7 +452,7 @@ public class LevelOneGameArea extends GameArea {
                         TooltipSystem.TooltipStyle.WARNING)
                 .build();
         spawnEntityAt(horizontalPlatformBat, new GridPoint2(
-                (int) platformBatBuilder.getSpawnX(),
+                (int) platformBatBuilder.getSpawnX() * 2,
                 (int) platformBatBuilder.getSpawnY()), true, true);
     }
     private void spawnLevelOneBatRoom() {

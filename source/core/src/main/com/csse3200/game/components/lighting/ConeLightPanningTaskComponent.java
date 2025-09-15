@@ -20,16 +20,16 @@ import com.csse3200.game.services.ServiceLocator;
 public class ConeLightPanningTaskComponent extends Component {
     private ConeLightComponent coneComp;
     private ConeDetectorComponent detectorComp;
-    private float degreeStart;
-    private float degreeEnd;
     private float angularVelocity;
     private boolean clockwise = false;
     private Entity target;
+    private float startDeg360;
+    private float spanDeg;
+
 
     private float angularAccel = LightingDefaults.ANGULAR_ACC;
     private float currentVel   = LightingDefaults.ANGULAR_VEL;
     private float maxSpeed;
-
 
     private float movSign = 1f;
     private boolean tracking = false;
@@ -49,12 +49,13 @@ public class ConeLightPanningTaskComponent extends Component {
 
     public ConeLightPanningTaskComponent(float degreeStart, float degreeEnd, float angularVelocity) {
         // just to make calculations easier, normalise all values
-        if (degreeStart < degreeEnd) {
-            this.degreeStart = wrapDeg(degreeStart);
-            this.degreeEnd = wrapDeg(degreeEnd);
-        } else {
-            this.degreeStart = wrapDeg(degreeEnd);
-            this.degreeEnd = wrapDeg(degreeStart);
+        float s = norm360(degreeStart);
+        float e = norm360(degreeEnd);
+
+        this.startDeg360 = s;
+        this.spanDeg = cwDelta(s, e);
+        if (this.spanDeg == 0f) {
+            this.spanDeg = 360f;
         }
 
         // set max speed based on angular vel
@@ -97,11 +98,11 @@ public class ConeLightPanningTaskComponent extends Component {
             throw new IllegalStateException("ConeDetectorComponent must be attached to lens entity");
         }
 
-        // set cone to bounds (could be omitted tho)
-        coneComp.setDirectionDeg(degreeStart);
+        // set cone to start bounds
+        coneComp.setDirectionDeg(startDeg360);
         target = detectorComp.getTarget();
         // scale lens movement bounds with x scale
-        maxLensMov *= entity.getScale().x;
+        maxLensMov = maxLensMov * entity.getScale().x;
     }
 
     private void centreLens() {
@@ -131,7 +132,7 @@ public class ConeLightPanningTaskComponent extends Component {
     @Override
     public void update() {
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
-        float dir = wrapDeg(coneComp.getLight().getDirection());
+        float dir = norm360(coneComp.getLight().getDirection());
         boolean detected = detectorComp.isDetected();
 
         if (!detected) {
@@ -143,30 +144,32 @@ public class ConeLightPanningTaskComponent extends Component {
             // reset velocity (removes effects from acceleration)
             currentVel = angularVelocity;
 
-            // change clockwise based off dir
-            if (dir >= degreeEnd) {
-                clockwise = true;
-                // move left
-            } else if (dir <= degreeStart) {
-                clockwise = false;
-                // move right
-            }
-
+            float d = cwDelta(startDeg360, dir);
             // move angle
             float step = angularVelocity * dt;
-            coneComp.setDirectionDeg(clockwise ? dir - step : dir + step);
+
+            if (clockwise) {
+                d = Math.min(spanDeg, d + step);
+                if (d >= spanDeg) clockwise = false;
+            } else {
+                d = Math.max(0, d - step);
+                if (d <= 0) clockwise = true;
+            }
+
+            dir = norm360(startDeg360 + d);
+            coneComp.setDirectionDeg(dir);
 
         } else {
             // TRACKING MODE
 
             // get vector from the target to the light
             Vector2 toLight = target.getPosition().cpy().sub(cameraLens.getPosition());
-            float targetAng = wrapDeg(toLight.angleDeg());
+            float targetAng = norm360(toLight.angleDeg());
             // clamp the target angle so it stays in the bounds
-            float aimAng = clampToRange(targetAng, degreeStart, degreeEnd);
+            float aimAng = clampToArc360(startDeg360, spanDeg, targetAng);
 
             // get different in angles
-            float delta = wrapDeg(aimAng - dir);
+            float delta = shortestSignedDelta(dir, aimAng);
             // change velocity based on acceleration, clamp to max speed
             currentVel = Math.min(currentVel + angularAccel * dt, maxSpeed);
             float step = currentVel * dt;
@@ -179,14 +182,14 @@ public class ConeLightPanningTaskComponent extends Component {
             } else {
                 // move along shortest distance and remember the sign
                 movSign = Math.signum(delta);
-                coneComp.setDirectionDeg(dir + movSign * step);
+                dir = norm360(dir + movSign * step);
+                coneComp.setDirectionDeg(dir);
             }
         }
 
         // rescale lens x pos based off of the cone degree bounds and current dir
         // map current dir int [0..1] across the panning span, then to [-max..+max]
-        float span = degreeEnd - degreeStart;
-        float t = (dir - degreeStart) / span;
+        float t = cwDelta(startDeg360, dir) / spanDeg;
         t = Math.max(0f, Math.min(1f, t)); // clamp to [0..1]
 
         // slide amount along the body's local x axis
@@ -200,31 +203,63 @@ public class ConeLightPanningTaskComponent extends Component {
     }
 
     /**
-     * Helper method to wrap an angle to be between (-180, 180)
+     * Normalises an angle to the range [0, 360).
      *
-     * @param a Angle
-     * @return Wrapped angle within range
+     * @param a angle in degrees
+     * @return equivalent angle in [0, 360)
      */
-    private static float wrapDeg(float a) {
+    private static float norm360(float a) {
         a = a % 360f;
-        if (a >= 180) a -= 360f;
-        if (a < -180) a += 360f;
+        if (a < 0f) a += 360f;
         return a;
     }
 
     /**
-     * Helper method to clamp angle between a range.
+     * Returns the clockwise angular distance from {@code from} to {@code to} on a circle,
+     * measured in degrees in the range [0, 360).
      *
-     * @param a Angle
-     * @param start Lower bound
-     * @param end Upper bound
-     * @return Clamped angle within range
+     * @param from from starting angle (degrees, any range)
+     * @param to target angle (degrees, any range)
+     * @return clockwise distance in [0, 360)
      */
-    private static float clampToRange(float a, float start, float end) {
-        a = wrapDeg(a);
-        if (a < start) return start;
-        if (a > end) return end;
-        return a;
+    private static float cwDelta(float from, float to) {
+        float d = (to - from) % 360;
+        if (d < 0f) d += 360f;
+        return d;
+    }
+
+    /**
+     * Computes the signed shortest turn from {@code from} to {@code to},
+     * in degrees within [-180, 180]. Positive means counter-clockwise, negative means clockwise.
+     *
+     * @param from starting angle (degrees, any range)
+     * @param to target angle (degrees, any range)
+     * @return shortest signed delta in [-180, 180]
+     */
+    private static float shortestSignedDelta(float from, float to) {
+        return ((to - from + 540f) % 360f) - 180f;
+    }
+
+    /**
+     * Clamps an angle {@code x} onto a circular arc that begins at {@code start} and
+     * proceeds clockwise by {@code span} degrees.
+     *
+     * @param start arc start angle (degrees, any range)
+     * @param span clockwise arc length in degrees, (0, 360]
+     * @param x angle to clamp (degrees, any range)
+     * @return {@code x} clamped to the arc [start..start+span] on the circle, in [0, 360)
+     */
+    private static float clampToArc360(float start, float span, float x) {
+        float xn = norm360(x);
+        float d = cwDelta(start, xn);
+        // inside arc
+        if (d <= span) return xn;
+
+        // outside arc: choose nearest endpoint
+        float end = norm360(start + span);
+        float distToS = Math.min(cwDelta(xn, start), cwDelta(start, xn));
+        float distToE = Math.min(cwDelta(xn, end), cwDelta(end, xn));
+        return (distToS <= distToE) ? start : end;
     }
 
     /**
@@ -239,14 +274,6 @@ public class ConeLightPanningTaskComponent extends Component {
 
     public void setAngularAccel(float angularAccel) {
         this.angularAccel = angularAccel;
-    }
-
-    public void setDegreeStart (float degreeStart) {
-        this.degreeStart = degreeStart;
-    }
-
-    public void setDegreeEnd (float degreeEnd) {
-        this.degreeEnd = degreeEnd;
     }
 
     @Override
