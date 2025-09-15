@@ -16,6 +16,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.AutonomousBoxComponent;
@@ -151,11 +152,9 @@ public class ForestGameArea extends GameArea {
    * Player must be spawned beforehand if spawning enemies.
    */
   protected void loadEntities() {
-    //spawnDrone();             // Play with idle/chasing drones (unless chasing)
-    //spawnPatrollingDrone();   // Play with patrolling/chasing drones
-    //spawnBomberDrone();       // Play with bomber drones
-    //spawnGhosts();
-    //spawnGhostKing();
+    //spawnDrone();
+    spawnPatrollingDrone();
+    //spawnBomberDrone();       // WIP do not use
 
     spawnPlatform(); //Testing platform
     spawnElevatorPlatform();
@@ -254,7 +253,8 @@ public class ForestGameArea extends GameArea {
     GridPoint2 spawnTile = new GridPoint2(16, 11);
     Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
+    Entity drone = EnemyFactory.createDrone(player, spawnWorldPos)
+            .addComponent(new ActivationComponent("1"));
     spawnEntityAt(drone, spawnTile, true, true);
 
   }
@@ -267,8 +267,9 @@ public class ForestGameArea extends GameArea {
             terrain.tileToWorldPosition(new GridPoint2(6, 11)),
             terrain.tileToWorldPosition(new GridPoint2(8, 11))
     };
-    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
-    spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+    Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
+                    .addComponent(new ActivationComponent("1"));
+    spawnEntityAt(patrolDrone, spawnTile, true, true);
   }
 
   private void spawnBomberDrone() {
