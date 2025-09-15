@@ -56,14 +56,17 @@ public class MainGameScreen extends ScreenAdapter {
   private final LightingEngine lightingEngine;
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
+  private Entity player = null;
+  private CombatStatsComponent combatStatsComponent = null;
 
   // Camera follow parameters
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
   private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
-  private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
+  private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
+  private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
 
   private GameArea gameArea;
-  private TerrainFactory terrainFactory;
+  private final TerrainFactory terrainFactory;
 
   private PauseInputComponent pauseInput;
 
@@ -182,65 +185,72 @@ public class MainGameScreen extends ScreenAdapter {
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
+  private void updatePlayerEntity() {
+    Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
+    for (Entity entity : entities) {
+      if (entity.getComponent(PlayerActions.class) != null) {
+        player = entity;
+        combatStatsComponent = player.getComponent(CombatStatsComponent.class);
+        break;
+      }
+    }
+  }
+
   /**
    * Updates the camera position to follow the player entity.
    * The camera only moves when the player is near the edge of the screen.
    */
   private void updateCameraFollow() {
+    if (player == null || combatStatsComponent == null || combatStatsComponent.isDead()) {
+      updatePlayerEntity();
+    }
+    System.out.println();
     Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
 
-    // Find the player entity
-    Vector2 playerPosition = null;
-    Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
-    for (Entity entity : entities) {
-      if (entity.getComponent(PlayerActions.class) != null) {
-        playerPosition = entity.getPosition().cpy();
-        break;
-      }
+    if (player == null) return;
+    // getPosition already copies the position vector, so no .cpy() needed
+    final Vector2 playerPosition = player.getPosition();
+
+    // Get camera viewport dimensions
+    float viewW = renderer.getCamera().getCamera().viewportWidth;
+    float viewH = renderer.getCamera().getCamera().viewportHeight;
+
+    // Calculate deadzone boundaries (area where camera doesn't move)
+    float dzW = viewW * DEADZONE_H_FRAC;
+    float dzH = viewH * DEADZONE_V_FRAC;
+
+    float dzLeft   = currentCamPos.x - dzW * 0.1f;
+    float dzRight  = currentCamPos.x + dzW * 0.1f;
+    float dzBottom = currentCamPos.y - dzH * 0.2f;
+    float dzTop    = currentCamPos.y + dzH * 0.1f;
+
+    // Calculate target camera position
+    float targetX = currentCamPos.x;
+    float targetY = currentCamPos.y;
+
+    // Only move camera if player is outside the deadzone
+    if (playerPosition.x < dzLeft) {
+      // Player is too far left, move camera left
+      targetX -= (dzLeft - playerPosition.x);
+    } else if (playerPosition.x > dzRight) {
+      // Player is too far right, move camera right
+      targetX += (playerPosition.x - dzRight);
     }
 
-    if (playerPosition != null) {
-      // Get camera viewport dimensions
-      float viewW = renderer.getCamera().getCamera().viewportWidth;
-      float viewH = renderer.getCamera().getCamera().viewportHeight;
-
-      // Calculate deadzone boundaries (area where camera doesn't move)
-      float dzW = viewW * DEADZONE_H_FRAC;
-      float dzH = viewH * DEADZONE_V_FRAC;
-
-      float dzLeft   = currentCamPos.x - dzW * 0.5f;
-      float dzRight  = currentCamPos.x + dzW * 0.5f;
-      float dzBottom = currentCamPos.y - dzH * 0.5f;
-      float dzTop    = currentCamPos.y + dzH * 0.5f;
-
-      // Calculate target camera position
-      float targetX = currentCamPos.x;
-      float targetY = currentCamPos.y;
-
-      // Only move camera if player is outside the deadzone
-      if (playerPosition.x < dzLeft) {
-        // Player is too far left, move camera left
-        targetX -= (dzLeft - playerPosition.x);
-      } else if (playerPosition.x > dzRight) {
-        // Player is too far right, move camera right
-        targetX += (playerPosition.x - dzRight);
-      }
-
-      if (playerPosition.y < dzBottom) {
-        // Player is too far down, move camera down
-        targetY -= (dzBottom - playerPosition.y);
-      } else if (playerPosition.y > dzTop) {
-        // Player is too far up, move camera up
-        targetY += (playerPosition.y - dzTop);
-      }
-
-      // Smoothly interpolate camera position for smooth movement
-      float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP;
-      float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP;
-
-      // Update camera position
-      renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
+    if (playerPosition.y < dzBottom) {
+      // Player is too far down, move camera down
+      targetY -= (dzBottom - playerPosition.y);
+    } else if (playerPosition.y > dzTop) {
+      // Player is too far up, move camera up
+      targetY += (playerPosition.y - dzTop);
     }
+
+    // Smoothly interpolate camera position for smooth movement
+    float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP_X;
+    float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP_Y;
+
+    // Update camera position
+    renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
   }
 
 
