@@ -180,7 +180,7 @@ public class EnemyFactory {
                 .addComponent(new SelfDestructComponent(target));
 
         AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask= new ChaseTask(target);
+        ChaseTask chaseTask= new ChaseTask(target,5f,3f);
 
         aiComponent.addTask(chaseTask);
         chaseTask.activate();

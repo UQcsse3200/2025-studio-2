@@ -452,7 +452,7 @@ public class SprintOneGameArea extends GameArea {
         music.play();
     }
 
-    private void loadAssets() {
+    protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(gameTextures);
