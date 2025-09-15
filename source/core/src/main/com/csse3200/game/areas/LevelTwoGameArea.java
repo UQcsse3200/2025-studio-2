@@ -165,8 +165,8 @@ public class LevelTwoGameArea extends GameArea {
 
         GridPoint2 step2Pos = new GridPoint2(90,10);
         Entity step2 = PlatformFactory.createStaticPlatform();
-        step1.setScale(2,0.5f);
-        spawnEntityAt(step1, step2Pos,false, false);
+        step2.setScale(2,0.5f);
+        spawnEntityAt(step2, step2Pos,false, false);
 
         GridPoint2 step3Pos = new GridPoint2(93,15);
         Entity step3 = PlatformFactory.createStaticPlatform();
