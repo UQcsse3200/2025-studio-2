@@ -98,14 +98,14 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
     //gameArea = new SprintOneGameArea(terrainFactory);
-    //gameArea = new LevelOneGameArea(terrainFactory);
-    gameArea = new LevelTwoGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
+    //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
 
-    gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", keyId, player);
-      switchArea("cutscene1", player);
+    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
+      logger.info("Door entered in sprint1 with key {}", player);
+      switchArea("sprint1", player);
     });
 
     // Have to createUI after the game area is created since createUI
@@ -145,10 +145,10 @@ public class MainGameScreen extends ScreenAdapter {
           gameArea = finalNewArea;
           String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
+                  "doorEntered", (Entity play) -> switchArea(finalNewLevel, player)
           );
           finalNewArea.getEvents().addListener(
-                  "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, player)
+                  "cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player)
           );
           System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           finalNewArea.createWithPlayer(player);
