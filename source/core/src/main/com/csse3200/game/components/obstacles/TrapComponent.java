@@ -84,9 +84,6 @@ public class TrapComponent extends CombatStatsComponent {
             }
         }
 
-        System.out.println("before " + legalDirection + "rotation " + rotation);
-        System.out.println("player " + playerPos.y + " trap " + trapPos.y);
-
         legalDirection &= switch (rotation) {
             case 1 -> // Facing left
                     (// Must approach from left
@@ -101,8 +98,6 @@ public class TrapComponent extends CombatStatsComponent {
                     (// Must approach from above
                             player.getPosition().y > trap.getPosition().y);
         };
-
-        System.out.println("after " + legalDirection);
 
         // Damage player
         if (legalDirection) {
