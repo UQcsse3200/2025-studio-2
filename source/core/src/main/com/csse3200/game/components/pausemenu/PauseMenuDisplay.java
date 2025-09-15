@@ -173,6 +173,10 @@ public class PauseMenuDisplay extends UIComponent {
         if (healthActor != null) {
             healthActor.setVisible(!visible);
         }
+        Actor staminaActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("stamina");
+        if (healthActor != null) {
+          staminaActor.setVisible(!visible);
+        }
         Actor exitActor =  ServiceLocator.getRenderService().getStage().getRoot().findActor("exit");
         if (exitActor != null) {
             exitActor.setVisible(!visible);
