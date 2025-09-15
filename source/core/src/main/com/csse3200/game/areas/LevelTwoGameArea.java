@@ -95,7 +95,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnDoor();
     }
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(0,0);
+        GridPoint2 spawnPos =  new GridPoint2(5,0);
         Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
@@ -109,6 +109,32 @@ public class LevelTwoGameArea extends GameArea {
         Entity middleWall = WallFactory.createWall(25,0,1,20f,"");
         middleWall.setScale(2f,6f);
         spawnEntityAt(middleWall, middleWallPos, false, false);
+
+//        TOP LEVEL
+        GridPoint2 wall1Pos = new GridPoint2(33,44);
+        Entity wall1 = WallFactory.createWall(25,0,1,20f,"");
+        wall1.setScale(2f,8f);
+        spawnEntityAt(wall1, wall1Pos, false, false);
+
+        GridPoint2 wall2Pos = new GridPoint2(46,44);
+        Entity wall2 = WallFactory.createWall(25,0,1,20f,"");
+        wall2.setScale(2f,6.5f);
+        spawnEntityAt(wall2, wall2Pos, false, false);
+
+        GridPoint2 wall3Pos = new GridPoint2(59,44);
+        Entity wall3 = WallFactory.createWall(25,0,1,20f,"");
+        wall3.setScale(2f,5f);
+        spawnEntityAt(wall3, wall3Pos, false, false);
+
+        GridPoint2 wall4Pos = new GridPoint2(72,44);
+        Entity wall4 = WallFactory.createWall(25,0,1,20f,"");
+        wall4.setScale(2f,3.5f);
+        spawnEntityAt(wall4, wall4Pos, false, false);
+
+        GridPoint2 wall5Pos = new GridPoint2(85,44);
+        Entity wall5 = WallFactory.createWall(25,0,1,20f,"");
+        wall5.setScale(2f,2f);
+        spawnEntityAt(wall5, wall5Pos, false, false);
     }
     private void spawnPlatforms(){
         GridPoint2 groundPos1 = new GridPoint2(0, 0);
@@ -160,8 +186,8 @@ public class LevelTwoGameArea extends GameArea {
         moving1.setScale(2f,0.5f);
         spawnEntityAt(moving1, moving1Pos,false, false);
 
-        GridPoint2 moving2Pos = new GridPoint2(60,35);
-        Vector2 offsetWorld2 = new Vector2(0f, -4f);
+        GridPoint2 moving2Pos = new GridPoint2(60,27);
+        Vector2 offsetWorld2 = new Vector2(0f, 4f);
         float speed2 = 2f;
         Entity moving2 = PlatformFactory.createMovingPlatform(offsetWorld2, speed2);
         moving2.setScale(2f,0.5f);
@@ -187,13 +213,39 @@ public class LevelTwoGameArea extends GameArea {
         Entity left4 = PlatformFactory.createStaticPlatform();
         left4.setScale(2,0.5f);
         spawnEntityAt(left4, left4Pos,false, false);
+
+        GridPoint2 left5Pos = new GridPoint2(5,52);
+        Entity left5 = PlatformFactory.createStaticPlatform();
+        left5.setScale(2,0.5f);
+        spawnEntityAt(left5, left5Pos,false, false);
+
+        GridPoint2 buttonBalconyPos = new GridPoint2(0,55);
+        Entity buttonBalcony = PlatformFactory.createStaticPlatform();
+        buttonBalcony.setScale(2,1f);
+        spawnEntityAt(buttonBalcony, buttonBalconyPos,false, false);
+
+//        TOP LEVEL
+        GridPoint2 top1Pos = new GridPoint2(34,47);
+        Entity top1 = PlatformFactory.createStaticPlatform();
+        top1.setScale(2,0.5f);
+        spawnEntityAt(top1, top1Pos,false, false);
+
+        GridPoint2 top2Pos = new GridPoint2(41,52);
+        Entity top2 = PlatformFactory.createStaticPlatform();
+        top2.setScale(2,0.5f);
+        spawnEntityAt(top2, top2Pos,false, false);
+
+        GridPoint2 top3Pos = new GridPoint2(47,50);
+        Entity top3 = PlatformFactory.createStaticPlatform();
+        top3.setScale(2,0.5f);
+        spawnEntityAt(top3, top3Pos,false, false);
     }
     public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(90,44), true, true);
+        spawnEntityAt(door, new GridPoint2(98,45), true, true);
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
@@ -269,6 +321,21 @@ public class LevelTwoGameArea extends GameArea {
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         volatile1.setScale(2f,0.5f);
         spawnEntityAt(volatile1, volatile1Pos,false, false);
+
+        GridPoint2 topVolatile1Pos = new GridPoint2(25,48);
+        Entity topVolatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
+        topVolatile1.setScale(2f,0.5f);
+        spawnEntityAt(topVolatile1, topVolatile1Pos,false, false);
+
+        GridPoint2 topVolatile2Pos = new GridPoint2(21,53);
+        Entity topVolatile2 = PlatformFactory.createVolatilePlatform(2f,1.5f);
+        topVolatile2.setScale(2f,0.5f);
+        spawnEntityAt(topVolatile2, topVolatile2Pos,false, false);
+
+        GridPoint2 topVolatile3Pos = new GridPoint2(25,58);
+        Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
+        topVolatile3.setScale(2f,0.5f);
+        spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
     }
     protected void loadAssets() {
         logger.debug("Loading assets");
