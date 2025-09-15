@@ -10,7 +10,6 @@ public class PlayerAnimationController extends Component {
     PlayerActions actions;
     private String currentAnimation = "";
     private int xDirection = 1;
-    private int oldPlayerHealth;
 
     @Override
     public void create() {
@@ -24,8 +23,6 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
         entity.getEvents().addListener("hurt", this::animateHurt);
-
-        oldPlayerHealth = entity.getComponent(CombatStatsComponent.class).getHealth();
     }
 
     void animateStop() {
@@ -100,22 +97,15 @@ public class PlayerAnimationController extends Component {
         if (xDirection == 1) {
             setAnimation("DASH");
         } else {
-            // Make DASHLEFT when bruce adds it to the atlas
-            setAnimation("DASH");
-//            animator.startAnimation("DASHLEFT");
+            setAnimation("DASHLEFT");
         }
-
-//        System.out.println("IDLING");
-//        animator.startAnimation("IDLE");
     }
 
     void animateHurt() {
         if (xDirection == 1) {
             setAnimation("HURT");
         } else {
-            // Make HURTLEFT when bruce adds it to the atlas
-            setAnimation("HURT");
-//            animator.startAnimation("HURTLEFT");
+            setAnimation("HURTLEFT");
         }
     }
 }

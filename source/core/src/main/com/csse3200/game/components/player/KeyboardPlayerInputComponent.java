@@ -53,8 +53,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
-    Gdx.app.log("Keycode", Integer.toString(keycode));
-
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
       triggerGlideEvent(true);
