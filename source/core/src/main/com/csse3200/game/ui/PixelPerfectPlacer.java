@@ -50,7 +50,6 @@ public class PixelPerfectPlacer extends Stack {
     if (actor == null) throw new IllegalArgumentException("actor cannot be null");
     final Rect transformedPosition =
         new Rect(rect.x, textureHeight -  (rect.y + rect.height), rect.width, rect.height);
-    System.out.println("Transformed position: " + transformedPosition);
     overlays.add(new OverlayConstraint(actor, transformedPosition));
     overlayGroup.addActor(actor);
     // WidgetGroup's comment says to call this
