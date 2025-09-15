@@ -96,6 +96,8 @@ public class MinimapDisplay extends UIComponent {
   private void addActors() {
     rootTable = new Table();
     rootTable.setFillParent(true);
+    rootTable.setName("minimap");
+    rootTable.setUserObject(this);
 
     switch (options.position) {
       case TOP_LEFT -> rootTable.top().left();
