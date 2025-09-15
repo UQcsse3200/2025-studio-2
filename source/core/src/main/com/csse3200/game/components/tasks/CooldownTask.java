@@ -55,6 +55,7 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
      */
     @Override
     public void start() {
+
         super.start();
         if (!active) return;
         resetPos = computeResetPos();
@@ -67,6 +68,7 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
 
         // Trigger event so animations/sfx can be implemented
         owner.getEntity().getEvents().trigger("cooldownStart");
+
     }
 
     /**

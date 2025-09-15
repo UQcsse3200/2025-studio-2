@@ -50,6 +50,8 @@ public class EnemyFactory {
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
+
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
