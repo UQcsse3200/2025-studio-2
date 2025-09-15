@@ -1,6 +1,8 @@
 package com.csse3200.game.components.player;
 
 import com.csse3200.game.components.Component;
+
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +15,17 @@ public class InventoryComponent extends Component {
 
     public InventoryComponent() {
         this.inventory = new HashMap<>();
+    }
+
+    public InventoryComponent(InventoryComponent other) {
+        this.inventory = other.inventory;
+    }
+
+    /**
+     * Read only view of the inventory for UI rendering
+     * */
+    public Map<String, Integer> getItemsView() {
+        return Collections.unmodifiableMap(inventory);
     }
 
     /**

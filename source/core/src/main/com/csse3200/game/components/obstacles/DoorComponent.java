@@ -5,10 +5,15 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
 
 public class DoorComponent extends Component {
     private final String keyId;
+    private final String levelId;
     private boolean locked = true;
+    private final GameArea area;
 
     /**
      * A component that represents a door which can be locked or unlocked with a specific key.
@@ -16,8 +21,10 @@ public class DoorComponent extends Component {
      * <p>The door listens for collisions with player entities and checks their inventory
      * for a matching key. If the player has the correct key, the door is unlocked and opened.</p>
      */
-    public DoorComponent(String keyId) {
+    public DoorComponent(String keyId, GameArea area, String levelId) {
         this.keyId = keyId;
+        this.area = area;
+        this.levelId = levelId;
     }
 
 
@@ -26,7 +33,7 @@ public class DoorComponent extends Component {
      */
     @Override
     public void create() {
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+        entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
     }
@@ -35,16 +42,19 @@ public class DoorComponent extends Component {
      * Handles collision events. If the colliding entity is the player and the door is locked,
      * it attempts to unlock the door using the player's inventory.
      *
-     * @param me    the door entity (ignored here)
      * @param other the colliding entity
      */
-    private void onCollisionStart(Object me, Object other) {
-        if (!(other instanceof Entity player)) return;
+    private void onCollisionStart(Entity other) {
+        HitboxComponent cc = other.getComponent(HitboxComponent.class);
+        if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
 
-        ColliderComponent cc = player.getComponent(ColliderComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
 
-        if (locked) tryUnlock(player);
+        if (locked) {
+            tryUnlock(other);
+        } else {
+            // Door already open -> trigger transition
+            this.area.trigger("doorEntered", levelId, other);
+        }
     }
 
     /**
@@ -66,9 +76,14 @@ public class DoorComponent extends Component {
     /**
      * Opens the door by making its collider a sensor (non-blocking).
      */
-    private void openDoor() {
+    public void openDoor() {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         col.setSensor(true);
+
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_open.png");
+
+        locked = false;
     }
 
     /**
@@ -77,6 +92,11 @@ public class DoorComponent extends Component {
     private void closeDoor() {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         if (col != null) col.setSensor(false);
+
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        texture.setTexture("images/door_closed.png");
+
+        locked = true;
     }
 
     /**

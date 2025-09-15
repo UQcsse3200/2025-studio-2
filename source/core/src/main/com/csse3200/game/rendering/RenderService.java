@@ -15,6 +15,7 @@ public class RenderService implements Disposable {
   private static final int INITIAL_LAYER_CAPACITY = 4;
   private static final int INITIAL_CAPACITY = 4;
   private Stage stage;
+  private Renderer renderer;
   private DebugRenderer debugRenderer;
 
   /**
@@ -35,6 +36,45 @@ public class RenderService implements Disposable {
     }
     Array<Renderable> layer = renderables.get(layerIndex);
     layer.add(renderable);
+  }
+
+  /**
+   * Trigger rendering on the given batch within the given layer range.
+   * This should be called only from the main renderer.
+   * <p>
+   * This method will only render layers within the possible range of the IntMap,
+   * as such {@code Integer.MIN_VALUE} and {@code Integer.MAX_VALUE} can be used as bounds.
+   *
+   * @param batch batch to render to
+   * @param minLayer render layer lower bound
+   * @param maxLayer render layer upper bound
+   */
+  public void renderLayerRange(SpriteBatch batch, int minLayer, int maxLayer) {
+    if (minLayer > maxLayer) return;
+    // iterate layers in order
+    int n = renderables.size();
+    for (int i = 0; i < n; i++) {
+      int layerKey = renderables.getKeyAt(i);
+      if (layerKey < minLayer) continue;
+      if (layerKey > maxLayer) break;
+
+      Array<Renderable> layer = renderables.getValueAt(i);
+      layer.sort();
+      for (Renderable renderable : layer) {
+        renderable.render(batch);
+      }
+    }
+  }
+
+  /**
+   * Trigger rendering on the given batch only on the given layer.
+   * This should be called only from the main renderer.
+   *
+   * @param batch batch to render to
+   * @param layer render layer to be rendered
+   */
+  public void renderLayer(SpriteBatch batch, int layer) {
+    renderLayerRange(batch, layer, layer);
   }
 
   /**
@@ -76,6 +116,22 @@ public class RenderService implements Disposable {
 
   public void setDebug(DebugRenderer debugRenderer) {
     this.debugRenderer = debugRenderer;
+  }
+
+  /**
+   * Sets the current renderer instance
+   * @param renderer the instance to set
+   */
+  public void setRenderer(Renderer renderer) {
+    this.renderer = renderer;
+  }
+
+  /**
+   * Returns the current renderer instance
+   * @return the renderer instance
+   */
+  public Renderer getRenderer() {
+    return renderer;
   }
 
   public DebugRenderer getDebug() {

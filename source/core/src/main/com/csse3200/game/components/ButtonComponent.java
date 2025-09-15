@@ -19,6 +19,7 @@ public class ButtonComponent extends Component {
     private boolean playerInRange = false;
     private ColliderComponent playerCollider = null;
     private boolean addToPlayer = false;
+    private String direction = "left";
 
     /**
      * Creates the button
@@ -72,8 +73,31 @@ public class ButtonComponent extends Component {
         Vector2 playerPos = playerEntity.getPosition();
         Vector2 buttonPos = entity.getPosition();
 
-        if(playerPos.x < buttonPos.x - 0.5f) {
-            toggleButton();
+        float dx = playerPos.x - buttonPos.x;
+        float dy = playerPos.y - buttonPos.y;
+
+        System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
+        switch (direction) {
+            case "left":
+                if (dx < -0.5f && Math.abs(dy) < 0.5f) {
+                    toggleButton();
+                }
+                break;
+            case "right":
+                if (dx > 0.03f && Math.abs(dy) < 0.5f) {
+                    toggleButton();
+                }
+                break;
+            case "down":
+                if (dy < -0.5f && Math.abs(dx) < 0.5f) {
+                    toggleButton();
+                }
+                break;
+            case "up":
+                if (dy > 0.5f && Math.abs(dx) < 0.5f) {
+                    toggleButton();
+                }
+                break;
         }
     }
 
@@ -104,6 +128,14 @@ public class ButtonComponent extends Component {
             if (render != null) {
                 render.setTexture(texture);
             }
+        }
+    }
+
+    public void setDirection(String direction) {
+        if (direction == null) {
+            this.direction = "left";
+        } else {
+            this.direction = direction.toLowerCase();
         }
     }
 

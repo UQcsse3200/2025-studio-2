@@ -38,6 +38,10 @@ public class Entity {
   private Vector2 scale = new Vector2(1, 1);
   private Array<Component> createdComponents;
 
+  private boolean resetRequested = false;
+  private boolean safeSpotRequested = false;
+  private Vector2 safeSpotPosition = Vector2.Zero.cpy();
+
   public Entity() {
     id = nextId;
     nextId++;
@@ -199,6 +203,42 @@ public class Entity {
     return this;
   }
 
+
+  /**
+   * Remove a component from the entity.
+   * Can only be called before the entity is registered in the world.
+   *
+   * @param component The component to remove.
+   * @return This entity.
+   */
+  public Entity removeComponent(Component component) {
+    if (created) {
+      logger.error("Attempted to remove a component after the class was created. Not supported.");
+      return this;
+    }
+    ComponentType componentType = ComponentType.getFrom(component.getClass());
+    if (!components.containsKey(componentType.getId())) {
+      logger.error("Attempted to remove a component that does not exist within this entity.");
+      return this;
+    }
+
+    components.remove(componentType.getId()); // Hopefully no extra steps have to be taken
+
+    return this;
+  }
+
+  /**
+   * Replace a component in the current entity.
+   *
+   * @param component - the component to replace
+   * @return This entity.
+   */
+  public Entity replaceComponent(Component component) {
+    removeComponent(component);
+    addComponent(component);
+    return this;
+  }
+
   /** Dispose of the entity. This will dispose of all components on this entity. */
   public void dispose() {
     for (Component component : createdComponents) {
@@ -249,6 +289,18 @@ public class Entity {
     for (Component component : createdComponents) {
       component.triggerUpdate();
     }
+
+    if (safeSpotRequested) {
+//      System.out.println(this.getPosition());
+      this.setPosition(safeSpotPosition);
+      safeSpotRequested = false;
+//      System.out.println(this.getPosition());
+    }
+
+    if (resetRequested) {
+      getEvents().trigger("reset");
+      resetRequested = false;
+    }
   }
 
   /**
@@ -268,6 +320,25 @@ public class Entity {
    */
   public EventHandler getEvents() {
     return eventHandler;
+  }
+
+  /**
+   * Perform a level reset.
+   */
+  public void requestReset() {
+    resetRequested = true;
+  }
+
+  /**
+   * This is bad. By all means it makes no sense for this function to be here instead of inside TrapComponent, as the
+   * only entity that calls this function is the player.
+   * But since the world state is locked when the TrapComponent hit happens, here we are.
+   * (Potential improvement for sprint 4 I guess)
+   * @param safeSpot - safe spot we want to move the player to.
+   */
+  public void requestMoveToSafeSpot(Vector2 safeSpot) {
+    safeSpotRequested = true;
+    safeSpotPosition = safeSpot;
   }
 
   @Override

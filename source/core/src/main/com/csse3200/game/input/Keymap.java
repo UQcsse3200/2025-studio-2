@@ -102,12 +102,19 @@ public class Keymap {
    */
   public static void setKeyMapDefaults() {
     // Player keybindings
-    registerAction("PlayerUp", Input.Keys.W, true);
+    registerAction("PlayerUp", Input.Keys.W, false);
+    registerAction("PlayerDown", Input.Keys.S, false);
     registerAction("PlayerLeft", Input.Keys.A, true);
-    registerAction("PlayerDown", Input.Keys.S, true);
     registerAction("PlayerRight", Input.Keys.D, true);
-    registerAction("PlayerAttack", Input.Keys.SPACE, true);
+    registerAction("PlayerAttack", Input.Keys.Q, true);
     registerAction("PlayerInteract", Input.Keys.E, true);
+    registerAction("PlayerJump", Input.Keys.SPACE, true);
+    registerAction("PlayerAdrenaline", Input.Keys.V, true);
+    registerAction("PlayerDash", Input.Keys.SHIFT_LEFT, true);
+    registerAction("PlayerCrouch", Input.Keys.C, true);
+    registerAction("Reset", Input.Keys.R, true);
+    registerAction("Enter", Input.Keys.ENTER, false);
+    registerAction("Grapple", Input.Keys.F, true);
 
     // Debug Terminal keybindings
     registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT, false);
@@ -117,7 +124,7 @@ public class Keymap {
     // Pause
     registerAction("PauseSettings", Input.Keys.ESCAPE, true);
     registerAction("PauseInventory", Input.Keys.I, true);
-    registerAction("PauseMap", Input.Keys.M, true);
+    registerAction("PauseObjectives", Input.Keys.O, true);
     registerAction("PauseUpgrades", Input.Keys.U, true);
 
   }

@@ -2,6 +2,7 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.CollectableFactory;
@@ -16,16 +17,21 @@ import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.InputFactory;
 import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.areas.GameArea;
+
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class DoorComponentTest {
+    private GameArea game;
 
     // Reference: Gemini to set up the @BeforeEach
     @BeforeEach
@@ -38,7 +44,6 @@ class DoorComponentTest {
         when(inputFactory.createForPlayer()).thenReturn(mock(InputComponent.class));
         ServiceLocator.registerInputService(inputSvc);
 
-        // If your entities render or dispose, also stub these:
         RenderService render = mock(RenderService.class);
         doNothing().when(render).register(any());
         doNothing().when(render).unregister(any());
@@ -56,6 +61,13 @@ class DoorComponentTest {
         doNothing().when(es).unregister(any());
         ServiceLocator.registerEntityService(es);
 
+        game = new GameArea() {
+            protected void loadPrerequisites() {}
+            protected void loadEntities() {}
+            protected Entity spawnPlayer() {return null;}
+            protected Entity spawnPlayer(List<Component> componentList) {return null;}
+            protected void loadAssets() {}
+        };
     }
 
     // --- Helpers ---
@@ -65,8 +77,8 @@ class DoorComponentTest {
         return player;
     }
 
-    private Entity makeDoor(String keyId) {
-        Entity door = ObstacleFactory.createDoor(keyId);
+    private Entity makeDoor(String keyId, String levelId) {
+        Entity door = ObstacleFactory.createDoor(keyId, game, levelId);
         door.create();
         return door;
     }
@@ -81,10 +93,10 @@ class DoorComponentTest {
     @Test
     void collideWithoutKey_doorRemainsLocked() {
         Entity player = makePlayer();
-        Entity door   = makeDoor("pink-key");
+        Entity door   = makeDoor("pink-key", "level1");
 
         DoorComponent dc = door.getComponent(DoorComponent.class);
-        door.getEvents().trigger("collisionStart", door, player);
+        door.getEvents().trigger("onCollisionStart", player);
 
         assertTrue(dc.isLocked(), "Door should stay locked when player has no key");
     }
@@ -95,7 +107,7 @@ class DoorComponentTest {
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
         Entity key = makeKey("pink-key");
 
-        key.getEvents().trigger("collisionStart", key, player);
+        key.getEvents().trigger("onCollisionStart", player);
         assertTrue(inv.hasItem("pink-key"), "Player should have the pink key after pickup");
     }
 
@@ -106,15 +118,15 @@ class DoorComponentTest {
 
         // Give the player the key via the real pickup path to mirror gameplay
         Entity key = makeKey("pink-key");
-        key.getEvents().trigger("collisionStart", key, player);
+        key.getEvents().trigger("onCollisionStart", player);
         assertTrue(inv.hasItem("pink-key"), "Sanity: player must have key before trying door");
 
-        Entity door = makeDoor("pink-key");
+        Entity door = makeDoor("pink-key", "level1");
         DoorComponent dc = door.getComponent(DoorComponent.class);
         assertTrue(dc.isLocked(), "Sanity: door starts locked");
 
         // Now collide: should unlock & consume key
-        door.getEvents().trigger("collisionStart", door, player);
+        door.getEvents().trigger("onCollisionStart", player);
 
         assertFalse(dc.isLocked(), "Door should be unlocked after collision with correct key");
         assertFalse(inv.hasItem("pink-key"), "Key should be consumed when unlocking the door");

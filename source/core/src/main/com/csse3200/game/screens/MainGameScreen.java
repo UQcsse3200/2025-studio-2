@@ -1,17 +1,20 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.CaveGameArea;
-import com.csse3200.game.areas.ForestGameArea;
-import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -19,6 +22,7 @@ import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
@@ -29,6 +33,7 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.maingame.MainGameExitDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.input.PauseInputComponent;
+import com.csse3200.game.ui.cutscene.CutsceneArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,12 +51,18 @@ public class MainGameScreen extends ScreenAdapter {
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
-
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
 
-  private GameArea forestGameArea;
+  // Camera follow parameters
+  private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
+  private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
+  private static final float CAMERA_LERP = 0.15f; // Camera smoothing factor (0.15 = smooth movement)
 
+  private GameArea gameArea;
+  private TerrainFactory terrainFactory;
+
+  private PauseInputComponent pauseInput;
 
   public MainGameScreen(GdxGame game) {
     this.game = game;
@@ -78,29 +89,149 @@ public class MainGameScreen extends ScreenAdapter {
     ServiceLocator.registerLightingService(lightingService);
     lightingEngine = lightingService.getEngine();
 
+    // Registering a new security camera service
+    ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());
+
     loadAssets();
 
     logger.debug("Initialising main game screen entities");
-    TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
-    forestGameArea = new ForestGameArea(terrainFactory);
-    //CaveGameArea caveGameArea = new CaveGameArea(terrainFactory);
-    //caveGameArea.create();
-    forestGameArea.create();
+    terrainFactory = new TerrainFactory(renderer.getCamera());
+
+    //gameArea = new SprintOneGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
+
+    gameArea.create();
+
+    gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
+      logger.info("Door entered in sprint1 with key {}", keyId, player);
+      switchArea("cutscene1", player);
+    });
 
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
     createUI();
-
   }
+
+  private void switchArea(String levelId, Entity player) {
+    Gdx.app.postRunnable(() -> {
+      if (!levelId.isEmpty()) {
+  //        System.out.println("Area switched to " + levelId);
+        GameArea oldArea = gameArea;
+
+  //        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+
+        GameArea newArea = null;
+        String newLevel = "";
+        if ("forest".equals(levelId)) {
+          newArea = new ForestGameArea(terrainFactory);
+          newLevel = "cutscene1";
+        } else if ("sprint1".equals(levelId)) {
+          newArea = new SprintOneGameArea(terrainFactory);
+          newLevel = "cutscene2";
+        } else if ("cave".equals(levelId)) {
+          newArea = new CaveGameArea(terrainFactory);
+          newLevel = "forest";
+        } else if ("cutscene1".equals(levelId)) {
+          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
+          newLevel = "sprint1";
+        } else if ("cutscene2".equals(levelId)) {
+          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
+          newLevel = "cave";
+        }
+
+        if (newArea != null) {
+          GameArea finalNewArea = newArea; // effectively final
+          gameArea = finalNewArea;
+          String finalNewLevel = newLevel;
+          finalNewArea.getEvents().addListener(
+                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
+          );
+          finalNewArea.getEvents().addListener(
+                  "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, player)
+          );
+          System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
+          finalNewArea.createWithPlayer(player);
+          oldArea.dispose();
+          oldArea = null;
+        }
+      }
+    });
+  }
+
 
   @Override
   public void render(float delta) {
     if (!paused) {
-        physicsEngine.update();
-        ServiceLocator.getEntityService().update();
+      // Update camera position to follow player
+      updateCameraFollow();
+
+      physicsEngine.update();
+      ServiceLocator.getEntityService().update();
     }
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
+
+  /**
+   * Updates the camera position to follow the player entity.
+   * The camera only moves when the player is near the edge of the screen.
+   */
+  private void updateCameraFollow() {
+    Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
+
+    // Find the player entity
+    Vector2 playerPosition = null;
+    Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
+    for (Entity entity : entities) {
+      if (entity.getComponent(PlayerActions.class) != null) {
+        playerPosition = entity.getPosition().cpy();
+        break;
+      }
+    }
+
+    if (playerPosition != null) {
+      // Get camera viewport dimensions
+      float viewW = renderer.getCamera().getCamera().viewportWidth;
+      float viewH = renderer.getCamera().getCamera().viewportHeight;
+
+      // Calculate deadzone boundaries (area where camera doesn't move)
+      float dzW = viewW * DEADZONE_H_FRAC;
+      float dzH = viewH * DEADZONE_V_FRAC;
+
+      float dzLeft   = currentCamPos.x - dzW * 0.5f;
+      float dzRight  = currentCamPos.x + dzW * 0.5f;
+      float dzBottom = currentCamPos.y - dzH * 0.5f;
+      float dzTop    = currentCamPos.y + dzH * 0.5f;
+
+      // Calculate target camera position
+      float targetX = currentCamPos.x;
+      float targetY = currentCamPos.y;
+
+      // Only move camera if player is outside the deadzone
+      if (playerPosition.x < dzLeft) {
+        // Player is too far left, move camera left
+        targetX -= (dzLeft - playerPosition.x);
+      } else if (playerPosition.x > dzRight) {
+        // Player is too far right, move camera right
+        targetX += (playerPosition.x - dzRight);
+      }
+
+      if (playerPosition.y < dzBottom) {
+        // Player is too far down, move camera down
+        targetY -= (dzBottom - playerPosition.y);
+      } else if (playerPosition.y > dzTop) {
+        // Player is too far up, move camera up
+        targetY += (playerPosition.y - dzTop);
+      }
+
+      // Smoothly interpolate camera position for smooth movement
+      float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP;
+      float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP;
+
+      // Update camera position
+      renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
+    }
+  }
+
 
   @Override
   public void resize(int width, int height) {
@@ -165,7 +296,11 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void createUI() {
     logger.debug("Creating ui");
-    pauseMenuDisplay = new PauseMenuDisplay(this, forestGameArea.getPlayer(), this.game);
+    if (gameArea.getPlayer() == null) {
+      throw new IllegalStateException("GameArea has a null player");
+    }
+    pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
+    pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
@@ -174,8 +309,15 @@ public class MainGameScreen extends ScreenAdapter {
         .addComponent(new MainGameActions(this.game))
         .addComponent(new MainGameExitDisplay())
         .addComponent(pauseMenuDisplay)
-        .addComponent(new PauseInputComponent(this));
+        .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
+  }
+
+  // Set last keycode for inventory when tab is clicked
+  public void reflectPauseTabClick(PauseMenuDisplay.Tab tab) {
+    if (pauseInput != null) {
+      pauseInput.setLastKeycodeForTab(tab);
+    }
   }
 }

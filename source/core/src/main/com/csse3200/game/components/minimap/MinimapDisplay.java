@@ -1,31 +1,41 @@
 package com.csse3200.game.components.minimap;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.services.MinimapService;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import java.util.HashMap;
+import net.dermetfan.utils.Pair;
+
 import java.util.Map;
 
 /**
  * A UI component for displaying a minimap.
  */
 public class MinimapDisplay extends UIComponent {
-  private final Texture minimapTexture;
-  private final Vector2 worldSizeRemapFactor;
-  private final Vector2 origin;
+  private final Camera camera;
+  private float minimapScaleFactor;
+  private final Map<Entity, Image> trackedEntities;
+  private final Vector2 textureBottomLeft;
+  private final Vector2 textureTopRight;
+  private final Vector2 fullMapSize;
   private final float displaySize;
   private final MinimapOptions options;
-  private final Map<Entity, Image> trackedEntities = new HashMap<>();
-  private Group markerGroup;
+  private Cell<?> contentCell;
+  private Cell<?> rootCell;
   private Table rootTable;
+  private Image minimapImage;
+  private final Group markers = new Group();
 
   /**
    * Dictate where the Minimap will be drawn
@@ -34,41 +44,56 @@ public class MinimapDisplay extends UIComponent {
     TOP_LEFT,
     TOP_RIGHT,
     BOTTOM_LEFT,
-    BOTTOM_RIGHT
+    BOTTOM_RIGHT,
   }
 
   /**
    * Used to specify the options for drawing the minimap.
    */
   public static class MinimapOptions {
-    public MinimapPosition position;
+    public MinimapPosition position = MinimapPosition.BOTTOM_RIGHT;
   }
 
   /**
    * Creates a new minimap display.
    *
-   * @param minimapTexture The texture to use for the minimap background.
-   * @param worldSize The size of the game world the texture represents.
-   * @param origin The position that origin of the texture will have in the world.
    * @param displaySize The size (width and height) of the minimap on the screen.
    * @param options Options for the minimap shape and position.
    */
-  public MinimapDisplay(Texture minimapTexture, Vector2 origin, Vector2 worldSize, float displaySize, MinimapOptions options) {
-    this.minimapTexture = minimapTexture;
-    this.worldSizeRemapFactor = new Vector2(displaySize / worldSize.x, displaySize / worldSize.y);
-    this.origin = origin;
+  public MinimapDisplay(float displaySize, MinimapOptions options) {
+    camera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
+
+    MinimapService service = ServiceLocator.getMinimapService();
+    trackedEntities = service.getTrackedEntities();
+    textureTopRight = service.getTextureTopRight();
+    this.textureBottomLeft = service.getTextureBottomLeft();
+    fullMapSize = textureTopRight.cpy().sub(textureBottomLeft);
     this.options = options;
     this.displaySize = displaySize;
+  }
+
+  /**
+   * Adds the given marker to the markers group.
+   *
+   * @param marker the marker image to be added to the group.
+   */
+  public void addMarker(Image marker) {
+    markers.addActor(marker);
+  }
+
+  /**
+   * Removes the given marker form the group
+   *
+   * @param marker the marker image to removed.
+   */
+  public void removeMarker(Image marker) {
+    markers.removeActor(marker);
   }
 
   @Override
   public void create() {
     super.create();
     addActors();
-
-    // Linking to its actor for easy look-up later
-    rootTable.setUserObject(this);
-    rootTable.setName("minimap");
   }
 
   private void addActors() {
@@ -83,86 +108,55 @@ public class MinimapDisplay extends UIComponent {
     }
     rootTable.pad(10f);
 
-    Image minimapImage = new Image(minimapTexture);
-    markerGroup = new Group();
+    final MinimapService service = ServiceLocator.getMinimapService();
+    minimapImage = new Image(service.getMinimapTexture());
 
-    Stack contentStack = new Stack();
-    contentStack.add(minimapImage);
-    contentStack.add(markerGroup);
+    Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+    pixmap.setColor(new Color(0, 0, 0, 0.55f)); // Black with 60% opacity
+    pixmap.fill();
+    Texture backgroundTexture = new Texture(pixmap);
+    pixmap.dispose();
+    Image background = new Image(backgroundTexture);
 
-    Table minimapContainer = new Table();
-    minimapContainer.add(contentStack).size(displaySize);
+    Stack stack = new Stack();
+    stack.addActor(background);
+    stack.add(markers);
+    stack.clipBegin();
 
-    Stack finalStack = new Stack();
-    finalStack.add(minimapContainer);
+    markers.addActor(minimapImage);
 
-    rootTable.add(finalStack).size(displaySize);
+    Table content = new Table();
+    contentCell = content.add(stack).size(displaySize);
+    rootCell = rootTable.add(content.clip());
     stage.addActor(rootTable);
   }
 
   @Override
   public void update() {
-    for (Map.Entry<Entity, Image> entry : trackedEntities.entrySet()) {
-      Entity entity = entry.getKey();
-      Image marker = entry.getValue();
+    if (!rootTable.isVisible()) return;
 
-      Vector2 minimapCoords = worldToMinimapCoordinates(entity.getPosition());
-      marker.setPosition(
-          minimapCoords.x - marker.getWidth() / 2f,
-          minimapCoords.y - marker.getHeight() / 2f
-      );
+    minimapScaleFactor = displaySize / camera.viewportHeight;
+    minimapImage.setSize(fullMapSize.x * minimapScaleFactor, fullMapSize.y * minimapScaleFactor);
+    final float width = minimapScaleFactor * camera.viewportWidth;
+    rootCell.width(width);
+    contentCell.width(width);
+
+    final Vector2 cameraOrigin =
+        new Vector2(camera.viewportWidth / 2 - camera.position.x, camera.viewportHeight / 2 - camera.position.y);
+    final Vector2 cameraMinimapOrigin = worldToMinimapCoordinates(cameraOrigin);
+    minimapImage.setPosition(cameraMinimapOrigin.x, cameraMinimapOrigin.y);
+
+    for (Map.Entry<Entity, Image> entry : ServiceLocator.getMinimapService().getTrackedEntities().entrySet()) {
+      final Vector2 minimapCoords = worldToMinimapCoordinates(entry.getKey().getPosition());
+      Image marker = entry.getValue();
+      marker.setPosition(cameraMinimapOrigin.x + minimapCoords.x, cameraMinimapOrigin.y + minimapCoords.y);
     }
   }
 
   private Vector2 worldToMinimapCoordinates(Vector2 worldPos) {
-    float minimapX = (worldPos.x - this.origin.x) * worldSizeRemapFactor.x;
-    float minimapY = (worldPos.y - this.origin.y) * worldSizeRemapFactor.y;
-    return new Vector2(minimapX, minimapY);
-  }
-
-  /**
-   * Adds an entity to be tracked on the minimap.
-   *
-   * @param entity The entity to track.
-   * @param marker The image to use for the entity's marker.
-   */
-  public void trackEntity(Entity entity, Image marker) {
-    if (!trackedEntities.containsKey(entity)) {
-      trackedEntities.put(entity, marker);
-      markerGroup.addActor(marker);
-    }
-  }
-
-  /**
-   * Stops tracking an entity on the minimap.
-   *
-   * @param entity The entity to stop tracking.
-   */
-  public void stopTracking(Entity entity) {
-    Image marker = trackedEntities.remove(entity);
-    if (marker != null) markerGroup.removeActor(marker);
-  }
-
-  /**
-   * Updates the marker on the minimap with a new drawable.
-   *
-   * @param entity The entity whose marker to change.
-   * @param drawable The new drawable for the marker.
-   */
-  public void setMarker(Entity entity, Drawable drawable) {
-    Image marker = trackedEntities.get(entity);
-    if (marker != null) marker.setDrawable(drawable);
-  }
-
-  /**
-   * Tints the marker on the minimap with a new color.
-   *
-   * @param entity The entity whose marker to change.
-   * @param color The new color for the marker.
-   */
-  public void setMarkerColor(Entity entity, Color color) {
-    Image marker = trackedEntities.get(entity);
-    if (marker != null) marker.setColor(color);
+    float mapX = (worldPos.x - textureBottomLeft.x) * minimapScaleFactor;
+    float mapY = (worldPos.y - textureBottomLeft.y) * minimapScaleFactor;
+    return new Vector2(mapX, mapY);
   }
 
   @Override
@@ -186,5 +180,12 @@ public class MinimapDisplay extends UIComponent {
     if (rootTable != null) {
       rootTable.remove();
     }
+  }
+
+  /**
+   * @param visible: Set the visibility of minimap display to this value.
+   */
+  public void setVisible(boolean visible) {
+    rootTable.setVisible(visible);
   }
 }

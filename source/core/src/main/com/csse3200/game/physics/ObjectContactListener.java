@@ -1,9 +1,11 @@
 package com.csse3200.game.physics;
 
 import com.badlogic.gdx.physics.box2d.*;
+import com.csse3200.game.components.*;
+import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
-import com.csse3200.game.components.obstacles.TrapComponent;
+import com.csse3200.game.components.PressurePlateComponent; // <— import added
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -40,6 +42,9 @@ public class ObjectContactListener implements ContactListener {
 
         if (a == null || b == null) return;
 
+        a.getEvents().trigger("onCollisionStart", b);
+        b.getEvents().trigger("onCollisionStart", a);
+
         // Set player in range
         setPlayerInRangeOfButton(a, b, true);
         setPlayerInRangeOfButton(b, a, true);
@@ -47,8 +52,14 @@ public class ObjectContactListener implements ContactListener {
         setPlayerInRangeOfBox(a, b, true);
         setPlayerInRangeOfBox(b, a, true);
 
+        setPlayerOnPressurePlate(a, b, true);
+        setPlayerOnPressurePlate(b, a, true);
+
         setPlayerInRangeOfTrap(a, b);
         setPlayerInRangeOfTrap(b, a);
+
+        setPlayerInRangeOfDeathZone(a, b);
+        setPlayerInRangeOfDeathZone(b, a);
     }
 
     /**
@@ -108,24 +119,8 @@ public class ObjectContactListener implements ContactListener {
         }
     }
 
-    /**
-     * Check if the colliding entities consist of a trap and a player, and if so calls the
-     * trap's damage function.
-     * In future, this method may be extended to apply to enemies or the player.
-     * @param colliding the colliding entity, expected to be a player.
-     * @param trap the entity on which to call TrapComponent.damage
-     */
-    private void setPlayerInRangeOfTrap(Entity colliding, Entity trap) {
-        PlayerActions player = colliding.getComponent(PlayerActions.class);
-        TrapComponent trapComponent = trap.getComponent(TrapComponent.class);
 
-        if(trapComponent != null && player != null) {
-            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
-            trapComponent.damage(collider);
-        }
-    }
-
-    /**
+     /*
      * Triggers events on entities involved in collisions.
      * This is used for tooltip system and other general collision events.
      */
@@ -158,6 +153,9 @@ public class ObjectContactListener implements ContactListener {
         setPlayerInRangeOfButton(a, b, false);
         setPlayerInRangeOfButton(b, a, false);
 
+        setPlayerOnPressurePlate(a, b, false);
+        setPlayerOnPressurePlate(b, a, false);
+
         setPlayerInRangeOfBox(a, b, false);
         setPlayerInRangeOfBox(b, a, false);
     }
@@ -170,5 +168,45 @@ public class ObjectContactListener implements ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 
+    }
+
+
+
+    /**
+     * Check if the colliding entities consist of a trap and a player, and if so calls the
+     * trap's damage function.
+     * In future, this method may be extended to apply to enemies or the player.
+     * @param colliding the colliding entity, expected to be a player.
+     * @param trap the entity on which to call TrapComponent.damage
+     */
+    private void setPlayerInRangeOfTrap(Entity colliding, Entity trap) {
+        PlayerActions player = colliding.getComponent(PlayerActions.class);
+        TrapComponent trapComponent = trap.getComponent(TrapComponent.class);
+
+        if (trapComponent != null && player != null) {
+            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
+            trapComponent.damage(collider);
+        }
+    }
+
+    private void setPlayerInRangeOfDeathZone(Entity colliding, Entity deathZone) {
+        PlayerActions player = colliding.getComponent(PlayerActions.class);
+        DeathZoneComponent deathZoneComponent = deathZone.getComponent(DeathZoneComponent.class);
+
+        if (deathZoneComponent != null && player != null) {
+            ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
+            deathZoneComponent.damage(collider);
+        }
+    }
+
+    private void setPlayerOnPressurePlate(Entity plate, Entity other, boolean inRange) {
+        PressurePlateComponent plateComp = plate.getComponent(PressurePlateComponent.class);
+        PlayerActions player = other.getComponent(PlayerActions.class);
+        if (plateComp != null && player != null) {
+            ColliderComponent collider = inRange
+                    ? other.getComponent(ColliderComponent.class)
+                    : null;
+
+        }
     }
 }

@@ -10,6 +10,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
@@ -36,13 +37,14 @@ class ConeDetectorComponentTest {
         DebugRenderer debug = mock(DebugRenderer.class);
         renderService.setDebug(debug);
         ServiceLocator.registerRenderService(renderService);
+        ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());
     }
 
     @Test
     void shouldRequireConeLightComponentOnSameEntity() {
         Entity e = new Entity();
         Entity target = new Entity();
-        ConeDetectorComponent detector = new ConeDetectorComponent(target);
+        ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
 
         e.addComponent(detector);
         assertThrows(IllegalStateException.class, e::create);
@@ -64,7 +66,7 @@ class ConeDetectorComponentTest {
 
             float dis = 5f, dir = 0f, coneDeg = 45f;
             ConeLightComponent cl = new ConeLightComponent(rh,32, Color.WHITE, dis, dir, coneDeg);
-            ConeDetectorComponent detector = new ConeDetectorComponent(target);
+            ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
             lightEntity.addComponent(cl);
             lightEntity.addComponent(detector);
 
@@ -108,7 +110,7 @@ class ConeDetectorComponentTest {
 
             ConeLightComponent cl = new ConeLightComponent(rh, 32, Color.WHITE, 5f, 0f, 45f);
             lightEntity.addComponent(cl);
-            ConeDetectorComponent detector = new ConeDetectorComponent(target);
+            ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
             lightEntity.addComponent(detector);
 
             when(physics.raycast(any(Vector2.class), any(Vector2.class), eq(PhysicsLayer.OBSTACLE), any())).thenReturn(false);
@@ -146,7 +148,7 @@ class ConeDetectorComponentTest {
             Entity target = new Entity();
 
             ConeLightComponent cl = new ConeLightComponent(rh, 32, Color.WHITE, 5f, 0f, 45f);
-            ConeDetectorComponent detector = new ConeDetectorComponent(target);
+            ConeDetectorComponent detector = new ConeDetectorComponent(target, "none");
 
             lightEntity.addComponent(cl);
             lightEntity.addComponent(detector);

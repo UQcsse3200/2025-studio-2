@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +15,20 @@ public class CombatStatsComponent extends Component {
   private int health;
   private int baseAttack;
 
+  // "Grace period" between hits
+  private static final long INVULN_FRAMES = 30;
+  private long lastHitFrame = -100;
+
   public CombatStatsComponent(int health, int baseAttack) {
     setHealth(health);
     setBaseAttack(baseAttack);
+  }
+
+  // Copy constructor
+  public CombatStatsComponent(CombatStatsComponent other) {
+    this.health = other.health;
+    this.baseAttack = other.baseAttack;
+    this.lastHitFrame = other.lastHitFrame;
   }
 
   /**
@@ -85,7 +97,11 @@ public class CombatStatsComponent extends Component {
   }
 
   public void hit(CombatStatsComponent attacker) {
-    int newHealth = getHealth() - attacker.getBaseAttack();
-    setHealth(newHealth);
+    long currentFrame = Gdx.graphics.getFrameId();
+    if (currentFrame - lastHitFrame > INVULN_FRAMES) {
+      lastHitFrame = currentFrame;
+      int newHealth = getHealth() - attacker.getBaseAttack();
+      setHealth(newHealth);
+    }
   }
 }

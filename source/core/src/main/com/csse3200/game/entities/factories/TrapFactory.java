@@ -1,16 +1,10 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -35,9 +29,10 @@ public class TrapFactory {
      * effect so it can be used on a variety of platforms and/or walls.
      *
      * @param position The start position of the trap
+     * @param safeSpot Spot to teleport the player once they take damage
      * @return the Spike trap Entity created.
      */
-    public static Entity createSpikes(GridPoint2 position) {//int length, int rotateClockwise) {
+    public static Entity createSpikes(GridPoint2 position, Vector2 safeSpot) {//int length, int rotateClockwise) {
         Entity spikes = new Entity();
         String texture = "images/spikes_sprite.png";
         spikes.addComponent(new TextureRenderComponent(texture));
@@ -60,7 +55,7 @@ public class TrapFactory {
 //        safePosition.x += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().x);
 //        safePosition.y += (int) ((tileSize / 2) - collider.getEntity().getCenterPosition().y);
 
-        TrapComponent trapComponent = new TrapComponent();
+        TrapComponent trapComponent = new TrapComponent(safeSpot);
         spikes.addComponent(trapComponent);
 
         return spikes;

@@ -12,24 +12,20 @@ import com.csse3200.game.services.ServiceLocator;
  * A component to be added to entities that should be tracked on the minimap.
  */
 public class MinimapComponent extends Component {
-  private final MinimapDisplay minimapDisplay;
   private final Image marker;
 
   /**
-   * @param minimapDisplay The MinimapDisplay instance to register with.
    * @param marker The image to use for the entity's marker.
    */
-  public MinimapComponent(MinimapDisplay minimapDisplay, Image marker) {
-    this.minimapDisplay = minimapDisplay;
+  public MinimapComponent(Image marker) {
     this.marker = marker;
   }
 
   /**
-   * @param minimapDisplay The MinimapDisplay instance to register with.
    * @param markerAsset The path to the texture for this entity's marker.
    */
-  public MinimapComponent(MinimapDisplay minimapDisplay, String markerAsset) {
-    this(minimapDisplay, loadImageWithDefaultSize(markerAsset));
+  public MinimapComponent(String markerAsset) {
+    this(loadImageWithDefaultSize(markerAsset));
   }
 
   private static Image loadImageWithDefaultSize(String markerAsset) {
@@ -40,28 +36,16 @@ public class MinimapComponent extends Component {
 
   @Override
   public void create() {
-    minimapDisplay.trackEntity(entity, marker);
+    ServiceLocator.getMinimapService().trackEntity(entity, marker);
   }
 
   /**
    * Updates the marker on the minimap with a new drawable.
    *
-   * @param drawable The new drawable for the marker.
+   * @param marker The new drawable for the marker.
    */
-  public void setMarker(Drawable drawable) {
-    minimapDisplay.setMarker(entity, drawable);
-  }
-
-  /**
-   * Updates the marker on the minimap with a new texture.
-   *
-   * @param markerAsset The path to the new texture for the marker.
-   */
-  public void setMarker(String markerAsset) {
-    Drawable drawable = new TextureRegionDrawable(
-        ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class)
-    );
-    setMarker(drawable);
+  public void setMarker(Image marker) {
+    ServiceLocator.getMinimapService().setMarker(entity, marker);
   }
 
   /**
@@ -70,11 +54,11 @@ public class MinimapComponent extends Component {
    * @param color The new color for the marker.
    */
   public void tintMarker(Color color) {
-    minimapDisplay.setMarkerColor(entity, color);
+    ServiceLocator.getMinimapService().setMarkerColor(entity, color);
   }
 
   @Override
   public void dispose() {
-    minimapDisplay.stopTracking(entity);
+    ServiceLocator.getMinimapService().stopTracking(entity);
   }
 }
