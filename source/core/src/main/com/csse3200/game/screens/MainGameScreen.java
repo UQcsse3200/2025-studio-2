@@ -158,6 +158,14 @@ public class MainGameScreen extends ScreenAdapter {
     });
   }
 
+  /**
+   * Returns the current game area instance
+   *
+   * @return the current game area instance.
+   */
+  public GameArea getGameArea() {
+    return gameArea;
+  }
 
   @Override
   public void render(float delta) {
