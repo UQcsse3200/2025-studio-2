@@ -34,15 +34,18 @@ public class ExplosionFactory {
         float visualScale = radius * 0.5f; // Adjust this coefficient to match the actual explosion range
         explosion.setScale(visualScale, visualScale);
 
-        // Set the visual size of the animation according to the explosion radius
-        // explosion.getComponent(AnimationRenderComponent.class).scaleEntity();
-
-        // Set the explosion center point at the bomb's position
-        explosion.setPosition(position.x, position.y);
-
-        /*Vector2 bottomLeftPos = explosion.getCenterPosition().cpy().sub(visualScale / 2f, visualScale / 2f);
-        explosion.setPosition(bottomLeftPos);*/
+        // The 'position' argument is the desired CENTER of the explosion.
+        // We need to calculate the correct bottom-left position.
+        Vector2 bottomLeftPos = getExplosionPosition(position, visualScale);
+        explosion.setPosition(bottomLeftPos);
 
         return explosion;
+    }
+
+    public static Vector2 getExplosionPosition(Vector2 position, float visualScale) {
+        Vector2 centerPos = position;
+        float halfSize = visualScale / 2f;
+        Vector2 bottomLeftPos = new Vector2(centerPos.x - halfSize, centerPos.y - halfSize);
+        return bottomLeftPos;
     }
 }
