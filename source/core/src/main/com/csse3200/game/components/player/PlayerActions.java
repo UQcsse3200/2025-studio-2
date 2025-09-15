@@ -82,6 +82,7 @@ public class PlayerActions extends Component {
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
     entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
+    entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
     entity.getEvents().addListener("grapple", this::grapple);
@@ -157,10 +158,10 @@ public class PlayerActions extends Component {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
-      impulseY = deltaVy * body.getMass();
+      impulseY = deltaVy * body.getMass() / 2;
 
     } else {
-      //entity.getEvents().trigger("gravityForPlayerOn");
+      entity.getEvents().trigger("gravityForPlayerOn");
       impulseY = 0f;
     }
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
