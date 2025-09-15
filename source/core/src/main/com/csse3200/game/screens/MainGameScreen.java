@@ -2,7 +2,9 @@ package com.csse3200.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
@@ -12,6 +14,7 @@ import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
@@ -109,7 +112,7 @@ public class MainGameScreen extends ScreenAdapter {
     gameArea.create();
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", keyId, player);
+      logger.info("Door entered in sprint1 with key id={}, player={}", keyId, player);
       switchArea("cutscene1", player);
     });
 
@@ -160,6 +163,8 @@ public class MainGameScreen extends ScreenAdapter {
           oldArea.dispose();
           oldArea = null;
         }
+
+        updatePlayerEntity();
       }
     });
   }
@@ -203,30 +208,28 @@ public class MainGameScreen extends ScreenAdapter {
   private void updateCameraFollow() {
     if (player == null || combatStatsComponent == null || combatStatsComponent.isDead()) {
       updatePlayerEntity();
+      if (player == null) return;
     }
-    System.out.println();
-    Vector2 currentCamPos = renderer.getCamera().getEntity().getPosition().cpy();
 
-    if (player == null) return;
-    // getPosition already copies the position vector, so no .cpy() needed
+    final Camera camera = renderer.getCamera().getCamera();
     final Vector2 playerPosition = player.getPosition();
 
     // Get camera viewport dimensions
-    float viewW = renderer.getCamera().getCamera().viewportWidth;
-    float viewH = renderer.getCamera().getCamera().viewportHeight;
+    float viewW = camera.viewportWidth;
+    float viewH = camera.viewportHeight;
 
     // Calculate deadzone boundaries (area where camera doesn't move)
     float dzW = viewW * DEADZONE_H_FRAC;
     float dzH = viewH * DEADZONE_V_FRAC;
 
-    float dzLeft   = currentCamPos.x - dzW * 0.1f;
-    float dzRight  = currentCamPos.x + dzW * 0.1f;
-    float dzBottom = currentCamPos.y - dzH * 0.2f;
-    float dzTop    = currentCamPos.y + dzH * 0.1f;
+    float dzLeft   = camera.position.x - dzW * 0.1f;
+    float dzRight  = camera.position.x + dzW * 0.1f;
+    float dzBottom = camera.position.y - dzH * 0.2f;
+    float dzTop    = camera.position.y + dzH * 0.1f;
 
     // Calculate target camera position
-    float targetX = currentCamPos.x;
-    float targetY = currentCamPos.y;
+    float targetX = camera.position.x;
+    float targetY = camera.position.y;
 
     // Only move camera if player is outside the deadzone
     if (playerPosition.x < dzLeft) {
@@ -246,11 +249,9 @@ public class MainGameScreen extends ScreenAdapter {
     }
 
     // Smoothly interpolate camera position for smooth movement
-    float newCamX = currentCamPos.x + (targetX - currentCamPos.x) * CAMERA_LERP_X;
-    float newCamY = currentCamPos.y + (targetY - currentCamPos.y) * CAMERA_LERP_Y;
-
-    // Update camera position
-    renderer.getCamera().getEntity().setPosition(new Vector2(newCamX, newCamY));
+    camera.position.x += (targetX - camera.position.x) * CAMERA_LERP_X;
+    camera.position.y += (targetY - camera.position.y) * CAMERA_LERP_Y;
+    camera.update();
   }
 
 
