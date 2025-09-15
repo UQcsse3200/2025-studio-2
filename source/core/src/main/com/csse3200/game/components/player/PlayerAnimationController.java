@@ -1,6 +1,7 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 
@@ -9,6 +10,7 @@ public class PlayerAnimationController extends Component {
     PlayerActions actions;
     private String currentAnimation = "";
     private int xDirection = 1;
+    private int oldPlayerHealth;
 
     @Override
     public void create() {
@@ -21,6 +23,9 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("landed", this::animateStop);
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
+        entity.getEvents().addListener("hurt", this::animateHurt);
+
+        oldPlayerHealth = entity.getComponent(CombatStatsComponent.class).getHealth();
     }
 
     void animateStop() {
@@ -52,12 +57,12 @@ public class PlayerAnimationController extends Component {
     void animateCrouching() {
         if (actions.getIsCrouching()) {
             if (xDirection == 1) {
-                animator.startAnimation("CROUCH");
+                setAnimation("CROUCH");
             } else if (xDirection == -1) {
-                animator.startAnimation("CROUCHLEFT");
+                setAnimation("CROUCHLEFT");
             }
         } else {
-            animator.startAnimation("IDLE");
+            setAnimation("IDLE");
         }
     }
 
@@ -73,13 +78,24 @@ public class PlayerAnimationController extends Component {
 
     void animateDash() {
         if (xDirection == 1) {
-            animator.startAnimation("DASH");
+            setAnimation("DASH");
         } else {
             // Make DASHLEFT when bruce adds it to the atlas
-            animator.startAnimation("DASH");
+            setAnimation("DASH");
 //            animator.startAnimation("DASHLEFT");
         }
 
-        animator.startAnimation("IDLE");
+//        System.out.println("IDLING");
+//        animator.startAnimation("IDLE");
+    }
+
+    void animateHurt() {
+        if (xDirection == 1) {
+            setAnimation("HURT");
+        } else {
+            // Make HURTLEFT when bruce adds it to the atlas
+            setAnimation("HURT");
+//            animator.startAnimation("HURTLEFT");
+        }
     }
 }

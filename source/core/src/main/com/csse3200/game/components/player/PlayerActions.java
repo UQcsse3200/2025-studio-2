@@ -95,7 +95,6 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("landed", this::onLand);
 
     entity.getEvents().addListener("toggleAdrenaline", this::toggleAdrenaline);
-
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);

@@ -70,6 +70,9 @@ public class PlayerFactory {
     animator.addAnimation("DASH", 0.2f, Animation.PlayMode.LOOP);
     // Uncomment when Bruce adds DASHLEFT to the atlas
 //    animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
+    // Uncomment when Bruce adds HURTLEFT to the atlas
+//    animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
 
 
     Entity player =
@@ -115,10 +118,6 @@ public class PlayerFactory {
     player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
     player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
 // --- end stamina block ---
-
-
-
-
 
     //PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
 
