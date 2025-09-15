@@ -21,29 +21,24 @@ public class ParallaxLayer {
     }
 
     public void render(SpriteBatch batch) {
-        float offsetX = (camera.position.x * factor) + 1;
-        float offsetY = (camera.position.y * factor) - 1.8f;
-
-        // Get current viewport dimensions
-        float viewportWidth = camera.viewportWidth;
-        float viewportHeight = camera.viewportHeight;
+        float offsetX = camera.position.x * factor;
+        float offsetY = (camera.position.y * factor) - 2.9f;
 
         // Get texture dimensions
         float textureWidth = texture.getWidth();
         float textureHeight = texture.getHeight();
 
-        // Calculate scale
-        float scaleX = viewportWidth / textureWidth;
-        float scaleY = viewportHeight / textureHeight;
+        // Calculate scale to cover the entire map
+        float scaleX = mapWidth / textureWidth / 2f;
+        float scaleY = mapHeight / textureHeight / 2f;
 
-        // Use the larger scale to ensure the texture covers the entire viewport
-        float scale = Math.max(scaleX, scaleY) * 1.5f;
+        float scale = Math.max(scaleX, scaleY);
 
         // Calculate final dimensions after scaling
         float scaledWidth = textureWidth * scale;
         float scaledHeight = textureHeight * scale;
 
-        // Center the image on the camera
+        // Center the cropped image
         float drawX = camera.position.x - scaledWidth / 2 - offsetX;
         float drawY = camera.position.y - scaledHeight / 2 - offsetY;
 

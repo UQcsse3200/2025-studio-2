@@ -176,6 +176,12 @@ public class LevelOneGameArea extends GameArea {
         Entity gateFloor = FloorFactory.createStaticFloor();
         gateFloor.setScale(5f, 0.8f);
         spawnEntityAt(gateFloor, gateFloorPos, false, false);
+
+        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
+        Entity puzzleGround = FloorFactory.createStaticFloor();
+        puzzleGround.setScale(16f,2f);
+        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
+
     }
 
 
