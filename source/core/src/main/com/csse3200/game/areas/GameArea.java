@@ -36,8 +36,8 @@ public abstract class GameArea implements Disposable {
     return events;
   }
 
-  public void trigger(String eventName, String keyId, Entity player) {
-    events.trigger(eventName, keyId, player);
+  public void trigger(String eventName, Entity player) {
+    events.trigger(eventName, player);
   }
 
   protected Entity player;

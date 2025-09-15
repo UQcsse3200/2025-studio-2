@@ -331,7 +331,7 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
     }
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this, "cave");
+        Entity door = ObstacleFactory.createDoor("door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(door, new GridPoint2(28,5), true, true);

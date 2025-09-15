@@ -98,13 +98,13 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
     //gameArea = new SprintOneGameArea(terrainFactory);
-    //gameArea = new LevelOneGameArea(terrainFactory);
-    gameArea = new LevelTwoGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
+    //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
 
-    gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", keyId, player);
+    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
+      logger.info("Door entered in sprint1 with key {}", player);
       switchArea("cutscene1", player);
     });
 
@@ -123,21 +123,19 @@ public class MainGameScreen extends ScreenAdapter {
 
         GameArea newArea = null;
         String newLevel = "";
-        if ("forest".equals(levelId)) {
-          newArea = new ForestGameArea(terrainFactory);
-          newLevel = "cutscene1";
-        } else if ("sprint1".equals(levelId)) {
-          newArea = new SprintOneGameArea(terrainFactory);
-          newLevel = "cutscene2";
-        } else if ("cave".equals(levelId)) {
-          newArea = new CaveGameArea(terrainFactory);
-          newLevel = "forest";
-        } else if ("cutscene1".equals(levelId)) {
+
+        if ("cutscene1".equals(levelId)) {
           newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-          newLevel = "sprint1";
+          newLevel = "level2";
+        } else if ("level2".equals(levelId)) {
+          newArea = new LevelTwoGameArea(terrainFactory);
+          newLevel = "cutscene2";
         } else if ("cutscene2".equals(levelId)) {
           newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-          newLevel = "cave";
+          newLevel = "sprint1";
+        } else if ("sprint1".equals(levelId)) {
+          newArea = new SprintOneGameArea(terrainFactory);
+          newLevel = "level2";
         }
 
         if (newArea != null) {
@@ -145,10 +143,10 @@ public class MainGameScreen extends ScreenAdapter {
           gameArea = finalNewArea;
           String finalNewLevel = newLevel;
           finalNewArea.getEvents().addListener(
-                  "doorEntered", (String key, Entity play) -> switchArea(finalNewLevel, player)
+                  "doorEntered", (Entity play) -> switchArea(finalNewLevel, player)
           );
           finalNewArea.getEvents().addListener(
-                  "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, player)
+                  "cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player)
           );
           System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           finalNewArea.createWithPlayer(player);
