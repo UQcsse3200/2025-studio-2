@@ -27,6 +27,8 @@ public class MainGameExitDisplay extends UIComponent {
     table = new Table();
     table.top().right();
     table.setFillParent(true);
+    table.setName("exit");
+    table.setUserObject(entity);
 
     TextButton mainMenuBtn = new TextButton("Exit", skin);
 
