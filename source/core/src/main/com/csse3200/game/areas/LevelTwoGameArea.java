@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LevelTwoGameArea extends GameArea {
-    private static final GridPoint2 mapSize = new GridPoint2(80,70);
+    private static final GridPoint2 mapSize = new GridPoint2(100,70);
     private static final float WALL_WIDTH = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
 
@@ -71,7 +71,8 @@ public class LevelTwoGameArea extends GameArea {
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/chimesound.mp3"};
     private static final String[] gameTextureAtlases = {
-            "images/PLAYER.atlas"
+            "images/PLAYER.atlas",
+            "images/volatile_platform.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -94,24 +95,105 @@ public class LevelTwoGameArea extends GameArea {
         spawnDoor();
     }
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(12,0);
+        GridPoint2 spawnPos =  new GridPoint2(0,0);
         Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
     private void spawnWalls(){
+        GridPoint2 bottomWallPos = new GridPoint2(80,6);
+        Entity bottomWall = WallFactory.createWall(25,0,1,20f,"");
+        bottomWall.setScale(2f,7f);
+        spawnEntityAt(bottomWall, bottomWallPos, false, false);
+
+        GridPoint2 middleWallPos = new GridPoint2(54,24);
+        Entity middleWall = WallFactory.createWall(25,0,1,20f,"");
+        middleWall.setScale(2f,6f);
+        spawnEntityAt(middleWall, middleWallPos, false, false);
     }
     private void spawnPlatforms(){
         GridPoint2 groundPos1 = new GridPoint2(0, 0);
         Entity ground1 = PlatformFactory.createStaticPlatform();
-        ground1.setScale(40,2);
+        ground1.setScale(5,2);
         spawnEntityAt(ground1, groundPos1, false, false);
+
+        GridPoint2 groundPos2 = new GridPoint2(25, 0);
+        Entity ground2 = PlatformFactory.createStaticPlatform();
+        ground2.setScale(37.5f,2f);
+        spawnEntityAt(ground2, groundPos2, false, false);
+
+        GridPoint2 middleGroundPos = new GridPoint2(0, 20);
+        Entity middleGround = PlatformFactory.createStaticPlatform();
+        middleGround.setScale(42f,2);
+        spawnEntityAt(middleGround, middleGroundPos, false, false);
+
+        GridPoint2 topGroundPos = new GridPoint2(16, 40);
+        Entity topGround = PlatformFactory.createStaticPlatform();
+        topGround.setScale(42f,2);
+        spawnEntityAt(topGround, topGroundPos, false, false);
+
+//        RIGHT GRAPPLE SECTION
+        GridPoint2 step1Pos = new GridPoint2(93,6);
+        Entity step1 = PlatformFactory.createStaticPlatform();
+        step1.setScale(2,0.5f);
+        spawnEntityAt(step1, step1Pos,false, false);
+
+        GridPoint2 step2Pos = new GridPoint2(90,10);
+        Entity step2 = PlatformFactory.createStaticPlatform();
+        step1.setScale(2,0.5f);
+        spawnEntityAt(step1, step2Pos,false, false);
+
+        GridPoint2 step3Pos = new GridPoint2(93,15);
+        Entity step3 = PlatformFactory.createStaticPlatform();
+        step3.setScale(2,0.5f);
+        spawnEntityAt(step3, step3Pos,false, false);
+
+        GridPoint2 step4Pos = new GridPoint2(90,19);
+        Entity step4 = PlatformFactory.createStaticPlatform();
+        step4.setScale(2,0.5f);
+        spawnEntityAt(step4, step4Pos,false, false);
+
+//        MIDDLE LEVEL
+        GridPoint2 moving1Pos = new GridPoint2(75,27);
+        Vector2 offsetWorld  = new Vector2(0f, 4f);
+        float speed = 2f;
+        Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
+        moving1.setScale(2f,0.5f);
+        spawnEntityAt(moving1, moving1Pos,false, false);
+
+        GridPoint2 moving2Pos = new GridPoint2(60,35);
+        Vector2 offsetWorld2 = new Vector2(0f, -4f);
+        float speed2 = 2f;
+        Entity moving2 = PlatformFactory.createMovingPlatform(offsetWorld2, speed2);
+        moving2.setScale(2f,0.5f);
+        spawnEntityAt(moving2, moving2Pos,false, false);
+
+//        LEFT GRAPPLE SECTION
+        GridPoint2 left1Pos = new GridPoint2(8,26);
+        Entity left1 = PlatformFactory.createStaticPlatform();
+        left1.setScale(2,0.5f);
+        spawnEntityAt(left1, left1Pos,false, false);
+
+        GridPoint2 left2Pos = new GridPoint2(5,30);
+        Entity left2 = PlatformFactory.createStaticPlatform();
+        left2.setScale(2,0.5f);
+        spawnEntityAt(left2, left2Pos,false, false);
+
+        GridPoint2 left3Pos = new GridPoint2(8,35);
+        Entity left3 = PlatformFactory.createStaticPlatform();
+        left3.setScale(2,0.5f);
+        spawnEntityAt(left3, left3Pos,false, false);
+
+        GridPoint2 left4Pos = new GridPoint2(5,39);
+        Entity left4 = PlatformFactory.createStaticPlatform();
+        left4.setScale(2,0.5f);
+        spawnEntityAt(left4, left4Pos,false, false);
     }
     public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(35,62), true, true);
+        spawnEntityAt(door, new GridPoint2(90,44), true, true);
     }
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
@@ -183,6 +265,10 @@ public class LevelTwoGameArea extends GameArea {
         return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
     private void spawnVolatilePlatform(){
+        GridPoint2 volatile1Pos = new GridPoint2(68,31);
+        Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
+        volatile1.setScale(2f,0.5f);
+        spawnEntityAt(volatile1, volatile1Pos,false, false);
     }
     protected void loadAssets() {
         logger.debug("Loading assets");
