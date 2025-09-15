@@ -169,6 +169,14 @@ public class PauseMenuDisplay extends UIComponent {
         if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
             minimapDisplay.setVisible(!visible);
         }
+        Actor healthActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("health");
+        if (healthActor != null) {
+            healthActor.setVisible(!visible);
+        }
+        Actor exitActor =  ServiceLocator.getRenderService().getStage().getRoot().findActor("exit");
+        if (exitActor != null) {
+            exitActor.setVisible(!visible);
+        }
 
         if (visible) {
             rootTable.toFront();
