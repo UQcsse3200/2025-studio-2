@@ -20,13 +20,11 @@ import java.util.Map;
 
 /**
  * UI tab that renders the player's inventory within the pause menu
- *
  * This tab shows a 4x4 grid of item slots. Each unique item present in the player's
  * {@link InventoryComponent} occupies one "filled" slot, which renders a slot border and,
  * if available, an item image. Remaining cells render as empty slots. The tab also provides
  * a close hotspot (positioned with {@link PixelPerfectPlacer}) which unpauses the game and
  * hides the pause screen when clicked.
- * </p>
  */
 public class InventoryTab implements InventoryTabInterface {
 

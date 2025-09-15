@@ -21,6 +21,11 @@ public class PixelPerfectPlacer extends Stack {
 
   /**
    * Helper record to store the actor's pixel-based layout constraints.
+   *
+   * @param x the x coordinate of table in pixels
+   * @param y the y coordinate of table in pixels
+   * @param width the width of the table in pixels
+   * @param height the height of the table in pixels
    */
   public record Rect(int x, int y, int width, int height) {}
 
