@@ -9,7 +9,7 @@ import com.csse3200.game.physics.components.ColliderComponent;
 public class TrapComponent extends CombatStatsComponent {
     private final Vector2 safeSpot;
     private final int rotation;
-    private final float trapSize = 0.6f; // The width of half a unit
+    private final float trapSize = 0.62f; // The width of half a unit
 
     public TrapComponent(Vector2 safeSpot, int rotation) {
         this(0, 40, safeSpot, rotation);
@@ -77,7 +77,11 @@ public class TrapComponent extends CombatStatsComponent {
                 legalDirection = (playerPos.x > (trapPos.x - trapSize));
             }
         } else { // Fix the over-enthusiastic lower bound
-            legalDirection = (playerPos.y > (trapPos.y - 1f));
+            if (playerPos.y > trapPos.y) {
+                legalDirection = (playerPos.y < (trapPos.y + trapSize));
+            } else {
+                legalDirection = (playerPos.y > (trapPos.y - (trapSize * 2)));
+            }
         }
 
         legalDirection &= switch (rotation) {

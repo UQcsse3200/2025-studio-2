@@ -66,7 +66,7 @@ public class LevelOneGameArea extends GameArea {
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/wall.png",
-            "images/glide_powerup.png"
+            "images/dash_powerup.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -426,14 +426,14 @@ public class LevelOneGameArea extends GameArea {
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
             //what to do when puzzle completed, probably player upgrade
             //if you want to spawn on platform before door spawn at (46, 56)
-            Entity upgrade = CollectableFactory.createGlideUpgrade();
-            spawnEntityAt(upgrade, new GridPoint2(46 ,56), true,  true);
+            Entity dashUpgrade = CollectableFactory.createDashUpgrade();
+            spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
         });
 
     }
     public void spawnKey() {
         Entity key = CollectableFactory.createKey("door");
-        spawnEntityAt(key, new GridPoint2(8,40), true, true);
+        spawnEntityAt(key, new GridPoint2(46,56), true, true);
     }
     private void spawnSecurityCams() {
         // see the LightFactory class for more details on spawning these
