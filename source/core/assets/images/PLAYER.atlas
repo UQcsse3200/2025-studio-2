@@ -1,259 +1,256 @@
 PLAYER.png
-	size: 1024, 128
+	size: 1024, 256
 	repeat: none
 CROUCH
 	index: 1
-	bounds: 2, 52, 64, 32
-CROUCH
-	index: 9
-	bounds: 2, 52, 64, 32
+	bounds: 2, 52, 64, 48
 CROUCHMOVE
-	bounds: 2, 52, 64, 32
+	bounds: 2, 52, 64, 48
 CROUCH
 	index: 6
-	bounds: 2, 18, 64, 32
+	bounds: 266, 202, 64, 48
 CROUCH
 	index: 4
-	bounds: 2, 18, 64, 32
+	bounds: 266, 202, 64, 48
 CROUCH
 	index: 3
-	bounds: 134, 86, 64, 32
+	bounds: 200, 2, 64, 48
 CROUCH
 	index: 7
-	bounds: 134, 86, 64, 32
+	bounds: 200, 2, 64, 48
 CROUCH
 	index: 8
-	bounds: 134, 52, 64, 32
+	bounds: 464, 152, 64, 48
 CROUCH
 	index: 2
-	bounds: 134, 52, 64, 32
+	bounds: 464, 152, 64, 48
 CROUCH
 	index: 5
-	bounds: 134, 18, 64, 32
+	bounds: 530, 102, 64, 48
 CROUCHLEFT
 	index: 1
-	bounds: 2, 86, 64, 32
+	bounds: 68, 202, 64, 48
 CROUCHLEFT
 	index: 9
-	bounds: 2, 86, 64, 32
+	bounds: 68, 202, 64, 48
 CROUCHMOVELEFT
-	bounds: 2, 86, 64, 32
+	bounds: 68, 202, 64, 48
 CROUCHLEFT
 	index: 6
-	bounds: 68, 86, 64, 32
+	bounds: 200, 202, 64, 48
 CROUCHLEFT
 	index: 4
-	bounds: 68, 86, 64, 32
+	bounds: 200, 202, 64, 48
 CROUCHLEFT
 	index: 3
-	bounds: 68, 52, 64, 32
+	bounds: 266, 102, 64, 48
 CROUCHLEFT
 	index: 7
-	bounds: 68, 52, 64, 32
+	bounds: 266, 102, 64, 48
 CROUCHLEFT
 	index: 8
-	bounds: 68, 18, 64, 32
+	bounds: 398, 152, 64, 48
 CROUCHLEFT
 	index: 2
-	bounds: 68, 18, 64, 32
+	bounds: 398, 152, 64, 48
 CROUCHLEFT
 	index: 5
-	bounds: 200, 86, 64, 32
+	bounds: 530, 152, 64, 48
 DASH
 	index: 5
-	bounds: 402, 86, 32, 32
+	bounds: 2, 2, 64, 48
 DASH
 	index: 2
-	bounds: 640, 86, 32, 32
+	bounds: 332, 152, 64, 48
 DASH
 	index: 7
-	bounds: 742, 86, 32, 32
+	bounds: 266, 2, 64, 48
 DASH
 	index: 4
-	bounds: 844, 86, 32, 32
+	bounds: 596, 202, 64, 48
 DASH
 	index: 1
-	bounds: 946, 86, 32, 32
+	bounds: 662, 152, 64, 48
 DASH
 	index: 6
-	bounds: 946, 86, 32, 32
+	bounds: 662, 152, 64, 48
 DASH
 	index: 3
-	bounds: 336, 2, 32, 32
+	bounds: 860, 202, 64, 48
 DASHLEFT
 	index: 7
-	bounds: 300, 86, 32, 32
+	bounds: 2, 102, 64, 48
 DASHLEFT
 	index: 4
-	bounds: 504, 86, 32, 32
+	bounds: 266, 152, 64, 48
 DASHLEFT
 	index: 1
-	bounds: 708, 86, 32, 32
+	bounds: 266, 52, 64, 48
 DASHLEFT
 	index: 6
-	bounds: 708, 86, 32, 32
+	bounds: 266, 52, 64, 48
 DASHLEFT
 	index: 3
-	bounds: 878, 86, 32, 32
+	bounds: 596, 152, 64, 48
 DASHLEFT
 	index: 5
-	bounds: 200, 2, 32, 32
+	bounds: 596, 2, 64, 48
 DASHLEFT
 	index: 2
-	bounds: 404, 2, 32, 32
+	bounds: 728, 52, 64, 48
 HURT
 	index: 4
-	bounds: 368, 86, 32, 32
+	bounds: 68, 102, 64, 48
 HURT
 	index: 1
-	bounds: 572, 86, 32, 32
+	bounds: 134, 2, 64, 48
 HURT
 	index: 3
-	bounds: 810, 86, 32, 32
+	bounds: 398, 52, 64, 48
 HURT
 	index: 0
-	bounds: 912, 86, 32, 32
+	bounds: 464, 2, 64, 48
 HURT
 	index: 5
-	bounds: 980, 86, 32, 32
+	bounds: 530, 2, 64, 48
 HURT
 	index: 2
-	bounds: 268, 2, 32, 32
+	bounds: 728, 102, 64, 48
 HURTLEFT
 	index: 1
-	bounds: 334, 86, 32, 32
+	bounds: 134, 202, 64, 48
 HURTLEFT
 	index: 3
-	bounds: 674, 86, 32, 32
+	bounds: 398, 202, 64, 48
 HURTLEFT
 	index: 0
-	bounds: 776, 86, 32, 32
+	bounds: 530, 202, 64, 48
 HURTLEFT
 	index: 5
-	bounds: 812, 52, 32, 32
+	bounds: 398, 2, 64, 48
 HURTLEFT
 	index: 2
-	bounds: 914, 52, 32, 32
+	bounds: 728, 202, 64, 48
 HURTLEFT
 	index: 4
-	bounds: 370, 2, 32, 32
+	bounds: 662, 2, 64, 48
 IDLE
 	index: 4
-	bounds: 234, 36, 32, 48
+	bounds: 68, 152, 64, 48
 JUMP
 	index: 6
-	bounds: 234, 36, 32, 48
+	bounds: 68, 152, 64, 48
 IDLE
 	index: 1
-	bounds: 336, 36, 32, 48
-IDLE
-	index: 2
-	bounds: 336, 36, 32, 48
+	bounds: 68, 2, 64, 48
 IDLE
 	index: 3
-	bounds: 336, 36, 32, 48
+	bounds: 68, 2, 64, 48
+IDLE
+	index: 2
+	bounds: 68, 2, 64, 48
 JUMP
 	index: 1
-	bounds: 336, 36, 32, 48
+	bounds: 68, 2, 64, 48
 IDLELEFT
 	index: 1
-	bounds: 370, 36, 32, 48
-IDLELEFT
-	index: 2
-	bounds: 370, 36, 32, 48
+	bounds: 134, 52, 64, 48
 IDLELEFT
 	index: 3
-	bounds: 370, 36, 32, 48
+	bounds: 134, 52, 64, 48
+IDLELEFT
+	index: 2
+	bounds: 134, 52, 64, 48
 JUMPLEFT
 	index: 1
-	bounds: 370, 36, 32, 48
+	bounds: 134, 52, 64, 48
 JUMP
 	index: 2
-	bounds: 268, 36, 32, 48
+	bounds: 134, 152, 64, 48
 JUMP
 	index: 7
-	bounds: 404, 36, 32, 48
+	bounds: 200, 102, 64, 48
 IDLE
 	index: 5
-	bounds: 404, 36, 32, 48
+	bounds: 200, 102, 64, 48
 JUMP
 	index: 4
-	bounds: 438, 36, 32, 48
+	bounds: 332, 102, 64, 48
 JUMP
 	index: 3
-	bounds: 574, 36, 32, 48
+	bounds: 596, 52, 64, 48
 JUMP
 	index: 5
-	bounds: 642, 36, 32, 48
+	bounds: 794, 102, 64, 48
 JUMPLEFT
 	index: 6
-	bounds: 200, 36, 32, 48
+	bounds: 2, 152, 64, 48
 IDLELEFT
 	index: 4
-	bounds: 200, 36, 32, 48
+	bounds: 2, 152, 64, 48
 JUMPLEFT
 	index: 3
-	bounds: 302, 36, 32, 48
+	bounds: 200, 152, 64, 48
 JUMPLEFT
 	index: 5
-	bounds: 472, 36, 32, 48
+	bounds: 398, 102, 64, 48
 JUMPLEFT
 	index: 2
-	bounds: 506, 36, 32, 48
+	bounds: 464, 52, 64, 48
 JUMPLEFT
 	index: 7
-	bounds: 540, 36, 32, 48
+	bounds: 596, 102, 64, 48
 IDLELEFT
 	index: 5
-	bounds: 540, 36, 32, 48
+	bounds: 596, 102, 64, 48
 JUMPLEFT
 	index: 4
-	bounds: 608, 36, 32, 48
+	bounds: 794, 202, 64, 48
 LEFT
 	index: 1
-	bounds: 436, 86, 32, 32
+	bounds: 68, 52, 64, 48
 LEFT
 	index: 6
-	bounds: 538, 86, 32, 32
+	bounds: 332, 202, 64, 48
 LEFT
 	index: 3
-	bounds: 676, 52, 32, 32
+	bounds: 464, 202, 64, 48
 LEFT
 	index: 8
-	bounds: 744, 52, 32, 32
+	bounds: 332, 2, 64, 48
 LEFT
 	index: 5
-	bounds: 846, 52, 32, 32
+	bounds: 662, 202, 64, 48
 LEFT
 	index: 2
-	bounds: 948, 52, 32, 32
+	bounds: 662, 102, 64, 48
 LEFT
 	index: 7
-	bounds: 234, 2, 32, 32
+	bounds: 662, 52, 64, 48
 LEFT
 	index: 4
-	bounds: 438, 2, 32, 32
+	bounds: 860, 152, 64, 48
 RIGHT
 	index: 4
-	bounds: 266, 86, 32, 32
+	bounds: 2, 202, 64, 48
 RIGHT
 	index: 1
-	bounds: 470, 86, 32, 32
+	bounds: 134, 102, 64, 48
 RIGHT
 	index: 6
-	bounds: 606, 86, 32, 32
+	bounds: 200, 52, 64, 48
 RIGHT
 	index: 3
-	bounds: 710, 52, 32, 32
+	bounds: 332, 52, 64, 48
 RIGHT
 	index: 8
-	bounds: 778, 52, 32, 32
+	bounds: 464, 102, 64, 48
 RIGHT
 	index: 5
-	bounds: 880, 52, 32, 32
+	bounds: 530, 52, 64, 48
 RIGHT
 	index: 2
-	bounds: 982, 52, 32, 32
+	bounds: 728, 152, 64, 48
 RIGHT
 	index: 7
-	bounds: 302, 2, 32, 32
+	bounds: 794, 152, 64, 48

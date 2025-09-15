@@ -8,14 +8,14 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 
 public class StandingColliderComponent extends ColliderComponent {
     private Fixture fixture;
-    private static Vector2 OFFSET = new Vector2(0.6f, 0.8f);
+    private static Vector2 OFFSET = new Vector2(0.9f, 0.5f);
 
     @Override
     public void create() {
         Body body = entity.getComponent(PhysicsComponent.class).getBody();
 
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(0.4f, 0.5f, OFFSET, 0f);
+        shape.setAsBox(0.3f, 0.5f, OFFSET, 0f);
 
         FixtureDef def = new FixtureDef();
         def.shape = shape;

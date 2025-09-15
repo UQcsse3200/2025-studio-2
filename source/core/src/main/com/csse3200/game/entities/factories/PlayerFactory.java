@@ -83,7 +83,7 @@ public class PlayerFactory {
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
-                    .addComponent(new ColliderComponent()) // temporary fix
+                    /**.addComponent(new ColliderComponent())*/ // temporary fix
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
@@ -126,7 +126,8 @@ public class PlayerFactory {
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
     //player.getComponent(TextureRenderComponent.class).scaleEntity();
-    player.setScale(1f, (float) 1000/792);
+    float scaleFactor = 2f;
+    player.setScale(1f * scaleFactor, (48f/64f) * scaleFactor);
     AnimationRenderComponent arc =
             player.getComponent(AnimationRenderComponent.class);
     arc.startAnimation("IDLE");
