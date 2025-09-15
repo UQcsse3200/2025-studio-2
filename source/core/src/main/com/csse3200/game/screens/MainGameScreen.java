@@ -96,7 +96,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    gameArea = new ForestGameArea(terrainFactory);
+    gameArea = new SprintOneGameArea(terrainFactory);
     gameArea.create();
 
     gameArea.getEvents().addListener("doorEntered", (String keyId, Entity player) -> {

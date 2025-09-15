@@ -1,6 +1,7 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 
@@ -8,7 +9,8 @@ public class PlayerAnimationController extends Component {
     AnimationRenderComponent animator;
     PlayerActions actions;
     private String currentAnimation = "";
-    private Vector2 direction;
+    private int xDirection = 1;
+    private int oldPlayerHealth;
 
     @Override
     public void create() {
@@ -21,29 +23,46 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("landed", this::animateStop);
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
+        entity.getEvents().addListener("hurt", this::animateHurt);
+
+        oldPlayerHealth = entity.getComponent(CombatStatsComponent.class).getHealth();
     }
 
     void animateStop() {
-        animator.stopAnimation();
+        if (xDirection == 1) {
+            animator.startAnimation("IDLE");
+        } else if (xDirection == -1) {
+            animator.startAnimation("IDLELEFT");
+        }
     }
 
     void animateJump() {
-        setAnimation("JUMP");
+        if (xDirection == 1) {
+            setAnimation("JUMP");
+        } else if (xDirection == -1) {
+            setAnimation("JUMPLEFT");
+        }
     }
 
     void animateWalk(Vector2 direction) {
         if (direction.x > 0f) {
             setAnimation("RIGHT");
+            xDirection = 1;
         } else if (direction.x < 0f) {
             setAnimation("LEFT");
+            xDirection = -1;
         }
     }
 
     void animateCrouching() {
         if (actions.getIsCrouching()) {
-            animator.startAnimation("CROUCHING");
+            if (xDirection == 1) {
+                setAnimation("CROUCH");
+            } else if (xDirection == -1) {
+                setAnimation("CROUCHLEFT");
+            }
         } else {
-            animator.stopAnimation();
+            setAnimation("IDLE");
         }
     }
 
@@ -58,6 +77,25 @@ public class PlayerAnimationController extends Component {
     }
 
     void animateDash() {
-        // DO STUFF HERE
+        if (xDirection == 1) {
+            setAnimation("DASH");
+        } else {
+            // Make DASHLEFT when bruce adds it to the atlas
+            setAnimation("DASH");
+//            animator.startAnimation("DASHLEFT");
+        }
+
+//        System.out.println("IDLING");
+//        animator.startAnimation("IDLE");
+    }
+
+    void animateHurt() {
+        if (xDirection == 1) {
+            setAnimation("HURT");
+        } else {
+            // Make HURTLEFT when bruce adds it to the atlas
+            setAnimation("HURT");
+//            animator.startAnimation("HURTLEFT");
+        }
     }
 }

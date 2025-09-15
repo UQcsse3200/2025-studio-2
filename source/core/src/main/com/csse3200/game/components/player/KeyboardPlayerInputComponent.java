@@ -195,9 +195,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerDashEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("dash")) {
-      entity.getEvents().trigger("dash");
-    }
+//    if (entity.getComponent(InventoryComponent.class).hasItem("dash")) {
+//      entity.getEvents().trigger("dash");
+//    }
+    entity.getEvents().trigger("dash");
   }
 
   private void triggerCrouchEvent() {

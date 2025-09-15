@@ -1,11 +1,166 @@
 PLAYER.png
-size:2048,2048
-repeat:none
-CROUCHING
-bounds:796,2,792,1000
+	size: 256, 256
+	repeat: none
+DASH
+	index: 5
+	bounds: 70, 70, 32, 32
+DASH
+	index: 2
+	bounds: 138, 152, 32, 32
+DASH
+	index: 7
+	bounds: 206, 220, 32, 32
+DASH
+	index: 4
+	bounds: 138, 84, 32, 32
+DASH
+	index: 1
+	bounds: 206, 118, 32, 32
+DASH
+	index: 6
+	bounds: 206, 118, 32, 32
+DASH
+	index: 3
+	bounds: 138, 16, 32, 32
+HURT
+	index: 4
+	bounds: 36, 20, 32, 32
+HURT
+	index: 1
+	bounds: 70, 36, 32, 32
+HURT
+	index: 3
+	bounds: 172, 152, 32, 32
+HURT
+	index: 0
+	bounds: 206, 152, 32, 32
+HURT
+	index: 5
+	bounds: 206, 84, 32, 32
+HURT
+	index: 2
+	bounds: 104, 18, 32, 32
+IDLE
+	index: 4
+	bounds: 2, 154, 32, 48
+CROUCH
+	bounds: 2, 154, 32, 48
 JUMP
-bounds:2,2,792,1000
+	index: 6
+	bounds: 2, 154, 32, 48
+IDLE
+	index: 1
+	bounds: 36, 154, 32, 48
+IDLE
+	index: 2
+	bounds: 36, 154, 32, 48
+IDLE
+	index: 3
+	bounds: 36, 154, 32, 48
+JUMP
+	index: 1
+	bounds: 36, 154, 32, 48
+IDLELEFT
+	index: 1
+	bounds: 70, 204, 32, 48
+IDLELEFT
+	index: 3
+	bounds: 70, 204, 32, 48
+IDLELEFT
+	index: 2
+	bounds: 70, 204, 32, 48
+JUMPLEFT
+	index: 1
+	bounds: 70, 204, 32, 48
+JUMP
+	index: 2
+	bounds: 36, 204, 32, 48
+JUMP
+	index: 7
+	bounds: 2, 54, 32, 48
+IDLE
+	index: 5
+	bounds: 2, 54, 32, 48
+JUMP
+	index: 4
+	bounds: 36, 104, 32, 48
+JUMP
+	index: 3
+	bounds: 36, 54, 32, 48
+JUMP
+	index: 5
+	bounds: 104, 154, 32, 48
+JUMPLEFT
+	index: 6
+	bounds: 2, 204, 32, 48
+CROUCHLEFT
+	bounds: 2, 204, 32, 48
+IDLELEFT
+	index: 4
+	bounds: 2, 204, 32, 48
+JUMPLEFT
+	index: 3
+	bounds: 2, 104, 32, 48
+JUMPLEFT
+	index: 5
+	bounds: 70, 154, 32, 48
+JUMPLEFT
+	index: 2
+	bounds: 104, 204, 32, 48
+JUMPLEFT
+	index: 7
+	bounds: 2, 4, 32, 48
+IDLELEFT
+	index: 5
+	bounds: 2, 4, 32, 48
+JUMPLEFT
+	index: 4
+	bounds: 70, 104, 32, 48
 LEFT
-bounds:796,1004,792,1000
+	index: 1
+	bounds: 104, 120, 32, 32
+LEFT
+	index: 6
+	bounds: 172, 220, 32, 32
+LEFT
+	index: 3
+	bounds: 172, 186, 32, 32
+LEFT
+	index: 8
+	bounds: 138, 118, 32, 32
+LEFT
+	index: 5
+	bounds: 172, 118, 32, 32
+LEFT
+	index: 2
+	bounds: 138, 50, 32, 32
+LEFT
+	index: 7
+	bounds: 206, 50, 32, 32
+LEFT
+	index: 4
+	bounds: 172, 16, 32, 32
 RIGHT
-bounds:2,1004,792,1000
+	index: 4
+	bounds: 138, 220, 32, 32
+RIGHT
+	index: 1
+	bounds: 138, 186, 32, 32
+RIGHT
+	index: 6
+	bounds: 104, 86, 32, 32
+RIGHT
+	index: 3
+	bounds: 104, 52, 32, 32
+RIGHT
+	index: 8
+	bounds: 206, 186, 32, 32
+RIGHT
+	index: 5
+	bounds: 172, 84, 32, 32
+RIGHT
+	index: 2
+	bounds: 172, 50, 32, 32
+RIGHT
+	index: 7
+	bounds: 70, 2, 32, 32
