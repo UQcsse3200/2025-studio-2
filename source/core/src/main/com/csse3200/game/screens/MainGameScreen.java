@@ -105,7 +105,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("sprint1", player);
+      switchArea("cutscene1", player);
     });
 
     // Have to createUI after the game area is created since createUI
@@ -123,21 +123,19 @@ public class MainGameScreen extends ScreenAdapter {
 
         GameArea newArea = null;
         String newLevel = "";
-        if ("forest".equals(levelId)) {
-          newArea = new ForestGameArea(terrainFactory);
-          newLevel = "cutscene1";
-        } else if ("sprint1".equals(levelId)) {
-          newArea = new SprintOneGameArea(terrainFactory);
-          newLevel = "cutscene2";
-        } else if ("cave".equals(levelId)) {
-          newArea = new CaveGameArea(terrainFactory);
-          newLevel = "forest";
-        } else if ("cutscene1".equals(levelId)) {
+
+        if ("cutscene1".equals(levelId)) {
           newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-          newLevel = "sprint1";
+          newLevel = "level2";
+        } else if ("level2".equals(levelId)) {
+          newArea = new LevelTwoGameArea(terrainFactory);
+          newLevel = "cutscene2";
         } else if ("cutscene2".equals(levelId)) {
           newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-          newLevel = "cave";
+          newLevel = "sprint1";
+        } else if ("sprint1".equals(levelId)) {
+          newArea = new SprintOneGameArea(terrainFactory);
+          newLevel = "level2";
         }
 
         if (newArea != null) {
