@@ -76,7 +76,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/bgtile5.png",
             "images/lablevel/background/bgtile6.png",
             "images/lablevel/background/labforeground.png",
-            "images/lablevel/background/level2background.png"
+            "images/lablevel/background/level2background.png",
+            "images/lablevel/background/background2.png"
 
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
@@ -237,11 +238,11 @@ public class LevelTwoGameArea extends GameArea {
 
         // Layer 1: Far background - moves slightly
         Texture farBackground = resourceService.getAsset("images/lablevel/background/level2background.png", Texture.class);
-        parallaxBg.addTiledLayer(farBackground, 0.05f, true, true, 10f, 10f, 0, 2.9f);
+        parallaxBg.addTiledLayer(farBackground, 0.12f, true, true, 10f, 10f, 0, -2.8f);
 
         // Layer 2: Near background - doesnt move
-        Texture nearBackground = resourceService.getAsset("images/lablevel/background/bgtile5.png", Texture.class);
-        parallaxBg.addTiledLayer(nearBackground, 0f, true, true, 19f, 10f, 0, 2.9f);
+        Texture nearBackground = resourceService.getAsset("images/lablevel/background/background2.png", Texture.class);
+        parallaxBg.addScaledLayer(nearBackground, 1f, -20, -14, 0.057f);
 
         backgroundEntity.addComponent(parallaxBg);
         spawnEntity(backgroundEntity);

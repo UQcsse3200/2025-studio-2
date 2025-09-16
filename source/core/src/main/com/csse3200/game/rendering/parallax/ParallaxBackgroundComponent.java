@@ -32,6 +32,17 @@ public class ParallaxBackgroundComponent extends RenderComponent {
         layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight, offsetX, offsetY));
     }
 
+    // Method for non-tiled layers with offset and scale
+    public void addLayer(Texture texture, float factor, float offsetX, float offsetY, float scaleX, float scaleY) {
+        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight,
+            false, false, 0, 0, offsetX, offsetY, scaleX, scaleY));
+    }
+
+    // Method for uniform scaling
+    public void addScaledLayer(Texture texture, float factor, float offsetX, float offsetY, float scale) {
+        addLayer(texture, factor, offsetX, offsetY, scale, scale);
+    }
+
     // Method for tiled layers with offset
     public void addTiledLayer(Texture texture, float factor, boolean tileHorizontally, boolean tileVertically,
                               float tileWidth, float tileHeight, float offsetX, float offsetY) {
@@ -39,19 +50,11 @@ public class ParallaxBackgroundComponent extends RenderComponent {
             tileHorizontally, tileVertically, tileWidth, tileHeight, offsetX, offsetY));
     }
 
-    // Convenience method for horizontal-only tiling with offset
-    public void addHorizontalTiledLayer(Texture texture, float factor, float tileWidth, float offsetX, float offsetY) {
-        addTiledLayer(texture, factor, true, false, tileWidth, 0, offsetX, offsetY);
-    }
-
-    // Convenience method for horizontal-only tiling with Y offset only
-    public void addHorizontalTiledLayerAtHeight(Texture texture, float factor, float tileWidth, float height) {
-        addTiledLayer(texture, factor, true, false, tileWidth, 0, 0, height);
-    }
-
-    // Convenience method for fully tiled layers with offset
-    public void addFullyTiledLayer(Texture texture, float factor, float tileWidth, float tileHeight, float offsetX, float offsetY) {
-        addTiledLayer(texture, factor, true, true, tileWidth, tileHeight, offsetX, offsetY);
+    // Method for tiled layers with offset and scale
+    public void addTiledLayer(Texture texture, float factor, boolean tileHorizontally, boolean tileVertically,
+                              float tileWidth, float tileHeight, float offsetX, float offsetY, float scaleX, float scaleY) {
+        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight,
+            tileHorizontally, tileVertically, tileWidth, tileHeight, offsetX, offsetY, scaleX, scaleY));
     }
 
     @Override

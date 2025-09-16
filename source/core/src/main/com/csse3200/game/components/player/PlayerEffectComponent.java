@@ -15,7 +15,7 @@ public class PlayerEffectComponent extends Component {
   public void create() {
     // When death screen is implemented maybe
     // entity.getEvents().addListener("death", this::chromaticAberration);
-    chromaticAberration();
+//    chromaticAberration();
   }
 
   private void chromaticAberration() {

@@ -14,23 +14,33 @@ public class ParallaxLayer {
     private boolean tileVertically;
     private float tileWidth;
     private float tileHeight;
-    private float offsetX; // Add X offset
-    private float offsetY; // Add Y offset
+    private float offsetX;
+    private float offsetY;
+    private float scaleX; // Add scale parameters
+    private float scaleY;
 
-    // Constructor
+    // Original constructor (no scale - defaults to 1.0f)
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight) {
-        this(texture, camera, factor, mapWidth, mapHeight, false, false, 0, 0, 0, 0);
+        this(texture, camera, factor, mapWidth, mapHeight, false, false, 0, 0, 0, 0, 1.0f, 1.0f);
     }
 
-    // Constructor with offset
+    // Constructor with offset (no scale - defaults to 1.0f)
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight, float offsetX, float offsetY) {
-        this(texture, camera, factor, mapWidth, mapHeight, false, false, 0, 0, offsetX, offsetY);
+        this(texture, camera, factor, mapWidth, mapHeight, false, false, 0, 0, offsetX, offsetY, 1.0f, 1.0f);
     }
 
-    // Constructor for tiled layers with offset
+    // Constructor for tiled layers with offset (no scale - defaults to 1.0f)
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight,
                          boolean tileHorizontally, boolean tileVertically, float tileWidth, float tileHeight,
                          float offsetX, float offsetY) {
+        this(texture, camera, factor, mapWidth, mapHeight, tileHorizontally, tileVertically,
+            tileWidth, tileHeight, offsetX, offsetY, 1.0f, 1.0f);
+    }
+
+    // Full constructor with scale
+    public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight,
+                         boolean tileHorizontally, boolean tileVertically, float tileWidth, float tileHeight,
+                         float offsetX, float offsetY, float scaleX, float scaleY) {
         this.texture = texture;
         this.camera = camera;
         this.factor = factor;
@@ -42,6 +52,8 @@ public class ParallaxLayer {
         this.tileHeight = tileHeight > 0 ? tileHeight : texture.getHeight();
         this.offsetX = offsetX;
         this.offsetY = offsetY;
+        this.scaleX = scaleX > 0 ? scaleX : 1.0f;
+        this.scaleY = scaleY > 0 ? scaleY : 1.0f;
     }
 
     public void render(SpriteBatch batch) {
@@ -56,6 +68,10 @@ public class ParallaxLayer {
     }
 
     private void renderTiled(SpriteBatch batch, float parallaxOffsetX, float parallaxOffsetY) {
+        // Apply scale to tile dimensions
+        float scaledTileWidth = tileWidth * scaleX;
+        float scaledTileHeight = tileHeight * scaleY;
+
         // Calculate visible area with some padding
         float padding = 2.0f;
         float viewLeft = camera.position.x - (camera.viewportWidth / 2) - padding;
@@ -69,47 +85,43 @@ public class ParallaxLayer {
         viewBottom += parallaxOffsetY + offsetY;
         viewTop += parallaxOffsetY + offsetY;
 
-        // Calculate tile range to draw
+        // Calculate tile range to draw using scaled tile dimensions
         int startTileX, endTileX, startTileY, endTileY;
 
         if (tileHorizontally) {
-            startTileX = (int) Math.floor(viewLeft / tileWidth);
-            endTileX = (int) Math.ceil(viewRight / tileWidth);
+            startTileX = (int) Math.floor(viewLeft / scaledTileWidth);
+            endTileX = (int) Math.ceil(viewRight / scaledTileWidth);
         } else {
             startTileX = 0;
             endTileX = 1;
         }
 
         if (tileVertically) {
-            startTileY = (int) Math.floor(viewBottom / tileHeight);
-            endTileY = (int) Math.ceil(viewTop / tileHeight);
+            startTileY = (int) Math.floor(viewBottom / scaledTileHeight);
+            endTileY = (int) Math.ceil(viewTop / scaledTileHeight);
         } else {
             startTileY = 0;
             endTileY = 1;
         }
 
-        // Draw tiles with offset applied
+        // Draw tiles with scale applied
         for (int x = startTileX; x <= endTileX; x++) {
             for (int y = startTileY; y <= endTileY; y++) {
-                float drawX = x * tileWidth - parallaxOffsetX - offsetX;
-                float drawY = y * tileHeight - parallaxOffsetY - offsetY;
+                float drawX = x * scaledTileWidth - parallaxOffsetX - offsetX;
+                float drawY = y * scaledTileHeight - parallaxOffsetY - offsetY;
 
-                batch.draw(texture, drawX, drawY, tileWidth, tileHeight);
+                batch.draw(texture, drawX, drawY, scaledTileWidth, scaledTileHeight);
             }
         }
     }
 
     private void renderStretched(SpriteBatch batch, float parallaxOffsetX, float parallaxOffsetY) {
-        // Original stretched rendering logic with offset
+        // Use custom scale instead of auto-calculated scale
         float textureWidth = texture.getWidth();
         float textureHeight = texture.getHeight();
 
-        float scaleX = mapWidth / textureWidth / 2f;
-        float scaleY = mapHeight / textureHeight / 2f;
-        float scale = Math.max(scaleX, scaleY);
-
-        float scaledWidth = textureWidth * scale;
-        float scaledHeight = textureHeight * scale;
+        float scaledWidth = textureWidth * scaleX;
+        float scaledHeight = textureHeight * scaleY;
 
         float drawX = camera.position.x - scaledWidth / 2 - parallaxOffsetX - offsetX;
         float drawY = camera.position.y - scaledHeight / 2 - parallaxOffsetY - offsetY;
