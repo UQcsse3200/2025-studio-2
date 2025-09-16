@@ -135,7 +135,7 @@ public class PlayerStatsDisplay extends UIComponent {
    * @param stamina the player's current stamina as an integer
    */
   public void updatePlayerStaminaUI(int stamina) {
-
+    staminaBar.setValue((float) stamina);
   }
 
   @Override
