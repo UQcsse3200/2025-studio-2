@@ -14,6 +14,7 @@ import com.csse3200.game.areas.LevelTwoGameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
@@ -61,6 +62,7 @@ public class MainGameScreen extends ScreenAdapter {
   private final TerrainFactory terrainFactory;
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
+  private DeathScreenDisplay deathScreenDisplay;
   private GameArea gameArea;
   private PauseInputComponent pauseInput;
 
@@ -318,13 +320,24 @@ public class MainGameScreen extends ScreenAdapter {
       throw new IllegalStateException("GameArea has a null player");
     }
     pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
+    deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
-    ui.addComponent(new InputDecorator(stage, 10)).addComponent(new PerformanceDisplay()).addComponent(new MainGameActions(this.game)).addComponent(pauseMenuDisplay).addComponent(pauseInput);
+    ui.addComponent(new InputDecorator(stage, 10)).addComponent(new PerformanceDisplay()).addComponent(new MainGameActions(this.game)).addComponent(pauseMenuDisplay).addComponent(deathScreenDisplay).addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
+    
+    // Listen for player death events
+    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+  }
+
+  /**
+   * Shows the death screen overlay
+   */
+  private void showDeathScreen() {
+    deathScreenDisplay.setVisible(true);
   }
 
   // Set last keycode for inventory when tab is clicked
