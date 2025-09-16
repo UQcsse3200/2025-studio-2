@@ -113,7 +113,7 @@ public class CollectableFactory {
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent()
                         .setLayer(PhysicsLayer.OBSTACLE) // collides with player's hitbox
-                        .setSensor(true))                // no blocking, overlap only
+                        .setSensor(true)) // not blocking, overlap only
                 .addComponent(new ObjectivesComponent(objectiveId));
 
         // Size the sensor using the same pattern as your other collectables

@@ -123,6 +123,7 @@ public class LevelOneGameArea extends GameArea {
         spawnTraps();
         spawnPlatformBat();
         spawnLevelOneBatRoom();
+        spawnObjectives();
     }
 
     private void spawnDeathZone() {
@@ -641,6 +642,18 @@ public class LevelOneGameArea extends GameArea {
                 (int) platformBatBuilder.getSpawnX() * 2,
                 (int) platformBatBuilder.getSpawnY()), true, true);
     }
+
+    private void spawnObjectives() {
+        // Large, invisible sensors — easy to grab, no textures.
+        // IDs chosen to match the ObjectiveTab banner map.
+//        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(14, 19), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), PLAYER_SPAWN, true, true);
+        spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), PLAYER_SPAWN, true, true);
+        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), PLAYER_SPAWN, true, true);
+    }
+
     private void spawnLevelOneBatRoom() {
         int offsetX = 0;
         int offsetY = 0;
