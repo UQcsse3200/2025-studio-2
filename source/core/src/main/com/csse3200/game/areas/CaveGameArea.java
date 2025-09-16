@@ -300,7 +300,7 @@ public class CaveGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "forest");
+    Entity gate = ObstacleFactory.createDoor("door", this);
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
@@ -308,7 +308,7 @@ public class CaveGameArea extends GameArea {
 
   private void spawnDeathZone() {
     GridPoint2 spawnPos =  new GridPoint2(18,0);
-    Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+    Entity deathZone = DeathZoneFactory.createDeathZone();
     spawnEntityAt(deathZone, spawnPos, true,  true);
   }
 

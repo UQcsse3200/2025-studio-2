@@ -110,7 +110,9 @@ public class ForestGameArea extends GameArea {
           "images/ghostKing.atlas",
           "images/drone.atlas",
           "images/security-camera.atlas",
-          "images/PLAYER.atlas"
+          "images/PLAYER.atlas",
+          // Bat sprites from https://todemann.itch.io/bat
+          "images/flying_bat.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
           "/chimesound.mp3"};
@@ -363,22 +365,15 @@ public class ForestGameArea extends GameArea {
     moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
     spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
-    // Autonomous box
-    float startX = 3f;
-    float endX = 10f;
-    float y = 17f;
-    float speed = 2f;
 
-    Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
-    spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
   }
 
-  private void spawnTraps() {
-    GridPoint2 spawnPos =  new GridPoint2(7,15);
-    Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
-    Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
-    spawnEntityAt(spikes, spawnPos, true,  true);
-  }
+    private void spawnTraps() {
+        GridPoint2 spawnPos =  new GridPoint2(7,15);
+        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
+        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 0f);
+        spawnEntityAt(spikes, spawnPos, true,  true);
+    }
 
   private void spawnElevatorPlatform() {
       float ts = terrain.getTileSize();
@@ -479,7 +474,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private Entity spawnDoor() {
-    Entity d = ObstacleFactory.createDoor("door", this, "sprint1");
+    Entity d = ObstacleFactory.createDoor("door", this);
     d.addComponent(new TooltipSystem.TooltipComponent(
             "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
     d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
@@ -500,7 +495,7 @@ public class ForestGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "cave");
+    Entity gate = ObstacleFactory.createDoor("door", this);
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);

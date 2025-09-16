@@ -37,6 +37,8 @@ public class PlayerStatsDisplay extends UIComponent {
     table.top().left();
     table.setFillParent(true);
     table.padTop(45f).padLeft(5f);
+    table.setName("health");
+    table.setUserObject(entity);
 
     // Heart image
     float heartSideLength = 30f;
