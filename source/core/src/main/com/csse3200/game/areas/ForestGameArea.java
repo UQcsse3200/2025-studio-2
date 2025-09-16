@@ -154,7 +154,7 @@ public class ForestGameArea extends GameArea {
   protected void loadEntities() {
     //spawnDrone();
     spawnPatrollingDrone();
-    //spawnBomberDrone();       // WIP do not use
+    //spawnBomberDrone();       // work rn
 
     spawnPlatform(); //Testing platform
     spawnElevatorPlatform();
@@ -272,13 +272,40 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(patrolDrone, spawnTile, true, true);
   }
 
-  private void spawnBomberDrone() {
-    GridPoint2 spawnTile = new GridPoint2(2, 11);
-    Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+    private void spawnBomberDrone() {
+        // First bomber with cone light detection - patrols and uses its downward cone light
+        GridPoint2 spawnTile = new GridPoint2(3, 15);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+        };
 
-    Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
-    spawnEntityAt(bomberDrone, spawnTile, true, true);
-  }
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
+
+        /*GridPoint2 spawnTile2 = new GridPoint2(30, 25);
+        Vector2[] patrolRoute2 = {
+                terrain.tileToWorldPosition(spawnTile2),
+                terrain.tileToWorldPosition(new GridPoint2(38, 25)),
+                terrain.tileToWorldPosition(new GridPoint2(38, 30)),
+                terrain.tileToWorldPosition(new GridPoint2(30, 30))
+        };
+
+        // Create second bomber with unique ID "bomber2"
+        Entity bomberDrone2 = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute2, "bomber2");
+        spawnEntityAt(bomberDrone2, spawnTile2, true, true);*/
+    }
+
+    // Optional: Method for spawning a stationary bomber at a specific position
+    private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(
+                player,
+                terrain.tileToWorldPosition(position),
+                bomberId
+        );
+        spawnEntityAt(bomberDrone, position, true, true);
+    }
 
   private void spawnGhostKing() {
     GridPoint2 minPos = new GridPoint2(0, 0);

@@ -10,6 +10,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.DoorControlComponent;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -17,6 +18,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -97,6 +99,9 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnLights();
+        //spawnPatrollingDrone();
+        spawnBomberDrone();
     }
 
     private void spawnDeathZone() {
@@ -256,6 +261,58 @@ public class LevelOneGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+    private void spawnLights() {
+        // see the LightFactory class for more details on spawning these
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
+    }
+    private void spawnPatrollingDrone() {
+        GridPoint2 spawnTile = new GridPoint2(3, 13);
+
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+        };
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
+                .addComponent(new ActivationComponent("1"));
+        spawnEntityAt(patrolDrone, spawnTile, true, true);
+    }
+
+    private void spawnBomberDrone() {
+        // First bomber with cone light detection - patrols and uses its downward cone light
+        GridPoint2 spawnTile = new GridPoint2(3, 15);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+        };
+
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
+
+        /*GridPoint2 spawnTile2 = new GridPoint2(30, 25);
+        Vector2[] patrolRoute2 = {
+                terrain.tileToWorldPosition(spawnTile2),
+                terrain.tileToWorldPosition(new GridPoint2(38, 25)),
+                terrain.tileToWorldPosition(new GridPoint2(38, 30)),
+                terrain.tileToWorldPosition(new GridPoint2(30, 30))
+        };
+
+        // Create second bomber with unique ID "bomber2"
+        Entity bomberDrone2 = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute2, "bomber2");
+        spawnEntityAt(bomberDrone2, spawnTile2, true, true);*/
+    }
+
+    // Optional: Method for spawning a stationary bomber at a specific position
+    private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(
+                player,
+                terrain.tileToWorldPosition(position),
+                bomberId
+        );
+        spawnEntityAt(bomberDrone, position, true, true);
+    }
+
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level one Game Area"));
