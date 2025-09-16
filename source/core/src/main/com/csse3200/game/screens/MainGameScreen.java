@@ -51,6 +51,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
   private static final String[] mainGameTextures = {"images/heart.png"};
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+  private static final float MIN_CAMERA_FOLLOW_Y = 1f;
 
   private final GdxGame game;
   private final Renderer renderer;
@@ -228,12 +229,15 @@ public class MainGameScreen extends ScreenAdapter {
       targetX += (playerPosition.x - dzRight);
     }
 
-    if (playerPosition.y < dzBottom) {
-      // Player is too far down, move camera down
-      targetY -= (dzBottom - playerPosition.y);
-    } else if (playerPosition.y > dzTop) {
-      // Player is too far up, move camera up
-      targetY += (playerPosition.y - dzTop);
+    // Don't move camera down if player is below the minium height camera following height
+    if (playerPosition.y >= MIN_CAMERA_FOLLOW_Y) {
+      if (playerPosition.y < dzBottom) {
+        // Player is too far down, move camera down
+        targetY -= (dzBottom - playerPosition.y);
+      } else if (playerPosition.y > dzTop) {
+        // Player is too far up, move camera up
+        targetY += (playerPosition.y - dzTop);
+      }
     }
 
     // Smoothly interpolate camera position for smooth movement

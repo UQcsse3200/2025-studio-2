@@ -133,7 +133,7 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(12,0);
+        GridPoint2 spawnPos =  new GridPoint2(12,-10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
 
@@ -490,9 +490,9 @@ public class LevelOneGameArea extends GameArea {
                 new GridPoint2(0, tileBounds.y - 4),
                 false,
                 false);
-        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, 0), false, false);
+//        // Bottom
+//        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+//                new GridPoint2(0, 0), false, false);
     }
 
     private void spawnParallaxBackground() {
