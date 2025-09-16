@@ -23,7 +23,6 @@ class CooldownTaskTest {
     void setUp() {
         gameTime = mock(GameTime.class);
         ServiceLocator.registerTimeSource(gameTime);
-        when(gameTime.getDeltaTime()).thenReturn(0.1f); // simulate 0.1s per update
 
         // --- Setup entity and components ---
         entity = new Entity();
@@ -73,11 +72,11 @@ class CooldownTaskTest {
 
         entity.setPosition(new Vector2(20f, 20f));
 
-        // Time sequence for update calls (Wait task uses GameTime.getTime)
-        when(gameTime.getTime()).thenReturn(0L, 100L);
+        when(gameTime.getTime()).thenReturn(0L, 100L, 100L, 1200L);
         cooldownTask.activate();
-        cooldownTask.start(); // Start waiting
-        cooldownTask.update(); // Finishes wait, resets position
+        cooldownTask.start();
+        cooldownTask.update();
+        cooldownTask.update();
 
         Vector2 expected = patrolRoute.patrolStart();
         Vector2 actual = entity.getPosition();
@@ -113,18 +112,28 @@ class CooldownTaskTest {
 
         entity.setPosition(new Vector2(50f, 50f));
 
-        when(gameTime.getTime()).thenReturn(0L, 100L, 200L, 300L);
+        when(gameTime.getTime()).thenReturn(
+                0L, // Start wait
+                300L, // Finish wait
+                300L, // Start teleport
+                800L, // Mid teleport
+                1300L // Finish teleport
+        );
+
         cooldownTask.activate();
         cooldownTask.start();
+        assertTrue(cooldownTask.isWaiting());
 
-        // Call update multiple times
+        // t = 300ms
         cooldownTask.update();
-        assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
+        assertTrue(cooldownTask.isTeleporting());
 
+        // t = 800ms
         cooldownTask.update();
-        assertEquals(Task.Status.ACTIVE, cooldownTask.getStatus());
+        assertTrue(cooldownTask.isTeleporting());
 
-        cooldownTask.update(); // Teleport here
+        // t = 1300ms // Finishes
+        cooldownTask.update();
 
         assertEquals(patrolRoute.patrolStart(), entity.getPosition());
         assertEquals(-1, cooldownTask.getPriority(),
@@ -159,9 +168,10 @@ class CooldownTaskTest {
         e.getComponent(AITaskComponent.class).addTask(cd);
         e.setPosition(new Vector2(5, 5));
 
-        when(gameTime.getTime()).thenReturn(0L, 100L);
+        when(gameTime.getTime()).thenReturn(0L, 100L, 100L, 1100L);
         cd.activate();
         cd.start();
+        cd.update();
         cd.update();
         assertEquals(spawn, e.getPosition());
     }

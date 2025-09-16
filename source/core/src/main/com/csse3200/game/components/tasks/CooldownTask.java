@@ -3,6 +3,7 @@ package com.csse3200.game.components.tasks;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
+import com.csse3200.game.ai.tasks.Task;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 
@@ -17,10 +18,13 @@ import com.csse3200.game.components.enemy.SpawnPositionComponent;
  */
 public class CooldownTask extends DefaultTask implements PriorityTask {
     private final float waitTime;
-
     private boolean active = false;
     private Vector2 resetPos;
+
+    // Subtasks
     private WaitTask waitTask;
+    private WaitTask teleportWait;
+    private Task currentTask;
 
     /**
      * Creates a cooldown task with the given wait duration.
@@ -50,12 +54,11 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     }
 
     /**
-     * Starts the cooldown. Starts a wait subtask, disables gravity, and triggers a
-     * {@code "cooldownStart"} event for animations TO BE ADDED.
+     * Starts the cooldown. Creates a wait and teleport wait subtask,
+     * starts wait and triggers a {@code "cooldownStart"} event.
      */
     @Override
     public void start() {
-
         super.start();
         if (!active) return;
         resetPos = computeResetPos();
@@ -64,27 +67,40 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
             waitTask = new WaitTask(waitTime);
             waitTask.create(owner);
         }
+
+        if (teleportWait == null) {
+            float teleportTime = 1.0f;
+            teleportWait = new WaitTask(teleportTime);
+            teleportWait.create(owner);
+        }
+
         waitTask.start();
+        currentTask = waitTask;
 
-        // Trigger event so animations/sfx can be implemented
         owner.getEntity().getEvents().trigger("cooldownStart");
-
     }
 
     /**
      * Advance wait task. Once the cooldown wait has elapsed,
-     * the entity is teleported back to its patrol start or spawn
-     * position the cooldown task is stopped.
+     * the entity starts the teleport wait while animation is played
+     * (triggered by 'teleportStart') then teleports back to its patrol start
+     * or spawn position.
      * Calls deactivate() to stop task being runnable.
      */
     @Override
     public void update() {
-        if (!active || waitTask == null) return;
-        waitTask.update();
+        if (!active || currentTask == null) return;
 
-        if (waitTask.getStatus() == Status.FINISHED) {
-            owner.getEntity().setPosition(resetPos);
-            deactivate();
+        currentTask.update();
+
+        if (currentTask.getStatus() != Status.ACTIVE) {
+            if (currentTask == waitTask) {
+                owner.getEntity().getEvents().trigger("teleportStart");
+                swapTask(teleportWait);
+            } else if (currentTask == teleportWait) {
+                owner.getEntity().setPosition(resetPos);
+                deactivate();
+            }
         }
     }
 
@@ -100,13 +116,13 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     }
 
     /**
-     * When the cooldown task is stopped, gravity is restored and a
+     * When the cooldown task is stopped, a
      * 'cooldownEnd' event is triggered.
      */
     @Override
     public void stop() {
-        if (waitTask != null) waitTask.stop();
-
+        if (currentTask != null) currentTask.stop();
+        currentTask = null;
         super.stop();
         owner.getEntity().getEvents().trigger("cooldownEnd");
     }
@@ -127,5 +143,33 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
 
         // Return current position as a fallback
         return new Vector2(owner.getEntity().getPosition());
+    }
+
+    /**
+     * Stop the current subtask (if not null) and start a new one.
+     * @param newTask to be started (wait or movement)
+     */
+    private void swapTask(Task newTask) {
+        if (currentTask != null) {
+            currentTask.stop();
+        }
+        currentTask = newTask;
+        currentTask.start();
+    }
+
+    /**
+     * Check if teleporting.
+     * @return true if currentTask is teleportWait
+     */
+    public boolean isTeleporting() {
+        return currentTask == teleportWait;
+    }
+
+    /**
+     * Check if waiting.
+     * @return true if currentTask is waitTask
+     */
+    public boolean isWaiting() {
+        return currentTask == waitTask;
     }
 }

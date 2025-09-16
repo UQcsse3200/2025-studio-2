@@ -25,7 +25,7 @@ public class DroneAnimationController extends Component {
         entity.getEvents().addListener("chaseStart", this::animateChase);
         entity.getEvents().addListener("patrolStart", this::animatePatrol);
         entity.getEvents().addListener("dropStart", this::animateDrop);
-        entity.getEvents().addListener("cooldownStart", this::animateTeleport);
+        entity.getEvents().addListener("teleportStart", this::animateTeleport);
     }
 
     void animateTeleport() {
