@@ -177,7 +177,6 @@ public class PlayerActions extends Component {
 
     // impulse = (desiredVel - currentVel) * mass
     //only update the horizontal impulse
-    /*float inAirControl = isJumping ? 0.2f : 1f;*/
 
     float deltaV = desiredVelocity.x - velocity.x;
     float maxDeltaV = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
@@ -265,7 +264,6 @@ public class PlayerActions extends Component {
       float impulseY = body.getMass() * JUMP_IMPULSE_FACTOR;
 
       body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
-      /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
 
       isJumping = true;
   }
@@ -277,7 +275,6 @@ public class PlayerActions extends Component {
    */
   void onLand() {
     Body body = physicsComponent.getBody();
-    //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
 
