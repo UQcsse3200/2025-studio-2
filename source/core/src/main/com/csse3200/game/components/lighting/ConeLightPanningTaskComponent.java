@@ -139,7 +139,7 @@ public class ConeLightPanningTaskComponent extends Component {
             // PANNING MODE
             // keep going in the same direction after returning to panning mode
             if (tracking) {
-                clockwise = (movSign < 0f);
+                clockwise = (movSign > 0f);
             }
             // reset velocity (removes effects from acceleration)
             currentVel = angularVelocity;

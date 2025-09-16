@@ -327,11 +327,11 @@ public class LevelTwoGameArea extends GameArea {
     private void spawnSecurityCams() {
         Entity cam1 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
         Entity cam2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "2");
-        Entity cam3 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 90f, "3");
+        Entity cam3 = SecurityCameraFactory.createStaticSecurityCam(player, 25f, -135f, 0f, "3");
 
         spawnEntityAt(cam1, new GridPoint2(34,19), true, true);
         spawnEntityAt(cam2, new GridPoint2(83,39), true, true);
-        spawnEntityAt(cam3, new GridPoint2(37,57), true, true);
+        spawnEntityAt(cam3, new GridPoint2(75,65), true, true);
     }
 
 
