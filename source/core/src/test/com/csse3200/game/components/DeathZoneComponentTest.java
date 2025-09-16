@@ -23,7 +23,7 @@ public class DeathZoneComponentTest {
 
         resetPos = new Vector2(5, 5);
         deathZone = new Entity().addComponent(new PhysicsComponent());
-        deathZoneComponent = new DeathZoneComponent(0, 50, resetPos);
+        deathZoneComponent = new DeathZoneComponent(0, 50);
         deathZone.addComponent(deathZoneComponent);
 
         player = new Entity().addComponent(new PhysicsComponent())

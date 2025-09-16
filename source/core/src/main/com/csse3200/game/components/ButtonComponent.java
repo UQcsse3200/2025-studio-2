@@ -1,7 +1,6 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -21,6 +20,11 @@ public class ButtonComponent extends Component {
     private boolean addToPlayer = false;
     private String direction = "left";
 
+    private float unpressTimer = 0f;
+    private boolean isTiming = false;
+    private static final float AUTO_UNPRESS_TIME = 15f; //buttons unpress after 5 seconds
+    private ButtonManagerComponent puzzleManager;
+
     /**
      * Creates the button
      */
@@ -29,10 +33,27 @@ public class ButtonComponent extends Component {
     }
 
     /**
-     * Updates the button
+     * Updates the button. If it is a timing button and the time runs out, button
+     *  will unpress and return to original texture
      */
     @Override
     public void update() {
+        if (isTiming && isPushed && (puzzleManager == null || puzzleManager.isPuzzleCompleted())) {
+            unpressTimer -= ServiceLocator.getTimeSource().getDeltaTime();
+
+            if (unpressTimer <= 0f) {
+                isTiming = false;
+                isPushed = false;
+
+                String texture = "images/button.png";
+                TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+                if (render != null) {
+                    render.setTexture(texture);
+                }
+
+                entity.getEvents().trigger("buttonToggled", false);
+            }
+        }
     }
 
     /**
@@ -76,25 +97,24 @@ public class ButtonComponent extends Component {
         float dx = playerPos.x - buttonPos.x;
         float dy = playerPos.y - buttonPos.y;
 
-        System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
         switch (direction) {
             case "left":
-                if (dx < -0.5f && Math.abs(dy) < 0.5f) {
+                if (dx < -0.3f && Math.abs(dy) < 0.6f) {
                     toggleButton();
                 }
                 break;
             case "right":
-                if (dx > 0.03f && Math.abs(dy) < 0.5f) {
+                if (dx > 0.3f && Math.abs(dy) < 0.6f) {
                     toggleButton();
                 }
                 break;
             case "down":
-                if (dy < -0.5f && Math.abs(dx) < 0.5f) {
+                if (dy < -0.3f && Math.abs(dx) < 0.6f) {
                     toggleButton();
                 }
                 break;
             case "up":
-                if (dy > 0.5f && Math.abs(dx) < 0.5f) {
+                if (dy > 0.3f && Math.abs(dx) < 0.6f) {
                     toggleButton();
                 }
                 break;
@@ -103,6 +123,8 @@ public class ButtonComponent extends Component {
 
     /**
      * Toggles the buttons state and updates its texture based on its type
+     * If the puzzle manager isn't active or puzzle isn't completed, buttons will automatically unpress
+     *  after set amount of time (standard time only)
      * Triggers buttonToggled event that can be listened for so events can be implemented on push
      */
     private void toggleButton() {
@@ -110,6 +132,20 @@ public class ButtonComponent extends Component {
         entity.getEvents().trigger("buttonToggled", isPushed);
 
         // set button texture based on its type
+
+        if(isPushed) {
+            if(puzzleManager == null || puzzleManager.isPuzzleCompleted()) {
+                if(!"platform".equals(type) && !"door".equals(type) && isPushed) {
+                    unpressTimer = AUTO_UNPRESS_TIME;
+                    isTiming = true;
+                }
+            }
+        }
+
+        if (puzzleManager != null && isPushed) {
+            puzzleManager.onButtonPressed();
+        }
+
         if("platform".equals(type)) {
             String texture = isPushed ? "images/blue_button_pushed.png" : "images/blue_button.png";
             TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
@@ -131,12 +167,47 @@ public class ButtonComponent extends Component {
         }
     }
 
+    /**
+     * Sets the direction the button will face, for both texture and pressing logic
+     * Automatically left unless otherwise specified (right, up, down)
+     *
+     * @param direction The direction string to set
+     */
     public void setDirection(String direction) {
         if (direction == null) {
             this.direction = "left";
         } else {
             this.direction = direction.toLowerCase();
         }
+    }
+
+    /**
+     * Forces the button to unpress immediately regardless of current state or timer
+     * Resets texture, stops timer and triggers buttonToggled event (with false as unpressed)
+     */
+    public void forceUnpress() {
+        if (!isPushed) {
+            return;
+        }
+        isPushed = false;
+        isTiming = false;
+        unpressTimer = 0f;
+
+        String texture = "images/button.png";
+        TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);
+        if (render != null) {
+            render.setTexture(texture);
+        }
+        entity.getEvents().trigger("buttonToggled", false);
+    }
+
+    /**
+     * Assigns a puzzle manager to the button, so manager can be notified when its pressed
+     *
+     * @param puzzleManager the ButtonManagerComponent managing this button
+     */
+    public void setPuzzleManager(ButtonManagerComponent puzzleManager) {
+        this.puzzleManager = puzzleManager;
     }
 
     /**

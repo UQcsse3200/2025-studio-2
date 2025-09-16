@@ -71,7 +71,7 @@ public class InventoryTabTest {
     @Test
     @DisplayName("Empty inventory -> all 16 empty slots")
     void emptyInventoryShowsAllEmptySlots() throws Exception {
-        when(inventory.getItemsView()).thenReturn(Collections.emptyMap());
+        when(inventory.getInventory()).thenReturn(Collections.emptyMap());
 
         InventoryTab tab = new InventoryTab(player, /*screen*/ null);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
@@ -85,7 +85,7 @@ public class InventoryTabTest {
     @Test
     @DisplayName("Partial inventory per-instance: 5 keys -> 5 filled, 11 empty")
     void partiallyFilledInventoryCountsCorrectly() throws Exception {
-        when(inventory.getItemsView()).thenReturn(Map.of("key",5));
+        when(inventory.getInventory()).thenReturn(Map.of("key",5));
 
         InventoryTab tab = new InventoryTab(player, null);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
@@ -99,7 +99,7 @@ public class InventoryTabTest {
     @Test
     @DisplayName("Overflow inventory is clamped: 100 keys -> 16 filled, 0 empty")
     void fullInventoryShowsNoEmptySlots() throws Exception {
-        when(inventory.getItemsView()).thenReturn(Map.of("key", 100));
+        when(inventory.getInventory()).thenReturn(Map.of("key", 100));
 
         InventoryTab tab = new InventoryTab(player, null);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
@@ -128,7 +128,7 @@ public class InventoryTabTest {
     @DisplayName("Multiple item types flatten correctly: key=2, door=1 -> 3 filled, 13 empty")
     void multipleItemsFlattenPerInstance() throws Exception {
         // door maps to key texture in InventoryTab#getItemTexture
-        when(inventory.getItemsView()).thenReturn(Map.of("key", 2, "door", 1));
+        when(inventory.getInventory()).thenReturn(Map.of("key", 2, "door", 1));
 
         InventoryTab tab = new InventoryTab(player, null);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
@@ -142,7 +142,7 @@ public class InventoryTabTest {
     @Test
     @DisplayName("Unknown item ids still show border-only filled slots")
     void unknownItemsShowBorderOnly() throws Exception {
-        when(inventory.getItemsView()).thenReturn(Map.of("mystery", 3));
+        when(inventory.getInventory()).thenReturn(Map.of("mystery", 3));
 
         InventoryTab tab = new InventoryTab(player, null);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
@@ -160,7 +160,7 @@ public class InventoryTabTest {
     @Test
     @DisplayName("Qualified ids use base id: 'key:door'=2 -> 2 key slots")
     void qualifiedIdsUseBaseId() throws Exception {
-        when(inventory.getItemsView()).thenReturn(Map.of("key:door", 2));
+        when(inventory.getInventory()).thenReturn(Map.of("key:door", 2));
 
         InventoryTab tab = new InventoryTab(player, null);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);

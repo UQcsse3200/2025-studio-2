@@ -203,7 +203,7 @@ public class InventoryTab implements InventoryTabInterface {
     gridTable.defaults().pad(SLOT_PADDING).expand().fill();
 
     InventoryComponent inv = player.getComponent(InventoryComponent.class);
-    Map<String, Integer> items = (inv != null) ? inv.getItemsView() : java.util.Collections.emptyMap();
+    Map<String, Integer> items = (inv != null) ? inv.getInventory() : java.util.Collections.emptyMap();
 
     int totalSlots = GRID_ROWS * GRID_COLS;
 
