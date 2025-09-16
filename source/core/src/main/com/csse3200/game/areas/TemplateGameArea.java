@@ -1,43 +1,32 @@
 package com.csse3200.game.areas;
 
-import com.badlogic.gdx.Game;
+
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
+
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.physics.ObjectContactListener;
-import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.naming.spi.ResolveResult;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TemplateGameArea extends GameArea {
-    private static final float WALL_WIDTH = 0.1f;
+    private static final GridPoint2 mapSize = new GridPoint2(100,70);
+    private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(10, 10);
 
     private static final String[] gameTextures = {
@@ -123,10 +112,7 @@ public class TemplateGameArea extends GameArea {
         spawnEntity(ui);
     }
     private void spawnTerrain() {
-        // Need to decide how large each area is going to be
-        // Background terrain
-//        terrain = terrainFactory.createTerrain(TerrainType.DEFAULT_ORTHO, new GridPoint2(80,60));
-        terrain = createDefaultTerrain(new GridPoint2(80,20) );
+        terrain = createDefaultTerrain();
         spawnEntity(new Entity().addComponent(terrain));
 
         // Terrain walls
@@ -136,25 +122,25 @@ public class TemplateGameArea extends GameArea {
 
         // Left
         spawnEntityAt(
-                ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
         // Right
         spawnEntityAt(
-                ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y),
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
                 new GridPoint2(tileBounds.x, 0),
                 false,
                 false);
         // Top
         spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
-                new GridPoint2(0, tileBounds.y - 4),
+                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+                new GridPoint2(0, tileBounds.y),
                 false,
                 false);
         // Bottom
         //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, 4), false, false);
     }
-    private TerrainComponent createDefaultTerrain(GridPoint2 mapSize) {
+    private TerrainComponent createDefaultTerrain() {
         TextureRegion variant1, variant2, variant3, baseTile;
         final ResourceService resourceService = ServiceLocator.getResourceService();
 
@@ -170,33 +156,14 @@ public class TemplateGameArea extends GameArea {
         TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
         return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
-    private void createMinimap() {
-        Texture minimapTexture =
-                ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png",
-                        Texture.class);
-
-        float tileSize = terrain.getTileSize();
-        Vector2 worldSize =
-                new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
-        ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
-
-        MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-        options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-
-        MinimapDisplay minimapDisplay =
-                new MinimapDisplay(150f, options);
-
-        Entity minimapEntity = new Entity();
-        minimapEntity.addComponent(minimapDisplay);
-        spawnEntity(minimapEntity);
-    }
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(gameTextures);
+        resourceService.loadMusic(musics);
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadSounds(gameSounds);
-        resourceService.loadMusic(musics);
+
 
         while (!resourceService.loadForMillis(10)) {
             // This could be upgraded to a loading screen

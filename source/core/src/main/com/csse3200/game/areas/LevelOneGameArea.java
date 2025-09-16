@@ -27,7 +27,7 @@ import java.util.List;
 
 public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
-    private static final float WALL_WIDTH = 0.1f;
+    private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
     private static final String[] gameTextures = {
@@ -106,13 +106,9 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,0);
-        Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
 
-        //Uncomment with deathzonefactory changes for a second small deathzone over second gap
-        //GridPoint2 spawn2Pos =  new GridPoint2(67,0);
-        //Entity deathZone2 = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
-        //spawnEntityAt(deathZone2, spawn2Pos, true,  true);
     }
     private void spawnWalls(){
         GridPoint2 leftWallPos = new GridPoint2(25,4);
@@ -280,7 +276,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(gatePlatform, gatePlatformPos,false, false);
     }
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
+        Entity door = ObstacleFactory.createDoor("door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
@@ -312,7 +308,7 @@ public class LevelOneGameArea extends GameArea {
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
-        terrain = createDefaultTerrain(mapSize);
+        terrain = createDefaultTerrain();
         spawnEntity(new Entity().addComponent(terrain));
 
         // Terrain walls
@@ -322,24 +318,24 @@ public class LevelOneGameArea extends GameArea {
 
         // Left
         spawnEntityAt(
-                ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
         // Right
         spawnEntityAt(
-                ObstacleFactory.createWall(WALL_WIDTH, worldBounds.y),
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
                 new GridPoint2(tileBounds.x, 0),
                 false,
                 false);
         // Top
         spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, tileBounds.y - 4),
                 false,
                 false);
         // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH),
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, 0), false, false);
     }
-    private TerrainComponent createDefaultTerrain(GridPoint2 mapSize) {
+    private TerrainComponent createDefaultTerrain() {
         TextureRegion variant1, variant2, variant3, baseTile;
         final ResourceService resourceService = ServiceLocator.getResourceService();
 
@@ -356,11 +352,6 @@ public class LevelOneGameArea extends GameArea {
         return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
     private void spawnVolatilePlatform(){
-//        GridPoint2 platformPos = new GridPoint2(5, 8);
-//        Entity volplatform = PlatformFactory.createVolatilePlatform(2,2);
-//        volplatform.setScale(3,1);
-//        spawnEntityAt(volplatform, platformPos, true, true);
-
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         volatile1.setScale(2f,0.5f);
@@ -516,10 +507,11 @@ public class LevelOneGameArea extends GameArea {
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.loadMusic(musics);
         resourceService.loadTextures(gameTextures);
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadSounds(gameSounds);
-        resourceService.loadMusic(musics);
+
 
         while (!resourceService.loadForMillis(10)) {
             // This could be upgraded to a loading screen

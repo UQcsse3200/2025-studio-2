@@ -474,7 +474,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private Entity spawnDoor() {
-    Entity d = ObstacleFactory.createDoor("door", this, "sprint1");
+    Entity d = ObstacleFactory.createDoor("door", this);
     d.addComponent(new TooltipSystem.TooltipComponent(
             "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
     d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
@@ -495,7 +495,7 @@ public class ForestGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "cave");
+    Entity gate = ObstacleFactory.createDoor("door", this);
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
