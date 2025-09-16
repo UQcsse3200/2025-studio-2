@@ -94,9 +94,6 @@ public class StaminaComponent extends Component {
     private void triggerStaminaUpdate() {
         if (entity != null && entity.getEvents() != null) {
             entity.getEvents().trigger("staminaUpdate", (int) currentStamina, (int) maxStamina);
-
-            // Update stamina bar
-            entity.getEvents().trigger("updateStamina", (int) currentStamina);
         }
     }
 
