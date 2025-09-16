@@ -1,6 +1,7 @@
 package com.csse3200.game.components.deathscreen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
@@ -17,11 +19,13 @@ import com.csse3200.game.ui.UIComponent;
 /**
  * A UI component for displaying the death screen overlay when the player dies.
  * Shows a semi-transparent background with death message and options to restart or exit.
+ * When visible, blocks all other input including pause menu and stops background music.
  */
 public class DeathScreenDisplay extends UIComponent {
     private Table rootTable;
     private final GdxGame game;
     private Texture blackTexture;
+    private InputComponent inputBlocker;
 
     public DeathScreenDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.game = game;
@@ -109,9 +113,17 @@ public class DeathScreenDisplay extends UIComponent {
             rootTable.toFront();
             // Hide other UI elements when death screen is shown
             hideOtherUIElements();
+            // Block all input except death screen interactions
+            blockAllInput();
+            // Pause background music
+            pauseBackgroundMusic();
         } else {
             // Show other UI elements when death screen is hidden
             showOtherUIElements();
+            // Unblock input
+            unblockAllInput();
+            // Resume background music
+            resumeBackgroundMusic();
         }
     }
 
@@ -179,6 +191,67 @@ public class DeathScreenDisplay extends UIComponent {
         }
     }
 
+    /**
+     * Blocks all input except death screen interactions by registering a high-priority input component
+     */
+    private void blockAllInput() {
+        // Create an input component that consumes all keyboard input to prevent pause menu access
+        this.inputBlocker = new InputComponent(100) { // High priority to consume input first
+            @Override
+            public boolean keyDown(int keycode) {
+                // Consume all keyboard input to block pause menu and other controls
+                return true;
+            }
+            
+            @Override
+            public boolean keyUp(int keycode) {
+                // Consume all keyboard input to block pause menu and other controls
+                return true;
+            }
+        };
+        
+        ServiceLocator.getInputService().register(this.inputBlocker);
+    }
+
+    /**
+     * Removes the input blocker to restore normal input handling
+     */
+    private void unblockAllInput() {
+        // Remove the input blocker if it exists
+        if (this.inputBlocker != null) {
+            ServiceLocator.getInputService().unregister(this.inputBlocker);
+            this.inputBlocker = null;
+        }
+    }
+    
+    /**
+     * Pauses background music when death screen is shown
+     */
+    private void pauseBackgroundMusic() {
+        try {
+            Music music = ServiceLocator.getResourceService().getAsset("sounds/BGM_03_mp3.mp3", Music.class);
+            if (music != null && music.isPlaying()) {
+                music.pause();
+            }
+        } catch (Exception e) {
+            // Music asset may not be loaded - ignore
+        }
+    }
+    
+    /**
+     * Resumes background music when death screen is hidden  
+     */
+    private void resumeBackgroundMusic() {
+        try {
+            Music music = ServiceLocator.getResourceService().getAsset("sounds/BGM_03_mp3.mp3", Music.class);
+            if (music != null && !music.isPlaying()) {
+                music.play();
+            }
+        } catch (Exception e) {
+            // Music asset may not be loaded - ignore
+        }
+    }
+
     @Override
     protected void draw(SpriteBatch batch) {
         // Drawing is handled by the stage
@@ -192,6 +265,7 @@ public class DeathScreenDisplay extends UIComponent {
         if (rootTable != null) {
             rootTable.remove();
         }
+        unblockAllInput();
         super.dispose();
     }
 }
