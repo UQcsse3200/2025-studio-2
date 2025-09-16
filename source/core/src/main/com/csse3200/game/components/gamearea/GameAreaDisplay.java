@@ -24,6 +24,8 @@ public class GameAreaDisplay extends UIComponent {
 
   private void addActors() {
     title = new Label(this.gameAreaName, skin, "large");
+    title.setName("title");
+    title.setUserObject(this);
     stage.addActor(title);
   }
 
