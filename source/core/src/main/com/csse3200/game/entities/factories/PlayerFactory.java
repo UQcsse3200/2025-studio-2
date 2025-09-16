@@ -44,10 +44,6 @@ public class PlayerFactory {
     return config;
   }
 
-  private static final float FOOT_HITBOX_WIDTH = 0.3f;
-  private static final float FOOT_HITBOX_HEIGHT = 0.0001f;
-  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0.9f, 0f);
-  private static final float FOOT_HITBOX_ANGLE = 0;
   /**
    * Create a player entity.
    * @return entity
@@ -81,6 +77,7 @@ public class PlayerFactory {
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
+                    .addComponent(new FootColliderComponent())
                     /**.addComponent(new ColliderComponent())*/ // temporary fix
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
@@ -119,8 +116,6 @@ public class PlayerFactory {
     player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
 // --- end stamina block ---
 
-    //PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
-
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
     //player.getComponent(TextureRenderComponent.class).scaleEntity();
@@ -129,21 +124,6 @@ public class PlayerFactory {
     AnimationRenderComponent arc =
             player.getComponent(AnimationRenderComponent.class);
     arc.startAnimation("IDLE");
-
-    // Fixture for Player feet, used to reset jump or handle landing logic
-    Body body = player.getComponent(PhysicsComponent.class).getBody();
-
-    PolygonShape footHitbox = new PolygonShape();
-    footHitbox.setAsBox(FOOT_HITBOX_WIDTH, FOOT_HITBOX_HEIGHT, FOOT_HITBOX_OFFSET, FOOT_HITBOX_ANGLE);
-
-    FixtureDef footFixtureDef = new FixtureDef();
-    footFixtureDef.shape = footHitbox;
-    footFixtureDef.isSensor = true;
-
-    Fixture footFixture = body.createFixture(footFixtureDef);
-    footFixture.setUserData("foot");
-
-    footHitbox.dispose();
 
     return player;
   }
