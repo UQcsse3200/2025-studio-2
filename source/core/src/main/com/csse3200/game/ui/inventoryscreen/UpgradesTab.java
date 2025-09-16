@@ -24,6 +24,13 @@ public class UpgradesTab implements InventoryTabInterface {
   // Aspect ratio of the objectives background
   private static final float BASE_ASPECT = BASE_W / BASE_H;
 
+  private static final int TAB_Y = 130;
+  private static final int TAB_H = 72;
+
+  private static final Rect TAB_INVENTORY = new Rect(32,  TAB_Y, 284, TAB_H);
+  private static final Rect TAB_UPGRADES  = new Rect(319, TAB_Y, 300, TAB_H);
+  private static final Rect TAB_OBJECTIVE = new Rect(623, TAB_Y, 258, TAB_H);
+
   private final MainGameScreen screen;
   private Entity player;
 
@@ -74,9 +81,24 @@ public class UpgradesTab implements InventoryTabInterface {
     });
     placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
 
+    addTabHotspot(placer, TAB_INVENTORY, PauseMenuDisplay.Tab.INVENTORY);
+    addTabHotspot(placer, TAB_OBJECTIVE, PauseMenuDisplay.Tab.OBJECTIVES);
+
     final Table root = new Table();
     root.add(placer).center().size(canvasW, canvasH);
 
     return root;
+  }
+
+  private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab targetTab) {
+    Button b = new Button(new Button.ButtonStyle()); // invisible hotzone
+    b.addListener(new ChangeListener() {
+      @Override public void changed(ChangeEvent event, Actor actor) {
+        if (screen != null) {
+          screen.togglePauseMenu(targetTab); // switch tab, keep paused state
+        }
+      }
+    });
+    placer.addOverlay(b, rect);
   }
 }

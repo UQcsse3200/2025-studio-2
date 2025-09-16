@@ -80,14 +80,11 @@ public class PauseMenuDisplay extends UIComponent {
 
         tabBar = new Table();
         tabBar.top().padTop(10);
-        addTabButton("Inventory", Tab.INVENTORY);
-        addTabButton("Upgrades", Tab.UPGRADES);
-        addTabButton("Objectives", Tab.OBJECTIVES);
-        addTabButton("Settings", Tab.SETTINGS);
         stack.add(tabBar);
 
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
+        addBottomButton("Settings", Tab.SETTINGS);
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
         addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
@@ -99,22 +96,6 @@ public class PauseMenuDisplay extends UIComponent {
         setVisible(false);
     }
 
-    // Tab button helper
-    private void addTabButton(String name, Tab tab) {
-        TextButton button = new TextButton(name, skin);
-        button.pad(25);
-        button.setWidth(150);
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setTab(tab);
-                screen.reflectPauseTabClick(tab);
-            }
-        });
-
-        tabBar.add(button).padRight(100);
-    }
-
     // Bottom button helper
     private void addBottomButton(String name, Runnable action) {
         TextButton button = new TextButton(name, skin);
@@ -122,6 +103,18 @@ public class PauseMenuDisplay extends UIComponent {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 action.run();
+            }
+        });
+        bottomButtons.add(button).padRight(25);
+    }
+
+    private void addBottomButton(String name, Tab tab) {
+        TextButton button = new TextButton(name, skin);
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setTab(tab);
+                screen.reflectPauseTabClick(tab);
             }
         });
         bottomButtons.add(button).padRight(25);
