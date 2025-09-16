@@ -455,7 +455,6 @@ public class LevelTwoGameArea extends GameArea {
         ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
-        //48, 2 light
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
