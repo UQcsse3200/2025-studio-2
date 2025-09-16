@@ -75,6 +75,17 @@ public class SecurityCameraFactory {
         return e;
     }
 
+    /**
+     * Creates a new rotated security camera entity.
+     * The id string can be looked up using the SecurityCamRetrievalService which will
+     * return this created entity.
+     *
+     * @param target The target entity to be detected by the camera
+     * @param angularVel The angular velocity at which the camera rotates at
+     * @param rotation The rotational angle at which to place the camera at
+     * @param id The id of the camera which will be registered with the retrieval service
+     * @return The newly created security camera entity
+     */
     public static Entity createSecurityCamera(Entity target, float angularVel, float rotation, String id)  {
         // create main entity
         Entity e = new Entity();
@@ -108,6 +119,51 @@ public class SecurityCameraFactory {
         lens.getEvents().addListener("targetLost", (Entity p) ->
                 lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.NORMAL_COLOR));
 
+
+        return e;
+    }
+
+    /**
+     * Creates a new static security camera entity.
+     * The id string can be looked up using the SecurityCamRetrievalService which will
+     * return this created entity.
+     *
+     * @param target The target entity to be detected by the camera
+     * @param dist The distance of the light rays from the camera
+     * @param dir The direction which the camera will face in
+     * @param rotation The rotational angle at which to place the camera at
+     * @param id The id of the camera which will be registered with the retrieval service
+     * @return The newly created security camera entit
+     */
+    public static Entity createStaticSecurityCam(Entity target, float dist, float dir, float rotation, String id) {
+        Entity e = new Entity();
+        ConeLightPanningTaskComponent pan = new ConeLightPanningTaskComponent(
+                dir + rotation, dir + rotation + 0.001f, 0f);
+        e.addComponent(pan);
+        TextureRenderComponent tex = new TextureRenderComponent("images/camera-body.png");
+        tex.setRotation(rotation);
+        tex.setLayer(2);
+        e.addComponent(tex);
+        e.setScale(1f, 22f / 28f);
+
+        Entity lens = pan.getCameraLens();
+        lens.addComponent(new ConeLightComponent(rayHandler(),
+                LightingDefaults.RAYS,
+                LightingDefaults.NORMAL_COLOR,
+                dist,
+                dir + rotation,
+                LightingDefaults.CONE_DEG));
+        lens.addComponent(new ConeDetectorComponent(target, LightingDefaults.OCCLUDER, id));
+        // ensures the lens is rendered on top of the body (layer 1 by default)
+        TextureRenderComponent lensTex = new TextureRenderComponent("images/camera-lens.png");
+        lensTex.setLayer(3);
+        lens.addComponent(lensTex);
+
+        // change the color of the lens based off of the detection status
+        lens.getEvents().addListener("targetDetected", (Entity p) ->
+                lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.DETECTED_COLOR));
+        lens.getEvents().addListener("targetLost", (Entity p) ->
+                lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.NORMAL_COLOR));
 
         return e;
     }
