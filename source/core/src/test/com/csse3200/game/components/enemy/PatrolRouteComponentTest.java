@@ -34,17 +34,21 @@ public class PatrolRouteComponentTest {
 
     @Test
     void constructorCopiesWaypointsNotRefs() {
-        Vector2[] points = {new Vector2(0, 0)};
+        Vector2[] points = {new Vector2(0, 0), new Vector2(1, 1), new Vector2(2, 2)};
         PatrolRouteComponent route = new PatrolRouteComponent(points);
 
-        points[0].set(1, 1);
+        points[0].set(3, 3);
+        points[1].set(4, 4);
+        points[2].set(5, 5);
 
-        assertEquals(new Vector2(0, 0), route.getWaypointAt(0),
-                "Mutating the original route array must not affect internal state");
+        for (int i = 0; i < points.length; i++) {
+            assertEquals(new Vector2(i, i), route.getWaypointAt(i),
+                    "Mutating the original route array  must not affect internal state");
+        }
     }
 
     @Test
-    void patrolStartReturnsCopy() {
+    void patrolStart_returnsCopy() {
         Vector2[] points = {new Vector2(0, 0), new Vector2(1, 0)};
         PatrolRouteComponent route = new PatrolRouteComponent(points);
 
@@ -56,7 +60,16 @@ public class PatrolRouteComponentTest {
     }
 
     @Test
-    void getWaypointAtReturnsCopy() {
+    void patrolStart_equalsFirstWaypoint() {
+        Vector2[] points = {new Vector2(0, 0), new Vector2(1, 1)};
+        PatrolRouteComponent route = new PatrolRouteComponent(points);
+
+        assertEquals(route.getWaypointAt(0), route.patrolStart(),
+                "patrolStart shoud equal first waypoint");
+    }
+
+    @Test
+    void getWaypointAt_returnsCopy() {
         Vector2[] points = {new Vector2(0, 0)};
         PatrolRouteComponent route = new PatrolRouteComponent(points);
 
@@ -68,7 +81,7 @@ public class PatrolRouteComponentTest {
     }
 
     @Test
-    void getWaypointsReturnsCopy() {
+    void getWaypoints_returnsCopy() {
         Vector2[] points = {new Vector2(0, 0)};
         PatrolRouteComponent route = new PatrolRouteComponent(points);
 
@@ -81,7 +94,7 @@ public class PatrolRouteComponentTest {
     }
 
     @Test
-    void getWaypointAtThrowsOutOfBounds() {
+    void getWaypointAt_throwsOutOfBounds() {
         Vector2[] points = {new Vector2(0, 0)};
         PatrolRouteComponent route = new PatrolRouteComponent(points);
 
@@ -92,7 +105,7 @@ public class PatrolRouteComponentTest {
     }
 
     @Test
-    void numWaypointsReturnsCorrectLength() {
+    void numWaypoints_returnsCorrectLength() {
         Vector2 [] points = {new Vector2(0, 0)};
         PatrolRouteComponent route = new PatrolRouteComponent(points);
 

@@ -130,7 +130,7 @@ public class InventoryTabTest {
     // Uses reflection to set the final fields 'bgTex' and 'slotTx'
     private static void replacePrivateTextures(InventoryTab tab, Texture bgTex, Texture slotTex) throws Exception {
         setFinalField(tab, "bgTex", bgTex);
-        setFinalField(tab, "slotTx", slotTex);
+        setFinalField(tab, "emptySlotTexture", slotTex);
     }
 
     private static void setFinalField(Object target, String fieldName, Object value) throws Exception {

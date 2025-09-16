@@ -7,8 +7,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -84,6 +86,8 @@ public class SprintOneGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
+            "images/tile.png",
+            "images/wall.png",
             "images/PLAYER.png"
     };
     private static final String[] forestTextureAtlases = {
@@ -117,7 +121,10 @@ public class SprintOneGameArea extends GameArea {
 
         spawnTerrain();
         //spawnTrees();
-        createMinimap();
+
+        createMinimap(
+            ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class)
+        );
 
         playMusic();
 
@@ -131,13 +138,14 @@ public class SprintOneGameArea extends GameArea {
     protected void loadEntities() {
         spawnPlatform();
         spawnElevatorPlatform();
+        spawnWalls();
         spawnBoxes();
         spawnLights();
         spawnButtons();
         spawnTraps();
-        spawnDrone();
+        //spawnDrone();
         spawnPatrollingDrone();
-        spawnBomberDrone();
+        //spawnBomberDrone();  // WIP do not use
         spawnDoor();
     }
 
@@ -147,33 +155,20 @@ public class SprintOneGameArea extends GameArea {
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
-    private MinimapDisplay createMinimap() {
-        Texture minimapTexture =
-                ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class);
 
-        MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
-        options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-
-        float tileSize = terrain.getTileSize();
-        Vector2 worldSize =
-                new Vector2(terrain.getMapBounds(0).x * tileSize, terrain.getMapBounds(0).y * tileSize);
-        ServiceLocator.registerMinimapService(new MinimapService(minimapTexture, worldSize, new Vector2()));
-
-        MinimapDisplay minimapDisplay =
-                new MinimapDisplay(150f, options);
-
-        Entity minimapEntity = new Entity();
-        minimapEntity.addComponent(minimapDisplay);
-        spawnEntity(minimapEntity);
-
-        return minimapDisplay;
-    }
     private void spawnTraps() {
-        GridPoint2 spawnPos =  new GridPoint2(2,4);
-        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)+2, ((spawnPos.y)/2)+2);
+        GridPoint2 spawnPos =  new GridPoint2(0,4);
+        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2f)+2, ((spawnPos.y)/2f)+2);
         Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
+
+    private void spawnDeathZone() {
+        GridPoint2 spawnPos =  new GridPoint2(15,5);
+        Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        spawnEntityAt(deathZone, spawnPos, true,  true);
+    }
+
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
@@ -276,6 +271,38 @@ public class SprintOneGameArea extends GameArea {
         spawnEntityAt(longPlatform, longPlatPos, false, false);
 
     }
+
+    private void spawnWalls() {
+        float ts = terrain.getTileSize();
+
+        // Tall wall on the left
+        GridPoint2 wall1Pos = new GridPoint2(8, 22);
+        Entity wall1 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 5f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall1, wall1Pos, false, false);
+
+        // Shorter wall in the middle
+        GridPoint2 wall2Pos = new GridPoint2(8, 6);
+        Entity wall2 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 3f * ts,
+                "images/tile.png"
+        );
+        spawnEntityAt(wall2, wall2Pos, false, false);
+
+        // Another tall wall further right
+        GridPoint2 wall3Pos = new GridPoint2(18, 4);
+        Entity wall3 = WallFactory.createWall(
+                0f, 0f,
+                1f * ts, 6f * ts,
+                "images/walls.png"
+        );
+        spawnEntityAt(wall3, wall3Pos, false, false);
+    }
+
     private void spawnBoxes() {
 
         // Static box
@@ -314,21 +341,22 @@ public class SprintOneGameArea extends GameArea {
         GridPoint2 spawnTile = new GridPoint2(27, 25);
         Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
 
-        Entity drone = EnemyFactory.createDrone(player, spawnWorldPos); // pass world pos here
+        Entity drone = EnemyFactory.createDrone(player, spawnWorldPos)
+                        .addComponent(new ActivationComponent("1"));
         spawnEntityAt(drone, spawnTile, true, true);
 
     }
 
     private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(3, 22);
+        GridPoint2 spawnTile = new GridPoint2(3, 13);
 
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(7, 22)),
-                terrain.tileToWorldPosition(new GridPoint2(11, 22))
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
         };
-        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute);
-        spawnEntityAt(patrolDrone, spawnTile, false, false); // Changed to false so patrol doesn't look weird
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
+                        .addComponent(new ActivationComponent("1"));
+        spawnEntityAt(patrolDrone, spawnTile, true, true);
     }
 
     private void spawnBomberDrone() {
