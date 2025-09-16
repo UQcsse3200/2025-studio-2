@@ -60,7 +60,7 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask = new ChaseTask(target);
+        ChaseTask chaseTask = new ChaseTask(target,5f,3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
 
         drone.getEvents().addListener("enemyActivated", () -> {
@@ -185,7 +185,7 @@ public class EnemyFactory {
             drone.addComponent(new SelfDestructComponent(target));
 
             AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
-            ChaseTask chaseTask= new ChaseTask(target);
+            ChaseTask chaseTask= new ChaseTask(target,10f,2f);
             aiComponent.addTask(chaseTask);
             chaseTask.activate();
         }
