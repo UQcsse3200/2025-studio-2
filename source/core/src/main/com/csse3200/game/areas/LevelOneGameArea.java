@@ -507,31 +507,31 @@ public class LevelOneGameArea extends GameArea {
 
         // Layer 7 - Farthest background (barely moves)
         Texture backgroundTexture = resourceService.getAsset("images/cavelevel/background/7.png", Texture.class);
-        parallaxBg.addLayer(backgroundTexture, 0.1f);
+        parallaxBg.addScaledLayer(backgroundTexture, 0f, -17, -14, 0.18f);
 
         // Layer 6 - Far background
         Texture layer1 = resourceService.getAsset("images/cavelevel/background/6.png", Texture.class);
-        parallaxBg.addLayer(layer1, 0.13f);
+        parallaxBg.addScaledLayer(layer1, 0.2f, -17, -14, 0.18f);
 
         // Layer 5 - Mid-far background
         Texture layer2 = resourceService.getAsset("images/cavelevel/background/5.png", Texture.class);
-        parallaxBg.addLayer(layer2, 0.15f);
+        parallaxBg.addScaledLayer(layer2, 0.3f, -17, -14, 0.18f);
 
         // Layer 4 - Mid background
         Texture layer3 = resourceService.getAsset("images/cavelevel/background/4.png", Texture.class);
-        parallaxBg.addLayer(layer3, 0.17f);
+        parallaxBg.addScaledLayer(layer3, 0.4f, -17, -14, 0.18f);
 
         // Layer 3 - Mid-near background
         Texture layer4 = resourceService.getAsset("images/cavelevel/background/3.png", Texture.class);
-        parallaxBg.addLayer(layer4, 0.19f);
+        parallaxBg.addScaledLayer(layer4, 0.6f, -17, -14, 0.18f);
 
         // Layer 2 - Near background
         Texture layer5 = resourceService.getAsset("images/cavelevel/background/2.png", Texture.class);
-        parallaxBg.addLayer(layer5, 0.20f);
+        parallaxBg.addScaledLayer(layer5, 0.8f, -17, -14, 0.18f);
 
         // Layer 1 - Nearest background (moves fastest)
         Texture layer6 = resourceService.getAsset("images/cavelevel/background/1.png", Texture.class);
-        parallaxBg.addLayer(layer6, 0.21f);
+        parallaxBg.addScaledLayer(layer6, 1f, -17, -14, 0.18f);
 
         backgroundEntity.addComponent(parallaxBg);
         spawnEntity(backgroundEntity);
