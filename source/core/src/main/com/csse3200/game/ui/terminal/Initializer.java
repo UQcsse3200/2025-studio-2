@@ -156,16 +156,19 @@ public class Initializer {
     "Set the game's time scale. e.g. timescale(0.5); for half speed.";
     setGlobal("setTimescale", (scale) { TerminalService.customTimeScale = scale; });
 
+    setGlobal(".oldTimeScale", 1.0);
+
     "Resume the game in the background";
     setGlobal("resume", () {
-      source = timeSource();
-      source.setTimeScale(.com.csse3200.game.ui.terminal.TerminalService.customTimeScale);
+      ts = .com.csse3200.game.ui.terminal.TerminalService;
+      ts.customTimeScale = getGlobal(".oldTimeScale");
     });
 
     "Pause the game if resume was called before";
     setGlobal("pause", () {
-      source = timeSource();
-      source.setTimeScale(.com.csse3200.game.ui.terminal.TerminalService.customTimeScale);
+      ts = .com.csse3200.game.ui.terminal.TerminalService;
+      setGlobal(".oldTimeScale", ts.customTimeScale);
+      ts.customTimeScale = 0.0;
     });
 
     "Toggle physics debug rendering. e.g. debug(true);";
