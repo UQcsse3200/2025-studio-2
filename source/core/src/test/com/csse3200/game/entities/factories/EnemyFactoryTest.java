@@ -1,11 +1,14 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
+import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
@@ -379,7 +382,105 @@ public class EnemyFactoryTest {
 
         assertEquals(List.of("cooldownStart", "cooldownEnd", "chaseStart"), eventLog);
     }
+    @Test
+    void SelfDestructDrone_hasALlRequiredComponents() {
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+        assertNotNull(SelfDestructDrone.getComponent(CombatStatsComponent.class));
+        assertNotNull(SelfDestructDrone.getComponent(AnimationRenderComponent.class));
+        assertNotNull(SelfDestructDrone.getComponent(AITaskComponent.class));
+        assertNotNull(SelfDestructDrone.getComponent(PhysicsMovementComponent.class));
+    }
+    @Test
+    void SelfDestructDrone_hasCorrectMaxSpeed(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+        PhysicsMovementComponent physics = SelfDestructDrone.getComponent(PhysicsMovementComponent.class);
 
+        assertEquals(1.8f,physics.getMaxSpeed(),0.01f,"SelfDestructDrone should have a max speed of 1.8f");
+    }
+    @Test
+    void SelfDestructDrone_hasCorrectPhysicsBodyType(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new  Entity(),  new Vector2(0, 0));
+        PhysicsComponent physics = SelfDestructDrone.getComponent(PhysicsComponent.class);
+
+        assertEquals(BodyDef.BodyType.DynamicBody,physics.getBody().getType(),"SelfDestructDrone Should use a dynamic physics body");
+
+    }
+    @Test
+    void SelfDestructDrone_hasSpawnPosition(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+        SpawnPositionComponent spawn = SelfDestructDrone.getComponent(SpawnPositionComponent.class);
+
+        assertNotNull(spawn,"SpawnPositionComponent should be present when start position provided");
+        assertEquals(new Vector2(0,0),spawn.getSpawnPos(),"SpawnPositionComponent should be correctly initialised with given position");
+    }
+    @Test
+    void SelfDestructDrone_doesNotAddNullPawnPos(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(), null);
+        assertNull(SelfDestructDrone.getComponent(SpawnPositionComponent.class),"No spawnPositionComponent when initialised with null spawnPos");
+
+    }
+    @Test
+    void SelfDestructDrone_hasAnimation(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),new Vector2(0,0));
+        AnimationRenderComponent animator = SelfDestructDrone.getComponent(AnimationRenderComponent.class);
+        assertNotNull(animator,"SelfDestructDrone Should have an AnimationRender Component");
+        assertTrue(animator.hasAnimation("angry_float"),"missing angry_float animation");
+        assertTrue(animator.hasAnimation("float"),"missing float animation");
+        assertTrue(animator.hasAnimation("bomb_effect"),"missing bomb_effect  animation");
+    }
+    @Test
+    void SelfDestructDrone_StartsOnFloatAnimation(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+        AnimationRenderComponent animator = SelfDestructDrone.getComponent(AnimationRenderComponent.class);
+
+        assertEquals("float",animator.getCurrentAnimation(),"SelfDestruct should start on Float animation");
+    }
+    @Test
+    void SelfDestructDrone_hasCorrectCombatStats(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+        CombatStatsComponent stats = SelfDestructDrone.getComponent(CombatStatsComponent.class);
+
+        assertNotNull(stats,"Drone should have a CombatStatsComponent");
+        assertEquals(droneConfig.health,stats.getHealth(),"DroneHealth mismatch");
+        assertEquals(droneConfig.baseAttack,stats.getBaseAttack(),"Drone baseAttack mismatch");
+    }
+    @Test
+    void SelfDestructDrone_returnsDistinct(){
+        Entity a = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+        Entity b = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
+
+        assertNotSame(a,b,"Drones Should be distinct");
+        assertNotSame(a.getComponent(AITaskComponent.class),b.getComponent(AITaskComponent.class),"Drones Should have Distinct AITaskComponent");
+    }
+    /*
+    @Test
+    void SelfDestructDrone_hasChaseTask(){
+        Entity target = new Entity();
+        target.addComponent(new SpawnPositionComponent(new Vector2(5,5)));
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(target,  new Vector2(0, 0));
+        AITaskComponent aiTask = SelfDestructDrone.getComponent(AITaskComponent.class);
+
+        assertDoesNotThrow(aiTask::update,"AI component should be updated without throwing ");
+    }
+    */
+    @Test
+    void SelfDestructDrone_handleNullParentEntityGracefully(){
+        assertDoesNotThrow(() -> EnemyFactory.createSelfDestructionDrone(null,new Vector2(0, 0)),"Creating a selfDestructDrone with null parent entity should not throw");
+    }
+    /*
+    @Test
+    void SelfDestructDrone_triggerExplosionOnDeath(){
+        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),new Vector2(0, 0));
+
+        final boolean[] exploded = {false};
+        SelfDestructDrone.getEvents().addListener("explode",()->exploded[0]=true);
+
+        //SelfDestructDrone.getComponent(CombatStatsComponent.class).setHealth(0);
+        SelfDestructDrone.getComponent(SelfDestructComponent.class).update();
+        assertTrue(exploded[0],"SelfDestructDrone should trigger explosion event on death");
+    }
+
+     */
 
     private Entity createEntityWithPosition() {
         Entity e = new Entity();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -158,6 +159,13 @@ public class EnemyFactory {
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
         drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
+
+        //Explicitly ensure DynamicBody only if not already set by createBaseEnemy
+        PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
+        if (physics.getBody()!= null && physics.getBody().getType()!= BodyDef.BodyType.DynamicBody) {
+            physics.setBodyType(BodyDef.BodyType.DynamicBody);
+        }
+        //add spawn if not provide
         if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
 
         AnimationRenderComponent animator=
@@ -171,15 +179,17 @@ public class EnemyFactory {
         drone
                 .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
                 .addComponent(animator)
-                .addComponent(new DroneAnimationController())
-                .addComponent(new SelfDestructComponent(target));
+                .addComponent(new DroneAnimationController());
+        //AITasks and selfDestruct behaviour is only added if valid target exists
+        if (target!=null){
+            drone.addComponent(new SelfDestructComponent(target));
 
-        AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
-        ChaseTask chaseTask= new ChaseTask(target);
-
-        aiComponent.addTask(chaseTask);
-        chaseTask.activate();
-
+            AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
+            ChaseTask chaseTask= new ChaseTask(target);
+            aiComponent.addTask(chaseTask);
+            chaseTask.activate();
+        }
+//
         animator.scaleEntity();
         animator.startAnimation("float");
         return drone;
