@@ -18,6 +18,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -106,8 +107,8 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
 //    gameArea = new SprintOneGameArea(terrainFactory);
-//    gameArea = new LevelOneGameArea(terrainFactory);
-    gameArea = new LevelTwoGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
+    //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
 
@@ -160,6 +161,12 @@ public class MainGameScreen extends ScreenAdapter {
           newArea.getEvents().addListener(
                   "cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player)
           );
+
+          InventoryComponent inv = player.getComponent(InventoryComponent.class);
+          if (inv != null) {
+            inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+          }
+
           System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           newArea.createWithPlayer(player);
           oldArea.dispose();
@@ -326,7 +333,6 @@ public class MainGameScreen extends ScreenAdapter {
     ui.addComponent(new InputDecorator(stage, 10))
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
-        .addComponent(new MainGameExitDisplay())
         .addComponent(pauseMenuDisplay)
         .addComponent(pauseInput);
 

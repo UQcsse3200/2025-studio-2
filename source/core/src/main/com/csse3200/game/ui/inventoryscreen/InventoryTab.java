@@ -43,6 +43,14 @@ public class InventoryTab implements InventoryTabInterface {
   private static final Rect GRID_PX = new Rect(371, 247, 586, 661);
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
 
+  // Pixel-accurate rectangles (top-left coordinates, width, height)
+  private static final int TAB_Y = 130;
+  private static final int TAB_H = 72;
+
+  private static final Rect TAB_INVENTORY = new Rect(32,  TAB_Y, 284, TAB_H);
+  private static final Rect TAB_UPGRADES  = new Rect(319, TAB_Y, 300, TAB_H);
+  private static final Rect TAB_OBJECTIVE = new Rect(623, TAB_Y, 258, TAB_H);
+
   private static final int GRID_ROWS = 4;
   private static final int GRID_COLS = 4;
   private static final float SLOT_PADDING = 10f;
@@ -180,6 +188,9 @@ public class InventoryTab implements InventoryTabInterface {
     this.currentGridTable = gridTable; // Store reference for refreshing
     placer.addOverlay(gridTable, GRID_PX);
     populateGrid(gridTable);
+
+    addTabHotspot(placer, TAB_UPGRADES,  PauseMenuDisplay.Tab.UPGRADES);
+    addTabHotspot(placer, TAB_OBJECTIVE, PauseMenuDisplay.Tab.OBJECTIVES);
 
     float screenH = Gdx.graphics.getHeight();
     float canvasH = screenH * (2f / 3f);
@@ -344,6 +355,33 @@ public class InventoryTab implements InventoryTabInterface {
     Texture texture = new Texture(pixmap);
     pixmap.dispose();
     return texture;
+  }
+
+
+  /**
+   * Adds an invisible, pixel-accurate clickable hotspot that switches to a pause menu tab
+   *
+   *
+   * Creates a Button with no visuals to act as a hotzone
+   * Positions and sizes the hotzone using PixelPerfectPlacer so it aligns with the
+   * background art and scales correctly with the canvas
+   * On click, calls screen.togglePauseMenu(targetTab) to switch tabs without
+   * changing the current paused state
+   *
+   * @param placer    the PixelPerfectPlacer instance that places the overlays to the tab background
+   * @param rect      the hotspot rectangle in background image pixels (top-left origin; width/height in pixels)
+   * @param targetTab the pause-menu tab to show when the hotspot is clicked
+   */
+  private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab targetTab) {
+    Button b = new Button(new Button.ButtonStyle()); // invisible hotzone
+    b.addListener(new ChangeListener() {
+      @Override public void changed(ChangeEvent event, Actor actor) {
+        if (screen != null) {
+          screen.togglePauseMenu(targetTab); // switch tab, keep paused state
+        }
+      }
+    });
+    placer.addOverlay(b, rect);
   }
 
   /**
