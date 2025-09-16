@@ -188,13 +188,7 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private Entity getPlayer() {
-    Array<Entity> entities = ServiceLocator.getEntityService().get_entities();
-    for (Entity entity : entities) {
-      if (entity.getComponent(PlayerActions.class) != null) {
-        return entity;
-      }
-    }
-    return null;
+    return gameArea.getPlayer();
   }
 
   /**
@@ -218,8 +212,8 @@ public class MainGameScreen extends ScreenAdapter {
 
     float dzLeft   = camera.position.x - dzW * 0.1f;
     float dzRight  = camera.position.x + dzW * 0.1f;
-    float dzBottom = camera.position.y - dzH * 0.2f;
-    float dzTop    = camera.position.y + dzH * 0.1f;
+    float dzBottom = camera.position.y - dzH * 0.20f;
+    float dzTop    = camera.position.y + dzH * 0.30f;
 
     // Calculate target camera position
     float targetX = camera.position.x;
