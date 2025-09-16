@@ -279,6 +279,5 @@ public class ConeLightPanningTaskComponent extends Component {
     @Override
     public void dispose() {
         cameraLens.dispose();
-        ServiceLocator.getEntityService().unregister(cameraLens);
     }
 }
