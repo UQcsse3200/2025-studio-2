@@ -81,11 +81,9 @@ public abstract class GameArea implements Disposable {
     // Save the old player's combat stats and inventory
     saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
             oldPlayer.getComponent(InventoryComponent.class));
-//    System.out.println(oldPlayer.getComponent(CombatStatsComponent.class).getHealth()); // debug
 
     // Get walk direction
     Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-//    System.out.println("Old direction: " + walkDirection); // debug
     // player must be spawned before enemies as they require a player to target
     player = spawnPlayer(getComponents());
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);

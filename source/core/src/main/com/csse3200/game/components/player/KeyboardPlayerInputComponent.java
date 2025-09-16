@@ -8,7 +8,6 @@ import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.Vector2Utils;
-import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.player.InventoryComponent;
 import java.lang.reflect.Array;
 import java.security.Key;
