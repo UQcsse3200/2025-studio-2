@@ -93,7 +93,7 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/4.png",
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
-            "images/cavelevel/background/7.png"
+            "images/cavelevel/background/7.png",
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -103,6 +103,8 @@ public class LevelOneGameArea extends GameArea {
             "images/PLAYER.atlas",
             "images/drone.atlas",
             "images/volatile_platform.atlas",
+            "images/health-potion.atlas",
+            "images/speed-potion.atlas",
             "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
@@ -132,6 +134,9 @@ public class LevelOneGameArea extends GameArea {
         spawnPlatformBat();
         spawnLevelOneBatRoom();
         spawnPlayerUpgrades();
+        spawnPotion("health", 60, 28);
+        spawnPotion("health", 10, 15);
+        spawnPotion("dash", 72, 12);
     }
 
     private void spawnDeathZone() {
@@ -616,9 +621,14 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
     }
     public void spawnKey() {
-        Entity key = CollectableFactory.createKey("door");
+        Entity key = CollectableFactory.createCollectable("key:door");
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
     }
+    public void spawnPotion(String type, int x, int y) {
+        Entity potion = CollectableFactory.createCollectable("potion:" + type);
+        spawnEntityAt(potion, new GridPoint2(x,y), true, true);
+    }
+
     private void spawnSecurityCams() {
         // see the LightFactory class for more details on spawning these
         Entity securityLight1 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
