@@ -77,7 +77,7 @@ public class TrapFactory {
                 break;
             default: // Facing down
                 center.y *= 0.5f;
-                alignY = PhysicsComponent.AlignY.BOTTOM;
+                alignY = PhysicsComponent.AlignY.TOP;
                 break;
         }
 
