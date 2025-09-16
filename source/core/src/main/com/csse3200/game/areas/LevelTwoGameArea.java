@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -15,6 +16,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.rendering.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -64,7 +66,24 @@ public class LevelTwoGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
-            "images/wall.png"
+            "images/wall.png",
+            "images/cavelevel/background/1.png",
+            "images/cavelevel/background/2.png",
+            "images/cavelevel/background/3.png",
+            "images/cavelevel/background/4.png",
+            "images/cavelevel/background/5.png",
+            "images/cavelevel/background/6.png",
+            "images/cavelevel/background/7.png",
+            "images/cavelevel/cavebackground.png",
+            "images/cavelevel/tile000.png",
+            "images/cavelevel/tile001.png",
+            "images/cavelevel/tile002.png",
+            "images/cavelevel/tile014.png",
+            "images/cavelevel/tile015.png",
+            "images/cavelevel/tile016.png",
+            "images/cavelevel/tile028.png",
+            "images/cavelevel/tile029.png",
+            "images/cavelevel/tile030.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -88,12 +107,63 @@ public class LevelTwoGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        spawnParallaxBackground();
         spawnPlatforms();
         spawnVolatilePlatform();
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
     }
+
+    private void spawnParallaxBackground() {
+        Entity backgroundEntity = new Entity();
+
+        // Get the camera from the player entity
+        Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
+
+        // Get map dimensions from terrain
+        GridPoint2 mapBounds = terrain.getMapBounds(0);
+        float tileSize = terrain.getTileSize();
+        float mapWorldWidth = mapBounds.x * tileSize;
+        float mapWorldHeight = mapBounds.y * tileSize;
+
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+
+
+        ResourceService resourceService = ServiceLocator.getResourceService();
+
+        // Layer 7 - Farthest background (barely moves)
+        Texture backgroundTexture = resourceService.getAsset("images/cavelevel/background/7.png", Texture.class);
+        parallaxBg.addLayer(backgroundTexture, 0.1f);
+
+        // Layer 6 - Far background
+        Texture layer1 = resourceService.getAsset("images/cavelevel/background/6.png", Texture.class);
+        parallaxBg.addLayer(layer1, 0.13f);
+
+        // Layer 5 - Mid-far background
+        Texture layer2 = resourceService.getAsset("images/cavelevel/background/5.png", Texture.class);
+        parallaxBg.addLayer(layer2, 0.15f);
+
+        // Layer 4 - Mid background
+        Texture layer3 = resourceService.getAsset("images/cavelevel/background/4.png", Texture.class);
+        parallaxBg.addLayer(layer3, 0.17f);
+
+        // Layer 3 - Mid-near background
+        Texture layer4 = resourceService.getAsset("images/cavelevel/background/3.png", Texture.class);
+        parallaxBg.addLayer(layer4, 0.19f);
+
+        // Layer 2 - Near background
+        Texture layer5 = resourceService.getAsset("images/cavelevel/background/2.png", Texture.class);
+        parallaxBg.addLayer(layer5, 0.20f);
+
+        // Layer 1 - Nearest background (moves fastest)
+        Texture layer6 = resourceService.getAsset("images/cavelevel/background/1.png", Texture.class);
+        parallaxBg.addLayer(layer6, 0.21f);
+
+        backgroundEntity.addComponent(parallaxBg);
+        spawnEntity(backgroundEntity);
+    }
+
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(5,0);
         Entity deathZone = DeathZoneFactory.createDeathZone();
@@ -305,7 +375,7 @@ public class LevelTwoGameArea extends GameArea {
         final ResourceService resourceService = ServiceLocator.getResourceService();
 
         baseTile =
-                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
+                new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
         variant1 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
         variant2 =
