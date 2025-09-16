@@ -39,6 +39,7 @@ allprojects {
         mockitoVersion = '5.2.0'
         gdxUtilsVersion = '0.13.4'
         slf4jVersion = '1.7.36'
+        gdxVfxVersion = '0.5.4'
     }
 
     repositories {
@@ -90,6 +91,8 @@ project(":core") {
         api "net.dermetfan.libgdx-utils:libgdx-utils:$gdxUtilsVersion"
         api "net.dermetfan.libgdx-utils:libgdx-utils-box2d:$gdxUtilsVersion"
         implementation "com.badlogicgames.box2dlights:box2dlights:1.5"
+        implementation "com.crashinvaders.vfx:gdx-vfx-core:$gdxVfxVersion"
+        implementation "com.crashinvaders.vfx:gdx-vfx-effects:$gdxVfxVersion"
 
         // Cutscene Text Boxes
         implementation "com.github.tommyettinger:textratypist:2.1.3"

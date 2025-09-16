@@ -11,6 +11,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
@@ -114,6 +115,7 @@ class LightFactoryTest {
             // have to mock these as the detector component uses both
             ServiceLocator.registerPhysicsService(mock(PhysicsService.class));
             ServiceLocator.registerRenderService(mock(RenderService.class));
+            ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());
 
             var target = new Entity();
             var e = LightFactory.createSecurityLight(target, PhysicsLayer.OBSTACLE, 64, Color.GREEN, 5f, 0f, 30f);
