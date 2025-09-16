@@ -130,6 +130,7 @@ public class LevelOneGameArea extends GameArea {
         spawnTraps();
         spawnPlatformBat();
         spawnLevelOneBatRoom();
+        spawnPlayerUpgrades();
     }
 
     private void spawnDeathZone() {
@@ -596,24 +597,9 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(spikesRight, new GridPoint2(32,34), true,  true);
     }
     private void spawnButtons() {
-        Entity puzzleEntity = new Entity();
-        ButtonManagerComponent manager = new ButtonManagerComponent();
-        puzzleEntity.addComponent(manager);
-        ServiceLocator.getEntityService().register(puzzleEntity);
-
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(79 ,20), true,  true);
-
-        Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
-        spawnEntityAt(button, new GridPoint2(74,50), true,  true);
-
-        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
-        button4.addComponent(new TooltipSystem.TooltipComponent("Puzzle Button\nYou have 15 seconds to press all three", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button4, new GridPoint2(67,40), true,  true);
-
-        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
-        spawnEntityAt(button5, new GridPoint2(58,45), true,  true);
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -622,14 +608,11 @@ public class LevelOneGameArea extends GameArea {
                 keySpawned = true;
             }
         });
+    }
 
-        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
-            //what to do when puzzle completed, probably player upgrade
-            //if you want to spawn on platform before door spawn at (46, 56)
-            Entity dashUpgrade = CollectableFactory.createDashUpgrade();
-            spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
-        });
-
+    public void spawnPlayerUpgrades() {
+        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
+        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
     }
     public void spawnKey() {
         Entity key = CollectableFactory.createKey("door");
