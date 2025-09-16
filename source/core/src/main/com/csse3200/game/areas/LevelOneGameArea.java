@@ -14,6 +14,7 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.services.ResourceService;
@@ -66,7 +67,9 @@ public class LevelOneGameArea extends GameArea {
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/wall.png",
-            "images/dash_powerup.png"
+            "images/dash_powerup.png",
+            "images/ladder.png",
+            "images/ladder-base.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -93,6 +96,7 @@ public class LevelOneGameArea extends GameArea {
     }
     protected void loadEntities() {
         spawnPlatforms();
+        spawnLadder();
         spawnVolatilePlatform();
         spawnDeathZone();
         spawnWalls();
@@ -121,6 +125,35 @@ public class LevelOneGameArea extends GameArea {
         rightWall.setScale(2.5f,7.5f);
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
+
+    private void spawnLadder() {
+        //builds ladder up 1 segment at a time to the specified height starting at the given x/y position
+        int x = 52;
+        int y = 4;
+        int height = 17;
+        for (int i = 0; i < height; i++) {
+            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            Entity ladder = LadderFactory.createStaticLadder();
+            ladder.setScale(1f, 1);
+            spawnEntityAt(ladder, ladderPos, false, false);
+        }
+
+        GridPoint2 basePos = new GridPoint2(59, 35);
+        Entity base = LadderFactory.createLadderBase();
+        base.setScale(1f, 1);
+        spawnEntityAt(base, basePos, false, false);
+
+        x = 59;
+        y = 36;
+        height = 15;
+        for (int i = 0; i < height; i++) {
+            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            Entity ladder = LadderFactory.createStaticLadder();
+            ladder.setScale(1f, 1);
+            spawnEntityAt(ladder, ladderPos, false, false);
+        }
+    }
+
     private void spawnPlatforms(){
         GridPoint2 groundPos1 = new GridPoint2(0, 0);
         Entity ground1 = PlatformFactory.createStaticPlatform();
@@ -153,15 +186,15 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(step3, step3Pos,false, false);
 
 //        THESE TWO TO BE REPLACED WITH LADDERS
-        GridPoint2 step4Pos = new GridPoint2(48,6);
+        GridPoint2 step4Pos = new GridPoint2(52,22);
         Entity step4 = PlatformFactory.createStaticPlatform();
         step4.setScale(1.8f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
 
-        GridPoint2 step6Pos = new GridPoint2(42,12);
-        Entity step6 = PlatformFactory.createStaticPlatform();
-        step6.setScale(1.8f,0.5f);
-        spawnEntityAt(step6, step6Pos,false, false);
+        //GridPoint2 step6Pos = new GridPoint2(42,12);
+        //Entity step6 = PlatformFactory.createStaticPlatform();
+        //step6.setScale(1.8f,0.5f);
+        //spawnEntityAt(step6, step6Pos,false, false);
 //      ^
 
         GridPoint2 step7Pos = new GridPoint2(45,18);
@@ -249,12 +282,12 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(step9, step9Pos,false, false);
 
 //        THESE TWO TO BE REPLACED WITH LADDERS
-        GridPoint2 step10Pos = new GridPoint2(63,38);
-        Entity step10 = PlatformFactory.createStaticPlatform();
-        step10.setScale(1.8f,0.5f);
-        spawnEntityAt(step10, step10Pos,false, false);
+        //GridPoint2 step10Pos = new GridPoint2(63,38);
+        //Entity step10 = PlatformFactory.createStaticPlatform();
+        //step10.setScale(1.8f,0.5f);
+        //spawnEntityAt(step10, step10Pos,false, false);
 
-        GridPoint2 step11Pos = new GridPoint2(58,43);
+        GridPoint2 step11Pos = new GridPoint2(58,52);
         Entity step11 = PlatformFactory.createStaticPlatform();
         step11.setScale(1.8f,0.5f);
         spawnEntityAt(step11, step11Pos,false, false);
