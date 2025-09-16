@@ -58,6 +58,7 @@ public class PlayerScreenTransitionComponent extends Component {
     remainingDuration = duration;
     totalDuration = duration;
     this.onComplete = onComplete;
+    entity.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
   }
 
   @Override
@@ -65,7 +66,7 @@ public class PlayerScreenTransitionComponent extends Component {
     if (totalDuration == 0f) return;
     if (remainingDuration == 0f) {
       totalDuration = 0f;
-      // vfxManager.removeEffect(effect);
+      stopEffect();
       if (onComplete != null) {
         final Runnable runnable = onComplete;
         Gdx.app.postRunnable(runnable);
@@ -91,8 +92,14 @@ public class PlayerScreenTransitionComponent extends Component {
     effect.setProgress(progress);
   }
 
+  private void stopEffect() {
+    vfxManager.removeEffect(effect);
+    entity.getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
+  }
+
   @Override
   public void dispose() {
-    vfxManager.removeEffect(effect);
+    stopEffect();
+    effect.dispose();
   }
 }

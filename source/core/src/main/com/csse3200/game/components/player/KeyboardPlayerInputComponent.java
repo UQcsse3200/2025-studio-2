@@ -51,6 +51,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
+    if (!enabled) return false;
 
     if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
       triggerJumpEvent();
@@ -117,7 +118,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
-      if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+    if (!enabled) return false;
+
+    if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
         return true;
