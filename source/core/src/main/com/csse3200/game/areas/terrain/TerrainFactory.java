@@ -199,7 +199,7 @@ public class TerrainFactory {
   public TerrainComponent createInvisibleTerrain(TerrainType terrainType, GridPoint2 mapSize) {
     ResourceService resourceService = ServiceLocator.getResourceService();
     // Use empty/transparent texture for invisible terrain
-    TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/Empty.png", Texture.class));
+    TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
 
     switch (terrainType) {
       case SPRINT_ONE_ORTHO:
