@@ -10,6 +10,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.DoorControlComponent;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -17,6 +18,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -97,6 +99,8 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnLights();
+        spawnPatrollingDrone();
     }
 
     private void spawnDeathZone() {
@@ -255,6 +259,22 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
+    }
+    private void spawnLights() {
+        // see the LightFactory class for more details on spawning these
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
+    }
+    private void spawnPatrollingDrone() {
+        GridPoint2 spawnTile = new GridPoint2(3, 13);
+
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+        };
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
+                .addComponent(new ActivationComponent("1"));
+        spawnEntityAt(patrolDrone, spawnTile, true, true);
     }
     private void displayUI() {
         Entity ui = new Entity();
