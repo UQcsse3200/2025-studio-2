@@ -15,6 +15,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -93,6 +94,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnSecurityCams();
     }
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(5,0);
@@ -247,6 +249,17 @@ public class LevelTwoGameArea extends GameArea {
         door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(98,45), true, true);
     }
+
+    private void spawnSecurityCams() {
+        Entity cam1 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        Entity cam2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "2");
+        Entity cam3 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 90f, "3");
+
+        spawnEntityAt(cam1, new GridPoint2(34,19), true, true);
+        spawnEntityAt(cam2, new GridPoint2(83,39), true, true);
+        spawnEntityAt(cam3, new GridPoint2(37,57), true, true);
+    }
+
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
