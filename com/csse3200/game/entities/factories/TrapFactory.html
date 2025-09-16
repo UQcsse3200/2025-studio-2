@@ -122,10 +122,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSpikes(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.math.Vector2)" class="member-name-link">createSpikes</a><wbr>(com.badlogic.gdx.math.GridPoint2&nbsp;position,
- com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSpikes(com.badlogic.gdx.math.Vector2,float)" class="member-name-link">createSpikes</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;safeSpot,
+ float&nbsp;rotation)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a basic Spike trap with configurable length and rotation.</div>
+<div class="block">Creates a basic Spike trap with configurable rotation and length of 1 unit.</div>
 </div>
 </div>
 </div>
@@ -159,24 +159,22 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createSpikes(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.math.Vector2)">
+<section class="detail" id="createSpikes(com.badlogic.gdx.math.Vector2,float)">
 <h3>createSpikes</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createSpikes</span><wbr><span class="parameters">(com.badlogic.gdx.math.GridPoint2&nbsp;position,
- com.badlogic.gdx.math.Vector2&nbsp;safeSpot)</span></div>
-<div class="block">Creates a basic Spike trap with configurable length and rotation.
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createSpikes</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;safeSpot,
+ float&nbsp;rotation)</span></div>
+<div class="block">Creates a basic Spike trap with configurable rotation and length of 1 unit.
  <p>
  The Spike trap displays in 16-pixel high x 16-pixel wide units of sprite spikes_sprite.png.
  It is immovable and cannot be destroyed. On collision with player (or enemy), it damages the colliding
  entity by 1, and resets their position to a safe location nearby.
  Spikes are NOT classified as an obstacle the player can hide behind, because they are very short
 
- In a future update, the width will configurable based on a provided length parameter,
- and the trap will be able to be rotated to face up (default), right, down, or left, as a visual
- effect so it can be used on a variety of platforms and/or walls.</div>
+ In a future update, the width will configurable based on a provided length parameter.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>position</code> - The start position of the trap</dd>
 <dd><code>safeSpot</code> - Spot to teleport the player once they take damage</dd>
+<dd><code>rotation</code> - The rotation (anti-clockwise) in degrees. Must be in {0, 90, 180, 270}.</dd>
 <dt>Returns:</dt>
 <dd>the Spike trap Entity created.</dd>
 </dl>

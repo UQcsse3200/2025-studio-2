@@ -137,34 +137,48 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Creates the button</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPlayerCollider()" class="member-name-link">getPlayerCollider</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#forceUnpress()" class="member-name-link">forceUnpress</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Forces the button to unpress immediately regardless of current state or timer
+ Resets texture, stops timer and triggers buttonToggled event (with false as unpressed)</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPlayerCollider()" class="member-name-link">getPlayerCollider</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Retrieves the ColliderComponent of the player currently interacting with the box</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isPlayerInRange()" class="member-name-link">isPlayerInRange</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isPlayerInRange()" class="member-name-link">isPlayerInRange</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Checks if the player is currently in range of the button.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isPushed()" class="member-name-link">isPushed</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isPushed()" class="member-name-link">isPushed</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns true if button is pushed, false otherwise</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDirection(java.lang.String)" class="member-name-link">setDirection</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPlayerInRange(com.csse3200.game.physics.components.ColliderComponent)" class="member-name-link">setPlayerInRange</a><wbr>(<a href="../physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a>&nbsp;collider)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDirection(java.lang.String)" class="member-name-link">setDirection</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the direction the button will face, for both texture and pressing logic
+ Automatically left unless otherwise specified (right, up, down)</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPlayerInRange(com.csse3200.game.physics.components.ColliderComponent)" class="member-name-link">setPlayerInRange</a><wbr>(<a href="../physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a>&nbsp;collider)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets whether a player is in interaction range of this button
  Adds the player to the "interact" event the first time</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPushed(boolean)" class="member-name-link">setPushed</a><wbr>(boolean&nbsp;pushed)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPushed(boolean)" class="member-name-link">setPushed</a><wbr>(boolean&nbsp;pushed)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the buttons pushed state manually [for future implementations]</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setPuzzleManager(com.csse3200.game.components.ButtonManagerComponent)" class="member-name-link">setPuzzleManager</a><wbr>(<a href="ButtonManagerComponent.html" title="class in com.csse3200.game.components">ButtonManagerComponent</a>&nbsp;puzzleManager)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Assigns a puzzle manager to the button, so manager can be notified when its pressed</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setType(java.lang.String)" class="member-name-link">setType</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</code></div>
@@ -174,7 +188,7 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#update()" class="member-name-link">update</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Updates the button</div>
+<div class="block">Updates the button.</div>
 </div>
 </div>
 </div>
@@ -225,7 +239,8 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="update()">
 <h3>update</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()</div>
-<div class="block">Updates the button</div>
+<div class="block">Updates the button. If it is a timing button and the time runs out, button
+  will unpress and return to original texture</div>
 <dl class="notes">
 <dt>Overrides:</dt>
 <dd><code><a href="Component.html#update()">update</a></code>&nbsp;in class&nbsp;<code><a href="Component.html" title="class in com.csse3200.game.components">Component</a></code></dd>
@@ -248,6 +263,31 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setDirection(java.lang.String)">
 <h3>setDirection</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setDirection</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction)</span></div>
+<div class="block">Sets the direction the button will face, for both texture and pressing logic
+ Automatically left unless otherwise specified (right, up, down)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>direction</code> - The direction string to set</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="forceUnpress()">
+<h3>forceUnpress</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">forceUnpress</span>()</div>
+<div class="block">Forces the button to unpress immediately regardless of current state or timer
+ Resets texture, stops timer and triggers buttonToggled event (with false as unpressed)</div>
+</section>
+</li>
+<li>
+<section class="detail" id="setPuzzleManager(com.csse3200.game.components.ButtonManagerComponent)">
+<h3>setPuzzleManager</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setPuzzleManager</span><wbr><span class="parameters">(<a href="ButtonManagerComponent.html" title="class in com.csse3200.game.components">ButtonManagerComponent</a>&nbsp;puzzleManager)</span></div>
+<div class="block">Assigns a puzzle manager to the button, so manager can be notified when its pressed</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>puzzleManager</code> - the ButtonManagerComponent managing this button</dd>
+</dl>
 </section>
 </li>
 <li>

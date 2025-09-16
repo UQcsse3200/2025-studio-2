@@ -117,7 +117,17 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a button entity with specified state and type</div>
+<div class="block">Creates a button entity with specified state and type
+ Uses getTextureRenderComponent to assign texture colour and state depending on type and pressed</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createPuzzleButton(boolean,java.lang.String,java.lang.String,com.csse3200.game.components.ButtonManagerComponent)" class="member-name-link">createPuzzleButton</a><wbr>(boolean&nbsp;isPressed,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction,
+ <a href="../../components/ButtonManagerComponent.html" title="class in com.csse3200.game.components">ButtonManagerComponent</a>&nbsp;manager)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates button entity that is part of button puzzle
+  Button is linked to a ButtonManagerComponent, which tracks all buttons assigned to the puzzle</div>
 </div>
 </div>
 </div>
@@ -142,13 +152,34 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createButton</span><wbr><span class="parameters">(boolean&nbsp;isPressed,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction)</span></div>
-<div class="block">Creates a button entity with specified state and type</div>
+<div class="block">Creates a button entity with specified state and type
+ Uses getTextureRenderComponent to assign texture colour and state depending on type and pressed</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>isPressed</code> - whether button should start in pressed state or not</dd>
 <dd><code>type</code> - type of button (door, platform, standard)</dd>
 <dt>Returns:</dt>
 <dd>fully configured button entity</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createPuzzleButton(boolean,java.lang.String,java.lang.String,com.csse3200.game.components.ButtonManagerComponent)">
+<h3>createPuzzleButton</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createPuzzleButton</span><wbr><span class="parameters">(boolean&nbsp;isPressed,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;direction,
+ <a href="../../components/ButtonManagerComponent.html" title="class in com.csse3200.game.components">ButtonManagerComponent</a>&nbsp;manager)</span></div>
+<div class="block">Creates button entity that is part of button puzzle
+  Button is linked to a ButtonManagerComponent, which tracks all buttons assigned to the puzzle</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>isPressed</code> - whether button should start in pressed state or not</dd>
+<dd><code>type</code> - type of button (door, platform, standard) (standard if not recognised)</dd>
+<dd><code>direction</code> - the direction the button should face (left, right, up, down) (left if not recognised)</dd>
+<dd><code>manager</code> - ButtonManagerComponent managing this button's puzzle</dd>
+<dt>Returns:</dt>
+<dd>fully configured puzzle entity button</dd>
 </dl>
 </section>
 </li>
