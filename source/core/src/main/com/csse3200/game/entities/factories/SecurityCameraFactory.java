@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
@@ -47,7 +48,11 @@ public class SecurityCameraFactory {
         ConeLightPanningTaskComponent pan = new ConeLightPanningTaskComponent(
                 LightingDefaults.START_DEG, LightingDefaults.END_DEG, angularVel);
         e.addComponent(pan);
-        e.addComponent(new TextureRenderComponent("images/camera-body.png"));
+        TextureRenderComponent tex = new TextureRenderComponent("images/camera-body.png");
+        tex.setLayer(2);
+        e.addComponent(tex);
+        e.setScale(1f, 22f / 28f);
+
 
         // panning component creates a child entity for the lens
         // the light component is added to the lens allowing it to move when the lens does
@@ -60,12 +65,49 @@ public class SecurityCameraFactory {
                 LightingDefaults.CONE_DEG));
         lens.addComponent(new ConeDetectorComponent(target, LightingDefaults.OCCLUDER, id));
         // ensures the lens is rendered on top of the body (layer 1 by default)
-        lens.addComponent(new TextureRenderComponent("images/camera-lens.png").setLayer(2));
+        lens.addComponent(new TextureRenderComponent("images/camera-lens.png").setLayer(3));
         // change the color of the lens based off of the detection status
         lens.getEvents().addListener("targetDetected", (Entity p) ->
                 lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.DETECTED_COLOR));
         lens.getEvents().addListener("targetLost", (Entity p) ->
                 lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.NORMAL_COLOR));
+
+        return e;
+    }
+
+    public static Entity createSecurityCamera(Entity target, float angularVel, float rotation, String id)  {
+        // create main entity
+        Entity e = new Entity();
+        ConeLightPanningTaskComponent pan = new ConeLightPanningTaskComponent(
+                LightingDefaults.START_DEG + rotation, LightingDefaults.END_DEG + rotation, angularVel);
+        e.addComponent(pan);
+        TextureRenderComponent tex = new TextureRenderComponent("images/camera-body.png");
+        tex.setRotation(rotation);
+        tex.setLayer(2);
+        e.addComponent(tex);
+        e.setScale(1f, 22f / 28f);
+
+        // panning component creates a child entity for the lens
+        // the light component is added to the lens allowing it to move when the lens does
+        Entity lens = pan.getCameraLens();
+        lens.addComponent(new ConeLightComponent(rayHandler(),
+                LightingDefaults.RAYS,
+                LightingDefaults.NORMAL_COLOR,
+                LightingDefaults.DIST,
+                LightingDefaults.DOWN,
+                LightingDefaults.CONE_DEG));
+        lens.addComponent(new ConeDetectorComponent(target, LightingDefaults.OCCLUDER, id));
+        // ensures the lens is rendered on top of the body (layer 1 by default)
+        TextureRenderComponent lensTex = new TextureRenderComponent("images/camera-lens.png");
+        lensTex.setLayer(3);
+        lens.addComponent(lensTex);
+
+        // change the color of the lens based off of the detection status
+        lens.getEvents().addListener("targetDetected", (Entity p) ->
+                lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.DETECTED_COLOR));
+        lens.getEvents().addListener("targetLost", (Entity p) ->
+                lens.getComponent(ConeLightComponent.class).setColor(LightingDefaults.NORMAL_COLOR));
+
 
         return e;
     }

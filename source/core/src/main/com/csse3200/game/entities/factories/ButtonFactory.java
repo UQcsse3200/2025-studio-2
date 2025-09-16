@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -22,6 +23,7 @@ public class ButtonFactory {
 
     /**
      * Creates a button entity with specified state and type
+     * Uses getTextureRenderComponent to assign texture colour and state depending on type and pressed
      *
      * @param isPressed whether button should start in pressed state or not
      * @param type type of button (door, platform, standard)
@@ -31,7 +33,6 @@ public class ButtonFactory {
     public static Entity createButton(boolean isPressed, String type, String direction) {
 
         Entity button = new Entity();
-
         TextureRenderComponent render = getTextureRenderComponent(isPressed, type);
 
         if(direction != null) {
@@ -72,6 +73,37 @@ public class ButtonFactory {
         return button;
     }
 
+    /**
+     *  Creates button entity that is part of button puzzle
+     *  Button is linked to a ButtonManagerComponent, which tracks all buttons assigned to the puzzle
+     *
+     * @param isPressed whether button should start in pressed state or not
+     * @param type type of button (door, platform, standard) (standard if not recognised)
+     * @param direction the direction the button should face (left, right, up, down) (left if not recognised)
+     * @param manager ButtonManagerComponent managing this button's puzzle
+     *
+     * @return fully configured puzzle entity button
+     */
+    public static Entity createPuzzleButton(boolean isPressed, String type, String direction, ButtonManagerComponent manager) {
+        Entity button = createButton(isPressed, type, direction);
+
+        ButtonComponent buttonComp = button.getComponent(ButtonComponent.class);
+        if (buttonComp != null && manager != null) {
+            buttonComp.setPuzzleManager(manager);
+            manager.addButton(buttonComp);
+        }
+
+        return button;
+    }
+
+    /**
+     * Returns a TextureRenderComponent with correct texture based on button's type and pressed state
+     *
+     * @param isPressed whether button is initially pressed
+     * @param type type of button (door, platform, standard) (standard if not recognised)
+     *
+     * @return a TextureRenderComponent with the appropriate texture
+     */
     private static TextureRenderComponent getTextureRenderComponent(boolean isPressed, String type) {
         String texture;
         //set texture based on type
