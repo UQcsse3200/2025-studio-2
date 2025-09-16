@@ -64,7 +64,9 @@ public class LevelTwoGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
-            "images/wall.png"
+            "images/wall.png",
+            "images/lablevel/level2background.png",
+            "images/empty.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -273,7 +275,7 @@ public class LevelTwoGameArea extends GameArea {
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
-        terrain = createDefaultTerrain();
+        terrain = createLabTerrain();
         spawnEntity(new Entity().addComponent(terrain));
 
         // Terrain walls
@@ -300,21 +302,14 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, 0), false, false);
     }
-    private TerrainComponent createDefaultTerrain() {
-        TextureRegion variant1, variant2, variant3, baseTile;
+    private TerrainComponent createLabTerrain() {
         final ResourceService resourceService = ServiceLocator.getResourceService();
+        // Use empty texture for invisible terrain grid
+        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
 
-        baseTile =
-                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
-        variant1 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        variant2 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        variant3 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
+        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
+        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(68,31);

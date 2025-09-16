@@ -170,6 +170,52 @@ public class TerrainFactory {
   }
 
   /**
+   * Used to generate invisible TerrainComponent within game areas
+   * @param tileWorldSize
+   * @param tiledMap
+   * @param tilePixelSize
+   * @return
+   */
+  public TerrainComponent createInvisibleFromTileMap(float tileWorldSize, TiledMap tiledMap, GridPoint2 tilePixelSize) {
+    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
+    return new InvisibleTerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
+  }
+
+  /**
+   * Create invisible terrain of the given type, using the orientation of the factory.
+   * @param terrainType Terrain to create
+   * @return Invisible terrain component which provides grid without rendering
+   */
+  public TerrainComponent createInvisibleTerrain(TerrainType terrainType) {
+    return createInvisibleTerrain(terrainType, MAP_SIZE);
+  }
+
+  /**
+   * Create invisible terrain with custom map size
+   * @param terrainType
+   * @param mapSize
+   * @return
+   */
+  public TerrainComponent createInvisibleTerrain(TerrainType terrainType, GridPoint2 mapSize) {
+    ResourceService resourceService = ServiceLocator.getResourceService();
+    // Use empty/transparent texture for invisible terrain
+    TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/Empty.png", Texture.class));
+
+    switch (terrainType) {
+      case SPRINT_ONE_ORTHO:
+      case CAVE_ORTHO:
+      case FOREST_DEMO:
+      case FOREST_DEMO_ISO:
+      case FOREST_DEMO_HEX:
+        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
+        TiledMap tiledMap = createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
+        return createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
+      default:
+        return null;
+    }
+  }
+
+  /**
    * Used to create/set ordering of background tiles with variants
    * @param tileSize
    * @param base

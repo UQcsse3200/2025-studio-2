@@ -93,7 +93,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/4.png",
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
-            "images/cavelevel/background/7.png"
+            "images/cavelevel/background/7.png",
+            "images/empty.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -545,20 +546,13 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private TerrainComponent createDefaultTerrain() {
-        TextureRegion variant1, variant2, variant3, baseTile;
+        // Use empty texture for invisible terrain grid
         final ResourceService resourceService = ServiceLocator.getResourceService();
+        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
 
-        baseTile =
-                new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
-        variant1 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        variant2 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        variant3 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
+        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
+        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
