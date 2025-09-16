@@ -406,7 +406,7 @@ public class LevelTwoGameArea extends GameArea {
         //spawn buttons
         Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
         button.addComponent(new TooltipSystem.TooltipComponent("Puzzle Button\nYou have 15 seconds to press all four", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button, new GridPoint2(53,7), true,  true);
+        spawnEntityAt(button, new GridPoint2(53,6), true,  true);
 
         Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
         spawnEntityAt(button4, new GridPoint2(73,10), true,  true);
