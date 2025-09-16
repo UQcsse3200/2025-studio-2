@@ -52,7 +52,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/TechWallVariant2.png",
             "images/TechWallVariant3.png",
             "images/platform.png",
-            "images/Empty.png",
+            "images/empty.png",
             "images/gate.png",
             "images/door_open.png",
             "images/door_closed.png",
