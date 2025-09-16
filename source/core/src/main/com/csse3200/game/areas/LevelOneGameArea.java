@@ -69,7 +69,8 @@ public class LevelOneGameArea extends GameArea {
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/wall.png",
-            "images/ladder.png"
+            "images/ladder.png",
+            "images/ladder-base.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -125,6 +126,7 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnLadder() {
+        //builds ladder up 1 segment at a time to the specified height starting at the given x/y position
         int x = 52;
         int y = 4;
         int height = 17;
@@ -135,9 +137,14 @@ public class LevelOneGameArea extends GameArea {
             spawnEntityAt(ladder, ladderPos, false, false);
         }
 
+        GridPoint2 basePos = new GridPoint2(59, 35);
+        Entity base = LadderFactory.createLadderBase();
+        base.setScale(1f, 1);
+        spawnEntityAt(base, basePos, false, false);
+
         x = 59;
-        y = 35;
-        height = 16;
+        y = 36;
+        height = 15;
         for (int i = 0; i < height; i++) {
             GridPoint2 ladderPos = new GridPoint2(x, (y + i));
             Entity ladder = LadderFactory.createStaticLadder();

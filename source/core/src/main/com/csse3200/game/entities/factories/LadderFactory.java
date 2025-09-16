@@ -16,6 +16,10 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  */
 public class LadderFactory {
 
+    private LadderFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
+
     /**
      * Creates a static ladder entity.
      * @return entity
@@ -32,7 +36,23 @@ public class LadderFactory {
 
         return ladder;
     }
-    private LadderFactory() {
-        throw new IllegalStateException("Instantiating static util class");
+
+    /**
+     * Creates a ladder base entity. Just a ladder entity with a different texture.
+     * @return entity
+     */
+    public static Entity createLadderBase() {
+        Entity ladder =
+                new Entity()
+                        .addComponent(new TextureRenderComponent("images/ladder-base.png"))
+                        .addComponent(new PhysicsComponent())
+                        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NONE))
+                        .addComponent(new LadderComponent());
+        ladder.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
+        ladder.getComponent(TextureRenderComponent.class).scaleEntity();
+
+        return ladder;
     }
+
+
 }

@@ -60,26 +60,30 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
 
+    //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
       this.ladders = findLadders();
     }
-    //if (this.onLadder) {
-    //  this.onLadder = inFrontOfLadder(this.ladders);
-    //}
 
     if (keycode == JUMP_KEY) {
+        //takes player off ladder if they are on one.
         this.onLadder = false;
         entity.getEvents().trigger("gravityForPlayerOn");
+
         triggerJumpEvent();
         triggerGlideEvent(true);
         return true;
     } else if (keycode == LEFT_KEY) {
+        //takes player off ladder if they are on one.
         this.onLadder = false;
+
         walkDirection.add(Vector2Utils.LEFT);
         triggerWalkEvent();
       return true;
     } else if (keycode == RIGHT_KEY) {
+        //takes player off ladder if they are on one.
         this.onLadder = false;
+
         walkDirection.add(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
@@ -89,7 +93,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       triggerAdrenalineEvent();
         return true;
     } else if (keycode == DASH_KEY) {
+        //takes player off ladder if they are on one.
         this.onLadder = false;
+
         triggerDashEvent();
         return true;
     } else if (keycode == CROUCH_KEY) {
@@ -105,24 +111,18 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("sprintStart");
       return true;
     } else if (keycode == UP_KEY) {
-      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
-      cheatPosition++;
+      //Only moves the player up if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
-          this.onLadder = true;
+        this.onLadder = true;
         walkDirection.add(Vector2Utils.UP);
         triggerWalkEvent();
-
       } else {
         entity.getEvents().trigger("gravityForPlayerOn");
         this.onLadder = false;
       }
       return true;
-
-
     } else if (keycode == DOWN_KEY) {
-
-      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
-      cheatPosition++;
+      //Only moves the player down if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
           this.onLadder = true;
         walkDirection.add(Vector2Utils.DOWN);
@@ -136,7 +136,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == ENTER_CHEAT_KEY) {
       enableCheats();
     } else if (keycode == GRAPPLE_KEY) {
+        //Takes player off a ladder if they are on one.
         this.onLadder = false;
+
         triggerGrappleEvent();
     }
     return false;
@@ -293,6 +295,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
   }
 
+  /**
+   * Checks every entity currently in the game and finds all the ones that are ladders.
+   * @return Array of Entities that are ladders.
+   */
   private Array<Entity> findLadders() {
     Array<Entity> ladd = new Array<>();
     Array<Entity> bobs = ServiceLocator.getEntityService().get_entities();
@@ -304,6 +310,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     return ladd;
   }
 
+  /**
+   * Checks if the player is in front of one of the ladders in the level.
+   * @param ladders
+   * @return true if in front of a ladder, false if not.
+   */
   private Boolean inFrontOfLadder(Array<Entity> ladders) {
     for (Entity ladder : ladders) {
       if (ladder.getPosition().x - entity.getPosition().x <= 0.5f
@@ -319,10 +330,18 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     return false;
   }
 
+  /**
+   * Gets the current on ladder state of the player
+   * @return boolean value of the state.
+   */
   public Boolean getOnLadder() {
     return this.onLadder;
   }
 
+  /**
+   * Sets the on ladder state of the player to the given boolean value
+   * @param set boolean value to set the on ladder state too.
+   */
   public void setOnLadder (boolean set) {
       this.onLadder = set;
   }

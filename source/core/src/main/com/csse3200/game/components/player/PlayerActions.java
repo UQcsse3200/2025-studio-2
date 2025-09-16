@@ -153,6 +153,7 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 //    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
+    //Allows for up/down movement if the player is on a ladder
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
       entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
