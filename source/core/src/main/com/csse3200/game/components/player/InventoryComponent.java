@@ -24,7 +24,7 @@ public class InventoryComponent extends Component {
     /**
      * Read only view of the inventory for UI rendering
      * */
-    public Map<String, Integer> getItemsView() {
+    public Map<String, Integer> getInventory() {
         return Collections.unmodifiableMap(inventory);
     }
 
