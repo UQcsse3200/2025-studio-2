@@ -24,7 +24,6 @@ public class TrapFactory {
      * It is immovable and cannot be destroyed. On collision with player (or enemy), it damages the colliding
      * entity by 1, and resets their position to a safe location nearby.
      * Spikes are NOT classified as an obstacle the player can hide behind, because they are very short
-     *
      * In a future update, the width will configurable based on a provided length parameter.
      *
      * @param safeSpot Spot to teleport the player once they take damage
@@ -42,8 +41,7 @@ public class TrapFactory {
         spikes.addComponent(textureComponent);
 
         // Add physics component
-        spikes.addComponent(new PhysicsComponent()
-                        .setBodyType(BodyDef.BodyType.StaticBody));
+        spikes.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
 
         // Set up damage collider
         int direction = (int) (rotation/90);
@@ -70,15 +68,16 @@ public class TrapFactory {
                 alignY = PhysicsComponent.AlignY.BOTTOM;
                 break;
             case 1: // Facing left
+                center.x *= 0.5f;
                 alignX = PhysicsComponent.AlignX.RIGHT;
                 break;
             case 3: // Facing right
-                center.x *= 0.3f;
+                center.x *= 0.5f;
                 alignX = PhysicsComponent.AlignX.LEFT;
                 break;
             default: // Facing down
                 center.y *= 0.5f;
-                alignY = PhysicsComponent.AlignY.BOTTOM;
+                alignY = PhysicsComponent.AlignY.TOP;
                 break;
         }
 

@@ -5,6 +5,7 @@ import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.services.CollectableService;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,6 +22,13 @@ public class InventoryComponent extends Component {
 
     public InventoryComponent(InventoryComponent other) {
         this.inventory = other.inventory;
+    }
+
+    /**
+     * Read only view of the inventory for UI rendering
+     * */
+    public Map<String, Integer> getInventory() {
+        return Collections.unmodifiableMap(inventory);
     }
 
     /**

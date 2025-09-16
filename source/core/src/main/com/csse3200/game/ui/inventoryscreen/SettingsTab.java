@@ -57,11 +57,6 @@ public class SettingsTab implements InventoryTabInterface {
         Table mainTable = new Table();
         mainTable.center();
         
-        // Create title
-        Label title = new Label("Game Settings", skin, "title");
-        mainTable.add(title).colspan(2).padBottom(20f);
-        mainTable.row();
-        
         // Create settings table
         Table settingsTable = createSettingsTable(skin, settings);
         mainTable.add(settingsTable).expand().fill();

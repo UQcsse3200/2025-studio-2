@@ -29,8 +29,8 @@ public final class LightingDefaults {
     public static final short OCCLUDER = PhysicsLayer.OBSTACLE;
 
     // Panning Task
-    public static final float START_DEG   = -135f;
-    public static final float END_DEG     = -45f;
+    public static final float START_DEG   = 225f;
+    public static final float END_DEG     = 315f;
     public static final float ANGULAR_ACC =  30f;
     public static final float ANGULAR_VEL =  25f;
 
