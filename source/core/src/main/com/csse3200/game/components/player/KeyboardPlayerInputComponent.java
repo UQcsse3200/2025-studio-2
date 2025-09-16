@@ -63,14 +63,16 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if(this.ladders == null) {
       this.ladders = findLadders();
     }
-    if (this.onLadder) {
-      this.onLadder = inFrontOfLadder(this.ladders);
-    }
+    //if (this.onLadder) {
+    //  this.onLadder = inFrontOfLadder(this.ladders);
+    //}
 
     if (keycode == JUMP_KEY) {
-      triggerJumpEvent();
-      triggerGlideEvent(true);
-      return true;
+        this.onLadder = false;
+        entity.getEvents().trigger("gravityForPlayerOn");
+        triggerJumpEvent();
+        triggerGlideEvent(true);
+        return true;
     } else if (keycode == LEFT_KEY) {
         this.onLadder = false;
         walkDirection.add(Vector2Utils.LEFT);
@@ -78,15 +80,16 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       return true;
     } else if (keycode == RIGHT_KEY) {
         this.onLadder = false;
-      walkDirection.add(Vector2Utils.RIGHT);
-      triggerWalkEvent();
-      return true;
+        walkDirection.add(Vector2Utils.RIGHT);
+        triggerWalkEvent();
+        return true;
     } else if (keycode == INTERACT_KEY) {
       entity.getEvents().trigger("interact");
     } else if (keycode == ADRENALINE_KEY) {
       triggerAdrenalineEvent();
         return true;
     } else if (keycode == DASH_KEY) {
+        this.onLadder = false;
         triggerDashEvent();
         return true;
     } else if (keycode == CROUCH_KEY) {
@@ -105,6 +108,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
       cheatPosition++;
       if (inFrontOfLadder(this.ladders)) {
+          this.onLadder = true;
         walkDirection.add(Vector2Utils.UP);
         triggerWalkEvent();
 
@@ -120,6 +124,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
       cheatPosition++;
       if (inFrontOfLadder(this.ladders)) {
+          this.onLadder = true;
         walkDirection.add(Vector2Utils.DOWN);
         triggerWalkEvent();
 
@@ -131,7 +136,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == ENTER_CHEAT_KEY) {
       enableCheats();
     } else if (keycode == GRAPPLE_KEY) {
-      triggerGrappleEvent();
+        this.onLadder = false;
+        triggerGrappleEvent();
     }
     return false;
   }
@@ -300,11 +306,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private Boolean inFrontOfLadder(Array<Entity> ladders) {
     for (Entity ladder : ladders) {
-      if (ladder.getPosition().x - entity.getPosition().x <= 0.25f
-              && ladder.getPosition().x - entity.getPosition().x >= -0.25f
-              && ladder.getPosition().y - entity.getPosition().y <= 0.25f
-              && ladder.getPosition().y - entity.getPosition().y >= -0.25f) {
-        this.onLadder = true;
+      if (ladder.getPosition().x - entity.getPosition().x <= 0.5f
+              && ladder.getPosition().x - entity.getPosition().x >= -0.5f
+              && ladder.getPosition().y - entity.getPosition().y <= 0.5f
+              && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
+        //this.onLadder = true;
         entity.getEvents().trigger("gravityForPlayerOff");
         return true;
       }

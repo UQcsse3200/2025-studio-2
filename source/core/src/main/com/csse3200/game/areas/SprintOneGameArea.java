@@ -404,13 +404,13 @@ public class SprintOneGameArea extends GameArea {
     }
 
     private void spawnLadder() {
-        int x = 13;
-        int y = 4;
-        int height = 8;
+        int x = 8;
+        int y = 8;
+        int height = 13;
         for (int i = 0; i < height; i++) {
             GridPoint2 ladderPos = new GridPoint2(x, (y + i));
             Entity ladder = LadderFactory.createStaticLadder();
-            ladder.setScale(0.5f, 1);
+            ladder.setScale(1f, 1);
             spawnEntityAt(ladder, ladderPos, false, false);
         }
     }
