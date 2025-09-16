@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.input.InputComponent;
@@ -49,6 +50,7 @@ public class PlayerActionsTest {
         when(mockResourceService.getAsset(anyString(), eq(Sound.class))).thenReturn(mockSound);
 
 
+
         KeyboardPlayerInputComponent mockInput = mock(KeyboardPlayerInputComponent.class);
         when(mockInput.getIsCheatsOn()).thenReturn(false);
 
@@ -60,11 +62,15 @@ public class PlayerActionsTest {
         CrouchingColliderComponent crouch = mock(CrouchingColliderComponent.class);
         when(crouch.getFixtureRef()).thenReturn(crouchFixture);
 
+        CombatStatsComponent mockCombatStats = mock(CombatStatsComponent.class);
+        when(mockCombatStats.isDead()).thenReturn(false);
+
         playerEntity = new Entity();
         playerEntity.addComponent(physicsComponent);
         playerEntity.addComponent(standing);
         playerEntity.addComponent(crouch);
         playerEntity.addComponent(mockInput);
+        playerEntity.addComponent(mockCombatStats);
 
         playerActions = new PlayerActions();
         playerEntity.addComponent(playerActions);
@@ -167,5 +173,42 @@ public class PlayerActionsTest {
         playerEntity.getEvents().trigger("dash");
         assertTrue(playerActions.hasDashed());
 
+    }
+
+    @Test
+    void testJetpackStopsWhenFuelReachesZero() {
+        int jetpackFuel = 100;
+
+        playerActions.getEntity().getEvents().trigger("jetpackOn");
+
+        assertTrue(playerActions.getJetpackFuel() > 0);
+        assertTrue(playerActions.getIsJetpackOn());
+
+        // Drain jetpack fuel
+        for (int i = 0; i < jetpackFuel + 1; i++) {
+            playerActions.update();
+        }
+
+        assertFalse(playerActions.getIsJetpackOn());
+    }
+
+    @Test
+    void testGlideActivatesWhenAirborne() {
+        // make player jump twice
+        playerEntity.getEvents().trigger("jump");
+        playerEntity.getEvents().trigger("jump");
+        assertTrue(playerActions.getIsJumping());
+
+        // trigger glide while airborne
+        playerEntity.getEvents().trigger("glide", true);
+        assertTrue(playerActions.getIsGliding());
+
+        // land player
+        playerEntity.getEvents().trigger("glide", false);
+        playerEntity.getEvents().trigger("landed");
+
+        //try to glide when landed
+        playerEntity.getEvents().trigger("glide", true);
+        assertFalse(playerActions.getIsGliding());
     }
 }
