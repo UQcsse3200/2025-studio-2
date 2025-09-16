@@ -42,7 +42,6 @@ public class CollectableFactory {
      *       images.</li>
      *   <li>A {@link ConeLightComponent} for a visual backlight effect.</li>
      * </ul>
-     * </p>
      *
      * @param itemId the identifier of the collectable, as defined in {@code items.json}
      * @return a collectable {@link Entity}
