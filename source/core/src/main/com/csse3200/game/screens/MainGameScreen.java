@@ -18,6 +18,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -48,10 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainGameScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
-  private static final String[] mainGameTextures = {
-          "images/playerstats/health.png",
-          "images/playerstats/stamina.png"
-  };
+  private static final String[] mainGameTextures = {"images/heart.png"};
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
 
   private final GdxGame game;
@@ -106,8 +104,8 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
 //    gameArea = new SprintOneGameArea(terrainFactory);
-//    gameArea = new LevelOneGameArea(terrainFactory);
-    gameArea = new LevelTwoGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
+    //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
 
@@ -160,6 +158,12 @@ public class MainGameScreen extends ScreenAdapter {
           newArea.getEvents().addListener(
                   "cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player)
           );
+
+          InventoryComponent inv = player.getComponent(InventoryComponent.class);
+          if (inv != null) {
+            inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+          }
+
           System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           newArea.createWithPlayer(player);
           oldArea.dispose();
