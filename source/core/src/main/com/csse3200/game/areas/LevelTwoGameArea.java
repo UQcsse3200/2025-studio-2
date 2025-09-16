@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -31,6 +32,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
+    private static boolean keySpawned;
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -114,6 +116,8 @@ public class LevelTwoGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnTraps();
+        spawnButtons();
         spawnSecurityCams();
     }
 
@@ -330,6 +334,72 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(cam3, new GridPoint2(37,57), true, true);
     }
 
+
+    private void spawnTraps() {
+        Vector2 safeSpotStart = new Vector2(41, 12);
+
+        Entity spikesUp = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp, new GridPoint2(77,24), true,  true);
+        Entity spikesUp3 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp3, new GridPoint2(59,24), true,  true);
+        Entity spikesUp4 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp4, new GridPoint2(61,24), true,  true);
+        Entity spikesUp5 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp5, new GridPoint2(63,24), true,  true);
+        Entity spikesUp6 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp6, new GridPoint2(65,24), true,  true);
+        Entity spikesUp7 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp7, new GridPoint2(67,24), true,  true);
+        Entity spikesUp8 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp8, new GridPoint2(69,24), true,  true);
+        Entity spikesUp9 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp9, new GridPoint2(71,24), true,  true);
+        Entity spikesUp10 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp10, new GridPoint2(73,24), true,  true);
+        Entity spikesUp11 = TrapFactory.createSpikes(safeSpotStart, 0f);
+        spawnEntityAt(spikesUp11, new GridPoint2(75,24), true,  true);
+    }
+
+    private void spawnButtons() {
+        Entity puzzleEntity = new Entity();
+        ButtonManagerComponent manager = new ButtonManagerComponent();
+        puzzleEntity.addComponent(manager);
+        ServiceLocator.getEntityService().register(puzzleEntity);
+
+        Entity button2 = ButtonFactory.createButton(false, "door", "right");
+        button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button2, new GridPoint2(0 ,58), true,  true);
+
+        Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        spawnEntityAt(button, new GridPoint2(74,50), true,  true);
+
+        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        button4.addComponent(new TooltipSystem.TooltipComponent("Puzzle Button\nYou have 15 seconds to press all three", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button4, new GridPoint2(67,40), true,  true);
+
+        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
+        spawnEntityAt(button5, new GridPoint2(58,45), true,  true);
+
+        //listener to spawn key when door button pushed
+        button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed && !keySpawned) {
+                spawnKey();
+                keySpawned = true;
+            }
+        });
+
+        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
+            Entity dashUpgrade = CollectableFactory.createGrappleUpgrade();
+            spawnEntityAt(dashUpgrade, new GridPoint2(93,50), true,  true);
+        });
+
+    }
+
+    public void spawnKey() {
+        Entity key = CollectableFactory.createKey("door");
+        spawnEntityAt(key, new GridPoint2(93,50), true, true);
+    }
+
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
@@ -353,6 +423,7 @@ public class LevelTwoGameArea extends GameArea {
         ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
+        //48, 2
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
