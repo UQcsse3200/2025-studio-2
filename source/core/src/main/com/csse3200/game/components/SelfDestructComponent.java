@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.math.Vector2;
@@ -27,16 +28,28 @@ public class SelfDestructComponent extends Component {
 
     private void explode(){
         if(exploded) return;
-        exploded=true;
-
-        AnimationRenderComponent animator=entity.getComponent(AnimationRenderComponent.class);
-        if(animator!=null){
-            animator.startAnimation("bomb_effect");
-            entity.getEvents().addListener("animationFinished-bomb_effect", entity::dispose);
+        exploded =true;
+        CombatStatsComponent targetStats= target.getComponent(CombatStatsComponent.class);
+        CombatStatsComponent selfStats = entity.getComponent(CombatStatsComponent.class);
+        if (targetStats!=null && selfStats!= null){
+            targetStats.hit(selfStats);
 
         }
-        target.getEvents().trigger("takeDamage",20);
+        AnimationRenderComponent animator= entity.getComponent(AnimationRenderComponent.class);
+        if(animator!=null){
+            animator.startAnimation("bomb_effect");
+        }
+
+        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task(){
+            @Override
+            public void run(){
+                entity.dispose();
+            }
+
+
+        }, 0.5f);
     }
+
 
 
 }
