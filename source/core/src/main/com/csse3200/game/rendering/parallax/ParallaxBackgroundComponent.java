@@ -19,32 +19,43 @@ public class ParallaxBackgroundComponent extends RenderComponent {
         this.layers = new ArrayList<>();
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
-        setLayer(0); // Render behind everything
+        setLayer(0);
     }
 
-    // Non-tiled layers
+    // Original method for non-tiled layers
     public void addLayer(Texture texture, float factor) {
         layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight));
     }
 
-    // Tiled layers
-    public void addTiledLayer(Texture texture, float factor, boolean tileHorizontally, boolean tileVertically, float tileWidth, float tileHeight) {
-        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight, tileHorizontally, tileVertically, tileWidth, tileHeight));
+    // Method for non-tiled layers with offset
+    public void addLayer(Texture texture, float factor, float offsetX, float offsetY) {
+        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight, offsetX, offsetY));
     }
 
-    // Horizontal-only tiling
-    public void addHorizontalTiledLayer(Texture texture, float factor, float tileWidth) {
-        addTiledLayer(texture, factor, true, false, tileWidth, 0);
+    // Method for tiled layers with offset
+    public void addTiledLayer(Texture texture, float factor, boolean tileHorizontally, boolean tileVertically,
+                              float tileWidth, float tileHeight, float offsetX, float offsetY) {
+        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight,
+            tileHorizontally, tileVertically, tileWidth, tileHeight, offsetX, offsetY));
     }
 
-    // Both directions
-    public void addFullyTiledLayer(Texture texture, float factor, float tileWidth, float tileHeight) {
-        addTiledLayer(texture, factor, true, true, tileWidth, tileHeight);
+    // Convenience method for horizontal-only tiling with offset
+    public void addHorizontalTiledLayer(Texture texture, float factor, float tileWidth, float offsetX, float offsetY) {
+        addTiledLayer(texture, factor, true, false, tileWidth, 0, offsetX, offsetY);
+    }
+
+    // Convenience method for horizontal-only tiling with Y offset only
+    public void addHorizontalTiledLayerAtHeight(Texture texture, float factor, float tileWidth, float height) {
+        addTiledLayer(texture, factor, true, false, tileWidth, 0, 0, height);
+    }
+
+    // Convenience method for fully tiled layers with offset
+    public void addFullyTiledLayer(Texture texture, float factor, float tileWidth, float tileHeight, float offsetX, float offsetY) {
+        addTiledLayer(texture, factor, true, true, tileWidth, tileHeight, offsetX, offsetY);
     }
 
     @Override
     protected void draw(SpriteBatch batch) {
-        // Draw all layers in order (back to front)
         for (ParallaxLayer layer : layers) {
             layer.render(batch);
         }

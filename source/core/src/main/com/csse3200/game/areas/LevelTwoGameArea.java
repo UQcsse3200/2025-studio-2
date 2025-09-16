@@ -235,13 +235,13 @@ public class LevelTwoGameArea extends GameArea {
 
         ResourceService resourceService = ServiceLocator.getResourceService();
 
-        // Layer 1: Far background - barely moves
+        // Layer 1: Far background - moves slightly
         Texture farBackground = resourceService.getAsset("images/lablevel/background/level2background.png", Texture.class);
-        parallaxBg.addTiledLayer(farBackground, 0.05f, true, true, 12.5f, 12.5f);
+        parallaxBg.addTiledLayer(farBackground, 0.05f, true, true, 10f, 10f, 0, 2.9f);
 
-        // Layer 2: Near background
+        // Layer 2: Near background - doesnt move
         Texture nearBackground = resourceService.getAsset("images/lablevel/background/bgtile5.png", Texture.class);
-        parallaxBg.addTiledLayer(nearBackground, 0.1f, true, true, 23.86f, 12.5f);
+        parallaxBg.addTiledLayer(nearBackground, 0f, true, true, 19f, 10f, 0, 2.9f);
 
         backgroundEntity.addComponent(parallaxBg);
         spawnEntity(backgroundEntity);
