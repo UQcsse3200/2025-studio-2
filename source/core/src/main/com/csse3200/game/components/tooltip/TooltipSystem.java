@@ -145,7 +145,25 @@ public class TooltipSystem {
         }
         
         private Entity triggerZoneEntity; // Store reference to trigger zone
-        
+
+        /**
+         * Gets the tooltip text.
+         *
+         * @return the text displayed in the tooltip
+         */
+        public String getText() {
+            return text;
+        }
+
+        /**
+         * Gets the tooltip style
+         *
+         * @return the style of the tooltip
+         */
+        public TooltipSystem.TooltipStyle getStyle() {
+            return style;
+        }
+
         @Override
         public void create() {
             super.create();

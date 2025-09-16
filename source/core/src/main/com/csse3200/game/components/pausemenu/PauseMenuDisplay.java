@@ -177,6 +177,10 @@ public class PauseMenuDisplay extends UIComponent {
         if (exitActor != null) {
             exitActor.setVisible(!visible);
         }
+        Actor titleActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("title");
+        if (titleActor != null) {
+            titleActor.setVisible(!visible);
+        }
 
         if (visible) {
             rootTable.toFront();

@@ -95,7 +95,7 @@ public class Renderer implements Disposable {
 
   private void renderBatch(int maxValue) {
     batch.setProjectionMatrix(camera.getProjectionMatrix());
-    Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
+    Gdx.gl.glClearColor(44f/255f, 44f/255f, 47f/255f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
     VfxManager vfxManager = ServiceLocator.getVfxService();
