@@ -316,7 +316,7 @@ public class SprintOneGameArea extends GameArea {
 
     }
     private void spawnSelfDestructDrone(){
-        GridPoint2 spawnTile =new GridPoint2(7,10);
+        GridPoint2 spawnTile =new GridPoint2(15,15);
         Vector2 spawnPos= terrain.tileToWorldPosition(spawnTile);
         Entity selfDrone =EnemyFactory.createSelfDestructionDrone(getPlayer(),spawnPos);
         spawnEntityAt( selfDrone, spawnTile, false, true);
