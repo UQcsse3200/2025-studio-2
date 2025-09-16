@@ -157,19 +157,19 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnGroundFloors() {
 
-        GridPoint2 groundFloor1Pos = new GridPoint2(0, 0);
+        GridPoint2 groundFloor1Pos = new GridPoint2(-20, -20);
         Entity groundFloor1 = FloorFactory.createGroundFloor();
-        groundFloor1.setScale(6, 2);
+        groundFloor1.setScale(16, 12);
         spawnEntityAt(groundFloor1, groundFloor1Pos, false, false);
 
-        GridPoint2 groundFloor2Pos = new GridPoint2(15, 0);
+        GridPoint2 groundFloor2Pos = new GridPoint2(15, -20);
         Entity groundFloor2 = FloorFactory.createGroundFloor();
-        groundFloor2.setScale(25f, 2f);
+        groundFloor2.setScale(25f, 12f);
         spawnEntityAt(groundFloor2, groundFloor2Pos, false, false);
 
-        GridPoint2 groundFloor3Pos = new GridPoint2(70, 0);
+        GridPoint2 groundFloor3Pos = new GridPoint2(70, -20);
         Entity groundFloor3 = FloorFactory.createGroundFloor();
-        groundFloor3.setScale(5, 2);
+        groundFloor3.setScale(25, 12);
         spawnEntityAt(groundFloor3, groundFloor3Pos, false, false);
 
         GridPoint2 gateFloorPos = new GridPoint2(33, 60);
