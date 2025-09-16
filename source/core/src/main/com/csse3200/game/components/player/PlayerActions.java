@@ -71,6 +71,7 @@ public class PlayerActions extends Component {
   private boolean wantsSprint = false;
   private int jetpackFuel = FUEL_CAPACITY;
   private boolean isJetpackOn = false;
+  private boolean isGliding = false;
 
   private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
           "sounds/Impact4.ogg", Sound.class);
@@ -345,18 +346,26 @@ public class PlayerActions extends Component {
     if (on && isOutOfJumps) {
       if (body.getLinearVelocity().y < 0.5f) {
         body.setGravityScale(0.1f);
+        isGliding = true;
       }
     } else {
       body.setGravityScale(1f);
+      isGliding = false;
     }
   }
 
+  /**
+   * Used to activate the jetpack upgrade for the player - allows for upwards movement
+   */
   private void jetpackOn() {
     isJetpackOn = true;
     isJumping = true;
     jetpackSound.loop();
   }
 
+  /**
+   * Used to disable the upwards movement gained by the jetpack upgrade
+   */
   private void jetpackOff() {
     isJetpackOn = false;
     jetpackSound.pause();
@@ -436,6 +445,10 @@ public class PlayerActions extends Component {
   }
 
   public int getJetpackFuel(){return jetpackFuel;};
+
+  public boolean getIsJetpackOn() {return isJetpackOn;}
+
+  public boolean getIsGliding() {return isGliding;}
 
   /**
    * Turns the gravity off/on for the player depending if cheats are on
