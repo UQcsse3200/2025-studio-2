@@ -16,6 +16,7 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.events.EventHandler;
+import com.csse3200.game.ui.terminal.TerminalService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,8 @@ public abstract class GameArea implements Disposable {
 
     // load remaining entities
     loadEntities();
+
+    TerminalService.getShell().setGlobal("gameArea", this);
   }
 
   /**

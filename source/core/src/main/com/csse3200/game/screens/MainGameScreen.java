@@ -20,6 +20,7 @@ import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.components.player.PlayerScreenTransitionComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -105,7 +106,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("cutscene1", player);
+      switchArea("level2", player);
     });
 
     // Have to createUI after the game area is created since createUI
@@ -115,16 +116,17 @@ public class MainGameScreen extends ScreenAdapter {
 
   private void switchArea(String key, Entity player) {
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
-    player.getEvents().trigger("startTransition", 1.5f, runnable);
+    if (player.getComponent(PlayerScreenTransitionComponent.class) != null) {
+      Gdx.app.postRunnable(runnable);
+    } else {
+      player.getEvents().trigger("startTransition", 1.5f, runnable);
+    }
   }
 
   private void switchAreaRunnable(String levelId, Entity player) {
-    Gdx.app.postRunnable(() -> {
       if (levelId.isEmpty()) return;
-//        System.out.println("Area switched to " + levelId);
-      GameArea oldArea = gameArea;
-
-//        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+      System.out.println("Area switched to " + levelId);
+      //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
       GameArea newArea = null;
       String newLevel = "";
@@ -149,6 +151,7 @@ public class MainGameScreen extends ScreenAdapter {
       }
 
       if (newArea != null) {
+        gameArea.dispose();
         gameArea = newArea;
         String finalNewLevel = newLevel;
         newArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, player));
@@ -161,9 +164,7 @@ public class MainGameScreen extends ScreenAdapter {
 
         System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
         newArea.createWithPlayer(player);
-        oldArea.dispose();
       }
-    });
   }
 
   /**

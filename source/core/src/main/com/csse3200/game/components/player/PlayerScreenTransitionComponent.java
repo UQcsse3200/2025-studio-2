@@ -25,7 +25,7 @@ public class PlayerScreenTransitionComponent extends Component {
 
   private VfxManager vfxManager;
   private Camera camera;
-  private ScreenTransitioningEffect effect = new ScreenTransitioningEffect();
+  private final ScreenTransitioningEffect effect = new ScreenTransitioningEffect();
   private float remainingDuration = 0f;
   private float totalDuration = 0f;
   private Runnable onComplete = null;
@@ -67,7 +67,8 @@ public class PlayerScreenTransitionComponent extends Component {
       totalDuration = 0f;
       // vfxManager.removeEffect(effect);
       if (onComplete != null) {
-        onComplete.run();
+        final Runnable runnable = onComplete;
+        Gdx.app.postRunnable(runnable);
         this.onComplete = null;
       }
       return;
