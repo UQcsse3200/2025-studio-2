@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParallaxBackgroundComponent extends RenderComponent {
-    private List<ParallaxLayer> layers;
-    private Camera camera;
-    private float mapWidth;
-    private float mapHeight;
+    private final List<ParallaxLayer> layers;
+    private final Camera camera;
+    private final float mapWidth;
+    private final float mapHeight;
 
     public ParallaxBackgroundComponent(Camera camera, float mapWidth, float mapHeight) {
         this.camera = camera;
@@ -31,5 +31,10 @@ public class ParallaxBackgroundComponent extends RenderComponent {
         for (ParallaxLayer layer : layers) {
             layer.render(batch);
         }
+    }
+
+    @Override
+    public int getLayer() {
+      return Integer.MIN_VALUE;
     }
 }
