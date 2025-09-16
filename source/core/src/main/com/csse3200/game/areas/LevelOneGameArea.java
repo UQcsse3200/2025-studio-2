@@ -130,7 +130,7 @@ public class LevelOneGameArea extends GameArea {
         //builds ladder up 1 segment at a time to the specified height starting at the given x/y position
         int x = 52;
         int y = 4;
-        int height = 17;
+        int height = 18;
         for (int i = 0; i < height; i++) {
             GridPoint2 ladderPos = new GridPoint2(x, (y + i));
             Entity ladder = LadderFactory.createStaticLadder();
@@ -145,7 +145,7 @@ public class LevelOneGameArea extends GameArea {
 
         x = 59;
         y = 36;
-        height = 15;
+        height = 16;
         for (int i = 0; i < height; i++) {
             GridPoint2 ladderPos = new GridPoint2(x, (y + i));
             Entity ladder = LadderFactory.createStaticLadder();
@@ -186,7 +186,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(step3, step3Pos,false, false);
 
 //        THESE TWO TO BE REPLACED WITH LADDERS
-        GridPoint2 step4Pos = new GridPoint2(52,22);
+        GridPoint2 step4Pos = new GridPoint2(52,23);
         Entity step4 = PlatformFactory.createStaticPlatform();
         step4.setScale(1.8f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
@@ -209,7 +209,7 @@ public class LevelOneGameArea extends GameArea {
        // spawnEntityAt(step8, step8Pos,false, false);
 
         // MOVING PLATFORM WITH BUTTONS
-        GridPoint2 buttonPlatformPos = new GridPoint2(53, 18);
+        GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
         Vector2 offsetWorldButton = new Vector2(9f, 0f);
         float speedButton = 2f;
 
@@ -287,7 +287,7 @@ public class LevelOneGameArea extends GameArea {
         //step10.setScale(1.8f,0.5f);
         //spawnEntityAt(step10, step10Pos,false, false);
 
-        GridPoint2 step11Pos = new GridPoint2(58,52);
+        GridPoint2 step11Pos = new GridPoint2(58,53);
         Entity step11 = PlatformFactory.createStaticPlatform();
         step11.setScale(1.8f,0.5f);
         spawnEntityAt(step11, step11Pos,false, false);
@@ -414,7 +414,7 @@ public class LevelOneGameArea extends GameArea {
         Vector2 safeSpotCamera = new Vector2(24, 10);
 
         Entity spikesUp = TrapFactory.createSpikes(safeSpotCamera, 0f);
-        spawnEntityAt(spikesUp, new GridPoint2(54,19), true,  true);
+        spawnEntityAt(spikesUp, new GridPoint2(60,19), true,  true);
 
         Entity spikesRight = TrapFactory.createSpikes(safeSpotCamera, 270f);
         spawnEntityAt(spikesRight, new GridPoint2(32,34), true,  true);
