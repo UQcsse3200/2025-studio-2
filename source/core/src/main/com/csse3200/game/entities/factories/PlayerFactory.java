@@ -78,7 +78,7 @@ public class PlayerFactory {
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
                     .addComponent(new FootColliderComponent())
-                    /**.addComponent(new ColliderComponent())*/ // temporary fix
+                    .addComponent(new ColliderComponent()) // Interactions
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
@@ -115,6 +115,10 @@ public class PlayerFactory {
     player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
     player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
 // --- end stamina block ---
+
+    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+    player.getComponent(ColliderComponent.class).setSensor(true);
+
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);

@@ -76,7 +76,7 @@ public class ButtonComponent extends Component {
         float dx = playerPos.x - buttonPos.x;
         float dy = playerPos.y - buttonPos.y;
 
-        System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
+//        System.out.println("Direction: " + direction + ", dx: " + dx + ", dy: " + dy);
         switch (direction) {
             case "left":
                 if (dx < -0.5f && Math.abs(dy) < 0.5f) {
