@@ -43,7 +43,7 @@ public class PauseMenuDisplay extends UIComponent {
         this.player = player;
         this.inventoryTab = new InventoryTab(player, screen);
         this.upgradesTab = new UpgradesTab(player, screen);
-        this.objectivesTab = new ObjectivesTab(screen);
+        this.objectivesTab = new ObjectivesTab(player, screen);
         this.game = game;
     }
 
