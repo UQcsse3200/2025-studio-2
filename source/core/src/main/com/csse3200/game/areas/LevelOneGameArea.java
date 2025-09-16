@@ -119,6 +119,7 @@ public class LevelOneGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        keySpawned = false;
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
