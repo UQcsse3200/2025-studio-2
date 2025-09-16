@@ -1,7 +1,11 @@
 package com.csse3200.game.entities.factories;
 
+import box2dLight.ConeLight;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.World;
 import com.csse3200.game.ai.tasks.AITaskComponent;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
@@ -12,6 +16,7 @@ import com.csse3200.game.entities.configs.BaseEntityConfig;
 import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.files.FileLoader;
+import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -24,10 +29,15 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.lighting.LightingService;
+import box2dLight.RayHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedConstruction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +50,9 @@ public class EnemyFactoryTest {
     private BaseEntityConfig droneConfig;
     private ResourceService rs;
     private GameTime gameTime;
+
+    private MockedConstruction<RayHandler> rhCons;
+    private MockedConstruction<ConeLight> coneCons;
 
     @BeforeEach
     void setUp() {
@@ -64,6 +77,22 @@ public class EnemyFactoryTest {
         gameTime = mock(GameTime.class);
         ServiceLocator.registerTimeSource(gameTime);
         when(gameTime.getTime()).thenReturn(0L);
+
+        // Mock light source
+        List<List<?>> capturedArgs = new ArrayList<>();
+        rhCons = mockConstruction(RayHandler.class);
+        coneCons = mockConstruction(
+                ConeLight.class,
+                (mock, ctx) -> {
+                    capturedArgs.add(ctx.arguments());
+                    when(mock.getDistance()).thenReturn((Float) ctx.arguments().get(3));
+                    when(mock.getConeDegree()).thenReturn((Float) ctx.arguments().get(7));
+                    when(mock.getDirection()).thenReturn((Float) ctx.arguments().get(6));
+                    when(mock.getColor()).thenReturn((Color) ctx.arguments().get(2));
+                });
+
+        // This call now uses the mocks that are stored as class fields
+        ServiceLocator.registerLightingService(createLightingService());
     }
 
     @AfterEach
@@ -71,6 +100,12 @@ public class EnemyFactoryTest {
         rs.unloadAssets(new String[]{"images/drone.atlas"});
         rs.dispose();
         ServiceLocator.clear();
+        if (rhCons != null) {
+            rhCons.close();
+        }
+        if (coneCons != null) {
+            coneCons.close();
+        }
     }
 
     @Test
@@ -193,7 +228,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasBaseEnemyComponents() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
         ServiceLocator.getEntityService().register(bomberDrone);
 
         assertNotNull(bomberDrone.getComponent(PhysicsComponent.class),
@@ -212,7 +247,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimations() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
         ServiceLocator.getEntityService().register(bomberDrone);
 
         AnimationRenderComponent anim = bomberDrone.getComponent(AnimationRenderComponent.class);
@@ -224,7 +259,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
+            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
             ServiceLocator.getEntityService().register(bomberDrone);
 
             assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
@@ -233,7 +268,7 @@ public class EnemyFactoryTest {
 
     @Test
     void bomberDrone_startsOnFloatAnim() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
         AnimationRenderComponent arc = bomberDrone.getComponent(AnimationRenderComponent.class);
         assertEquals("float", arc.getCurrentAnimation());
         assertTrue(arc.hasAnimation("float"));
@@ -241,7 +276,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasCorrectCombatStats() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
         ServiceLocator.getEntityService().register(bomberDrone);
 
         CombatStatsComponent stats = bomberDrone.getComponent(CombatStatsComponent.class);
@@ -253,7 +288,7 @@ public class EnemyFactoryTest {
     @Test
     void createBomberDrone_addsSpawnPosition() {
         Vector2 start = new Vector2(0, 0);
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), start, "1");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), start, "bomber1");
         SpawnPositionComponent sp = bomberDrone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
         assertEquals(start, sp.getSpawnPos(),
@@ -262,15 +297,15 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_doesNotAddNullSpawnPos() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), null, "1");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), null, "bomber1");
         assertNull(bomberDrone.getComponent(SpawnPositionComponent.class),
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
 
     @Test
     void createBomberDrone_returnsDistinct() {
-        Entity a = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
-        Entity b = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "1");
+        Entity a = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
+        Entity b = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
         assertNotSame(a, b, "Drones should be distinct");
 
         AITaskComponent ai_a = a.getComponent(AITaskComponent.class);
@@ -364,5 +399,10 @@ public class EnemyFactoryTest {
         e.setPosition(pos);
         e.create();
         return e;
+    }
+
+    private LightingService createLightingService() {
+        return new LightingService(
+                new LightingEngine(new CameraComponent(), new World(new Vector2(0, 0), true)));
     }
 }
