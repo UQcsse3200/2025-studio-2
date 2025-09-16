@@ -3,29 +3,21 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.DoorControlComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.rendering.ParallaxBackgroundComponent;
-import com.csse3200.game.rendering.RenderComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
-import com.csse3200.game.services.MinimapService;
+import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -152,12 +144,12 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnFloorsAndPlatforms(){
-        spawnGroundFloors();
+        spawnFloors();
 
         spawnElevatedPlatforms();
     }
 
-    private void spawnGroundFloors() {
+    private void spawnFloors() {
 
         GridPoint2 groundFloor1Pos = new GridPoint2(-20, -20);
         Entity groundFloor1 = FloorFactory.createGroundFloor();
@@ -284,10 +276,10 @@ public class LevelOneGameArea extends GameArea {
         moving1.setScale(2f,0.5f);
         spawnEntityAt(moving1, moving1Pos,false, false);
 
-        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
-        Entity puzzleGround = PlatformFactory.createStaticPlatform();
-        puzzleGround.setScale(16,2);
-        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
+//        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
+//        Entity puzzleGround = PlatformFactory.createStaticPlatform();
+//        puzzleGround.setScale(16,2);
+//        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
 
         GridPoint2 removeThis1 = new GridPoint2(48,35);
         Entity removeThis = PlatformFactory.createStaticPlatform();
