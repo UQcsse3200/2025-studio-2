@@ -9,7 +9,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.SelfDestructComponent;
-import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -227,7 +226,6 @@ public class EnemyFactory {
 
         return drone;
     }
-
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
@@ -270,6 +268,7 @@ public class EnemyFactory {
 
 
     }
+
     /**
      * Creates a base enemy entity with a minimal, reusable set of components that all enemies share
      * (physics, movement, collider, hitbox and AI task holder (with no tasks).
