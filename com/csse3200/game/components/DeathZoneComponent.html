@@ -95,6 +95,8 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">DeathZoneComponent</span>
 <span class="extends-implements">extends <a href="CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a></span></div>
+<div class="block">DeathZone component that makes sure to deal max damage to a player to kill them.
+ As well as remove regular entity characteristics from the DeathZone such as health</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -115,12 +117,15 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(int,int,com.badlogic.gdx.math.Vector2)" class="member-name-link">DeathZoneComponent</a><wbr>(int&nbsp;health,
- int&nbsp;baseAttack,
- com.badlogic.gdx.math.Vector2&nbsp;resetPos)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
-<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.badlogic.gdx.math.Vector2)" class="member-name-link">DeathZoneComponent</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;resetPos)</code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">DeathZoneComponent</a>()</code></div>
+<div class="col-last even-row-color">
+<div class="block">Setting DeathZone Base attack power to max</div>
+</div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(int,int)" class="member-name-link">DeathZoneComponent</a><wbr>(int&nbsp;health,
+ int&nbsp;baseAttack)</code></div>
+<div class="col-last odd-row-color">
+<div class="block">DeathZone component Initialisation</div>
+</div>
 </div>
 </section>
 </li>
@@ -188,17 +193,23 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.badlogic.gdx.math.Vector2)">
+<section class="detail" id="&lt;init&gt;()">
 <h3>DeathZoneComponent</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DeathZoneComponent</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;resetPos)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DeathZoneComponent</span>()</div>
+<div class="block">Setting DeathZone Base attack power to max</div>
 </section>
 </li>
 <li>
-<section class="detail" id="&lt;init&gt;(int,int,com.badlogic.gdx.math.Vector2)">
+<section class="detail" id="&lt;init&gt;(int,int)">
 <h3>DeathZoneComponent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">DeathZoneComponent</span><wbr><span class="parameters">(int&nbsp;health,
- int&nbsp;baseAttack,
- com.badlogic.gdx.math.Vector2&nbsp;resetPos)</span></div>
+ int&nbsp;baseAttack)</span></div>
+<div class="block">DeathZone component Initialisation</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>health</code> - </dd>
+<dd><code>baseAttack</code> - </dd>
+</dl>
 </section>
 </li>
 </ul>
