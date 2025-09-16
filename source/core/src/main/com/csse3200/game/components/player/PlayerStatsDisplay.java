@@ -15,9 +15,24 @@ import com.csse3200.game.ui.UIComponent;
  * A ui component for displaying player stats, e.g. health.
  */
 public class PlayerStatsDisplay extends UIComponent {
+
+  /**
+   * Table used for storing all UI actors related to health bar
+   */
   Table healthTable;
+
+  /**
+   * Image icon used in health bar
+   */
   private Image heartImage;
+  /**
+   * Health label
+   */
   private Label healthLabel;
+  /**
+   * The maximum number of hearts to represent max health
+   */
+  private static final int MAX_HEARTS = 10;
 
   /**
    * Table used for storing all UI actors related to stamina bar
@@ -69,7 +84,7 @@ public class PlayerStatsDisplay extends UIComponent {
     staminaTable = new Table();
     staminaTable.top().left();
     staminaTable.setFillParent(true);
-    staminaTable.padTop(90f).padLeft(5f);
+    staminaTable.padTop(45f).padLeft(5f);
     staminaTable.setName("stamina");
     staminaTable.setUserObject(entity);
 
@@ -99,21 +114,33 @@ public class PlayerStatsDisplay extends UIComponent {
     healthTable = new Table();
     healthTable.top().left();
     healthTable.setFillParent(true);
-    healthTable.padTop(45f).padLeft(5f);
+    healthTable.padTop(5f).padLeft(5f);
     healthTable.setName("health");
     healthTable.setUserObject(entity);
+    updateHealthTable(entity.getComponent(CombatStatsComponent.class).getHealth());
+  }
 
+  /**
+   * Update the health table with correct label and number of hearts
+   * @param playerHealth The player health, as it currently stands
+   */
+  private void updateHealthTable(int playerHealth) {
     // Heart image
     float heartSideLength = 30f;
     heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
 
+    // Player hearts
+    int numHearts = playerHealth / MAX_HEARTS;
+
     // Health text
-    int health = entity.getComponent(CombatStatsComponent.class).getHealth();
-    CharSequence healthText = String.format("Health: %d", health);
-    healthLabel = new Label(healthText, skin, "large");
+    healthLabel = new Label("Health: ", skin, "large");
 
     healthTable.add(heartImage).size(heartSideLength).pad(5);
     healthTable.add(healthLabel);
+    for (int i = 0; i < numHearts; i++) {
+      heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
+      healthTable.add(heartImage).size(heartSideLength).pad(5);
+    }
   }
 
   @Override
@@ -126,8 +153,8 @@ public class PlayerStatsDisplay extends UIComponent {
    * @param health player health
    */
   public void updatePlayerHealthUI(int health) {
-    CharSequence text = String.format("Health: %d", health);
-    healthLabel.setText(text);
+    healthTable.clear();
+    updateHealthTable(health);
   }
 
   /**
