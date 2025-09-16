@@ -60,6 +60,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
 
+<<<<<<< HEAD
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
       this.ladders = findLadders();
@@ -88,21 +89,40 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
     } else if (keycode == INTERACT_KEY) {
+=======
+    if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
+      triggerJumpEvent();
+      triggerGlideEvent(true);
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+      walkDirection.add(Vector2Utils.LEFT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      walkDirection.add(Vector2Utils.RIGHT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
+>>>>>>> 4b24d13201aff3ae7548fed9a54d0cbe7ef86c73
       entity.getEvents().trigger("interact");
-    } else if (keycode == ADRENALINE_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
       triggerAdrenalineEvent();
         return true;
+<<<<<<< HEAD
     } else if (keycode == DASH_KEY) {
         //takes player off ladder if they are on one.
         this.onLadder = false;
 
+=======
+    } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
+>>>>>>> 4b24d13201aff3ae7548fed9a54d0cbe7ef86c73
         triggerDashEvent();
         return true;
-    } else if (keycode == CROUCH_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerCrouch")) {
       triggerCrouchEvent();
       return true;
       // debug
-    } else if (keycode == RESET_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("Reset")) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
     }
@@ -152,6 +172,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
+<<<<<<< HEAD
 
     if(this.ladders == null) {
       this.ladders = findLadders();
@@ -161,10 +182,13 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
 
       if (keycode == LEFT_KEY) {
+=======
+      if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+>>>>>>> 4b24d13201aff3ae7548fed9a54d0cbe7ef86c73
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
         return true;
-      } else if (keycode == RIGHT_KEY) {
+      } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
         walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
