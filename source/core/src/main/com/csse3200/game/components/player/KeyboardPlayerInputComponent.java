@@ -1,6 +1,5 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
@@ -11,9 +10,7 @@ import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.Vector2Utils;
-import com.csse3200.game.components.player.InventoryComponent;
 
-import java.security.Key;
 import java.util.Arrays;
 
 /**
@@ -59,8 +56,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
-
-<<<<<<< HEAD
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
       this.ladders = findLadders();
@@ -89,33 +84,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         triggerWalkEvent();
         return true;
     } else if (keycode == INTERACT_KEY) {
-=======
-    if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
-      triggerJumpEvent();
-      triggerGlideEvent(true);
-      return true;
-    } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
-      walkDirection.add(Vector2Utils.LEFT);
-      triggerWalkEvent();
-      return true;
-    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
-      walkDirection.add(Vector2Utils.RIGHT);
-      triggerWalkEvent();
-      return true;
-    } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
->>>>>>> 4b24d13201aff3ae7548fed9a54d0cbe7ef86c73
       entity.getEvents().trigger("interact");
     } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
       triggerAdrenalineEvent();
         return true;
-<<<<<<< HEAD
     } else if (keycode == DASH_KEY) {
         //takes player off ladder if they are on one.
         this.onLadder = false;
-
-=======
     } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
->>>>>>> 4b24d13201aff3ae7548fed9a54d0cbe7ef86c73
         triggerDashEvent();
         return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerCrouch")) {
@@ -172,7 +148,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
-<<<<<<< HEAD
 
     if(this.ladders == null) {
       this.ladders = findLadders();
@@ -180,11 +155,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if (this.onLadder) {
       this.onLadder = inFrontOfLadder(this.ladders);
     }
-
-      if (keycode == LEFT_KEY) {
-=======
       if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
->>>>>>> 4b24d13201aff3ae7548fed9a54d0cbe7ef86c73
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
         return true;
@@ -214,7 +185,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
           this.onLadder = false;
         }
         return true;
-
 
       } else if (keycode == com.badlogic.gdx.Input.Keys.TAB) {
           // Stop sprinting when Tab is released
