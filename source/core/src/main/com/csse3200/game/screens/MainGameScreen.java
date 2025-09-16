@@ -118,6 +118,8 @@ public class MainGameScreen extends ScreenAdapter {
       if (!levelId.isEmpty()) {
   //        System.out.println("Area switched to " + levelId);
         GameArea oldArea = gameArea;
+        oldArea.dispose();
+        oldArea = null;
 
   //        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
@@ -150,10 +152,8 @@ public class MainGameScreen extends ScreenAdapter {
           finalNewArea.getEvents().addListener(
                   "cutsceneFinished", (String key, Entity play) -> switchArea(finalNewLevel, player)
           );
-          System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
+//          System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
           finalNewArea.createWithPlayer(player);
-          oldArea.dispose();
-          oldArea = null;
         }
       }
     });
