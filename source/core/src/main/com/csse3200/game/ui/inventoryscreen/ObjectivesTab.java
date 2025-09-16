@@ -31,9 +31,8 @@ import java.util.Map;
  *   <li>Banner height: 74 px</li>
  *   <li>Vertical gap: 12 px</li>
  *   <li>Close hotspot: (971, 16, 39, 39) — same hit area as Inventory</li>
- *   <li>Tab hotspots (invisible): Inventory & Upgrades are clickable, Settings untouched</li>
+ *   <li>Tab hotspots (invisible): Inventory and Upgrades are clickable, Settings untouched</li>
  * </ul>
- * </p>
  *
  * <p>Objective id mapping (OBJECTIVES bag -> PNG):
  * dash -> inventory-screen/objectives/dash.png
