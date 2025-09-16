@@ -53,7 +53,7 @@ public class DoorComponent extends Component {
             tryUnlock(other);
         } else {
             // Door already open -> trigger transition
-            this.area.trigger("doorEntered", other);
+            this.area.trigger("doorEntered");
         }
     }
 

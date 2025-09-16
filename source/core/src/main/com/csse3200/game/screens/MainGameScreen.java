@@ -106,7 +106,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
       logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("level2", player);
+      switchArea("cutscene1", player);
     });
 
     // Have to createUI after the game area is created since createUI
@@ -116,7 +116,7 @@ public class MainGameScreen extends ScreenAdapter {
 
   private void switchArea(String key, Entity player) {
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
-    if (player.getComponent(PlayerScreenTransitionComponent.class) != null) {
+    if (gameArea instanceof CutsceneArea) {
       Gdx.app.postRunnable(runnable);
     } else {
       player.getEvents().trigger("startTransition", 1.5f, runnable);
@@ -154,8 +154,8 @@ public class MainGameScreen extends ScreenAdapter {
         gameArea.dispose();
         gameArea = newArea;
         String finalNewLevel = newLevel;
-        newArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, player));
-        newArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player));
+        newArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
+        newArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
 
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
         if (inv != null) {

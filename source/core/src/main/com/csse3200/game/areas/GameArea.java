@@ -37,7 +37,7 @@ public abstract class GameArea implements Disposable {
     return events;
   }
 
-  public void trigger(String eventName, Entity player) {
+  public void trigger(String eventName) {
     events.trigger(eventName, player);
   }
 
@@ -98,6 +98,8 @@ public abstract class GameArea implements Disposable {
 
     // load remaining entities
     loadEntities();
+
+    TerminalService.getShell().setGlobal("gameArea", this);
   }
 
   /**
