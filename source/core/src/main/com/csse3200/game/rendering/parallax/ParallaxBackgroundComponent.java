@@ -22,8 +22,24 @@ public class ParallaxBackgroundComponent extends RenderComponent {
         setLayer(0); // Render behind everything
     }
 
+    // Non-tiled layers
     public void addLayer(Texture texture, float factor) {
         layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight));
+    }
+
+    // Tiled layers
+    public void addTiledLayer(Texture texture, float factor, boolean tileHorizontally, boolean tileVertically, float tileWidth, float tileHeight) {
+        layers.add(new ParallaxLayer(texture, camera, factor, mapWidth, mapHeight, tileHorizontally, tileVertically, tileWidth, tileHeight));
+    }
+
+    // Horizontal-only tiling
+    public void addHorizontalTiledLayer(Texture texture, float factor, float tileWidth) {
+        addTiledLayer(texture, factor, true, false, tileWidth, 0);
+    }
+
+    // Both directions
+    public void addFullyTiledLayer(Texture texture, float factor, float tileWidth, float tileHeight) {
+        addTiledLayer(texture, factor, true, true, tileWidth, tileHeight);
     }
 
     @Override
@@ -36,6 +52,6 @@ public class ParallaxBackgroundComponent extends RenderComponent {
 
     @Override
     public int getLayer() {
-      return Integer.MIN_VALUE;
+        return Integer.MIN_VALUE;
     }
 }

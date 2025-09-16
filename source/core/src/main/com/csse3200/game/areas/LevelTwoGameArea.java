@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -15,6 +16,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -66,7 +68,16 @@ public class LevelTwoGameArea extends GameArea {
             "images/camera-lens.png",
             "images/wall.png",
             "images/lablevel/level2background.png",
-            "images/empty.png"
+            "images/empty.png",
+            "images/lablevel/background/bgtile1.png",
+            "images/lablevel/background/bgtile2.png",
+            "images/lablevel/background/bgtile3.png",
+            "images/lablevel/background/bgtile4.png",
+            "images/lablevel/background/bgtile5.png",
+            "images/lablevel/background/bgtile6.png",
+            "images/lablevel/background/labforeground.png",
+            "images/lablevel/background/level2background.png"
+
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -209,7 +220,31 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     private void spawnParallaxBackground() {
-        return;
+        Entity backgroundEntity = new Entity();
+
+        // Get the camera from the render service
+        Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
+
+        // Get map dimensions from terrain
+        GridPoint2 mapBounds = terrain.getMapBounds(0);
+        float tileSize = terrain.getTileSize();
+        float mapWorldWidth = mapBounds.x * tileSize;
+        float mapWorldHeight = mapBounds.y * tileSize;
+
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+
+        ResourceService resourceService = ServiceLocator.getResourceService();
+
+        // Layer 1: Far background - barely moves
+        Texture farBackground = resourceService.getAsset("images/lablevel/background/level2background.png", Texture.class);
+        parallaxBg.addTiledLayer(farBackground, 0.05f, true, true, 12.5f, 12.5f);
+
+        // Layer 2: Near background
+        Texture nearBackground = resourceService.getAsset("images/lablevel/background/bgtile5.png", Texture.class);
+        parallaxBg.addTiledLayer(nearBackground, 0.1f, true, true, 23.86f, 12.5f);
+
+        backgroundEntity.addComponent(parallaxBg);
+        spawnEntity(backgroundEntity);
     }
 
     private void spawnFloorsAndPlatforms(){
