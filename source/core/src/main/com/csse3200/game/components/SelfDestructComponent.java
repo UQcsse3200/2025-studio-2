@@ -20,7 +20,7 @@ public class SelfDestructComponent extends Component {
         if(exploded) return;
         if(target==null) return;
 
-        if(entity.getCenterPosition().dst(target.getCenterPosition()) <1f){
+        if(entity.getCenterPosition().dst(target.getCenterPosition()) <1.1f){
             explode();
         }
     }
@@ -36,7 +36,6 @@ public class SelfDestructComponent extends Component {
 
         }
         target.getEvents().trigger("takeDamage",20);
-
     }
 
 

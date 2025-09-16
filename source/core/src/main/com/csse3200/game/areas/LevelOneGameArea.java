@@ -101,7 +101,8 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         spawnLights();
         //spawnPatrollingDrone();
-        spawnBomberDrone();
+        //spawnBomberDrone();
+        spawnSelfDestructDrone();
     }
 
     private void spawnDeathZone() {
@@ -311,6 +312,16 @@ public class LevelOneGameArea extends GameArea {
                 bomberId
         );
         spawnEntityAt(bomberDrone, position, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(10, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("selfDestruct1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
 
     private void displayUI() {
