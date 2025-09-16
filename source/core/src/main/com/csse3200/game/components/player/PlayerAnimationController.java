@@ -1,16 +1,24 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.services.GameTime;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.badlogic.gdx.utils.Timer;
+
 
 public class PlayerAnimationController extends Component {
     AnimationRenderComponent animator;
     PlayerActions actions;
+    private final GameTime timer = new GameTime();
+
     private String currentAnimation = "";
+
     private int xDirection = 1;
-    private int oldPlayerHealth;
+    private long hurtTime = -1000;
+    private float hurtDelay = 0.5f;
+    private float dashDelay = 0.3f;
 
     @Override
     public void create() {
@@ -24,8 +32,6 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
         entity.getEvents().addListener("hurt", this::animateHurt);
-
-        oldPlayerHealth = entity.getComponent(CombatStatsComponent.class).getHealth();
     }
 
     /**
@@ -102,7 +108,8 @@ public class PlayerAnimationController extends Component {
      * setAnimation: to avoid repeated startup of the same animations
      */
     private void setAnimation(String animationName) {
-        if (!animationName.equals(currentAnimation)) {
+        //                                             Don't cancel hurt animation
+        if (!animationName.equals(currentAnimation) && timer.getTimeSince(hurtTime) > hurtDelay * 900) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
@@ -115,13 +122,16 @@ public class PlayerAnimationController extends Component {
         if (xDirection == 1) {
             setAnimation("DASH");
         } else {
-            // Make DASHLEFT when bruce adds it to the atlas
-            setAnimation("DASH");
-//            animator.startAnimation("DASHLEFT");
+            setAnimation("DASHLEFT");
         }
 
-//        System.out.println("IDLING");
-//        animator.startAnimation("IDLE");
+        // After delay stop the dash animation
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                setAnimation("IDLE");
+            }
+        }, dashDelay);
     }
 
     /**
@@ -131,9 +141,15 @@ public class PlayerAnimationController extends Component {
         if (xDirection == 1) {
             setAnimation("HURT");
         } else {
-            // Make HURTLEFT when bruce adds it to the atlas
-            setAnimation("HURT");
-//            animator.startAnimation("HURTLEFT");
+            setAnimation("HURTLEFT");
         }
+        hurtTime = timer.getTime();
+        // After delay stop the hurt animation
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                setAnimation("IDLE");
+            }
+        }, hurtDelay);
     }
 }
