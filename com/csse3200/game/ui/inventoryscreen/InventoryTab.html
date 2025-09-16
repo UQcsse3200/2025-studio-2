@@ -96,6 +96,12 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">InventoryTab</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></span></div>
+<div class="block">UI tab that renders the player's inventory within the pause menu
+ This tab shows a 4x4 grid of item slots. Each unique item present in the player's
+ <a href="../../components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player"><code>InventoryComponent</code></a> occupies one "filled" slot, which renders a slot border and,
+ if available, an item image. Remaining cells render as empty slots. The tab also provides
+ a close hotspot (positioned with <a href="../PixelPerfectPlacer.html" title="class in com.csse3200.game.ui"><code>PixelPerfectPlacer</code></a>) which unpauses the game and
+ hides the pause screen when clicked.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -107,8 +113,11 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.entities.Entity)" class="member-name-link">InventoryTab</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player)</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.entities.Entity,com.csse3200.game.screens.MainGameScreen)" class="member-name-link">InventoryTab</a><wbr>(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player,
+ <a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;gameScreen)</code></div>
+<div class="col-last even-row-color">
+<div class="block">Creates an Inventory tab bound to the given main game screen.</div>
+</div>
 </div>
 </section>
 </li>
@@ -126,7 +135,47 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.scenes.scene2d.Actor</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build</a><wbr>(com.badlogic.gdx.scenes.scene2d.ui.Skin&nbsp;skin)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Builds and returns the UI for this tab.</div>
+<div class="block">Builds the Scene2D Actor representing this inventory tab
+
+ The returned actor contains the background-aligned layout via PixelPerfectPlacer,
+ an invisible close hotspot at #CLOSE_BUTTON_POS, and a grid region at
+ #GRID_PX populated from the player's InventoryComponent</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dispose()" class="member-name-link">dispose</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Disposes all textures owned by this tab</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemAt(int)" class="member-name-link">getItemAt</a><wbr>(int&nbsp;slotIndex)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the item ID at a specific slot index</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemAt(int,int)" class="member-name-link">getItemAt</a><wbr>(int&nbsp;row,
+ int&nbsp;col)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the item ID in a specific slot</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemDescriptionAt(int)" class="member-name-link">getItemDescriptionAt</a><wbr>(int&nbsp;slotIndex)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Gets the item description for a specific slot index</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refreshGrid()" class="member-name-link">refreshGrid</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Refreshes the current grid display</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#refreshGrid(com.badlogic.gdx.scenes.scene2d.ui.Table)" class="member-name-link">refreshGrid</a><wbr>(com.badlogic.gdx.scenes.scene2d.ui.Table&nbsp;gridTable)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Refreshes the grid display to update selection highlighting</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setNavigationComponent(com.csse3200.game.components.inventory.InventoryNavigationComponent)" class="member-name-link">setNavigationComponent</a><wbr>(<a href="../../components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a>&nbsp;navigationComponent)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Sets the navigation component that provides selection state</div>
 </div>
 </div>
 </div>
@@ -146,9 +195,16 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;(com.csse3200.game.entities.Entity)">
+<section class="detail" id="&lt;init&gt;(com.csse3200.game.entities.Entity,com.csse3200.game.screens.MainGameScreen)">
 <h3>InventoryTab</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryTab</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryTab</span><wbr><span class="parameters">(<a href="../../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player,
+ <a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;gameScreen)</span></div>
+<div class="block">Creates an Inventory tab bound to the given main game screen.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>player</code> - entity holding upgrades information</dd>
+<dd><code>gameScreen</code> - main game screen used to unpause and hide the pause menu</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -160,15 +216,91 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
+<section class="detail" id="getItemDescriptionAt(int)">
+<h3>getItemDescriptionAt</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getItemDescriptionAt</span><wbr><span class="parameters">(int&nbsp;slotIndex)</span></div>
+<div class="block">Gets the item description for a specific slot index</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>slotIndex</code> - the slot index (0-based, row-major order)</dd>
+<dt>Returns:</dt>
+<dd>the item description or "Empty Slot" if no item</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getItemAt(int)">
+<h3>getItemAt</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getItemAt</span><wbr><span class="parameters">(int&nbsp;slotIndex)</span></div>
+<div class="block">Gets the item ID at a specific slot index</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>slotIndex</code> - the slot index (0-based, row-major order)</dd>
+<dt>Returns:</dt>
+<dd>the item ID or null if slot is empty</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getItemAt(int,int)">
+<h3>getItemAt</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">getItemAt</span><wbr><span class="parameters">(int&nbsp;row,
+ int&nbsp;col)</span></div>
+<div class="block">Gets the item ID in a specific slot</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>row</code> - the row index (0-3)</dd>
+<dd><code>col</code> - the column index (0-3)</dd>
+<dt>Returns:</dt>
+<dd>the item ID or null if slot is empty or coordinates are invalid</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setNavigationComponent(com.csse3200.game.components.inventory.InventoryNavigationComponent)">
+<h3>setNavigationComponent</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setNavigationComponent</span><wbr><span class="parameters">(<a href="../../components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a>&nbsp;navigationComponent)</span></div>
+<div class="block">Sets the navigation component that provides selection state</div>
+</section>
+</li>
+<li>
+<section class="detail" id="refreshGrid(com.badlogic.gdx.scenes.scene2d.ui.Table)">
+<h3>refreshGrid</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">refreshGrid</span><wbr><span class="parameters">(com.badlogic.gdx.scenes.scene2d.ui.Table&nbsp;gridTable)</span></div>
+<div class="block">Refreshes the grid display to update selection highlighting</div>
+</section>
+</li>
+<li>
+<section class="detail" id="refreshGrid()">
+<h3>refreshGrid</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">refreshGrid</span>()</div>
+<div class="block">Refreshes the current grid display</div>
+</section>
+</li>
+<li>
 <section class="detail" id="build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">
 <h3>build</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.scenes.scene2d.Actor</span>&nbsp;<span class="element-name">build</span><wbr><span class="parameters">(com.badlogic.gdx.scenes.scene2d.ui.Skin&nbsp;skin)</span></div>
-<div class="block"><span class="description-from-type-label">Description copied from interface:&nbsp;<code><a href="InventoryTabInterface.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">InventoryTabInterface</a></code></span></div>
-<div class="block">Builds and returns the UI for this tab.</div>
+<div class="block">Builds the Scene2D Actor representing this inventory tab
+
+ The returned actor contains the background-aligned layout via PixelPerfectPlacer,
+ an invisible close hotspot at #CLOSE_BUTTON_POS, and a grid region at
+ #GRID_PX populated from the player's InventoryComponent</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="InventoryTabInterface.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">build</a></code>&nbsp;in interface&nbsp;<code><a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></code></dd>
+<dt>Parameters:</dt>
+<dd><code>skin</code> - the UI skin used for widgets and layout</dd>
+<dt>Returns:</dt>
+<dd>a centered container wrapping the <a href="../PixelPerfectPlacer.html" title="class in com.csse3200.game.ui"><code>PixelPerfectPlacer</code></a> contents</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="dispose()">
+<h3>dispose</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">dispose</span>()</div>
+<div class="block">Disposes all textures owned by this tab</div>
 </section>
 </li>
 </ul>

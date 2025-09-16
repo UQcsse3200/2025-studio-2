@@ -103,8 +103,7 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">PixelPerfectPlacer</span>
 <span class="extends-implements">extends com.badlogic.gdx.scenes.scene2d.ui.Stack</span></div>
-<div class="block">A layout component that allows placing actors at precise pixel coordinates relative to a background image.
- The component handles dynamic scaling, ensuring that overlays remain correctly positioned when resizing</div>
+<div class="block">A layout component that allows placing actors at precise pixel coordinates relative to a background image.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -119,7 +118,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code>static final record&nbsp;</code></div>
 <div class="col-second even-row-color"><code><a href="PixelPerfectPlacer.Rect.html" class="type-name-link" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a></code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Helper record to store the actor's pixel-based layout constraints.</div>
+</div>
 </div>
 </section>
 </li>
@@ -227,7 +228,7 @@ loadScripts(document, 'script');</script>
 <h3>layout</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">layout</span>()</div>
 <div class="block">This method is called by Scene2D's layout manager whenever the table's size or children change.
- It calculates and applies the correct on-screen positions and sizes for all overlay actors.</div>
+ It calculates and applies the correct on-screen positions and sizes for all overlaid actors.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code>layout</code>&nbsp;in interface&nbsp;<code>com.badlogic.gdx.scenes.scene2d.utils.Layout</code></dd>

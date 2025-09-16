@@ -116,6 +116,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds <code>amount</code> instances of the given item id (stacking).</div>
 </dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html#addLayer(com.badlogic.gdx.graphics.Texture,float)" class="member-name-link">addLayer(Texture, float)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html" title="class in com.csse3200.game.rendering">ParallaxBackgroundComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/events/EventHandler.html#addListener(java.lang.String,com.csse3200.game.events.listeners.EventListener0)" class="member-name-link">addListener(String, EventListener0)</a> - Method in class com.csse3200.game.events.<a href="com/csse3200/game/events/EventHandler.html" title="class in com.csse3200.game.events">EventHandler</a></dt>
 <dd>
 <div class="block">Add a listener to an event with zero arguments</div>
@@ -278,17 +280,29 @@ loadScripts(document, 'script');</script>
 <div class="block">Builds and returns the autonomous box entity with all its properties configured.</div>
 </dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build(Skin)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Builds the Scene2D Actor representing this inventory tab
+
+ The returned actor contains the background-aligned layout via PixelPerfectPlacer,
+ an invisible close hotspot at #CLOSE_BUTTON_POS, and a grid region at
+ #GRID_PX populated from the player's InventoryComponent</div>
+</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTabInterface.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build(Skin)</a> - Method in interface com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></dt>
 <dd>
 <div class="block">Builds and returns the UI for this tab.</div>
 </dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build(Skin)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html" title="class in com.csse3200.game.ui.inventoryscreen">ObjectivesTab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Builds the UI actor tree for the objectives tab.</div>
+</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/SettingsTab.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build(Skin)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/SettingsTab.html" title="class in com.csse3200.game.ui.inventoryscreen">SettingsTab</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build(Skin)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html" title="class in com.csse3200.game.ui.inventoryscreen">UpgradesTab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Builds the UI actor tree for the upgrades tab
+ The background is placed using a pixel-perfect placer and scaled to two thirds
+ of the current screen height while preserving aspect ratio.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/ButtonComponent.html" class="type-name-link" title="class in com.csse3200.game.components">ButtonComponent</a> - Class in <a href="com/csse3200/game/components/package-summary.html">com.csse3200.game.components</a></dt>
 <dd>
 <div class="block">Component for button entities that can be pushed by the player to trigger other events
@@ -425,6 +439,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/components/enemy/package-summary.html">com.csse3200.game.components.enemy</a> - package com.csse3200.game.components.enemy</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/gamearea/package-summary.html">com.csse3200.game.components.gamearea</a> - package com.csse3200.game.components.gamearea</dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/package-summary.html">com.csse3200.game.components.inventory</a> - package com.csse3200.game.components.inventory</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/lighting/package-summary.html">com.csse3200.game.components.lighting</a> - package com.csse3200.game.components.lighting</dt>
 <dd>&nbsp;</dd>
@@ -740,6 +756,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates a basic death zone with configurable length.</div>
 </dd>
+<dt><a href="com/csse3200/game/entities/factories/FloorFactory.html#createDecorativeFloor()" class="member-name-link">createDecorativeFloor()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/FloorFactory.html" title="class in com.csse3200.game.entities.factories">FloorFactory</a></dt>
+<dd>
+<div class="block">Creates a decorative floor without physics collision.</div>
+</dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainFactory.html#createDefaultTiles(com.badlogic.gdx.math.GridPoint2,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.math.GridPoint2)" class="member-name-link">createDefaultTiles(GridPoint2, TextureRegion, TextureRegion, TextureRegion, TextureRegion, GridPoint2)</a> - Method in class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainFactory.html" title="class in com.csse3200.game.areas.terrain">TerrainFactory</a></dt>
 <dd>
 <div class="block">Used to create/set ordering of background tiles with variants</div>
@@ -756,8 +776,6 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Creates an explosion entity.</div>
 </dd>
-<dt><a href="com/csse3200/game/areas/terrain/TerrainFactory.html#createForestDemoTerrain(float,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion)" class="member-name-link">createForestDemoTerrain(float, TextureRegion, TextureRegion, TextureRegion)</a> - Method in class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainFactory.html" title="class in com.csse3200.game.areas.terrain">TerrainFactory</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/input/InputFactory.html#createForPlayer()" class="member-name-link">createForPlayer()</a> - Method in class com.csse3200.game.input.<a href="com/csse3200/game/input/InputFactory.html" title="class in com.csse3200.game.input">InputFactory</a></dt>
 <dd>
 <div class="block">Creates an input handler for the player</div>
@@ -795,6 +813,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/entities/factories/CollectableFactory.html#createGrappleUpgrade()" class="member-name-link">createGrappleUpgrade()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/CollectableFactory.html" title="class in com.csse3200.game.entities.factories">CollectableFactory</a></dt>
 <dd>
 <div class="block">Builds a new collectable grappler upgrade that enables the grapple ability</div>
+</dd>
+<dt><a href="com/csse3200/game/entities/factories/FloorFactory.html#createGroundFloor()" class="member-name-link">createGroundFloor()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/FloorFactory.html" title="class in com.csse3200.game.entities.factories">FloorFactory</a></dt>
+<dd>
+<div class="block">Creates a ground floor that extends to the bottom of the screen.</div>
 </dd>
 <dt><a href="com/csse3200/game/physics/PhysicsEngine.html#createJoint(com.badlogic.gdx.physics.box2d.JointDef)" class="member-name-link">createJoint(JointDef)</a> - Method in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/PhysicsEngine.html" title="class in com.csse3200.game.physics">PhysicsEngine</a></dt>
 <dd>&nbsp;</dd>
@@ -860,6 +882,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/entities/factories/BoxFactory.html#createStaticBox()" class="member-name-link">createStaticBox()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/BoxFactory.html" title="class in com.csse3200.game.entities.factories">BoxFactory</a></dt>
 <dd>
 <div class="block">Creates a static (immovable) box entity.</div>
+</dd>
+<dt><a href="com/csse3200/game/entities/factories/FloorFactory.html#createStaticFloor()" class="member-name-link">createStaticFloor()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/FloorFactory.html" title="class in com.csse3200.game.entities.factories">FloorFactory</a></dt>
+<dd>
+<div class="block">Creates a static tiled floor entity.</div>
 </dd>
 <dt><a href="com/csse3200/game/entities/factories/PlatformFactory.html#createStaticPlatform()" class="member-name-link">createStaticPlatform()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/PlatformFactory.html" title="class in com.csse3200.game.entities.factories">PlatformFactory</a></dt>
 <dd>
@@ -988,8 +1014,6 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/PhysicsLayer.html#DEFAULT" class="member-name-link">DEFAULT</a> - Static variable in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/PhysicsLayer.html" title="class in com.csse3200.game.physics">PhysicsLayer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/csse3200/game/areas/terrain/TerrainFactory.TerrainType.html#DEFAULT_ORTHO" class="member-name-link">DEFAULT_ORTHO</a> - Enum constant in enum class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainFactory.TerrainType.html" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a></dt>
-<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ai/tasks/DefaultTask.html" class="type-name-link" title="class in com.csse3200.game.ai.tasks">DefaultTask</a> - Class in <a href="com/csse3200/game/ai/tasks/package-summary.html">com.csse3200.game.ai.tasks</a></dt>
 <dd>
 <div class="block">A default task implementation that stores the associated entity and updates status when
@@ -1005,6 +1029,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/raycast/SingleHitCallback.html#didHit" class="member-name-link">didHit</a> - Variable in class com.csse3200.game.physics.raycast.<a href="com/csse3200/game/physics/raycast/SingleHitCallback.html" title="class in com.csse3200.game.physics.raycast">SingleHitCallback</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#disableNavigation()" class="member-name-link">disableNavigation()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>
+<div class="block">Disables navigation and hides tooltip</div>
+</dd>
 <dt><a href="com/csse3200/game/files/UserSettings.Settings.html#displayMode" class="member-name-link">displayMode</a> - Variable in class com.csse3200.game.files.<a href="com/csse3200/game/files/UserSettings.Settings.html" title="class in com.csse3200.game.files">UserSettings.Settings</a></dt>
 <dd>
 <div class="block">ui Scale.</div>
@@ -1127,6 +1155,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Correctly removes all widgets registered in the root stack object</div>
 </dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Disposes all textures owned by this tab</div>
+</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/SettingsTab.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/SettingsTab.html" title="class in com.csse3200.game.ui.inventoryscreen">SettingsTab</a></dt>
 <dd>
 <div class="block">Cleanup method to call when the settings tab is closed
@@ -1180,11 +1212,17 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/AnimationRenderComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/AnimationRenderComponent.html" title="class in com.csse3200.game.rendering">AnimationRenderComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html" title="class in com.csse3200.game.rendering">ParallaxBackgroundComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/RenderComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/RenderComponent.html" title="class in com.csse3200.game.rendering">RenderComponent</a></dt>
 <dd>
 <div class="block">Draw the renderable.</div>
 </dd>
 <dt><a href="com/csse3200/game/rendering/TextureRenderComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TextureRenderComponent.html" title="class in com.csse3200.game.rendering">TextureRenderComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/TiledFloorComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledFloorComponent.html" title="class in com.csse3200.game.rendering">TiledFloorComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html" title="class in com.csse3200.game.rendering">TiledGroundFloorComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/TiledPlatformComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledPlatformComponent.html" title="class in com.csse3200.game.rendering">TiledPlatformComponent</a></dt>
 <dd>&nbsp;</dd>
@@ -1240,6 +1278,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/components/Component.html#enabled" class="member-name-link">enabled</a> - Variable in class com.csse3200.game.components.<a href="com/csse3200/game/components/Component.html" title="class in com.csse3200.game.components">Component</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#enableNavigation()" class="member-name-link">enableNavigation()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>
+<div class="block">Enables navigation and shows initial tooltip</div>
+</dd>
 <dt><a href="com/csse3200/game/lighting/LightingDefaults.html#END_DEG" class="member-name-link">END_DEG</a> - Static variable in class com.csse3200.game.lighting.<a href="com/csse3200/game/lighting/LightingDefaults.html" title="class in com.csse3200.game.lighting">LightingDefaults</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/ObjectContactListener.html#endContact(com.badlogic.gdx.physics.box2d.Contact)" class="member-name-link">endContact(Contact)</a> - Method in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/ObjectContactListener.html" title="class in com.csse3200.game.physics">ObjectContactListener</a></dt>
@@ -1374,6 +1416,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Iterates over registered input handlers in descending priority and stops as soon as the input is
  processed</div>
+</dd>
+<dt><a href="com/csse3200/game/entities/factories/FloorFactory.html" class="type-name-link" title="class in com.csse3200.game.entities.factories">FloorFactory</a> - Class in <a href="com/csse3200/game/entities/factories/package-summary.html">com.csse3200.game.entities.factories</a></dt>
+<dd>
+<div class="block">Factory to create Floor entities using individual PNG textures.</div>
 </dd>
 <dt><a href="com/csse3200/game/ui/terminal/TerminalService.html#focusTerminalInput()" class="member-name-link">focusTerminalInput()</a> - Static method in class com.csse3200.game.ui.terminal.<a href="com/csse3200/game/ui/terminal/TerminalService.html" title="class in com.csse3200.game.ui.terminal">TerminalService</a></dt>
 <dd>
@@ -1579,6 +1625,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/ComponentType.html#getFrom(java.lang.Class)" class="member-name-link">getFrom(Class&lt;? extends Component&gt;)</a> - Static method in class com.csse3200.game.components.<a href="com/csse3200/game/components/ComponentType.html" title="class in com.csse3200.game.components">ComponentType</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/screens/MainGameScreen.html#getGameArea()" class="member-name-link">getGameArea()</a> - Method in class com.csse3200.game.screens.<a href="com/csse3200/game/screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a></dt>
+<dd>
+<div class="block">Returns the current game area instance</div>
+</dd>
 <dt><a href="com/csse3200/game/ui/terminal/Shell.html#getGlobal(java.lang.String)" class="member-name-link">getGlobal(String)</a> - Method in class com.csse3200.game.ui.terminal.<a href="com/csse3200/game/ui/terminal/Shell.html" title="class in com.csse3200.game.ui.terminal">Shell</a></dt>
 <dd>
 <div class="block">Gets a value from the global environment scope.</div>
@@ -1617,6 +1667,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/services/ServiceLocator.html#getInputService()" class="member-name-link">getInputService()</a> - Static method in class com.csse3200.game.services.<a href="com/csse3200/game/services/ServiceLocator.html" title="class in com.csse3200.game.services">ServiceLocator</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/player/InventoryComponent.html#getInventory()" class="member-name-link">getInventory()</a> - Method in class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a></dt>
+<dd>
+<div class="block">Read only view of the inventory for UI rendering</div>
+</dd>
 <dt><a href="com/csse3200/game/components/player/KeyboardPlayerInputComponent.html#getIsCheatsOn()" class="member-name-link">getIsCheatsOn()</a> - Method in class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/KeyboardPlayerInputComponent.html" title="class in com.csse3200.game.components.player">KeyboardPlayerInputComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/player/PlayerActions.html#getIsCrouching()" class="member-name-link">getIsCrouching()</a> - Method in class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/PlayerActions.html" title="class in com.csse3200.game.components.player">PlayerActions</a></dt>
@@ -1625,10 +1679,22 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/player/PlayerActions.html#getIsJumping()" class="member-name-link">getIsJumping()</a> - Method in class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/PlayerActions.html" title="class in com.csse3200.game.components.player">PlayerActions</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#getItemAt(int)" class="member-name-link">getItemAt(int)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Gets the item ID at a specific slot index</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#getItemAt(int,int)" class="member-name-link">getItemAt(int, int)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Gets the item ID in a specific slot</div>
+</dd>
 <dt><a href="com/csse3200/game/components/player/InventoryComponent.html#getItemCount(java.lang.String)" class="member-name-link">getItemCount(String)</a> - Method in class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a></dt>
 <dd>
 <div class="block">Gets the current stack count for <code>itemId</code>, where the stack count
  is the number of instances of an item in the inventory.</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#getItemDescriptionAt(int)" class="member-name-link">getItemDescriptionAt(int)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Gets the item description for a specific slot index</div>
 </dd>
 <dt><a href="com/csse3200/game/utils/SortedIntMap.html#getKeyAt(int)" class="member-name-link">getKeyAt(int)</a> - Method in class com.csse3200.game.utils.<a href="com/csse3200/game/utils/SortedIntMap.html" title="class in com.csse3200.game.utils">SortedIntMap</a></dt>
 <dd>
@@ -1651,6 +1717,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/components/minimap/MinimapDisplay.html#getLayer()" class="member-name-link">getLayer()</a> - Method in class com.csse3200.game.components.minimap.<a href="com/csse3200/game/components/minimap/MinimapDisplay.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/components/ColliderComponent.html#getLayer()" class="member-name-link">getLayer()</a> - Method in class com.csse3200.game.physics.components.<a href="com/csse3200/game/physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html#getLayer()" class="member-name-link">getLayer()</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html" title="class in com.csse3200.game.rendering">ParallaxBackgroundComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/Renderable.html#getLayer()" class="member-name-link">getLayer()</a> - Method in interface com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/Renderable.html" title="interface in com.csse3200.game.rendering">Renderable</a></dt>
 <dd>
@@ -1792,6 +1860,16 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/services/ServiceLocator.html#getSecurityCamRetrievalService()" class="member-name-link">getSecurityCamRetrievalService()</a> - Static method in class com.csse3200.game.services.<a href="com/csse3200/game/services/ServiceLocator.html" title="class in com.csse3200.game.services">ServiceLocator</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#getSelectedCol()" class="member-name-link">getSelectedCol()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#getSelectedRow()" class="member-name-link">getSelectedRow()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>
+<div class="block">Gets the current selection coordinates for the UI to highlight</div>
+</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#getSelectedSlotIndex()" class="member-name-link">getSelectedSlotIndex()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>
+<div class="block">Gets the currently selected slot index (0-based, row-major order)</div>
+</dd>
 <dt><a href="com/csse3200/game/components/enemy/SpawnPositionComponent.html#getSpawnPos()" class="member-name-link">getSpawnPos()</a> - Method in class com.csse3200.game.components.enemy.<a href="com/csse3200/game/components/enemy/SpawnPositionComponent.html" title="class in com.csse3200.game.components.enemy">SpawnPositionComponent</a></dt>
 <dd>
 <div class="block">Returns the spawn position</div>
@@ -2008,7 +2086,7 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#height()" class="member-name-link">height()</a> - Method in record class com.csse3200.game.ui.<a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a></dt>
 <dd>
-<div class="block">Returns the value of the <code>height</code> record component.</div>
+<div class="block">Returns the value of the <a href="./com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#param-height"><code>height</code></a> record component.</div>
 </dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainComponent.TerrainOrientation.html#HEXAGONAL" class="member-name-link">HEXAGONAL</a> - Enum constant in enum class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainComponent.TerrainOrientation.html" title="enum class in com.csse3200.game.areas.terrain">TerrainComponent.TerrainOrientation</a></dt>
 <dd>&nbsp;</dd>
@@ -2115,10 +2193,21 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/player/InventoryComponent.html#%3Cinit%3E(com.csse3200.game.components.player.InventoryComponent)" class="member-name-link">InventoryComponent(InventoryComponent)</a> - Constructor for class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" class="type-name-link" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a> - Class in <a href="com/csse3200/game/components/inventory/package-summary.html">com.csse3200.game.components.inventory</a></dt>
+<dd>
+<div class="block">Input component for handling keyboard navigation within the inventory screen.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#%3Cinit%3E(com.csse3200.game.ui.inventoryscreen.InventoryTab)" class="member-name-link">InventoryNavigationComponent(InventoryTab)</a> - Constructor for class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" class="type-name-link" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a> - Class in <a href="com/csse3200/game/ui/inventoryscreen/package-summary.html">com.csse3200.game.ui.inventoryscreen</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#%3Cinit%3E(com.csse3200.game.entities.Entity)" class="member-name-link">InventoryTab(Entity)</a> - Constructor for class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">UI tab that renders the player's inventory within the pause menu
+ This tab shows a 4x4 grid of item slots.</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#%3Cinit%3E(com.csse3200.game.entities.Entity,com.csse3200.game.screens.MainGameScreen)" class="member-name-link">InventoryTab(Entity, MainGameScreen)</a> - Constructor for class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Creates an Inventory tab bound to the given main game screen.</div>
+</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTabInterface.html" class="type-name-link" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a> - Interface in <a href="com/csse3200/game/ui/inventoryscreen/package-summary.html">com.csse3200.game.ui.inventoryscreen</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/MoveableBoxComponent.html#isAddToPlayer()" class="member-name-link">isAddToPlayer()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/MoveableBoxComponent.html" title="class in com.csse3200.game.components">MoveableBoxComponent</a></dt>
@@ -2173,6 +2262,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Check patrol direction.</div>
 </dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#isNavigationEnabled()" class="member-name-link">isNavigationEnabled()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainComponent.TerrainOrientation.html#ISOMETRIC" class="member-name-link">ISOMETRIC</a> - Enum constant in enum class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainComponent.TerrainOrientation.html" title="enum class in com.csse3200.game.areas.terrain">TerrainComponent.TerrainOrientation</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/terminal/Terminal.html#isOpen()" class="member-name-link">isOpen()</a> - Method in class com.csse3200.game.ui.terminal.<a href="com/csse3200/game/ui/terminal/Terminal.html" title="class in com.csse3200.game.ui.terminal">Terminal</a></dt>
@@ -2257,6 +2348,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/components/collectables/KeyComponent.html#%3Cinit%3E(java.lang.String)" class="member-name-link">KeyComponent(String)</a> - Constructor for class com.csse3200.game.components.collectables.<a href="com/csse3200/game/components/collectables/KeyComponent.html" title="class in com.csse3200.game.components.collectables">KeyComponent</a></dt>
 <dd>
 <div class="block">Creates a <code>KeyComponent</code> with a given key identifier.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#keyDown(int)" class="member-name-link">keyDown(int)</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>
+<div class="block">Triggers player events on specific keycodes.</div>
 </dd>
 <dt><a href="com/csse3200/game/components/lighting/KeyboardLightingInputTestComponent.html#keyDown(int)" class="member-name-link">keyDown(int)</a> - Method in class com.csse3200.game.components.lighting.<a href="com/csse3200/game/components/lighting/KeyboardLightingInputTestComponent.html" title="class in com.csse3200.game.components.lighting">KeyboardLightingInputTestComponent</a></dt>
 <dd>&nbsp;</dd>
@@ -2683,9 +2778,13 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/components/pausemenu/PauseMenuDisplay.Tab.html#OBJECTIVES" class="member-name-link">OBJECTIVES</a> - Enum constant in enum class com.csse3200.game.components.pausemenu.<a href="com/csse3200/game/components/pausemenu/PauseMenuDisplay.Tab.html" title="enum class in com.csse3200.game.components.pausemenu">PauseMenuDisplay.Tab</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html" class="type-name-link" title="class in com.csse3200.game.ui.inventoryscreen">ObjectivesTab</a> - Class in <a href="com/csse3200/game/ui/inventoryscreen/package-summary.html">com.csse3200.game.ui.inventoryscreen</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html#%3Cinit%3E()" class="member-name-link">ObjectivesTab()</a> - Constructor for class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html" title="class in com.csse3200.game.ui.inventoryscreen">ObjectivesTab</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Objectives tab shown inside the pause menu</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html#%3Cinit%3E(com.csse3200.game.screens.MainGameScreen)" class="member-name-link">ObjectivesTab(MainGameScreen)</a> - Constructor for class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/ObjectivesTab.html" title="class in com.csse3200.game.ui.inventoryscreen">ObjectivesTab</a></dt>
+<dd>
+<div class="block">Creates an Objectives tab bound to the given main game screen.</div>
+</dd>
 <dt><a href="com/csse3200/game/physics/PhysicsLayer.html#OBSTACLE" class="member-name-link">OBSTACLE</a> - Static variable in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/PhysicsLayer.html" title="class in com.csse3200.game.physics">PhysicsLayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/entities/factories/ObstacleFactory.html" class="type-name-link" title="class in com.csse3200.game.entities.factories">ObstacleFactory</a> - Class in <a href="com/csse3200/game/entities/factories/package-summary.html">com.csse3200.game.entities.factories</a></dt>
@@ -2743,6 +2842,14 @@ loadScripts(document, 'script');</script>
 <div class="block">Iterates over registered input handlers in descending priority and stops as soon as the input is
  processed</div>
 </dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html" class="type-name-link" title="class in com.csse3200.game.rendering">ParallaxBackgroundComponent</a> - Class in <a href="com/csse3200/game/rendering/package-summary.html">com.csse3200.game.rendering</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html#%3Cinit%3E(com.badlogic.gdx.graphics.Camera,float,float)" class="member-name-link">ParallaxBackgroundComponent(Camera, float, float)</a> - Constructor for class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/ParallaxBackgroundComponent.html" title="class in com.csse3200.game.rendering">ParallaxBackgroundComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxLayer.html" class="type-name-link" title="class in com.csse3200.game.rendering">ParallaxLayer</a> - Class in <a href="com/csse3200/game/rendering/package-summary.html">com.csse3200.game.rendering</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxLayer.html#%3Cinit%3E(com.badlogic.gdx.graphics.Texture,com.badlogic.gdx.graphics.Camera,float,float,float)" class="member-name-link">ParallaxLayer(Texture, Camera, float, float, float)</a> - Constructor for class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/ParallaxLayer.html" title="class in com.csse3200.game.rendering">ParallaxLayer</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/enemy/PatrolRouteComponent.html" class="type-name-link" title="class in com.csse3200.game.components.enemy">PatrolRouteComponent</a> - Class in <a href="com/csse3200/game/components/enemy/package-summary.html">com.csse3200.game.components.enemy</a></dt>
 <dd>
 <div class="block">A component that stores the patrol route for an enemy entity, which is represented
@@ -2861,7 +2968,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a new PixelPerfectPlacer with a specified background image.</div>
 </dd>
 <dt><a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html" class="type-name-link" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a> - Record Class in <a href="com/csse3200/game/ui/package-summary.html">com.csse3200.game.ui</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Helper record to store the actor's pixel-based layout constraints.</div>
+</dd>
 <dt><a href="com/csse3200/game/entities/factories/PlatformFactory.html" class="type-name-link" title="class in com.csse3200.game.entities.factories">PlatformFactory</a> - Class in <a href="com/csse3200/game/entities/factories/package-summary.html">com.csse3200.game.entities.factories</a></dt>
 <dd>
 <div class="block">Factory to create Platform entities.</div>
@@ -3019,6 +3128,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/screens/MainGameScreen.html#reflectPauseTabClick(com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab)" class="member-name-link">reflectPauseTabClick(PauseMenuDisplay.Tab)</a> - Method in class com.csse3200.game.screens.<a href="com/csse3200/game/screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#refreshGrid()" class="member-name-link">refreshGrid()</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Refreshes the current grid display</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#refreshGrid(com.badlogic.gdx.scenes.scene2d.ui.Table)" class="member-name-link">refreshGrid(Table)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Refreshes the grid display to update selection highlighting</div>
+</dd>
 <dt><a href="com/csse3200/game/files/UserSettings.DisplaySettings.html#refreshRate" class="member-name-link">refreshRate</a> - Variable in class com.csse3200.game.files.<a href="com/csse3200/game/files/UserSettings.DisplaySettings.html" title="class in com.csse3200.game.files">UserSettings.DisplaySettings</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/entities/EntityService.html#register(com.csse3200.game.entities.Entity)" class="member-name-link">register(Entity)</a> - Method in class com.csse3200.game.entities.<a href="com/csse3200/game/entities/EntityService.html" title="class in com.csse3200.game.entities">EntityService</a></dt>
@@ -3088,6 +3205,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/screens/MainMenuScreen.html#render(float)" class="member-name-link">render(float)</a> - Method in class com.csse3200.game.screens.<a href="com/csse3200/game/screens/MainMenuScreen.html" title="class in com.csse3200.game.screens">MainMenuScreen</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/screens/SettingsScreen.html#render(float)" class="member-name-link">render(float)</a> - Method in class com.csse3200.game.screens.<a href="com/csse3200/game/screens/SettingsScreen.html" title="class in com.csse3200.game.screens">SettingsScreen</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/ParallaxLayer.html#render(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">render(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/ParallaxLayer.html" title="class in com.csse3200.game.rendering">ParallaxLayer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/Renderable.html#render(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">render(SpriteBatch)</a> - Method in interface com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/Renderable.html" title="interface in com.csse3200.game.rendering">Renderable</a></dt>
 <dd>
@@ -3399,6 +3518,10 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainTile.html#setId(int)" class="member-name-link">setId(int)</a> - Method in class com.csse3200.game.areas.terrain.<a href="com/csse3200/game/areas/terrain/TerrainTile.html" title="class in com.csse3200.game.areas.terrain">TerrainTile</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#setInventoryTab(com.csse3200.game.ui.inventoryscreen.InventoryTab)" class="member-name-link">setInventoryTab(InventoryTab)</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
+<dd>
+<div class="block">Sets the inventory tab that this component controls</div>
+</dd>
 <dt><a href="com/csse3200/game/input/SettingsInputComponent.html#setKeyBindButtons(java.util.Map)" class="member-name-link">setKeyBindButtons(Map&lt;String, TextButton&gt;)</a> - Method in class com.csse3200.game.input.<a href="com/csse3200/game/input/SettingsInputComponent.html" title="class in com.csse3200.game.input">SettingsInputComponent</a></dt>
 <dd>
 <div class="block">Set the key binding buttons that this component will manage</div>
@@ -3436,6 +3559,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/physics/components/PhysicsMovementComponent.html#setMoving(boolean)" class="member-name-link">setMoving(boolean)</a> - Method in class com.csse3200.game.physics.components.<a href="com/csse3200/game/physics/components/PhysicsMovementComponent.html" title="class in com.csse3200.game.physics.components">PhysicsMovementComponent</a></dt>
 <dd>
 <div class="block">Enable/disable movement for the controller.</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html#setNavigationComponent(com.csse3200.game.components.inventory.InventoryNavigationComponent)" class="member-name-link">setNavigationComponent(InventoryNavigationComponent)</a> - Method in class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/InventoryTab.html" title="class in com.csse3200.game.ui.inventoryscreen">InventoryTab</a></dt>
+<dd>
+<div class="block">Sets the navigation component that provides selection state</div>
 </dd>
 <dt><a href="com/csse3200/game/components/lighting/ConeDetectorComponent.html#setOccluderMask(short)" class="member-name-link">setOccluderMask(short)</a> - Method in class com.csse3200.game.components.lighting.<a href="com/csse3200/game/components/lighting/ConeDetectorComponent.html" title="class in com.csse3200.game.components.lighting">ConeDetectorComponent</a></dt>
 <dd>&nbsp;</dd>
@@ -3921,7 +4048,7 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainFactory.TerrainType.html" class="type-name-link" title="enum class in com.csse3200.game.areas.terrain">TerrainFactory.TerrainType</a> - Enum Class in <a href="com/csse3200/game/areas/terrain/package-summary.html">com.csse3200.game.areas.terrain</a></dt>
 <dd>
-<div class="block">Enum for different game areas to specify specific requirements</div>
+<div class="block">This enum should contain the different terrains in your game, e.g.</div>
 </dd>
 <dt><a href="com/csse3200/game/areas/terrain/TerrainTile.html" class="type-name-link" title="class in com.csse3200.game.areas.terrain">TerrainTile</a> - Class in <a href="com/csse3200/game/areas/terrain/package-summary.html">com.csse3200.game.areas.terrain</a></dt>
 <dd>
@@ -3951,6 +4078,20 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/rendering/TextureRenderComponent.html#%3Cinit%3E(java.lang.String)" class="member-name-link">TextureRenderComponent(String)</a> - Constructor for class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TextureRenderComponent.html" title="class in com.csse3200.game.rendering">TextureRenderComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/StaminaComponent.html#tick(float)" class="member-name-link">tick(float)</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/StaminaComponent.html" title="class in com.csse3200.game.components">StaminaComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/rendering/TiledFloorComponent.html" class="type-name-link" title="class in com.csse3200.game.rendering">TiledFloorComponent</a> - Class in <a href="com/csse3200/game/rendering/package-summary.html">com.csse3200.game.rendering</a></dt>
+<dd>
+<div class="block">A render component for dynamically tiling a floor texture with corners, edges, and middle tiles.</div>
+</dd>
+<dt><a href="com/csse3200/game/rendering/TiledFloorComponent.html#%3Cinit%3E(com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion)" class="member-name-link">TiledFloorComponent(TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion)</a> - Constructor for class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledFloorComponent.html" title="class in com.csse3200.game.rendering">TiledFloorComponent</a></dt>
+<dd>
+<div class="block">Creates a new TiledFloorComponent.</div>
+</dd>
+<dt><a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html" class="type-name-link" title="class in com.csse3200.game.rendering">TiledGroundFloorComponent</a> - Class in <a href="com/csse3200/game/rendering/package-summary.html">com.csse3200.game.rendering</a></dt>
+<dd>
+<div class="block">A render component for ground floors that extend to the bottom of the screen.</div>
+</dd>
+<dt><a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html#%3Cinit%3E(com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion,com.badlogic.gdx.graphics.g2d.TextureRegion)" class="member-name-link">TiledGroundFloorComponent(TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion, TextureRegion)</a> - Constructor for class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html" title="class in com.csse3200.game.rendering">TiledGroundFloorComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/TiledPlatformComponent.html" class="type-name-link" title="class in com.csse3200.game.rendering">TiledPlatformComponent</a> - Class in <a href="com/csse3200/game/rendering/package-summary.html">com.csse3200.game.rendering</a></dt>
 <dd>
@@ -4335,8 +4476,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html" class="type-name-link" title="class in com.csse3200.game.ui.inventoryscreen">UpgradesTab</a> - Class in <a href="com/csse3200/game/ui/inventoryscreen/package-summary.html">com.csse3200.game.ui.inventoryscreen</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html#%3Cinit%3E()" class="member-name-link">UpgradesTab()</a> - Constructor for class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html" title="class in com.csse3200.game.ui.inventoryscreen">UpgradesTab</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html#%3Cinit%3E(com.csse3200.game.entities.Entity,com.csse3200.game.screens.MainGameScreen)" class="member-name-link">UpgradesTab(Entity, MainGameScreen)</a> - Constructor for class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/UpgradesTab.html" title="class in com.csse3200.game.ui.inventoryscreen">UpgradesTab</a></dt>
+<dd>
+<div class="block">Creates an Upgrades tab bound to the given main game screen.</div>
+</dd>
 <dt><a href="com/csse3200/game/components/player/InventoryComponent.html#useItem(java.lang.String)" class="member-name-link">useItem(String)</a> - Method in class com.csse3200.game.components.player.<a href="com/csse3200/game/components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a></dt>
 <dd>
 <div class="block">Uses one instance of <code>itemId</code>.</div>
@@ -4515,7 +4658,7 @@ the order they are declared.</div>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#width()" class="member-name-link">width()</a> - Method in record class com.csse3200.game.ui.<a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a></dt>
 <dd>
-<div class="block">Returns the value of the <code>width</code> record component.</div>
+<div class="block">Returns the value of the <a href="./com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#param-width"><code>width</code></a> record component.</div>
 </dd>
 <dt><a href="com/csse3200/game/files/FileLoader.html#writeClass(java.lang.Object,java.lang.String)" class="member-name-link">writeClass(Object, String)</a> - Static method in class com.csse3200.game.files.<a href="com/csse3200/game/files/FileLoader.html" title="class in com.csse3200.game.files">FileLoader</a></dt>
 <dd>
@@ -4530,14 +4673,14 @@ the order they are declared.</div>
 <dl class="index">
 <dt><a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#x()" class="member-name-link">x()</a> - Method in record class com.csse3200.game.ui.<a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a></dt>
 <dd>
-<div class="block">Returns the value of the <code>x</code> record component.</div>
+<div class="block">Returns the value of the <a href="./com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#param-x"><code>x</code></a> record component.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:Y">Y</h2>
 <dl class="index">
 <dt><a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#y()" class="member-name-link">y()</a> - Method in record class com.csse3200.game.ui.<a href="com/csse3200/game/ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a></dt>
 <dd>
-<div class="block">Returns the value of the <code>y</code> record component.</div>
+<div class="block">Returns the value of the <a href="./com/csse3200/game/ui/PixelPerfectPlacer.Rect.html#param-y"><code>y</code></a> record component.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:Z">Z</h2>
