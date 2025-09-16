@@ -82,7 +82,7 @@ public class PlayerStatsDisplay extends UIComponent {
 
     // Stamina bar
     StaminaComponent staminaComp = entity.getComponent(StaminaComponent.class);
-    staminaBar = new ProgressBar(-5f, (float) staminaComp.getMaxStamina(), 1f, false, skin);
+    staminaBar = new ProgressBar(0f, (float) staminaComp.getMaxStamina(), 1f, false, skin);
     staminaBar.setValue((float) staminaComp.getCurrentStamina());
 
     // Add actors to stamina table
@@ -134,8 +134,8 @@ public class PlayerStatsDisplay extends UIComponent {
    * Updates the player's stamina on the ui.
    * @param stamina the player's current stamina as an integer
    */
-  public void updatePlayerStaminaUI(float stamina) {
-    staminaBar.setValue(stamina);
+  public void updatePlayerStaminaUI(int stamina) {
+    staminaBar.setValue((float) stamina);
   }
 
   @Override
