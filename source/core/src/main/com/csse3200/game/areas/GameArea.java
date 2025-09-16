@@ -71,7 +71,7 @@ public abstract class GameArea implements Disposable {
 
   /**
    * Create the game area using components from a different player entity.
-   * @param oldPlayer
+   * @param oldPlayer the older player entity
    */
   public void createWithPlayer(Entity oldPlayer) {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
@@ -115,7 +115,7 @@ public abstract class GameArea implements Disposable {
     // the start of the level. Copies are used in order to not break the original components.
     player = spawnPlayer(getComponents());
 
-    // transfer all of the retained data
+    // transfer all the retained data
     player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
     loadEntities();
@@ -139,7 +139,7 @@ public abstract class GameArea implements Disposable {
 
   /**
    * Spawns player with previous components
-   * @param componentList
+   * @param componentList the list of components with witch to create the player
    * @return Player entity with old components
    */
   protected abstract Entity spawnPlayer(List<Component> componentList);
@@ -151,7 +151,7 @@ public abstract class GameArea implements Disposable {
 
 
   /**
-   * Get copies all of the player components we want to transfer in between resets/levels.
+   * Get copies all the player components we want to transfer in between resets/levels.
    * @return The list of all player components.
    */
   public List<Component> getComponents() {
@@ -162,7 +162,7 @@ public abstract class GameArea implements Disposable {
   }
 
   /**
-   * Save a copy of all of the components we want to store for resets/level switches.
+   * Save a copy of all the components we want to store for resets/level switches.
    * @param combatStats - CombatStatsComponent.
    * @param inventory - InventoryComponent.
    */
