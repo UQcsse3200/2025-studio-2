@@ -3,6 +3,7 @@ package com.csse3200.game.rendering;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
@@ -10,6 +11,8 @@ import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.Vector;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -134,5 +137,22 @@ class AnimationRenderComponentTest {
     }
     when(atlas.findRegions(animationName)).thenReturn(regions);
     return atlas;
+  }
+
+  @Test
+  void shouldFlipEntityHorizontally() {
+      TextureAtlas atlas = createMockAtlas("test_name", 1);
+      AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+
+      Entity mockEntity = mock(Entity.class);
+      animator.setEntity(mockEntity);
+      when(mockEntity.getScale()).thenReturn(new Vector2(2f, 3f));
+
+      animator.setFlipX(true);
+      verify(mockEntity).setScale(-2f, 3f);
+
+      when(mockEntity.getScale()).thenReturn(new Vector2(-2f, 3f));
+      animator.setFlipX(false);
+      verify(mockEntity).setScale(2f, 3f);
   }
 }
