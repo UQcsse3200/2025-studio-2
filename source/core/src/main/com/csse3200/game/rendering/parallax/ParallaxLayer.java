@@ -1,9 +1,8 @@
-package com.csse3200.game.rendering;
+package com.csse3200.game.rendering.parallax;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class ParallaxLayer {
     private Texture texture;

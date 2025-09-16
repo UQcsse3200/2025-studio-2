@@ -1,9 +1,10 @@
-package com.csse3200.game.rendering;
+package com.csse3200.game.rendering.parallax;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.rendering.RenderComponent;
+
 import java.util.ArrayList;
 import java.util.List;
 

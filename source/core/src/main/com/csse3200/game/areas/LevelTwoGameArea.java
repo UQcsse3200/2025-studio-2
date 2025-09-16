@@ -90,8 +90,8 @@ public class LevelTwoGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
-        spawnPlatforms();
-        spawnVolatilePlatform();
+        spawnParallaxBackground();
+        spawnFloorsAndPlatforms();
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
@@ -138,28 +138,115 @@ public class LevelTwoGameArea extends GameArea {
         wall5.setScale(2f,2f);
         spawnEntityAt(wall5, wall5Pos, false, false);
     }
-    private void spawnPlatforms(){
+    public void spawnDoor() {
+        Entity door = ObstacleFactory.createDoor("door", this);
+        door.setScale(1, 2);
+        door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
+        door.getComponent(DoorComponent.class).openDoor();
+        spawnEntityAt(door, new GridPoint2(98,45), true, true);
+    }
+    private void playMusic() {
+        Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+        music.setLooping(true);
+        music.setVolume(UserSettings.getMusicVolumeNormalized());
+        music.play();
+    }
+    protected Entity spawnPlayer() {
+        Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
+        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
+        return newPlayer;
+    }
+    protected Entity spawnPlayer(List<Component> componentList) {
+        Entity newPlayer = PlayerFactory.createPlayer(componentList);
+        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        newPlayer.getEvents().addListener("reset", this::reset);
+        return newPlayer;
+    }
+    private void displayUI() {
+        Entity ui = new Entity();
+        ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
+        ui.addComponent(new TooltipSystem.TooltipDisplay());
+        spawnEntity(ui);
+    }
+    private void spawnTerrain() {
+        // Need to decide how large each area is going to be
+        terrain = createLabTerrain();
+        spawnEntity(new Entity().addComponent(terrain));
+
+        // Terrain walls
+        float tileSize = terrain.getTileSize();
+        GridPoint2 tileBounds = terrain.getMapBounds(0);
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
+
+        // Left
+        spawnEntityAt(
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+        // Right
+        spawnEntityAt(
+                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+                new GridPoint2(tileBounds.x, 0),
+                false,
+                false);
+        // Top
+        spawnEntityAt(
+                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+                new GridPoint2(0, tileBounds.y - 4),
+                false,
+                false);
+        // Bottom
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+                new GridPoint2(0, 0), false, false);
+    }
+    private TerrainComponent createLabTerrain() {
+        final ResourceService resourceService = ServiceLocator.getResourceService();
+        // Use empty texture for invisible terrain grid
+        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
+
+        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
+        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
+    }
+
+    private void spawnParallaxBackground() {
+        return;
+    }
+
+    private void spawnFloorsAndPlatforms(){
+        spawnFloors();
+
+        spawnElevatedPlatforms();
+
+        spawnVolatilePlatform();
+
+    }
+
+    private void spawnFloors() {
         GridPoint2 groundPos1 = new GridPoint2(0, 0);
-        Entity ground1 = PlatformFactory.createStaticPlatform();
+        Entity ground1 = FloorFactory.createGroundFloor();
         ground1.setScale(5,2);
         spawnEntityAt(ground1, groundPos1, false, false);
 
         GridPoint2 groundPos2 = new GridPoint2(25, 0);
-        Entity ground2 = PlatformFactory.createStaticPlatform();
+        Entity ground2 = FloorFactory.createGroundFloor();
         ground2.setScale(37.5f,2f);
         spawnEntityAt(ground2, groundPos2, false, false);
 
         GridPoint2 middleGroundPos = new GridPoint2(0, 20);
-        Entity middleGround = PlatformFactory.createStaticPlatform();
+        Entity middleGround = FloorFactory.createStaticFloor();
         middleGround.setScale(42f,2);
         spawnEntityAt(middleGround, middleGroundPos, false, false);
 
         GridPoint2 topGroundPos = new GridPoint2(16, 40);
-        Entity topGround = PlatformFactory.createStaticPlatform();
+        Entity topGround = FloorFactory.createStaticFloor();
         topGround.setScale(42f,2);
         spawnEntityAt(topGround, topGroundPos, false, false);
 
-//        RIGHT GRAPPLE SECTION
+    }
+
+
+    private void spawnElevatedPlatforms() {
+        //        RIGHT GRAPPLE SECTION
         GridPoint2 step1Pos = new GridPoint2(93,6);
         Entity step1 = PlatformFactory.createStaticPlatform();
         step1.setScale(2,0.5f);
@@ -242,75 +329,7 @@ public class LevelTwoGameArea extends GameArea {
         top3.setScale(2,0.5f);
         spawnEntityAt(top3, top3Pos,false, false);
     }
-    public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this);
-        door.setScale(1, 2);
-        door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
-        door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(98,45), true, true);
-    }
-    private void playMusic() {
-        Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
-        music.setLooping(true);
-        music.setVolume(UserSettings.getMusicVolumeNormalized());
-        music.play();
-    }
-    protected Entity spawnPlayer() {
-        Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
-        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
-        newPlayer.getEvents().addListener("reset", this::reset);
-        return newPlayer;
-    }
-    protected Entity spawnPlayer(List<Component> componentList) {
-        Entity newPlayer = PlayerFactory.createPlayer(componentList);
-        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
-        newPlayer.getEvents().addListener("reset", this::reset);
-        return newPlayer;
-    }
-    private void displayUI() {
-        Entity ui = new Entity();
-        ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
-        ui.addComponent(new TooltipSystem.TooltipDisplay());
-        spawnEntity(ui);
-    }
-    private void spawnTerrain() {
-        // Need to decide how large each area is going to be
-        terrain = createLabTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
 
-        // Terrain walls
-        float tileSize = terrain.getTileSize();
-        GridPoint2 tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
-        // Right
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                new GridPoint2(tileBounds.x, 0),
-                false,
-                false);
-        // Top
-        spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y - 4),
-                false,
-                false);
-        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, 0), false, false);
-    }
-    private TerrainComponent createLabTerrain() {
-        final ResourceService resourceService = ServiceLocator.getResourceService();
-        // Use empty texture for invisible terrain grid
-        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-
-        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(68,31);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
