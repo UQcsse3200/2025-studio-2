@@ -24,7 +24,7 @@
   {
     "id": "potion:dash",
     "name": "Temporary speed upgrade",
-    "sprite": "images/ghost_3.png",
+    "sprite": "images/speed-potion.atlas",
     "description": "Unlocks the dash ability when used.",
     "autoConsume": true,
     "ttl": 0,
