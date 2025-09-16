@@ -12,6 +12,7 @@ import com.csse3200.game.components.player.InventoryComponent;
 import java.lang.reflect.Array;
 import java.security.Key;
 import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Input handler for the player for keyboard and touch (mouse) input.
@@ -36,13 +37,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private int cheatPosition = 0;
   private Boolean cheatsOn = false;
 
+  private HashMap<Integer, Boolean> pressedKeys = new HashMap<>();
+
   public KeyboardPlayerInputComponent() {
     super(5);
   }
-
-
-
-
 
   /**
    * Triggers player events on specific keycodes.
@@ -54,37 +53,28 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyDown(int keycode) {
     if (keycode == JUMP_KEY) {
       triggerJumpEvent();
-      return true;
     } else if (keycode == LEFT_KEY) {
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
-      return true;
     } else if (keycode == RIGHT_KEY) {
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
-      return true;
     } else if (keycode == INTERACT_KEY) {
       entity.getEvents().trigger("interact");
     } else if (keycode == ADRENALINE_KEY) {
       triggerAdrenalineEvent();
-        return true;
     } else if (keycode == DASH_KEY) {
         triggerDashEvent();
-        return true;
     } else if (keycode == CROUCH_KEY) {
       triggerCrouchEvent();
-      return true;
-      // debug
     } else if (keycode == RESET_KEY) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
-        return true;
     } else if (keycode == GLIDE_KEY) {
       triggerGlideEvent(true);
     }
     // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
     else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
       entity.getEvents().trigger("sprintStart");
-      return true;
     } else if (keycode == UP_KEY) {
       CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
       cheatPosition++;
@@ -107,8 +97,13 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == ENTER_CHEAT_KEY) {
       enableCheats();
     }
+    else {
+      return false;
+    }
 
-    return false;
+    // Mark key as pressed
+    pressedKeys.put(keycode, true);
+    return true;
   }
 
   /**
@@ -119,38 +114,44 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
-      if (keycode == LEFT_KEY) {
-        walkDirection.sub(Vector2Utils.LEFT);
-        triggerWalkEvent();
-        return true;
-      } else if (keycode == RIGHT_KEY) {
-        walkDirection.sub(Vector2Utils.RIGHT);
-        triggerWalkEvent();
-        return true;
-      } else if (keycode == UP_KEY) {
-        triggerJetpackOffEvent();
-        if (cheatsOn) {
-          walkDirection.sub(Vector2Utils.UP);
-          triggerWalkEvent();
-        }
-      } else if (keycode == DOWN_KEY) {
-        if (cheatsOn) {
-          walkDirection.sub(Vector2Utils.DOWN);
-          triggerWalkEvent();
-        }
-      } else if (keycode == com.badlogic.gdx.Input.Keys.TAB) {
-          // Stop sprinting when Tab is released
-          entity.getEvents().trigger("sprintStop");
-          return true;
-     } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
-              entity.getEvents().trigger("sprintStop");
-              return true;
-      } else if (keycode == GLIDE_KEY) {
+    // If the key hasn't been pressed but has somehow been released then it's a legacy input
+    // from an earlier KeyboardPlayerInputComponent
+    if ((pressedKeys.get(keycode) == null) || (!pressedKeys.get(keycode))) {
+      return false;
+    }
 
-        triggerGlideEvent(false);
+    if (keycode == LEFT_KEY) {
+      walkDirection.sub(Vector2Utils.LEFT);
+      triggerWalkEvent();
+    } else if (keycode == RIGHT_KEY) {
+      walkDirection.sub(Vector2Utils.RIGHT);
+      triggerWalkEvent();
+    } else if (keycode == UP_KEY) {
+      triggerJetpackOffEvent();
+      if (cheatsOn) {
+        walkDirection.sub(Vector2Utils.UP);
+        triggerWalkEvent();
       }
+    } else if (keycode == DOWN_KEY) {
+      if (cheatsOn) {
+        walkDirection.sub(Vector2Utils.DOWN);
+        triggerWalkEvent();
+      }
+    } else if (keycode == com.badlogic.gdx.Input.Keys.TAB) {
+      // Stop sprinting when Tab is released
+      entity.getEvents().trigger("sprintStop");
+    } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
+      entity.getEvents().trigger("sprintStop");
+    } else if (keycode == GLIDE_KEY) {
+      triggerGlideEvent(false);
+    }
+    else {
+      return false;
+    }
 
-    return false;
+    // Mark key as released
+    pressedKeys.put(keycode, false);
+    return true;
   }
 
   private void triggerWalkEvent() {
@@ -159,24 +160,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else {
       entity.getEvents().trigger("walk", walkDirection);
     }
-  }
-
-  /**
-   * Return current walk direction.
-   * (Only current use is for transfers between resets.)
-   * @return walkDirection
-   */
-  public Vector2 getWalkDirection() {
-    return walkDirection;
-  }
-  /**
-   * Set current walk direction.
-   * (Only current use is for transfers between resets.)
-   * @param walkDirection - walkDirection to set.
-   */
-
-  public void setWalkDirection(Vector2 walkDirection) {
-    this.walkDirection.set(walkDirection);
   }
 
   /**

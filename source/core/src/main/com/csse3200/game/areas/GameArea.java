@@ -84,35 +84,25 @@ public abstract class GameArea implements Disposable {
     saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
             oldPlayer.getComponent(InventoryComponent.class));
 
-    // Get walk direction
-
-    Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
     // player must be spawned before enemies as they require a player to target
     player = spawnPlayer(getComponents());
-    //player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
     // load remaining entities
     loadEntities();
   }
 
   protected void reset() {
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
 
-    loadAssets(); // As much as I tried to avoid it, here it is
+    loadAssets(); // As we also dispose of animation components we have to reload assets
     loadPrerequisites();
 
     // Components such as health, upgrades and items we want to revert to how they were at
-    // the start of the level. Copies are used in order to not break the original components.
+    // the start of the level. Copies are used in order to not lose the original components when
+    // the original player is disposed.
     player = spawnPlayer(getComponents());
-
-    // transfer all of the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
     loadEntities();
   }
@@ -153,7 +143,7 @@ public abstract class GameArea implements Disposable {
   /** Dispose of all internal entities in the area */
   public void dispose() {
     for (Entity entity : areaEntities) {
-      // entity.dispose() does not delete the entity object itself.
+      // entity.dispose() does not remove the entity from the list of entities this area contains.
       entity.dispose();
     }
 
