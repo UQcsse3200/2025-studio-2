@@ -101,6 +101,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         spawnLights();
         spawnPatrollingDrone();
+        spawnSelfDestructDrone();
     }
 
     private void spawnDeathZone() {
@@ -275,6 +276,13 @@ public class LevelOneGameArea extends GameArea {
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
                 .addComponent(new ActivationComponent("1"));
         spawnEntityAt(patrolDrone, spawnTile, true, true);
+    }
+
+    private void spawnSelfDestructDrone(){
+        GridPoint2 spawnTile =new GridPoint2(13,15);
+        Vector2 spawnPos= terrain.tileToWorldPosition(spawnTile);
+        Entity selfDrone =EnemyFactory.createSelfDestructionDrone(getPlayer(),spawnPos);
+        spawnEntityAt( selfDrone, spawnTile, false, true);
     }
     private void displayUI() {
         Entity ui = new Entity();
