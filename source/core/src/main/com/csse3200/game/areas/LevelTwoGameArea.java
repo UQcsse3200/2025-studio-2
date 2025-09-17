@@ -340,10 +340,10 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(ButtonPlat4, buttonPlat4Pos,false, false);
     }
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this);
+        Entity door = ObstacleFactory.createDoor("key:door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
-        door.getComponent(DoorComponent.class).openDoor();
+        //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(98,45), true, true);
     }
 
@@ -361,26 +361,10 @@ public class LevelTwoGameArea extends GameArea {
     private void spawnTraps() {
         Vector2 safeSpotStart = new Vector2(41, 12);
 
-        Entity spikesUp = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp, new GridPoint2(77,24), true,  true);
-        Entity spikesUp3 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp3, new GridPoint2(59,24), true,  true);
-        Entity spikesUp4 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp4, new GridPoint2(61,24), true,  true);
-        Entity spikesUp5 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp5, new GridPoint2(63,24), true,  true);
-        Entity spikesUp6 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp6, new GridPoint2(65,24), true,  true);
-        Entity spikesUp7 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp7, new GridPoint2(67,24), true,  true);
-        Entity spikesUp8 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp8, new GridPoint2(69,24), true,  true);
-        Entity spikesUp9 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp9, new GridPoint2(71,24), true,  true);
-        Entity spikesUp10 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp10, new GridPoint2(73,24), true,  true);
-        Entity spikesUp11 = TrapFactory.createSpikes(safeSpotStart, 0f);
-        spawnEntityAt(spikesUp11, new GridPoint2(75,24), true,  true);
+        for(int i=59; i<=77; i++) {
+            Entity spikesUp = TrapFactory.createSpikes(safeSpotStart, 0f);
+            spawnEntityAt(spikesUp, new GridPoint2(i,24), true,  true);
+        }
     }
 
     private void spawnButtons() {

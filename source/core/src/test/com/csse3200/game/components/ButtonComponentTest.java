@@ -200,7 +200,7 @@ public class ButtonComponentTest {
     }
 
     @Test
-    void toggleButton_doesNotStartTimer_whenPuzzleIncomplete() {
+    void toggleButton_doesNotImmmediatelyUnpress_whenPuzzleIncomplete() {
         ButtonManagerComponent mockManager = mock(ButtonManagerComponent.class);
         when(mockManager.isPuzzleCompleted()).thenReturn(false);
         buttonComponent.setPuzzleManager(mockManager);
