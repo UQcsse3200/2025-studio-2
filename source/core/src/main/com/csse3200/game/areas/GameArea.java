@@ -10,6 +10,7 @@ import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.MinimapService;
@@ -17,6 +18,8 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.events.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.List;
  * <p>Support for enabling/disabling game areas could be added by making this a Component instead.
  */
 public abstract class GameArea implements Disposable {
+  private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
 
@@ -102,18 +106,33 @@ public abstract class GameArea implements Disposable {
    * Resets the game area
    */
   public void reset() {
+    final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
+
+    //System.out.println(ServiceLocator.getEntityService().get_entities());
 
     loadAssets(); // As much as I tried to avoid it, here it is
     loadPrerequisites();
 
     // Components such as health, upgrades and items we want to revert to how they were at
     // the start of the level. Copies are used in order to not break the original components.
+    KeyboardPlayerInputComponent component = player.getComponent(KeyboardPlayerInputComponent.class);
+    player.removeComponent(component);
+    component.dispose();
+
     player = spawnPlayer(getComponents());
 
     loadEntities();
+
+    final int newEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    if (oldEntityCount != newEntityCount) {
+      logger.error(
+          "only {} entities should exist but {} entities exist now, {} Entities Leaked!!!",
+          oldEntityCount, newEntityCount, newEntityCount - oldEntityCount
+      );
+    }
   }
 
   /**
