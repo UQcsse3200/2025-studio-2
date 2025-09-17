@@ -94,10 +94,27 @@ public class InventoryComponent extends Component {
     public void addItems(Bag bag, String itemId, int amount) {
         if (bag == null)    throw new NullPointerException("bag");
         if (itemId == null) throw new NullPointerException("itemId");
-        if (amount < 0)     throw new IllegalArgumentException("Amount cannot be negative");
+        if (amount <= 0)     throw new IllegalArgumentException("Amount cannot be negative");
 
         Map<String, Integer> map = mapFor(bag);
-        map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+
+        // CollectableService should only run on inventory items, not upgrades or objectives
+        if (bag == Bag.INVENTORY) {
+            var cfg = CollectableService.get(itemId);
+            if (cfg == null) return;
+
+            if (cfg.autoConsume) {
+                for (int i = 0; i < amount; i++) {
+                    applyEffects(cfg);
+                }
+            } else {
+                map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+            }
+        }
+        else {
+            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+        }
+
     }
 
     /**
@@ -175,11 +192,6 @@ public class InventoryComponent extends Component {
      * @throws NullPointerException if bag or itemId is null
      */
     public boolean useItem(Bag bag, String itemId) {
-        if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
-            applyEffects(CollectableService.get(itemId));
-            inventory.put(itemId, inventory.get(itemId) - 1);
-        }
-
         return useItems(bag, itemId, 1) > 0;
     }
 
@@ -213,24 +225,23 @@ public class InventoryComponent extends Component {
 
         int used = Math.min(have, amount);
         int remaining = have - used;
-        if (remaining > 0) map.put(itemId, remaining);
-        else               map.remove(itemId);
-        // return used;
+        if (remaining >= 0) {
+            var cfg = CollectableService.get(itemId);
+            if (cfg == null) return 0; // shit's fucked
 
-        var cfg = CollectableService.get(itemId);
-        if (cfg == null || amount <= 0) {} //return 0;
-
-
-        if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
-            int numToUse = Math.min(amount, inventory.get(itemId));
-            for (int i = 0; i < numToUse; i++) {
-                applyEffects(cfg);
-                inventory.put(itemId, inventory.get(itemId) - 1);
-
+            if (map.get(itemId) != null && map.get(itemId) > 0) {
+                for (int i = 0; i < used; i++) {
+                    applyEffects(cfg);
+                }
             }
+
+            map.put(itemId, remaining);
+        }
+        else {
+            map.remove(itemId);
         }
 
-        return 0;
+        return used;
     }
 
     // Bag helpers
