@@ -86,7 +86,8 @@ public class LevelTwoGameArea extends GameArea {
             "sounds/chimesound.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
-            "images/volatile_platform.atlas"
+            "images/volatile_platform.atlas",
+            "images/doors.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;

@@ -96,7 +96,8 @@ public class LevelOneGameArea extends GameArea {
             "images/PLAYER.atlas",
             "images/drone.atlas",
             "images/volatile_platform.atlas",
-            "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+            "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+            "images/doors.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
