@@ -92,8 +92,10 @@ public class DoorComponent extends Component {
                 col.setSensor(true);
             }
 
-            // Door is fully open -> trigger transition
-            this.area.trigger("doorEntered");
+            if (area != null) {
+                // Door is fully open -> trigger transition
+                this.area.trigger("doorEntered");
+            }
         }
     }
 

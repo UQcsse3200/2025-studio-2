@@ -9,6 +9,11 @@ import com.csse3200.game.entities.factories.CollectableFactory;
 import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactoryTest;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.PhysicsService;
@@ -78,7 +83,15 @@ class DoorComponentTest {
     }
 
     private Entity makeDoor(String keyId, String levelId) {
-        Entity door = ObstacleFactory.createDoor(keyId, game);
+        // Create minimal door for testing - no animations needed
+        Entity door = new Entity();
+        door.addComponent(new DoorComponent(keyId, game));
+
+        // Add physics components that the door component expects
+        door.addComponent(new PhysicsComponent());
+        door.addComponent(new ColliderComponent());
+        door.addComponent(new HitboxComponent().setLayer(PhysicsLayer.OBSTACLE));
+
         door.create();
         return door;
     }
