@@ -265,11 +265,10 @@ public class MainGameScreen extends ScreenAdapter {
   public void dispose() {
     logger.debug("Disposing main game screen");
 
-    renderer.dispose();
-    lightingEngine.dispose();
-    unloadAssets();
-
     ServiceLocator.getEntityService().dispose();
+    lightingEngine.dispose();
+    renderer.dispose();
+    unloadAssets();
     ServiceLocator.getRenderService().dispose();
     ServiceLocator.getResourceService().dispose();
 
