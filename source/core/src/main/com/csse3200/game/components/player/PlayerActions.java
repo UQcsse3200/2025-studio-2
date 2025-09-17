@@ -81,7 +81,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-    entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
+    entity.getEvents().addListener("gravityForPlayerOff", this::gravityOff);
+    entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
     entity.getEvents().addListener("grapple", this::grapple);
@@ -151,20 +152,21 @@ public class PlayerActions extends Component {
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
-
 //    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+    //Allows for up/down movement if the player is on a ladder
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
+      entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
     } else {
+      //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
+      entity.getEvents().trigger("gravityForPlayerOn");
       impulseY = 0f;
     }
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-
-
 
     /**
     Vector2 impulse =
@@ -397,11 +399,19 @@ public class PlayerActions extends Component {
    */
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
-
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       body.setGravityScale(0f);
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  private void gravityOff() {
+    Body body = physicsComponent.getBody();
+    body.setGravityScale(0f);
+  }
+  private void gravityOn() {
+      Body body = physicsComponent.getBody();
+      body.setGravityScale(1f);
   }
 }

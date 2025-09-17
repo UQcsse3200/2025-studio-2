@@ -20,6 +20,7 @@ import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.rendering.ParallaxBackgroundComponent;
@@ -77,6 +78,8 @@ public class LevelOneGameArea extends GameArea {
             "images/camera-lens.png",
             "images/wall.png",
             "images/dash_powerup.png",
+            "images/ladder.png",
+            "images/ladder-base.png",
             "images/cavelevel/cavebackground.png",
             "images/cavelevel/tile000.png",
             "images/cavelevel/tile001.png",
@@ -122,6 +125,8 @@ public class LevelOneGameArea extends GameArea {
     }
     protected void loadEntities() {
         keySpawned = false;
+        spawnPlatforms();
+        spawnLadder();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
@@ -140,7 +145,7 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(12,0);
+        GridPoint2 spawnPos =  new GridPoint2(12,-10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
 
@@ -156,6 +161,41 @@ public class LevelOneGameArea extends GameArea {
         rightWall.setScale(2.5f,7.5f);
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
+
+    private void spawnLadder() {
+        //builds ladder up 1 segment at a time to the specified height starting at the given x/y position
+        int x = 52;
+        int y = 4;
+        int height = 18;
+        for (int i = 0; i < height; i++) {
+            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            Entity ladder = LadderFactory.createStaticLadder();
+            ladder.setScale(1f, 1);
+            spawnEntityAt(ladder, ladderPos, false, false);
+        }
+
+        GridPoint2 basePos = new GridPoint2(59, 35);
+        Entity base = LadderFactory.createLadderBase();
+        base.setScale(1f, 1);
+        spawnEntityAt(base, basePos, false, false);
+
+        x = 59;
+        y = 36;
+        height = 16;
+        for (int i = 0; i < height; i++) {
+            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            Entity ladder = LadderFactory.createStaticLadder();
+            ladder.setScale(1f, 1);
+            spawnEntityAt(ladder, ladderPos, false, false);
+        }
+    }
+
+    //private void spawnPlatforms() {
+    //    GridPoint2 groundPos1 = new GridPoint2(0, 0);
+    //    Entity ground1 = PlatformFactory.createStaticPlatform();
+    //    ground1.setScale(5, 2);
+    //    spawnEntityAt(ground1, groundPos1, false, false);
+    //}
 
     private void spawnFloorsAndPlatforms(){
         spawnGroundFloors();
@@ -209,16 +249,16 @@ public class LevelOneGameArea extends GameArea {
         step3.setScale(1.8f,0.5f);
         spawnEntityAt(step3, step3Pos,false, false);
 
-        // THESE TWO TO BE REPLACED WITH LADDERS
-        GridPoint2 step4Pos = new GridPoint2(48,6);
+//        THESE TWO TO BE REPLACED WITH LADDERS
+        GridPoint2 step4Pos = new GridPoint2(52,23);
         Entity step4 = PlatformFactory.createStaticPlatform();
         step4.setScale(1.8f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
 
-        GridPoint2 step6Pos = new GridPoint2(42,12);
-        Entity step6 = PlatformFactory.createStaticPlatform();
-        step6.setScale(1.8f,0.5f);
-        spawnEntityAt(step6, step6Pos,false, false);
+        //GridPoint2 step6Pos = new GridPoint2(42,12);
+        //Entity step6 = PlatformFactory.createStaticPlatform();
+        //step6.setScale(1.8f,0.5f);
+        //spawnEntityAt(step6, step6Pos,false, false);
 //      ^
 
         GridPoint2 step7Pos = new GridPoint2(45,18);
@@ -233,7 +273,7 @@ public class LevelOneGameArea extends GameArea {
        // spawnEntityAt(step8, step8Pos,false, false);
 
         // MOVING PLATFORM WITH BUTTONS
-        GridPoint2 buttonPlatformPos = new GridPoint2(53, 18);
+        GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
         Vector2 offsetWorldButton = new Vector2(9f, 0f);
         float speedButton = 2f;
 
@@ -248,7 +288,7 @@ public class LevelOneGameArea extends GameArea {
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonStartPos = new GridPoint2(50, 25);
+        GridPoint2 buttonStartPos = new GridPoint2(57, 25);
         spawnEntityAt(buttonStart, buttonStartPos, true, true);
         logger.info("Platform button spawned at {}", buttonStartPos);
 
@@ -268,7 +308,7 @@ public class LevelOneGameArea extends GameArea {
                 "Platform Button \nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonEndPos = new GridPoint2(72, 25);
+        GridPoint2 buttonEndPos = new GridPoint2(74, 25);
         spawnEntityAt(buttonEnd, buttonEndPos, true, true);
         logger.info("Platform button spawned at {}", buttonEndPos);
 
@@ -305,13 +345,13 @@ public class LevelOneGameArea extends GameArea {
         step9.setScale(4f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
-        // THESE TWO TO BE REPLACED WITH LADDERS
-        GridPoint2 step10Pos = new GridPoint2(63,38);
-        Entity step10 = PlatformFactory.createStaticPlatform();
-        step10.setScale(1.8f,0.5f);
-        spawnEntityAt(step10, step10Pos,false, false);
+//        THESE TWO TO BE REPLACED WITH LADDERS
+        //GridPoint2 step10Pos = new GridPoint2(63,38);
+        //Entity step10 = PlatformFactory.createStaticPlatform();
+        //step10.setScale(1.8f,0.5f);
+        //spawnEntityAt(step10, step10Pos,false, false);
 
-        GridPoint2 step11Pos = new GridPoint2(58,43);
+        GridPoint2 step11Pos = new GridPoint2(58,53);
         Entity step11 = PlatformFactory.createStaticPlatform();
         step11.setScale(1.8f,0.5f);
         spawnEntityAt(step11, step11Pos,false, false);
@@ -497,9 +537,9 @@ public class LevelOneGameArea extends GameArea {
                 new GridPoint2(0, tileBounds.y - 4),
                 false,
                 false);
-        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, 0), false, false);
+//        // Bottom
+//        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+//                new GridPoint2(0, 0), false, false);
     }
 
     private void spawnParallaxBackground() {
@@ -597,7 +637,7 @@ public class LevelOneGameArea extends GameArea {
         Vector2 safeSpotCamera = new Vector2(24, 10);
 
         Entity spikesUp = TrapFactory.createSpikes(safeSpotCamera, 0f);
-        spawnEntityAt(spikesUp, new GridPoint2(54,19), true,  true);
+        spawnEntityAt(spikesUp, new GridPoint2(60,19), true,  true);
 
         Entity spikesRight = TrapFactory.createSpikes(safeSpotCamera, 270f);
         spawnEntityAt(spikesRight, new GridPoint2(32,34), true,  true);
