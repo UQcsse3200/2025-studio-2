@@ -378,8 +378,13 @@ public class ForestGameArea extends GameArea {
 
     private void spawnBoxOnlyPlate() {
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-        // You approved this position
         spawnEntityAt(plate, new GridPoint2(16, 17), true, true);
+
+        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed) {
+                showTooltip(plate, "Door unlocked", 2f);
+            }
+        });
     }
 
   private void spawnElevatorPlatform() {
@@ -464,6 +469,19 @@ public class ForestGameArea extends GameArea {
         spawnEntityAt(plate, platePos, true, true);
     }
 
+    private void showTooltip(Entity entity, String msg, float seconds) {
+        TooltipSystem.TooltipComponent tip =
+                new TooltipSystem.TooltipComponent(msg, TooltipSystem.TooltipStyle.SUCCESS);
+        entity.addComponent(tip);
+        Timer.schedule(new Timer.Task() {
+            @Override public void run() {
+                TooltipSystem.TooltipComponent existing = entity.getComponent(TooltipSystem.TooltipComponent.class);
+                if (existing != null) entity.removeComponent(existing);
+            }
+        }, seconds);
+    }
+
+
   private void spawnPressurePlates() {
     Entity plate = PressurePlateFactory.createPressurePlate();
     PressurePlateComponent comp = plate.getComponent(PressurePlateComponent.class);
@@ -475,6 +493,7 @@ public class ForestGameArea extends GameArea {
       if (pressed) {
         if (doorCloseTask != null) { doorCloseTask.cancel(); doorCloseTask = null; }
         door.getEvents().trigger("openDoor");
+        showTooltip(plate, "Door unlocked", 2f);
       } else {
         doorCloseTask = new Timer.Task() {
           @Override public void run() { door.getEvents().trigger("closeDoor"); doorCloseTask = null; }
