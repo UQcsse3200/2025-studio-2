@@ -21,28 +21,25 @@ import java.util.Map;
 /**
  * Objectives tab UI.
  *
- * <p>Shows each collected objective as a full-width banner image stacked vertically.
- * No grid is used. Each objective instance occupies one row.</p>
+ * Shows each collected objective as a full-width banner image stacked vertically.
+ * No grid is used. Each objective instance occupies one row.
  *
- * <p>Layout (pixel-accurate on the background art):
- * <ul>
- *   <li>Background: inventory-screen/objectives-selected.png</li>
- *   <li>First banner top-left: (x=46, y=252)</li>
- *   <li>Banner height: 74 px</li>
- *   <li>Vertical gap: 12 px</li>
- *   <li>Close hotspot: (971, 16, 39, 39) — same hit area as Inventory</li>
- *   <li>Tab hotspots (invisible): Inventory & Upgrades are clickable, Settings untouched</li>
- * </ul>
- * </p>
+ * Layout (pixel-accurate on the background art):
+ *   Background: inventory-screen/objectives-selected.png
+ *   First banner top-left: (x=46, y=252)
+ *   Banner height: 74 px
+ *   Vertical gap: 12 px
+ *   Close hotspot: (971, 16, 39, 39) — same hit area as Inventory
+ *   Tab hotspots (invisible): Inventory and Upgrades are clickable, Settings untouched
  *
- * <p>Objective id mapping (OBJECTIVES bag -> PNG):
+ *
+ * Objective id mapping (OBJECTIVES bag -> PNG):
  * dash -> inventory-screen/objectives/dash.png
  * door -> inventory-screen/objectives/findDoor.png
  * glider -> inventory-screen/objectives/glider.png
  * jetpack -> inventory-screen/objectives/jetpack.png
  * keycard -> inventory-screen/objectives/keycard.png
- * tutorial -> inventory-screen/objectives/Try dash n croach.png
- * </p>
+ * tutorial -> inventory-screen/objectives/crouch.png
  */
 public class ObjectivesTab implements InventoryTabInterface {
 
@@ -60,10 +57,13 @@ public class ObjectivesTab implements InventoryTabInterface {
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
 
   // Objective list placement (top-left origin on the background)
-  private static final int START_X = 46;
-  private static final int START_Y = 252; // top-left of first banner
+  private static final int START_X = 4;
+  private static final int START_Y = 260; // top-left of first banner
   private static final int ROW_H = 74; // each banner is 74 px high
   private static final int V_GAP = 12; // 12 px vertical spacing between banners
+
+  private static final float OBJ_SCALE = 1.5f; // 50% bigger
+  private static final float DOWN_SHIFT = 1.5f; // shift list down by +50% of original Y
 
   // Objective banner textures by id
   private final Map<String, Texture> objectiveTex = new HashMap<>();
@@ -73,12 +73,12 @@ public class ObjectivesTab implements InventoryTabInterface {
     this.player = player;
 
     // Load per-objective banner textures
-    objectiveTex.put("dash",     new Texture(Gdx.files.internal("images/objectives/dash.png")));
-    objectiveTex.put("door",     new Texture(Gdx.files.internal("images/objectives/findDoor.png")));
-    objectiveTex.put("glider",   new Texture(Gdx.files.internal("images/objectives/glider.png")));
-    objectiveTex.put("jetpack",  new Texture(Gdx.files.internal("images/objectives/jetpack.png")));
-    objectiveTex.put("keycard",  new Texture(Gdx.files.internal("images/objectives/keycard.png")));
-    objectiveTex.put("tutorial", new Texture(Gdx.files.internal("images/objectives/try-dash-n-crouch.png")));
+    objectiveTex.put("dash", new Texture(Gdx.files.internal("images/objectives/dash.png")));
+    objectiveTex.put("door", new Texture(Gdx.files.internal("images/objectives/findDoor.png")));
+    objectiveTex.put("glider", new Texture(Gdx.files.internal("images/objectives/glider.png")));
+    objectiveTex.put("jetpack", new Texture(Gdx.files.internal("images/objectives/jetpack.png")));
+    objectiveTex.put("keycard", new Texture(Gdx.files.internal("images/objectives/keycard.png")));
+    objectiveTex.put("tutorial", new Texture(Gdx.files.internal("images/objectives/crouch.png")));
   }
 
   /**
@@ -125,37 +125,37 @@ public class ObjectivesTab implements InventoryTabInterface {
   /**
    * Reads OBJECTIVES bag and places one banner per item, stacked top-to-bottom.
    * If an id has no matching texture, it is skipped (no labels are created).
+   *
+   * @param placer the PixelPerfectPlacer instance that places the overlays to the tab background
    */
   private void layoutObjectives(PixelPerfectPlacer placer) {
     InventoryComponent inv = player.getComponent(InventoryComponent.class);
     Map<String, Integer> bag = (inv != null) ? inv.getObjectives() : java.util.Collections.emptyMap();
 
-    // Flatten multiset into list of instance ids
-    java.util.List<String> instances = new java.util.ArrayList<>();
+    // Flatten multiset
+    java.util.List<String> instances = new ArrayList<>();
     for (Map.Entry<String, Integer> e : bag.entrySet()) {
       String id = e.getKey();
-      int count = Math.max(0, e.getValue());
-      for (int i = 0; i < count; i++) {
-        instances.add(id);
-      }
+      for (int i = 0, cnt = Math.max(0, e.getValue()); i < cnt; i++) instances.add(id);
     }
 
-    // Place each banner at below the other
+    // Scaled geometry
+    final int rowH = Math.round(ROW_H * OBJ_SCALE);
+    final int gap  = Math.round(V_GAP * OBJ_SCALE);
+    final int x = START_X;
+    final int y0 = START_Y;
+
     for (int i = 0; i < instances.size(); i++) {
       String id = instances.get(i);
       Texture tex = objectiveTex.get(id);
-      if (tex == null) {
-        Gdx.app.log("ObjectivesTab", "No banner for objective id='" + id + "'. Skipping.");
-        continue;
-      }
-      int x = START_X;
-      int y = START_Y + i * (ROW_H + V_GAP);
-      int w = tex.getWidth();  // use the PNG's native width so art aligns
-      int h = ROW_H;           // height fixed at 74 px
+      if (tex == null) { Gdx.app.log("ObjectivesTab","No banner for '"+id+"'"); continue; }
+
+      int y = y0 + i * (rowH + gap);
+      int w = Math.round(tex.getWidth() * OBJ_SCALE); // widen by 1.5×
+      int h = rowH;
 
       Image img = new Image(tex);
-      // Let PixelPerfectPlacer handle the exact on-canvas sizing
-      placer.addOverlay(img, new Rect(x, y, w, h));
+      placer.addOverlay(img, new Rect(x, y, w, h)); // PixelPerfectPlacer will scale/position
     }
   }
 
@@ -163,8 +163,8 @@ public class ObjectivesTab implements InventoryTabInterface {
    * Adds an invisible, pixel-accurate clickable hotspot that switches tabs.
    *
    * @param placer PixelPerfectPlacer anchoring overlays to the background
-   * @param rect   background-space rectangle (top-left origin)
-   * @param tab    target pause-menu tab
+   * @param rect background-space rectangle (top-left origin)
+   * @param tab target pause-menu tab
    */
   private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab tab) {
     Button b = new Button(new Button.ButtonStyle());
@@ -177,7 +177,7 @@ public class ObjectivesTab implements InventoryTabInterface {
   }
 
   /**
-   * Dispose all textures owned by this tab.
+   * Dispose all textures owned by this tab
    */
   public void dispose() {
     bgTex.dispose();

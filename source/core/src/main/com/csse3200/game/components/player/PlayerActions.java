@@ -117,9 +117,13 @@ public class PlayerActions extends Component {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
     }
 
-    // Check if the player's health is currently 0, in which case, reset level
+    // Check if the player's health is currently 0, in which case, death screen will handle reset
+    // (Death screen is triggered by the "playerDied" event from CombatStatsComponent)
     if (combatStatsComponent.isDead()) {
-      entity.requestReset();
+      // Stop player movement when dead
+      moving = false;
+      entity.getEvents().trigger("death");
+      // Death screen component will handle the reset when user chooses to restart
     }
 
 //    Gdx.app.log("Inventory", Integer.toString(
@@ -356,6 +360,16 @@ public class PlayerActions extends Component {
     updateSpeed();
   }
 
+  /**
+   * @param moving weather the entity position will be updated or not
+   */
+  public void setMoving(boolean moving) {
+    this.moving = moving;
+  }
+
+  /**
+   * @return returns weather the entity is allowed to move
+   */
   public boolean isMoving() {
     return moving;
   }

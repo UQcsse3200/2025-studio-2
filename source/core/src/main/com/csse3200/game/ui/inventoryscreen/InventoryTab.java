@@ -47,7 +47,6 @@ public class InventoryTab implements InventoryTabInterface {
   private static final int TAB_Y = 130;
   private static final int TAB_H = 72;
 
-  private static final Rect TAB_INVENTORY = new Rect(32,  TAB_Y, 284, TAB_H);
   private static final Rect TAB_UPGRADES  = new Rect(319, TAB_Y, 300, TAB_H);
   private static final Rect TAB_OBJECTIVE = new Rect(623, TAB_Y, 258, TAB_H);
 
@@ -368,8 +367,8 @@ public class InventoryTab implements InventoryTabInterface {
    * On click, calls screen.togglePauseMenu(targetTab) to switch tabs without
    * changing the current paused state
    *
-   * @param placer    the PixelPerfectPlacer instance that places the overlays to the tab background
-   * @param rect      the hotspot rectangle in background image pixels (top-left origin; width/height in pixels)
+   * @param placer the PixelPerfectPlacer instance that places the overlays to the tab background
+   * @param rect the hotspot rectangle in background image pixels (top-left origin; width/height in pixels)
    * @param targetTab the pause-menu tab to show when the hotspot is clicked
    */
   private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab targetTab) {
