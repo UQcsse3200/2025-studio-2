@@ -360,6 +360,16 @@ public class PlayerActions extends Component {
     updateSpeed();
   }
 
+  /**
+   * @param moving weather the entity position will be updated or not
+   */
+  public void setMoving(boolean moving) {
+    this.moving = moving;
+  }
+
+  /**
+   * @return returns weather the entity is allowed to move
+   */
   public boolean isMoving() {
     return moving;
   }

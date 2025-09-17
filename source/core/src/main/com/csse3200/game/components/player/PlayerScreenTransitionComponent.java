@@ -59,6 +59,7 @@ public class PlayerScreenTransitionComponent extends Component {
     totalDuration = duration;
     this.onComplete = onComplete;
     entity.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
+    entity.getComponent(PlayerActions.class).setMoving(false);
   }
 
   @Override
@@ -95,6 +96,7 @@ public class PlayerScreenTransitionComponent extends Component {
   private void stopEffect() {
     vfxManager.removeEffect(effect);
     entity.getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
+    entity.getComponent(PlayerActions.class).setMoving(true);
   }
 
   @Override
