@@ -229,7 +229,7 @@ public class EnemyFactory {
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(0.9f);
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
 
         //Explicitly ensure DynamicBody only if not already set by createBaseEnemy
         PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
