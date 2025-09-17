@@ -55,8 +55,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
     if (!enabled) return false;
-    System.out.println("KeyboardPlayerInputComponent.keyDown(" + keycode + ")");
-    System.out.println("Entity: " + entity);
 
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
