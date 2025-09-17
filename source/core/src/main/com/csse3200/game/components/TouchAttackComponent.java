@@ -85,5 +85,9 @@ public class TouchAttackComponent extends Component {
       Vector2 impulse = direction.setLength(knockbackForce);
       targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
     }
+    // Direction from target -> attacker so UI can point at the source
+    Vector2 toAttacker = entity.getCenterPosition().sub(target.getCenterPosition()).nor();
+    target.getEvents().trigger("damageDirection", toAttacker);
   }
+
 }
