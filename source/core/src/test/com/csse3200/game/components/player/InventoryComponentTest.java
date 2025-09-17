@@ -1,22 +1,46 @@
 package com.csse3200.game.components.player;
 
+import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.services.CollectableService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(GameExtension.class)
 class InventoryComponentTest {
 
     private InventoryComponent inv;
 
+    private MockedStatic<CollectableService> svcMock;
+
+    private static CollectablesConfig cfg(String id) {
+        var c = new CollectablesConfig();
+        c.id = id;
+        c.sprite = "";
+        c.effects = List.of();
+        return c;
+    }
+
     @BeforeEach
     void setUp() {
         inv = new InventoryComponent();
+        svcMock = Mockito.mockStatic(CollectableService.class);
+        svcMock.when(() -> CollectableService.get(anyString()))
+                .thenAnswer(invocation -> cfg(invocation.getArgument(0)));
+    }
+    @AfterEach
+    void tearDown() {
+        if (svcMock != null) svcMock.close();
     }
 
     void addItemsBulk() {
@@ -24,7 +48,6 @@ class InventoryComponentTest {
         inv.addItems("purple-key", 3);
         inv.addItems("blue-key", 2);
         inv.addItems("red-key", 8);
-        inv.addItems("orange-key", 0);
     }
 
     @Nested
@@ -77,7 +100,7 @@ class InventoryComponentTest {
 
         @Test
         void addZeroItems() {
-            inv.addItems("pink-key", 0);
+            assertThrows(IllegalArgumentException.class, () -> inv.addItems("pink-key", 0));
             assertEquals(0, inv.getItemCount("pink-key"));
             assertFalse(inv.hasItem("pink-key"));
         }

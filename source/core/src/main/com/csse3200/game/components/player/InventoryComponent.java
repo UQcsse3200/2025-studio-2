@@ -1,6 +1,9 @@
 package com.csse3200.game.components.player;
 
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
+import com.csse3200.game.entities.configs.CollectablesConfig;
+import com.csse3200.game.services.CollectableService;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -148,6 +151,12 @@ public class InventoryComponent extends Component {
 
     /**
      * Clears all items from the specified bag.
+     * Uses one instance of {@code itemId}.
+     * <p>
+     * Decrements inventory item count by 1 if the item is present
+     * in the inventory and the number of items is &gt; 0. Also
+     * applies its effects.s
+     * </p>
      *
      * @param bag which bag to clear
      * @throws NullPointerException if bag is null
@@ -166,11 +175,25 @@ public class InventoryComponent extends Component {
      * @throws NullPointerException if bag or itemId is null
      */
     public boolean useItem(Bag bag, String itemId) {
+        if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
+            applyEffects(CollectableService.get(itemId));
+            inventory.put(itemId, inventory.get(itemId) - 1);
+        }
+
         return useItems(bag, itemId, 1) > 0;
     }
 
     /**
      * Consumes up to "amount" instances of itemId from the specified bag
+     * Consumes a specified number of items from the inventory.
+     * <p>
+     * This method will decrement the count of the given {@code itemId} until either
+     * the requested {@code amount} has been used or the available quantity is depleted.
+     * If the item does not exist in the inventory or has a count of zero, no changes occur.
+     *
+     * Looks up the item's config and applies its effects. If no effect can be
+     * applied (e.g., using a heart at full HP), the item is not consumed.
+     * </p>
      *
      * @param bag which bag to modify
      * @param itemId non-null identifier to decrement
@@ -192,7 +215,22 @@ public class InventoryComponent extends Component {
         int remaining = have - used;
         if (remaining > 0) map.put(itemId, remaining);
         else               map.remove(itemId);
-        return used;
+        // return used;
+
+        var cfg = CollectableService.get(itemId);
+        if (cfg == null || amount <= 0) {} //return 0;
+
+
+        if (inventory.get(itemId) != null && inventory.get(itemId) > 0) {
+            int numToUse = Math.min(amount, inventory.get(itemId));
+            for (int i = 0; i < numToUse; i++) {
+                applyEffects(cfg);
+                inventory.put(itemId, inventory.get(itemId) - 1);
+
+            }
+        }
+
+        return 0;
     }
 
     // Bag helpers
@@ -276,4 +314,27 @@ public class InventoryComponent extends Component {
             case OBJECTIVES-> objectives;
         };
     }
+
+    /**
+     * Applies all effects defined in the collectables' config
+     * <p>
+     * Each effect is looked up in the {@link ItemEffectRegistry} and executed if a handler
+     * is registered. Unknown effect types are ignored.
+     * </p>
+     *
+     * @param cfg the config containing effects to apply (maybe empty).
+     */
+
+    private void applyEffects(CollectablesConfig cfg) {
+        if (cfg.effects == null || cfg.effects.isEmpty()) {
+            return;
+        }
+        for (var effect : cfg.effects) {
+            var handler = ItemEffectRegistry.get(effect.type);
+            if (handler != null) {
+                handler.apply(getEntity(), effect);
+            }
+        }
+    }
+
 }

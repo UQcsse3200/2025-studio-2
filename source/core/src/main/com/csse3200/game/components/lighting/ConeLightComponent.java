@@ -4,7 +4,9 @@ import box2dLight.ConeLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -52,6 +54,11 @@ public class ConeLightComponent extends Component {
         coneLight = new ConeLight(rayHandler, rays, color, distance, p.x, p.y, directionDeg, coneDegree);
         coneLight.setSoftnessLength(1f);
         coneLight.setXray(false);
+
+        short categoryBits = -1;
+        short maskBits = (short)~PhysicsLayer.COLLECTABLE;
+        short groupIndex = 0;
+        coneLight.setContactFilter(categoryBits, groupIndex, maskBits);
 
         // only here for testing
         entity.getEvents().addListener("walk", this::setVelocity);

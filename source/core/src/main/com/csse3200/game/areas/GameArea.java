@@ -5,12 +5,14 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
+import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
@@ -54,6 +56,8 @@ public abstract class GameArea implements Disposable {
   public void create() {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
+    CollectableService.load("configs/items.json");
+    ItemEffectRegistry.registerDefaults();
     loadAssets();
 
     // Terrain must be loaded first in order to spawn entities
