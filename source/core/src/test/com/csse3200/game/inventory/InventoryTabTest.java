@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
@@ -18,10 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -48,9 +46,10 @@ public class InventoryTabTest {
     private Texture fakeEmptySlot;
     private Texture fakeItemSlot;
     private Texture fakeKey;
+    private Texture fakeHighlight;
 
     @BeforeEach
-    void setup() throws Exception {
+    void setup() {
         when(player.getComponent(InventoryComponent.class)).thenReturn(inventory);
 
         // Tiny 2x2 RGBA textures so tests don't touch disk
@@ -58,15 +57,15 @@ public class InventoryTabTest {
         fakeEmptySlot = makeTinyTex();
         fakeItemSlot = makeTinyTex();
         fakeKey = makeTinyTex();
+        fakeHighlight = makeTinyTex();
     }
 
     @AfterEach
     void tearDown() {
-        if (fakeBg != null) fakeBg.dispose();
-        if (fakeEmptySlot != null) fakeEmptySlot.dispose();
-        if (fakeItemSlot != null) fakeItemSlot.dispose();
-        if (fakeKey != null) fakeKey.dispose();
+        Arrays.asList(fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight)
+                .forEach(t -> { if (t != null) t.dispose(); });
     }
+
 
     @Test
     @DisplayName("Empty inventory -> all 16 empty slots")
@@ -173,6 +172,97 @@ public class InventoryTabTest {
         assertEquals( 2, countImagesUsingTexture(root, fakeKey));
     }
 
+    @Test
+    @DisplayName("Selection highlight appears on a FILLED slot")
+    void selectionHighlightOnFilledSlot() throws Exception {
+        // Inventory with 2 keys => slots 0 and 1 are filled
+        when(inventory.getInventory()).thenReturn(Map.of("key", 2));
+
+        InventoryTab tab = new InventoryTab(player, null);
+        // Also replace the highlight texture so we can count it
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
+
+        // Mock navigation: enable + select row=0, col=1  (slot index 1 -> filled)
+        InventoryNavigationComponent nav = mock(InventoryNavigationComponent.class);
+        when(nav.isNavigationEnabled()).thenReturn(true);
+        when(nav.getSelectedRow()).thenReturn(0);
+        when(nav.getSelectedCol()).thenReturn(1);
+        tab.setNavigationComponent(nav);
+
+        Actor root = tab.build(null);
+
+        assertEquals(1, countHighlights(root, fakeHighlight), "Exactly one highlight should be drawn on the selected filled slot");
+    }
+
+    @Test
+    @DisplayName("Selection highlight appears on an EMPTY slot")
+    void selectionHighlightOnEmptySlot() throws Exception {
+        // Inventory empty => all slots empty
+        when(inventory.getInventory()).thenReturn(Collections.emptyMap());
+
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
+
+        // Select bottom-right cell (row=3, col=3 => index 15), which is empty
+        InventoryNavigationComponent nav = mock(InventoryNavigationComponent.class);
+        when(nav.isNavigationEnabled()).thenReturn(true);
+        when(nav.getSelectedRow()).thenReturn(3);
+        when(nav.getSelectedCol()).thenReturn(3);
+        tab.setNavigationComponent(nav);
+
+        Actor root = tab.build(null);
+
+        assertEquals(1, countHighlights(root, fakeHighlight), "Exactly one highlight should be drawn on the selected empty slot");
+    }
+
+    @Test
+    @DisplayName("Selection disabled -> no highlight")
+    void selectionDisabledNoHighlight() throws Exception {
+        when(inventory.getInventory()).thenReturn(Map.of("key", 1));
+
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
+
+        InventoryNavigationComponent nav = mock(InventoryNavigationComponent.class);
+        when(nav.isNavigationEnabled()).thenReturn(false); // <- only this is needed
+        tab.setNavigationComponent(nav);
+
+        Actor root = tab.build(null);
+
+        assertEquals(0, countHighlights(root, fakeHighlight),
+                "No highlight should be drawn when navigation is disabled");
+    }
+
+    @Test
+    @DisplayName("refreshGrid() moves the highlight when selection changes")
+    void refreshMovesHighlight() throws Exception {
+        // Inventory with 3 items => first row has indexes 0..2 filled
+        when(inventory.getInventory()).thenReturn(Map.of("key", 3));
+
+        InventoryTab tab = new InventoryTab(player, null);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
+
+        InventoryNavigationComponent nav = mock(InventoryNavigationComponent.class);
+        when(nav.isNavigationEnabled()).thenReturn(true);
+
+        // Initial selection (row=0, col=0)
+        when(nav.getSelectedRow()).thenReturn(0);
+        when(nav.getSelectedCol()).thenReturn(0);
+        tab.setNavigationComponent(nav);
+
+        Actor root = tab.build(null);
+        assertEquals(1, countHighlights(root, fakeHighlight), "One highlight after initial build");
+
+        // Change selection to (row=0, col=2) and refresh grid
+        when(nav.getSelectedRow()).thenReturn(0);
+        when(nav.getSelectedCol()).thenReturn(2);
+        tab.refreshGrid();
+
+        // Still exactly one highlight (moved to new cell)
+        assertEquals(1, countHighlights(root, fakeHighlight), "One highlight after selection moved via refreshGrid()");
+    }
+
+
     // Helpers
 
     // Create a tiny 2x2 RGBA texture
@@ -186,14 +276,24 @@ public class InventoryTabTest {
     }
 
     /**
-     * Swap InventoryTab's private textures with in-memory ones so tests don't hit disk.
+     * Swap InventoryTab's private textures (without highlight) with in memory ones so tests don't hit disk
      */
     private static void replacePrivateTextures(InventoryTab tab, Texture bgTex,
-            Texture emptySlotTex, Texture itemSlotTex, Texture keyTex) throws Exception {
+                                               Texture emptySlotTex, Texture itemSlotTex, Texture keyTex) throws Exception {
         setPrivateField(tab, "bgTex", bgTex);
         setPrivateField(tab, "emptySlotTexture", emptySlotTex);
         setPrivateField(tab, "itemSlotTexture", itemSlotTex);
         setPrivateField(tab, "keyTexture", keyTex);
+    }
+
+    /**
+     * Swap InventoryTab's private textures including the selection highlight.
+     */
+    private static void replacePrivateTextures(InventoryTab tab, Texture bgTex,
+                                               Texture emptySlotTex, Texture itemSlotTex, Texture keyTex,
+                                               Texture selectionHighlightTex) throws Exception {
+        replacePrivateTextures(tab, bgTex, emptySlotTex, itemSlotTex, keyTex);
+        setPrivateField(tab, "selectionHighlight", selectionHighlightTex);
     }
 
     private static void setPrivateField(Object target, String fieldName, Object value) throws Exception {
@@ -219,6 +319,10 @@ public class InventoryTabTest {
             }
         }
         return count;
+    }
+
+    private static int countHighlights(Actor root, Texture highlightTex) {
+        return countImagesUsingTexture(root, highlightTex);
     }
 
     // Recursively collect all Image actors from the subtree
