@@ -112,6 +112,7 @@ public class MainGameScreen extends ScreenAdapter {
       switchArea("cutscene1", player);
     });
 
+    gameArea.getEvents().addListener("reset", this::onGameAreaReset);
     gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
 
     // Have to createUI after the game area is created since createUI
@@ -156,7 +157,7 @@ public class MainGameScreen extends ScreenAdapter {
       }
 
       if (newArea != null) {
-        gameArea.dispose();
+        final GameArea oldArea = gameArea;
         gameArea = newArea;
         String finalNewLevel = newLevel;
         gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
@@ -169,6 +170,9 @@ public class MainGameScreen extends ScreenAdapter {
 
         System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
         gameArea.createWithPlayer(player);
+        oldArea.dispose();
+
+        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
         gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
       }
   }
@@ -328,7 +332,8 @@ public class MainGameScreen extends ScreenAdapter {
     ui.addComponent(new InputDecorator(stage, 10))
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
-        .addComponent(pauseMenuDisplay).addComponent(deathScreenDisplay)
+        .addComponent(pauseMenuDisplay)
+        .addComponent(deathScreenDisplay)
         .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
@@ -346,7 +351,10 @@ public class MainGameScreen extends ScreenAdapter {
    */
   public void reset() {
     gameArea.reset();
-    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+  }
+
+  public void onGameAreaReset(Entity player) {
+    player.getEvents().addListener("playerDied", this::showDeathScreen);
   }
 
   // Set last keycode for inventory when tab is clicked

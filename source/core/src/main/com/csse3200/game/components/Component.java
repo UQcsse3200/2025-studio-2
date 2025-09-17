@@ -93,10 +93,6 @@ public class Component {
 
   @Override
   public String toString() {
-    String className = this.getClass().getSimpleName();
-    if (entity == null) {
-      return className;
-    }
-    return entity + "." + className;
+    return getClass().getSimpleName() + "{id=" + entity.getId() + ", enabled=" + enabled + "}";
   }
 }
