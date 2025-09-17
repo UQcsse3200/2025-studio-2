@@ -1,16 +1,13 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.utils.math.Vector2Utils;
-import com.csse3200.game.components.player.InventoryComponent;
-import java.lang.reflect.Array;
-import java.security.Key;
 import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Input handler for the player for keyboard and touch (mouse) input.
@@ -18,6 +15,7 @@ import java.util.Arrays;
  */
 public class KeyboardPlayerInputComponent extends InputComponent {
   private final Vector2 walkDirection = Vector2.Zero.cpy();
+  private final HashSet<Integer> pressedKeys = new HashSet<>();
 
   private final int LEFT_KEY = Keymap.getActionKeyCode("PlayerLeft");
   private final int RIGHT_KEY = Keymap.getActionKeyCode("PlayerRight");
@@ -39,10 +37,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     super(5);
   }
 
-
-
-
-
   /**
    * Triggers player events on specific keycodes.
    *
@@ -58,10 +52,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       triggerGlideEvent(true);
       return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+      pressedKeys.add(keycode);
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
       return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      pressedKeys.add(keycode);
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
       return true;
@@ -121,11 +117,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if (!enabled) return false;
 
     if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
-        walkDirection.sub(Vector2Utils.LEFT);
+        if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
         return true;
       } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
-        walkDirection.sub(Vector2Utils.RIGHT);
+        if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
       } else if (keycode == UP_KEY) {

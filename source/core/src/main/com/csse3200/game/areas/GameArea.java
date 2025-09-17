@@ -106,9 +106,6 @@ public abstract class GameArea implements Disposable {
    * Resets the game area
    */
   public void reset() {
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
@@ -119,9 +116,6 @@ public abstract class GameArea implements Disposable {
     // Components such as health, upgrades and items we want to revert to how they were at
     // the start of the level. Copies are used in order to not break the original components.
     player = spawnPlayer(getComponents());
-
-    // transfer all the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
     loadEntities();
   }
