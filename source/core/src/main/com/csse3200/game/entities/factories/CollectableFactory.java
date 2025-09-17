@@ -55,7 +55,7 @@ public class CollectableFactory {
 
         Entity e = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new CollectableComponentV2(itemId));
 
         // add sprites and animations
@@ -98,7 +98,7 @@ public class CollectableFactory {
     public static Entity createKey(String target) {
         Entity key = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/key.png"))
                 .addComponent(new KeyComponent(target));
 
@@ -116,7 +116,7 @@ public class CollectableFactory {
     public static Entity createDashUpgrade() {
         Entity dash = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
                 .addComponent(new UpgradesComponent("dash"));
 
@@ -135,7 +135,7 @@ public class CollectableFactory {
     public static Entity createGlideUpgrade() {
         Entity glide = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
                 .addComponent(new UpgradesComponent("glider"));
 
@@ -154,7 +154,7 @@ public class CollectableFactory {
     public static Entity createGrappleUpgrade() {
         Entity grapple = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE).setSensor(true))
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
                 .addComponent(new UpgradesComponent("grapple"));
 

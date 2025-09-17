@@ -78,7 +78,7 @@ public class CollectableFactoryTest {
 
         assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
                 "Key PhysicsBody should be static");
-        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
+        assertEquals(PhysicsLayer.COLLECTABLE, collider.getLayer(),
                 "Button ColliderComponent should be in OBSTACLE layer");
     }
 }
