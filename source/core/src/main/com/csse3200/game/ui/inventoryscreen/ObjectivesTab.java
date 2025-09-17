@@ -125,6 +125,8 @@ public class ObjectivesTab implements InventoryTabInterface {
   /**
    * Reads OBJECTIVES bag and places one banner per item, stacked top-to-bottom.
    * If an id has no matching texture, it is skipped (no labels are created).
+   *
+   * @param placer the PixelPerfectPlacer instance that places the overlays to the tab background
    */
   private void layoutObjectives(PixelPerfectPlacer placer) {
     InventoryComponent inv = player.getComponent(InventoryComponent.class);
