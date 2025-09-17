@@ -133,6 +133,8 @@ public abstract class GameArea implements Disposable {
           oldEntityCount, newEntityCount, newEntityCount - oldEntityCount
       );
     }
+
+    this.trigger("reset");
   }
 
   /**
