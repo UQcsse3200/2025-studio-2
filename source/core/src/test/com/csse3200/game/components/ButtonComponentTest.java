@@ -99,7 +99,7 @@ public class ButtonComponentTest {
     }
 
     @Test
-    void toggleButton_updatesPlatformTexture() {
+    void toggleButton_updatesPlatformButtonTexture() {
         buttonComponent.setType("platform");
         buttonComponent.setPushed(false);
         buttonComponent.setPuzzleManager(null);
@@ -114,7 +114,7 @@ public class ButtonComponentTest {
     }
 
     @Test
-    void toggleButton_updatesDoorTexture() {
+    void toggleButton_updatesDoorButtonTexture() {
         buttonComponent.setType("door");
         buttonComponent.setPushed(false);
         buttonComponent.setPuzzleManager(null);
@@ -129,7 +129,7 @@ public class ButtonComponentTest {
     }
 
     @Test
-    void toggleButton_updatesStandardTexture() {
+    void toggleButton_updatesStandardButtonTexture() {
         buttonComponent.setType("standard");
         buttonComponent.setPushed(false);
         buttonComponent.setPuzzleManager(null);
@@ -200,7 +200,7 @@ public class ButtonComponentTest {
     }
 
     @Test
-    void toggleButton_doesNotStartTimer_whenPuzzleIncomplete() {
+    void toggleButton_doesNotImmmediatelyUnpress_whenPuzzleIncomplete() {
         ButtonManagerComponent mockManager = mock(ButtonManagerComponent.class);
         when(mockManager.isPuzzleCompleted()).thenReturn(false);
         buttonComponent.setPuzzleManager(mockManager);

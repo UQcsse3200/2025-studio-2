@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
@@ -16,6 +17,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -30,6 +32,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
+    private static boolean keySpawned;
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -103,17 +106,23 @@ public class LevelTwoGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        keySpawned = false;
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnTraps();
+        spawnButtons();
+        spawnSecurityCams();
     }
+
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(5,0);
         Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
+
     private void spawnWalls(){
         GridPoint2 bottomWallPos = new GridPoint2(80,6);
         Entity bottomWall = WallFactory.createWall(25,0,1,20f,"");
@@ -151,6 +160,7 @@ public class LevelTwoGameArea extends GameArea {
         wall5.setScale(2f,2f);
         spawnEntityAt(wall5, wall5Pos, false, false);
     }
+
     public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("door", this);
         door.setScale(1, 2);
@@ -158,30 +168,35 @@ public class LevelTwoGameArea extends GameArea {
         door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(98,45), true, true);
     }
+
     private void playMusic() {
         Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
         music.setLooping(true);
         music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
     }
+
     protected Entity spawnPlayer() {
         Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+
     protected Entity spawnPlayer(List<Component> componentList) {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
+
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
         terrain = createLabTerrain();
@@ -211,6 +226,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, 0), false, false);
     }
+
     private TerrainComponent createLabTerrain() {
         final ResourceService resourceService = ServiceLocator.getResourceService();
         // Use empty texture for invisible terrain grid
@@ -251,11 +267,8 @@ public class LevelTwoGameArea extends GameArea {
 
     private void spawnFloorsAndPlatforms(){
         spawnFloors();
-
         spawnElevatedPlatforms();
-
         spawnVolatilePlatform();
-
     }
 
     private void spawnFloors() {
@@ -280,7 +293,6 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(topGround, topGroundPos, false, false);
 
     }
-
 
     private void spawnElevatedPlatforms() {
         //        RIGHT GRAPPLE SECTION
@@ -365,6 +377,96 @@ public class LevelTwoGameArea extends GameArea {
         Entity top3 = PlatformFactory.createStaticPlatform();
         top3.setScale(2,0.5f);
         spawnEntityAt(top3, top3Pos,false, false);
+
+        //platforms for button puzzle
+        GridPoint2 buttonPlat1Pos = new GridPoint2(53,5);
+        Entity buttonPlat1 = PlatformFactory.createStaticPlatform();
+        buttonPlat1.setScale(2,0.5f);
+        spawnEntityAt(buttonPlat1, buttonPlat1Pos,false, false);
+
+        GridPoint2 buttonPlat2Pos = new GridPoint2(70,8);
+        Entity buttonPlat2 = PlatformFactory.createStaticPlatform();
+        buttonPlat2.setScale(2,0.5f);
+        spawnEntityAt(buttonPlat2, buttonPlat2Pos,false, false);
+
+        GridPoint2 buttonPlat3Pos = new GridPoint2(53,11);
+        Entity buttonPlat3 = PlatformFactory.createStaticPlatform();
+        buttonPlat3.setScale(2,0.5f);
+        spawnEntityAt(buttonPlat3, buttonPlat3Pos,false, false);
+
+        GridPoint2 buttonPlat4Pos = new GridPoint2(70,15);
+        Entity ButtonPlat4 = PlatformFactory.createStaticPlatform();
+        ButtonPlat4.setScale(2,0.5f);
+        spawnEntityAt(ButtonPlat4, buttonPlat4Pos,false, false);
+    }
+
+    private void spawnSecurityCams() {
+        Entity cam1 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        Entity cam2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "2");
+        Entity cam3 = SecurityCameraFactory.createStaticSecurityCam(player, 25f, -135f, 0f, "3");
+
+        spawnEntityAt(cam1, new GridPoint2(34,19), true, true);
+        spawnEntityAt(cam2, new GridPoint2(83,39), true, true);
+        spawnEntityAt(cam3, new GridPoint2(75,65), true, true);
+    }
+
+
+    private void spawnTraps() {
+        Vector2 safeSpotStart = new Vector2(41, 12);
+
+        for(int i=59; i<=77; i++) {
+            Entity spikesUp = TrapFactory.createSpikes(safeSpotStart, 0f);
+            spawnEntityAt(spikesUp, new GridPoint2(i,24), true,  true);
+        }
+    }
+
+    private void spawnButtons() {
+        //key button and spawning
+        Entity button2 = ButtonFactory.createButton(false, "door", "right");
+        button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button2, new GridPoint2(0 ,58), true,  true);
+
+        button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+          if (isPushed && !keySpawned) {
+            spawnKey();
+            keySpawned = true;
+          }
+        });
+
+        //white button puzzle and spawning upgrade
+        //puzzle setup
+        Entity puzzleEntity = new Entity();
+        ButtonManagerComponent manager = new ButtonManagerComponent();
+        puzzleEntity.addComponent(manager);
+        ServiceLocator.getEntityService().register(puzzleEntity);
+
+        //spawn buttons
+        Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
+        button.addComponent(new TooltipSystem.TooltipComponent("Puzzle Button\nYou have 15 seconds to press all four", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(button, new GridPoint2(53,6), true,  true);
+
+        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        spawnEntityAt(button4, new GridPoint2(73,10), true,  true);
+
+        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
+        spawnEntityAt(button5, new GridPoint2(53,13), true,  true);
+
+        Entity button6 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        spawnEntityAt(button6, new GridPoint2(73,17), true,  true);
+
+
+
+        //spawn upgrade
+        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
+          Entity dashUpgrade = CollectableFactory.createGrappleUpgrade();
+          spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
+        });
+
+    }
+
+    public void spawnKey() {
+        Entity key = CollectableFactory.createKey("key:door");
+        spawnEntityAt(key, new GridPoint2(93,50), true, true);
     }
 
     private void spawnVolatilePlatform(){

@@ -50,6 +50,11 @@ public class ButtonTriggeredPlatformComponent extends Component {
         // instead of immediately mutating state mid-physics step.
     }
 
+    /**
+     * Returns a moving platform to its original start position, before it was moved
+     * Does nothing if platform is currently moving, if not moving, moves it to opposite position
+     *  to the one it is currently in
+     */
     private void onDeactivate() {
         // Ignore while moving
         if (state == State.MOVING_TO_END || state == State.MOVING_TO_START) {
