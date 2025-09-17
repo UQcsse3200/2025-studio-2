@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.DeathOnTrapComponent;
+import com.csse3200.game.components.DisposalComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -238,7 +240,9 @@ public class EnemyFactory {
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                         .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
-                        .addComponent(new AITaskComponent()); // Want this empty for base enemies
+                        .addComponent(new AITaskComponent())// Want this empty for base enemies
+                        .addComponent(new DeathOnTrapComponent())
+                        .addComponent(new DisposalComponent(0.5f));
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 

@@ -100,8 +100,8 @@ public class LevelOneGameArea extends GameArea {
         spawnWalls();
         spawnDoor();
         spawnLights();
-        //spawnPatrollingDrone();
-        spawnBomberDrone();
+        spawnPatrollingDrone();
+        //spawnBomberDrone();
     }
 
     private void spawnDeathZone() {
@@ -267,11 +267,11 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
     }
     private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(3, 13);
+        GridPoint2 spawnTile = new GridPoint2(11, 4);
 
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+                terrain.tileToWorldPosition(new GridPoint2(14, 4))
         };
         Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
                 .addComponent(new ActivationComponent("1"));
