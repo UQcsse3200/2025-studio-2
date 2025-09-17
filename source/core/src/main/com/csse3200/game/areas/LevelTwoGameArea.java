@@ -443,7 +443,8 @@ public class LevelTwoGameArea extends GameArea {
         Entity puzzleEntity = new Entity();
         ButtonManagerComponent manager = new ButtonManagerComponent();
         puzzleEntity.addComponent(manager);
-        ServiceLocator.getEntityService().register(puzzleEntity);
+        // Prevent leak
+        this.spawnEntityAt(puzzleEntity, new GridPoint2(0, 0), true, true);
 
         //spawn buttons
         Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);

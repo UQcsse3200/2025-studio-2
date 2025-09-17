@@ -176,8 +176,8 @@ public class SprintOneGameArea extends GameArea {
         Entity puzzleEntity = new Entity();
         ButtonManagerComponent manager = new ButtonManagerComponent();
         puzzleEntity.addComponent(manager);
-        ServiceLocator.getEntityService().register(puzzleEntity);
-
+        // Prevent leak
+        this.spawnEntityAt(puzzleEntity, new GridPoint2(0, 0), true, true);
 
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
