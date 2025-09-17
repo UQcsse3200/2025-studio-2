@@ -144,7 +144,7 @@ public class PlayerActions extends Component {
       jetpackFuel++;
     }
 
-    if (!isJetpackOn) {
+    if (!isJetpackOn && !isGliding) {
       body.setGravityScale(1f);
     }
 
@@ -341,6 +341,7 @@ public class PlayerActions extends Component {
 
     if (on && isOutOfJumps) {
       if (body.getLinearVelocity().y < 0.5f) {
+
         body.setGravityScale(0.1f);
         isGliding = true;
       }
