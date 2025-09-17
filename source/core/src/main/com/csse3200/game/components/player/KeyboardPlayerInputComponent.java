@@ -110,7 +110,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       //Only moves the player up if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
         this.onLadder = true;
-        walkDirection.sub(Vector2Utils.DOWN);
+        //walkDirection.sub(Vector2Utils.DOWN);
         walkDirection.add(Vector2Utils.UP);
         triggerWalkEvent();
       } else {
@@ -122,7 +122,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       //Only moves the player down if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
         this.onLadder = true;
-        walkDirection.sub(Vector2Utils.UP);
+        //walkDirection.sub(Vector2Utils.UP);
         walkDirection.add(Vector2Utils.DOWN);
           triggerWalkEvent();
       } else {
@@ -153,9 +153,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       this.ladders = findLadders();
     }
 
-    if(this.ladders == null) {
-      this.ladders = findLadders();
-    }
     if (this.onLadder) {
       this.onLadder = inFrontOfLadder(this.ladders);
     }
@@ -171,7 +168,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
       } else if (keycode == UP_KEY) {
         if (inFrontOfLadder(this.ladders)) {
-          walkDirection.setZero();
+          //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
           entity.getEvents().trigger("walkStop");
@@ -183,7 +180,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
       } else if (keycode == DOWN_KEY) {
         if (inFrontOfLadder(this.ladders)) {
-          walkDirection.setZero();
+          //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.DOWN);
           triggerWalkEvent();
           entity.getEvents().trigger("walkStop");
@@ -202,6 +199,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
               entity.getEvents().trigger("sprintStop");
               return true;
       } else if (keycode == JUMP_KEY) {
+        this.onLadder = false;
         triggerGlideEvent(false);
       }
 
