@@ -73,7 +73,6 @@ public class PlayerFactory {
 
     Entity player =
             new Entity()
-                    /*.addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))*/
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
@@ -117,9 +116,6 @@ public class PlayerFactory {
     player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
 // --- end stamina block ---
 
-
-    // Horrendous code
-
     player.getComponent(ColliderComponent.class).setAsBox(new Vector2(0.8f, 1.175f),
             player.getCenterPosition().add(new Vector2(0.425f, 0.0f)));
     player.getComponent(ColliderComponent.class).setSensor(true);
@@ -129,7 +125,6 @@ public class PlayerFactory {
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
-    //player.getComponent(TextureRenderComponent.class).scaleEntity();
     float scaleFactor = 2f;
     player.setScale(1f * scaleFactor, (48f/64f) * scaleFactor);
     AnimationRenderComponent arc =
