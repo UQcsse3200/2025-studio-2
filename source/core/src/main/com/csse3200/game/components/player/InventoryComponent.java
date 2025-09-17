@@ -114,7 +114,6 @@ public class InventoryComponent extends Component {
         else {
             map.put(itemId, map.getOrDefault(itemId, 0) + amount);
         }
-
     }
 
     /**
@@ -227,7 +226,7 @@ public class InventoryComponent extends Component {
         int remaining = have - used;
         if (remaining >= 0) {
             var cfg = CollectableService.get(itemId);
-            if (cfg == null) return 0; // shit's fucked
+            if (cfg == null) return 0;
 
             if (map.get(itemId) != null && map.get(itemId) > 0) {
                 for (int i = 0; i < used; i++) {
