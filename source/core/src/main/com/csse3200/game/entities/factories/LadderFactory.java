@@ -25,7 +25,7 @@ public class LadderFactory {
     public static Entity createStaticLadder() {
         Entity ladder =
                 new Entity()
-                        .addComponent(new TextureRenderComponent("images/ladder.png"))
+                        .addComponent(new TextureRenderComponent("images/ladder.png").setLayer(0))
                         .addComponent(new PhysicsComponent())
                         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NONE))
                         .addComponent(new LadderComponent());
