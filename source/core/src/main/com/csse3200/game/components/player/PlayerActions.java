@@ -169,14 +169,15 @@ public class PlayerActions extends Component {
     // only update the horizontal impulse
 
     float deltaV = desiredVelocity.x - velocity.x;
-    float maxDeltaV = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
+    float maxDeltaV =
+            MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       float deltaVy = desiredVelocity.y - velocity.y;
-      float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
+      float maxDeltaVy = MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
       if (deltaVy > maxDeltaVy) deltaVy = maxDeltaVy;
       if (deltaVy < -maxDeltaVy) deltaVy = -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
@@ -190,14 +191,6 @@ public class PlayerActions extends Component {
 
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-
-
-
-    /**
-    Vector2 impulse =
-            new Vector2((desiredVelocity.x - velocity.x) * inAirControl, 0).scl(body.getMass());
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-     */
   }
 
   /**
