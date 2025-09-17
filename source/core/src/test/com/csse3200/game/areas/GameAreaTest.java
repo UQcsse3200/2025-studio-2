@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
@@ -12,8 +11,9 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.ServiceLocator;
-import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -25,6 +25,13 @@ import java.util.List;
  */
 @ExtendWith(GameExtension.class)
 class GameAreaTest {
+
+  @BeforeEach
+  void setUp() {
+    CollectableService.load("configs/items.json");
+    ServiceLocator.registerEntityService(new EntityService());
+  }
+
   @Test
   void shouldSpawnEntities() {
     TerrainFactory factory = mock(TerrainFactory.class);
@@ -55,7 +62,7 @@ class GameAreaTest {
       int startHealth = 100;
       int newHealth = 80; // != startHealth
       int baseAttack = 1;
-      String testItem = "test";
+      String testItem = "key:door";
       int itemCount = 4;
 
       GameArea gameArea =
@@ -93,8 +100,7 @@ class GameAreaTest {
       // Add an item to player inventory
       gameArea.getPlayer().getComponent(InventoryComponent.class)
               .addItems(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
-      assertEquals(itemCount,
-              gameArea.player.getComponent(InventoryComponent.class).getGrandTotalCount());
+      assertEquals(itemCount, gameArea.player.getComponent(InventoryComponent.class).getGrandTotalCount());
 
       // Reload gameArea, should load saved components
       gameArea.reset();

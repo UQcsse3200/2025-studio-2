@@ -8,6 +8,7 @@ import com.csse3200.game.entities.factories.CollectableFactory;
 import com.csse3200.game.entities.factories.PlayerFactoryTest;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.rendering.RenderService;
+import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.entities.Entity;
@@ -60,6 +61,7 @@ public class UpgradesComponentTest {
         player.create();
         inv = player.getComponent(InventoryComponent.class);
         assertNotNull(inv, "Player should have InventoryComponent");
+        CollectableService.load("configs/items.json");
     }
 
     @Test
@@ -81,7 +83,7 @@ public class UpgradesComponentTest {
 
         upgrade.getEvents().trigger("onCollisionStart", player);
 
-        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grappler upgrade");
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the jetpack upgrade");
     }
 
     @Test

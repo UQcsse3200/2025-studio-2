@@ -19,8 +19,7 @@ public final class CollectableService {
 
     /** Load configs from a JSON array file */
     public static void load(String path) {
-        CollectablesConfig[] items =
-                FileLoader.readClass(CollectablesConfig[].class, path);
+        CollectablesConfig[] items = FileLoader.readClass(CollectablesConfig[].class, path);
         byId = Arrays.stream(items).collect(Collectors.toMap(c -> c.id, Function.identity()));
     }
 

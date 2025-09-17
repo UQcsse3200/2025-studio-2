@@ -32,5 +32,20 @@
     "effects": [
       { "type": "buff_speed", "duration": 5 }
     ]
+  },
+  {
+    "id": "dash",
+    "name": "Dash Upgrade",
+    "autoConsume": false
+  },
+  {
+    "id": "glider",
+    "name": "Glider Upgrade",
+    "autoConsume": false
+  },
+  {
+    "id": "jetpack",
+    "name": "Jetpack Upgrade",
+    "autoConsume": false
   }
 ]
