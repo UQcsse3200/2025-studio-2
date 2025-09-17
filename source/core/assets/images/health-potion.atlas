@@ -1,0 +1,23 @@
+health-potion.png
+size:128,256
+repeat:none
+collectable-spin
+    bounds:2,2,32,32
+collectable-spin
+    bounds:36,2,32,32
+collectable-spin
+    bounds:70,2,32,32
+collectable-spin
+    bounds:2,36,32,32
+collectable-spin
+    bounds:36,36,32,32
+collectable-spin
+    bounds:70,35,32,32
+collectable-spin
+    bounds:2,69,32,32
+collectable-spin
+    bounds:36,69,32,32
+collectable-spin
+    bounds:70,69,32,32
+collectable-spin
+    bounds:2,103,32,32

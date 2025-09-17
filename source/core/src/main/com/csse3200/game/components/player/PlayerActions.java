@@ -31,12 +31,10 @@ import java.awt.*;
  */
 public class PlayerActions extends Component {
   private static final float MAX_ACCELERATION = 70f;
-  // second
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-    private static final Vector2 MAX_SPEED = new Vector2(3f, 3f);
-    private static final float   SPRINT_MULT = 2.3f;
+  private static final float   SPRINT_MULT = 2.3f;
 
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 20f;
@@ -48,14 +46,9 @@ public class PlayerActions extends Component {
   private CameraComponent cameraComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
-  private Vector2 jumpDirection = Vector2.Zero.cpy();
   private boolean moving = false;
   private boolean adrenaline = false;
   private boolean crouching = false;
-
-  private StandingColliderComponent standingCollider;
-  private CrouchingColliderComponent crouchingCollider;
-
 
   // For Tests (Not Functionality)
   private boolean hasDashed = false;
@@ -83,9 +76,6 @@ public class PlayerActions extends Component {
     cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
 
-    standingCollider = entity.getComponent(StandingColliderComponent.class);
-    crouchingCollider = entity.getComponent(CrouchingColliderComponent.class);
-
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
 
@@ -99,7 +89,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-    entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
+    entity.getEvents().addListener("gravityForPlayerOff", this::gravityOff);
+    entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
     entity.getEvents().addListener("jetpackOn", this::jetpackOn);
@@ -144,7 +135,7 @@ public class PlayerActions extends Component {
       jetpackFuel++;
     }
 
-    if (!isJetpackOn) {
+    if (!isJetpackOn && !isGliding) {
       body.setGravityScale(1f);
     }
 
@@ -156,7 +147,6 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       entity.requestReset();
     }
-
   }
 
   private void updateSpeed() {
@@ -176,17 +166,20 @@ public class PlayerActions extends Component {
     desiredVelocity.scl(mult);
 
     // impulse = (desiredVel - currentVel) * mass
-    //only update the horizontal impulse
+    // only update the horizontal impulse
 
     float deltaV = desiredVelocity.x - velocity.x;
-    float maxDeltaV = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
+    float maxDeltaV =
+            MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()
+    || entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
+      entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
-      float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
+      float maxDeltaVy = MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
       if (deltaVy > maxDeltaVy) deltaVy = maxDeltaVy;
       if (deltaVy < -maxDeltaVy) deltaVy = -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
@@ -195,13 +188,13 @@ public class PlayerActions extends Component {
 
       impulseY = 1.1f * 1.2f * body.getMass();
     } else {
-        impulseY = 0f;
+      //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
+      entity.getEvents().trigger("gravityForPlayerOn");
+      impulseY = 0f;
     }
 
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-
-
 
     /**
     Vector2 impulse =
@@ -274,7 +267,6 @@ public class PlayerActions extends Component {
    * This method resets the players jump state, allowing them to jump again
    */
   void onLand() {
-    Body body = physicsComponent.getBody();
     isJumping = false;
     isDoubleJump = false;
 
@@ -326,7 +318,6 @@ public class PlayerActions extends Component {
    * Makes the player interact
    */
   void interact() {
-    // do something
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
@@ -342,6 +333,7 @@ public class PlayerActions extends Component {
 
     if (on && isOutOfJumps) {
       if (body.getLinearVelocity().y < 0.5f) {
+
         body.setGravityScale(0.1f);
         isGliding = true;
       }
@@ -391,14 +383,10 @@ public class PlayerActions extends Component {
             entity.getComponent(CrouchingColliderComponent.class);
     if (crouching) {
       crouching = false;
-      //PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
-      //standingCollider.getFixture().setSensor(false);
-      //crouchingCollider.getFixture().setSensor(true);
       standing.getFixtureRef().setSensor(false);
       crouch.getFixtureRef().setSensor(true);
     } else {
       crouching = true;
-      //PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
       standing.getFixtureRef().setSensor(true);
       crouch.getFixtureRef().setSensor(false);
     }
@@ -452,11 +440,19 @@ public class PlayerActions extends Component {
    */
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
-
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       body.setGravityScale(0f);
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  private void gravityOff() {
+    Body body = physicsComponent.getBody();
+    body.setGravityScale(0f);
+  }
+  private void gravityOn() {
+      Body body = physicsComponent.getBody();
+      body.setGravityScale(1f);
   }
 }

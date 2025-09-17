@@ -7,12 +7,12 @@ public final class LightingDefaults {
     private LightingDefaults() {} // do not initialise
 
     // Lighting Engine Defaults
-    public static final float AMBIENT_LIGHT = 1f;
+    public static final float AMBIENT_LIGHT = 0.5f;
     public static final int   BLUR_NUM      = 3;
 
     // Light Defaults
     public static final int   RAYS     = 128;
-    public static final float DIST     = 5f;
+    public static final float DIST     = 10f;
     public static final float CONE_DEG = 35f;
 
     // Directions
@@ -29,9 +29,9 @@ public final class LightingDefaults {
     public static final short OCCLUDER = PhysicsLayer.OBSTACLE;
 
     // Panning Task
-    public static final float START_DEG   = -135f;
-    public static final float END_DEG     = -45f;
-    public static final float ANGULAR_ACC =  40f;
-    public static final float ANGULAR_VEL =  30f;
+    public static final float START_DEG   = 225f;
+    public static final float END_DEG     = 315f;
+    public static final float ANGULAR_ACC =  30f;
+    public static final float ANGULAR_VEL =  25f;
 
 }

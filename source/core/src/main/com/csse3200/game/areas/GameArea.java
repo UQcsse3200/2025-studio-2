@@ -5,12 +5,14 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
+import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
@@ -36,8 +38,8 @@ public abstract class GameArea implements Disposable {
     return events;
   }
 
-  public void trigger(String eventName, String keyId, Entity player) {
-    events.trigger(eventName, keyId, player);
+  public void trigger(String eventName, Entity player) {
+    events.trigger(eventName, player);
   }
 
   protected Entity player;
@@ -54,6 +56,8 @@ public abstract class GameArea implements Disposable {
   public void create() {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
+    CollectableService.load("configs/items.json");
+    ItemEffectRegistry.registerDefaults();
     loadAssets();
 
     // Terrain must be loaded first in order to spawn entities
@@ -71,6 +75,7 @@ public abstract class GameArea implements Disposable {
 
   /**
    * Create the game area using components from a different player entity.
+   * @param oldPlayer
    */
   public void createWithPlayer(Entity oldPlayer) {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
@@ -91,6 +96,9 @@ public abstract class GameArea implements Disposable {
     loadEntities();
   }
 
+  /**
+   * Resets the game area
+   */
   protected void reset() {
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
@@ -107,15 +115,34 @@ public abstract class GameArea implements Disposable {
     loadEntities();
   }
 
+  /**
+   * Loads prerequisites for each area. Music, sounds, terrain etc
+   */
   protected abstract void loadPrerequisites();
 
+  /**
+   * Loads all entities in a given area
+   */
   protected abstract void loadEntities();
 
+  /**
+   * Spawns player
+   * @return player entity
+   */
   protected abstract Entity spawnPlayer();
 
+  /**
+   * Spawns player with previous components
+   * @param componentList
+   * @return Player entity with old components
+   */
   protected abstract Entity spawnPlayer(List<Component> componentList);
 
+  /**
+   * Loads assets
+   */
   protected abstract void loadAssets();
+
 
   /**
    * Get copies all of the player components we want to transfer in between resets/levels.
@@ -123,7 +150,7 @@ public abstract class GameArea implements Disposable {
    */
   public List<Component> getComponents() {
     List<Component> resetComponents = new ArrayList<>();
-    resetComponents.add(new CombatStatsComponent(combatStats));
+//    resetComponents.add(new CombatStatsComponent(combatStats));
     resetComponents.add(new InventoryComponent(inventory));
     return resetComponents;
   }
@@ -135,7 +162,7 @@ public abstract class GameArea implements Disposable {
    */
   public void saveComponents(CombatStatsComponent combatStats,
                                      InventoryComponent inventory) {
-    this.combatStats = new CombatStatsComponent(combatStats);
+//    this.combatStats = new CombatStatsComponent(combatStats);
     this.inventory = new InventoryComponent(inventory);
   }
 

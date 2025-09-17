@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.Array;
 
 /**
  * A layout component that allows placing actors at precise pixel coordinates relative to a background image.
- * The component handles dynamic scaling, ensuring that overlays remain correctly positioned when resizing
  */
 public class PixelPerfectPlacer extends Stack {
   private final Image backgroundImage;
@@ -18,11 +17,16 @@ public class PixelPerfectPlacer extends Stack {
   final int textureWidth;
   final int textureHeight;
 
-  /**
-   * Helper class to store the actor and its pixel-based layout constraints.
-   */
   private record OverlayConstraint(Actor actor, Rect rect) {}
 
+  /**
+   * Helper record to store the actor's pixel-based layout constraints.
+   *
+   * @param x the x coordinate of table in pixels
+   * @param y the y coordinate of table in pixels
+   * @param width the width of the table in pixels
+   * @param height the height of the table in pixels
+   */
   public record Rect(int x, int y, int width, int height) {}
 
   /**
@@ -40,7 +44,6 @@ public class PixelPerfectPlacer extends Stack {
     this.add(overlayGroup);
   }
 
-
   /**
    * Adds an actor to be placed on top of the background image.
    *
@@ -49,9 +52,9 @@ public class PixelPerfectPlacer extends Stack {
    *            image (using gimp) and its width and height
    */
   public void addOverlay(Actor actor, Rect rect) {
+    if (actor == null) throw new IllegalArgumentException("actor cannot be null");
     final Rect transformedPosition =
         new Rect(rect.x, textureHeight -  (rect.y + rect.height), rect.width, rect.height);
-//    System.out.println("Transformed position: " + transformedPosition);
     overlays.add(new OverlayConstraint(actor, transformedPosition));
     overlayGroup.addActor(actor);
     // WidgetGroup's comment says to call this
@@ -60,7 +63,7 @@ public class PixelPerfectPlacer extends Stack {
 
   /**
    * This method is called by Scene2D's layout manager whenever the table's size or children change.
-   * It calculates and applies the correct on-screen positions and sizes for all overlay actors.
+   * It calculates and applies the correct on-screen positions and sizes for all overlaid actors.
    */
   @Override
   public void layout() {
