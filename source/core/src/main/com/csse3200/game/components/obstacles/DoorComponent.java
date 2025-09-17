@@ -14,6 +14,8 @@ public class DoorComponent extends Component {
     private final String keyId;
     //private final String levelId;
     private boolean locked = true;
+    private boolean isOpening = false; // track animation state
+    private boolean animationFinished = false;
     private final GameArea area;
     private AnimationRenderComponent animationComponent;
 
@@ -48,6 +50,33 @@ public class DoorComponent extends Component {
         }
     }
 
+    // Continually checks if animation finished
+    @Override
+    public void update() {
+        // Check if opening animation has finished
+        if (isOpening && !animationFinished && animationComponent != null) {
+            if (animationComponent.isFinished()) {
+                onAnimationFinished();
+                animationFinished = true;
+            }
+        }
+    }
+
+    private void onAnimationFinished() {
+        // Switch to open animation
+        if (animationComponent != null) {
+            animationComponent.startAnimation("door_open");
+        }
+
+        // Make collider a sensor
+        ColliderComponent col = entity.getComponent(ColliderComponent.class);
+        if (col != null) {
+            col.setSensor(true);
+        }
+
+        isOpening = false;
+    }
+
     /**
      * Handles collision events. If the colliding entity is the player and the door is locked,
      * it attempts to unlock the door using the player's inventory.
@@ -61,8 +90,8 @@ public class DoorComponent extends Component {
 
         if (locked) {
             tryUnlock(other);
-        } else {
-            // Door already open -> trigger transition
+        } else if (!isOpening) {
+            // Door is fully open -> trigger transition
             this.area.trigger("doorEntered", other);
         }
     }
@@ -87,15 +116,18 @@ public class DoorComponent extends Component {
      * Opens the door by making its collider a sensor (non-blocking).
      */
     public void openDoor() {
-        ColliderComponent col = entity.getComponent(ColliderComponent.class);
-        col.setSensor(true);
+//        ColliderComponent col = entity.getComponent(ColliderComponent.class);
+//        col.setSensor(true);
+
+        isOpening = true;
+        animationFinished = false;
+        locked = false;
 
         // play door opening animation
         if (animationComponent != null) {
             animationComponent.startAnimation("door_opening");
         }
 
-        locked = false;
     }
 
     /**
@@ -111,6 +143,8 @@ public class DoorComponent extends Component {
         }
 
         locked = true;
+        isOpening = false;
+        animationFinished = false;
     }
 
     /**
