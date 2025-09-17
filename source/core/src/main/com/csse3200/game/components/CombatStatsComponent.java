@@ -107,6 +107,9 @@ public class CombatStatsComponent extends Component {
       lastHitFrame = currentFrame;
       int newHealth = getHealth() - attacker.getBaseAttack();
       setHealth(newHealth);
+
+      // Animate hurt
+      entity.getEvents().trigger("hurt");
     }
   }
 }

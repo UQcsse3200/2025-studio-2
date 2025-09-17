@@ -67,9 +67,54 @@ public class UpgradesComponentTest {
         Entity upgrade = CollectableFactory.createDashUpgrade();
         upgrade.create();
 
-        assertFalse(inv.hasItem("dash"), "Inventory should not contain an upgrade initially");
+        assertFalse(inv.hasItem(InventoryComponent.Bag.UPGRADES,"dash"), "Inventory should not contain an upgrade initially");
         UpgradesComponent dash = upgrade.getComponent(UpgradesComponent.class);
         assertNotNull(dash, "Upgrade entity should have an UpgradeComponent");
         assertEquals("dash", dash.getUpgradeId(), "UpgradeComponent should store its ID");
+    }
+
+    @Test
+    void upgradeCollectMarksAsCollected() {
+        Entity upgrade = CollectableFactory.createJetpackUpgrade();
+        upgrade.create();
+        assertFalse(inv.hasItem(InventoryComponent.Bag.UPGRADES,"grappler"));
+
+        upgrade.getEvents().trigger("onCollisionStart", player);
+
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grappler upgrade");
+    }
+
+    @Test
+    void cannotCollectSameUpgradeAgain() {
+        Entity upgrade = CollectableFactory.createGlideUpgrade();
+        upgrade.create();
+        Entity secondUpgrade = CollectableFactory.createGlideUpgrade();
+        secondUpgrade.create();
+
+        // Upgrade should not collect twice
+        upgrade.getEvents().trigger("onCollisionStart", player);
+        secondUpgrade.getEvents().trigger("onCollisionStart", player);
+
+        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "glider"));
+    }
+
+    @Test
+    void canCollectMultipleDifferentUpgrades() {
+        Entity dash = CollectableFactory.createDashUpgrade();
+        Entity glider = CollectableFactory.createGlideUpgrade();
+        Entity jetpack = CollectableFactory.createJetpackUpgrade();
+
+        dash.create();
+        glider.create();
+        jetpack.create();
+
+        dash.getEvents().trigger("onCollisionStart", player);
+        glider.getEvents().trigger("onCollisionStart", player);
+        jetpack.getEvents().trigger("onCollisionStart", player);
+
+        assertEquals(3, inv.getTotalCount(InventoryComponent.Bag.UPGRADES));
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"dash"), "Inventory should contain the dash upgrade");
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"glider"), "Inventory should contain the glide upgrade");
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grapple upgrade");
     }
 }

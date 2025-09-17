@@ -90,12 +90,8 @@ public abstract class GameArea implements Disposable {
     saveComponents(oldPlayer.getComponent(CombatStatsComponent.class), oldPlayer.getComponent(InventoryComponent.class));
 //    System.out.println(oldPlayer.getComponent(CombatStatsComponent.class).getHealth()); // debug
 
-    // Get walk direction
-    //Vector2 walkDirection = oldPlayer.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-//    System.out.println("Old direction: " + walkDirection); // debug
     // player must be spawned before enemies as they require a player to target
     player = spawnPlayer(getComponents());
-    //player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
 
     // load remaining entities
     loadEntities();
@@ -110,17 +106,12 @@ public abstract class GameArea implements Disposable {
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
 
-    //System.out.println(ServiceLocator.getEntityService().get_entities());
-
-    loadAssets(); // As much as I tried to avoid it, here it is
+    loadAssets(); // As we also dispose of animation components we have to reload assets
     loadPrerequisites();
 
     // Components such as health, upgrades and items we want to revert to how they were at
-    // the start of the level. Copies are used in order to not break the original components.
-//    KeyboardPlayerInputComponent component = player.getComponent(KeyboardPlayerInputComponent.class);
-//    player.removeComponent(component);
-//    component.dispose();
-
+    // the start of the level. Copies are used in order to not lose the original components when
+    // the original player is disposed.
     player = spawnPlayer(getComponents());
 
     loadEntities();
@@ -170,7 +161,10 @@ public abstract class GameArea implements Disposable {
    * @return The list of all player components.
    */
   public List<Component> getComponents() {
-    return List.of(new CombatStatsComponent(combatStats), new InventoryComponent(inventory));
+    List<Component> resetComponents = new ArrayList<>();
+//    resetComponents.add(new CombatStatsComponent(combatStats));
+    resetComponents.add(new InventoryComponent(inventory));
+    return resetComponents;
   }
 
   /**
@@ -179,7 +173,7 @@ public abstract class GameArea implements Disposable {
    * @param inventory - InventoryComponent.
    */
   public void saveComponents(CombatStatsComponent combatStats, InventoryComponent inventory) {
-    this.combatStats = new CombatStatsComponent(combatStats);
+    //this.combatStats = new CombatStatsComponent(combatStats);
     this.inventory = new InventoryComponent(inventory);
   }
 
@@ -187,7 +181,7 @@ public abstract class GameArea implements Disposable {
   /** Dispose of all internal entities in the area */
   public void dispose() {
     for (Entity entity : areaEntities) {
-      // entity.dispose() does not delete the entity object itself.
+      // entity.dispose() does not remove the entity from the list of entities this area contains.
       entity.dispose();
     }
 

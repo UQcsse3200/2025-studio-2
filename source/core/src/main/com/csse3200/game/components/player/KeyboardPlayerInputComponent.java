@@ -33,7 +33,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private final int UP_KEY = Keymap.getActionKeyCode("PlayerUp");
   private final int DOWN_KEY = Keymap.getActionKeyCode("PlayerDown");
   private final int ENTER_CHEAT_KEY = Keymap.getActionKeyCode("Enter");
-  private final int GRAPPLE_KEY = Keymap.getActionKeyCode("Grapple");
+  private final int GLIDE_KEY = Keymap.getActionKeyCode("Glide");
   private int[] CHEAT_INPUT_HISTORY = new int[4];
   private int cheatPosition = 0;
   private Boolean cheatsOn = false;
@@ -67,45 +67,39 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
       triggerJumpEvent();
       triggerGlideEvent(true);
-      return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
       this.onLadder = false;
 
-      pressedKeys.add(keycode);
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
-      return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
       this.onLadder = false;
 
-      pressedKeys.add(keycode);
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
-      return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
       entity.getEvents().trigger("interact");
     } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
       triggerAdrenalineEvent();
-        return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
         //takes player off ladder if they are on one.
         this.onLadder = false;
-    } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
         triggerDashEvent();
-        return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerCrouch")) {
       triggerCrouchEvent();
-      return true;
       // debug
     } else if (keycode == Keymap.getActionKeyCode("Reset")) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
-        return true;
+    } else if (keycode == Keymap.getActionKeyCode("Glide")) {
+      triggerGlideEvent(true);
     }
     // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
     else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
       entity.getEvents().trigger("sprintStart");
-      return true;
     } else if (keycode == UP_KEY) {
+      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
+      cheatPosition++;
+
       //Only moves the player up if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
         this.onLadder = true;
@@ -115,27 +109,39 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       } else {
         entity.getEvents().trigger("gravityForPlayerOn");
         this.onLadder = false;
+
+        triggerJetpackEvent();
+        if (cheatsOn) {
+          walkDirection.add(Vector2Utils.UP);
+          triggerWalkEvent();
+        }
       }
-      return true;
     } else if (keycode == DOWN_KEY) {
+      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
+      cheatPosition++;
+
       //Only moves the player down if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
         this.onLadder = true;
         //walkDirection.sub(Vector2Utils.UP);
         walkDirection.add(Vector2Utils.DOWN);
-          triggerWalkEvent();
+        triggerWalkEvent();
       } else {
         entity.getEvents().trigger("gravityForPlayerOn");
         this.onLadder = false;
+        if (cheatsOn) {
+          walkDirection.add(Vector2Utils.DOWN);
+          triggerWalkEvent();
+        }
       }
-      return true;
-    } else if (keycode == GRAPPLE_KEY) {
-        //Takes player off a ladder if they are on one.
-        this.onLadder = false;
-
-        triggerGrappleEvent();
+    } else if (keycode == ENTER_CHEAT_KEY) {
+      enableCheats();
+    } else {
+      return false;
     }
-    return false;
+
+    pressedKeys.add(keycode);
+    return true;
   }
 
   /**
@@ -148,8 +154,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyUp(int keycode) {
     if (!enabled) return false;
 
+    // If the key hasn't been pressed but has somehow been released then it's a legacy input
+    // from an earlier KeyboardPlayerInputComponent
+    if (!pressedKeys.contains(keycode)) return false;
+
+    pressedKeys.remove(keycode);
+
     //gets all the ladder in the level if not already done so.
-    if(this.ladders == null) {
+    if (this.ladders == null) {
       this.ladders = findLadders();
     }
 
@@ -158,52 +170,54 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
 
     if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
-        if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.LEFT);
+      walkDirection.sub(Vector2Utils.LEFT);
+      triggerWalkEvent();
+    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      walkDirection.sub(Vector2Utils.RIGHT);
+      triggerWalkEvent();
+    } else if (keycode == UP_KEY) {
+      if (inFrontOfLadder(this.ladders)) {
+        //walkDirection.setZero();
+        walkDirection.sub(Vector2Utils.UP);
         triggerWalkEvent();
-        //entity.getEvents().trigger("walkStop");
-        return true;
-      } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
-        if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.RIGHT);
-        triggerWalkEvent();
-        //entity.getEvents().trigger("walkStop");
-        return true;
-      } else if (keycode == UP_KEY) {
-        if (inFrontOfLadder(this.ladders)) {
-          //walkDirection.setZero();
+        entity.getEvents().trigger("walkStop");
+
+      } else {
+        entity.getEvents().trigger("gravityForPlayerOn");
+        this.onLadder = false;
+
+        triggerJetpackOffEvent();
+        if (cheatsOn) {
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
-
-        } else {
-          entity.getEvents().trigger("gravityForPlayerOn");
-          this.onLadder = false;
         }
-        return true;
-      } else if (keycode == DOWN_KEY) {
-        if (inFrontOfLadder(this.ladders)) {
-          //walkDirection.setZero();
+      }
+    } else if (keycode == DOWN_KEY) {
+      if (inFrontOfLadder(this.ladders)) {
+        //walkDirection.setZero();
+        walkDirection.sub(Vector2Utils.DOWN);
+        triggerWalkEvent();
+        entity.getEvents().trigger("walkStop");
+
+      } else {
+        entity.getEvents().trigger("gravityForPlayerOn");
+        this.onLadder = false;
+
+        if (cheatsOn) {
           walkDirection.sub(Vector2Utils.DOWN);
           triggerWalkEvent();
-          entity.getEvents().trigger("walkStop");
-
-        } else {
-          entity.getEvents().trigger("gravityForPlayerOn");
-          this.onLadder = false;
         }
-        return true;
-
-      } else if (keycode == com.badlogic.gdx.Input.Keys.TAB) {
-          // Stop sprinting when Tab is released
-          entity.getEvents().trigger("sprintStop");
-          return true;
-     } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
-              entity.getEvents().trigger("sprintStop");
-              return true;
-      } else if (keycode == JUMP_KEY) {
-        this.onLadder = false;
-        triggerGlideEvent(false);
       }
+    } else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
+      entity.getEvents().trigger("sprintStop");
+    } else if (keycode == Keymap.getActionKeyCode("Glide")) {
+      this.onLadder = false;
+      triggerGlideEvent(false);
+    } else {
+      return false;
+    }
 
-    return false;
+    return true;
   }
 
   private void triggerWalkEvent() {
@@ -212,24 +226,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else {
       entity.getEvents().trigger("walk", walkDirection);
     }
-  }
-
-  /**
-   * Return current walk direction.
-   * (Only current use is for transfers between resets.)
-   * @return walkDirection
-   */
-  public Vector2 getWalkDirection() {
-    return walkDirection;
-  }
-  /**
-   * Set current walk direction.
-   * (Only current use is for transfers between resets.)
-   * @param walkDirection - walkDirection to set.
-   */
-
-  public void setWalkDirection(Vector2 walkDirection) {
-    this.walkDirection.set(walkDirection);
   }
 
   /**
@@ -245,7 +241,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerDashEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("dash")) {
+    if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES,"dash")) {
       entity.getEvents().trigger("dash");
     }
   }
@@ -255,15 +251,22 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerGlideEvent(boolean status) {
-    if (entity.getComponent(InventoryComponent.class).hasItem("glider")) {
+    if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES,"glider")) {
       entity.getEvents().trigger("glide", status);
     }
   }
 
-  private void triggerGrappleEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("grappler")) {
-      entity.getEvents().trigger("grapple");
+  private void triggerJetpackEvent() {
+
+    if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES,"jetpack")) {
+      entity.getEvents().trigger("jetpackOn");
     }
+
+  }
+
+  private void triggerJetpackOffEvent() {
+
+    entity.getEvents().trigger("jetpackOff");
   }
 
   private int[] addToCheatHistory(int[] keyHistory, int position, int input) {
@@ -287,6 +290,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public Boolean getIsCheatsOn() {
     return cheatsOn;
   }
+
   private void enableCheats() {
     if (Arrays.equals(CHEAT_INPUT_HISTORY, new int[]{UP_KEY, UP_KEY, DOWN_KEY, UP_KEY})){
       cheatsOn = !cheatsOn;
@@ -295,8 +299,27 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   public void resetInputState() {
-      walkDirection.setZero();
-      triggerWalkEvent();
+    walkDirection.setZero();
+    triggerWalkEvent();
+  }
+
+  /**
+   * Return current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @return walkDirection
+   */
+  @Deprecated
+  public Vector2 getWalkDirection() {
+    return walkDirection;
+  }
+  /**
+   * Set current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @param walkDirection - walkDirection to set.
+   */
+  @Deprecated
+  public void setWalkDirection(Vector2 walkDirection) {
+    this.walkDirection.set(walkDirection);
   }
 
   /**

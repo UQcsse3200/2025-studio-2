@@ -14,7 +14,6 @@ import java.util.Map;
  * - INVENTORY   : regular items picked up during gameplay (keys, etc.)
  * - UPGRADES    : upgrade tokens/items
  * - OBJECTIVES  : quest/goal items
- *
  * Each bag is a multiset (item id -> stack count).
  */
 public class InventoryComponent extends Component {
@@ -44,7 +43,7 @@ public class InventoryComponent extends Component {
      * @throws NullPointerException if other is null
      */
     public InventoryComponent(InventoryComponent other) {
-        if (other == null) throw new NullPointerException("other");
+        if (other == null) throw new NullPointerException("Passed a null component");
         this.inventory = new HashMap<>(other.inventory);
         this.upgrades = new HashMap<>(other.upgrades);
         this.objectives = new HashMap<>(other.objectives);
@@ -201,6 +200,7 @@ public class InventoryComponent extends Component {
     }
 
     /**
+     * Consumes up to "amount" instances of itemId from the specified bag
      * Consumes a specified number of items from the inventory.
      * <p>
      * This method will decrement the count of the given {@code itemId} until either

@@ -68,6 +68,7 @@ public class LevelOneGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
+            "images/glide_powerup.png",
             "images/wall.png",
             "images/dash_powerup.png",
             "images/ladder.png",
@@ -124,6 +125,9 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnUpgrade("dash", 9, 6);
+        spawnUpgrade("glider", 7, 6);
+        spawnUpgrade("jetpack", 5, 6);
         spawnSecurityCams();
         spawnButtons();
         spawnTraps();
@@ -613,6 +617,24 @@ public class LevelOneGameArea extends GameArea {
                 true, true);
     }
 
+
+    public void spawnUpgrade(String upgradeID, int posx, int posy) {
+        if (upgradeID == "dash") {
+            Entity upgrade = CollectableFactory.createDashUpgrade();
+            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+        }
+
+        if (upgradeID == "glider") {
+            Entity upgrade = CollectableFactory.createGlideUpgrade();
+            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+        }
+        if (upgradeID == "jetpack") {
+            Entity upgrade = CollectableFactory.createJetpackUpgrade();
+            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+        }
+    }
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
