@@ -57,6 +57,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
+    // If the key has already been pressed then it's a legacy input from pausing the game
+    if (pressedKeys.getOrDefault(keycode, false)) {
+      return false;
+    }
+
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
       this.ladders = findLadders();
@@ -158,7 +163,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyUp(int keycode) {
     // If the key hasn't been pressed but has somehow been released then it's a legacy input
     // from an earlier KeyboardPlayerInputComponent
-    if ((pressedKeys.get(keycode) == null) || (!pressedKeys.get(keycode))) {
+    if (!pressedKeys.getOrDefault(keycode, false)) {
       return false;
     }
 
@@ -215,8 +220,15 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == GLIDE_KEY) {
       this.onLadder = false;
       triggerGlideEvent(false);
-    }
-    else {
+    // Need to mark the following keys as released
+    } else if (keycode == JUMP_KEY) {
+    } else if (keycode == DASH_KEY) {
+    } else if (keycode == INTERACT_KEY) {
+    } else if (keycode == ADRENALINE_KEY) {
+    } else if (keycode == CROUCH_KEY) {
+    } else if (keycode == ENTER_CHEAT_KEY) {
+    } else if (keycode == RESET_KEY) {
+    } else {
       return false;
     }
 
