@@ -105,7 +105,7 @@ public abstract class GameArea implements Disposable {
   /**
    * Resets the game area
    */
-  protected void reset() {
+  public void reset() {
     // Retain all data we want to be transferred across the reset (e.g. player movement direction)
     Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
 

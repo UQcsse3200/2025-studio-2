@@ -36,12 +36,13 @@ public class DeathScreenDisplay extends UIComponent {
     private TypingLabel typewriterLabel;
     private Table buttonsTable;
     private String[] deathPrompts;
-    private Random random;
+    private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
+    private final MainGameScreen screen;
 
     public DeathScreenDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.game = game;
-        this.random = new Random();
+        this.screen = screen;
         loadDeathPrompts();
     }
 
@@ -52,7 +53,7 @@ public class DeathScreenDisplay extends UIComponent {
         try {
             String fileContent = Gdx.files.internal("deathscreen-prompts.txt").readString();
             deathPrompts = fileContent.split("\\r?\\n");
-            
+
             // Remove empty lines
             java.util.List<String> validPrompts = new java.util.ArrayList<>();
             for (String prompt : deathPrompts) {
@@ -139,12 +140,12 @@ public class DeathScreenDisplay extends UIComponent {
         typewriterLabel = new TypingLabel("", skin);
         typewriterLabel.setAlignment(com.badlogic.gdx.utils.Align.left); // Left align for typewriter effect
         typewriterLabel.pause(); // Start paused, will restart when visible
-        
+
         // Put the label in a container so we can offset it
         typewriterContainer = new Container<>(typewriterLabel);
         typewriterContainer.left(); // Align container contents to left
         typewriterContainer.fillX(); // Fill available width so we can position properly
-        
+
         // Add listener to detect when typewriter finishes
         typewriterLabel.setTypingListener(new TypingListener() {
             @Override
@@ -156,7 +157,7 @@ public class DeathScreenDisplay extends UIComponent {
                     }
                 }
             }
-            
+
             @Override
             public void end() {
                 // This is called when typing animation completes
@@ -164,19 +165,19 @@ public class DeathScreenDisplay extends UIComponent {
                     buttonsTable.addAction(Actions.fadeIn(1.5f));
                 }
             }
-            
+
             @Override
             public void onChar(long ch) {
                 // Character typed - not needed for our use case
             }
-            
+
             @Override
             public String replaceVariable(String str) {
                 // Variable replacement - not needed for our use case
                 return str;
             }
         });
-        
+
         contentTable.add(typewriterContainer).center().width(400f).padBottom(30f);
         contentTable.row();
 
@@ -190,7 +191,7 @@ public class DeathScreenDisplay extends UIComponent {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(GdxGame.ScreenType.MAIN_GAME);
+                screen.getGameArea().reset();
             }
         });
         this.buttonsTable.add(restartButton).padRight(30f).minWidth(180f).minHeight(50f);
