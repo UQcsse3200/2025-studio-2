@@ -175,7 +175,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerDashEvent() {
-    if (entity.getComponent(InventoryComponent.class).hasItem("dash")) {
+    if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES,"dash")) {
       entity.getEvents().trigger("dash");
     }
   }
@@ -186,14 +186,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   private void triggerGlideEvent(boolean status) {
-    if (entity.getComponent(InventoryComponent.class).hasItem("glider")) {
+    if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES,"glider")) {
       entity.getEvents().trigger("glide", status);
     }
   }
 
   private void triggerJetpackEvent() {
 
-    if (entity.getComponent(InventoryComponent.class).hasItem("jetpack")) {
+    if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES,"jetpack")) {
       entity.getEvents().trigger("jetpackOn");
     }
 

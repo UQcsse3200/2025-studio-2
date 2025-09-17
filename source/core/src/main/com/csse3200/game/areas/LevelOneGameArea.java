@@ -67,7 +67,9 @@ public class LevelOneGameArea extends GameArea {
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
-            "images/wall.png"
+            "images/wall.png",
+            "images/dash_powerup.png",
+            "images/glide_powerup.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -97,6 +99,9 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnUpgrade("dash", 9, 6);
+        spawnUpgrade("glider", 7, 6);
+        spawnUpgrade("jetpack", 5, 6);
     }
 
     private void spawnDeathZone() {
@@ -327,6 +332,24 @@ public class LevelOneGameArea extends GameArea {
         Entity volatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         volatile3.setScale(1.8f,0.5f);
         spawnEntityAt(volatile3, volatile3Pos,false, false);
+    }
+
+    public void spawnUpgrade(String upgradeID, int posx, int posy) {
+        if (upgradeID == "dash") {
+            Entity upgrade = CollectableFactory.createDashUpgrade();
+            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+        }
+
+        if (upgradeID == "glider") {
+            Entity upgrade = CollectableFactory.createGlideUpgrade();
+            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+        }
+        if (upgradeID == "jetpack") {
+            Entity upgrade = CollectableFactory.createJetpackUpgrade();
+            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+        }
     }
     protected void loadAssets() {
         logger.debug("Loading assets");

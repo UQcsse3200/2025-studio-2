@@ -67,7 +67,7 @@ public class UpgradesComponentTest {
         Entity upgrade = CollectableFactory.createDashUpgrade();
         upgrade.create();
 
-        assertFalse(inv.hasItem("dash"), "Inventory should not contain an upgrade initially");
+        assertFalse(inv.hasItem(InventoryComponent.Bag.UPGRADES,"dash"), "Inventory should not contain an upgrade initially");
         UpgradesComponent dash = upgrade.getComponent(UpgradesComponent.class);
         assertNotNull(dash, "Upgrade entity should have an UpgradeComponent");
         assertEquals("dash", dash.getUpgradeId(), "UpgradeComponent should store its ID");
@@ -77,11 +77,11 @@ public class UpgradesComponentTest {
     void upgradeCollectMarksAsCollected() {
         Entity upgrade = CollectableFactory.createJetpackUpgrade();
         upgrade.create();
-        assertFalse(inv.hasItem("grappler"));
+        assertFalse(inv.hasItem(InventoryComponent.Bag.UPGRADES,"grappler"));
 
         upgrade.getEvents().trigger("onCollisionStart", player);
 
-        assertTrue(inv.hasItem("jetpack"), "Inventory should contain the grappler upgrade");
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grappler upgrade");
     }
 
     @Test
@@ -95,7 +95,7 @@ public class UpgradesComponentTest {
         upgrade.getEvents().trigger("onCollisionStart", player);
         secondUpgrade.getEvents().trigger("onCollisionStart", player);
 
-        assertEquals(1, inv.getItemCount("glider"));
+        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "glider"));
     }
 
     @Test
@@ -112,9 +112,9 @@ public class UpgradesComponentTest {
         glider.getEvents().trigger("onCollisionStart", player);
         jetpack.getEvents().trigger("onCollisionStart", player);
 
-        assertEquals(3, inv.getTotalItemCount());
-        assertTrue(inv.hasItem("dash"), "Inventory should contain the dash upgrade");
-        assertTrue(inv.hasItem("glider"), "Inventory should contain the glide upgrade");
-        assertTrue(inv.hasItem("jetpack"), "Inventory should contain the grapple upgrade");
+        assertEquals(3, inv.getTotalCount(InventoryComponent.Bag.UPGRADES));
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"dash"), "Inventory should contain the dash upgrade");
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"glider"), "Inventory should contain the glide upgrade");
+        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grapple upgrade");
     }
 }
