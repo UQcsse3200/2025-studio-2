@@ -27,6 +27,7 @@ public class PlayerAnimationController extends Component {
     private long hurtTime = -1000;
     private float hurtDelay = 0.5f;
     private float dashDelay = 0.3f;
+    private float jumpDelay = 0.8f;
 
     @Override
     public void create() {
@@ -78,6 +79,9 @@ public class PlayerAnimationController extends Component {
         } else if (xDirection == -1) {
             setAnimation("JUMPLEFT");
         }
+
+        // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
+        scheduleTask.accept(() -> setAnimation("IDLE"), jumpDelay);
     }
 
     /**
@@ -124,8 +128,9 @@ public class PlayerAnimationController extends Component {
      * setAnimation: to avoid repeated startup of the same animations
      */
     public void setAnimation(String animationName) {
-        //                                             Don't cancel hurt animation
-        if (!animationName.equals(currentAnimation) && timer.getTimeSince(hurtTime) > hurtDelay * 900) {
+        if ((!animationName.equals(currentAnimation) || animationName.equals("JUMP"))
+                // Don't cancel hurt animation
+                && timer.getTimeSince(hurtTime) > hurtDelay * 900) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
@@ -142,7 +147,8 @@ public class PlayerAnimationController extends Component {
         }
 
         // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-        scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);    }
+        scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);
+    }
 
     /**
      * starts the player's hurt animation
