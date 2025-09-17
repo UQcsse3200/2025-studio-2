@@ -34,7 +34,7 @@ public class PlayerActions extends Component {
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-    private static final float   SPRINT_MULT = 2.3f;
+  private static final float   SPRINT_MULT = 2.3f;
 
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 20f;
@@ -89,7 +89,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-    entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
+    entity.getEvents().addListener("gravityForPlayerOff", this::gravityOff);
+    entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
     entity.getEvents().addListener("jetpackOn", this::jetpackOn);
@@ -146,7 +147,6 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       entity.requestReset();
     }
-
   }
 
   private void updateSpeed() {
@@ -175,7 +175,9 @@ public class PlayerActions extends Component {
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
 
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()
+    || entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
+      entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
       if (deltaVy > maxDeltaVy) deltaVy = maxDeltaVy;
@@ -186,11 +188,19 @@ public class PlayerActions extends Component {
 
       impulseY = 1.1f * 1.2f * body.getMass();
     } else {
-        impulseY = 0f;
+      //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
+      entity.getEvents().trigger("gravityForPlayerOn");
+      impulseY = 0f;
     }
 
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+
+    /**
+    Vector2 impulse =
+            new Vector2((desiredVelocity.x - velocity.x) * inAirControl, 0).scl(body.getMass());
+    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+     */
   }
 
   /**
@@ -430,11 +440,19 @@ public class PlayerActions extends Component {
    */
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
-
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       body.setGravityScale(0f);
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  private void gravityOff() {
+    Body body = physicsComponent.getBody();
+    body.setGravityScale(0f);
+  }
+  private void gravityOn() {
+      Body body = physicsComponent.getBody();
+      body.setGravityScale(1f);
   }
 }

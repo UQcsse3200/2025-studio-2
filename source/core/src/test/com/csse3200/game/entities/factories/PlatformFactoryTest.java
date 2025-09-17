@@ -9,10 +9,12 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 public class PlatformFactoryTest {
     private ResourceService rs;
+    @AfterEach
+    void cleanUp() {
+        rs.unloadAssets(new String[]{"images/volatile_platform.atlas"});
+        rs.dispose();
+        ServiceLocator.clear();
+    }
     @BeforeEach
     void setupGameServices() {
 
@@ -74,6 +82,8 @@ public class PlatformFactoryTest {
                 "Volatile platform should have a ColliderComponent");
         assertNotNull(volatilePlatform.getComponent(VolatilePlatformComponent.class),
                 "Volatile platform should have a VolatilePlatformComponent");
+        assertNotNull(volatilePlatform.getComponent(AnimationRenderComponent.class),
+                "Volatile platform should have a AnimationRenderComponent");
     }
 
     @Test
@@ -92,5 +102,10 @@ public class PlatformFactoryTest {
         ColliderComponent collider = volatilePlatform.getComponent(ColliderComponent.class);
         assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
                 "Volatile Platform ColliderComponent should be on OBSTACLE layer");
+    }
+    @Test
+    void createVolatilePlatform_disappears() {
+        Entity volatilePlatform = PlatformFactory.createVolatilePlatform(5,5);
+
     }
 }
