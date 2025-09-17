@@ -111,6 +111,8 @@ public class MainGameScreen extends ScreenAdapter {
       switchArea("cutscene1", player);
     });
 
+    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
     createUI();
@@ -156,8 +158,8 @@ public class MainGameScreen extends ScreenAdapter {
         gameArea.dispose();
         gameArea = newArea;
         String finalNewLevel = newLevel;
-        newArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
-        newArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
+        gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
+        gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
 
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
         if (inv != null) {
@@ -165,7 +167,8 @@ public class MainGameScreen extends ScreenAdapter {
         }
 
         System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-        newArea.createWithPlayer(player);
+        gameArea.createWithPlayer(player);
+        gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
       }
   }
 
@@ -325,12 +328,13 @@ public class MainGameScreen extends ScreenAdapter {
     Stage stage = ServiceLocator.getRenderService().getStage();
 
     Entity ui = new Entity();
-    ui.addComponent(new InputDecorator(stage, 10)).addComponent(new PerformanceDisplay()).addComponent(new MainGameActions(this.game)).addComponent(pauseMenuDisplay).addComponent(deathScreenDisplay).addComponent(pauseInput);
+    ui.addComponent(new InputDecorator(stage, 10))
+        .addComponent(new PerformanceDisplay())
+        .addComponent(new MainGameActions(this.game))
+        .addComponent(pauseMenuDisplay).addComponent(deathScreenDisplay)
+        .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
-    
-    // Listen for player death events
-    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
   }
 
   /**
@@ -338,6 +342,14 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private void showDeathScreen() {
     deathScreenDisplay.setVisible(true);
+  }
+
+  /**
+   * Reset game area and re-add plater's death listener
+   */
+  public void reset() {
+    gameArea.reset();
+    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
   }
 
   // Set last keycode for inventory when tab is clicked

@@ -73,6 +73,7 @@ public class PlayerFactory {
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay())
                     .addComponent(new PlayerScreenTransitionComponent())
+                    .addComponent(new PlayerDeathEffectComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
 

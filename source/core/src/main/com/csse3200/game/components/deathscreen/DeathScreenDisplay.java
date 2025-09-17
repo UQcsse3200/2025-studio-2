@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.screens.MainGameScreen;
@@ -36,12 +37,13 @@ public class DeathScreenDisplay extends UIComponent {
     private TypingLabel typewriterLabel;
     private Table buttonsTable;
     private String[] deathPrompts;
-    private Random random;
+    private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
+    private final MainGameScreen screen;
 
     public DeathScreenDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.game = game;
-        this.random = new Random();
+        this.screen = screen;
         loadDeathPrompts();
     }
 
@@ -52,7 +54,7 @@ public class DeathScreenDisplay extends UIComponent {
         try {
             String fileContent = Gdx.files.internal("deathscreen-prompts.txt").readString();
             deathPrompts = fileContent.split("\\r?\\n");
-            
+
             // Remove empty lines
             java.util.List<String> validPrompts = new java.util.ArrayList<>();
             for (String prompt : deathPrompts) {
@@ -115,7 +117,7 @@ public class DeathScreenDisplay extends UIComponent {
 
         // Create semi-transparent background
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0, 0, 0, 0.8f); // Darker than pause menu for dramatic effect
+        pixmap.setColor(0, 0, 0, 0.2f); // Darker than pause menu for dramatic effect
         pixmap.fill();
         blackTexture = new Texture(pixmap);
         pixmap.dispose();
@@ -139,12 +141,12 @@ public class DeathScreenDisplay extends UIComponent {
         typewriterLabel = new TypingLabel("", skin);
         typewriterLabel.setAlignment(com.badlogic.gdx.utils.Align.left); // Left align for typewriter effect
         typewriterLabel.pause(); // Start paused, will restart when visible
-        
+
         // Put the label in a container so we can offset it
         typewriterContainer = new Container<>(typewriterLabel);
         typewriterContainer.left(); // Align container contents to left
         typewriterContainer.fillX(); // Fill available width so we can position properly
-        
+
         // Add listener to detect when typewriter finishes
         typewriterLabel.setTypingListener(new TypingListener() {
             @Override
@@ -152,11 +154,11 @@ public class DeathScreenDisplay extends UIComponent {
                 // When typing finishes, start button fade-in
                 if ("{ENDCOLOR}".equals(event) || event.equals("{END}")) {
                     if (buttonsTable != null) {
-                        buttonsTable.addAction(Actions.fadeIn(1.5f));
+                        buttonsTable.addAction(Actions.fadeIn(1f));
                     }
                 }
             }
-            
+
             @Override
             public void end() {
                 // This is called when typing animation completes
@@ -164,19 +166,19 @@ public class DeathScreenDisplay extends UIComponent {
                     buttonsTable.addAction(Actions.fadeIn(1.5f));
                 }
             }
-            
+
             @Override
             public void onChar(long ch) {
                 // Character typed - not needed for our use case
             }
-            
+
             @Override
             public String replaceVariable(String str) {
                 // Variable replacement - not needed for our use case
                 return str;
             }
         });
-        
+
         contentTable.add(typewriterContainer).center().width(400f).padBottom(30f);
         contentTable.row();
 
@@ -190,7 +192,8 @@ public class DeathScreenDisplay extends UIComponent {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(GdxGame.ScreenType.MAIN_GAME);
+                screen.reset();
+                setVisible(false);
             }
         });
         this.buttonsTable.add(restartButton).padRight(30f).minWidth(180f).minHeight(50f);
@@ -345,22 +348,7 @@ public class DeathScreenDisplay extends UIComponent {
      * Blocks all input except death screen interactions by registering a high-priority input component
      */
     private void blockAllInput() {
-        // Create an input component that consumes all keyboard input to prevent pause menu access
-        this.inputBlocker = new InputComponent(100) { // High priority to consume input first
-            @Override
-            public boolean keyDown(int keycode) {
-                // Consume all keyboard input to block pause menu and other controls
-                return true;
-            }
-            
-            @Override
-            public boolean keyUp(int keycode) {
-                // Consume all keyboard input to block pause menu and other controls
-                return true;
-            }
-        };
-        
-        ServiceLocator.getInputService().register(this.inputBlocker);
+      screen.getGameArea().getPlayer().getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
     }
 
     /**

@@ -122,6 +122,7 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       // Stop player movement when dead
       moving = false;
+      entity.getEvents().trigger("death");
       // Death screen component will handle the reset when user chooses to restart
     }
 
