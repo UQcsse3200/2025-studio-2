@@ -136,13 +136,13 @@ loadScripts(document, 'script');</script>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItem(java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds an item to the inventory</div>
+<div class="block">Adds one instance of the given item to the inventory.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItems(java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds <code>amount</code> instances of the given item id (stacking).</div>
+<div class="block">Adds <code>amount</code> instances of the given item (stacking).</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInventory()" class="member-name-link">getInventory</a>()</code></div>
@@ -232,14 +232,15 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="addItem(java.lang.String)">
 <h3>addItem</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="block">Adds an item to the inventory
+<div class="block">Adds one instance of the given item to the inventory.
  <p>
-     If item not present in inventory, the new item is created
-     and inserted into the inventory with a count of 1.
+ If the item's config has <code>autoConsume == true</code>, its effects are applied
+ immediately and the item is not stored. Otherwise the item is added to the
+ inventory stack; if it is not yet present, a new stack is created with count 1.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier (e.g., <code>"key:door"</code>).</dd>
+<dd><code>itemId</code> - non-null identifier (e.g., <code>"key:red"</code>).</dd>
 </dl>
 </section>
 </li>
@@ -248,17 +249,18 @@ loadScripts(document, 'script');</script>
 <h3>addItems</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</span></div>
-<div class="block">Adds <code>amount</code> instances of the given item id (stacking).
+<div class="block">Adds <code>amount</code> instances of the given item (stacking).
  <p>
-      If item not present in inventory, the new item is created
-      and inserted into the inventory with a count of amount.
+ If <code>autoConsume == true</code>, effects are applied once per instance and nothing
+ is stored. Otherwise the inventory count is increased by <code>amount</code>, creating
+ a new stack if needed.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier (e.g., <code>"key:door"</code>).</dd>
-<dd><code>amount</code> - number of items to add.</dd>
+<dd><code>itemId</code> - non-null identifier (e.g., <code>"key:red"</code>).</dd>
+<dd><code>amount</code> - number of items to add (must be ≥ 1).</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - when amount is negative</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>amount &lt; 1</code>.</dd>
 </dl>
 </section>
 </li>
@@ -317,8 +319,9 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">useItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
 <div class="block">Uses one instance of <code>itemId</code>.
  <p>
-     Decrements inventory item count by 1 if the item is present
-     in the inventory and the number of items is &gt; 0.
+ Decrements inventory item count by 1 if the item is present
+ in the inventory and the number of items is &gt; 0. Also
+ applies its effects.s
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
@@ -336,6 +339,9 @@ loadScripts(document, 'script');</script>
  This method will decrement the count of the given <code>itemId</code> until either
  the requested <code>amount</code> has been used or the available quantity is depleted.
  If the item does not exist in the inventory or has a count of zero, no changes occur.
+
+ Looks up the item's config and applies its effects. If no effect can be
+ applied (e.g., using a heart at full HP), the item is not consumed.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>

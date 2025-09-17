@@ -126,13 +126,24 @@ loadScripts(document, 'script');</script>
  float&nbsp;angularVel,
  float&nbsp;rotation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new rotated security camera entity.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSecurityCamera(com.csse3200.game.entities.Entity,float,java.lang.String)" class="member-name-link">createSecurityCamera</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  float&nbsp;angularVel,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new security camera entity.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createStaticSecurityCam(com.csse3200.game.entities.Entity,float,float,float,java.lang.String)" class="member-name-link">createStaticSecurityCam</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ float&nbsp;dist,
+ float&nbsp;dir,
+ float&nbsp;rotation,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a new static security camera entity.</div>
 </div>
 </div>
 </div>
@@ -191,6 +202,41 @@ loadScripts(document, 'script');</script>
  float&nbsp;angularVel,
  float&nbsp;rotation,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Creates a new rotated security camera entity.
+ The id string can be looked up using the SecurityCamRetrievalService which will
+ return this created entity.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - The target entity to be detected by the camera</dd>
+<dd><code>angularVel</code> - The angular velocity at which the camera rotates at</dd>
+<dd><code>rotation</code> - The rotational angle at which to place the camera at</dd>
+<dd><code>id</code> - The id of the camera which will be registered with the retrieval service</dd>
+<dt>Returns:</dt>
+<dd>The newly created security camera entity</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createStaticSecurityCam(com.csse3200.game.entities.Entity,float,float,float,java.lang.String)">
+<h3>createStaticSecurityCam</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createStaticSecurityCam</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ float&nbsp;dist,
+ float&nbsp;dir,
+ float&nbsp;rotation,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;id)</span></div>
+<div class="block">Creates a new static security camera entity.
+ The id string can be looked up using the SecurityCamRetrievalService which will
+ return this created entity.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - The target entity to be detected by the camera</dd>
+<dd><code>dist</code> - The distance of the light rays from the camera</dd>
+<dd><code>dir</code> - The direction which the camera will face in</dd>
+<dd><code>rotation</code> - The rotational angle at which to place the camera at</dd>
+<dd><code>id</code> - The id of the camera which will be registered with the retrieval service</dd>
+<dt>Returns:</dt>
+<dd>The newly created security camera entit</dd>
+</dl>
 </section>
 </li>
 </ul>
