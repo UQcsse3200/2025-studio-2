@@ -65,8 +65,7 @@ public abstract class GameArea implements Disposable {
     // player must be spawned before enemies as they require a player to target
     player = spawnPlayer();
     // Save this new player's components
-    saveComponents(player.getComponent(CombatStatsComponent.class),
-            player.getComponent(InventoryComponent.class));
+    saveComponents(player.getComponent(CombatStatsComponent.class), player.getComponent(InventoryComponent.class));
 
     // load remaining entities
     loadEntities();
@@ -85,8 +84,7 @@ public abstract class GameArea implements Disposable {
     loadPrerequisites();
 
     // Save the old player's combat stats and inventory
-    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
-            oldPlayer.getComponent(InventoryComponent.class));
+    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class), oldPlayer.getComponent(InventoryComponent.class));
 //    System.out.println(oldPlayer.getComponent(CombatStatsComponent.class).getHealth()); // debug
 
     // Get walk direction
@@ -152,10 +150,7 @@ public abstract class GameArea implements Disposable {
    * @return The list of all player components.
    */
   public List<Component> getComponents() {
-    List<Component> resetComponents = new ArrayList<>();
-    resetComponents.add(new CombatStatsComponent(combatStats));
-    resetComponents.add(new InventoryComponent(inventory));
-    return resetComponents;
+    return List.of(new CombatStatsComponent(combatStats), new InventoryComponent(inventory));
   }
 
   /**
@@ -163,8 +158,7 @@ public abstract class GameArea implements Disposable {
    * @param combatStats - CombatStatsComponent.
    * @param inventory - InventoryComponent.
    */
-  public void saveComponents(CombatStatsComponent combatStats,
-                                     InventoryComponent inventory) {
+  public void saveComponents(CombatStatsComponent combatStats, InventoryComponent inventory) {
     this.combatStats = new CombatStatsComponent(combatStats);
     this.inventory = new InventoryComponent(inventory);
   }

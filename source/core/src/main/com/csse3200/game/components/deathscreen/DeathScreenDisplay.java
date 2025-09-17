@@ -271,6 +271,9 @@ public class DeathScreenDisplay extends UIComponent {
                 // Animation will be triggered by typewriter listener
             }
         } else {
+            // Re-enable player input
+            screen.getGameArea().getPlayer().getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
+
             // Show other UI elements when death screen is hidden
             showOtherUIElements();
             // Unblock input

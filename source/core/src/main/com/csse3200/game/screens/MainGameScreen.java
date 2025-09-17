@@ -154,7 +154,7 @@ public class MainGameScreen extends ScreenAdapter {
       }
 
       if (newArea != null) {
-        gameArea.dispose();
+        final GameArea oldArea = gameArea;
         gameArea = newArea;
         String finalNewLevel = newLevel;
         gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
@@ -167,6 +167,8 @@ public class MainGameScreen extends ScreenAdapter {
 
         System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
         gameArea.createWithPlayer(player);
+        oldArea.dispose();
+
         gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
       }
   }
@@ -329,7 +331,8 @@ public class MainGameScreen extends ScreenAdapter {
     ui.addComponent(new InputDecorator(stage, 10))
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
-        .addComponent(pauseMenuDisplay).addComponent(deathScreenDisplay)
+        .addComponent(pauseMenuDisplay)
+        .addComponent(deathScreenDisplay)
         .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
@@ -346,8 +349,11 @@ public class MainGameScreen extends ScreenAdapter {
    * Reset game area and re-add plater's death listener
    */
   public void reset() {
+    pauseMenuDisplay.setVisible(false);
+    deathScreenDisplay.setVisible(false);
     gameArea.reset();
     gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+    paused = false;
   }
 
   // Set last keycode for inventory when tab is clicked

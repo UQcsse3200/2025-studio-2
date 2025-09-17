@@ -83,7 +83,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       return true;
     } else if (keycode == UP_KEY) {
 
-      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
+      addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
       cheatPosition++;
       if (cheatsOn) {
         walkDirection.add(Vector2Utils.UP);
@@ -91,7 +91,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       }
     } else if (keycode == DOWN_KEY) {
 
-      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
+      addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
       cheatPosition++;
       if (cheatsOn) {
         walkDirection.add(Vector2Utils.DOWN);
@@ -209,7 +209,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
   }
 
-  private int[] addToCheatHistory(int[] keyHistory, int position, int input) {
+  private void addToCheatHistory(int[] keyHistory, int position, int input) {
     if (position > 3) {
         for (int i = 1; i < 3; i ++) {
           keyHistory[i] = keyHistory[i + 1];
@@ -218,9 +218,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else {
       keyHistory[position] = input;
     }
-
-
-    return keyHistory;
   }
 
   public int[] getInputHistory() {
