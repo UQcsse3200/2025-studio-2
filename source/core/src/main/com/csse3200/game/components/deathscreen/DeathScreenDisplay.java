@@ -117,7 +117,7 @@ public class DeathScreenDisplay extends UIComponent {
 
         // Create semi-transparent background
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0, 0, 0, 0.8f); // Darker than pause menu for dramatic effect
+        pixmap.setColor(0, 0, 0, 0.2f); // Darker than pause menu for dramatic effect
         pixmap.fill();
         blackTexture = new Texture(pixmap);
         pixmap.dispose();
@@ -154,7 +154,7 @@ public class DeathScreenDisplay extends UIComponent {
                 // When typing finishes, start button fade-in
                 if ("{ENDCOLOR}".equals(event) || event.equals("{END}")) {
                     if (buttonsTable != null) {
-                        buttonsTable.addAction(Actions.fadeIn(1.5f));
+                        buttonsTable.addAction(Actions.fadeIn(1f));
                     }
                 }
             }
