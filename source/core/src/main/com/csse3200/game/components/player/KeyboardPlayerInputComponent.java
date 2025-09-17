@@ -110,6 +110,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       //Only moves the player up if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
         this.onLadder = true;
+        walkDirection.sub(Vector2Utils.DOWN);
         walkDirection.add(Vector2Utils.UP);
         triggerWalkEvent();
       } else {
@@ -120,17 +121,15 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == DOWN_KEY) {
       //Only moves the player down if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
-          this.onLadder = true;
-          walkDirection.add(Vector2Utils.DOWN);
+        this.onLadder = true;
+        walkDirection.sub(Vector2Utils.UP);
+        walkDirection.add(Vector2Utils.DOWN);
           triggerWalkEvent();
-
       } else {
         entity.getEvents().trigger("gravityForPlayerOn");
         this.onLadder = false;
       }
       return true;
-    } else if (keycode == ENTER_CHEAT_KEY) {
-      enableCheats();
     } else if (keycode == GRAPPLE_KEY) {
         //Takes player off a ladder if they are on one.
         this.onLadder = false;
@@ -149,6 +148,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyUp(int keycode) {
 
+    //gets all the ladder in the level if not already done so.
+    if(this.ladders == null) {
+      this.ladders = findLadders();
+    }
+
     if(this.ladders == null) {
       this.ladders = findLadders();
     }
@@ -158,13 +162,16 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
+        entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
         walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
+        entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == UP_KEY) {
         if (inFrontOfLadder(this.ladders)) {
+          walkDirection.setZero();
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
           entity.getEvents().trigger("walkStop");
@@ -176,6 +183,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
       } else if (keycode == DOWN_KEY) {
         if (inFrontOfLadder(this.ladders)) {
+          walkDirection.setZero();
           walkDirection.sub(Vector2Utils.DOWN);
           triggerWalkEvent();
           entity.getEvents().trigger("walkStop");
