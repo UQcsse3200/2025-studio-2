@@ -5,34 +5,19 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(GameExtension.class)
 class ShellTest {
   private Shell shell;
-
-  private static class TestConsole implements Shell.Console {
-    private final StringBuilder output = new StringBuilder();
-
-    @Override
-    public void print(Object obj) {
-      output.append(obj);
-    }
-    @Override
-    public String next() { return null; }
-    @Override
-    public boolean hasNext() { return false; }
-    @Override
-    public void close() {}
-
-    public String getOutput() {
-      return output.toString();
-    }
-  }
+  private TestConsole console;
 
   @BeforeEach
   void setUp() {
-    TestConsole console = new TestConsole();
+    console = new TestConsole();
     shell = new Shell(console);
   }
 
@@ -79,6 +64,14 @@ class ShellTest {
     assertFalse(Shell.isTruthy(""));
     assertTrue(Shell.isTruthy(new Object()));
     assertFalse(Shell.isTruthy(null));
+
+    assertTrue(Shell.isTruthy(new Object()));
+    assertFalse(Shell.isTruthy(null));
+    assertTrue(Shell.isTruthy(new int[]{1, 2}));
+    assertFalse(Shell.isTruthy(new int[]{}));
+    assertTrue(Shell.isTruthy(List.of(1)));
+    assertFalse(Shell.isTruthy(new ArrayList<>()));
+
   }
 
   @Test
@@ -91,5 +84,97 @@ class ShellTest {
   void shouldHandleIfElse() {
     assertEquals(10, shell.eval("globalThis.ifElse(1, () { globalThis.ReturnValueClass(10); }, () { globalThis.ReturnValueClass(20); });"));
     assertEquals(20, shell.eval("globalThis.ifElse(0, () { globalThis.ReturnValueClass(10); }, () { globalThis.ReturnValueClass(20); });"));
+  }
+
+  @Test
+  void shouldAccessPrivateJavaMembers() {
+    shell.eval("""
+      instance = .com.csse3200.game.ui.terminal.ShellTest.TestClass();
+      instance.privateField = "modified";
+    """);
+    assertEquals("modified", shell.eval("instance.privateField;"));
+  }
+
+  @Test
+  void shouldIterateJavaArray() {
+    shell.setGlobal("myArray", new String[]{"a", "b", "c"});
+    shell.eval("globalThis.forEach(myArray, globalThis.console.print);");
+    assertEquals("abc", console.getOutput());
+  }
+
+  @Test
+  void shouldIterateJavaList() {
+    shell.env.put("myList", List.of(1, 2, 3));
+    shell.eval("globalThis.forEach(myList, globalThis.console.print);");
+    assertEquals("123", console.getOutput());
+  }
+
+  @Test
+  void shouldThrowOnMismatchedConstructorArgs() {
+    assertThrows(RuntimeException.class, () -> shell.eval(".java.awt.Point(1);"));
+    assertThrows(RuntimeException.class, () -> shell.eval(".java.awt.Point(\"a\", \"b\");"));
+  }
+
+  @Test
+  void shouldThrowOnNonExistentMethod() {
+    shell.eval("p = .java.awt.Point();");
+    assertThrows(RuntimeException.class, () -> shell.eval("p.nonExistentMethod();"));
+  }
+
+  @Test
+  void shouldThrowOnNonExistentFieldAccess() {
+    shell.eval("p = .java.awt.Point();");
+    assertThrows(RuntimeException.class, () -> shell.eval("p.nonExistentField;"));
+  }
+
+  @Test
+  void shellRangeShouldIterateCorrectly() {
+    Shell.Range range = new Shell.Range(1, 3);
+    assertTrue(range.hasNext());
+    assertEquals(1L, range.next());
+    assertTrue(range.hasNext());
+    assertEquals(2L, range.next());
+    assertTrue(range.hasNext());
+    assertEquals(3L, range.next());
+    assertFalse(range.hasNext());
+  }
+
+  @Test
+  void shellMapShouldHandleRecursiveToString() {
+    ShellMap map = new ShellMap();
+    map.put("self", map);
+    assertDoesNotThrow(map::toString);
+    assertEquals("{self=...}", map.toString());
+  }
+
+  private static class TestConsole implements Shell.Console {
+    private final StringBuilder output = new StringBuilder();
+
+    @Override
+    public void print(Object obj) {
+      output.append(obj);
+    }
+
+    @Override
+    public String next() {
+      return null;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return false;
+    }
+
+    @Override
+    public void close() {
+    }
+
+    public String getOutput() {
+      return output.toString();
+    }
+  }
+
+  public static class TestClass {
+    private String privateField = "initial";
   }
 }
