@@ -1,8 +1,10 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.services.GameTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,6 +35,9 @@ public class PlayerAnimationTest {
         player.addComponent(controller);
 
         controller.create();
+
+        controller.scheduleTask = (runnable, delay) -> { /* do nothing */ };
+
     }
 
     @Test
@@ -129,25 +134,55 @@ public class PlayerAnimationTest {
     @Test
     void testAnimateDashRight() {
         // Verify dash right animation plays and resets to idle
+        player.getEvents().trigger("dash");
+        verify(animator).startAnimation("DASH");
+
+        player.getEvents().trigger("walkStop");
+        verify(animator).startAnimation("IDLE");
     }
 
     @Test
     void testAnimateDashLeft() {
         // Verify dash left animation plays and resets to idle
+
+        controller.animateWalk(new Vector2(-1f, 0f));
+        player.getEvents().trigger("dash");
+        verify(animator).startAnimation("DASHLEFT");
+
+        player.getEvents().trigger("walkStop");
+        verify(animator).startAnimation("IDLELEFT");
     }
 
     @Test
     void testAnimateHurtRight() {
         // Verify hurt right animation plays and resets to idle
+
+        player.getEvents().trigger("hurt");
+        verify(animator).startAnimation("HURT");
+
+        player.getEvents().trigger("walkStop");
+        verify(animator).startAnimation("IDLE");
     }
 
     @Test
     void testAnimateHurtLeft() {
         // Verify hurt left animation plays and resets to idle
+
+        controller.animateWalk(new Vector2(-1f, 0f));
+        player.getEvents().trigger("hurt");
+        verify(animator).startAnimation("HURTLEFT");
+
+        player.getEvents().trigger("walkStop");
+        verify(animator).startAnimation("IDLELEFT");
     }
 
     @Test
-    void testSetAnimationAvoidsRepeats() {
-        // Verify repeated animations are not restarted unnecessarily
+    void testSetAnimation() {
+        String[] animations = new String[] {"RIGHT", "LEFT", "DASH", "DASHLEFT", "HURT", "HURTLEFT",
+                "JUMP", "JUMPLEFT", "CROUCHMOVE", "CROUCHMOVELEFT", "IDLE", "IDLELEFT"};
+        for (String s : animations) {
+            controller.setAnimation(s);
+            verify(animator).startAnimation("RIGHT");
+        }
     }
 }
