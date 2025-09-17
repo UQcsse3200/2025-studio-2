@@ -38,10 +38,11 @@ public class DoorComponent extends Component {
     @Override
     public void create() {
         entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
+        entity.getEvents().addListener("onCollisionEnd", this::onCollisionEnd);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
 
-        // Get the animation comnponent
+        // Get the animation component
         animationComponent = entity.getComponent(AnimationRenderComponent.class);
 
         // start with closed door
@@ -68,12 +69,6 @@ public class DoorComponent extends Component {
             animationComponent.startAnimation("door_open");
         }
 
-        // Make collider a sensor
-        ColliderComponent col = entity.getComponent(ColliderComponent.class);
-        if (col != null) {
-            col.setSensor(true);
-        }
-
         isOpening = false;
     }
 
@@ -91,8 +86,27 @@ public class DoorComponent extends Component {
         if (locked) {
             tryUnlock(other);
         } else if (!isOpening) {
+            // Make collider a sensor
+            ColliderComponent col = entity.getComponent(ColliderComponent.class);
+            if (col != null) {
+                col.setSensor(true);
+            }
+
             // Door is fully open -> trigger transition
-            this.area.trigger("doorEntered", other);
+            this.area.trigger("doorEntered");
+        }
+    }
+
+    private void onCollisionEnd(Entity other) {
+        HitboxComponent cc = other.getComponent(HitboxComponent.class);
+        if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
+
+        // When player leaves the door area, reset it
+        if (!locked) {
+            ColliderComponent col = entity.getComponent(ColliderComponent.class);
+            if (col != null) {
+                col.setSensor(false); // Make solid again
+            }
         }
     }
 
