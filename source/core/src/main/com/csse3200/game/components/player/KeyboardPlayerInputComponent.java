@@ -159,12 +159,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
-        entity.getEvents().trigger("walkStop");
+        //entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
         walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
-        entity.getEvents().trigger("walkStop");
+        //entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == UP_KEY) {
         if (inFrontOfLadder(this.ladders)) {

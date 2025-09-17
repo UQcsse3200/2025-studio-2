@@ -81,7 +81,7 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-    entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
+    entity.getEvents().addListener("gravityForPlayerOff", this::gravityOff);
     entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
@@ -399,14 +399,17 @@ public class PlayerActions extends Component {
    */
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
-    body.setGravityScale(0f);
-    //if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
-    //  body.setGravityScale(0f);
-    //} else {
-    //  body.setGravityScale(1f);
-    //}
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+      body.setGravityScale(0f);
+    } else {
+      body.setGravityScale(1f);
+    }
   }
 
+  private void gravityOff() {
+    Body body = physicsComponent.getBody();
+    body.setGravityScale(0f);
+  }
   private void gravityOn() {
       Body body = physicsComponent.getBody();
       body.setGravityScale(1f);
