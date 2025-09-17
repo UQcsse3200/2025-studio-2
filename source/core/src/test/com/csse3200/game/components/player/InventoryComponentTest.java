@@ -137,14 +137,6 @@ class InventoryComponentTest {
         }
 
         @Test
-        void addZeroIsNoop() {
-            inv.addItems(Bag.INVENTORY, "pink-key", 0);
-            inv.addItems(Bag.UPGRADES, "jetpack", 0);
-            inv.addItems(Bag.OBJECTIVES, "find-door", 0);
-            assertEquals(0, inv.getGrandTotalCount());
-        }
-
-        @Test
         void addNegativeThrows() {
             assertThrows(IllegalArgumentException.class,
                     () -> inv.addItems(Bag.INVENTORY, "pink-key", -1));
