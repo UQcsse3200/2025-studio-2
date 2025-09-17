@@ -3,8 +3,12 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.csse3200.game.components.LadderComponent;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.Vector2Utils;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -33,6 +37,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private int cheatPosition = 0;
   private Boolean cheatsOn = false;
 
+  private Array<Entity> ladders = null;
+
+  private Boolean onLadder = false;
+
   public KeyboardPlayerInputComponent() {
     super(5);
   }
@@ -47,16 +55,28 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyDown(int keycode) {
     if (!enabled) return false;
 
+    //gets all the ladder in the level if not already done so.
+    if(this.ladders == null) {
+      this.ladders = findLadders();
+    }
+
     if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
+      this.onLadder = false;
+      entity.getEvents().trigger("gravityForPlayerOn");
+
       triggerJumpEvent();
       triggerGlideEvent(true);
       return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+      this.onLadder = false;
+
       pressedKeys.add(keycode);
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
       return true;
     } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      this.onLadder = false;
+
       pressedKeys.add(keycode);
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
@@ -66,6 +86,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
       triggerAdrenalineEvent();
         return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
+        //takes player off ladder if they are on one.
+        this.onLadder = false;
     } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
         triggerDashEvent();
         return true;
@@ -82,27 +105,35 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("sprintStart");
       return true;
     } else if (keycode == UP_KEY) {
-
-      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, UP_KEY);
-      cheatPosition++;
-      if (cheatsOn) {
+      //Only moves the player up if they are in front of a ladder.
+      if (inFrontOfLadder(this.ladders)) {
+        this.onLadder = true;
+        //walkDirection.sub(Vector2Utils.DOWN);
         walkDirection.add(Vector2Utils.UP);
         triggerWalkEvent();
+      } else {
+        entity.getEvents().trigger("gravityForPlayerOn");
+        this.onLadder = false;
       }
+      return true;
     } else if (keycode == DOWN_KEY) {
-
-      CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, DOWN_KEY);
-      cheatPosition++;
-      if (cheatsOn) {
+      //Only moves the player down if they are in front of a ladder.
+      if (inFrontOfLadder(this.ladders)) {
+        this.onLadder = true;
+        //walkDirection.sub(Vector2Utils.UP);
         walkDirection.add(Vector2Utils.DOWN);
-        triggerWalkEvent();
+          triggerWalkEvent();
+      } else {
+        entity.getEvents().trigger("gravityForPlayerOn");
+        this.onLadder = false;
       }
-    } else if (keycode == ENTER_CHEAT_KEY) {
-      enableCheats();
+      return true;
     } else if (keycode == GRAPPLE_KEY) {
-      triggerGrappleEvent();
-    }
+        //Takes player off a ladder if they are on one.
+        this.onLadder = false;
 
+        triggerGrappleEvent();
+    }
     return false;
   }
 
@@ -116,24 +147,48 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public boolean keyUp(int keycode) {
     if (!enabled) return false;
 
+    //gets all the ladder in the level if not already done so.
+    if(this.ladders == null) {
+      this.ladders = findLadders();
+    }
+
+    if (this.onLadder) {
+      this.onLadder = inFrontOfLadder(this.ladders);
+    }
+
     if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
+        entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
         if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;
       } else if (keycode == UP_KEY) {
-        if (cheatsOn) {
+        if (inFrontOfLadder(this.ladders)) {
+          //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
+
+        } else {
+          entity.getEvents().trigger("gravityForPlayerOn");
+          this.onLadder = false;
         }
+        return true;
       } else if (keycode == DOWN_KEY) {
-        if (cheatsOn) {
+        if (inFrontOfLadder(this.ladders)) {
+          //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.DOWN);
           triggerWalkEvent();
+          entity.getEvents().trigger("walkStop");
+
+        } else {
+          entity.getEvents().trigger("gravityForPlayerOn");
+          this.onLadder = false;
         }
+        return true;
+
       } else if (keycode == com.badlogic.gdx.Input.Keys.TAB) {
           // Stop sprinting when Tab is released
           entity.getEvents().trigger("sprintStop");
@@ -142,6 +197,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
               entity.getEvents().trigger("sprintStop");
               return true;
       } else if (keycode == JUMP_KEY) {
+        this.onLadder = false;
         triggerGlideEvent(false);
       }
 
@@ -240,5 +296,56 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public void resetInputState() {
       walkDirection.setZero();
       triggerWalkEvent();
+  }
+
+  /**
+   * Checks every entity currently in the game and finds all the ones that are ladders.
+   * @return Array of Entities that are ladders.
+   */
+  private Array<Entity> findLadders() {
+    Array<Entity> ladd = new Array<>();
+    Array<Entity> bobs = ServiceLocator.getEntityService().get_entities();
+    for (Entity bob : bobs) {
+      if (bob.getComponent(LadderComponent.class) != null) {
+        ladd.add(bob);
+      }
+    }
+    return ladd;
+  }
+
+  /**
+   * Checks if the player is in front of one of the ladders in the level.
+   * @param ladders
+   * @return true if in front of a ladder, false if not.
+   */
+  private Boolean inFrontOfLadder(Array<Entity> ladders) {
+    for (Entity ladder : ladders) {
+      if (ladder.getPosition().x - entity.getPosition().x <= 0.5f
+          && ladder.getPosition().x - entity.getPosition().x >= -0.5f
+          && ladder.getPosition().y - entity.getPosition().y <= 0.5f
+          && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
+        //this.onLadder = true;
+        entity.getEvents().trigger("gravityForPlayerOff");
+        return true;
+      }
+    }
+    this.onLadder = false;
+    return false;
+  }
+
+  /**
+   * Gets the current on ladder state of the player
+   * @return boolean value of the state.
+   */
+  public Boolean getOnLadder() {
+    return this.onLadder;
+  }
+
+  /**
+   * Sets the on ladder state of the player to the given boolean value
+   * @param set boolean value to set the on ladder state too.
+   */
+  public void setOnLadder (boolean set) {
+    this.onLadder = set;
   }
 }

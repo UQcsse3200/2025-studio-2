@@ -76,6 +76,55 @@ class ConeLightPanningTaskComponentTest {
     }
 
     @Test
+    void createsAndRegistersLens_withRequiredComponents() {
+        try (var rhCons = mockConstruction(RayHandler.class);
+             var coneCons = statefulConeLight()) {
+            ServiceLocator.registerLightingService(createLightingService());
+
+            // create camera
+            Entity target = new Entity();
+            Entity cam = SecurityCameraFactory.createSecurityCamera(target, LightingDefaults.ANGULAR_VEL, "test");
+            cam.create();
+
+            ConeLightPanningTaskComponent task = cam.getComponent(ConeLightPanningTaskComponent.class);
+            assertNotNull(task);
+
+            Entity lens = task.getCameraLens();
+            assertNotNull(lens);
+            assertNotNull(lens.getComponent(ConeLightComponent.class));
+
+            // lens is registered in EntityService
+            assertTrue(ServiceLocator.getEntityService().get_entities().contains(lens, true));
+        }
+    }
+
+    @Test
+    void clampsExactlyAtBounds_noOverShoot() {
+        try (var rhCons = mockConstruction(RayHandler.class);
+             var coneCons = statefulConeLight()) {
+            ServiceLocator.registerLightingService(createLightingService());
+
+            // create camera
+            Entity target = new Entity();
+            Entity cam = SecurityCameraFactory.createSecurityCamera(target, LightingDefaults.ANGULAR_VEL, "test");
+            cam.create();
+
+            Entity lens = cam.getComponent(ConeLightPanningTaskComponent.class).getCameraLens();
+            ConeLightComponent cl = lens.getComponent(ConeLightComponent.class);
+
+            cl.setDirectionDeg(LightingDefaults.START_DEG);
+            // Walk forward until we hit/end bound exactly (delta = 1)
+            while (cl.getLight().getDirection() + LightingDefaults.ANGULAR_VEL <= LightingDefaults.END_DEG) {
+                cam.update();
+            }
+            cam.update();
+            assertEquals(LightingDefaults.END_DEG, cl.getLight().getDirection(), 0.0001f);
+            cam.update();
+            assertTrue(cl.getLight().getDirection() <= LightingDefaults.END_DEG);
+        }
+    }
+
+    @Test
     void flipsDirectionAtBounds_andMovesBackInsideRange() {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = statefulConeLight()) {
@@ -159,6 +208,27 @@ class ConeLightPanningTaskComponentTest {
             int after  = ServiceLocator.getEntityService().get_entities().size;
 
             assertTrue(after <= before - 1);
+        }
+    }
+
+    @Test
+    void dispose_doesntThrowAndRemovesSpecificLens() {
+        try (var rhCons = mockConstruction(RayHandler.class);
+             var coneCons = statefulConeLight()) {
+            ServiceLocator.registerLightingService(createLightingService());
+
+            Entity target = new Entity();
+            Entity cam = SecurityCameraFactory.createSecurityCamera(target, LightingDefaults.ANGULAR_VEL, "test");
+            cam.create();
+
+            Entity lens = cam.getComponent(ConeLightPanningTaskComponent.class).getCameraLens();
+            cam.dispose();
+
+            // lens is no longer registered
+            assertFalse(ServiceLocator.getEntityService().get_entities().contains(lens, true));
+
+            // doesnt throw when run again
+            assertDoesNotThrow(cam::dispose);
         }
     }
 
