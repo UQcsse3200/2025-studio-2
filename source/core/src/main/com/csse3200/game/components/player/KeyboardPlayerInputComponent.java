@@ -236,4 +236,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       entity.getEvents().trigger("gravityForPlayerOff");
     }
   }
+
+  public void resetInputState() {
+      walkDirection.setZero();
+      triggerWalkEvent();
+  }
 }

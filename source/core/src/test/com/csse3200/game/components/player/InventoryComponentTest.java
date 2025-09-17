@@ -5,10 +5,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
+import java.util.Map;
+import com.csse3200.game.components.player.InventoryComponent.Bag;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Tests for the three-bag InventoryComponent:
+ * - inventory  (consumable items, supports use/remove)
+ * - upgrades   (non-consumable flags, e.g., jetpack/glider)
+ * - objectives (non-consumable, cleared via resetObjectives)
+ *
+ * NOTE: We avoid legacy methods like getTotalItemCount() and assert by summing
+ * the exposed read-only maps returned by getInventory()/getUpgrades()/getObjectives().
+ */
 @ExtendWith(GameExtension.class)
 class InventoryComponentTest {
 
@@ -19,126 +30,231 @@ class InventoryComponentTest {
         inv = new InventoryComponent();
     }
 
-    void addItemsBulk() {
-        inv.addItems("pink-key", 8);
-        inv.addItems("purple-key", 3);
-        inv.addItems("blue-key", 2);
-        inv.addItems("red-key", 8);
-        inv.addItems("orange-key", 0);
+    private static int sum(Map<String, Integer> m) {
+        return m.values().stream().mapToInt(Integer::intValue).sum();
     }
 
+    // --------------------------
+    // Construction / empty state
+    // --------------------------
     @Nested
     class Construction {
         @Test
-        void startsWithEmptyInventory() {
-            assertEquals(0, inv.getTotalItemCount());
-            assertFalse(inv.hasItem("pink-key"));
-            assertEquals(0, inv.getItemCount("pink-key"));
+        void startsEmptyAcrossAllBags() {
+            assertTrue(inv.getInventory().isEmpty());
+            assertTrue(inv.getUpgrades().isEmpty());
+            assertTrue(inv.getObjectives().isEmpty());
+
+            assertEquals(0, inv.getTotalCount(Bag.INVENTORY));
+            assertEquals(0, inv.getTotalCount(Bag.UPGRADES));
+            assertEquals(0, inv.getTotalCount(Bag.OBJECTIVES));
+            assertEquals(0, inv.getGrandTotalCount());
+        }
+
+        @Test
+        void copyConstructorDeepCopies() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 2);
+            inv.addItems(Bag.UPGRADES, "jetpack", 1);
+            inv.addItems(Bag.OBJECTIVES, "find-door", 3);
+
+            InventoryComponent copy = new InventoryComponent(inv);
+
+            // mutate original
+            inv.addItems(Bag.INVENTORY, "pink-key", 5);
+            inv.removeItem(Bag.UPGRADES, "jetpack");
+            inv.resetBag(Bag.OBJECTIVES);
+
+            // copy remains with original values
+            assertEquals(2, copy.getItemCount(Bag.INVENTORY, "pink-key"));
+            assertEquals(1, copy.getItemCount(Bag.UPGRADES, "jetpack"));
+            assertEquals(3, copy.getItemCount(Bag.OBJECTIVES, "find-door"));
         }
     }
 
+    // -------------
+    // Add / stack
+    // -------------
     @Nested
-    class AddItemStack {
+    class AddAndStack {
         @Test
-        void addsItems() {
-            inv.addItems("pink-key", 3);
-            inv.addItems("purple-key", 2);
-            assertEquals(3, inv.getItemCount("pink-key"));
-            assertEquals(2, inv.getItemCount("purple-key"));
-            assertEquals(5, inv.getTotalItemCount());
+        void addSingleAndBulkPerBag() {
+            inv.addItem(Bag.INVENTORY, "pink-key");
+            inv.addItems(Bag.INVENTORY, "purple-key", 2);
+            inv.addItems(Bag.UPGRADES, "jetpack", 1);
+            inv.addItems(Bag.OBJECTIVES, "find-door", 3);
+
+            assertEquals(1, inv.getItemCount(Bag.INVENTORY, "pink-key"));
+            assertEquals(2, inv.getItemCount(Bag.INVENTORY, "purple-key"));
+            assertEquals(1, inv.getItemCount(Bag.UPGRADES, "jetpack"));
+            assertEquals(3, inv.getItemCount(Bag.OBJECTIVES, "find-door"));
+
+            assertEquals(3, inv.getTotalCount(Bag.INVENTORY));
+            assertEquals(1, inv.getTotalCount(Bag.UPGRADES));
+            assertEquals(3, inv.getTotalCount(Bag.OBJECTIVES));
+            assertEquals(7, inv.getGrandTotalCount());
         }
 
         @Test
-        void stacksSameItem() {
-            inv.addItems("pink-key", 3);
-            inv.addItems("pink-key", 2);
-            inv.addItem("pink-key");
-            inv.addItems("purple-key", 2);
-            assertEquals(6, inv.getItemCount("pink-key"));
-            assertEquals(8, inv.getTotalItemCount());
+        void stackingSameKeyAccumulates() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 3);
+            inv.addItem(Bag.INVENTORY, "pink-key");
+            assertEquals(4, inv.getItemCount(Bag.INVENTORY, "pink-key"));
         }
 
         @Test
-        void stacksDifferentItem() {
-            inv.addItems("pink-key", 3);
-            inv.addItems("purple-key", 2);
-            assertEquals(3, inv.getItemCount("pink-key"));
-            assertEquals(2, inv.getItemCount("purple-key"));
-            assertEquals(5, inv.getTotalItemCount());
+        void addZeroIsNoop() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 0);
+            inv.addItems(Bag.UPGRADES, "jetpack", 0);
+            inv.addItems(Bag.OBJECTIVES, "find-door", 0);
+            assertEquals(0, inv.getGrandTotalCount());
         }
 
         @Test
-        void hasItemsIndependently() {
-            inv.addItems("pink-key", 3);
-            inv.addItems("purple-key", 2);
-            assertTrue(inv.hasItem("pink-key"));
-            assertTrue(inv.hasItem("purple-key"));
-        }
-
-        @Test
-        void addZeroItems() {
-            inv.addItems("pink-key", 0);
-            assertEquals(0, inv.getItemCount("pink-key"));
-            assertFalse(inv.hasItem("pink-key"));
+        void addNegativeThrows() {
+            assertThrows(IllegalArgumentException.class,
+                    () -> inv.addItems(Bag.INVENTORY, "pink-key", -1));
+            assertThrows(IllegalArgumentException.class,
+                    () -> inv.addItems(Bag.UPGRADES, "jetpack", -2));
+            assertThrows(IllegalArgumentException.class,
+                    () -> inv.addItems(Bag.OBJECTIVES, "find-door", -3));
         }
     }
 
+    // -------------
+    // Queries
+    // -------------
     @Nested
-    class RemoveItem {
+    class Queries {
         @Test
-        void removesItems() {
-            addItemsBulk();
-            inv.removeItem("pink-key");
-            inv.removeItem("purple-key");
-            assertEquals(0, inv.getItemCount("pink-key"));
-            assertEquals(0, inv.getItemCount("purple-key"));
-            assertEquals(10, inv.getTotalItemCount());
+        void hasItemAndCountsWorkPerBag() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 2);
+            assertTrue(inv.hasItem(Bag.INVENTORY, "pink-key"));
+            assertFalse(inv.hasItem(Bag.INVENTORY, "ghost"));
+            assertEquals(2, inv.getItemCount(Bag.INVENTORY, "pink-key"));
+            assertEquals(0, inv.getItemCount(Bag.INVENTORY, "ghost"));
         }
 
         @Test
-        void useMultipleItems() {
-            addItemsBulk();
-            inv.useItems("pink-key", 5);
-            assertEquals(3, inv.getItemCount("pink-key"));
-            assertEquals(3, inv.getItemCount("purple-key"));
+        void existsAnywhereChecksAllBags() {
+            inv.addItems(Bag.UPGRADES, "jetpack", 1);
+            assertTrue(inv.existsAnywhere("jetpack"));
+            assertFalse(inv.existsAnywhere("glider"));
+
+            inv.addItems(Bag.OBJECTIVES, "glider", 1);
+            assertTrue(inv.existsAnywhere("glider"));
+        }
+    }
+
+    // -------------------
+    // Remove / reset bag
+    // -------------------
+    @Nested
+    class RemoveAndReset {
+        @Test
+        void removeItemDeletesAllInstances() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 5);
+            inv.removeItem(Bag.INVENTORY, "pink-key");
+            assertEquals(0, inv.getItemCount(Bag.INVENTORY, "pink-key"));
+            assertEquals(0, inv.getTotalCount(Bag.INVENTORY));
         }
 
         @Test
-        void useNonExistentItemInstance() {
-            inv.useItems("pink-key", 12);
-            assertEquals(0, inv.getTotalItemCount());
-            assertFalse(inv.hasItem("pink-key"));
+        void resetBagClearsOnlyThatBag() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 2);
+            inv.addItems(Bag.UPGRADES, "jetpack", 1);
+            inv.addItems(Bag.OBJECTIVES, "find-door", 3);
 
-            inv.useItems("heart", 2);
-            assertFalse(inv.hasItem("heart"));
-            assertEquals(0, inv.getItemCount("heart"));
+            inv.resetBag(Bag.OBJECTIVES);
 
-            assertFalse(inv.hasItem("red-key"));
-            inv.useItems("red-key", 5);
-            assertEquals(0, inv.getItemCount("red-key"));
+            assertEquals(2, inv.getTotalCount(Bag.INVENTORY));
+            assertEquals(1, inv.getTotalCount(Bag.UPGRADES));
+            assertEquals(0, inv.getTotalCount(Bag.OBJECTIVES));
+            assertEquals(3, inv.getGrandTotalCount());
+        }
+    }
+
+    // -------------
+    // Consumption
+    // -------------
+    @Nested
+    class Consumption {
+        @Test
+        void useItemConsumesOneIfAvailable() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 2);
+            assertTrue(inv.useItem(Bag.INVENTORY, "pink-key"));
+            assertEquals(1, inv.getItemCount(Bag.INVENTORY, "pink-key"));
         }
 
         @Test
-        void usesItemInstance() {
-            addItemsBulk();
-            inv.useItem("purple-key");
-            assertEquals(2, inv.getItemCount("purple-key"));
+        void useItemsClampedToAvailable() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 3);
+            int used = inv.useItems(Bag.INVENTORY, "pink-key", 5);
+            assertEquals(3, used);
+            assertEquals(0, inv.getItemCount(Bag.INVENTORY, "pink-key"));
         }
 
         @Test
-        void useDecrementsItemCount() {
-            addItemsBulk();
-            inv.useItem("purple-key");
-            assertEquals(2, inv.getItemCount("purple-key"));
+        void useItemsZeroAmountIsNoop() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 3);
+            int used = inv.useItems(Bag.INVENTORY, "pink-key", 0);
+            assertEquals(0, used);
+            assertEquals(3, inv.getItemCount(Bag.INVENTORY, "pink-key"));
         }
 
         @Test
-        void useItemDecrementsSelectedOnly() {
-            addItemsBulk();
-            inv.useItem("purple-key");
-            assertEquals(2, inv.getItemCount("purple-key"));
-            assertEquals(8, inv.getItemCount("red-key"));
-            assertEquals(20, inv.getTotalItemCount());
+        void useItemsNegativeThrows() {
+            assertThrows(IllegalArgumentException.class,
+                    () -> inv.useItems(Bag.INVENTORY, "pink-key", -1));
+        }
+
+        @Test
+        void useFromEmptyReturnsFalseOrZero() {
+            assertFalse(inv.useItem(Bag.INVENTORY, "ghost-key"));
+            assertEquals(0, inv.useItems(Bag.INVENTORY, "ghost-key", 3));
+        }
+    }
+
+    // --------------------
+    // Read-only map views
+    // --------------------
+    @Nested
+    class ReadOnlyViews {
+        @Test
+        void mapsAreUnmodifiable() {
+            inv.addItems(Bag.INVENTORY, "pink-key", 1);
+            assertThrows(UnsupportedOperationException.class,
+                    () -> inv.getInventory().put("hack", 999));
+            assertThrows(UnsupportedOperationException.class,
+                    () -> inv.getUpgrades().put("hack", 999));
+            assertThrows(UnsupportedOperationException.class,
+                    () -> inv.getObjectives().put("hack", 999));
+        }
+    }
+
+    // ----------------
+    // Null parameters
+    // ----------------
+    @Nested
+    class NullGuards {
+        @Test
+        void nullBagOrItemIdThrows() {
+            assertThrows(NullPointerException.class, () -> inv.addItem(null, "x"));
+            assertThrows(NullPointerException.class, () -> inv.addItem(Bag.INVENTORY, null));
+            assertThrows(NullPointerException.class, () -> inv.addItems(null, "x", 1));
+            assertThrows(NullPointerException.class, () -> inv.addItems(Bag.INVENTORY, null, 1));
+            assertThrows(NullPointerException.class, () -> inv.getItemCount(null, "x"));
+            assertThrows(NullPointerException.class, () -> inv.getItemCount(Bag.INVENTORY, null));
+            assertThrows(NullPointerException.class, () -> inv.getTotalCount(null));
+            assertThrows(NullPointerException.class, () -> inv.removeItem(null, "x"));
+            assertThrows(NullPointerException.class, () -> inv.removeItem(Bag.INVENTORY, null));
+            assertThrows(NullPointerException.class, () -> inv.resetBag(null));
+            assertThrows(NullPointerException.class, () -> inv.useItem(null, "x"));
+            assertThrows(NullPointerException.class, () -> inv.useItem(Bag.INVENTORY, null));
+            assertThrows(NullPointerException.class, () -> inv.useItems(null, "x", 1));
+            assertThrows(NullPointerException.class, () -> inv.useItems(Bag.INVENTORY, null, 1));
+            assertThrows(NullPointerException.class, () -> inv.existsAnywhere(null));
+            // copy constructor guard
+            assertThrows(NullPointerException.class, () -> new InventoryComponent(null));
         }
     }
 }
