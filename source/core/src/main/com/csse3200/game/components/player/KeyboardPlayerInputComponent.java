@@ -213,6 +213,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == Keymap.getActionKeyCode("Glide")) {
       this.onLadder = false;
       triggerGlideEvent(false);
+    // Need to mark the following keys as released
+    } else if (keycode == JUMP_KEY) {
+    } else if (keycode == DASH_KEY) {
+    } else if (keycode == INTERACT_KEY) {
+    } else if (keycode == ADRENALINE_KEY) {
+    } else if (keycode == CROUCH_KEY) {
+    } else if (keycode == ENTER_CHEAT_KEY) {
+    } else if (keycode == RESET_KEY) {
     } else {
       return false;
     }
