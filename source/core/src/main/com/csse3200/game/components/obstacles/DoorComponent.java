@@ -7,6 +7,7 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 
 public class DoorComponent extends Component {
@@ -14,6 +15,7 @@ public class DoorComponent extends Component {
     //private final String levelId;
     private boolean locked = true;
     private final GameArea area;
+    private AnimationRenderComponent animationComponent;
 
     /**
      * A component that represents a door which can be locked or unlocked with a specific key.
@@ -36,6 +38,14 @@ public class DoorComponent extends Component {
         entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
         entity.getEvents().addListener("openDoor", this::openDoor);
         entity.getEvents().addListener("closeDoor", this::closeDoor);
+
+        // Get the animation comnponent
+        animationComponent = entity.getComponent(AnimationRenderComponent.class);
+
+        // start with closed door
+        if (animationComponent != null) {
+            animationComponent.startAnimation("door_closed");
+        }
     }
 
     /**
@@ -80,8 +90,10 @@ public class DoorComponent extends Component {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         col.setSensor(true);
 
-        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
-        texture.setTexture("images/door_open.png");
+        // play door opening animation
+        if (animationComponent != null) {
+            animationComponent.startAnimation("door_opening");
+        }
 
         locked = false;
     }
@@ -93,8 +105,10 @@ public class DoorComponent extends Component {
         ColliderComponent col = entity.getComponent(ColliderComponent.class);
         if (col != null) col.setSensor(false);
 
-        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
-        texture.setTexture("images/door_closed.png");
+        // play door closing animation
+        if (animationComponent != null) {
+            animationComponent.startAnimation("door_closing");
+        }
 
         locked = true;
     }
