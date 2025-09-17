@@ -161,6 +161,7 @@ public class ForestGameArea extends GameArea {
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
+    spawnBoxOnlyPlate();
 
     door = spawnDoor();
     spawnWalls();
@@ -375,6 +376,12 @@ public class ForestGameArea extends GameArea {
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
 
+    private void spawnBoxOnlyPlate() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+        // You approved this position
+        spawnEntityAt(plate, new GridPoint2(16, 17), true, true);
+    }
+
   private void spawnElevatorPlatform() {
       float ts = terrain.getTileSize();
 
@@ -438,7 +445,6 @@ public class ForestGameArea extends GameArea {
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-
     if (upgradeID == "glider") {
       Entity upgrade = CollectableFactory.createGlideUpgrade();
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
@@ -449,6 +455,14 @@ public class ForestGameArea extends GameArea {
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
   }
+    private void spawnBoxPressurePlate() {
+        // create a plate that ONLY boxes can press
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+
+        // put it near the existing moveable box (spawned at 17,17 in this area)
+        GridPoint2 platePos = new GridPoint2(17, 16); // adjust if you want
+        spawnEntityAt(plate, platePos, true, true);
+    }
 
   private void spawnPressurePlates() {
     Entity plate = PressurePlateFactory.createPressurePlate();
