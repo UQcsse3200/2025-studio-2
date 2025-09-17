@@ -461,8 +461,8 @@ public class LevelTwoGameArea extends GameArea {
 
         //spawn upgrade
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
-            Entity dashUpgrade = CollectableFactory.createGrappleUpgrade();
-            spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
+            Entity glideUpgrade = CollectableFactory.createGlideUpgrade();
+            spawnEntityAt(glideUpgrade, new GridPoint2(91,6), true,  true);
         });
 
     }

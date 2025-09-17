@@ -63,7 +63,6 @@ public class ObjectivesTab implements InventoryTabInterface {
   private static final int V_GAP = 12; // 12 px vertical spacing between banners
 
   private static final float OBJ_SCALE = 1.5f; // 50% bigger
-  private static final float DOWN_SHIFT = 1.5f; // shift list down by +50% of original Y
 
   // Objective banner textures by id
   private final Map<String, Texture> objectiveTex = new HashMap<>();
@@ -131,7 +130,6 @@ public class ObjectivesTab implements InventoryTabInterface {
   private void layoutObjectives(PixelPerfectPlacer placer) {
     InventoryComponent inv = player.getComponent(InventoryComponent.class);
     Map<String, Integer> bag = (inv != null) ? inv.getObjectives() : java.util.Collections.emptyMap();
-
     // Flatten multiset
     java.util.List<String> instances = new ArrayList<>();
     for (Map.Entry<String, Integer> e : bag.entrySet()) {

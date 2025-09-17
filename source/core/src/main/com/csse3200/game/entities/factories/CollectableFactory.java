@@ -186,7 +186,7 @@ public class CollectableFactory {
         Entity obj = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent()
-                        .setLayer(PhysicsLayer.OBSTACLE) // collides with player's hitbox
+                        .setLayer(PhysicsLayer.COLLECTABLE)
                         .setSensor(true)) // not blocking, overlap only
                 .addComponent(new ObjectivesComponent(objectiveId));
 
@@ -194,7 +194,6 @@ public class CollectableFactory {
         obj.setScale(width, height);
         PhysicsUtils.setScaledCollider(obj, width, height);
 
-        // NOTE: No TextureRenderComponent -> invisible in world
         return obj;
     }
 
