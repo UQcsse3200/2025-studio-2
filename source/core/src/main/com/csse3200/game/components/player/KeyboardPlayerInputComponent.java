@@ -10,6 +10,7 @@ import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.Vector2Utils;
+
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -44,6 +45,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public KeyboardPlayerInputComponent() {
     super(5);
   }
+
+
+
+
 
   /**
    * Triggers player events on specific keycodes.
@@ -159,11 +164,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
-        entity.getEvents().trigger("walkStop");
+        //entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
         if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
+        //entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == UP_KEY) {
         if (inFrontOfLadder(this.ladders)) {
