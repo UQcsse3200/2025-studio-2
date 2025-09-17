@@ -344,6 +344,14 @@ public class MainGameScreen extends ScreenAdapter {
     deathScreenDisplay.setVisible(true);
   }
 
+  /**
+   * Reset game area and re-add plater's death listener
+   */
+  public void reset() {
+    gameArea.reset();
+    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+  }
+
   // Set last keycode for inventory when tab is clicked
   public void reflectPauseTabClick(PauseMenuDisplay.Tab tab) {
     if (pauseInput != null) {

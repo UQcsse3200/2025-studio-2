@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.screens.MainGameScreen;
@@ -191,7 +192,8 @@ public class DeathScreenDisplay extends UIComponent {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                screen.getGameArea().reset();
+                screen.reset();
+                setVisible(false);
             }
         });
         this.buttonsTable.add(restartButton).padRight(30f).minWidth(180f).minHeight(50f);
@@ -346,22 +348,7 @@ public class DeathScreenDisplay extends UIComponent {
      * Blocks all input except death screen interactions by registering a high-priority input component
      */
     private void blockAllInput() {
-        // Create an input component that consumes all keyboard input to prevent pause menu access
-        this.inputBlocker = new InputComponent(100) { // High priority to consume input first
-            @Override
-            public boolean keyDown(int keycode) {
-                // Consume all keyboard input to block pause menu and other controls
-                return true;
-            }
-            
-            @Override
-            public boolean keyUp(int keycode) {
-                // Consume all keyboard input to block pause menu and other controls
-                return true;
-            }
-        };
-        
-        ServiceLocator.getInputService().register(this.inputBlocker);
+      screen.getGameArea().getPlayer().getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
     }
 
     /**
