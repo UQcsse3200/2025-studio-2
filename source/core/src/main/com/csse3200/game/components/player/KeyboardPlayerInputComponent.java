@@ -121,8 +121,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       //Only moves the player down if they are in front of a ladder.
       if (inFrontOfLadder(this.ladders)) {
           this.onLadder = true;
-        walkDirection.add(Vector2Utils.DOWN);
-        triggerWalkEvent();
+          walkDirection.add(Vector2Utils.DOWN);
+          triggerWalkEvent();
 
       } else {
         entity.getEvents().trigger("gravityForPlayerOn");
