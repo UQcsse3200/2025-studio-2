@@ -10,7 +10,6 @@ import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.MinimapService;
@@ -118,9 +117,9 @@ public abstract class GameArea implements Disposable {
 
     // Components such as health, upgrades and items we want to revert to how they were at
     // the start of the level. Copies are used in order to not break the original components.
-    KeyboardPlayerInputComponent component = player.getComponent(KeyboardPlayerInputComponent.class);
-    player.removeComponent(component);
-    component.dispose();
+//    KeyboardPlayerInputComponent component = player.getComponent(KeyboardPlayerInputComponent.class);
+//    player.removeComponent(component);
+//    component.dispose();
 
     player = spawnPlayer(getComponents());
 

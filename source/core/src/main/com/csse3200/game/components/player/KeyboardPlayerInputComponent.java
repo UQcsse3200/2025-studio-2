@@ -46,10 +46,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     super(5);
   }
 
-
-
-
-
   /**
    * Triggers player events on specific keycodes.
    *
@@ -59,6 +55,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
     if (!enabled) return false;
+    System.out.println("KeyboardPlayerInputComponent.keyDown(" + keycode + ")");
+    System.out.println("Entity: " + entity);
 
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
@@ -256,7 +254,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private void triggerCrouchEvent() {
     entity.getEvents().trigger("crouch");
-
   }
 
   private void triggerGlideEvent(boolean status) {

@@ -347,7 +347,7 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   /**
-   * Reset game area and re-add plater's death listener
+   * Reset game area and re-add player's death listener
    */
   public void reset() {
     gameArea.reset();

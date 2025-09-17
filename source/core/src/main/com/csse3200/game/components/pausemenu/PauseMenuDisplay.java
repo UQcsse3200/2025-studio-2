@@ -38,7 +38,6 @@ public class PauseMenuDisplay extends UIComponent {
     private final ObjectivesTab objectivesTab;
     private InventoryNavigationComponent navigationComponent;
     private PauseMenuNavigationComponent pauseMenuNavigationComponent;
-    private KeyboardPlayerInputComponent playerInputComponent;
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
     private Tab currentTab = Tab.INVENTORY;
@@ -50,7 +49,6 @@ public class PauseMenuDisplay extends UIComponent {
         this.upgradesTab = new UpgradesTab(player, screen);
         this.objectivesTab = new ObjectivesTab(player, screen);
         this.game = game;
-        this.playerInputComponent = player.getComponent(KeyboardPlayerInputComponent.class);
     }
 
     @Override
@@ -152,7 +150,7 @@ public class PauseMenuDisplay extends UIComponent {
             }
         }
         if (currentTab != Tab.SETTINGS) {
-            ServiceLocator.getInputService().unregister(playerInputComponent);
+            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
             ServiceLocator.getInputService().register(pauseMenuNavigationComponent);
         }
     }
@@ -236,10 +234,7 @@ public class PauseMenuDisplay extends UIComponent {
 
         if (visible) {
             rootTable.toFront();
-            // Unregister player input and reset input state
-            ServiceLocator.getInputService().unregister(playerInputComponent);
-            //Reset input after unregistering player input
-            playerInputComponent.resetInputState();
+            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
 
             ServiceLocator.getInputService().register(pauseMenuNavigationComponent);
             // Enable navigation and register input component when the pause menu becomes visible
@@ -262,8 +257,7 @@ public class PauseMenuDisplay extends UIComponent {
                 pauseMenuNavigationComponent.keyUp(Input.Keys.D);
             }
 
-            playerInputComponent.resetInputState();
-            ServiceLocator.getInputService().register(playerInputComponent);
+            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
         }
     }
 

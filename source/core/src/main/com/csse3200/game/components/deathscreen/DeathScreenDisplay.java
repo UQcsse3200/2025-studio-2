@@ -192,8 +192,8 @@ public class DeathScreenDisplay extends UIComponent {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                screen.reset();
                 setVisible(false);
+                screen.reset();
             }
         });
         this.buttonsTable.add(restartButton).padRight(30f).minWidth(180f).minHeight(50f);
