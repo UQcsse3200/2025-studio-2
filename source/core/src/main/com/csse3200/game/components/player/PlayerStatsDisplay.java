@@ -168,10 +168,7 @@ public class PlayerStatsDisplay extends UIComponent {
   @Override
   public void dispose() {
     super.dispose();
-    heartImage.remove();
-    healthLabel.remove();
-    staminaLabel.remove();
-    staminaBar.remove();
-    staminaImage.remove();
+    if (healthTable != null) healthTable.remove();
+    if (staminaTable != null) staminaTable.remove();
   }
 }
