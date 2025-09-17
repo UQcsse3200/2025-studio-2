@@ -101,7 +101,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         spawnLights();
         //spawnPatrollingDrone();
-        //spawnBomberDrone();
+        spawnBomberDrone();
         spawnSelfDestructDrone();
     }
 

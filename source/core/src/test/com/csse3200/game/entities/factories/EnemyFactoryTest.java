@@ -228,7 +228,7 @@ public class EnemyFactoryTest {
         assertNotNull(sp);
         assertEquals(route[0], sp.getSpawnPos());
     }
-    /*
+
         @Test
         void createBomberDrone_hasBaseEnemyComponents() {
             Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
@@ -287,7 +287,7 @@ public class EnemyFactoryTest {
             assertEquals(droneConfig.health, stats.getHealth(), "Drone health mismatch");
             assertEquals(droneConfig.baseAttack, stats.getBaseAttack(), "Drone baseAttack mismatch");
         }
-    */
+
     @Test
     void createBomberDrone_addsSpawnPosition() {
         Vector2 start = new Vector2(0, 0);
