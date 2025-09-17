@@ -19,7 +19,8 @@
     "tags": ["CONSUMABLE"],
     "effects": [
       { "type": "heal", "value": 10 }
-    ]
+    ],
+    "glowColor": [240, 125, 140]
   },
   {
     "id": "potion:dash",
@@ -31,6 +32,7 @@
     "tags": ["CONSUMABLE"],
     "effects": [
       { "type": "buff_speed", "duration": 5 }
-    ]
+    ],
+    "glowColor": [125, 140, 240]
   }
 ]
