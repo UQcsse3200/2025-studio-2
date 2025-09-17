@@ -7,6 +7,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,9 @@ public class TrapFactoryTest {
 
     @Test
     void createSpikeHasAllComponents() {
-        Entity spikeTrap = TrapFactory.createSpikes(new GridPoint2(0,0), new Vector2(0, 0));
+        Entity spikeTrap = TrapFactory.createSpikes(new Vector2(0, 0), 0f);
+        assertNotNull(spikeTrap.getComponent(TextureRenderComponent.class),
+                "Spike trap should have a TextureRenderComponent");
         assertNotNull(spikeTrap.getComponent(PhysicsComponent.class),
                 "Spike trap should have a PhysicsComponent");
         assertNotNull(spikeTrap.getComponent(ColliderComponent.class),

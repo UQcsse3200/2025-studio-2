@@ -43,6 +43,15 @@ public class TouchAttackComponent extends Component {
     this.knockbackForce = knockback;
   }
 
+  /**
+   * Returns the knockback force applied to the enitity it collides with.
+   *
+   * @return the size of the knockback force
+   */
+  public float getKnockbackForce() {
+      return knockbackForce;
+  }
+
   @Override
   public void create() {
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);

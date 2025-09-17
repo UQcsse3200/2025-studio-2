@@ -1,19 +1,28 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 
+/**
+ * DeathZone component that makes sure to deal max damage to a player to kill them.
+ * As well as remove regular entity characteristics from the DeathZone such as health
+ */
 public class DeathZoneComponent extends CombatStatsComponent {
-    private Vector2 resetPos;
 
-    public DeathZoneComponent(Vector2 resetPos) {
-        this(0, 10000, resetPos);
+    /**
+     * Setting DeathZone Base attack power to max
+     */
+    public DeathZoneComponent() {
+        this(0, 10000);
     }
 
-    public DeathZoneComponent(int health, int baseAttack, Vector2 resetPos) {
+    /**
+     * DeathZone component Initialisation
+     * @param health
+     * @param baseAttack
+     */
+    public DeathZoneComponent(int health, int baseAttack) {
         super(health, baseAttack);
-        this.resetPos = resetPos;
     }
 
 

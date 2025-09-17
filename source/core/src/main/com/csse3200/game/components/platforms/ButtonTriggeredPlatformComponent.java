@@ -5,6 +5,10 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
+
+/**
+ * Button Triggered Platform Component for platforms with buttons to trigger movement
+ */
 public class ButtonTriggeredPlatformComponent extends Component {
     private enum State {
         IDLE_AT_START,
@@ -25,6 +29,11 @@ public class ButtonTriggeredPlatformComponent extends Component {
 
     private State state = State.IDLE_AT_START;
 
+    /**
+     * Sets the offset (direction) and speed of the platform to be moved
+     * @param offset
+     * @param speed
+     */
     public ButtonTriggeredPlatformComponent(Vector2 offset, float speed) {
         this.offset = offset.cpy();
         this.speed = speed;
@@ -36,8 +45,37 @@ public class ButtonTriggeredPlatformComponent extends Component {
 
         // Only one input we honor; no deactivate listener that can interrupt mid-trip
         entity.getEvents().addListener("activatePlatform", this::onActivate);
+        entity.getEvents().addListener("deactivatePlatform", this::onDeactivate);
         // If you truly need an emergency stop, replace with a guarded handler that sets a flag
         // instead of immediately mutating state mid-physics step.
+    }
+
+    private void onDeactivate() {
+        // Ignore while moving
+        if (state == State.MOVING_TO_END || state == State.MOVING_TO_START) {
+            return;
+        }
+
+        Body body = physics.getBody();
+        Vector2 currentPos = body.getPosition().cpy();
+
+        if (state == State.IDLE_AT_END) {
+            // At end move to start
+            end = currentPos;
+            start = end.cpy().sub(offset);
+            if (offset.x == 0f) start.x = end.x;
+            if (offset.y == 0f) start.y = end.y;
+
+            state = State.MOVING_TO_START;
+        } else if (state == State.IDLE_AT_START) {
+            // At start move to end
+            start = currentPos;
+            end = start.cpy().add(offset);
+            if (offset.x == 0f) end.x = start.x;
+            if (offset.y == 0f) end.y = start.y;
+
+            state = State.MOVING_TO_END;
+        }
     }
 
     private void onActivate() {

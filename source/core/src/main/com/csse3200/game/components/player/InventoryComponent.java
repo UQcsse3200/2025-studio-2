@@ -41,17 +41,15 @@ public class InventoryComponent extends Component {
      * @throws NullPointerException if other is null
      */
     public InventoryComponent(InventoryComponent other) {
-        if (other == null) throw new NullPointerException("other");
+        if (other == null) throw new NullPointerException("Passed a null component");
         this.inventory = new HashMap<>(other.inventory);
         this.upgrades = new HashMap<>(other.upgrades);
         this.objectives = new HashMap<>(other.objectives);
     }
 
-    // Read-only views (preferred getters)
-
     /**
-     * @return unmodifiable view of the INVENTORY bag
-     */
+     * Read only view of the inventory for UI rendering
+     * */
     public Map<String, Integer> getInventory() {
         return Collections.unmodifiableMap(inventory);
     }
@@ -69,8 +67,6 @@ public class InventoryComponent extends Component {
     public Map<String, Integer> getObjectives() {
         return Collections.unmodifiableMap(objectives);
     }
-
-    // Generic bag operations (recommended API)
 
     /**
      * Adds a single instance of itemId to the specified bag.

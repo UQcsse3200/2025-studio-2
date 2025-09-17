@@ -100,6 +100,7 @@ class ConeLightPanningTaskComponentTest {
             cone.setDirectionDeg(LightingDefaults.START_DEG);
             before = cone.getLight().getDirection();
             cam.update();
+            cam.update();
             after = cone.getLight().getDirection();
             assertTrue(after > before);
         }
@@ -125,6 +126,7 @@ class ConeLightPanningTaskComponentTest {
             assertEquals(LightingDefaults.START_DEG, dir);
             // progress time one update
             cam.update();
+            cam.update();
             // check that cone has moved according to vel (should be moving anti-clockwise to start)
             float newDir = dir + LightingDefaults.ANGULAR_VEL;
             dir = cone.getLight().getDirection();
@@ -133,6 +135,7 @@ class ConeLightPanningTaskComponentTest {
             // works going the clockwise also
             cone.setDirectionDeg(LightingDefaults.END_DEG);
             dir = cone.getLight().getDirection();
+            cam.update();
             cam.update();
             // make sure light didnt go over bounds
             newDir = dir - LightingDefaults.ANGULAR_VEL;
