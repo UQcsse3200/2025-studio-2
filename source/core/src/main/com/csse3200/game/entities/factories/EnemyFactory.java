@@ -123,7 +123,7 @@ public class EnemyFactory {
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP);
-        animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
+        animator.addAnimation("teleBomber", 0.05f, Animation.PlayMode.LOOP);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
