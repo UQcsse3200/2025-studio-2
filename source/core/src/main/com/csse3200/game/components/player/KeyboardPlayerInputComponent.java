@@ -152,10 +152,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if(this.ladders == null) {
       this.ladders = findLadders();
     }
-
-    if (this.onLadder) {
-      this.onLadder = inFrontOfLadder(this.ladders);
-    }
       if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
@@ -168,6 +164,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
       } else if (keycode == UP_KEY) {
         if (inFrontOfLadder(this.ladders)) {
+          this.onLadder = true;
           //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
@@ -180,6 +177,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         return true;
       } else if (keycode == DOWN_KEY) {
         if (inFrontOfLadder(this.ladders)) {
+          this.onLadder = true;
           //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.DOWN);
           triggerWalkEvent();

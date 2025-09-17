@@ -159,10 +159,9 @@ public class PlayerActions extends Component {
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
-      impulseY = deltaVy * body.getMass() / 5;
-
+      impulseY = deltaVy * body.getMass();
     } else {
-      entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
+      //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
       entity.getEvents().trigger("gravityForPlayerOn");
       impulseY = 0f;
     }
