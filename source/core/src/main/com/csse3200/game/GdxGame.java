@@ -8,6 +8,7 @@ import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.screens.MainMenuScreen;
 import com.csse3200.game.screens.SettingsScreen;
+import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,8 @@ public class GdxGame extends Game {
     Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
 
     setScreen(ScreenType.MAIN_MENU);
+
+    TerminalService.getShell().setGlobal("game", this);
   }
 
   /**
@@ -63,6 +66,7 @@ public class GdxGame extends Game {
   public void dispose() {
     logger.debug("Disposing of current screen");
     getScreen().dispose();
+    TerminalService.getShell().setGlobal("game", null);
   }
 
   /**
