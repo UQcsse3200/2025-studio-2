@@ -43,7 +43,7 @@ public class PauseMenuDisplay extends UIComponent {
         this.player = player;
         this.inventoryTab = new InventoryTab(player, screen);
         this.upgradesTab = new UpgradesTab(player, screen);
-        this.objectivesTab = new ObjectivesTab(screen);
+        this.objectivesTab = new ObjectivesTab(player, screen);
         this.game = game;
     }
 
@@ -145,6 +145,7 @@ public class PauseMenuDisplay extends UIComponent {
 
     private void updateTabContent() {
         tabContent.clear();
+        bottomButtons.clear();
         Actor ui = switch (currentTab) {
             case INVENTORY -> inventoryTab.build(skin);
             case UPGRADES -> upgradesTab.build(skin);
@@ -153,6 +154,14 @@ public class PauseMenuDisplay extends UIComponent {
         };
         // Ensure the returned actor from build() fills the tab content area.
         tabContent.add(ui).expand().fill();
+
+        // Only add settings tab while not in settings
+        if (currentTab != Tab.SETTINGS) {
+            addBottomButton("Settings", Tab.SETTINGS);
+        }
+        addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
+        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
     }
 
     public void setVisible(boolean visible) {

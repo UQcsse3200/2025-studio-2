@@ -28,8 +28,8 @@ public class InventoryComponent extends Component {
 
     /** Creates a new, empty component with three empty bags. */
     public InventoryComponent() {
-        this.inventory  = new HashMap<>();
-        this.upgrades   = new HashMap<>();
+        this.inventory = new HashMap<>();
+        this.upgrades = new HashMap<>();
         this.objectives = new HashMap<>();
     }
 
@@ -42,14 +42,12 @@ public class InventoryComponent extends Component {
      */
     public InventoryComponent(InventoryComponent other) {
         if (other == null) throw new NullPointerException("other");
-        this.inventory  = new HashMap<>(other.inventory);
-        this.upgrades   = new HashMap<>(other.upgrades);
+        this.inventory = new HashMap<>(other.inventory);
+        this.upgrades = new HashMap<>(other.upgrades);
         this.objectives = new HashMap<>(other.objectives);
     }
 
-    // --------------------------------------------------------------------------
     // Read-only views (preferred getters)
-    // --------------------------------------------------------------------------
 
     /**
      * @return unmodifiable view of the INVENTORY bag
@@ -70,19 +68,6 @@ public class InventoryComponent extends Component {
      */
     public Map<String, Integer> getObjectives() {
         return Collections.unmodifiableMap(objectives);
-    }
-
-    // --------------------------------------------------------------------------
-    // Backward-compatibility aliases (existing code may call these)
-    // --------------------------------------------------------------------------
-
-    /**
-     * Alias for getInventory() kept for older code.
-     * @deprecated Use {@link #getInventory()}.
-     */
-    @Deprecated
-    public Map<String, Integer> getInventoryView() {
-        return getInventory();
     }
 
     // Generic bag operations (recommended API)

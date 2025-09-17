@@ -3,115 +3,186 @@ package com.csse3200.game.ui.inventoryscreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
 
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Objectives tab shown inside the pause menu
+ * Objectives tab UI.
+ *
+ * <p>Shows each collected objective as a full-width banner image stacked vertically.
+ * No grid is used. Each objective instance occupies one row.</p>
+ *
+ * <p>Layout (pixel-accurate on the background art):
+ * <ul>
+ *   <li>Background: inventory-screen/objectives-selected.png</li>
+ *   <li>First banner top-left: (x=46, y=252)</li>
+ *   <li>Banner height: 74 px</li>
+ *   <li>Vertical gap: 12 px</li>
+ *   <li>Close hotspot: (971, 16, 39, 39) — same hit area as Inventory</li>
+ *   <li>Tab hotspots (invisible): Inventory and Upgrades are clickable, Settings untouched</li>
+ * </ul>
+ *
+ * <p>Objective id mapping (OBJECTIVES bag -> PNG):
+ * dash -> inventory-screen/objectives/dash.png
+ * door -> inventory-screen/objectives/findDoor.png
+ * glider -> inventory-screen/objectives/glider.png
+ * jetpack -> inventory-screen/objectives/jetpack.png
+ * keycard -> inventory-screen/objectives/keycard.png
+ * tutorial -> inventory-screen/objectives/Try dash n croach.png
+ * </p>
  */
 public class ObjectivesTab implements InventoryTabInterface {
-  // Pixel-accurate position and size for the invisible close button
-  private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
-
-  // Base artwork height/width in pixels used to compute aspect ratio for scaling
-  private static final float BASE_W = 770f;
-  private static final float BASE_H = 768f;
-  // Aspect ratio of the objectives background
-  private static final float BASE_ASPECT = BASE_W / BASE_H;
-
-  private static final int TAB_Y = 130;
-  private static final int TAB_H = 72;
-
-  private static final Rect TAB_INVENTORY = new Rect(32,  TAB_Y, 284, TAB_H);
-  private static final Rect TAB_UPGRADES  = new Rect(319, TAB_Y, 300, TAB_H);
-  private static final Rect TAB_OBJECTIVE = new Rect(623, TAB_Y, 258, TAB_H);
 
   private final MainGameScreen screen;
+  private final Entity player;
 
-  /**
-   * Creates an Objectives tab bound to the given main game screen.
-   *
-   * @param gameScreen main game screen used to unpause and hide the pause menu
-   */
-  public ObjectivesTab (MainGameScreen gameScreen) {
-    this.screen = gameScreen;
+  // Background
+  private final Texture bgTex = new Texture(Gdx.files.internal("inventory-screen/objectives-selected.png"));
+
+  // Tab hotspot rects (same positions you used in Inventory)
+  private static final int TAB_Y = 130;
+  private static final int TAB_H = 72;
+  private static final Rect TAB_INVENTORY = new Rect(32,  TAB_Y, 284, TAB_H);
+  private static final Rect TAB_UPGRADES  = new Rect(319, TAB_Y, 300, TAB_H);
+  private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
+
+  // Objective list placement (top-left origin on the background)
+  private static final int START_X = 46;
+  private static final int START_Y = 252; // top-left of first banner
+  private static final int ROW_H = 74; // each banner is 74 px high
+  private static final int V_GAP = 12; // 12 px vertical spacing between banners
+
+  // Objective banner textures by id
+  private final Map<String, Texture> objectiveTex = new HashMap<>();
+
+  public ObjectivesTab(Entity player, MainGameScreen screen) {
+    this.screen = screen;
+    this.player = player;
+
+    // Load per-objective banner textures
+    objectiveTex.put("dash",     new Texture(Gdx.files.internal("images/objectives/dash.png")));
+    objectiveTex.put("door",     new Texture(Gdx.files.internal("images/objectives/findDoor.png")));
+    objectiveTex.put("glider",   new Texture(Gdx.files.internal("images/objectives/glider.png")));
+    objectiveTex.put("jetpack",  new Texture(Gdx.files.internal("images/objectives/jetpack.png")));
+    objectiveTex.put("keycard",  new Texture(Gdx.files.internal("images/objectives/keycard.png")));
+    objectiveTex.put("tutorial", new Texture(Gdx.files.internal("images/objectives/try-dash-n-crouch.png")));
   }
 
   /**
-   * Builds the UI actor tree for the objectives tab.
-   * The background is placed using a pixel-perfect placer and scaled to two thirds
-   * of the current screen height while preserving aspect ratio. An invisible button
-   * is overlaid at a fixed pixel rectangle to act as the close hotspot
+   * Builds the objectives tab as a centered canvas using PixelPerfectPlacer.
    *
-   * @param skin UI skin used for widget construction
-   * @return a root table containing the objectives content
+   * @param skin scene2d skin (not used for visuals here, but required by the interface)
+   * @return root actor to add to the stage
    */
   @Override
   public Actor build(Skin skin) {
-    float screenH = Gdx.graphics.getHeight();
-    float canvasH = screenH * (2f / 3f);
-    float canvasW = canvasH * BASE_ASPECT;
+    PixelPerfectPlacer placer = new PixelPerfectPlacer(bgTex);
 
-    PixelPerfectPlacer placer = new PixelPerfectPlacer(
-        new Texture(Gdx.files.internal("inventory-screen/objectives-selected.png"))
-    );
+    // Invisible close/hide hotspot (same logic as Inventory)
     Button closeButton = new Button(new Button.ButtonStyle());
     closeButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
+      @Override public void changed(ChangeEvent event, Actor actor) {
         if (screen != null) {
-          if (screen.isPaused()) {
-            screen.togglePaused(); // unpause
-          }
-          // Update pause menu visibility to reflect paused=false (this hides it)
+          if (screen.isPaused()) screen.togglePaused();
           screen.togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
-        } else {
-          // No screen available: do nothing (or log)
-          Gdx.app.log("InventoryTab", "MainGameScreen was null; close ignored.");
         }
       }
     });
     placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
 
+    // Invisible tab hotspots
     addTabHotspot(placer, TAB_INVENTORY, PauseMenuDisplay.Tab.INVENTORY);
     addTabHotspot(placer, TAB_UPGRADES,  PauseMenuDisplay.Tab.UPGRADES);
 
-    final Table root = new Table();
-    root.add(placer).center().size(canvasW, canvasH);
+    // Lay out collected objectives vertically
+    layoutObjectives(placer);
 
-    return root;
+    // Center the whole canvas at 2/3 screen height
+    float screenH = Gdx.graphics.getHeight();
+    float canvasH = screenH * (2f / 3f);
+    float baseAspect = (float) bgTex.getWidth() / bgTex.getHeight();
+    float canvasW = canvasH * baseAspect;
+
+    Container<PixelPerfectPlacer> centered = new Container<>(placer);
+    centered.size(canvasW, canvasH);
+    centered.align(Align.center);
+    return centered;
   }
 
   /**
-   * Adds an invisible, pixel-accurate clickable hotspot that switches to a pause menu tab
-   *
-   *
-   * Creates a Button with no visuals to act as a hotzone
-   * Positions and sizes the hotzone using PixelPerfectPlacer so it aligns with the
-   * background art and scales correctly with the canvas
-   * On click, calls screen.togglePauseMenu(targetTab) to switch tabs without
-   * changing the current paused state
-   *
-   * @param placer    the PixelPerfectPlacer instance that places the overlays to the tab background
-   * @param rect      the hotspot rectangle in background image pixels (top-left origin; width/height in pixels)
-   * @param targetTab the pause-menu tab to show when the hotspot is clicked
+   * Reads OBJECTIVES bag and places one banner per item, stacked top-to-bottom.
+   * If an id has no matching texture, it is skipped (no labels are created).
    */
-  private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab targetTab) {
-    Button b = new Button(new Button.ButtonStyle()); // invisible hotzone
+  private void layoutObjectives(PixelPerfectPlacer placer) {
+    InventoryComponent inv = player.getComponent(InventoryComponent.class);
+    Map<String, Integer> bag = (inv != null) ? inv.getObjectives() : java.util.Collections.emptyMap();
+
+    // Flatten multiset into list of instance ids
+    java.util.List<String> instances = new java.util.ArrayList<>();
+    for (Map.Entry<String, Integer> e : bag.entrySet()) {
+      String id = e.getKey();
+      int count = Math.max(0, e.getValue());
+      for (int i = 0; i < count; i++) {
+        instances.add(id);
+      }
+    }
+
+    // Place each banner at below the other
+    for (int i = 0; i < instances.size(); i++) {
+      String id = instances.get(i);
+      Texture tex = objectiveTex.get(id);
+      if (tex == null) {
+        Gdx.app.log("ObjectivesTab", "No banner for objective id='" + id + "'. Skipping.");
+        continue;
+      }
+      int x = START_X;
+      int y = START_Y + i * (ROW_H + V_GAP);
+      int w = tex.getWidth();  // use the PNG's native width so art aligns
+      int h = ROW_H;           // height fixed at 74 px
+
+      Image img = new Image(tex);
+      // Let PixelPerfectPlacer handle the exact on-canvas sizing
+      placer.addOverlay(img, new Rect(x, y, w, h));
+    }
+  }
+
+  /**
+   * Adds an invisible, pixel-accurate clickable hotspot that switches tabs.
+   *
+   * @param placer PixelPerfectPlacer anchoring overlays to the background
+   * @param rect   background-space rectangle (top-left origin)
+   * @param tab    target pause-menu tab
+   */
+  private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab tab) {
+    Button b = new Button(new Button.ButtonStyle());
     b.addListener(new ChangeListener() {
       @Override public void changed(ChangeEvent event, Actor actor) {
-        if (screen != null) {
-          screen.togglePauseMenu(targetTab); // switch tab, keep paused state
-        }
+        if (screen != null) screen.togglePauseMenu(tab);
       }
     });
     placer.addOverlay(b, rect);
+  }
+
+  /**
+   * Dispose all textures owned by this tab.
+   */
+  public void dispose() {
+    bgTex.dispose();
+    for (Texture t : objectiveTex.values()) {
+      t.dispose();
+    }
+    objectiveTex.clear();
   }
 }
