@@ -68,16 +68,16 @@ public class TrapFactory {
                 alignY = PhysicsComponent.AlignY.BOTTOM;
                 break;
             case 1: // Facing left
-                center.x *= 0.3f;
+                center.x *= 0.5f;
                 alignX = PhysicsComponent.AlignX.RIGHT;
                 break;
             case 3: // Facing right
-                center.x *= 0.3f;
+                center.x *= 0.5f;
                 alignX = PhysicsComponent.AlignX.LEFT;
                 break;
             default: // Facing down
                 center.y *= 0.5f;
-                alignY = PhysicsComponent.AlignY.BOTTOM;
+                alignY = PhysicsComponent.AlignY.TOP;
                 break;
         }
 
