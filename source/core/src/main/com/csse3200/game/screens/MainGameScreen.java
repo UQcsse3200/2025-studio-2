@@ -119,12 +119,9 @@ public class MainGameScreen extends ScreenAdapter {
   private void switchArea(String levelId, Entity player) {
     Gdx.app.postRunnable(() -> {
       if (!levelId.isEmpty()) {
-  //        System.out.println("Area switched to " + levelId);
         GameArea oldArea = gameArea;
         oldArea.dispose();
         oldArea = null;
-
-  //        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
         GameArea newArea = null;
         String newLevel = "";
