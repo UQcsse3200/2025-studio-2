@@ -69,6 +69,9 @@ public class CollectableFactory {
         } else {
             e.addComponent(new TextureRenderComponent(
                     (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png"));
+            // change scale of non potion collectables
+            e.setScale(0.5f, 0.5f);
+            PhysicsUtils.setScaledCollider(e, 0.5f, 0.5f);
         }
 
         // backlight because it looks cool (thanks tristyn)
@@ -76,7 +79,7 @@ public class CollectableFactory {
         ConeLightComponent cone = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
                 128,
-                new Color(240f/255f, 125f/255f, 140f/255f, 0.5f),
+                new Color(1f, 1f, 230f/255f, 0.5f),
                 1.5f,
                 0f,
                 180f
