@@ -173,7 +173,7 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(5,0);
+        GridPoint2 spawnPos =  new GridPoint2(5,-10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
