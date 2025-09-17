@@ -88,7 +88,7 @@ public class PlayerFactory {
                     .addComponent(new InventoryComponent())
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay())
-                    //.addComponent(new DamageIndicatorUI())
+                    .addComponent(new DamageIndicatorUI())
                     .addComponent(new CameraComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
