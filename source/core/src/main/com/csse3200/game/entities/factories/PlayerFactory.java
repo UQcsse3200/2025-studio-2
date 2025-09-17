@@ -117,9 +117,15 @@ public class PlayerFactory {
     player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
 // --- end stamina block ---
 
-    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+
+    // Horrendous code
+
+    player.getComponent(ColliderComponent.class).setAsBox(new Vector2(0.8f, 1.175f),
+            player.getCenterPosition().add(new Vector2(0.425f, 0.0f)));
     player.getComponent(ColliderComponent.class).setSensor(true);
 
+    player.getComponent(HitboxComponent.class).setAsBox(new Vector2(0.8f, 1.175f),
+            player.getCenterPosition().add(new Vector2(0.425f, 0.0f)));
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);

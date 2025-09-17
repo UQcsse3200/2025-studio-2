@@ -326,7 +326,6 @@ public class PlayerActions extends Component {
    * Makes the player interact
    */
   void interact() {
-    // do something
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
