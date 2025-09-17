@@ -125,7 +125,7 @@ public class EnemyFactory {
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP);
-        animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
+        animator.addAnimation("teleBomber", 0.05f, Animation.PlayMode.LOOP);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
@@ -173,7 +173,7 @@ public class EnemyFactory {
                 0.5f   // Height tolerance
         );
 
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        CooldownTask cooldownTask = new CooldownTask(3f, "teleBomber");
 
         // Wire up detection events
         drone.getEvents().addListener("targetDetected", (Entity detectedTarget) -> {
