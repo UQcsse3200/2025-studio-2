@@ -101,7 +101,7 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
 //    gameArea = new SprintOneGameArea(terrainFactory);
-    gameArea = new ForestGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
     //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
