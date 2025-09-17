@@ -281,7 +281,7 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,1.5f))
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
                         .addComponent(new AITaskComponent()); // Want this empty for base enemies
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
