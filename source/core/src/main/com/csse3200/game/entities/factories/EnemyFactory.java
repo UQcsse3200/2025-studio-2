@@ -171,7 +171,7 @@ public class EnemyFactory {
                 0.5f   // Height tolerance
         );
 
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        CooldownTask cooldownTask = new CooldownTask(3f, "teleBomber");
 
         // Wire up detection events
         drone.getEvents().addListener("targetDetected", (Entity detectedTarget) -> {
