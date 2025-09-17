@@ -226,10 +226,30 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public Boolean getIsCheatsOn() {
     return cheatsOn;
   }
+
   private void enableCheats() {
     if (Arrays.equals(CHEAT_INPUT_HISTORY, new int[]{UP_KEY, UP_KEY, DOWN_KEY, UP_KEY})){
       cheatsOn = !cheatsOn;
       entity.getEvents().trigger("gravityForPlayerOff");
     }
+  }
+
+  /**
+   * Return current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @return walkDirection
+   */
+  @Deprecated
+  public Vector2 getWalkDirection() {
+    return walkDirection;
+  }
+  /**
+   * Set current walk direction.
+   * (Only current use is for transfers between resets.)
+   * @param walkDirection - walkDirection to set.
+   */
+  @Deprecated
+  public void setWalkDirection(Vector2 walkDirection) {
+    this.walkDirection.set(walkDirection);
   }
 }
