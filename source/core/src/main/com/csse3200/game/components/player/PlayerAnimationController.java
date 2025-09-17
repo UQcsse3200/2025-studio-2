@@ -142,7 +142,7 @@ public class PlayerAnimationController extends Component {
         }
 
         // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-        scheduleTask.accept(() -> setAnimation("IDLE"), hurtDelay);    }
+        scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);    }
 
     /**
      * starts the player's hurt animation
