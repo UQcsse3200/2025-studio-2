@@ -4,6 +4,12 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+/**
+ * Represents a single layer in a parallax background system.
+ * Each layer can scroll at a different speed relative to the camera movement,
+ * creating depth perception. Layers can be either tiled (repeated) or stretched
+ * to fill the viewport.
+ */
 public class ParallaxLayer {
     private Texture texture;
     private Camera camera;
@@ -19,17 +25,52 @@ public class ParallaxLayer {
     private float scaleX; // Add scale parameters
     private float scaleY;
 
-    // Original constructor (no scale - defaults to 1.0f)
+    /**
+     * Creates a basic parallax layer with default settings.
+     * The layer will be stretched and use default scaling (1.0).
+     *
+     * @param texture The texture to display
+     * @param camera The camera to track for parallax calculations
+     * @param factor The parallax factor (0.0 = static, 1.0 = moves with camera)
+     * @param mapWidth The total width of the game map
+     * @param mapHeight The total height of the game map
+     */
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight) {
         this(texture, camera, factor, mapWidth, mapHeight, false, false, 0, 0, 0, 0, 1.0f, 1.0f);
     }
 
-    // Constructor with offset (no scale - defaults to 1.0f)
+    /**
+     * Creates a parallax layer with custom offset.
+     * The layer will be stretched and use default scaling (1.0).
+     *
+     * @param texture The texture to display
+     * @param camera The camera to track for parallax calculations
+     * @param factor The parallax factor (0.0 = static, 1.0 = moves with camera)
+     * @param mapWidth The total width of the game map
+     * @param mapHeight The total height of the game map
+     * @param offsetX Horizontal offset in world units
+     * @param offsetY Vertical offset in world units
+     */
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight, float offsetX, float offsetY) {
         this(texture, camera, factor, mapWidth, mapHeight, false, false, 0, 0, offsetX, offsetY, 1.0f, 1.0f);
     }
 
-    // Constructor for tiled layers with offset (no scale - defaults to 1.0f)
+    /**
+     * Creates a tiled parallax layer with custom offset.
+     * The texture will be repeated according to the tiling parameters.
+     *
+     * @param texture The texture to display
+     * @param camera The camera to track for parallax calculations
+     * @param factor The parallax factor (0.0 = static, 1.0 = moves with camera)
+     * @param mapWidth The total width of the game map
+     * @param mapHeight The total height of the game map
+     * @param tileHorizontally Whether to tile the texture horizontally
+     * @param tileVertically Whether to tile the texture vertically
+     * @param tileWidth Width of each tile (0 = use texture width)
+     * @param tileHeight Height of each tile (0 = use texture height)
+     * @param offsetX Horizontal offset in world units
+     * @param offsetY Vertical offset in world units
+     */
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight,
                          boolean tileHorizontally, boolean tileVertically, float tileWidth, float tileHeight,
                          float offsetX, float offsetY) {
@@ -37,7 +78,24 @@ public class ParallaxLayer {
             tileWidth, tileHeight, offsetX, offsetY, 1.0f, 1.0f);
     }
 
-    // Full constructor with scale
+    /**
+     * Creates a fully customizable parallax layer.
+     * This is the master constructor that all other constructors delegate to.
+     *
+     * @param texture The texture to display
+     * @param camera The camera to track for parallax calculations
+     * @param factor The parallax factor (0.0 = static, 1.0 = moves with camera)
+     * @param mapWidth The total width of the game map
+     * @param mapHeight The total height of the game map
+     * @param tileHorizontally Whether to tile the texture horizontally
+     * @param tileVertically Whether to tile the texture vertically
+     * @param tileWidth Width of each tile before scaling (0 = use texture width)
+     * @param tileHeight Height of each tile before scaling (0 = use texture height)
+     * @param offsetX Horizontal offset in world units
+     * @param offsetY Vertical offset in world units
+     * @param scaleX Horizontal scale factor (1.0 = original size)
+     * @param scaleY Vertical scale factor (1.0 = original size)
+     */
     public ParallaxLayer(Texture texture, Camera camera, float factor, float mapWidth, float mapHeight,
                          boolean tileHorizontally, boolean tileVertically, float tileWidth, float tileHeight,
                          float offsetX, float offsetY, float scaleX, float scaleY) {
@@ -56,6 +114,13 @@ public class ParallaxLayer {
         this.scaleY = scaleY > 0 ? scaleY : 1.0f;
     }
 
+    /**
+     * Renders this parallax layer to the screen.
+     * Calculates the appropriate position based on camera movement and parallax factor,
+     * then renders either as tiles or stretched based on configuration.
+     *
+     * @param batch The sprite batch to use for rendering
+     */
     public void render(SpriteBatch batch) {
         float parallaxOffsetX = camera.position.x * factor;
         float parallaxOffsetY = (camera.position.y * factor) - 2.9f;
@@ -67,6 +132,14 @@ public class ParallaxLayer {
         }
     }
 
+    /**
+     * Renders the layer as repeating tiles.
+     * Calculates which tiles are visible and only renders those for performance.
+     *
+     * @param batch The sprite batch to use for rendering
+     * @param parallaxOffsetX The calculated horizontal parallax offset
+     * @param parallaxOffsetY The calculated vertical parallax offset
+     */
     private void renderTiled(SpriteBatch batch, float parallaxOffsetX, float parallaxOffsetY) {
         // Apply scale to tile dimensions
         float scaledTileWidth = tileWidth * scaleX;
@@ -115,6 +188,14 @@ public class ParallaxLayer {
         }
     }
 
+    /**
+     * Renders the layer as a single stretched texture.
+     * The texture is scaled and positioned to create the parallax effect.
+     *
+     * @param batch The sprite batch to use for rendering
+     * @param parallaxOffsetX The calculated horizontal parallax offset
+     * @param parallaxOffsetY The calculated vertical parallax offset
+     */
     private void renderStretched(SpriteBatch batch, float parallaxOffsetX, float parallaxOffsetY) {
         // Use custom scale instead of auto-calculated scale
         float textureWidth = texture.getWidth();
