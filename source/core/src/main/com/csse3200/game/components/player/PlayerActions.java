@@ -81,7 +81,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-    entity.getEvents().addListener("gravityForPlayerOff", this::toggleGravity);
+    entity.getEvents().addListener("gravityForPlayerOff", this::gravityOff);
+    entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
     entity.getEvents().addListener("grapple", this::grapple);
@@ -117,9 +118,13 @@ public class PlayerActions extends Component {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
     }
 
-    // Check if the player's health is currently 0, in which case, reset level
+    // Check if the player's health is currently 0, in which case, death screen will handle reset
+    // (Death screen is triggered by the "playerDied" event from CombatStatsComponent)
     if (combatStatsComponent.isDead()) {
-      entity.requestReset();
+      // Stop player movement when dead
+      moving = false;
+      entity.getEvents().trigger("death");
+      // Death screen component will handle the reset when user chooses to restart
     }
 
 //    Gdx.app.log("Inventory", Integer.toString(
@@ -151,20 +156,21 @@ public class PlayerActions extends Component {
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
-
 //    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
+    //Allows for up/down movement if the player is on a ladder
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
+      entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
       float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
       deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
     } else {
+      //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
+      entity.getEvents().trigger("gravityForPlayerOn");
       impulseY = 0f;
     }
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-
-
 
     /**
     Vector2 impulse =
@@ -356,6 +362,16 @@ public class PlayerActions extends Component {
     updateSpeed();
   }
 
+  /**
+   * @param moving weather the entity position will be updated or not
+   */
+  public void setMoving(boolean moving) {
+    this.moving = moving;
+  }
+
+  /**
+   * @return returns weather the entity is allowed to move
+   */
   public boolean isMoving() {
     return moving;
   }
@@ -397,11 +413,19 @@ public class PlayerActions extends Component {
    */
   private void toggleGravity() {
     Body body = physicsComponent.getBody();
-
     if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()) {
       body.setGravityScale(0f);
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  private void gravityOff() {
+    Body body = physicsComponent.getBody();
+    body.setGravityScale(0f);
+  }
+  private void gravityOn() {
+      Body body = physicsComponent.getBody();
+      body.setGravityScale(1f);
   }
 }

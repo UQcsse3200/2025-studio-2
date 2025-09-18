@@ -163,7 +163,7 @@ public class CutsceneDisplayTest {
         }
 
         // Verify the event for finishing the cutscene was triggered
-        verify(gameArea).trigger("cutsceneFinished", null);
+        verify(gameArea).trigger("cutsceneFinished");
     }
 
     /**

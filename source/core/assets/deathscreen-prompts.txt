@@ -1,0 +1,13 @@
+Your journey ends here...
+this is a test prompt
+this is another test prompt but longer so that we can test this thing
+{RAINBOW}you died a horrible death{ENDRAINBOW}
+Well, that was {WAVE}embarrassing{ENDWAVE}...
+{SHAKE}OOPS!{ENDSHAKE}
+{SICK}Skill issue{ENDSICK} detected
+Maybe try the {WAVE}tutorial{ENDWAVE} next time?
+{COLOR=RED}{SHAKE}FATALITY!{ENDSHAKE}{ENDCOLOR}
+{COLOR=RED}{SHAKE}WASTED{ENDSHAKE}{ENDCOLOR}
+{SICK}Git gud{ENDSICK}
+Try again?
+Congratulations! You've unlocked the {SHAKE}death screen{ENDSHAKE} achievement!

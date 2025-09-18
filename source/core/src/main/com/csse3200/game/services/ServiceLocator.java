@@ -8,6 +8,7 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.lighting.LightingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.crashinvaders.vfx.VfxManager;
 
 /**
  * A simplified implementation of the Service Locator pattern:
@@ -28,10 +29,19 @@ public class ServiceLocator {
   private static LightingService lightingService;
   private static MinimapService minimapService;
   private static SecurityCamRetrievalService securityCamRetrievalService;
+  private static VfxManager vfxService;
 
-  public static LightingService getLightingService() { return lightingService; }
+  public static LightingService getLightingService() {
+    return lightingService;
+  }
 
-  public static SecurityCamRetrievalService getSecurityCamRetrievalService() { return securityCamRetrievalService; }
+  public static VfxManager getVfxService() {
+    return vfxService;
+  }
+
+  public static SecurityCamRetrievalService getSecurityCamRetrievalService() {
+    return securityCamRetrievalService;
+  }
 
   public static EntityService getEntityService() {
     return entityService;
@@ -106,6 +116,11 @@ public class ServiceLocator {
     minimapService = source;
   }
 
+  public static void registerVfxService(VfxManager service) {
+    logger.debug("Registering VFX service {}", service);
+    vfxService = service;
+  }
+
   public static void clear() {
     entityService = null;
     renderService = null;
@@ -114,6 +129,9 @@ public class ServiceLocator {
     inputService = null;
     resourceService = null;
     lightingService = null;
+    minimapService = null;
+    securityCamRetrievalService = null;
+    vfxService = null;
   }
 
   private ServiceLocator() {

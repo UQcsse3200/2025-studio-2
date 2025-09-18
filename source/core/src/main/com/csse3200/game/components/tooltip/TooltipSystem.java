@@ -227,6 +227,10 @@ public class TooltipSystem {
         @Override
         public void dispose() {
             super.dispose();
+            if (triggerZoneEntity != null) {
+                triggerZoneEntity.dispose();
+                triggerZoneEntity = null;
+            }
         }
     }
     
