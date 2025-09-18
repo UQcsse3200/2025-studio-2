@@ -36,6 +36,9 @@ import java.util.List;
 public class PlayerFactory {
   private static final PlayerConfig stats = loadPlayerConfig();
 
+  private static final Vector2 HITBOX_OFFSET = new Vector2(0.425f, 0.0f);
+  private static final Vector2 HITBOX_SCALE = new Vector2(0.8f, 1.0f);
+
   private static PlayerConfig loadPlayerConfig() {
     PlayerConfig config = FileLoader.readClass(PlayerConfig.class, "configs/player.json");
     if (config == null) {
@@ -116,12 +119,12 @@ public class PlayerFactory {
     player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
 // --- end stamina block ---
 
-    player.getComponent(ColliderComponent.class).setAsBox(new Vector2(0.8f, 1.175f),
-            player.getCenterPosition().add(new Vector2(0.425f, 0.0f)));
+    player.getComponent(ColliderComponent.class).setAsBox(HITBOX_SCALE,
+            player.getCenterPosition().add(HITBOX_OFFSET));
     player.getComponent(ColliderComponent.class).setSensor(true);
 
-    player.getComponent(HitboxComponent.class).setAsBox(new Vector2(0.8f, 1.175f),
-            player.getCenterPosition().add(new Vector2(0.425f, 0.0f)));
+    player.getComponent(HitboxComponent.class).setAsBox(HITBOX_SCALE,
+            player.getCenterPosition().add(HITBOX_OFFSET));
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);

@@ -10,7 +10,7 @@ public class StandingColliderComponent extends ColliderComponent {
     private Fixture fixture;
     private static Vector2 OFFSET = new Vector2(0.9f, 0.5f);
     private final float BOX_WIDTH = 0.3f;
-    private final float BOX_HEIGHT = 0.5f;
+    private final float BOX_HEIGHT = 0.45f;
 
     @Override
     public void create() {
