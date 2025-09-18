@@ -76,11 +76,17 @@ public class CollectableFactory {
         }
 
         // backlight because it looks cool (thanks tristyn)
-
+        // set color based on glowColor in item config
+        Color color = new Color();
+        if (cfg.glowColor != null && !cfg.glowColor.isEmpty()) {
+            color.set(cfg.glowColor.get(0) / 255f, cfg.glowColor.get(1) / 255f, cfg.glowColor.get(2) / 255f, 0.6f);
+        } else {
+            color.set(1f, 1f, 230f/255f, 0.6f);
+        }
         ConeLightComponent cone = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
                 128,
-                new Color(1f, 1f, 230f/255f, 0.5f),
+                color,
                 1.5f,
                 0f,
                 180f
