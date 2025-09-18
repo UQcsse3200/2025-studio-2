@@ -311,8 +311,8 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   public void togglePauseMenu(Tab tab) {
-    pauseMenuDisplay.setTab(tab);
     pauseMenuDisplay.setVisible(paused);
+    if (paused) pauseMenuDisplay.setTab(tab);
   }
 
   /**
@@ -324,7 +324,7 @@ public class MainGameScreen extends ScreenAdapter {
     if (gameArea.getPlayer() == null) {
       throw new IllegalStateException("GameArea has a null player");
     }
-    pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
+    pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
     deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();

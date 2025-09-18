@@ -307,8 +307,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   }
 
   public void resetInputState() {
-    walkDirection.setZero();
-    triggerWalkEvent();
+      walkDirection.setZero();
+      triggerWalkEvent();
+      pressedKeys.clear();
   }
 
   /**

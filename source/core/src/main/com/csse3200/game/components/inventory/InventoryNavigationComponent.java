@@ -68,9 +68,7 @@ public class InventoryNavigationComponent extends InputComponent {
      */
     @Override
     public boolean keyDown(int keycode) {
-        if (!navigationEnabled) {
-            return false;
-        }
+        if (!navigationEnabled) return false;
         
         switch (keycode) {
             case Input.Keys.UP:

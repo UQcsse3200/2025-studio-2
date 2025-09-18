@@ -165,10 +165,10 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this);
+        Entity door = ObstacleFactory.createDoor("key:door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
-        door.getComponent(DoorComponent.class).openDoor();
+        // door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(98,45), true, true);
     }
 
@@ -443,7 +443,8 @@ public class LevelTwoGameArea extends GameArea {
         Entity puzzleEntity = new Entity();
         ButtonManagerComponent manager = new ButtonManagerComponent();
         puzzleEntity.addComponent(manager);
-        ServiceLocator.getEntityService().register(puzzleEntity);
+        // Prevent leak
+        this.spawnEntityAt(puzzleEntity, new GridPoint2(0, 0), true, true);
 
         //spawn buttons
         Entity button = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
