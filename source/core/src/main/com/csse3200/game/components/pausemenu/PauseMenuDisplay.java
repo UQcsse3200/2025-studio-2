@@ -235,11 +235,11 @@ public class PauseMenuDisplay extends UIComponent {
 
             pauseMenuNavigationComponent.setEnabled(false);
 
-            if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-                pauseMenuNavigationComponent.keyUp(Input.Keys.A);
+            if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+                pauseMenuNavigationComponent.keyUp(Input.Keys.Q);
             }
-            if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-                pauseMenuNavigationComponent.keyUp(Input.Keys.D);
+            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                pauseMenuNavigationComponent.keyUp(Input.Keys.E);
             }
 
         }
