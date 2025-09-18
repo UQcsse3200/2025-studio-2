@@ -8,10 +8,12 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +41,8 @@ public class InventoryTabTest {
     private static final int COLS = 4;
     private static final int TOTAL_SLOTS = ROWS * COLS;
 
+    @Mock MainGameScreen screen;
+    @Mock GameArea gameArea;
     @Mock Entity player;
     @Mock InventoryComponent inventory;
 
@@ -50,6 +54,8 @@ public class InventoryTabTest {
 
     @BeforeEach
     void setup() {
+        when(screen.getGameArea()).thenReturn(gameArea);
+        when(gameArea.getPlayer()).thenReturn(player);
         when(player.getComponent(InventoryComponent.class)).thenReturn(inventory);
 
         // Tiny 2x2 RGBA textures so tests don't touch disk
@@ -72,7 +78,7 @@ public class InventoryTabTest {
     void emptyInventoryShowsAllEmptySlots() throws Exception {
         when(inventory.getInventory()).thenReturn(Collections.emptyMap());
 
-        InventoryTab tab = new InventoryTab(player, /*screen*/ null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(/*skin*/ null);
@@ -86,7 +92,7 @@ public class InventoryTabTest {
     void partiallyFilledInventoryCountsCorrectly() throws Exception {
         when(inventory.getInventory()).thenReturn(Map.of("key",5));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
@@ -100,7 +106,7 @@ public class InventoryTabTest {
     void fullInventoryShowsNoEmptySlots() throws Exception {
         when(inventory.getInventory()).thenReturn(Map.of("key", 100));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
@@ -114,7 +120,7 @@ public class InventoryTabTest {
     void nullInventoryGracefullyShowsEmpties() throws Exception {
         when(player.getComponent(InventoryComponent.class)).thenReturn(null);
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
@@ -129,7 +135,7 @@ public class InventoryTabTest {
         // door maps to key texture in InventoryTab#getItemTexture
         when(inventory.getInventory()).thenReturn(Map.of("key", 2, "door", 1));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
@@ -143,7 +149,7 @@ public class InventoryTabTest {
     void unknownItemsShowBorderOnly() throws Exception {
         when(inventory.getInventory()).thenReturn(Map.of("mystery", 3));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
@@ -161,7 +167,7 @@ public class InventoryTabTest {
     void qualifiedIdsUseBaseId() throws Exception {
         when(inventory.getInventory()).thenReturn(Map.of("key:door", 2));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
 
         Actor root = tab.build(null);
@@ -178,7 +184,7 @@ public class InventoryTabTest {
         // Inventory with 2 keys => slots 0 and 1 are filled
         when(inventory.getInventory()).thenReturn(Map.of("key", 2));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         // Also replace the highlight texture so we can count it
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
 
@@ -200,7 +206,7 @@ public class InventoryTabTest {
         // Inventory empty => all slots empty
         when(inventory.getInventory()).thenReturn(Collections.emptyMap());
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
 
         // Select bottom-right cell (row=3, col=3 => index 15), which is empty
@@ -220,7 +226,7 @@ public class InventoryTabTest {
     void selectionDisabledNoHighlight() throws Exception {
         when(inventory.getInventory()).thenReturn(Map.of("key", 1));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
 
         InventoryNavigationComponent nav = mock(InventoryNavigationComponent.class);
@@ -239,7 +245,7 @@ public class InventoryTabTest {
         // Inventory with 3 items => first row has indexes 0..2 filled
         when(inventory.getInventory()).thenReturn(Map.of("key", 3));
 
-        InventoryTab tab = new InventoryTab(player, null);
+        InventoryTab tab = new InventoryTab(screen);
         replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey, fakeHighlight);
 
         InventoryNavigationComponent nav = mock(InventoryNavigationComponent.class);

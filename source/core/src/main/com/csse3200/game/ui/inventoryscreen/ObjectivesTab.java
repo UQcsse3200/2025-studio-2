@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
@@ -42,9 +41,7 @@ import java.util.Map;
  * tutorial -> inventory-screen/objectives/crouch.png
  */
 public class ObjectivesTab implements InventoryTabInterface {
-
   private final MainGameScreen screen;
-  private final Entity player;
 
   // Background
   private final Texture bgTex = new Texture(Gdx.files.internal("inventory-screen/objectives-selected.png"));
@@ -67,9 +64,8 @@ public class ObjectivesTab implements InventoryTabInterface {
   // Objective banner textures by id
   private final Map<String, Texture> objectiveTex = new HashMap<>();
 
-  public ObjectivesTab(Entity player, MainGameScreen screen) {
+  public ObjectivesTab(MainGameScreen screen) {
     this.screen = screen;
-    this.player = player;
 
     // Load per-objective banner textures
     objectiveTex.put("dash", new Texture(Gdx.files.internal("images/objectives/dash.png")));
@@ -128,7 +124,7 @@ public class ObjectivesTab implements InventoryTabInterface {
    * @param placer the PixelPerfectPlacer instance that places the overlays to the tab background
    */
   private void layoutObjectives(PixelPerfectPlacer placer) {
-    InventoryComponent inv = player.getComponent(InventoryComponent.class);
+    InventoryComponent inv = screen.getGameArea().getPlayer().getComponent(InventoryComponent.class);
     Map<String, Integer> bag = (inv != null) ? inv.getObjectives() : java.util.Collections.emptyMap();
     // Flatten multiset
     java.util.List<String> instances = new ArrayList<>();

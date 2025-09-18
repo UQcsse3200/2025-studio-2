@@ -24,14 +24,12 @@ import com.csse3200.game.ui.inventoryscreen.SettingsTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 
 public class PauseMenuDisplay extends UIComponent {
-    private MainGameScreen screen;
+    private final MainGameScreen screen;
     private Table rootTable;
     private final GdxGame game;
     private Texture blackTexture;
-    private Table tabBar;
     private Table tabContent;
     private Table bottomButtons;
-    private Entity player;
     private final InventoryTab inventoryTab;
     private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
@@ -42,12 +40,12 @@ public class PauseMenuDisplay extends UIComponent {
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay(MainGameScreen screen, Entity player, GdxGame game) {
+    public PauseMenuDisplay(MainGameScreen screen, GdxGame game) {
         this.screen = screen;
-        this.player = player;
-        this.inventoryTab = new InventoryTab(player, screen);
-        this.upgradesTab = new UpgradesTab(player, screen);
-        this.objectivesTab = new ObjectivesTab(player, screen);
+
+        this.inventoryTab = new InventoryTab(screen);
+        this.upgradesTab = new UpgradesTab(screen);
+        this.objectivesTab = new ObjectivesTab(screen);
         this.game = game;
     }
 
@@ -58,16 +56,19 @@ public class PauseMenuDisplay extends UIComponent {
         // Initialize the inventory navigation component
         navigationComponent = new InventoryNavigationComponent(inventoryTab);
         entity.addComponent(navigationComponent);
+        navigationComponent.create();
+        navigationComponent.disableNavigation();
+        // Wire up the navigation component with the inventory tab
+        inventoryTab.setNavigationComponent(navigationComponent);
 
         // Initialize the pause menu navigation component
         pauseMenuNavigationComponent = new PauseMenuNavigationComponent(this);
         entity.addComponent(pauseMenuNavigationComponent);
-
-        // Wire up the navigation component with the inventory tab
-        inventoryTab.setNavigationComponent(navigationComponent);
+        pauseMenuNavigationComponent.create();
+        pauseMenuNavigationComponent.setEnabled(false);
 
         // Add event listeners for navigation
-        entity.getEvents().addListener("refreshInventoryGrid", () -> refreshInventoryGrid());
+        entity.getEvents().addListener("refreshInventoryGrid", this::refreshInventoryGrid);
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -86,7 +87,7 @@ public class PauseMenuDisplay extends UIComponent {
         tabContent.center();
         stack.add(tabContent);
 
-        tabBar = new Table();
+        Table tabBar = new Table();
         tabBar.top().padTop(10);
         stack.add(tabBar);
 
@@ -129,34 +130,15 @@ public class PauseMenuDisplay extends UIComponent {
     }
 
     public void setTab(Tab tab) {
-        // Disable navigation on the old tab
-        if (currentTab == Tab.INVENTORY) {
-            navigationComponent.disableNavigation();
-            // Only unregister if the menu is visible (input component was registered)
-            if (rootTable.isVisible()) {
-                ServiceLocator.getInputService().unregister(navigationComponent);
-            }
-        }
-
         this.currentTab = tab;
         updateTabContent();
 
-        // Enable navigation on the new tab if it's inventory
         if (currentTab == Tab.INVENTORY) {
             navigationComponent.enableNavigation();
-            // Only register if the menu is visible
-            if (rootTable.isVisible()) {
-                ServiceLocator.getInputService().register(navigationComponent);
-            }
+        } else {
+            navigationComponent.disableNavigation();
         }
-        if (currentTab != Tab.SETTINGS) {
-            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
-            ServiceLocator.getInputService().register(pauseMenuNavigationComponent);
-        }
-    }
-
-    public Entity getPlayer() {
-        return this.player;
+        pauseMenuNavigationComponent.setEnabled(currentTab != Tab.SETTINGS);
     }
 
     public MainGameScreen getScreen() {
@@ -232,24 +214,27 @@ public class PauseMenuDisplay extends UIComponent {
             titleActor.setVisible(!visible);
         }
 
+        Entity player = screen.getGameArea().getPlayer();
         if (visible) {
             rootTable.toFront();
             player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
+            pauseMenuNavigationComponent.setEnabled(currentTab != Tab.SETTINGS);
 
-            ServiceLocator.getInputService().register(pauseMenuNavigationComponent);
             // Enable navigation and register input component when the pause menu becomes visible
             if (currentTab == Tab.INVENTORY) {
                 navigationComponent.enableNavigation();
-                ServiceLocator.getInputService().register(navigationComponent);
             } else {
                 navigationComponent.disableNavigation();
-                ServiceLocator.getInputService().unregister(navigationComponent);
             }
         } else {
             // Disable navigation and unregister input component when the pause menu is hidden
             navigationComponent.disableNavigation();
-            ServiceLocator.getInputService().unregister(navigationComponent);
-            ServiceLocator.getInputService().unregister(pauseMenuNavigationComponent);
+            KeyboardPlayerInputComponent playerInputComponent = player.getComponent(KeyboardPlayerInputComponent.class);
+            playerInputComponent.setEnabled(true);
+            playerInputComponent.resetInputState();
+
+            pauseMenuNavigationComponent.setEnabled(false);
+
             if (Gdx.input.isKeyPressed(Input.Keys.A)) {
                 pauseMenuNavigationComponent.keyUp(Input.Keys.A);
             }
@@ -257,7 +242,6 @@ public class PauseMenuDisplay extends UIComponent {
                 pauseMenuNavigationComponent.keyUp(Input.Keys.D);
             }
 
-            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
         }
     }
 

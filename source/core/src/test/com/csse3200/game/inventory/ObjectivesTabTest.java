@@ -7,9 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.inventoryscreen.ObjectivesTab;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +31,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 @ExtendWith(MockitoExtension.class)
 public class ObjectivesTabTest {
-
+    @Mock MainGameScreen screen;
+    @Mock GameArea gameArea;
     @Mock Entity player;
     @Mock InventoryComponent inventory;
 
@@ -38,6 +41,8 @@ public class ObjectivesTabTest {
 
     @BeforeEach
     void setup() {
+        when(screen.getGameArea()).thenReturn(gameArea);
+        when(gameArea.getPlayer()).thenReturn(player);
         when(player.getComponent(InventoryComponent.class)).thenReturn(inventory);
 
         // Tiny 2x2 RGBA textures so we never hit disk
@@ -63,7 +68,7 @@ public class ObjectivesTabTest {
     void emptyObjectivesShowsNoBanners() throws Exception {
         when(inventory.getObjectives()).thenReturn(Collections.emptyMap());
 
-        ObjectivesTab tab = new ObjectivesTab(player, /*screen*/ null);
+        ObjectivesTab tab = new ObjectivesTab(screen);
         replaceTextures(tab, fakeBg, Map.of(
                 "dash", texDash, "door", texDoor, "glider", texGlider,
                 "jetpack", texJetpack, "keycard", texKeycard, "tutorial", texTutorial
@@ -84,7 +89,7 @@ public class ObjectivesTabTest {
     void singleObjectiveRendersOneBanner() throws Exception {
         when(inventory.getObjectives()).thenReturn(Map.of("door", 1));
 
-        ObjectivesTab tab = new ObjectivesTab(player, null);
+        ObjectivesTab tab = new ObjectivesTab(screen);
         replaceTextures(tab, fakeBg, Map.of(
                 "dash", texDash, "door", texDoor, "glider", texGlider,
                 "jetpack", texJetpack, "keycard", texKeycard, "tutorial", texTutorial
@@ -111,7 +116,7 @@ public class ObjectivesTabTest {
                 "keycard", 1
         ));
 
-        ObjectivesTab tab = new ObjectivesTab(player, null);
+        ObjectivesTab tab = new ObjectivesTab(screen);
         replaceTextures(tab, fakeBg, Map.of(
                 "dash", texDash, "door", texDoor, "glider", texGlider,
                 "jetpack", texJetpack, "keycard", texKeycard, "tutorial", texTutorial
@@ -133,7 +138,7 @@ public class ObjectivesTabTest {
                 "door", 2
         ));
 
-        ObjectivesTab tab = new ObjectivesTab(player, null);
+        ObjectivesTab tab = new ObjectivesTab(screen);
         replaceTextures(tab, fakeBg, Map.of(
                 "dash", texDash, "door", texDoor, "glider", texGlider,
                 "jetpack", texJetpack, "keycard", texKeycard, "tutorial", texTutorial
@@ -155,7 +160,7 @@ public class ObjectivesTabTest {
     void nullInventoryIsSafe() throws Exception {
         when(player.getComponent(InventoryComponent.class)).thenReturn(null);
 
-        ObjectivesTab tab = new ObjectivesTab(player, null);
+        ObjectivesTab tab = new ObjectivesTab(screen);
         replaceTextures(tab, fakeBg, Map.of(
                 "dash", texDash, "door", texDoor, "glider", texGlider,
                 "jetpack", texJetpack, "keycard", texKeycard, "tutorial", texTutorial

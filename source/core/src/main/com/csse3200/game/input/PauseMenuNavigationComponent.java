@@ -13,6 +13,8 @@ public class PauseMenuNavigationComponent extends InputComponent {
 
     @Override
     public boolean keyDown(int keycode) {
+        if (!enabled) return false;
+
         switch (keycode) {
             case Input.Keys.A:
                 PauseMenuDisplay.Tab prev = pauseMenuDisplay.getPrevTab();

@@ -28,7 +28,6 @@ import java.util.Map;
  */
 public class InventoryTab implements InventoryTabInterface {
 
-  private final Entity player;
   private final MainGameScreen screen;
 
   private final Texture bgTex = new Texture(Gdx.files.internal("inventory-screen/inventory-selected.png"));
@@ -61,11 +60,9 @@ public class InventoryTab implements InventoryTabInterface {
   /**
    * Creates an Inventory tab bound to the given main game screen.
    *
-   * @param player entity holding upgrades information
    * @param gameScreen main game screen used to unpause and hide the pause menu
    */
-  public InventoryTab(Entity player, MainGameScreen gameScreen) {
-    this.player = player;
+  public InventoryTab(MainGameScreen gameScreen) {
     this.screen = gameScreen;
     
     // Create a simple highlight texture programmatically
@@ -212,7 +209,7 @@ public class InventoryTab implements InventoryTabInterface {
     gridTable.clear();
     gridTable.defaults().pad(SLOT_PADDING).expand().fill();
 
-    InventoryComponent inv = player.getComponent(InventoryComponent.class);
+    InventoryComponent inv = screen.getGameArea().getPlayer().getComponent(InventoryComponent.class);
     Map<String, Integer> items = (inv != null) ? inv.getInventory() : java.util.Collections.emptyMap();
 
     int totalSlots = GRID_ROWS * GRID_COLS;

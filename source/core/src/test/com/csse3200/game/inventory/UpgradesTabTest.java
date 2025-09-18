@@ -7,9 +7,11 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +36,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 @ExtendWith(MockitoExtension.class)
 public class UpgradesTabTest {
-
+    @Mock MainGameScreen screen;
+    @Mock GameArea gameArea;
     @Mock Entity player;
     @Mock InventoryComponent inventory;
 
@@ -45,6 +48,8 @@ public class UpgradesTabTest {
 
     @BeforeEach
     void setup() {
+        when(screen.getGameArea()).thenReturn(gameArea);
+        when(gameArea.getPlayer()).thenReturn(player);
         // player -> inventory unless explicitly overridden in a test
         when(player.getComponent(InventoryComponent.class)).thenReturn(inventory);
 
@@ -53,6 +58,8 @@ public class UpgradesTabTest {
         texPlayer  = makeTinyTex();
         texJetpack = makeTinyTex();
         texGlider  = makeTinyTex();
+
+
     }
 
     @AfterEach
@@ -67,7 +74,7 @@ public class UpgradesTabTest {
     void noUpgrades_playerOnly() throws Exception {
         when(inventory.getUpgrades()).thenReturn(Map.of());
 
-        UpgradesTab tab = new UpgradesTab(player, /*screen*/ null);
+        UpgradesTab tab = new UpgradesTab(screen);
         replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
 
         Actor root = tab.build(/*skin*/ null);
@@ -82,7 +89,7 @@ public class UpgradesTabTest {
     void jetpackOnly_rendersJetpack() throws Exception {
         when(inventory.getUpgrades()).thenReturn(Map.of("jetpack", 1));
 
-        UpgradesTab tab = new UpgradesTab(player, null);
+        UpgradesTab tab = new UpgradesTab(screen);
         replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
 
         Actor root = tab.build(null);
@@ -97,7 +104,7 @@ public class UpgradesTabTest {
     void gliderOnly_rendersGlider() throws Exception {
         when(inventory.getUpgrades()).thenReturn(Map.of("glider", 2)); // count>0 still one image
 
-        UpgradesTab tab = new UpgradesTab(player, null);
+        UpgradesTab tab = new UpgradesTab(screen);
         replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
 
         Actor root = tab.build(null);
@@ -112,7 +119,7 @@ public class UpgradesTabTest {
     void bothJetpackAndGlider_jetpackWins() throws Exception {
         when(inventory.getUpgrades()).thenReturn(Map.of("jetpack", 1, "glider", 1));
 
-        UpgradesTab tab = new UpgradesTab(player, null);
+        UpgradesTab tab = new UpgradesTab(screen);
         replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
 
         Actor root = tab.build(null);
@@ -127,7 +134,7 @@ public class UpgradesTabTest {
     void unknownIdsIgnored() throws Exception {
         when(inventory.getUpgrades()).thenReturn(Map.of("hoverboots", 3));
 
-        UpgradesTab tab = new UpgradesTab(player, null);
+        UpgradesTab tab = new UpgradesTab(screen);
         replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
 
         Actor root = tab.build(null);
@@ -142,7 +149,7 @@ public class UpgradesTabTest {
     void nullInventory_safe() throws Exception {
         when(player.getComponent(InventoryComponent.class)).thenReturn(null);
 
-        UpgradesTab tab = new UpgradesTab(player, null);
+        UpgradesTab tab = new UpgradesTab(screen);
         replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
 
         Actor root = tab.build(null);

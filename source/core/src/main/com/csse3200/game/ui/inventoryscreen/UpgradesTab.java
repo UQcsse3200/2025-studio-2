@@ -46,7 +46,6 @@ public class UpgradesTab implements InventoryTabInterface {
   private static final int PLAYER_TOP_Y = 285;
 
   private final MainGameScreen screen;
-  private final Entity player;
 
   // Textures owned by this tab
   private final Texture bgTex     = new Texture(Gdx.files.internal("inventory-screen/upgrades-selected.png"));
@@ -58,12 +57,10 @@ public class UpgradesTab implements InventoryTabInterface {
   /**
    * Creates an Upgrades tab bound to the given main game screen and player entity
    *
-   * @param player the player entity (source of the upgrades bag)
    * @param gameScreen the owning game screen (used to toggle pause/panels)
    */
-  public UpgradesTab(Entity player, MainGameScreen gameScreen) {
+  public UpgradesTab(MainGameScreen gameScreen) {
     this.screen = gameScreen;
-    this.player = player;
   }
 
   /**
@@ -125,7 +122,7 @@ public class UpgradesTab implements InventoryTabInterface {
 
     // Read upgrades bag (defensive default to empty)
     Map<String, Integer> upgrades = java.util.Collections.emptyMap();
-    InventoryComponent inv = player.getComponent(InventoryComponent.class);
+    InventoryComponent inv = screen.getGameArea().getPlayer().getComponent(InventoryComponent.class);
     if (inv != null) upgrades = inv.getUpgrades();
 
     // Priority: jetpack > glider. Only one may be shown underneath the player.
