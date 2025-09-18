@@ -9,9 +9,9 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 public class FootColliderComponent extends ColliderComponent{
 
     private Fixture fixture;
-    private static Vector2 OFFSET = new Vector2(0.9f, 0.0f);
+    private static Vector2 OFFSET = new Vector2(0.9f, 0.09f);
     private final float BOX_WIDTH = 0.3f;
-    private final float BOX_HEIGHT = 0.0001f;
+    private final float BOX_HEIGHT = 0.1f;
 
     @Override
     public void create() {

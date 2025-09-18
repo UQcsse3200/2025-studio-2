@@ -272,12 +272,12 @@ public class LevelOneGameArea extends GameArea {
         logger.info("Moving platform spawned at {}", buttonPlatformPos);
 
         //start button
-        Entity buttonStart = ButtonFactory.createButton(false, "platform", "down");
+        Entity buttonStart = ButtonFactory.createButton(false, "platform", "right");
         buttonStart.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button\nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonStartPos = new GridPoint2(57, 25);
+        GridPoint2 buttonStartPos = new GridPoint2(56, 23);
         spawnEntityAt(buttonStart, buttonStartPos, true, true);
         logger.info("Platform button spawned at {}", buttonStartPos);
 
@@ -292,12 +292,12 @@ public class LevelOneGameArea extends GameArea {
         });
 
         //end button (where platform stops)
-        Entity buttonEnd = ButtonFactory.createButton(false, "platform", "down");
+        Entity buttonEnd = ButtonFactory.createButton(false, "platform", "left");
         buttonEnd.addComponent(new TooltipSystem.TooltipComponent(
                 "Platform Button \nPress E to interact",
                 TooltipSystem.TooltipStyle.DEFAULT
         ));
-        GridPoint2 buttonEndPos = new GridPoint2(74, 25);
+        GridPoint2 buttonEndPos = new GridPoint2(76, 23);
         spawnEntityAt(buttonEnd, buttonEndPos, true, true);
         logger.info("Platform button spawned at {}", buttonEndPos);
 
@@ -632,10 +632,10 @@ public class LevelOneGameArea extends GameArea {
             upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
             spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
         }
-        if (upgradeID == "jetpack") {
-            Entity upgrade = CollectableFactory.createJetpackUpgrade();
-            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-        }
+//        if (upgradeID == "jetpack") {
+//            Entity upgrade = CollectableFactory.createJetpackUpgrade();
+//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+//        }
     }
     protected void loadAssets() {
         logger.debug("Loading assets");

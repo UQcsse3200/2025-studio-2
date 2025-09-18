@@ -94,7 +94,7 @@ public class TrapComponent extends CombatStatsComponent {
                             playerPos.y < trapPos.y);
             case 3 -> // Facing right
                     (// Must approach from right
-                            player.getPosition().x > trap.getPosition().x);
+                            player.getPosition().x > (trap.getPosition().x-0.3f));
             default -> // Facing up
                     (// Must approach from above
                             player.getPosition().y > trap.getPosition().y);

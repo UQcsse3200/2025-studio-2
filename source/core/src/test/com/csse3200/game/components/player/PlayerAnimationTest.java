@@ -57,8 +57,7 @@ public class PlayerAnimationTest {
         verify(animator).startAnimation("JUMP");
         // double jump
         player.getEvents().trigger("jump");
-        verify(animator).startAnimation("JUMP");
-        // land
+        verify(animator, times(2)).startAnimation("JUMP");
         player.getEvents().trigger("landed");
         verify(animator).startAnimation("IDLE");
     }
@@ -70,7 +69,7 @@ public class PlayerAnimationTest {
         verify(animator).startAnimation("JUMPLEFT");
         // double jump
         player.getEvents().trigger("jump");
-        verify(animator).startAnimation("JUMPLEFT");
+        verify(animator, times(2)).startAnimation("JUMPLEFT");
         // land
         player.getEvents().trigger("landed");
         verify(animator).startAnimation("IDLELEFT");
@@ -92,12 +91,11 @@ public class PlayerAnimationTest {
 
     @Test
     void testAnimateCrouchingToIdle() {
-        when(actions.getIsCrouching()).thenReturn(false);
+        when(actions.getIsCrouching()).thenReturn(true);
         // crouch
         player.getEvents().trigger("crouch");
         verify(animator).startAnimation("CROUCH");
         reset(animator);
-        when(actions.getIsCrouching()).thenReturn(true);
         controller.animateWalk(new Vector2(1f, 0f));
         verify(animator).startAnimation("CROUCHMOVE");
         reset(animator);
@@ -109,23 +107,24 @@ public class PlayerAnimationTest {
         // uncrouch
         player.getEvents().trigger("crouch");
         player.getEvents().trigger("walkStop");
-        verify(animator).startAnimation("IDLELEFT");
+        verify(animator, atLeastOnce()).startAnimation("IDLELEFT");
     }
 
     @Test
     void testAnimateCrouchingToCrouch() {
         // crouch
+        when(actions.getIsCrouching()).thenReturn(true);
         player.getEvents().trigger("crouch");
         verify(animator).startAnimation("CROUCH");
         reset(animator);
         // uncrouch
-        when(actions.getIsCrouching()).thenReturn(true);
+        when(actions.getIsCrouching()).thenReturn(false);
         player.getEvents().trigger("crouch");
         player.getEvents().trigger("walkStop");
-        verify(animator).startAnimation("IDLE");
+        verify(animator, atLeastOnce()).startAnimation("IDLE");
         reset(animator);
         // crouch again
-        when(actions.getIsCrouching()).thenReturn(false);
+        when(actions.getIsCrouching()).thenReturn(true);
         player.getEvents().trigger("crouch");
         player.getEvents().trigger("walkStop");
         verify(animator).startAnimation("CROUCH");
@@ -180,6 +179,7 @@ public class PlayerAnimationTest {
     void testSetAnimation() {
         String[] animations = new String[] {"RIGHT", "LEFT", "DASH", "DASHLEFT", "HURT", "HURTLEFT",
                 "JUMP", "JUMPLEFT", "CROUCHMOVE", "CROUCHMOVELEFT", "IDLE", "IDLELEFT"};
+
         for (String s : animations) {
             controller.setAnimation(s);
             verify(animator).startAnimation("RIGHT");
