@@ -124,9 +124,9 @@ public class EnemyFactory {
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
-        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bidle", 0.15f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bscan", 0.15f, Animation.PlayMode.LOOP);
+        animator.addAnimation("drop", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("teleBomber", 0.05f, Animation.PlayMode.LOOP);
 
         drone
@@ -202,7 +202,9 @@ public class EnemyFactory {
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
-        arc.startAnimation("float");
+        arc.startAnimation("bidle");
+
+        PhysicsUtils.setScaledCollider(drone, 1f, 0.8f);
 
         return drone;
     }
@@ -224,10 +226,12 @@ public class EnemyFactory {
 
         // Add patrol task with lowest priority
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent.addTask(new PatrolTask(1f)); // Priority 1 - default behavior
+        aiComponent.addTask(new BombPatrolTask(1f)); // Priority 1 - default behavior
 
         return drone;
     }
+
+
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
         Entity drone= createBaseEnemy();

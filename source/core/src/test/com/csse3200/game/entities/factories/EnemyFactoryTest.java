@@ -255,9 +255,10 @@ public class EnemyFactoryTest {
 
             AnimationRenderComponent anim = bomberDrone.getComponent(AnimationRenderComponent.class);
             assertNotNull(anim, "Drone should have an AnimationRenderComponent");
-            assertTrue(anim.hasAnimation("float"), "Missing 'float' animation");
-            assertTrue(anim.hasAnimation("angry_float"), "Missing 'angry_float' animation");
+            assertTrue(anim.hasAnimation("bidle"), "Missing 'bomber idle' animation");
+            assertTrue(anim.hasAnimation("bscan"), "Missing 'bomber chase' animation");
             assertTrue(anim.hasAnimation("drop"), "Missing 'drop' animation");
+            assertTrue(anim.hasAnimation("teleBomber"), "Missing 'bomber teleport' animation");
         }
 
         @Test
@@ -273,8 +274,8 @@ public class EnemyFactoryTest {
         void bomberDrone_startsOnFloatAnim() {
             Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
             AnimationRenderComponent arc = bomberDrone.getComponent(AnimationRenderComponent.class);
-            assertEquals("float", arc.getCurrentAnimation());
-            assertTrue(arc.hasAnimation("float"));
+            assertEquals("bidle", arc.getCurrentAnimation());
+            assertTrue(arc.hasAnimation("bidle"));
         }
 
         @Test

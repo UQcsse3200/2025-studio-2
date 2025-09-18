@@ -27,6 +27,8 @@ public class DroneAnimationController extends Component {
         entity.getEvents().addListener("dropStart", this::animateDrop);
         entity.getEvents().addListener("teleportStart", this::animateTeleport);
         entity.getEvents().addListener("teleBomber", this::animateTeleBomber);
+        entity.getEvents().addListener("patrolBomber", this::animatePatrolBomber);
+        entity.getEvents().addListener("chaseBomber", this::animateChaseBomber);
         entity.getEvents().addListener("selfExplosion", this::animateSelfExplosion);
     }
 
@@ -54,6 +56,14 @@ public class DroneAnimationController extends Component {
 
     void animatePatrol() {
         setAnimation("float");
+    }
+
+    void animatePatrolBomber() {
+        setAnimation("bidle");
+    }
+
+    void animateChaseBomber() {
+        setAnimation("bscan");
     }
 
     /**
