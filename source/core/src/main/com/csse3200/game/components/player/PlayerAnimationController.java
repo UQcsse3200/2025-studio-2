@@ -105,7 +105,7 @@ public class PlayerAnimationController extends Component {
      * starts the player's crouching animation
      */
     public void animateCrouching() {
-        if (!actions.getIsCrouching()) {
+        if (actions.getIsCrouching()) {
             if (xDirection == 1) {
                 setAnimation("CROUCH");
             } else if (xDirection == -1) {
