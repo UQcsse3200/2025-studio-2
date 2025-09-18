@@ -50,9 +50,11 @@ public class InventoryComponent extends Component {
         this.objectives = new HashMap<>(other.objectives);
     }
 
+    // Read-only views (preferred getters)
+
     /**
-     * Read only view of the inventory for UI rendering
-     * */
+     * @return unmodifiable view of the INVENTORY bag
+     */
     public Map<String, Integer> getInventory() {
         return Collections.unmodifiableMap(inventory);
     }
@@ -71,16 +73,23 @@ public class InventoryComponent extends Component {
         return Collections.unmodifiableMap(objectives);
     }
 
-    /**
-     * Adds a single instance of itemId to the specified bag.
-     *
-     * @param bag which bag to modify
-     * @param itemId non-null item identifier (e.g., "key:door")
-     * @throws NullPointerException if bag or itemId is null
-     */
-    public void addItem(Bag bag, String itemId) {
-        addItems(bag, itemId, 1);
-    }
+    // Generic bag operations (recommended API)
+
+  /**
+   * Adds one instance of the given item to the inventory.
+   * <p>
+   * If the item's config has {@code autoConsume == true}, its effects are applied
+   * immediately and the item is not stored. Otherwise the item is added to the
+   * inventory stack; if it is not yet present, a new stack is created with count 1.
+   * </p>
+   *
+   * @param bag which bag to modify
+   * @param itemId non-null item identifier (e.g., "key:door")
+   * @throws NullPointerException if bag or itemId is null
+   */
+  public void addItem(Bag bag, String itemId) {
+    addItems(bag, itemId, 1);
+  }
 
     /**
      * Adds {@code amount} instances of itemId to the specified bag.
@@ -171,7 +180,7 @@ public class InventoryComponent extends Component {
      * <p>
      * Decrements inventory item count by 1 if the item is present
      * in the inventory and the number of items is &gt; 0. Also
-     * applies its effects.s
+     * applies its effect(s)
      * </p>
      *
      * @param bag which bag to clear
@@ -201,7 +210,6 @@ public class InventoryComponent extends Component {
      * This method will decrement the count of the given {@code itemId} until either
      * the requested {@code amount} has been used or the available quantity is depleted.
      * If the item does not exist in the inventory or has a count of zero, no changes occur.
-     *
      * Looks up the item's config and applies its effects. If no effect can be
      * applied (e.g., using a heart at full HP), the item is not consumed.
      * </p>
@@ -325,26 +333,26 @@ public class InventoryComponent extends Component {
         };
     }
 
-    /**
-     * Applies all effects defined in the collectables' config
-     * <p>
-     * Each effect is looked up in the {@link ItemEffectRegistry} and executed if a handler
-     * is registered. Unknown effect types are ignored.
-     * </p>
-     *
-     * @param cfg the config containing effects to apply (maybe empty).
-     */
+  /**
+   * Applies all effects defined in the collectables' config
+   * <p>
+   * Each effect is looked up in the {@link ItemEffectRegistry} and executed if a handler
+   * is registered. Unknown effect types are ignored.
+   * </p>
+   *
+   * @param cfg the config containing effects to apply (maybe empty).
+   */
 
-    private void applyEffects(CollectablesConfig cfg) {
-        if (cfg.effects == null || cfg.effects.isEmpty()) {
-            return;
-        }
-        for (var effect : cfg.effects) {
-            var handler = ItemEffectRegistry.get(effect.type);
-            if (handler != null) {
-                handler.apply(getEntity(), effect);
-            }
-        }
+  private void applyEffects(CollectablesConfig cfg) {
+    if (cfg.effects == null || cfg.effects.isEmpty()) {
+      return;
     }
+    for (var effect : cfg.effects) {
+      var handler = ItemEffectRegistry.get(effect.type);
+      if (handler != null) {
+        handler.apply(getEntity(), effect);
+      }
+    }
+  }
 
 }

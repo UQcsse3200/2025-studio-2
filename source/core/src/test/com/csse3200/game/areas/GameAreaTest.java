@@ -75,6 +75,8 @@ class GameAreaTest {
                   protected void loadAssets() {}
               };
 
+      ServiceLocator.registerEntityService(new EntityService());
+
       // Save components
       gameArea.player = gameArea.spawnPlayer();
       gameArea.saveComponents(gameArea.player.getComponent(CombatStatsComponent.class),

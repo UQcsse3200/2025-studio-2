@@ -55,6 +55,7 @@ public class CombatStatsComponent extends Component {
    * @param health health
    */
   public void setHealth(int health) {
+    int oldHealth = this.health;
     if (health >= 0) {
       this.health = health;
     } else {
@@ -62,6 +63,10 @@ public class CombatStatsComponent extends Component {
     }
     if (entity != null) {
       entity.getEvents().trigger("updateHealth", this.health);
+      // Trigger death event when health reaches 0 for the first time
+      if (oldHealth > 0 && this.health == 0) {
+        entity.getEvents().trigger("playerDied");
+      }
     }
   }
 

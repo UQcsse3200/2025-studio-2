@@ -1,32 +1,25 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.DoorControlComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.rendering.ParallaxBackgroundComponent;
-import com.csse3200.game.rendering.RenderComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
-import com.csse3200.game.services.MinimapService;
+import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -62,7 +55,7 @@ public class LevelOneGameArea extends GameArea {
             "images/TechWallVariant2.png",
             "images/TechWallVariant3.png",
             "images/platform.png",
-            "images/Empty.png",
+            "images/empty.png",
             "images/gate.png",
             "images/door_open.png",
             "images/door_closed.png",
@@ -81,7 +74,6 @@ public class LevelOneGameArea extends GameArea {
             "images/dash_powerup.png",
             "images/ladder.png",
             "images/ladder-base.png",
-            "images/cavelevel/cavebackground.png",
             "images/cavelevel/tile000.png",
             "images/cavelevel/tile001.png",
             "images/cavelevel/tile002.png",
@@ -109,7 +101,8 @@ public class LevelOneGameArea extends GameArea {
             "images/volatile_platform.atlas",
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
-            "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+            "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+            "images/doors.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -126,7 +119,6 @@ public class LevelOneGameArea extends GameArea {
     }
     protected void loadEntities() {
         keySpawned = false;
-        spawnPlatforms();
         spawnLadder();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
@@ -146,14 +138,15 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 60, 28);
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
+        spawnObjectives();
     }
 
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,-10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
-
     }
+
     private void spawnWalls(){
         GridPoint2 leftWallPos = new GridPoint2(25,4);
         Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
@@ -194,20 +187,13 @@ public class LevelOneGameArea extends GameArea {
         }
     }
 
-    //private void spawnPlatforms() {
-    //    GridPoint2 groundPos1 = new GridPoint2(0, 0);
-    //    Entity ground1 = PlatformFactory.createStaticPlatform();
-    //    ground1.setScale(5, 2);
-    //    spawnEntityAt(ground1, groundPos1, false, false);
-    //}
-
     private void spawnFloorsAndPlatforms(){
-        spawnGroundFloors();
+        spawnFloors();
 
         spawnElevatedPlatforms();
     }
 
-    private void spawnGroundFloors() {
+    private void spawnFloors() {
 
         GridPoint2 groundFloor1Pos = new GridPoint2(-20, -20);
         Entity groundFloor1 = FloorFactory.createGroundFloor();
@@ -235,7 +221,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
 
     }
-
 
     private void spawnElevatedPlatforms() {
         GridPoint2 step1Pos = new GridPoint2(21,6);
@@ -334,11 +319,6 @@ public class LevelOneGameArea extends GameArea {
         moving1.setScale(2f,0.5f);
         spawnEntityAt(moving1, moving1Pos,false, false);
 
-        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
-        Entity puzzleGround = PlatformFactory.createStaticPlatform();
-        puzzleGround.setScale(16,2);
-        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
-
         GridPoint2 removeThis1 = new GridPoint2(48,35);
         Entity removeThis = PlatformFactory.createStaticPlatform();
         removeThis.setScale(2f,0.5f);
@@ -349,17 +329,11 @@ public class LevelOneGameArea extends GameArea {
         step9.setScale(4f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
-//        THESE TWO TO BE REPLACED WITH LADDERS
-        //GridPoint2 step10Pos = new GridPoint2(63,38);
-        //Entity step10 = PlatformFactory.createStaticPlatform();
-        //step10.setScale(1.8f,0.5f);
-        //spawnEntityAt(step10, step10Pos,false, false);
 
         GridPoint2 step11Pos = new GridPoint2(58,53);
         Entity step11 = PlatformFactory.createStaticPlatform();
         step11.setScale(1.8f,0.5f);
         spawnEntityAt(step11, step11Pos,false, false);
-//      ^^
 
         GridPoint2 step12Pos = new GridPoint2(52,48);
         Entity step12 = PlatformFactory.createStaticPlatform();
@@ -372,118 +346,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(step13, step13Pos,false, false);
     }
 
-
-    private void spawnPlatforms(){
-//        GridPoint2 groundPos1 = new GridPoint2(0, 0);
-//        Entity ground1 = PlatformFactory.createStaticPlatform();
-//        ground1.setScale(5,2);
-//        spawnEntityAt(ground1, groundPos1, false, false);
-//
-//        GridPoint2 groundPos2 = new GridPoint2(15, 0);
-//        Entity ground2 = PlatformFactory.createStaticPlatform();
-//        ground2.setScale(25f,2f);
-//        spawnEntityAt(ground2, groundPos2, false, false);
-//
-//        GridPoint2 groundPos3 = new GridPoint2(70, 0);
-//        Entity ground3 = PlatformFactory.createStaticPlatform();
-//        ground3.setScale(5,2);
-//        spawnEntityAt(ground3, groundPos3, false, false);
-
-//        GridPoint2 step1Pos = new GridPoint2(21,6);
-//        Entity step1 = PlatformFactory.createStaticPlatform();
-//        step1.setScale(2,0.5f);
-//        spawnEntityAt(step1, step1Pos,false, false);
-//
-//        GridPoint2 step2Pos = new GridPoint2(15,9);
-//        Entity step2 = PlatformFactory.createStaticPlatform();
-//        step2.setScale(1.5f,0.5f);
-//        spawnEntityAt(step2, step2Pos,false, false);
-//
-//        GridPoint2 step3Pos = new GridPoint2(22,12);
-//        Entity step3 = PlatformFactory.createStaticPlatform();
-//        step3.setScale(1.8f,0.5f);
-//        spawnEntityAt(step3, step3Pos,false, false);
-//
-////        THESE TWO TO BE REPLACED WITH LADDERS
-//        GridPoint2 step4Pos = new GridPoint2(48,6);
-//        Entity step4 = PlatformFactory.createStaticPlatform();
-//        step4.setScale(1.8f,0.5f);
-//        spawnEntityAt(step4, step4Pos,false, false);
-//
-//        GridPoint2 step6Pos = new GridPoint2(42,12);
-//        Entity step6 = PlatformFactory.createStaticPlatform();
-//        step6.setScale(1.8f,0.5f);
-//        spawnEntityAt(step6, step6Pos,false, false);
-////      ^
-//
-//        GridPoint2 step7Pos = new GridPoint2(45,18);
-//        Entity step7 = PlatformFactory.createStaticPlatform();
-//        step7.setScale(3.5f,0.5f);
-//        spawnEntityAt(step7, step7Pos,false, false);
-//
-////        RIGHT PATH
-//        GridPoint2 step8Pos = new GridPoint2(58,18);
-//        Entity step8 = PlatformFactory.createStaticPlatform();
-//        step8.setScale(2f,0.5f);
-//        spawnEntityAt(step8, step8Pos,false, false);
-//
-//        GridPoint2 buttonPlatformPos = new GridPoint2(63,18);
-//        Vector2 offsetWorldButton = new Vector2(2.5f, 0f);
-//        float speedButton = 2f;
-//        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speedButton);
-//        buttonPlatform.setScale(2f,0.5f);
-//        spawnEntityAt(buttonPlatform, buttonPlatformPos,false, false);
-//
-////        LEFT PATH
-//        GridPoint2 moving1Pos = new GridPoint2(38,26);
-//        Vector2 offsetWorld  = new Vector2(0f, 4f);
-//        float speed = 2f;
-//        Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
-//        moving1.setScale(2f,0.5f);
-//        spawnEntityAt(moving1, moving1Pos,false, false);
-//
-//        GridPoint2 puzzleGroundPos = new GridPoint2(0, 32);
-//        Entity puzzleGround = PlatformFactory.createStaticPlatform();
-//        puzzleGround.setScale(16,2);
-//        spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
-//
-//        GridPoint2 removeThis1 = new GridPoint2(48,35);
-//        Entity removeThis = PlatformFactory.createStaticPlatform();
-//        removeThis.setScale(2f,0.5f);
-//        spawnEntityAt(removeThis, removeThis1,false, false);
-//
-//        GridPoint2 step9Pos = new GridPoint2(57,35);
-//        Entity step9 = PlatformFactory.createStaticPlatform();
-//        step9.setScale(4f,0.5f);
-//        spawnEntityAt(step9, step9Pos,false, false);
-//
-////        THESE TWO TO BE REPLACED WITH LADDERS
-//        GridPoint2 step10Pos = new GridPoint2(63,38);
-//        Entity step10 = PlatformFactory.createStaticPlatform();
-//        step10.setScale(1.8f,0.5f);
-//        spawnEntityAt(step10, step10Pos,false, false);
-//
-//        GridPoint2 step11Pos = new GridPoint2(58,43);
-//        Entity step11 = PlatformFactory.createStaticPlatform();
-//        step11.setScale(1.8f,0.5f);
-//        spawnEntityAt(step11, step11Pos,false, false);
-////      ^^
-//
-//        GridPoint2 step12Pos = new GridPoint2(52,48);
-//        Entity step12 = PlatformFactory.createStaticPlatform();
-//        step12.setScale(3.5f,0.5f);
-//        spawnEntityAt(step12, step12Pos,false, false);
-//
-//        GridPoint2 step13Pos = new GridPoint2(70,48);
-//        Entity step13 = PlatformFactory.createStaticPlatform();
-//        step13.setScale(2f,0.5f);
-//        spawnEntityAt(step13, step13Pos,false, false);
-//
-//        GridPoint2 gatePlatformPos= new GridPoint2(33,60);
-//        Entity gatePlatform = PlatformFactory.createStaticPlatform();
-//        gatePlatform.setScale(5f,0.5f);
-//        spawnEntityAt(gatePlatform, gatePlatformPos,false, false);
-    }
     public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("key:door", this);
         door.setScale(1, 2);
@@ -565,51 +427,44 @@ public class LevelOneGameArea extends GameArea {
 
         // Layer 7 - Farthest background (barely moves)
         Texture backgroundTexture = resourceService.getAsset("images/cavelevel/background/7.png", Texture.class);
-        parallaxBg.addLayer(backgroundTexture, 0.1f);
+        parallaxBg.addScaledLayer(backgroundTexture, 0f, -17, -14, 0.18f);
 
         // Layer 6 - Far background
         Texture layer1 = resourceService.getAsset("images/cavelevel/background/6.png", Texture.class);
-        parallaxBg.addLayer(layer1, 0.13f);
+        parallaxBg.addScaledLayer(layer1, 0.2f, -17, -14, 0.18f);
 
         // Layer 5 - Mid-far background
         Texture layer2 = resourceService.getAsset("images/cavelevel/background/5.png", Texture.class);
-        parallaxBg.addLayer(layer2, 0.15f);
+        parallaxBg.addScaledLayer(layer2, 0.3f, -17, -14, 0.18f);
 
         // Layer 4 - Mid background
         Texture layer3 = resourceService.getAsset("images/cavelevel/background/4.png", Texture.class);
-        parallaxBg.addLayer(layer3, 0.17f);
+        parallaxBg.addScaledLayer(layer3, 0.4f, -17, -14, 0.18f);
 
         // Layer 3 - Mid-near background
         Texture layer4 = resourceService.getAsset("images/cavelevel/background/3.png", Texture.class);
-        parallaxBg.addLayer(layer4, 0.19f);
+        parallaxBg.addScaledLayer(layer4, 0.6f, -17, -14, 0.18f);
 
         // Layer 2 - Near background
         Texture layer5 = resourceService.getAsset("images/cavelevel/background/2.png", Texture.class);
-        parallaxBg.addLayer(layer5, 0.20f);
+        parallaxBg.addScaledLayer(layer5, 0.8f, -17, -14, 0.18f);
 
         // Layer 1 - Nearest background (moves fastest)
         Texture layer6 = resourceService.getAsset("images/cavelevel/background/1.png", Texture.class);
-        parallaxBg.addLayer(layer6, 0.21f);
+        parallaxBg.addScaledLayer(layer6, 1f, -17, -14, 0.18f);
 
         backgroundEntity.addComponent(parallaxBg);
         spawnEntity(backgroundEntity);
     }
 
     private TerrainComponent createDefaultTerrain() {
-        TextureRegion variant1, variant2, variant3, baseTile;
+        // Use empty texture for invisible terrain grid
         final ResourceService resourceService = ServiceLocator.getResourceService();
+        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
 
-        baseTile =
-                new TextureRegion(resourceService.getAsset("images/cavelevel/cavebackground.png", Texture.class));
-        variant1 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        variant2 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        variant3 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
+        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
+        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
@@ -693,6 +548,19 @@ public class LevelOneGameArea extends GameArea {
                 (int) platformBatBuilder.getSpawnX() * 2,
                 (int) platformBatBuilder.getSpawnY()), true, true);
     }
+
+    private void spawnObjectives() {
+        // Large, invisible sensors — easy to grab, no textures.
+        // IDs chosen to match the ObjectiveTab banner map.
+        Gdx.app.log("LevelOne", "Spawning objectives…");
+//        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(14, 19), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+    }
+
     private void spawnLevelOneBatRoom() {
         int offsetX = 0;
         int offsetY = 0;

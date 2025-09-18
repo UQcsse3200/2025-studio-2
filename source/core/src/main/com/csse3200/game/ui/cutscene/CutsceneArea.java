@@ -137,7 +137,7 @@ public class CutsceneArea extends GameArea {
      * Cutscene areas cannot be reset
      */
     @Override
-    protected void reset() {
+    public void reset() {
         // Reset does nothing for cutscene
     }
 

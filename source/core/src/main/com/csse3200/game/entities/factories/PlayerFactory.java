@@ -1,17 +1,12 @@
 package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Gdx;
 
-
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.*;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.npc.DroneAnimationController;
-import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.PlayerActions;
-import com.csse3200.game.components.player.PlayerAnimationController;
-import com.csse3200.game.components.player.PlayerStatsDisplay;
+import com.csse3200.game.components.player.*;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.PlayerConfig;
 import com.csse3200.game.files.FileLoader;
@@ -88,6 +83,8 @@ public class PlayerFactory {
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay())
                     .addComponent(new CameraComponent())
+                    .addComponent(new PlayerScreenTransitionComponent())
+                    .addComponent(new PlayerDeathEffectComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
 

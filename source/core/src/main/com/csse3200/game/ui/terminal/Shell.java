@@ -758,11 +758,10 @@ final class Accessor {
         }
 
         if (i == path.size() - 1 && accessMethods) {
-          try {
-            currentClass.getDeclaredMethod(propertyName);
-            return new MaybeMethodStatement(current, propertyName);
-          } catch (NoSuchMethodException e) {
-            // Ignore
+          for (Method method : targetClass.getDeclaredMethods()) {
+            if (method.getName().equals(propertyName)) {
+              return new MaybeMethodStatement(current, propertyName);
+            }
           }
 
           if (current instanceof Class) {
@@ -777,7 +776,7 @@ final class Accessor {
         }
       }
 
-      if (!found) {
+      if (i == path.size() - 1 && !found) {
         throw new ShellException("Cannot access property '" + path.get(i) + "' on " + targetClass.getSimpleName());
       }
     }
@@ -918,9 +917,10 @@ final class MaybeMethodStatement implements EvaluableFunction {
 
   private Object tryInvoke(Method method, Object targetInstance, Object[] args) {
     try {
+      method.setAccessible(true);
       return method.invoke(targetInstance, args);
     } catch (Exception e) {
-      throw new ShellException("Error invoking method '" + methodName + "': " + e.getCause().getMessage());
+      throw new ShellException("Error invoking method '" + methodName + "': " + e);
     }
   }
 

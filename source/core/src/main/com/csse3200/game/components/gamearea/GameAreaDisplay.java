@@ -32,10 +32,11 @@ public class GameAreaDisplay extends UIComponent {
   @Override
   public void draw(SpriteBatch batch)  {
     int screenHeight = Gdx.graphics.getHeight();
+    int screenWidth = Gdx.graphics.getWidth();
     float offsetX = 10f;
     float offsetY = 30f;
 
-    title.setPosition(offsetX, screenHeight - offsetY);
+    title.setPosition(screenWidth - offsetX - title.getWidth(), screenHeight - offsetY);
   }
 
   @Override

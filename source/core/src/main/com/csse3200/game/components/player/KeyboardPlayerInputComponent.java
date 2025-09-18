@@ -57,6 +57,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
+    if (!enabled) return false;
+
     // If the key has already been pressed then it's a legacy input from pausing the game
     if (pressedKeys.getOrDefault(keycode, false)) {
       return false;
@@ -161,6 +163,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
+    if (!enabled) return false;
+
     // If the key hasn't been pressed but has somehow been released then it's a legacy input
     // from an earlier KeyboardPlayerInputComponent
     if (!pressedKeys.getOrDefault(keycode, false)) {
@@ -265,7 +269,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private void triggerCrouchEvent() {
     entity.getEvents().trigger("crouch");
-
   }
 
   private void triggerGlideEvent(boolean status) {
@@ -316,6 +319,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
   }
 
+  public void resetInputState() {
+      walkDirection.setZero();
+      triggerWalkEvent();
+      pressedKeys.clear();
+  }
+
   /**
    * Return current walk direction.
    * (Only current use is for transfers between resets.)
@@ -358,9 +367,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private Boolean inFrontOfLadder(Array<Entity> ladders) {
     for (Entity ladder : ladders) {
       if (ladder.getPosition().x - entity.getPosition().x <= 0.5f
-              && ladder.getPosition().x - entity.getPosition().x >= -0.5f
-              && ladder.getPosition().y - entity.getPosition().y <= 0.5f
-              && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
+          && ladder.getPosition().x - entity.getPosition().x >= -0.5f
+          && ladder.getPosition().y - entity.getPosition().y <= 0.5f
+          && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
         //this.onLadder = true;
         entity.getEvents().trigger("gravityForPlayerOff");
         return true;
@@ -383,6 +392,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    * @param set boolean value to set the on ladder state too.
    */
   public void setOnLadder (boolean set) {
-      this.onLadder = set;
+    this.onLadder = set;
   }
 }

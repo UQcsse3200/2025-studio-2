@@ -90,6 +90,7 @@ public class SprintOneGameArea extends GameArea {
             "images/ghost.atlas",
             "images/ghostKing.atlas",
             "images/drone.atlas",
+            "images/doors.atlas",
             "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
@@ -175,8 +176,8 @@ public class SprintOneGameArea extends GameArea {
         Entity puzzleEntity = new Entity();
         ButtonManagerComponent manager = new ButtonManagerComponent();
         puzzleEntity.addComponent(manager);
-        ServiceLocator.getEntityService().register(puzzleEntity);
-
+        // Prevent leak
+        this.spawnEntityAt(puzzleEntity, new GridPoint2(0, 0), true, true);
 
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
