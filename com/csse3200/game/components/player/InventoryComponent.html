@@ -30,6 +30,7 @@ loadScripts(document, 'script');</script>
 <li><a href="package-summary.html">Package</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../../index-all.html">Index</a></li>
 <li><a href="../../../../../help-doc.html#class">Help</a></li>
 </ul>
@@ -37,7 +38,7 @@ loadScripts(document, 'script');</script>
 <li>
 <p>Summary:</p>
 <ul>
-<li>Nested</li>
+<li><a href="#nested-class-summary">Nested</a></li>
 <li><a href="#field-summary">Field</a></li>
 <li><a href="#constructor-summary">Constr</a></li>
 <li><a href="#method-summary">Method</a></li>
@@ -57,7 +58,7 @@ loadScripts(document, 'script');</script>
 <div id="navbar-sub-list">
 <ul class="sub-nav-list">
 <li>Summary:&nbsp;</li>
-<li>Nested&nbsp;|&nbsp;</li>
+<li><a href="#nested-class-summary">Nested</a>&nbsp;|&nbsp;</li>
 <li><a href="#field-summary">Field</a>&nbsp;|&nbsp;</li>
 <li><a href="#constructor-summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method-summary">Method</a></li>
@@ -93,11 +94,32 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">InventoryComponent</span>
 <span class="extends-implements">extends <a href="../Component.html" title="class in com.csse3200.game.components">Component</a></span></div>
-<div class="block">A component to track and manage a player's inventory, including stacking items.
- Inventory is set up as a multiset of item ids (stack counts).</div>
+<div class="block">Tracks and manages a player's possessions, split into three logical bags:
+ - INVENTORY   : regular items picked up during gameplay (keys, etc.)
+ - UPGRADES    : upgrade tokens/items
+ - OBJECTIVES  : quest/goal items
+
+ Each bag is a multiset (item id -&gt; stack count).</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
+<!-- ======== NESTED CLASS SUMMARY ======== -->
+<li>
+<section class="nested-class-summary" id="nested-class-summary">
+<h2>Nested Class Summary</h2>
+<div class="caption"><span>Nested Classes</span></div>
+<div class="summary-table three-column-summary">
+<div class="table-header col-first">Modifier and Type</div>
+<div class="table-header col-second">Class</div>
+<div class="table-header col-last">Description</div>
+<div class="col-first even-row-color"><code>static enum&nbsp;</code></div>
+<div class="col-second even-row-color"><code><a href="InventoryComponent.Bag.html" class="type-name-link" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Logical groupings for items held by the player.</div>
+</div>
+</div>
+</section>
+</li>
 <!-- =========== FIELD SUMMARY =========== -->
 <li>
 <section class="field-summary" id="field-summary">
@@ -116,9 +138,13 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">InventoryComponent</a>()</code></div>
-<div class="col-last even-row-color">&nbsp;</div>
+<div class="col-last even-row-color">
+<div class="block">Creates a new, empty component with three empty bags.</div>
+</div>
 <div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.components.player.InventoryComponent)" class="member-name-link">InventoryComponent</a><wbr>(<a href="InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a>&nbsp;other)</code></div>
-<div class="col-last odd-row-color">&nbsp;</div>
+<div class="col-last odd-row-color">
+<div class="block">Copy constructor.</div>
+</div>
 </div>
 </section>
 </li>
@@ -127,59 +153,136 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button><button id="method-summary-table-tab6" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab6', 3)" class="table-tab">Deprecated Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItem(java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds one instance of the given item to the inventory.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItems(java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItem(java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: addItem(Bag.INVENTORY, itemId).</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Adds <code>amount</code> instances of the given item (stacking).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInventory()" class="member-name-link">getInventory</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItems(java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: addItems(Bag.INVENTORY, itemId, amount).</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#existsAnywhere(java.lang.String)" class="member-name-link">existsAnywhere</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Read only view of the inventory for UI rendering</div>
+<div class="block">Returns true if the item exists in ANY bag (count &gt; 0).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemCount(java.lang.String)" class="member-name-link">getItemCount</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getGrandTotalCount()" class="member-name-link">getGrandTotalCount</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getInventory()" class="member-name-link">getInventory</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getItemCount(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">getItemCount</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the current stack count for <code>itemId</code>, where the stack count
- is the number of instances of an item in the inventory.</div>
+<div class="block">Returns the stack count for itemId in the given bag.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#getItemCount(java.lang.String)" class="member-name-link">getItemCount</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: getItemCount(Bag.INVENTORY, itemId).</div>
+</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getObjectives()" class="member-name-link">getObjectives</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTotalItemCount()" class="member-name-link">getTotalItemCount</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Gets the count for all instances of items in the inventory.</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getTotalCount(com.csse3200.game.components.player.InventoryComponent.Bag)" class="member-name-link">getTotalCount</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#getTotalItemCount()" class="member-name-link">getTotalItemCount</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: getTotalCount(Bag.INVENTORY).</div>
 </div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a><wbr>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUpgrades()" class="member-name-link">getUpgrades</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasItem(java.lang.String)" class="member-name-link">hasItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns whether at least one instance of <code>itemId</code> exists in the inventory.</div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hasItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">hasItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#hasItem(java.lang.String)" class="member-name-link">hasItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: hasItem(Bag.INVENTORY, itemId).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeItem(java.lang.String)" class="member-name-link">removeItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Removes all items with <code>itemId</code> from the inventory.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useItem(java.lang.String)" class="member-name-link">useItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#removeItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">removeItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Removes all instances of itemId from the specified bag.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#removeItem(java.lang.String)" class="member-name-link">removeItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: removeItem(Bag.INVENTORY, itemId).</div>
+</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#resetBag(com.csse3200.game.components.player.InventoryComponent.Bag)" class="member-name-link">resetBag</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Clears all items from the specified bag.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">useItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Uses one instance of <code>itemId</code>.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useItems(java.lang.String,int)" class="member-name-link">useItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#useItem(java.lang.String)" class="member-name-link">useItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: useItem(Bag.INVENTORY, itemId).</div>
+</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)" class="member-name-link">useItems</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Consumes a specified number of items from the inventory.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#useItems(java.lang.String,int)" class="member-name-link">useItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: useItems(Bag.INVENTORY, itemId, amount).</div>
+</div>
 </div>
 </div>
 </div>
@@ -205,12 +308,21 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="&lt;init&gt;()">
 <h3>InventoryComponent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryComponent</span>()</div>
+<div class="block">Creates a new, empty component with three empty bags.</div>
 </section>
 </li>
 <li>
 <section class="detail" id="&lt;init&gt;(com.csse3200.game.components.player.InventoryComponent)">
 <h3>InventoryComponent</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">InventoryComponent</span><wbr><span class="parameters">(<a href="InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a>&nbsp;other)</span></div>
+<div class="block">Copy constructor.
+ Creates deep copies of the three internal maps.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>other</code> - another InventoryComponent to copy</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if other is null</dd>
+</dl>
 </section>
 </li>
 </ul>
@@ -225,13 +337,37 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="getInventory()">
 <h3>getInventory</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</span>&nbsp;<span class="element-name">getInventory</span>()</div>
-<div class="block">Read only view of the inventory for UI rendering</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>unmodifiable view of the INVENTORY bag</dd>
+</dl>
 </section>
 </li>
 <li>
-<section class="detail" id="addItem(java.lang.String)">
+<section class="detail" id="getUpgrades()">
+<h3>getUpgrades</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</span>&nbsp;<span class="element-name">getUpgrades</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>unmodifiable view of the UPGRADES bag</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getObjectives()">
+<h3>getObjectives</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>&gt;</span>&nbsp;<span class="element-name">getObjectives</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>unmodifiable view of the OBJECTIVES bag</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
 <h3>addItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
 <div class="block">Adds one instance of the given item to the inventory.
  <p>
  If the item's config has <code>autoConsume == true</code>, its effects are applied
@@ -240,14 +376,18 @@ loadScripts(document, 'script');</script>
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier (e.g., <code>"key:red"</code>).</dd>
+<dd><code>bag</code> - which bag to modify</dd>
+<dd><code>itemId</code> - non-null item identifier (e.g., "key:door")</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="addItems(java.lang.String,int)">
+<section class="detail" id="addItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)">
 <h3>addItems</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</span></div>
 <div class="block">Adds <code>amount</code> instances of the given item (stacking).
  <p>
@@ -257,98 +397,244 @@ loadScripts(document, 'script');</script>
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier (e.g., <code>"key:red"</code>).</dd>
-<dd><code>amount</code> - number of items to add (must be ≥ 1).</dd>
+<dd><code>bag</code> - which bag to modify</dd>
+<dd><code>itemId</code> - non-null item identifier</dd>
+<dd><code>amount</code> - number of instances to add (must be &gt;= 0)</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>amount &lt; 1</code>.</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if amount is negative</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="hasItem(java.lang.String)">
+<section class="detail" id="hasItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
 <h3>hasItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="block">Returns whether at least one instance of <code>itemId</code> exists in the inventory.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier of item.</dd>
+<dd><code>bag</code> - which bag to query</dd>
+<dd><code>itemId</code> - non-null identifier</dd>
 <dt>Returns:</dt>
-<dd><code>true</code> if the count is &gt; 0; otherwise <code>false</code>.</dd>
+<dd>true if the bag contains at least one instance</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getItemCount(java.lang.String)">
+<section class="detail" id="getItemCount(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
 <h3>getItemCount</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getItemCount</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="block">Gets the current stack count for <code>itemId</code>, where the stack count
- is the number of instances of an item in the inventory.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getItemCount</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="block">Returns the stack count for itemId in the given bag.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier of item.</dd>
+<dd><code>bag</code> - which bag to query</dd>
+<dd><code>itemId</code> - non-null identifier</dd>
 <dt>Returns:</dt>
-<dd>the stored count, or <code>0</code> if the item is absent</dd>
+<dd>count (0 if absent)</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="getTotalItemCount()">
-<h3>getTotalItemCount</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getTotalItemCount</span>()</div>
-<div class="block">Gets the count for all instances of items in the inventory.</div>
+<section class="detail" id="getTotalCount(com.csse3200.game.components.player.InventoryComponent.Bag)">
+<h3>getTotalCount</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getTotalCount</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag)</span></div>
 <dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>bag</code> - which bag to query</dd>
 <dt>Returns:</dt>
-<dd>the stored count, or <code>0</code> if the inventory is empty</dd>
+<dd>total count of all instances stored in the bag</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="removeItem(java.lang.String)">
+<section class="detail" id="removeItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
 <h3>removeItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="block">Removes all items with <code>itemId</code> from the inventory.</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="block">Removes all instances of itemId from the specified bag.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier to remove.</dd>
+<dd><code>bag</code> - which bag to modify</dd>
+<dd><code>itemId</code> - non-null identifier to remove</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="useItem(java.lang.String)">
+<section class="detail" id="resetBag(com.csse3200.game.components.player.InventoryComponent.Bag)">
+<h3>resetBag</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetBag</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag)</span></div>
+<div class="block">Clears all items from the specified bag.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>bag</code> - which bag to clear</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag is null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="useItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
 <h3>useItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">useItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
 <div class="block">Uses one instance of <code>itemId</code>.
  <p>
  Decrements inventory item count by 1 if the item is present
  in the inventory and the number of items is &gt; 0. Also
- applies its effects.s
+ applies its effect(s)
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - non-null identifier of item to decrement.</dd>
+<dd><code>bag</code> - which bag to modify</dd>
+<dd><code>itemId</code> - non-null identifier to decrement</dd>
+<dt>Returns:</dt>
+<dd>true if one instance was consumed; false if none were available</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="useItems(java.lang.String,int)">
+<section class="detail" id="useItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)">
 <h3>useItems</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">useItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">useItems</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</span></div>
 <div class="block">Consumes a specified number of items from the inventory.
  <p>
  This method will decrement the count of the given <code>itemId</code> until either
  the requested <code>amount</code> has been used or the available quantity is depleted.
  If the item does not exist in the inventory or has a count of zero, no changes occur.
-
  Looks up the item's config and applies its effects. If no effect can be
  applied (e.g., using a heart at full HP), the item is not consumed.
  </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>itemId</code> - the identifier of the item to use</dd>
-<dd><code>amount</code> - the number of items to attempt to consume; if greater than the
-               available count, all available items are consumed</dd>
+<dd><code>bag</code> - which bag to modify</dd>
+<dd><code>itemId</code> - non-null identifier to decrement</dd>
+<dd><code>amount</code> - desired number to consume (must be &gt;= 0)</dd>
+<dt>Returns:</dt>
+<dd>the number of instances actually consumed (0..amount)</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if amount is negative</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="existsAnywhere(java.lang.String)">
+<h3>existsAnywhere</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">existsAnywhere</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="block">Returns true if the item exists in ANY bag (count &gt; 0).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>itemId</code> - non-null identifier</dd>
+<dt>Returns:</dt>
+<dd>true if present in inventory OR upgrades OR objectives</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if itemId is null</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="getGrandTotalCount()">
+<h3>getGrandTotalCount</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getGrandTotalCount</span>()</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>total count across all bags (inventory + upgrades + objectives)</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addItem(java.lang.String)">
+<h3>addItem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: addItem(Bag.INVENTORY, itemId).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addItems(java.lang.String,int)">
+<h3>addItems</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: addItems(Bag.INVENTORY, itemId, amount).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="hasItem(java.lang.String)">
+<h3>hasItem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">hasItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: hasItem(Bag.INVENTORY, itemId).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getItemCount(java.lang.String)">
+<h3>getItemCount</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getItemCount</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: getItemCount(Bag.INVENTORY, itemId).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getTotalItemCount()">
+<h3>getTotalItemCount</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getTotalItemCount</span>()</div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: getTotalCount(Bag.INVENTORY).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="removeItem(java.lang.String)">
+<h3>removeItem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">removeItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: removeItem(Bag.INVENTORY, itemId).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="useItem(java.lang.String)">
+<h3>useItem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">useItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: useItem(Bag.INVENTORY, itemId).</div>
+</div>
+</section>
+</li>
+<li>
+<section class="detail" id="useItems(java.lang.String,int)">
+<h3>useItems</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">useItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
+<div class="deprecation-comment">Prefer bagged version: useItems(Bag.INVENTORY, itemId, amount).</div>
+</div>
 </section>
 </li>
 </ul>

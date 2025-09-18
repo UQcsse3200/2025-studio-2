@@ -6,6 +6,7 @@ com.csse3200.game.areas.terrain
 com.csse3200.game.components
 com.csse3200.game.components.collectables
 com.csse3200.game.components.collectables.effects
+com.csse3200.game.components.deathscreen
 com.csse3200.game.components.enemy
 com.csse3200.game.components.gamearea
 com.csse3200.game.components.inventory
@@ -35,6 +36,8 @@ com.csse3200.game.physics
 com.csse3200.game.physics.components
 com.csse3200.game.physics.raycast
 com.csse3200.game.rendering
+com.csse3200.game.rendering.effects
+com.csse3200.game.rendering.parallax
 com.csse3200.game.screens
 com.csse3200.game.services
 com.csse3200.game.ui

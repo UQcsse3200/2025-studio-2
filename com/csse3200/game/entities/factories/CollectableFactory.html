@@ -30,6 +30,7 @@ loadScripts(document, 'script');</script>
 <li><a href="package-summary.html">Package</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../../index-all.html">Index</a></li>
 <li><a href="../../../../../help-doc.html#class">Help</a></li>
 </ul>
@@ -143,6 +144,18 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createKey(java.lang.String)" class="member-name-link">createKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;target)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Builds a collectable key for <code>target</code>.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createObjective(java.lang.String)" class="member-name-link">createObjective</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates an invisible objective pickup with a large sensor collider.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createObjective(java.lang.String,float,float)" class="member-name-link">createObjective</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId,
+ float&nbsp;width,
+ float&nbsp;height)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates an invisible objective pickup with a custom sensor size (world units).</div>
 </div>
 </div>
 </div>
@@ -267,6 +280,33 @@ loadScripts(document, 'script');</script>
 <li><a href="../../components/collectables/UpgradesComponent.html" title="class in com.csse3200.game.components.collectables"><code>UpgradesComponent</code></a></li>
 </ul>
 </dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createObjective(java.lang.String)">
+<h3>createObjective</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createObjective</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId)</span></div>
+<div class="block">Creates an invisible objective pickup with a large sensor collider.
+ Default footprint is 2x2 world units (might tweak)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>objectiveId</code> - id routed through switch in ObjectiveCollectableComponent (e.g., "obj:plans")</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createObjective(java.lang.String,float,float)">
+<h3>createObjective</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createObjective</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId,
+ float&nbsp;width,
+ float&nbsp;height)</span></div>
+<div class="block">Creates an invisible objective pickup with a custom sensor size (world units).</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>objectiveId</code> - id routed through switch in ObjectiveCollectableComponent</dd>
+<dd><code>width</code> - collider width in world units</dd>
+<dd><code>height</code> - collider height in world units</dd>
 </dl>
 </section>
 </li>

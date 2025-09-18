@@ -30,6 +30,7 @@ loadScripts(document, 'script');</script>
 <li><a href="package-summary.html">Package</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../../index-all.html">Index</a></li>
 <li><a href="../../../../../help-doc.html#class">Help</a></li>
 </ul>
@@ -96,7 +97,27 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ObjectivesTab</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a>
 implements <a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></span></div>
-<div class="block">Objectives tab shown inside the pause menu</div>
+<div class="block">Objectives tab UI.
+
+ Shows each collected objective as a full-width banner image stacked vertically.
+ No grid is used. Each objective instance occupies one row.
+
+ Layout (pixel-accurate on the background art):
+   Background: inventory-screen/objectives-selected.png
+   First banner top-left: (x=46, y=252)
+   Banner height: 74 px
+   Vertical gap: 12 px
+   Close hotspot: (971, 16, 39, 39) — same hit area as Inventory
+   Tab hotspots (invisible): Inventory and Upgrades are clickable, Settings untouched
+
+
+ Objective id mapping (OBJECTIVES bag -&gt; PNG):
+ dash -&gt; inventory-screen/objectives/dash.png
+ door -&gt; inventory-screen/objectives/findDoor.png
+ glider -&gt; inventory-screen/objectives/glider.png
+ jetpack -&gt; inventory-screen/objectives/jetpack.png
+ keycard -&gt; inventory-screen/objectives/keycard.png
+ tutorial -&gt; inventory-screen/objectives/crouch.png</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -108,10 +129,8 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.screens.MainGameScreen)" class="member-name-link">ObjectivesTab</a><wbr>(<a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;gameScreen)</code></div>
-<div class="col-last even-row-color">
-<div class="block">Creates an Objectives tab bound to the given main game screen.</div>
-</div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.screens.MainGameScreen)" class="member-name-link">ObjectivesTab</a><wbr>(<a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;screen)</code></div>
+<div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -129,7 +148,12 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.scenes.scene2d.Actor</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)" class="member-name-link">build</a><wbr>(com.badlogic.gdx.scenes.scene2d.ui.Skin&nbsp;skin)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Builds the UI actor tree for the objectives tab.</div>
+<div class="block">Builds the objectives tab as a centered canvas using PixelPerfectPlacer.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#dispose()" class="member-name-link">dispose</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Dispose all textures owned by this tab</div>
 </div>
 </div>
 </div>
@@ -151,12 +175,7 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <li>
 <section class="detail" id="&lt;init&gt;(com.csse3200.game.screens.MainGameScreen)">
 <h3>ObjectivesTab</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ObjectivesTab</span><wbr><span class="parameters">(<a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;gameScreen)</span></div>
-<div class="block">Creates an Objectives tab bound to the given main game screen.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>gameScreen</code> - main game screen used to unpause and hide the pause menu</dd>
-</dl>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">ObjectivesTab</span><wbr><span class="parameters">(<a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;screen)</span></div>
 </section>
 </li>
 </ul>
@@ -171,18 +190,22 @@ implements <a href="InventoryTabInterface.html" title="interface in com.csse3200
 <section class="detail" id="build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">
 <h3>build</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.scenes.scene2d.Actor</span>&nbsp;<span class="element-name">build</span><wbr><span class="parameters">(com.badlogic.gdx.scenes.scene2d.ui.Skin&nbsp;skin)</span></div>
-<div class="block">Builds the UI actor tree for the objectives tab.
- The background is placed using a pixel-perfect placer and scaled to two thirds
- of the current screen height while preserving aspect ratio. An invisible button
- is overlaid at a fixed pixel rectangle to act as the close hotspot</div>
+<div class="block">Builds the objectives tab as a centered canvas using PixelPerfectPlacer.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="InventoryTabInterface.html#build(com.badlogic.gdx.scenes.scene2d.ui.Skin)">build</a></code>&nbsp;in interface&nbsp;<code><a href="InventoryTabInterface.html" title="interface in com.csse3200.game.ui.inventoryscreen">InventoryTabInterface</a></code></dd>
 <dt>Parameters:</dt>
-<dd><code>skin</code> - UI skin used for widget construction</dd>
+<dd><code>skin</code> - scene2d skin (not used for visuals here, but required by the interface)</dd>
 <dt>Returns:</dt>
-<dd>a root table containing the objectives content</dd>
+<dd>root actor to add to the stage</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="dispose()">
+<h3>dispose</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">dispose</span>()</div>
+<div class="block">Dispose all textures owned by this tab</div>
 </section>
 </li>
 </ul>

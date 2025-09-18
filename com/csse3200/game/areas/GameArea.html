@@ -30,6 +30,7 @@ loadScripts(document, 'script');</script>
 <li><a href="package-summary.html">Package</a></li>
 <li class="nav-bar-cell1-rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
+<li><a href="../../../../deprecated-list.html">Deprecated</a></li>
 <li><a href="../../../../index-all.html">Index</a></li>
 <li><a href="../../../../help-doc.html#class">Help</a></li>
 </ul>
@@ -183,7 +184,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a><wbr>&lt;<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&gt;</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getComponents()" class="member-name-link">getComponents</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Get copies all of the player components we want to transfer in between resets/levels.</div>
+<div class="block">Get copies all the player components we want to transfer in between resets/levels.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../events/EventHandler.html" title="class in com.csse3200.game.events">EventHandler</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEvents()" class="member-name-link">getEvents</a>()</code></div>
@@ -206,7 +207,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Loads prerequisites for each area.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Resets the game area</div>
@@ -215,7 +216,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveComponents(com.csse3200.game.components.CombatStatsComponent,com.csse3200.game.components.player.InventoryComponent)" class="member-name-link">saveComponents</a><wbr>(<a href="../components/CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a>&nbsp;combatStats,
  <a href="../components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a>&nbsp;inventory)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Save a copy of all of the components we want to store for resets/level switches.</div>
+<div class="block">Save a copy of all the components we want to store for resets/level switches.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnEntity(com.csse3200.game.entities.Entity)" class="member-name-link">spawnEntity</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity)</code></div>
@@ -241,8 +242,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="block">Spawns player with previous components</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trigger(java.lang.String,com.csse3200.game.entities.Entity)" class="member-name-link">trigger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;eventName,
- <a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trigger(java.lang.String)" class="member-name-link">trigger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;eventName)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -320,10 +320,9 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 </section>
 </li>
 <li>
-<section class="detail" id="trigger(java.lang.String,com.csse3200.game.entities.Entity)">
+<section class="detail" id="trigger(java.lang.String)">
 <h3>trigger</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">trigger</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;eventName,
- <a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player)</span></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">trigger</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;eventName)</span></div>
 </section>
 </li>
 <li>
@@ -340,14 +339,14 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="block">Create the game area using components from a different player entity.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>oldPlayer</code> - </dd>
+<dd><code>oldPlayer</code> - the older player entity</dd>
 </dl>
 </section>
 </li>
 <li>
 <section class="detail" id="reset()">
 <h3>reset</h3>
-<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">reset</span>()</div>
 <div class="block">Resets the game area</div>
 </section>
 </li>
@@ -383,7 +382,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="block">Spawns player with previous components</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>componentList</code> - </dd>
+<dd><code>componentList</code> - the list of components with witch to create the player</dd>
 <dt>Returns:</dt>
 <dd>Player entity with old components</dd>
 </dl>
@@ -400,7 +399,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <section class="detail" id="getComponents()">
 <h3>getComponents</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&gt;</span>&nbsp;<span class="element-name">getComponents</span>()</div>
-<div class="block">Get copies all of the player components we want to transfer in between resets/levels.</div>
+<div class="block">Get copies all the player components we want to transfer in between resets/levels.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>The list of all player components.</dd>
@@ -412,7 +411,7 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <h3>saveComponents</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">saveComponents</span><wbr><span class="parameters">(<a href="../components/CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a>&nbsp;combatStats,
  <a href="../components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a>&nbsp;inventory)</span></div>
-<div class="block">Save a copy of all of the components we want to store for resets/level switches.</div>
+<div class="block">Save a copy of all the components we want to store for resets/level switches.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>combatStats</code> - - CombatStatsComponent.</dd>
