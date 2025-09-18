@@ -177,7 +177,7 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds <code>amount</code> instances of the given item (stacking).</div>
+<div class="block">Adds <code>amount</code> instances of itemId to the specified bag.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItems(java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
@@ -260,7 +260,7 @@ loadScripts(document, 'script');</script>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#useItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">useItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Uses one instance of <code>itemId</code>.</div>
+<div class="block">Consumes one instance of itemId from the specified bag (if present).</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#useItem(java.lang.String)" class="member-name-link">useItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
@@ -274,7 +274,8 @@ loadScripts(document, 'script');</script>
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Consumes a specified number of items from the inventory.</div>
+<div class="block">Consumes up to "amount" instances of itemId from the specified bag
+ Consumes a specified number of items from the inventory.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#useItems(java.lang.String,int)" class="member-name-link">useItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
@@ -389,12 +390,7 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</span></div>
-<div class="block">Adds <code>amount</code> instances of the given item (stacking).
- <p>
- If <code>autoConsume == true</code>, effects are applied once per instance and nothing
- is stored. Otherwise the inventory count is increased by <code>amount</code>, creating
- a new stack if needed.
- </p></div>
+<div class="block">Adds <code>amount</code> instances of itemId to the specified bag.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>bag</code> - which bag to modify</dd>
@@ -472,7 +468,13 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="resetBag(com.csse3200.game.components.player.InventoryComponent.Bag)">
 <h3>resetBag</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">resetBag</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag)</span></div>
-<div class="block">Clears all items from the specified bag.</div>
+<div class="block">Clears all items from the specified bag.
+ Uses one instance of <code>itemId</code>.
+ <p>
+ Decrements inventory item count by 1 if the item is present
+ in the inventory and the number of items is &gt; 0. Also
+ applies its effect(s)
+ </p></div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>bag</code> - which bag to clear</dd>
@@ -486,12 +488,7 @@ loadScripts(document, 'script');</script>
 <h3>useItem</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">useItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="block">Uses one instance of <code>itemId</code>.
- <p>
- Decrements inventory item count by 1 if the item is present
- in the inventory and the number of items is &gt; 0. Also
- applies its effect(s)
- </p></div>
+<div class="block">Consumes one instance of itemId from the specified bag (if present).</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>bag</code> - which bag to modify</dd>
@@ -509,7 +506,8 @@ loadScripts(document, 'script');</script>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">useItems</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</span></div>
-<div class="block">Consumes a specified number of items from the inventory.
+<div class="block">Consumes up to "amount" instances of itemId from the specified bag
+ Consumes a specified number of items from the inventory.
  <p>
  This method will decrement the count of the given <code>itemId</code> until either
  the requested <code>amount</code> has been used or the available quantity is depleted.
