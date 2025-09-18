@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.components.obstacles.TrapComponent;
@@ -35,7 +36,7 @@ class DeathOnTrapComponentTest {
 
         // Create trap entity
         trapEntity = new Entity();
-        trapEntity.addComponent(new TrapComponent(null));
+        trapEntity.addComponent(new TrapComponent(new Vector2(0,0),1));
         trapEntity.create();
 
         // Mock Box2D Body and Fixture

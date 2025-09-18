@@ -43,7 +43,8 @@ public class SelfDestructComponent extends Component {
         com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task(){
             @Override
             public void run(){
-                entity.dispose();
+                entity.getEvents().trigger("destroy"); // custom destroy event for cleanup
+                entity.removeComponent(SelfDestructComponent.this);
             }
 
 
