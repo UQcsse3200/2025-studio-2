@@ -57,8 +57,7 @@ public class PlayerAnimationTest {
         verify(animator).startAnimation("JUMP");
         // double jump
         player.getEvents().trigger("jump");
-        verify(animator).startAnimation("JUMP");
-        // land
+        verify(animator, times(2)).startAnimation("JUMP");
         player.getEvents().trigger("landed");
         verify(animator).startAnimation("IDLE");
     }

@@ -94,6 +94,9 @@ public class ButtonComponent extends Component {
         Vector2 playerPos = playerEntity.getPosition();
         Vector2 buttonPos = entity.getPosition();
 
+        System.out.println(playerPos);
+        System.out.println(buttonPos);
+
         float dx = playerPos.x - buttonPos.x;
         float dy = playerPos.y - buttonPos.y;
 
@@ -104,7 +107,9 @@ public class ButtonComponent extends Component {
                 }
                 break;
             case "right":
+                System.out.printf("dx, dy: %f, %f\n", dx, dy);
                 if (dx > 0.3f && Math.abs(dy) < 0.6f) {
+                    System.out.println("TOGGLING");
                     toggleButton();
                 }
                 break;
