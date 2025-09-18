@@ -10,7 +10,6 @@ import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.MinimapService;
@@ -18,6 +17,8 @@ import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.events.EventHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +30,7 @@ import java.util.List;
  * <p>Support for enabling/disabling game areas could be added by making this a Component instead.
  */
 public abstract class GameArea implements Disposable {
+  private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
   protected TerrainComponent terrain;
   protected List<Entity> areaEntities;
 
@@ -38,7 +40,7 @@ public abstract class GameArea implements Disposable {
     return events;
   }
 
-  public void trigger(String eventName, Entity player) {
+  public void trigger(String eventName) {
     events.trigger(eventName, player);
   }
 
@@ -66,8 +68,7 @@ public abstract class GameArea implements Disposable {
     // player must be spawned before enemies as they require a player to target
     player = spawnPlayer();
     // Save this new player's components
-    saveComponents(player.getComponent(CombatStatsComponent.class),
-            player.getComponent(InventoryComponent.class));
+    saveComponents(player.getComponent(CombatStatsComponent.class), player.getComponent(InventoryComponent.class));
 
     // load remaining entities
     loadEntities();
@@ -75,7 +76,7 @@ public abstract class GameArea implements Disposable {
 
   /**
    * Create the game area using components from a different player entity.
-   * @param oldPlayer
+   * @param oldPlayer the older player entity
    */
   public void createWithPlayer(Entity oldPlayer) {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
@@ -86,8 +87,7 @@ public abstract class GameArea implements Disposable {
     loadPrerequisites();
 
     // Save the old player's combat stats and inventory
-    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class),
-            oldPlayer.getComponent(InventoryComponent.class));
+    saveComponents(oldPlayer.getComponent(CombatStatsComponent.class), oldPlayer.getComponent(InventoryComponent.class));
 //    System.out.println(oldPlayer.getComponent(CombatStatsComponent.class).getHealth()); // debug
 
     // Get walk direction
@@ -104,25 +104,36 @@ public abstract class GameArea implements Disposable {
   /**
    * Resets the game area
    */
-  protected void reset() {
-    // Retain all data we want to be transferred across the reset (e.g. player movement direction)
-    Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
-
+  public void reset() {
+    final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
+
+    //System.out.println(ServiceLocator.getEntityService().get_entities());
 
     loadAssets(); // As much as I tried to avoid it, here it is
     loadPrerequisites();
 
     // Components such as health, upgrades and items we want to revert to how they were at
     // the start of the level. Copies are used in order to not break the original components.
+//    KeyboardPlayerInputComponent component = player.getComponent(KeyboardPlayerInputComponent.class);
+//    player.removeComponent(component);
+//    component.dispose();
+
     player = spawnPlayer(getComponents());
 
-    // transfer all of the retained data
-    player.getComponent(KeyboardPlayerInputComponent.class).setWalkDirection(walkDirection);
-
     loadEntities();
+
+    final int newEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    if (oldEntityCount != newEntityCount) {
+      logger.error(
+          "only {} entities should exist but {} entities exist now, {} Entities Leaked!!!",
+          oldEntityCount, newEntityCount, newEntityCount - oldEntityCount
+      );
+    }
+
+    this.trigger("reset");
   }
 
   /**
@@ -143,7 +154,7 @@ public abstract class GameArea implements Disposable {
 
   /**
    * Spawns player with previous components
-   * @param componentList
+   * @param componentList the list of components with witch to create the player
    * @return Player entity with old components
    */
   protected abstract Entity spawnPlayer(List<Component> componentList);
@@ -155,23 +166,19 @@ public abstract class GameArea implements Disposable {
 
 
   /**
-   * Get copies all of the player components we want to transfer in between resets/levels.
+   * Get copies all the player components we want to transfer in between resets/levels.
    * @return The list of all player components.
    */
   public List<Component> getComponents() {
-    List<Component> resetComponents = new ArrayList<>();
-    resetComponents.add(new CombatStatsComponent(combatStats));
-    resetComponents.add(new InventoryComponent(inventory));
-    return resetComponents;
+    return List.of(new CombatStatsComponent(combatStats), new InventoryComponent(inventory));
   }
 
   /**
-   * Save a copy of all of the components we want to store for resets/level switches.
+   * Save a copy of all the components we want to store for resets/level switches.
    * @param combatStats - CombatStatsComponent.
    * @param inventory - InventoryComponent.
    */
-  public void saveComponents(CombatStatsComponent combatStats,
-                                     InventoryComponent inventory) {
+  public void saveComponents(CombatStatsComponent combatStats, InventoryComponent inventory) {
     this.combatStats = new CombatStatsComponent(combatStats);
     this.inventory = new InventoryComponent(inventory);
   }

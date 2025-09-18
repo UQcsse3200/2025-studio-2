@@ -12,6 +12,7 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.Vector2Utils;
 
 import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Input handler for the player for keyboard and touch (mouse) input.
@@ -19,6 +20,7 @@ import java.util.Arrays;
  */
 public class KeyboardPlayerInputComponent extends InputComponent {
   private final Vector2 walkDirection = Vector2.Zero.cpy();
+  private final HashSet<Integer> pressedKeys = new HashSet<>();
 
   private final int LEFT_KEY = Keymap.getActionKeyCode("PlayerLeft");
   private final int RIGHT_KEY = Keymap.getActionKeyCode("PlayerRight");
@@ -44,10 +46,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     super(5);
   }
 
-
-
-
-
   /**
    * Triggers player events on specific keycodes.
    *
@@ -56,39 +54,40 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyDown(int keycode) {
+    if (!enabled) return false;
+
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
       this.ladders = findLadders();
     }
 
-    if (keycode == JUMP_KEY) {
-        //takes player off ladder if they are on one.
-        this.onLadder = false;
-        entity.getEvents().trigger("gravityForPlayerOn");
+    if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
+      this.onLadder = false;
+      entity.getEvents().trigger("gravityForPlayerOn");
 
-        triggerJumpEvent();
-        triggerGlideEvent(true);
-        return true;
-    } else if (keycode == LEFT_KEY) {
-        //takes player off ladder if they are on one.
-        this.onLadder = false;
-
-        walkDirection.add(Vector2Utils.LEFT);
-        triggerWalkEvent();
+      triggerJumpEvent();
+      triggerGlideEvent(true);
       return true;
-    } else if (keycode == RIGHT_KEY) {
-        //takes player off ladder if they are on one.
-        this.onLadder = false;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+      this.onLadder = false;
 
-        walkDirection.add(Vector2Utils.RIGHT);
-        triggerWalkEvent();
-        return true;
-    } else if (keycode == INTERACT_KEY) {
+      pressedKeys.add(keycode);
+      walkDirection.add(Vector2Utils.LEFT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
+      this.onLadder = false;
+
+      pressedKeys.add(keycode);
+      walkDirection.add(Vector2Utils.RIGHT);
+      triggerWalkEvent();
+      return true;
+    } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
       entity.getEvents().trigger("interact");
     } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
       triggerAdrenalineEvent();
         return true;
-    } else if (keycode == DASH_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
         //takes player off ladder if they are on one.
         this.onLadder = false;
     } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
@@ -147,6 +146,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
+    if (!enabled) return false;
 
     //gets all the ladder in the level if not already done so.
     if(this.ladders == null) {
@@ -156,13 +156,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if (this.onLadder) {
       this.onLadder = inFrontOfLadder(this.ladders);
     }
-      if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
-        walkDirection.sub(Vector2Utils.LEFT);
+
+    if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
+        if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
         //entity.getEvents().trigger("walkStop");
         return true;
       } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
-        walkDirection.sub(Vector2Utils.RIGHT);
+        if (pressedKeys.remove(keycode)) walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
         //entity.getEvents().trigger("walkStop");
         return true;
@@ -171,7 +172,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
           //walkDirection.setZero();
           walkDirection.sub(Vector2Utils.UP);
           triggerWalkEvent();
-          entity.getEvents().trigger("walkStop");
 
         } else {
           entity.getEvents().trigger("gravityForPlayerOn");
@@ -252,7 +252,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
   private void triggerCrouchEvent() {
     entity.getEvents().trigger("crouch");
-
   }
 
   private void triggerGlideEvent(boolean status) {
@@ -295,6 +294,12 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
   }
 
+  public void resetInputState() {
+      walkDirection.setZero();
+      triggerWalkEvent();
+      pressedKeys.clear();
+  }
+
   /**
    * Checks every entity currently in the game and finds all the ones that are ladders.
    * @return Array of Entities that are ladders.
@@ -318,9 +323,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   private Boolean inFrontOfLadder(Array<Entity> ladders) {
     for (Entity ladder : ladders) {
       if (ladder.getPosition().x - entity.getPosition().x <= 0.5f
-              && ladder.getPosition().x - entity.getPosition().x >= -0.5f
-              && ladder.getPosition().y - entity.getPosition().y <= 0.5f
-              && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
+          && ladder.getPosition().x - entity.getPosition().x >= -0.5f
+          && ladder.getPosition().y - entity.getPosition().y <= 0.5f
+          && ladder.getPosition().y - entity.getPosition().y >= -0.5f) {
         //this.onLadder = true;
         entity.getEvents().trigger("gravityForPlayerOff");
         return true;
@@ -343,6 +348,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    * @param set boolean value to set the on ladder state too.
    */
   public void setOnLadder (boolean set) {
-      this.onLadder = set;
+    this.onLadder = set;
   }
 }

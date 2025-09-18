@@ -1,30 +1,31 @@
 package com.csse3200.game.screens;
 
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.Array;
+import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.*;
-import com.csse3200.game.areas.CaveGameArea;
-import com.csse3200.game.areas.ForestGameArea;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.areas.LevelOneGameArea;
+import com.csse3200.game.areas.LevelTwoGameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
+import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
-import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
+import com.csse3200.game.input.PauseInputComponent;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.lighting.SecurityCamRetrievalService;
@@ -35,9 +36,6 @@ import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.maingame.MainGameExitDisplay;
-import com.csse3200.game.components.gamearea.PerformanceDisplay;
-import com.csse3200.game.input.PauseInputComponent;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,26 +47,24 @@ import org.slf4j.LoggerFactory;
  */
 public class MainGameScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
-  private static final String[] mainGameTextures = {"images/heart.png"};
+  private static final String[] mainGameTextures = {"images/playerstats/health.png", "images/playerstats/stamina.png"};
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+  // Camera follow parameters
+  private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
+  private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
+  private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
+  private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
 
   private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
+  private final TerrainFactory terrainFactory;
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
-
-  // Camera follow parameters
-  private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
-  private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
-  private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
-  private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
-
+  private DeathScreenDisplay deathScreenDisplay;
   private GameArea gameArea;
-  private final TerrainFactory terrainFactory;
-
   private PauseInputComponent pauseInput;
 
   public MainGameScreen(GdxGame game) {
@@ -86,6 +82,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     ServiceLocator.registerEntityService(new EntityService());
     ServiceLocator.registerRenderService(new RenderService());
+    ServiceLocator.registerVfxService(new VfxManager(Pixmap.Format.RGBA8888));
 
     renderer = RenderFactory.createRenderer();
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
@@ -115,56 +112,69 @@ public class MainGameScreen extends ScreenAdapter {
       switchArea("cutscene1", player);
     });
 
+    gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
     createUI();
   }
 
-  private void switchArea(String levelId, Entity player) {
-    Gdx.app.postRunnable(() -> {
-      if (!levelId.isEmpty()) {
-  //        System.out.println("Area switched to " + levelId);
-        GameArea oldArea = gameArea;
+  private void switchArea(String key, Entity player) {
+    final Runnable runnable = () -> this.switchAreaRunnable(key, player);
+    if (gameArea instanceof CutsceneArea) {
+      Gdx.app.postRunnable(runnable);
+    } else {
+      player.getEvents().trigger("startTransition", 1.5f, runnable);
+    }
+  }
 
-  //        TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+  private void switchAreaRunnable(String levelId, Entity player) {
+      if (levelId.isEmpty()) return;
+      System.out.println("Area switched to " + levelId);
+      //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
 
-        GameArea newArea = null;
-        String newLevel = "";
+      GameArea newArea = null;
+      String newLevel = "";
 
-          switch (levelId) {
-              case "cutscene1" -> {
-                  newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-                  newLevel = "level2";
-              }
-              case "level2" -> {
-                  newArea = new LevelTwoGameArea(terrainFactory);
-                  newLevel = "cutscene2";
-              }
-              case "cutscene2" -> {
-                  newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-                  newLevel = "sprint1";
-              }
-              case "sprint1" -> {
-                  newArea = new SprintOneGameArea(terrainFactory);
-                  newLevel = "level2";
-              }
-          }
-
-        if (newArea != null) {
-          gameArea = newArea;
-          String finalNewLevel = newLevel;
-          newArea.getEvents().addListener(
-                  "doorEntered", (Entity play) -> switchArea(finalNewLevel, player)
-          );
-          newArea.getEvents().addListener(
-                  "cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, player)
-          );
-          System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-          newArea.createWithPlayer(player);
-          oldArea.dispose();
+      switch (levelId) {
+        case "cutscene1" -> {
+          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
+          newLevel = "level2";
+        }
+        case "level2" -> {
+          newArea = new LevelTwoGameArea(terrainFactory);
+          newLevel = "cutscene2";
+        }
+        case "cutscene2" -> {
+          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
+          newLevel = "sprint1";
+        }
+        case "sprint1" -> {
+          newArea = new SprintOneGameArea(terrainFactory);
+          newLevel = "level2";
         }
       }
-    });
+
+      if (newArea != null) {
+        final GameArea oldArea = gameArea;
+        gameArea = newArea;
+        String finalNewLevel = newLevel;
+        gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
+        gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
+
+        InventoryComponent inv = player.getComponent(InventoryComponent.class);
+        if (inv != null) {
+          inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+        }
+
+        System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
+        gameArea.createWithPlayer(player);
+        oldArea.dispose();
+
+        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+        gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+      }
   }
 
   /**
@@ -273,6 +283,7 @@ public class MainGameScreen extends ScreenAdapter {
     unloadAssets();
     ServiceLocator.getRenderService().dispose();
     ServiceLocator.getResourceService().dispose();
+    ServiceLocator.getVfxService().dispose();
 
     ServiceLocator.clear();
   }
@@ -291,16 +302,16 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   public boolean isPaused() {
-      return paused;
+    return paused;
   }
 
   public void togglePaused() {
-      paused = !paused;
+    paused = !paused;
   }
 
   public void togglePauseMenu(Tab tab) {
-      pauseMenuDisplay.setTab(tab);
-      pauseMenuDisplay.setVisible(paused);
+    pauseMenuDisplay.setVisible(paused);
+    if (paused) pauseMenuDisplay.setTab(tab);
   }
 
   /**
@@ -312,7 +323,8 @@ public class MainGameScreen extends ScreenAdapter {
     if (gameArea.getPlayer() == null) {
       throw new IllegalStateException("GameArea has a null player");
     }
-    pauseMenuDisplay = new PauseMenuDisplay(this, gameArea.getPlayer(), this.game);
+    pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
+    deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
@@ -320,11 +332,29 @@ public class MainGameScreen extends ScreenAdapter {
     ui.addComponent(new InputDecorator(stage, 10))
         .addComponent(new PerformanceDisplay())
         .addComponent(new MainGameActions(this.game))
-        .addComponent(new MainGameExitDisplay())
         .addComponent(pauseMenuDisplay)
+        .addComponent(deathScreenDisplay)
         .addComponent(pauseInput);
 
     ServiceLocator.getEntityService().register(ui);
+  }
+
+  /**
+   * Shows the death screen overlay
+   */
+  private void showDeathScreen() {
+    deathScreenDisplay.setVisible(true);
+  }
+
+  /**
+   * Reset game area and re-add player's death listener
+   */
+  public void reset() {
+    gameArea.reset();
+  }
+
+  public void onGameAreaReset(Entity player) {
+    player.getEvents().addListener("playerDied", this::showDeathScreen);
   }
 
   // Set last keycode for inventory when tab is clicked

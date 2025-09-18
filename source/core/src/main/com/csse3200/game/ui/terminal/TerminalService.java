@@ -120,4 +120,11 @@ public class TerminalService {
       terminalDisplay.getHistoryArea().appendText(obj.toString());
     }
   }
+
+  /**
+   * @return the current Shell instance
+   */
+  static public Shell getShell() {
+    return shell;
+  }
 }

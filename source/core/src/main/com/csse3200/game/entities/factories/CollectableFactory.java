@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.KeyComponent;
+import com.csse3200.game.components.collectables.ObjectivesComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
@@ -163,4 +164,37 @@ public class CollectableFactory {
 
         return grapple;
     }
+
+    /**
+     * Creates an invisible objective pickup with a large sensor collider.
+     * Default footprint is 2x2 world units (might tweak)
+     *
+     * @param objectiveId id routed through switch in ObjectiveCollectableComponent (e.g., "obj:plans")
+     */
+    public static Entity createObjective(String objectiveId) {
+        return createObjective(objectiveId, 2f, 2f);
+    }
+
+    /**
+     * Creates an invisible objective pickup with a custom sensor size (world units).
+     *
+     * @param objectiveId id routed through switch in ObjectiveCollectableComponent
+     * @param width collider width in world units
+     * @param height collider height in world units
+     */
+    public static Entity createObjective(String objectiveId, float width, float height) {
+        Entity obj = new Entity()
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new ColliderComponent()
+                        .setLayer(PhysicsLayer.COLLECTABLE)
+                        .setSensor(true)) // not blocking, overlap only
+                .addComponent(new ObjectivesComponent(objectiveId));
+
+        // Size the sensor using the same pattern as your other collectables
+        obj.setScale(width, height);
+        PhysicsUtils.setScaledCollider(obj, width, height);
+
+        return obj;
+    }
+
 }
