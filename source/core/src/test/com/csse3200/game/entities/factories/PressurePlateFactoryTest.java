@@ -1,7 +1,8 @@
-package com.csse3200.game.components;
+package com.csse3200.game.entities.factories;
 
+import com.csse3200.game.components.BoxPressurePlateComponent;
+import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.PressurePlateFactory;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -16,7 +17,7 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(GameExtension.class)
-class BoxPressurePlateComponentTest {
+class PressurePlateFactoryTest {
     private static final String[] PLATE_TEXTURES = {
             "images/pressure_plate_unpressed.png",
             "images/pressure_plate_pressed.png"
@@ -38,31 +39,29 @@ class BoxPressurePlateComponentTest {
     }
 
     @Test
-    void create_hasExpectedComponentsAndConfig() {
-        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+    void createPressurePlate_hasExpectedComponents() {
+        Entity plate = PressurePlateFactory.createPressurePlate();
 
-        // components
         assertNotNull(plate.getComponent(TextureRenderComponent.class));
-        PhysicsComponent pc = plate.getComponent(PhysicsComponent.class);
-        assertNotNull(pc);
+        assertNotNull(plate.getComponent(PhysicsComponent.class));
         ColliderComponent collider = plate.getComponent(ColliderComponent.class);
         assertNotNull(collider);
-        assertNotNull(plate.getComponent(BoxPressurePlateComponent.class));
+        assertNotNull(plate.getComponent(PressurePlateComponent.class));
 
-        // collider config
         assertNotNull(collider);
         assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(), "Plate layer");
-        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(), "Plate layer");
-
-        // default scale
-        assertEquals(1f, plate.getScale().x, 0.0001f);
-        assertEquals(1f, plate.getScale().y, 0.0001f);
+        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer());
     }
 
     @Test
-    void defaultScale_isOneByOne() {
+    void createBoxOnlyPlate_hasBoxPressurePlateComponent() {
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-        assertEquals(1f, plate.getScale().x, 0.0001f);
-        assertEquals(1f, plate.getScale().y, 0.0001f);
+
+        assertNotNull(plate.getComponent(TextureRenderComponent.class));
+        assertNotNull(plate.getComponent(PhysicsComponent.class));
+        assertNotNull(plate.getComponent(ColliderComponent.class));
+        assertNotNull(plate.getComponent(BoxPressurePlateComponent.class));
+        assertNull(plate.getComponent(PressurePlateComponent.class),
+                "Box-only plate should not attach the generic player-pressable component");
     }
 }

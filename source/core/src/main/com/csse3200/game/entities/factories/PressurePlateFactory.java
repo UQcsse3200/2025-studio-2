@@ -19,42 +19,28 @@ public class PressurePlateFactory {
 
     public static Entity createPressurePlate() {
         Entity plate = new Entity();
-
-        String texturePath = "images/pressure_plate_unpressed.png";
-        plate.addComponent(new TextureRenderComponent(texturePath));
+        plate.addComponent(new TextureRenderComponent("images/pressure_plate_unpressed.png"));
         plate.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
-
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(true);
         plate.addComponent(collider);
-
-        // Attach pressure plate logic
-        plate.addComponent(new PressurePlateComponent());
-
-        plate.setScale(DEFAULT_SCALE, DEFAULT_SCALE);
-
-        return plate;
+        plate.addComponent(new PressurePlateComponent()); // generic plate
+        plate.setScale(1f, 1f);
+        return plate;  // <-- DON'T FORGET THIS
     }
 
     public static Entity createBoxOnlyPlate() {
         Entity plate = new Entity();
-
         plate.addComponent(new TextureRenderComponent("images/pressure_plate_unpressed.png"));
         plate.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
-
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
-        collider.setSensor(true); // trigger-only
+        collider.setSensor(true);
         plate.addComponent(collider);
-
-        BoxPressurePlateComponent comp = new BoxPressurePlateComponent();
-        plate.addComponent(comp);
-        comp.setTextures("images/pressure_plate_unpressed.png",
-                "images/pressure_plate_pressed.png");
-
-        plate.setScale(DEFAULT_SCALE, DEFAULT_SCALE);
-        return plate;
+        plate.addComponent(new BoxPressurePlateComponent()); // boxes-only logic
+        plate.setScale(1f, 1f);
+        return plate;  // <-- AND THIS
     }
 
 
