@@ -111,14 +111,6 @@ public class PlayerFactory {
     });
     player.getEvents().addListener("sprintStop", () -> stamina.setSprinting(false));
 
-// TEMP: Console logs to verify behaviour (remove before merging)
-    player.getEvents().addListener("staminaUpdate", (Integer cur, Integer max) -> {
-      Gdx.app.log("STAM", cur + "/" + max + (stamina.isExhausted() ? " (EXHAUSTED)" : ""));
-    });
-    player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
-    player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
-// --- end stamina block ---
-
     player.getComponent(ColliderComponent.class).setAsBox(HITBOX_SCALE,
             player.getCenterPosition().add(HITBOX_OFFSET));
     player.getComponent(ColliderComponent.class).setSensor(true);
@@ -129,7 +121,7 @@ public class PlayerFactory {
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
     float scaleFactor = 2f;
-    player.setScale(1f * scaleFactor, (48f/64f) * scaleFactor);
+    player.setScale(scaleFactor, (3f/4f) * scaleFactor);
     AnimationRenderComponent arc =
             player.getComponent(AnimationRenderComponent.class);
     arc.startAnimation("IDLE");

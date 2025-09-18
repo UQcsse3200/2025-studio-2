@@ -57,8 +57,7 @@ public class PlayerAnimationTest {
         verify(animator).startAnimation("JUMP");
         // double jump
         player.getEvents().trigger("jump");
-        verify(animator).startAnimation("JUMP");
-        // land
+        verify(animator, times(2)).startAnimation("JUMP");
         player.getEvents().trigger("landed");
         verify(animator).startAnimation("IDLE");
     }
@@ -180,6 +179,7 @@ public class PlayerAnimationTest {
     void testSetAnimation() {
         String[] animations = new String[] {"RIGHT", "LEFT", "DASH", "DASHLEFT", "HURT", "HURTLEFT",
                 "JUMP", "JUMPLEFT", "CROUCHMOVE", "CROUCHMOVELEFT", "IDLE", "IDLELEFT"};
+
         for (String s : animations) {
             controller.setAnimation(s);
             verify(animator).startAnimation("RIGHT");

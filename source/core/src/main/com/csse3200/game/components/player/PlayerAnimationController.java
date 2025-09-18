@@ -27,6 +27,7 @@ public class PlayerAnimationController extends Component {
     private long hurtTime = -1000;
     private float hurtDelay = 0.5f;
     private float dashDelay = 0.3f;
+    private float jumpDelay = 0.8f;
 
     @Override
     public void create() {
@@ -75,9 +76,16 @@ public class PlayerAnimationController extends Component {
     public void animateJump() {
         if (xDirection == 1) {
             setAnimation("JUMP");
+
+            // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
+            scheduleTask.accept(() -> setAnimation("IDLE"), jumpDelay);
         } else if (xDirection == -1) {
             setAnimation("JUMPLEFT");
+
+            // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
+            scheduleTask.accept(() -> setAnimation("IDLELEFT"), jumpDelay);
         }
+
     }
 
     /**
@@ -124,8 +132,9 @@ public class PlayerAnimationController extends Component {
      * setAnimation: to avoid repeated startup of the same animations
      */
     public void setAnimation(String animationName) {
-        //                                             Don't cancel hurt animation
-        if (!animationName.equals(currentAnimation) && timer.getTimeSince(hurtTime) > hurtDelay * 900) {
+        if ((!animationName.equals(currentAnimation) || animationName.equals("JUMP"))
+                // Don't cancel hurt animation
+                && timer.getTimeSince(hurtTime) > hurtDelay * 900) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
@@ -137,12 +146,14 @@ public class PlayerAnimationController extends Component {
     public void animateDash() {
         if (xDirection == 1) {
             setAnimation("DASH");
+            // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
+            scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);
         } else {
             setAnimation("DASHLEFT");
+            // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
+            scheduleTask.accept(() -> setAnimation("IDLELEFT"), hurtDelay);
         }
-
-        // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-        scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);    }
+    }
 
     /**
      * starts the player's hurt animation
@@ -150,12 +161,14 @@ public class PlayerAnimationController extends Component {
     public void animateHurt() {
         if (xDirection == 1) {
             setAnimation("HURT");
+            // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
+            scheduleTask.accept(() -> setAnimation("IDLE"), hurtDelay);
         } else {
             setAnimation("HURTLEFT");
+            // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
+            scheduleTask.accept(() -> setAnimation("IDLELEFT"), hurtDelay);
         }
         hurtTime = timer.getTime();
 
-        // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-        scheduleTask.accept(() -> setAnimation("IDLE"), hurtDelay);
     }
 }
