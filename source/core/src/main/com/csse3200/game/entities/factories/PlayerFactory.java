@@ -19,6 +19,7 @@ import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.components.player.DamageIndicatorUI;
 
 import java.util.List;
 
@@ -82,6 +83,7 @@ public class PlayerFactory {
                     .addComponent(new InventoryComponent())
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay())
+                    .addComponent(new DamageIndicatorUI())
                     .addComponent(new CameraComponent())
                     .addComponent(new PlayerScreenTransitionComponent())
                     .addComponent(new PlayerDeathEffectComponent())
