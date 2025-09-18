@@ -24,12 +24,13 @@ public class ObjectivesComponent extends CollectableComponent {
 
         // Branch per objective id (hook up UI/toasts/etc. here)
         switch (objectiveId) {
-            // add more later
-            case "obj:keycard" -> Gdx.app.log("Objective", "Collected Security Keycard");
-            default            -> Gdx.app.log("Objective", "Collected: " + objectiveId);
+            case "keycard" -> Gdx.app.log("Objective", "Collected Security Keycard");
+            case "door"    -> Gdx.app.log("Objective", "Found the door objective");
+            case "tutorial"-> Gdx.app.log("Objective", "Collected tutorial objective");
+            default         -> Gdx.app.log("Objective", "Collected: " + objectiveId);
         }
 
-         collector.getEvents().trigger("objectiveCollected", objectiveId);
+        collector.getEvents().trigger("objectiveCollected", objectiveId);
 
         return true;
     }

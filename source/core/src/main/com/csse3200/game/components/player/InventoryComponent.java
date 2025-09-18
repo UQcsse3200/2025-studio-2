@@ -107,19 +107,32 @@ public class InventoryComponent extends Component {
      */
 
     public void addItems(Bag bag, String itemId, int amount) {
-      if (bag == null)    throw new NullPointerException("bag");
-      if (itemId == null) throw new NullPointerException("itemId");
-      if (amount <= 0)     throw new IllegalArgumentException("Amount must be positive");
+        if (bag == null)    throw new NullPointerException("bag");
+        if (itemId == null) throw new NullPointerException("itemId");
+        if (amount <= 0)    throw new IllegalArgumentException("Amount must be positive");
 
+        Map<String, Integer> map = mapFor(bag);
+
+        // OBJECTIVES & UPGRADES: always store (no auto-consume logic)
+        if (bag == Bag.OBJECTIVES || bag == Bag.UPGRADES) {
+            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+            return;
+        }
+
+        // INVENTORY: respect autoConsume if we have a config; otherwise store anyway
         var cfg = CollectableService.get(itemId);
-        if (cfg == null) return;
+        if (cfg == null) {
+            // Not registered? Just stack it.
+            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+            return;
+        }
 
         if (cfg.autoConsume) {
             for (int i = 0; i < amount; i++) {
                 applyEffects(cfg);
             }
         } else {
-          mapFor(bag).put(itemId, inventory.getOrDefault(itemId, 0) + amount);
+            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
         }
     }
 
@@ -218,25 +231,26 @@ public class InventoryComponent extends Component {
      * @throws IllegalArgumentException if amount is negative
      */
     public int useItems(Bag bag, String itemId, int amount) {
-      if (bag == null)    throw new NullPointerException("bag");
-      if (itemId == null) throw new NullPointerException("itemId");
-      if (amount < 0)     throw new IllegalArgumentException("Amount cannot be negative");
+        if (bag == null)    throw new NullPointerException("bag");
+        if (itemId == null) throw new NullPointerException("itemId");
+        if (amount < 0)     throw new IllegalArgumentException("Amount cannot be negative");
 
-      Map<String, Integer> map = mapFor(bag);
-      int have = map.getOrDefault(itemId, 0);
-      if (have <= 0) return 0;
+        Map<String, Integer> map = mapFor(bag);
+        int have = map.getOrDefault(itemId, 0);
+        if (have <= 0 || amount == 0) return 0;
 
-      var cfg = CollectableService.get(itemId);
-      if (cfg == null || amount <= 0) return 0;
-      if (inventory.get(itemId) == null || inventory.get(itemId) <= 0) return 0;
+        // Only inventory items have effects defined/applied
+        var cfg = (bag == Bag.INVENTORY) ? CollectableService.get(itemId) : null;
 
-      final int used = Math.min(amount, inventory.get(itemId));
-      final int remaining = have - used;
-      if (remaining > 0) map.put(itemId, remaining);
-      else               map.remove(itemId);
+        int used = Math.min(have, amount);
+        int remaining = have - used;
+        if (remaining > 0) map.put(itemId, remaining);
+        else               map.remove(itemId);
 
-      for (int i = 0; i < used; i++) applyEffects(cfg);
-      return used;
+        if (cfg != null) {
+            for (int i = 0; i < used; i++) applyEffects(cfg);
+        }
+        return used;
     }
 
   /**
