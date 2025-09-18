@@ -39,6 +39,9 @@ public class CutsceneArea extends GameArea {
     private static final String[] dummyAtlases = {
             "images/PLAYER.atlas"
     };
+    private static final String[] dummySounds = {
+            "sounds/Impact4.ogg"
+    };
 
     /**
      * Constructor for creating the game area representing cutscene.
@@ -88,6 +91,7 @@ public class CutsceneArea extends GameArea {
         // Load in the dummy assets
         resourceService.loadTextures(dummyTextures);
         resourceService.loadTextureAtlases(dummyAtlases);
+        resourceService.loadSounds(dummySounds);
 
         // Show loading progress in logs
         while (!resourceService.loadForMillis(10)) {
@@ -126,6 +130,7 @@ public class CutsceneArea extends GameArea {
         // Unload dummy assets
         resourceService.unloadAssets(dummyTextures);
         resourceService.unloadAssets(dummyAtlases);
+        resourceService.unloadAssets(dummySounds);
     }
 
     /**
@@ -135,7 +140,6 @@ public class CutsceneArea extends GameArea {
     public void reset() {
         // Reset does nothing for cutscene
     }
-
 
     /**
      * Create dummy player for cutscene

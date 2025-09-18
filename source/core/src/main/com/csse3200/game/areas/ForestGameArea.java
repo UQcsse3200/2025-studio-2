@@ -102,7 +102,8 @@ public class ForestGameArea extends GameArea {
           "images/dash_powerup.png",
           "images/glide_powerup.png",
           "images/camera-body.png",
-          "images/camera-lens.png"
+          "images/camera-lens.png",
+          "images/PLAYER.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas",
@@ -115,7 +116,7 @@ public class ForestGameArea extends GameArea {
           "images/flying_bat.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-          "/chimesound.mp3"};
+          "/chimesound.mp3", "sounds/hurt.mp3"};
   private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
   private static final String[] forestMusic = {backgroundMusic};
 
@@ -170,9 +171,9 @@ public class ForestGameArea extends GameArea {
     spawnTraps();
     spawnGate();
 
-    spawnUpgrade("dash", 15, 19);
-    spawnUpgrade("glider", 15, 17);
-    spawnUpgrade("grappler", 15, 15);
+    spawnUpgrade("dash", 9, 6);
+    spawnUpgrade("glider", 7, 6);
+    spawnUpgrade("jetpack", 5, 6);
   }
 
   private void displayUI() {
@@ -444,8 +445,8 @@ public class ForestGameArea extends GameArea {
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-    if (upgradeID == "grappler") {
-      Entity upgrade = CollectableFactory.createGrappleUpgrade();
+    if (upgradeID == "jetpack") {
+      Entity upgrade = CollectableFactory.createJetpackUpgrade();
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
   }

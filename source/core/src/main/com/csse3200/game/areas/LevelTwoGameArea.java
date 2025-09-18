@@ -121,7 +121,7 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(5,-10);
+        GridPoint2 spawnPos =  new GridPoint2(5,0);
         Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
@@ -462,10 +462,9 @@ public class LevelTwoGameArea extends GameArea {
 
         //spawn upgrade
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
-            Entity glideUpgrade = CollectableFactory.createGlideUpgrade();
-            spawnEntityAt(glideUpgrade, new GridPoint2(91,6), true,  true);
+            Entity dashUpgrade = CollectableFactory.createJetpackUpgrade();
+            spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
         });
-
     }
 
     public void spawnKey() {

@@ -11,6 +11,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.PlayerConfig;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.*;
@@ -30,6 +31,9 @@ import java.util.List;
 public class PlayerFactory {
   private static final PlayerConfig stats = loadPlayerConfig();
 
+  private static final Vector2 HITBOX_OFFSET = new Vector2(0.425f, 0.0f);
+  private static final Vector2 HITBOX_SCALE = new Vector2(0.8f, 1.0f);
+
   private static PlayerConfig loadPlayerConfig() {
     PlayerConfig config = FileLoader.readClass(PlayerConfig.class, "configs/player.json");
     if (config == null) {
@@ -38,40 +42,47 @@ public class PlayerFactory {
     return config;
   }
 
-  private static final float FOOT_HITBOX_WIDTH = 0.25f;
-  private static final float FOOT_HITBOX_HEIGHT = 0.0001f;
-  private static Vector2 FOOT_HITBOX_OFFSET = new Vector2(0, 0f);
-  private static final float FOOT_HITBOX_ANGLE = 0;
   /**
    * Create a player entity.
    * @return entity
    */
-    public static Entity createPlayer(List<Component> componentList) {
+  public static Entity createPlayer(List<Component> componentList) {
     InputComponent inputComponent =
             ServiceLocator.getInputService().getInputFactory().createForPlayer();
 
     AnimationRenderComponent animator =
             new AnimationRenderComponent(
-                    ServiceLocator.getResourceService().getAsset("images" +
-                            "/PLAYER.atlas", TextureAtlas.class));
-    animator.addAnimation("CROUCHING", 0.1f, Animation.PlayMode.LOOP);
+                    ServiceLocator.getResourceService().getAsset("images/PLAYER.atlas", TextureAtlas.class));
+    animator.addAnimation("CROUCH", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("CROUCHMOVE", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("CROUCHLEFT", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("CROUCHMOVELEFT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("JUMP", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("JUMPLEFT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("LEFT", 0.1f, Animation.PlayMode.LOOP);
     animator.addAnimation("RIGHT", 0.1f, Animation.PlayMode.LOOP);
+    animator.addAnimation("IDLE", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("IDLELEFT", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("DASH", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
+
 
     Entity player =
             new Entity()
-                    .addComponent(new TextureRenderComponent("images/box_boy_leaf.png"))
                     .addComponent(new PhysicsComponent())
                     .addComponent(new StandingColliderComponent())
                     .addComponent(new CrouchingColliderComponent())
-                    .addComponent(new ColliderComponent()) // temporary fix
+                    .addComponent(new FootColliderComponent())
+                    .addComponent(new ColliderComponent()) // Interactions
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
                     .addComponent(new InventoryComponent())
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay())
+                    .addComponent(new CameraComponent())
                     .addComponent(new PlayerScreenTransitionComponent())
                     .addComponent(new PlayerDeathEffectComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
@@ -93,40 +104,21 @@ public class PlayerFactory {
     });
     player.getEvents().addListener("sprintStop", () -> stamina.setSprinting(false));
 
-// TEMP: Console logs to verify behaviour (remove before merging)
-    player.getEvents().addListener("staminaUpdate", (Integer cur, Integer max) -> {
-      Gdx.app.log("STAM", cur + "/" + max + (stamina.isExhausted() ? " (EXHAUSTED)" : ""));
-    });
-    player.getEvents().addListener("exhausted", () -> Gdx.app.log("STAM", "exhausted"));
-    player.getEvents().addListener("recovered", () -> Gdx.app.log("STAM", "recovered"));
-// --- end stamina block ---
+    player.getComponent(ColliderComponent.class).setAsBox(HITBOX_SCALE,
+            player.getCenterPosition().add(HITBOX_OFFSET));
+    player.getComponent(ColliderComponent.class).setSensor(true);
 
-
-
-
-
-    PhysicsUtils.setScaledCollider(player, 0.6f, 0.3f);
+    player.getComponent(HitboxComponent.class).setAsBox(HITBOX_SCALE,
+            player.getCenterPosition().add(HITBOX_OFFSET));
 
     player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
     player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
-    player.getComponent(TextureRenderComponent.class).scaleEntity();
+    float scaleFactor = 2f;
+    player.setScale(scaleFactor, (3f/4f) * scaleFactor);
+    AnimationRenderComponent arc =
+            player.getComponent(AnimationRenderComponent.class);
+    arc.startAnimation("IDLE");
 
-    // Fixture for Player feet, used to reset jump or handle landing logic
-    Body body = player.getComponent(PhysicsComponent.class).getBody();
-
-    PolygonShape footHitbox = new PolygonShape();
-    footHitbox.setAsBox(FOOT_HITBOX_WIDTH, FOOT_HITBOX_HEIGHT, FOOT_HITBOX_OFFSET, FOOT_HITBOX_ANGLE);
-
-    FixtureDef footFixtureDef = new FixtureDef();
-    footFixtureDef.shape = footHitbox;
-    footFixtureDef.isSensor = true;
-
-    Fixture footFixture = body.createFixture(footFixtureDef);
-    footFixture.setUserData("foot");
-
-    footHitbox.dispose();
-
-    // replace components with existing counterparts
     for (Component component : componentList) {
       player.replaceComponent(component);
     }

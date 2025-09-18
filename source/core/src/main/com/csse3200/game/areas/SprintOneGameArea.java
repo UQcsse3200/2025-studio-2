@@ -94,7 +94,7 @@ public class SprintOneGameArea extends GameArea {
             "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-            "/chimesound.mp3"};
+            "/chimesound.mp3", "sounds/hurt.mp3"};
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] forestMusic = {backgroundMusic};
 

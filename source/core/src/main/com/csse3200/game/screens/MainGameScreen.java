@@ -101,7 +101,8 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
-//    gameArea = new SprintOneGameArea(terrainFactory);
+
+    //gameArea = new SprintOneGameArea(terrainFactory);
     gameArea = new LevelOneGameArea(terrainFactory);
     //gameArea = new LevelTwoGameArea(terrainFactory);
 
@@ -130,54 +131,57 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private void switchAreaRunnable(String levelId, Entity player) {
-      if (levelId.isEmpty()) return;
-      System.out.println("Area switched to " + levelId);
-      //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+    if (levelId.isEmpty()) return;
 
-      GameArea newArea = null;
-      String newLevel = "";
+    GameArea oldArea = gameArea;
+    oldArea.dispose();
+    oldArea = null;
 
-      switch (levelId) {
-        case "cutscene1" -> {
-          newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-          newLevel = "level2";
-        }
-        case "level2" -> {
-          newArea = new LevelTwoGameArea(terrainFactory);
-          newLevel = "cutscene2";
-        }
-        case "cutscene2" -> {
-          newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-          newLevel = "sprint1";
-        }
-        case "sprint1" -> {
-          newArea = new SprintOneGameArea(terrainFactory);
-          newLevel = "level2";
-        }
+    System.out.println("Area switched to " + levelId);
+    //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+
+    GameArea newArea = null;
+    String newLevel = "";
+
+    switch (levelId) {
+      case "cutscene1" -> {
+        newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
+        newLevel = "level2";
+      }
+      case "level2" -> {
+        newArea = new LevelTwoGameArea(terrainFactory);
+        newLevel = "cutscene2";
+      }
+      case "cutscene2" -> {
+        newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
+        newLevel = "sprint1";
+      }
+      case "sprint1" -> {
+              newArea = new SprintOneGameArea(terrainFactory);
+              newLevel = "level2";
+          }
       }
 
       if (newArea != null) {
-        final GameArea oldArea = gameArea;
-        gameArea = newArea;
-        String finalNewLevel = newLevel;
-        gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
-        gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
+          gameArea = newArea;
+          String finalNewLevel = newLevel;
+          gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
+          gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
 
-        InventoryComponent inv = player.getComponent(InventoryComponent.class);
-        if (inv != null) {
-          inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
-        }
+          InventoryComponent inv = player.getComponent(InventoryComponent.class);
+          if (inv != null) {
+              inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+          }
 
-        System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-        gameArea.createWithPlayer(player);
-        oldArea.dispose();
+//        System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
+          gameArea.createWithPlayer(player);
 
-        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
-        gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+          gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+          gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
       }
   }
 
-  /**
+    /**
    * Returns the current game area instance
    *
    * @return the current game area instance.
