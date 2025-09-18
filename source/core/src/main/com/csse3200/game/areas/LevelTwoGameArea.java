@@ -401,6 +401,11 @@ public class LevelTwoGameArea extends GameArea {
         Entity button6 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
         spawnEntityAt(button6, new GridPoint2(73,17), true,  true);
 
+        //spawn upgrade
+        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
+            Entity dashUpgrade = CollectableFactory.createJetpackUpgrade();
+            spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
+        });
     }
 
     public void spawnKey() {

@@ -764,10 +764,10 @@ public class LevelOneGameArea extends GameArea {
             upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
             spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
         }
-        if (upgradeID == "jetpack") {
-            Entity upgrade = CollectableFactory.createJetpackUpgrade();
-            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-        }
+//        if (upgradeID == "jetpack") {
+//            Entity upgrade = CollectableFactory.createJetpackUpgrade();
+//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+//        }
     }
     protected void loadAssets() {
         logger.debug("Loading assets");
