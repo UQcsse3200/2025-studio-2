@@ -78,7 +78,7 @@ class DoorComponentTest {
     }
 
     private Entity makeDoor(String keyId, String levelId) {
-        Entity door = ObstacleFactory.createDoor(keyId, game, levelId);
+        Entity door = ObstacleFactory.createDoor(keyId, game);
         door.create();
         return door;
     }

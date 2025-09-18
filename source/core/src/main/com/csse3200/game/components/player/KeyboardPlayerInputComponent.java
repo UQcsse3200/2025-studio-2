@@ -52,31 +52,31 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   @Override
   public boolean keyDown(int keycode) {
 
-    if (keycode == JUMP_KEY) {
+    if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
       triggerJumpEvent();
       triggerGlideEvent(true);
       return true;
-    } else if (keycode == LEFT_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
       return true;
-    } else if (keycode == RIGHT_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
       return true;
-    } else if (keycode == INTERACT_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
       entity.getEvents().trigger("interact");
-    } else if (keycode == ADRENALINE_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
       triggerAdrenalineEvent();
         return true;
-    } else if (keycode == DASH_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
         triggerDashEvent();
         return true;
-    } else if (keycode == CROUCH_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("PlayerCrouch")) {
       triggerCrouchEvent();
       return true;
       // debug
-    } else if (keycode == RESET_KEY) {
+    } else if (keycode == Keymap.getActionKeyCode("Reset")) {
         entity.getEvents().trigger("reset"); // This might cause a memory leak?
         return true;
     }
@@ -117,11 +117,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
    */
   @Override
   public boolean keyUp(int keycode) {
-      if (keycode == LEFT_KEY) {
+      if (keycode == Keymap.getActionKeyCode("PlayerLeft")) {
         walkDirection.sub(Vector2Utils.LEFT);
         triggerWalkEvent();
         return true;
-      } else if (keycode == RIGHT_KEY) {
+      } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
         walkDirection.sub(Vector2Utils.RIGHT);
         triggerWalkEvent();
         return true;

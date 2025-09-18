@@ -36,8 +36,8 @@ public abstract class GameArea implements Disposable {
     return events;
   }
 
-  public void trigger(String eventName, String keyId, Entity player) {
-    events.trigger(eventName, keyId, player);
+  public void trigger(String eventName, Entity player) {
+    events.trigger(eventName, player);
   }
 
   protected Entity player;
@@ -71,6 +71,7 @@ public abstract class GameArea implements Disposable {
 
   /**
    * Create the game area using components from a different player entity.
+   * @param oldPlayer
    */
   public void createWithPlayer(Entity oldPlayer) {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
@@ -96,6 +97,9 @@ public abstract class GameArea implements Disposable {
     loadEntities();
   }
 
+  /**
+   * Resets the game area
+   */
   protected void reset() {
     // Retain all data we want to be transferred across the reset (e.g. player movement direction)
     Vector2 walkDirection = player.getComponent(KeyboardPlayerInputComponent.class).getWalkDirection();
@@ -117,15 +121,34 @@ public abstract class GameArea implements Disposable {
     loadEntities();
   }
 
+  /**
+   * Loads prerequisites for each area. Music, sounds, terrain etc
+   */
   protected abstract void loadPrerequisites();
 
+  /**
+   * Loads all entities in a given area
+   */
   protected abstract void loadEntities();
 
+  /**
+   * Spawns player
+   * @return player entity
+   */
   protected abstract Entity spawnPlayer();
 
+  /**
+   * Spawns player with previous components
+   * @param componentList
+   * @return Player entity with old components
+   */
   protected abstract Entity spawnPlayer(List<Component> componentList);
 
+  /**
+   * Loads assets
+   */
   protected abstract void loadAssets();
+
 
   /**
    * Get copies all of the player components we want to transfer in between resets/levels.

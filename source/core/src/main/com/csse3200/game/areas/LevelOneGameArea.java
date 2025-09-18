@@ -100,13 +100,15 @@ public class LevelOneGameArea extends GameArea {
         spawnWalls();
         spawnDoor();
         spawnLights();
+        //spawnPatrollingDrone();
+        spawnBomberDrone();
+        spawnSelfDestructDrone();
         spawnPatrollingDrone();
-        //spawnBomberDrone();
     }
 
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,0);
-        Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+        Entity deathZone = DeathZoneFactory.createDeathZone();
         spawnEntityAt(deathZone, spawnPos, true,  true);
 
         //Uncomment with deathzonefactory changes for a second small deathzone over second gap
@@ -237,7 +239,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(gatePlatform, gatePlatformPos,false, false);
     }
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this, "sprint1");
+        Entity door = ObstacleFactory.createDoor("door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         door.getComponent(DoorComponent.class).openDoor();
@@ -311,6 +313,16 @@ public class LevelOneGameArea extends GameArea {
                 bomberId
         );
         spawnEntityAt(bomberDrone, position, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(25, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("selfDestruct1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
 
     private void displayUI() {

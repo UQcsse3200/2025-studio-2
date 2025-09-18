@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.DeathOnTrapComponent;
 import com.csse3200.game.components.DisposalComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
@@ -225,6 +227,48 @@ public class EnemyFactory {
         aiComponent.addTask(new PatrolTask(1f)); // Priority 1 - default behavior
 
         return drone;
+    }
+    public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
+        BaseEntityConfig config = configs.drone;
+        Entity drone= createBaseEnemy();
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
+
+        //Explicitly ensure DynamicBody only if not already set by createBaseEnemy
+        PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
+        if (physics.getBody()!= null && physics.getBody().getType()!= BodyDef.BodyType.DynamicBody) {
+            physics.setBodyType(BodyDef.BodyType.DynamicBody);
+        }
+        //add spawn if not provide
+        if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
+
+        AnimationRenderComponent animator=
+                new AnimationRenderComponent(
+                        ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
+        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.NORMAL);
+        animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
+
+        animator.addAnimation("bomb_effect",0.08f,Animation.PlayMode.NORMAL);
+
+        drone
+                .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
+                .addComponent(animator)
+                .addComponent(new DroneAnimationController());
+        //AITasks and selfDestruct behaviour is only added if valid target exists
+        if (target!=null){
+            drone.addComponent(new SelfDestructComponent(target));
+
+            AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
+            ChaseTask chaseTask= new ChaseTask(target,10f,2f);
+            aiComponent.addTask(chaseTask);
+            chaseTask.activate();
+        }
+//
+        animator.scaleEntity();
+        animator.startAnimation("float");
+        return drone;
+
+
+
     }
 
     /**
