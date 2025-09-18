@@ -165,7 +165,7 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("door", this);
+        Entity door = ObstacleFactory.createDoor("key:door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         // door.getComponent(DoorComponent.class).openDoor();
