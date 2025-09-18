@@ -235,6 +235,8 @@ public class PauseMenuDisplay extends UIComponent {
         if (visible) {
             rootTable.toFront();
             player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
+            // Reset player movement to avoid movement carrying over after pausing and unpausing
+            player.getComponent(KeyboardPlayerInputComponent.class).resetInputState();
 
             ServiceLocator.getInputService().register(pauseMenuNavigationComponent);
             // Enable navigation and register input component when the pause menu becomes visible
