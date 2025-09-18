@@ -3,17 +3,27 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
+import com.csse3200.game.physics.raycast.AllHitCallback;
+import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.physics.raycast.SingleHitCallback;
+import com.csse3200.game.rendering.RenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.utils.math.Vector2Utils;
+
+import java.awt.*;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -21,29 +31,24 @@ import com.csse3200.game.utils.math.Vector2Utils;
  */
 public class PlayerActions extends Component {
   private static final float MAX_ACCELERATION = 70f;
-  // second
   private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-    private static final Vector2 MAX_SPEED = new Vector2(3f, 3f);
-    private static final float   SPRINT_MULT = 2.3f;
+  private static final float   SPRINT_MULT = 2.3f;
 
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 20f;
 
+  private static final int FUEL_CAPACITY = 100;
+
   private PhysicsComponent physicsComponent;
   private StaminaComponent stamina;
-  private KeyboardPlayerInputComponent keyboardPlayerInputComponent;
+  private CameraComponent cameraComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
-  private Vector2 jumpDirection = Vector2.Zero.cpy();
   private boolean moving = false;
   private boolean adrenaline = false;
   private boolean crouching = false;
-
-  private StandingColliderComponent standingCollider;
-  private CrouchingColliderComponent crouchingCollider;
-
 
   // For Tests (Not Functionality)
   private boolean hasDashed = false;
@@ -57,15 +62,19 @@ public class PlayerActions extends Component {
 
   // Whether player is currently holding sprint (Shift)
   private boolean wantsSprint = false;
+  private int jetpackFuel = FUEL_CAPACITY;
+  private boolean isJetpackOn = false;
+  private boolean isGliding = false;
+
+  private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
+          "sounds/Impact4.ogg", Sound.class);
 
   @Override
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
+    cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
-
-    standingCollider = entity.getComponent(StandingColliderComponent.class);
-    crouchingCollider = entity.getComponent(CrouchingColliderComponent.class);
 
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
@@ -77,7 +86,6 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("landed", this::onLand);
 
     entity.getEvents().addListener("toggleAdrenaline", this::toggleAdrenaline);
-
     entity.getEvents().addListener("dash", this::dash);
 
     entity.getEvents().addListener("collisionStart", this::onCollisionStart);
@@ -85,7 +93,8 @@ public class PlayerActions extends Component {
     entity.getEvents().addListener("gravityForPlayerOn", this::gravityOn);
 
     entity.getEvents().addListener("glide", this::glide);
-    entity.getEvents().addListener("grapple", this::grapple);
+    entity.getEvents().addListener("jetpackOn", this::jetpackOn);
+    entity.getEvents().addListener("jetpackOff", this::jetpackOff);
 
     entity.getEvents().addListener("crouch", this::crouch);
     entity.getEvents().addListener("sprintStart", () -> {
@@ -108,11 +117,27 @@ public class PlayerActions extends Component {
 
   @Override
   public void update() {
-    if (moving) {
+
+    Body body = physicsComponent.getBody();
+
+    if (moving || isJetpackOn) {
       updateSpeed();
     }
 
-    Body body = physicsComponent.getBody();
+    if (jetpackFuel <= 0) {
+      jetpackOff();
+    }
+
+    if (isJetpackOn) {
+      jetpackFuel--;
+      body.setGravityScale(0f); //for impulse to act upwards
+    } else if (jetpackFuel < FUEL_CAPACITY) {
+      jetpackFuel++;
+    }
+
+    if (!isJetpackOn && !isGliding) {
+      body.setGravityScale(1f);
+    }
 
     if (body.getLinearVelocity().y < 0) {
       body.applyForceToCenter(new Vector2(0, -body.getMass() * 10f), true);
@@ -126,9 +151,6 @@ public class PlayerActions extends Component {
       entity.getEvents().trigger("death");
       // Death screen component will handle the reset when user chooses to restart
     }
-
-//    Gdx.app.log("Inventory", Integer.toString(
-//            entity.getComponent(InventoryComponent.class).getTotalItemCount()));
   }
 
   private void updateSpeed() {
@@ -148,27 +170,33 @@ public class PlayerActions extends Component {
     desiredVelocity.scl(mult);
 
     // impulse = (desiredVel - currentVel) * mass
-    //only update the horizontal impulse
-    /*float inAirControl = isJumping ? 0.2f : 1f;*/
+    // only update the horizontal impulse
 
     float deltaV = desiredVelocity.x - velocity.x;
-    float maxDeltaV = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
+    float maxDeltaV =
+            MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
     if (deltaV > maxDeltaV) deltaV = maxDeltaV;
     if (deltaV < -maxDeltaV) deltaV = -maxDeltaV;
     float impulseY;
-//    Gdx.app.log("Is cheats on", entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn().toString());
-    //Allows for up/down movement if the player is on a ladder
-    if (entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
+
+    if (entity.getComponent(KeyboardPlayerInputComponent.class).getIsCheatsOn()
+    || entity.getComponent(KeyboardPlayerInputComponent.class).getOnLadder()) {
       entity.getEvents().trigger("gravityForPlayerOff");
       float deltaVy = desiredVelocity.y - velocity.y;
-      float maxDeltaVy = MAX_ACCELERATION /*inAirControl*/ * Gdx.graphics.getDeltaTime();
-      deltaVy = deltaVy > maxDeltaVy ? maxDeltaVy : -maxDeltaVy;
+      float maxDeltaVy = MAX_ACCELERATION * Gdx.graphics.getDeltaTime();
+      if (deltaVy > maxDeltaVy) deltaVy = maxDeltaVy;
+      if (deltaVy < -maxDeltaVy) deltaVy = -maxDeltaVy;
       impulseY = deltaVy * body.getMass();
+
+    } else if (isJetpackOn) {
+
+      impulseY = 1.1f * 1.2f * body.getMass();
     } else {
       //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
       entity.getEvents().trigger("gravityForPlayerOn");
       impulseY = 0f;
     }
+
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
 
@@ -233,7 +261,6 @@ public class PlayerActions extends Component {
       float impulseY = body.getMass() * JUMP_IMPULSE_FACTOR;
 
       body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
-      /*body.applyForce(new Vector2(Math.abs(vel.x), impulseY), body.getWorldCenter(), true);*/
 
       isJumping = true;
   }
@@ -244,8 +271,6 @@ public class PlayerActions extends Component {
    * This method resets the players jump state, allowing them to jump again
    */
   void onLand() {
-    Body body = physicsComponent.getBody();
-    //body.setLinearVelocity(body.getLinearVelocity().x, 0f);
     isJumping = false;
     isDoubleJump = false;
 
@@ -279,9 +304,10 @@ public class PlayerActions extends Component {
 
     // Scale the direction vector to increase speed
     this.walkDirection.scl(DASH_SPEED_MULTIPLIER);
-    body.applyLinearImpulse(this.walkDirection, body.getWorldCenter(), true);
+    body.applyLinearImpulse(new Vector2(this.walkDirection.x, 0f), body.getWorldCenter(), true);
     // Unscale the direction vector to ensure player does not infinitely dash in one direction
     this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
+
   }
 
   /**
@@ -296,7 +322,6 @@ public class PlayerActions extends Component {
    * Makes the player interact
    */
   void interact() {
-    // do something
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/chimesound.mp3", Sound.class);
     interactSound.play();
@@ -310,21 +335,35 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
     boolean isOutOfJumps = (isJumping) && (isDoubleJump);
 
-    if (on == true && isOutOfJumps) {
-      if (body.getLinearVelocity().y < 0.1f) {
+    if (on && isOutOfJumps) {
+      if (body.getLinearVelocity().y < 0.5f) {
+
         body.setGravityScale(0.1f);
+        isGliding = true;
       }
     } else {
       body.setGravityScale(1f);
+      isGliding = false;
     }
   }
 
-  private void grapple() {
-    Body body = physicsComponent.getBody();
-
-
-    /*Vector2Utils aimDirection = new Vector2Utils()*/
+  /**
+   * Used to activate the jetpack upgrade for the player - allows for upwards movement
+   */
+  private void jetpackOn() {
+    isJetpackOn = true;
+    isJumping = true;
+    jetpackSound.loop();
   }
+
+  /**
+   * Used to disable the upwards movement gained by the jetpack upgrade
+   */
+  private void jetpackOff() {
+    isJetpackOn = false;
+    jetpackSound.pause();
+  }
+
 
   /**
    * Called when a collision involving the players starts
@@ -335,7 +374,7 @@ public class PlayerActions extends Component {
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
 
     if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
-      onLand();
+      entity.getEvents().trigger("landed");
     }
   }
 
@@ -348,14 +387,10 @@ public class PlayerActions extends Component {
             entity.getComponent(CrouchingColliderComponent.class);
     if (crouching) {
       crouching = false;
-      //PhysicsUtils.setScaledCollider(entity, 0.6f, 1f);
-      //standingCollider.getFixture().setSensor(false);
-      //crouchingCollider.getFixture().setSensor(true);
       standing.getFixtureRef().setSensor(false);
       crouch.getFixtureRef().setSensor(true);
     } else {
       crouching = true;
-      //PhysicsUtils.setScaledCollider(entity, 0.6f, 0.5f);
       standing.getFixtureRef().setSensor(true);
       crouch.getFixtureRef().setSensor(false);
     }
@@ -407,6 +442,12 @@ public class PlayerActions extends Component {
   public boolean hasDashed() {
     return hasDashed;
   }
+
+  public int getJetpackFuel(){return jetpackFuel;};
+
+  public boolean getIsJetpackOn() {return isJetpackOn;}
+
+  public boolean getIsGliding() {return isGliding;}
 
   /**
    * Turns the gravity off/on for the player depending if cheats are on
