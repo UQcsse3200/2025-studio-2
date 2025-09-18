@@ -9,6 +9,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.SelfDestructComponent;
+import com.csse3200.game.components.DeathOnTrapComponent;
+import com.csse3200.game.components.DisposalComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -125,7 +127,7 @@ public class EnemyFactory {
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("drop", 0.075f, Animation.PlayMode.LOOP);
-        animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
+        animator.addAnimation("teleBomber", 0.05f, Animation.PlayMode.LOOP);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
@@ -173,7 +175,7 @@ public class EnemyFactory {
                 0.5f   // Height tolerance
         );
 
-        CooldownTask cooldownTask = new CooldownTask(3f);
+        CooldownTask cooldownTask = new CooldownTask(3f, "teleBomber");
 
         // Wire up detection events
         drone.getEvents().addListener("targetDetected", (Entity detectedTarget) -> {
@@ -282,7 +284,9 @@ public class EnemyFactory {
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                         .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
-                        .addComponent(new AITaskComponent()); // Want this empty for base enemies
+                        .addComponent(new AITaskComponent())// Want this empty for base enemies
+                        .addComponent(new DeathOnTrapComponent())
+                        .addComponent(new DisposalComponent(0.5f));
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 
