@@ -95,10 +95,6 @@ public class PlayerFactory {
             .addComponent(animator)
             .addComponent(new PlayerAnimationController());
 
-    for (Component component : componentList) {
-      player.replaceComponent(component);
-    }
-
     // --- Stamina: add component, wire sprint, and TEMP logging ---
     StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
     player.addComponent(stamina);
@@ -125,6 +121,10 @@ public class PlayerFactory {
     AnimationRenderComponent arc =
             player.getComponent(AnimationRenderComponent.class);
     arc.startAnimation("IDLE");
+
+    for (Component component : componentList) {
+      player.replaceComponent(component);
+    }
 
     return player;
   }
