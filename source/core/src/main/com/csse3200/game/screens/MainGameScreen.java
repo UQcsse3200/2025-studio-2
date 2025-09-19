@@ -37,6 +37,7 @@ import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
+import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,6 +83,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     ServiceLocator.registerEntityService(new EntityService());
     ServiceLocator.registerRenderService(new RenderService());
+    TerminalService.register();
     ServiceLocator.registerVfxService(new VfxManager(Pixmap.Format.RGBA8888));
 
     renderer = RenderFactory.createRenderer();
