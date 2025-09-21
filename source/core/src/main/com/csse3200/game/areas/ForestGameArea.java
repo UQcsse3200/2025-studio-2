@@ -102,7 +102,8 @@ public class ForestGameArea extends GameArea {
           "images/dash_powerup.png",
           "images/glide_powerup.png",
           "images/camera-body.png",
-          "images/camera-lens.png"
+          "images/camera-lens.png",
+          "images/PLAYER.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas",
@@ -115,7 +116,7 @@ public class ForestGameArea extends GameArea {
           "images/flying_bat.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-          "/chimesound.mp3"};
+          "/chimesound.mp3", "sounds/hurt.mp3"};
   private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
   private static final String[] forestMusic = {backgroundMusic};
 
@@ -161,6 +162,7 @@ public class ForestGameArea extends GameArea {
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
+    spawnBoxOnlyPlate();
 
     door = spawnDoor();
     spawnWalls();
@@ -170,9 +172,9 @@ public class ForestGameArea extends GameArea {
     spawnTraps();
     spawnGate();
 
-    spawnUpgrade("dash", 15, 19);
-    spawnUpgrade("glider", 15, 17);
-    spawnUpgrade("grappler", 15, 15);
+    spawnUpgrade("dash", 9, 6);
+    spawnUpgrade("glider", 7, 6);
+    spawnUpgrade("jetpack", 5, 6);
   }
 
   private void displayUI() {
@@ -402,6 +404,17 @@ public class ForestGameArea extends GameArea {
         spawnEntityAt(spikes, spawnPos, true,  true);
     }
 
+    private void spawnBoxOnlyPlate() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+        spawnEntityAt(plate, new GridPoint2(16, 17), true, true);
+
+        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed) {
+                showTooltip(plate, "Door unlocked", 2f);
+            }
+        });
+    }
+
   private void spawnElevatorPlatform() {
       float ts = terrain.getTileSize();
 
@@ -465,17 +478,37 @@ public class ForestGameArea extends GameArea {
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-
     if (upgradeID == "glider") {
       Entity upgrade = CollectableFactory.createGlideUpgrade();
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-    if (upgradeID == "grappler") {
-      Entity upgrade = CollectableFactory.createGrappleUpgrade();
+    if (upgradeID == "jetpack") {
+      Entity upgrade = CollectableFactory.createJetpackUpgrade();
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
   }
+    private void spawnBoxPressurePlate() {
+        // create a plate that ONLY boxes can press
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+
+        // put it near the existing moveable box (spawned at 17,17 in this area)
+        GridPoint2 platePos = new GridPoint2(17, 16); // adjust if you want
+        spawnEntityAt(plate, platePos, true, true);
+    }
+
+    private void showTooltip(Entity entity, String msg, float seconds) {
+        TooltipSystem.TooltipComponent tip =
+                new TooltipSystem.TooltipComponent(msg, TooltipSystem.TooltipStyle.SUCCESS);
+        entity.addComponent(tip);
+        Timer.schedule(new Timer.Task() {
+            @Override public void run() {
+                TooltipSystem.TooltipComponent existing = entity.getComponent(TooltipSystem.TooltipComponent.class);
+                if (existing != null) entity.removeComponent(existing);
+            }
+        }, seconds);
+    }
+
 
   private void spawnPressurePlates() {
     Entity plate = PressurePlateFactory.createPressurePlate();
@@ -488,6 +521,7 @@ public class ForestGameArea extends GameArea {
       if (pressed) {
         if (doorCloseTask != null) { doorCloseTask.cancel(); doorCloseTask = null; }
         door.getEvents().trigger("openDoor");
+        showTooltip(plate, "Door unlocked", 2f);
       } else {
         doorCloseTask = new Timer.Task() {
           @Override public void run() { door.getEvents().trigger("closeDoor"); doorCloseTask = null; }

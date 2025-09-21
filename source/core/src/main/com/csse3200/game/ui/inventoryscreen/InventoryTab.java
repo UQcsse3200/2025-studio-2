@@ -28,7 +28,6 @@ import java.util.Map;
  */
 public class InventoryTab implements InventoryTabInterface {
 
-  private final Entity player;
   private final MainGameScreen screen;
 
   private final Texture bgTex = new Texture(Gdx.files.internal("inventory-screen/inventory-selected.png"));
@@ -43,6 +42,13 @@ public class InventoryTab implements InventoryTabInterface {
   private static final Rect GRID_PX = new Rect(371, 247, 586, 661);
   private static final Rect CLOSE_BUTTON_POS = new Rect(971, 16, 39, 39);
 
+  // Pixel-accurate rectangles (top-left coordinates, width, height)
+  private static final int TAB_Y = 130;
+  private static final int TAB_H = 72;
+
+  private static final Rect TAB_UPGRADES  = new Rect(319, TAB_Y, 300, TAB_H);
+  private static final Rect TAB_OBJECTIVE = new Rect(623, TAB_Y, 258, TAB_H);
+
   private static final int GRID_ROWS = 4;
   private static final int GRID_COLS = 4;
   private static final float SLOT_PADDING = 10f;
@@ -54,11 +60,9 @@ public class InventoryTab implements InventoryTabInterface {
   /**
    * Creates an Inventory tab bound to the given main game screen.
    *
-   * @param player entity holding upgrades information
    * @param gameScreen main game screen used to unpause and hide the pause menu
    */
-  public InventoryTab(Entity player, MainGameScreen gameScreen) {
-    this.player = player;
+  public InventoryTab(MainGameScreen gameScreen) {
     this.screen = gameScreen;
     
     // Create a simple highlight texture programmatically
@@ -181,6 +185,9 @@ public class InventoryTab implements InventoryTabInterface {
     placer.addOverlay(gridTable, GRID_PX);
     populateGrid(gridTable);
 
+    addTabHotspot(placer, TAB_UPGRADES,  PauseMenuDisplay.Tab.UPGRADES);
+    addTabHotspot(placer, TAB_OBJECTIVE, PauseMenuDisplay.Tab.OBJECTIVES);
+
     float screenH = Gdx.graphics.getHeight();
     float canvasH = screenH * (2f / 3f);
     float baseAspect = (float) bgTex.getWidth() / bgTex.getHeight();
@@ -202,7 +209,7 @@ public class InventoryTab implements InventoryTabInterface {
     gridTable.clear();
     gridTable.defaults().pad(SLOT_PADDING).expand().fill();
 
-    InventoryComponent inv = player.getComponent(InventoryComponent.class);
+    InventoryComponent inv = screen.getGameArea().getPlayer().getComponent(InventoryComponent.class);
     Map<String, Integer> items = (inv != null) ? inv.getInventory() : java.util.Collections.emptyMap();
 
     int totalSlots = GRID_ROWS * GRID_COLS;
@@ -344,6 +351,33 @@ public class InventoryTab implements InventoryTabInterface {
     Texture texture = new Texture(pixmap);
     pixmap.dispose();
     return texture;
+  }
+
+
+  /**
+   * Adds an invisible, pixel-accurate clickable hotspot that switches to a pause menu tab
+   *
+   *
+   * Creates a Button with no visuals to act as a hotzone
+   * Positions and sizes the hotzone using PixelPerfectPlacer so it aligns with the
+   * background art and scales correctly with the canvas
+   * On click, calls screen.togglePauseMenu(targetTab) to switch tabs without
+   * changing the current paused state
+   *
+   * @param placer the PixelPerfectPlacer instance that places the overlays to the tab background
+   * @param rect the hotspot rectangle in background image pixels (top-left origin; width/height in pixels)
+   * @param targetTab the pause-menu tab to show when the hotspot is clicked
+   */
+  private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab targetTab) {
+    Button b = new Button(new Button.ButtonStyle()); // invisible hotzone
+    b.addListener(new ChangeListener() {
+      @Override public void changed(ChangeEvent event, Actor actor) {
+        if (screen != null) {
+          screen.togglePauseMenu(targetTab); // switch tab, keep paused state
+        }
+      }
+    });
+    placer.addOverlay(b, rect);
   }
 
   /**

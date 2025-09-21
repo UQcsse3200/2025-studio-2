@@ -58,7 +58,7 @@ public class PlatformFactory {
    */
   public static Entity createMovingPlatform(Vector2 offsetWorld, float speed) {
     ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);
-    collider.setFriction(7f);
+    collider.setFriction(2f);
     Entity platform = new Entity()
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())

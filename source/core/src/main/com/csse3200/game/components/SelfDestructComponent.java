@@ -45,6 +45,7 @@ public class SelfDestructComponent extends Component {
             public void run(){
                 entity.getEvents().trigger("destroy"); // custom destroy event for cleanup
                 entity.removeComponent(SelfDestructComponent.this);
+                entity.dispose();
             }
 
 

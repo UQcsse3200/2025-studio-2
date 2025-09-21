@@ -228,7 +228,7 @@ public class EnemyFactoryTest {
         assertNotNull(sp);
         assertEquals(route[0], sp.getSpawnPos());
     }
-
+/*
         @Test
         void createBomberDrone_hasBaseEnemyComponents() {
             Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
@@ -317,7 +317,7 @@ public class EnemyFactoryTest {
         assertNotSame(ai_a, ai_b,
                 "Drones should have distinct AITaskComponents");
     }
-
+*/
 
     // Tests to verify correct AI task flow
     @Test

@@ -353,6 +353,6 @@ public class Entity {
 
   @Override
   public String toString() {
-    return String.format("Entity{id=%d}", id);
+    return "Entity{id=" + id + "}" + components;
   }
 }
