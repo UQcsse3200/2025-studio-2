@@ -2,9 +2,8 @@ package com.csse3200.game.physics;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.*;
-import com.csse3200.game.components.obstacles.MoveableBoxV2Component;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
-import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.PressurePlateComponent; // <— import added
 import com.csse3200.game.components.player.PlayerActions;
@@ -109,7 +108,7 @@ public class ObjectContactListener implements ContactListener {
      * @param inRange true if player in collision, false if they leave collision
      */
     private void setPlayerInRangeOfBox(Entity box, Entity other, boolean inRange) {
-        MoveableBoxV2Component moveableBoxComponent = box.getComponent(MoveableBoxV2Component.class);
+        MoveableBoxComponent moveableBoxComponent = box.getComponent(MoveableBoxComponent.class);
         PlayerActions player = other.getComponent(PlayerActions.class);
 
         if (moveableBoxComponent != null && player != null) {

@@ -1,14 +1,13 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.TouchAttackComponent;
-import com.csse3200.game.components.obstacles.MoveableBoxV2Component;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -16,10 +15,9 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-
-import java.security.Provider;
 
 /**
  * Factory class for creating box entities in the game.
@@ -72,6 +70,8 @@ public class BoxFactory {
      * @return A new moveable box Entity
      */
     public static Entity createMoveableBox() {
+        RenderService rs = ServiceLocator.getRenderService();
+        Camera camera = rs.getRenderer() == null ? null : rs.getRenderer().getCamera().getCamera();
         Entity moveableBox = new Entity()
                 .addComponent(new TextureRenderComponent("images/box_blue.png"))
                 .addComponent(new PhysicsComponent()
@@ -81,8 +81,7 @@ public class BoxFactory {
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f))
-                .addComponent(new MoveableBoxV2Component()
-                        .setCamera(ServiceLocator.getRenderService().getRenderer().getCamera().getCamera()));
+                .addComponent(new MoveableBoxComponent().setCamera(camera));
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;
