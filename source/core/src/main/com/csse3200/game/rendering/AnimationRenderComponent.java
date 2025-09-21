@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
@@ -42,6 +43,8 @@ public class AnimationRenderComponent extends RenderComponent {
   private String currentAnimationName;
   private float animationPlayTime;
   private boolean isPaused = false;
+  private boolean flipX = false;
+  private boolean flipY = false;
 
   /**
    * Create the component for a given texture atlas.
@@ -170,8 +173,9 @@ public class AnimationRenderComponent extends RenderComponent {
    * @param flip whether to flip the entity horizontally
    */
   public void setFlipX(boolean flip) {
-      Vector2 scale = entity.getScale();
-      entity.setScale(flip ? -Math.abs(scale.x) : Math.abs(scale.x), scale.y);
+      //Vector2 scale = entity.getScale();
+      //entity.setScale(flip ? -Math.abs(scale.x) : Math.abs(scale.x), scale.y);
+      this.flipX = flip;
   }
 
   /**
@@ -203,7 +207,15 @@ public class AnimationRenderComponent extends RenderComponent {
     TextureRegion region = currentAnimation.getKeyFrame(animationPlayTime);
     Vector2 pos = entity.getPosition();
     Vector2 scale = entity.getScale();
-    batch.draw(region, pos.x, pos.y, scale.x, scale.y);
+    float w = Math.abs(scale.x);
+    float h = Math.abs(scale.y);
+    float originX = w / 2;
+    float originY = h / 2;
+    float sx = flipX ? -1f : 1f;
+    float sy = flipY ? -1f : 1f;
+    float rotation = 0f;
+    batch.draw(region, pos.x, pos.y, originX, originY, w, h, sx, sy, rotation);
+    //batch.draw(region, pos.x, pos.y, scale.x, scale.y);
     if (!isPaused) {
       animationPlayTime += timeSource.getDeltaTime();
     }
