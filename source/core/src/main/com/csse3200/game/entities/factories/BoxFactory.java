@@ -8,6 +8,7 @@ import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxV2Component;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -80,7 +81,8 @@ public class BoxFactory {
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f))
-                .addComponent(new MoveableBoxComponent());
+                .addComponent(new MoveableBoxV2Component()
+                        .setCamera(ServiceLocator.getRenderService().getRenderer().getCamera().getCamera()));
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;

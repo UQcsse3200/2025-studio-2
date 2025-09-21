@@ -139,6 +139,12 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
+        spawnBoxes();
+    }
+
+    private void spawnBoxes() {
+        Entity e = BoxFactory.createMoveableBox();
+        spawnEntityAt(e, new GridPoint2(15, 15), true, true);
     }
 
     private void spawnDeathZone() {
