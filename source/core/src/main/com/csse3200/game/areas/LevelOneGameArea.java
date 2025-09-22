@@ -13,6 +13,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -541,6 +542,10 @@ public class LevelOneGameArea extends GameArea {
 
         Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 270f, "2");
         spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
+
+        Entity laser = new Entity();
+        laser.addComponent(new LaserEmitterComponent());
+
     }
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
