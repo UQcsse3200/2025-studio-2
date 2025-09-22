@@ -1,10 +1,12 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * component for self destruction drones
@@ -13,6 +15,7 @@ public class SelfDestructComponent extends Component {
     private final Entity target;
     private boolean exploded =false;
 
+    private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
     public SelfDestructComponent(Entity target){
         this.target=target;
     }
@@ -38,6 +41,11 @@ public class SelfDestructComponent extends Component {
         if(animator!=null){
             animator.startAnimation("bomb_effect");
         }
+        Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND,Sound.class);
+        if (explosionSound!=null){
+            long soundId = explosionSound.play(1.0f); // full volume
+            fadeOutSound(explosionSound,soundId,0.5f); // fade out over 0.5 secondes
+        }
 
         Timer.schedule(new Timer.Task(){
             @Override
@@ -56,5 +64,29 @@ public class SelfDestructComponent extends Component {
                 entity.removeComponent(SelfDestructComponent.this);
             }
         }, 0.5f);
+    }
+
+    /**
+     * Gradually fades out the given sound over specified duration
+     * @param sound Sound object
+     * @param soundId Sound instance ID
+     * @param duration Duration to fade out in seconds
+     */
+    private void fadeOutSound(Sound sound, long soundId, float duration) {
+        final int steps =10;
+        final float interval = duration/steps;
+
+        for(int i=0;i<steps;i++){
+            final float volume = 1.0f - (i/(float)steps);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    sound.setVolume(soundId, volume);
+                    if (volume <= 0f){
+                        sound.stop(soundId);
+                    }
+                }
+            },i*interval);
+        }
     }
 }
