@@ -30,10 +30,8 @@ public class SelfDestructComponent extends Component {
         if(exploded) return;
         exploded =true;
         CombatStatsComponent targetStats= target.getComponent(CombatStatsComponent.class);
-        CombatStatsComponent selfStats = entity.getComponent(CombatStatsComponent.class);
-        if (targetStats!=null && selfStats!= null){
-            targetStats.hit(selfStats);
-
+        if (targetStats!=null ){
+            targetStats.setHealth(Math.max(0,targetStats.getHealth()-2));
         }
         AnimationRenderComponent animator= entity.getComponent(AnimationRenderComponent.class);
         if(animator!=null){
