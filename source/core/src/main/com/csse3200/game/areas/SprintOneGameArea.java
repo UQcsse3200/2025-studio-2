@@ -21,6 +21,7 @@ import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.ObjectContactListener;
@@ -90,7 +91,8 @@ public class SprintOneGameArea extends GameArea {
             "images/camera-lens.png",
             "images/tile.png",
             "images/wall.png",
-            "images/PLAYER.png"
+            "images/PLAYER.png",
+            "images/ladder.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images" +
@@ -99,10 +101,11 @@ public class SprintOneGameArea extends GameArea {
             "images/ghost.atlas",
             "images/ghostKing.atlas",
             "images/drone.atlas",
+            "images/doors.atlas",
             "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-            "/chimesound.mp3"};
+            "/chimesound.mp3", "sounds/hurt.mp3"};
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] forestMusic = {backgroundMusic};
 
@@ -157,6 +160,7 @@ public class SprintOneGameArea extends GameArea {
         spawnPatrollingDrone();
         //spawnBomberDrone();  // WIP do not use
         spawnDoor();
+        spawnLadder();
     }
 
     private void displayUI() {
@@ -183,8 +187,8 @@ public class SprintOneGameArea extends GameArea {
         Entity puzzleEntity = new Entity();
         ButtonManagerComponent manager = new ButtonManagerComponent();
         puzzleEntity.addComponent(manager);
-        ServiceLocator.getEntityService().register(puzzleEntity);
-
+        // Prevent leak
+        this.spawnEntityAt(puzzleEntity, new GridPoint2(0, 0), true, true);
 
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
@@ -520,6 +524,18 @@ public class SprintOneGameArea extends GameArea {
             }
         });
          */
+    }
+
+    private void spawnLadder() {
+        int x = 8;
+        int y = 8;
+        int height = 13;
+        for (int i = 0; i < height; i++) {
+            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            Entity ladder = LadderFactory.createStaticLadder();
+            ladder.setScale(1f, 1);
+            spawnEntityAt(ladder, ladderPos, false, false);
+        }
     }
 
 

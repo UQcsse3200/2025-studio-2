@@ -104,7 +104,7 @@ public class ButtonComponent extends Component {
                 }
                 break;
             case "right":
-                if (dx > 0.3f && Math.abs(dy) < 0.6f) {
+                if (dx > -0.1f && Math.abs(dy) < 0.6f) {
                     toggleButton();
                 }
                 break;

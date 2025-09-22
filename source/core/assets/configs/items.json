@@ -1,0 +1,38 @@
+[
+  {
+    "id": "key:door",
+    "name": "Door Key",
+    "sprite": "images/key.png",
+    "description": "Unlocks doors.",
+    "autoConsume": false,
+    "ttl": 0,
+    "tags": ["KEY"],
+    "effects": []
+  },
+  {
+    "id": "potion:health",
+    "name": "Health Potion",
+    "sprite": "images/health-potion.atlas",
+    "description": "Restores 10 HP.",
+    "autoConsume": true,
+    "ttl": 0,
+    "tags": ["CONSUMABLE"],
+    "effects": [
+      { "type": "heal", "value": 10 }
+    ],
+    "glowColor": [240, 125, 140]
+  },
+  {
+    "id": "potion:dash",
+    "name": "Temporary speed upgrade",
+    "sprite": "images/speed-potion.atlas",
+    "description": "Unlocks the dash ability when used.",
+    "autoConsume": true,
+    "ttl": 0,
+    "tags": ["CONSUMABLE"],
+    "effects": [
+      { "type": "buff_speed", "duration": 5 }
+    ],
+    "glowColor": [125, 140, 240]
+  }
+]
