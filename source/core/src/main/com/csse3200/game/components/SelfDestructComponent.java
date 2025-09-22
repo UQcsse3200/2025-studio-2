@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.math.Vector2;
 
@@ -43,10 +44,16 @@ public class SelfDestructComponent extends Component {
             public void run(){
                 if(animator!=null){
                     animator.stopAnimation();
+                    entity.removeComponent(animator);
+                }
+                PhysicsComponent physics= entity.getComponent(PhysicsComponent.class);
+                if(physics!=null){
+                    physics.getBody().setActive(false);
+                    entity.removeComponent(physics);
+                    // physics.dispose();  //to safely destroy box2D body
                 }
                 entity.getEvents().trigger("destroy"); // custom destroy event for cleanup
                 entity.removeComponent(SelfDestructComponent.this);
-
             }
         }, 0.5f);
     }
