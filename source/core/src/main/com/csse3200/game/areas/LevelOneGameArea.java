@@ -4,27 +4,24 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.DoorControlComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -100,7 +97,7 @@ public class LevelOneGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/chimesound.mp3", "sounds/explosion.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
@@ -132,6 +129,11 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
+        spawnLights();
+        //spawnPatrollingDrone();
+        //spawnBomberDrone();
+        spawnSelfDestructDrone();
+        spawnPatrollingDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
@@ -145,8 +147,6 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
-
-        spawnBomberDrone();
     }
 
     private void spawnDeathZone() {
@@ -227,6 +227,7 @@ public class LevelOneGameArea extends GameArea {
         Entity puzzleGround = FloorFactory.createStaticFloor();
         puzzleGround.setScale(16f,2f);
         spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
+
 
     }
 
@@ -380,6 +381,22 @@ public class LevelOneGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+    private void spawnLights() {
+        // see the LightFactory class for more details on spawning these
+        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
+        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
+    }
+    private void spawnPatrollingDrone() {
+        GridPoint2 spawnTile = new GridPoint2(11, 4);
+
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(14, 4))
+        };
+        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
+                .addComponent(new ActivationComponent("1"));
+        spawnEntityAt(patrolDrone, spawnTile, true, true);
+    }
 
     private void spawnBomberDrone() {
         // First bomber with cone light detection - patrols and uses its downward cone light
@@ -414,6 +431,16 @@ public class LevelOneGameArea extends GameArea {
                 bomberId
         );
         spawnEntityAt(bomberDrone, position, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(25, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("selfDestruct1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
 
     private void displayUI() {
@@ -684,10 +711,10 @@ public class LevelOneGameArea extends GameArea {
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.loadMusic(musics);
         resourceService.loadTextures(gameTextures);
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadSounds(gameSounds);
-        resourceService.loadMusic(musics);
 
         while (!resourceService.loadForMillis(10)) {
             // This could be upgraded to a loading screen
