@@ -40,18 +40,16 @@ public class SelfDestructComponent extends Component {
             animator.startAnimation("bomb_effect");
         }
 
-        com.badlogic.gdx.utils.Timer.schedule(new com.badlogic.gdx.utils.Timer.Task(){
+        Timer.schedule(new Timer.Task(){
             @Override
             public void run(){
+                if(animator!=null){
+                    animator.stopAnimation();
+                }
                 entity.getEvents().trigger("destroy"); // custom destroy event for cleanup
                 entity.removeComponent(SelfDestructComponent.this);
-                entity.dispose();
+
             }
-
-
         }, 0.5f);
     }
-
-
-
 }
