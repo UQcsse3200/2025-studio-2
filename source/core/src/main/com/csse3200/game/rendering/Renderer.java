@@ -51,7 +51,7 @@ public class Renderer implements Disposable {
     Temporary zoom adjustment for whole-level screenshots.  Meant for development/debugging only.
     */
 //     OrthographicCamera screenshotCamera = (OrthographicCamera) this.camera.getCamera();
-//     screenshotCamera.zoom = 4.5f;
+//     screenshotCamera.zoom = 5f;
   }
 
   /**
