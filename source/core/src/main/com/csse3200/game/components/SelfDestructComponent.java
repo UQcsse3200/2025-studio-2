@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
@@ -54,13 +55,20 @@ public class SelfDestructComponent extends Component {
                     animator.stopAnimation();
                     entity.removeComponent(animator);
                 }
-                PhysicsComponent physics= entity.getComponent(PhysicsComponent.class);
+                PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
                 if(physics!=null){
-                    physics.getBody().setActive(false);
+                    if(physics.getBody()!=null){
+                        physics.getBody().setActive(false);
+                    }
                     entity.removeComponent(physics);
-                    // physics.dispose();  //to safely destroy box2D body
                 }
-                entity.getEvents().trigger("destroy"); // custom destroy event for cleanup
+                ConeLightComponent light= entity.getComponent(ConeLightComponent.class);
+                if(light!=null){
+                    light.dispose();
+                    //physics.getBody().setActive(false);
+                    entity.removeComponent(light);
+                }
+                entity.getEvents().trigger("destroy");
                 entity.removeComponent(SelfDestructComponent.this);
             }
         }, 0.5f);
