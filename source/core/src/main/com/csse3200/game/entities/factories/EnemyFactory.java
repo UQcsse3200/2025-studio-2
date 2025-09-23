@@ -264,8 +264,27 @@ public class EnemyFactory {
             AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
             ChaseTask chaseTask= new ChaseTask(target,10f,2f);
             aiComponent.addTask(chaseTask);
-            chaseTask.activate();
+            RayHandler rayHandle= ServiceLocator.getLightingService().getEngine().getRayHandler();
+            ConeLightComponent lightComponent =new ConeLightComponent(
+                    rayHandle,
+                    100,
+                    new Color(1f,0.3f,0.3f,1f),
+                    6f,-90f,60f
+            );
+            lightComponent.setFollowEntity(true);
+            drone.addComponent(lightComponent);
+
+            ConeDetectorComponent detectorComponent= new ConeDetectorComponent(
+                    target,
+                    PhysicsLayer.OBSTACLE,
+                    "self-destruct-drone"
+            );
+            drone.addComponent(detectorComponent);
+            drone.getEvents().addListener("targetDetected",(Entity detectedTarget)->{
+                chaseTask.deactivate();
+            });
         }
+
 //
         animator.scaleEntity();
         animator.startAnimation("float");
