@@ -11,6 +11,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -86,7 +87,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/chimesound.mp3","sounds/explosion.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
@@ -118,6 +119,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
+        spawnSelfDestructDrone();
     }
 
     private void spawnDeathZone() {
@@ -492,6 +494,15 @@ public class LevelTwoGameArea extends GameArea {
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
+    }
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(25, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("selfDestruct1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
 
     protected void loadAssets() {

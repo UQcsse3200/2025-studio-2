@@ -105,7 +105,7 @@ public class SprintOneGameArea extends GameArea {
             "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-            "/chimesound.mp3", "sounds/hurt.mp3"};
+            "/chimesound.mp3", "sounds/hurt.mp3","sounds/explosion.mp3"};
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] forestMusic = {backgroundMusic};
 
@@ -159,6 +159,7 @@ public class SprintOneGameArea extends GameArea {
 //        spawnDrone();
         spawnPatrollingDrone();
         //spawnBomberDrone();  // WIP do not use
+        spawnSelfDestructDrone();
         spawnDoor();
         spawnLadder();
     }
@@ -471,7 +472,15 @@ public class SprintOneGameArea extends GameArea {
         );
         spawnEntityAt(bomberDrone, position, true, true);
     }
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(25, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("selfDestruct1"));
 
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
     private void spawnElevatorPlatform() {
         float ts = terrain.getTileSize();
 
