@@ -27,6 +27,7 @@ public class MoveableBoxComponent extends Component {
 
     private static final float CARRY_GAIN = 18f; // how aggressively it homes
     private static final float CARRY_MAX_SPEED = 10f; // homing speed cap
+    private static final float MAX_ANG_SPEED = 10f;
     private static final float BASE_GRAVITY_SCALE = 0.75f;
     private static final float BASE_LINEAR_DAMPING = 1.5f;
 
@@ -149,12 +150,14 @@ public class MoveableBoxComponent extends Component {
             savedBullet = body.isBullet();
 
             body.setGravityScale(0f);
-            body.setFixedRotation(true);
+            body.setFixedRotation(false);
             body.setBullet(true);
             body.setLinearDamping(20f);
             body.setAngularVelocity(0f);
             body.setLinearVelocity(0f, 0f);
         } else {
+            body.setAngularVelocity(0f);
+            //body.setLinearVelocity(0f, 0f);
             // restore
             body.setGravityScale(BASE_GRAVITY_SCALE);
             body.setFixedRotation(savedFixedRotation);
@@ -211,47 +214,40 @@ public class MoveableBoxComponent extends Component {
         dir.nor();
 
         // target = player + dir * CARRY_RANGE
-        tmp.set(playerPos).mulAdd(dir, CARRY_RANGE);
+        Vector2 target = new Vector2(playerPos).mulAdd(dir, CARRY_RANGE);
 
-        // face the mouse
-        float angle = MathUtils.atan2(dir.y, dir.x);
-        boxTexture.setRotation(angle * MathUtils.radiansToDegrees);
+        // target angle
+        float targetAngle = MathUtils.atan2(dir.y, dir.x);
+
+        Body body = boxPhysics.getBody();
 
         // get delta away from target
-        Body body = boxPhysics.getBody();
         Vector2 center = body.getWorldCenter();
-
-        float dt = ServiceLocator.getTimeSource().getDeltaTime();
-        float alpha = MathUtils.clamp(CARRY_GAIN * dt, 0f, 1f);
-        Vector2 centerNext = new Vector2(
-                MathUtils.lerp(center.x, tmp.x, alpha),
-                MathUtils.lerp(center.y, tmp.y, alpha)
-        );
-
-        // local offset r = center of mass in local body space
-        Vector2 r = body.getLocalCenter();
-        Vector2 rotR = new Vector2(r).rotateRad(angle);
-
-        Vector2 bodyPos = centerNext.sub(rotR);
-
-
-        Vector2 delta = tmp.cpy().sub(center);
+        Vector2 delta = target.cpy().sub(center);
 
         // velocity proportional to delta with max speed
         float dist = delta.len2();
         Vector2 vel = (dist < 1e-4f) ? delta.setZero()
                                      : delta.scl(CARRY_GAIN);
+
         if (vel.len2() > CARRY_MAX_SPEED * CARRY_MAX_SPEED) {
             vel.setLength(CARRY_MAX_SPEED);
         }
 
+        // angular velocity to target angle
+        float currentAng = body.getAngle();
+        float deltaAng = MathUtils.atan2(MathUtils.sin(targetAngle - currentAng),
+                                         MathUtils.cos(targetAngle - currentAng));
+        //float angVel = 10f * deltaAng - 2f * body.getAngularVelocity();
+        float angVel = (Math.abs(deltaAng) < 1e-2f) ? 0f : deltaAng * 10f;
+        angVel = MathUtils.clamp(angVel, -MAX_ANG_SPEED, MAX_ANG_SPEED);
 
         // apply correct velocity and don't rotate at all
-        body.setAngularVelocity(0f);
+        body.setAngularVelocity(angVel);
         body.setLinearVelocity(vel);
 
-        body.setTransform(bodyPos, angle);
-        entity.setPosition(bodyPos, false);
+        entity.setPosition(body.getPosition(), false);
+        boxTexture.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 
     }
 
