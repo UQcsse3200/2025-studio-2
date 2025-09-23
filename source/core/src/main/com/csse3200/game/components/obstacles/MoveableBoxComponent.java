@@ -13,6 +13,7 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * This component is used to do the interactions between the player and the box entity. It is responsible for both
@@ -77,6 +78,7 @@ public class MoveableBoxComponent extends Component {
         }
 
         boxPhysics.getBody().setGravityScale(BASE_GRAVITY_SCALE);
+        boxTexture.setOrigin(0f, 0f);
     }
 
     /**
@@ -159,7 +161,7 @@ public class MoveableBoxComponent extends Component {
             body.setBullet(savedBullet);
             body.setLinearDamping(BASE_LINEAR_DAMPING);
             //boxPhysics.getBody().setTransform(boxPhysics.getBody().getPosition(), 0);
-            boxTexture.setRotation(0f);
+            //boxTexture.setRotation(0f);
         }
         toggleFilter();
     }
@@ -178,7 +180,6 @@ public class MoveableBoxComponent extends Component {
             boxCollider.getFixture().setFilterData(f);
             boxCollider.getFixture().getBody().setAwake(true);
             appliedFilter = true;
-            System.out.println("Filter applied");
         }
 
         // run following method if box is currently picked up
@@ -214,11 +215,26 @@ public class MoveableBoxComponent extends Component {
 
         // face the mouse
         float angle = MathUtils.atan2(dir.y, dir.x);
-        boxTexture.setRotation((float) Math.toDegrees(angle));
+        boxTexture.setRotation(angle * MathUtils.radiansToDegrees);
 
         // get delta away from target
-        var body = boxPhysics.getBody();
+        Body body = boxPhysics.getBody();
         Vector2 center = body.getWorldCenter();
+
+        float dt = ServiceLocator.getTimeSource().getDeltaTime();
+        float alpha = MathUtils.clamp(CARRY_GAIN * dt, 0f, 1f);
+        Vector2 centerNext = new Vector2(
+                MathUtils.lerp(center.x, tmp.x, alpha),
+                MathUtils.lerp(center.y, tmp.y, alpha)
+        );
+
+        // local offset r = center of mass in local body space
+        Vector2 r = body.getLocalCenter();
+        Vector2 rotR = new Vector2(r).rotateRad(angle);
+
+        Vector2 bodyPos = centerNext.sub(rotR);
+
+
         Vector2 delta = tmp.cpy().sub(center);
 
         // velocity proportional to delta with max speed
@@ -229,9 +245,13 @@ public class MoveableBoxComponent extends Component {
             vel.setLength(CARRY_MAX_SPEED);
         }
 
+
         // apply correct velocity and don't rotate at all
         body.setAngularVelocity(0f);
         body.setLinearVelocity(vel);
+
+        body.setTransform(bodyPos, angle);
+        entity.setPosition(bodyPos, false);
 
     }
 
