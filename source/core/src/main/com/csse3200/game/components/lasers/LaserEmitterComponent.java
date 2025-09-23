@@ -1,9 +1,14 @@
 package com.csse3200.game.components.lasers;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -13,16 +18,20 @@ import java.util.List;
 public class LaserEmitterComponent extends Component {
     private static final int MAX_REBOUNDS = 8;
     private static final float MAX_DISTANCE = 50f;
+    private static final float KNOCKBACK = 10f;
+
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
     private static final short blockedOccluder = (short) (
             PhysicsLayer.OBSTACLE
             // | PhysicsLayer.DEFAULT
             );
-    private static final short hitMask = (short) (reboundOccluder | blockedOccluder);
+    private static final short playerOccluder = PhysicsLayer.PLAYER;
+    private static final short hitMask = (short) (reboundOccluder | blockedOccluder |  playerOccluder);
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;
     private PhysicsEngine physicsEngine;
+    private CombatStatsComponent combatStats;
 
     public LaserEmitterComponent() {
 
@@ -38,6 +47,7 @@ public class LaserEmitterComponent extends Component {
         if (physicsEngine == null) {
             throw new IllegalStateException("Physics engine not found");
         }
+        combatStats = entity.getComponent(CombatStatsComponent.class);
     }
 
     @Override
@@ -73,6 +83,7 @@ public class LaserEmitterComponent extends Component {
             // classify reflector or blocker
             short cat = categoryBitsFromHit(hit);
             boolean isReflector = (cat & reboundOccluder) != 0;
+            boolean isPlayer = (cat & playerOccluder) != 0;
 
             if (isReflector) {
                 // reflect r = d -2(d.n) n
@@ -83,6 +94,9 @@ public class LaserEmitterComponent extends Component {
                 start.set(hit.point).mulAdd(dirVec, 1e-4f);
                 rebounds++;
             } else {
+                if (isPlayer) {
+                    damagePlayer(hit);
+                }
                 // is blocker so stop
                 break;
             }
@@ -103,6 +117,26 @@ public class LaserEmitterComponent extends Component {
                 d.x - 2f * dot * n.x,
                 d.y - 2f * dot * n.y
         );
+    }
+
+    private void damagePlayer(RaycastHit hit) {
+        Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+        if (target == null) return;
+
+        // attack target
+        CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
+        if  (targetStats != null) {
+            targetStats.hit(combatStats);
+        }
+
+        // apply knockback
+        PhysicsComponent physics = target.getComponent(PhysicsComponent.class);
+        if (physics != null) {
+            Body targetBody = physics.getBody();
+            Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
+            Vector2 impulse = direction.setLength(KNOCKBACK);
+            targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
+        }
     }
 
     public List<Vector2> getPositions() {

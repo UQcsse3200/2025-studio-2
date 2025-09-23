@@ -16,11 +16,11 @@ public class LaserRenderComponent extends RenderComponent {
     private Texture pixelTex;
     private TextureRegion pixel;
     private final Color color = new Color(1f, 0f, 0f, 1f);
-    private final Color glowColor = new Color(1f, 0.2f, 0.2f, 1f);
+    private final Color glowColor = new Color(1f, 0.32f, 0.32f, 1f);
 
     private static final float THICKNESS  = 0.05f; // core beam thickness
     private static final int   GLOW_STEPS = 4;     // glow smoothness
-    private static final float GLOW_MULT  = 2.5f;  // outer glow thickness multiplier
+    private static final float GLOW_MULT  = 2.7f;  // outer glow thickness multiplier
     private static final float GLOW_ALPHA = 0.35f; // max glow alpha
 
     private LaserEmitterComponent emitter;

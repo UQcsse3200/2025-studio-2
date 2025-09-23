@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
@@ -548,7 +549,8 @@ public class LevelOneGameArea extends GameArea {
 
         Entity laser = new Entity();
         laser.addComponent(new LaserEmitterComponent(-54f));
-        laser.addComponent(new LaserRenderComponent().setLayer(3));
+        laser.addComponent(new LaserRenderComponent());
+        laser.addComponent(new CombatStatsComponent(1, 1));
         spawnEntityAt(laser, new GridPoint2(40, 15), true, true);
     }
     private void spawnPlatformBat() {
