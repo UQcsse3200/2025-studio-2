@@ -17,6 +17,8 @@ public class SelfDestructComponent extends Component {
     private boolean exploded =false;
 
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
+    private static final float MAX_DISTANCE=11f;
+    private static final float TELEPORT_OFFSET = 1.5f;
     public SelfDestructComponent(Entity target){
         this.target=target;
     }
@@ -26,9 +28,25 @@ public class SelfDestructComponent extends Component {
         if(exploded) return;
         if(target==null) return;
 
-        if(entity.getCenterPosition().dst(target.getCenterPosition()) <1.1f){
+        float distance = entity.getCenterPosition().dst(target.getCenterPosition());
+        if(distance > MAX_DISTANCE){
+            teleportNearPlayer();
+            //return;
+        }
+        if( distance<1.1f){
             explode();
         }
+    }
+    private void teleportNearPlayer(){
+        Vector2 position=target.getCenterPosition();
+
+        float randomAngle = (float)(Math.random()*Math.PI*2);
+        Vector2 offset = new Vector2(
+                (float) Math.cos(randomAngle)*TELEPORT_OFFSET,
+                (float) Math.sin(randomAngle)*TELEPORT_OFFSET
+        );
+        Vector2 newPos = position.cpy().add(offset);
+        entity.setPosition(newPos);
     }
 
     private void explode(){
