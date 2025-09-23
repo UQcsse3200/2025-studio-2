@@ -173,7 +173,7 @@ public class MoveableBoxComponent extends Component {
             if (boxCollider.getFixture() == null) return;
 
             Filter f = boxCollider.getFixture().getFilterData();
-            f.categoryBits = (short) PhysicsLayer.OBSTACLE;
+            f.categoryBits = (short) PhysicsLayer.LASER_REFLECTOR;
             f.maskBits = (short) (PhysicsLayer.OBSTACLE | PhysicsLayer.PLAYER | PhysicsLayer.NPC);
             boxCollider.getFixture().setFilterData(f);
             boxCollider.getFixture().getBody().setAwake(true);

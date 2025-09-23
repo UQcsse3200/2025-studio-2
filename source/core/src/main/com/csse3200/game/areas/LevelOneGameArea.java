@@ -10,10 +10,10 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -146,6 +146,9 @@ public class LevelOneGameArea extends GameArea {
     private void spawnBoxes() {
         Entity e = BoxFactory.createMoveableBox();
         spawnEntityAt(e, new GridPoint2(15, 15), true, true);
+
+        Entity staticB = BoxFactory.createStaticBox();
+        spawnEntityAt(staticB, new GridPoint2(15, 20), true, true);
     }
 
     private void spawnDeathZone() {
@@ -544,8 +547,9 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
 
         Entity laser = new Entity();
-        laser.addComponent(new LaserEmitterComponent());
-
+        laser.addComponent(new LaserEmitterComponent(-54f));
+        laser.addComponent(new LaserRenderComponent().setLayer(3));
+        spawnEntityAt(laser, new GridPoint2(40, 15), true, true);
     }
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();

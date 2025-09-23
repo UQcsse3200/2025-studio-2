@@ -14,7 +14,11 @@ public class LaserEmitterComponent extends Component {
     private static final int MAX_REBOUNDS = 8;
     private static final float MAX_DISTANCE = 50f;
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
-    private static final short blockedOccluder = PhysicsLayer.OBSTACLE;
+    private static final short blockedOccluder = (short) (
+            PhysicsLayer.OBSTACLE
+            // | PhysicsLayer.DEFAULT
+            );
+    private static final short hitMask = (short) (reboundOccluder | blockedOccluder);
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;
@@ -39,59 +43,58 @@ public class LaserEmitterComponent extends Component {
     @Override
     public void update() {
         positions.clear();
+        // add initial point
         Vector2 start = entity.getPosition().cpy();
         positions.add(start.cpy());
 
-        Vector2 dirVec = new Vector2(1f, 0f).setAngleDeg(dir).nor();
+        Vector2 dirVec = new Vector2(1f, 0f).rotateDeg(dir).nor();
 
         float remaining = MAX_DISTANCE;
         int rebounds = 0;
 
-        RaycastHit hitBlock = new RaycastHit();
-        RaycastHit hitRebound = new RaycastHit();
-
-        boolean isHitBlock;
-        boolean isHitRebound;
-
         while (rebounds <= MAX_REBOUNDS && remaining > 0f) {
             Vector2 end = start.cpy().mulAdd(dirVec, remaining);
 
-            isHitBlock = physicsEngine.raycast(start, end, blockedOccluder, hitBlock);
-            isHitRebound = physicsEngine.raycast(start, end, reboundOccluder, hitRebound);
+            RaycastHit hit = new RaycastHit();
+            boolean hitSomething = physicsEngine.raycast(start, end, hitMask, hit);
 
             // if no hit on block and rebound laser reaches max dist hitting nothing
-            if (!isHitBlock && !isHitRebound) {
+            if (!hitSomething) {
                 positions.add(end);
                 break;
             }
 
-            // decide which hit is first if both are hit
-            float dBlock2 = isHitBlock ? start.dst2(hitBlock.point) : Float.POSITIVE_INFINITY;
-            float dRefl2 = isHitRebound ? start.dst2(hitRebound.point) : Float.POSITIVE_INFINITY;
+            // travel to first hit
+            float travelled = start.dst(hit.point);
+            remaining -= travelled;
+            positions.add(hit.point.cpy());
+            if (remaining <= 0f) break;
 
-            boolean takeBlock = dBlock2 < dRefl2;
+            // classify reflector or blocker
+            short cat = categoryBitsFromHit(hit);
+            boolean isReflector = (cat & reboundOccluder) != 0;
 
-            if  (takeBlock) {
-                positions.add(hitBlock.point.cpy());
-                break;
-            } else {
-                // reflect
-                positions.add(hitRebound.point.cpy());
+            if (isReflector) {
+                // reflect r = d -2(d.n) n
+                Vector2 n = hit.normal.cpy().nor();
+                dirVec = reflect(dirVec, n).nor();
 
-                // remaining distance after reaching the reflector
-                float traveled = (float) Math.sqrt(dRefl2);
-                remaining -= traveled;
-                if (remaining <= 0f) break;
-
-                // reflect dir: r = d - 2(d-n) n
-                Vector2 n = hitRebound.normal.cpy().nor();
-                dirVec = reflect(dirVec, n);
-
-                // start next segment just past the hit point to avoid re-hitting
-                start.set(hitRebound.point).mulAdd(dirVec, 1e-4f);
+                // continue from just past the hit to avoid re-hit
+                start.set(hit.point).mulAdd(dirVec, 1e-4f);
                 rebounds++;
+            } else {
+                // is blocker so stop
+                break;
             }
         }
+    }
+
+    private static short categoryBitsFromHit(RaycastHit hit) {
+        if (hit.fixture != null) {
+            return hit.fixture.getFilterData().categoryBits;
+        }
+        // fallback to blocker
+        return blockedOccluder;
     }
 
     private static Vector2 reflect(Vector2 d, Vector2 n) {
