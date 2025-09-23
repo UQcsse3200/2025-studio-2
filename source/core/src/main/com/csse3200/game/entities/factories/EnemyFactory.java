@@ -281,8 +281,9 @@ public class EnemyFactory {
             );
             drone.addComponent(detectorComponent);
             drone.getEvents().addListener("targetDetected",(Entity detectedTarget)->{
-                chaseTask.deactivate();
+                chaseTask.activate();
             });
+
         }
 
 //
