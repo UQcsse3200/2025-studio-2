@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -126,9 +125,9 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-        spawnUpgrade("dash", 9, 6);
-        spawnUpgrade("glider", 7, 6);
-        spawnUpgrade("jetpack", 5, 6);
+//        spawnUpgrade("dash", 9, 6);
+//        spawnUpgrade("glider", 7, 6);
+//        spawnUpgrade("jetpack", 5, 6);
         spawnSecurityCams();
         spawnButtons();
         spawnTraps();
@@ -165,31 +164,108 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
 
+//    private void spawnLadder() {
+//        //builds ladder up 1 segment at a time to the specified height starting at the given x/y position
+//        int x = 52;
+//        int y = 4;
+//        int height = 18;
+//        for (int i = 0; i < height; i++) {
+//            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+//            Entity ladder = LadderFactory.createStaticLadder();
+//            ladder.setScale(1f, 1);
+//            spawnEntityAt(ladder, ladderPos, false, false);
+//        }
+//
+//        GridPoint2 basePos = new GridPoint2(59, 35);
+//        Entity base = LadderFactory.createLadderBase();
+//        base.setScale(1f, 1);
+//        spawnEntityAt(base, basePos, false, false);
+//
+//        x = 59;
+//        y = 36;
+//        height = 16;
+//        for (int i = 0; i < height; i++) {
+//            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+//            Entity ladder = LadderFactory.createStaticLadder();
+//            ladder.setScale(1f, 1);
+//            spawnEntityAt(ladder, ladderPos, false, false);
+//        }
+//    }
+
+    // Lower ladder
+    private List<GridPoint2> lowerLadderHiddenSegments = new ArrayList<>();
+    private boolean extendLowerLadder;
+    private float lowerLadderTimer = 0f;
+
+    // Upper ladder
+    private List<GridPoint2> higherLadderHiddenSegments = new ArrayList<>();
+    private boolean extendHigherLadder;
+    private float higherLadderTimer = 0f;
+
     private void spawnLadder() {
-        //builds ladder up 1 segment at a time to the specified height starting at the given x/y position
+
+        // Lower ladder
         int x = 52;
         int y = 4;
-        int height = 18;
-        for (int i = 0; i < height; i++) {
-            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
-            Entity ladder = LadderFactory.createStaticLadder();
-            ladder.setScale(1f, 1);
-            spawnEntityAt(ladder, ladderPos, false, false);
+        int height = 19;
+        int hidden = 12;
+        for (int i = hidden; i < height; i++) {
+            GridPoint2 position = new GridPoint2(x, y + i);
+            Entity lowerLadder = LadderFactory.createStaticLadder();
+            lowerLadder.setScale(1f, 1f);
+            spawnEntityAt(lowerLadder, position, false, false);
         }
 
-        GridPoint2 basePos = new GridPoint2(59, 35);
-        Entity base = LadderFactory.createLadderBase();
-        base.setScale(1f, 1);
-        spawnEntityAt(base, basePos, false, false);
+        // Stores lower segments in a list to be spawned later
+        for (int i = hidden; i >= 0; i--) {
+            lowerLadderHiddenSegments.add(new GridPoint2(x, y + i));
+        }
 
+        // Base for higher ladder
+        GridPoint2 basePosition = new GridPoint2(59, 35);
+        Entity base = LadderFactory.createLadderBase();
+        base.setScale(1f, 1f);
+        spawnEntityAt(base, basePosition, false, false);
+
+        // Higher ladder
         x = 59;
         y = 36;
-        height = 16;
-        for (int i = 0; i < height; i++) {
-            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
-            Entity ladder = LadderFactory.createStaticLadder();
-            ladder.setScale(1f, 1);
-            spawnEntityAt(ladder, ladderPos, false, false);
+        height = 17;
+        hidden = 11;
+        for (int i = hidden; i < height; i++) {
+            GridPoint2 position = new GridPoint2(x, y + i);
+            Entity higherLadder = LadderFactory.createStaticLadder();
+            higherLadder.setScale(1f, 1f);
+            spawnEntityAt(higherLadder, position, false, false);
+        }
+        for (int i = hidden; i >= 0; i--) {
+            higherLadderHiddenSegments.add(new GridPoint2(x, y + i));
+        }
+    }
+
+    private void updateLadders(float deltaTime) {
+        // Lower ladder
+        if (extendLowerLadder && !lowerLadderHiddenSegments.isEmpty()) {
+            lowerLadderTimer += deltaTime;
+            while (lowerLadderTimer >= 0.1f && !lowerLadderHiddenSegments.isEmpty()) {
+                GridPoint2 position = lowerLadderHiddenSegments.removeFirst();
+                Entity ladder = LadderFactory.createStaticLadder();
+                ladder.setScale(1f, 1f);
+                spawnEntityAt(ladder, position, false, false);
+                lowerLadderTimer -= 0.1f;
+            }
+        }
+
+        // Upper ladder
+        if (extendHigherLadder && !higherLadderHiddenSegments.isEmpty()) {
+            higherLadderTimer += deltaTime;
+            while (higherLadderTimer >= 0.1f && !higherLadderHiddenSegments.isEmpty()) {
+                GridPoint2 position = higherLadderHiddenSegments.removeFirst();
+                Entity ladder = LadderFactory.createStaticLadder();
+                ladder.setScale(1f, 1f);
+                spawnEntityAt(ladder, position, false, false);
+                higherLadderTimer -= 0.1f;
+            }
         }
     }
 
