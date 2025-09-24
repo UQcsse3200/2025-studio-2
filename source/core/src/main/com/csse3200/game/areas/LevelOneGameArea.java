@@ -104,7 +104,8 @@ public class LevelOneGameArea extends GameArea {
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas"
+            "images/doors.atlas",
+            "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -142,14 +143,16 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
+        //spawnLasers();
     }
 
     private void spawnBoxes() {
-        Entity e = BoxFactory.createMoveableBox();
+        Entity e = BoxFactory.createReflectorBox();
         spawnEntityAt(e, new GridPoint2(15, 15), true, true);
-
-        Entity staticB = BoxFactory.createStaticBox();
-        spawnEntityAt(staticB, new GridPoint2(15, 20), true, true);
+    }
+    private void spawnLasers() {
+        Entity e = LaserFactory.createLaserEmitter(-45f);
+        spawnEntityAt(e, new GridPoint2(40, 12), true, true);
     }
 
     private void spawnDeathZone() {
@@ -546,12 +549,6 @@ public class LevelOneGameArea extends GameArea {
 
         Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 270f, "2");
         spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
-
-        Entity laser = new Entity();
-        laser.addComponent(new LaserEmitterComponent(-54f));
-        laser.addComponent(new LaserRenderComponent());
-        laser.addComponent(new CombatStatsComponent(1, 1));
-        spawnEntityAt(laser, new GridPoint2(40, 15), true, true);
     }
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();

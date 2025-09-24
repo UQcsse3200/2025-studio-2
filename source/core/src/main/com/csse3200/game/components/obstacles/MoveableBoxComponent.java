@@ -13,7 +13,6 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
-import com.csse3200.game.services.ServiceLocator;
 
 /**
  * This component is used to do the interactions between the player and the box entity. It is responsible for both
@@ -28,7 +27,7 @@ public class MoveableBoxComponent extends Component {
     private static final float CARRY_GAIN = 18f; // how aggressively it homes
     private static final float CARRY_MAX_SPEED = 10f; // homing speed cap
     private static final float MAX_ANG_SPEED = 10f;
-    private static final float BASE_GRAVITY_SCALE = 0.75f;
+    private float BASE_GRAVITY_SCALE = 0.75f;
     private static final float BASE_LINEAR_DAMPING = 1.5f;
 
     private Entity player;
@@ -37,6 +36,7 @@ public class MoveableBoxComponent extends Component {
     private PhysicsComponent boxPhysics;
     private ColliderComponent boxCollider;
     private TextureRenderComponent boxTexture;
+    private short physicsLayer = PhysicsLayer.OBSTACLE;
 
     private Camera camera;
     private final Vector2 tmp = new Vector2();
@@ -58,6 +58,14 @@ public class MoveableBoxComponent extends Component {
     public MoveableBoxComponent setCamera(Camera camera) {
         this.camera = camera;
         return this;
+    }
+
+    public void setPhysicsLayer(short physicsLayer) {
+        this.physicsLayer = physicsLayer;
+    }
+
+    public void setBaseGravityScale(float gravityScale) {
+        this.BASE_GRAVITY_SCALE = gravityScale;
     }
 
     @Override
@@ -164,7 +172,6 @@ public class MoveableBoxComponent extends Component {
             body.setBullet(savedBullet);
             body.setLinearDamping(BASE_LINEAR_DAMPING);
             //boxPhysics.getBody().setTransform(boxPhysics.getBody().getPosition(), 0);
-            //boxTexture.setRotation(0f);
         }
         toggleFilter();
     }
@@ -178,8 +185,11 @@ public class MoveableBoxComponent extends Component {
             if (boxCollider.getFixture() == null) return;
 
             Filter f = boxCollider.getFixture().getFilterData();
-            f.categoryBits = (short) PhysicsLayer.LASER_REFLECTOR;
-            f.maskBits = (short) (PhysicsLayer.OBSTACLE | PhysicsLayer.PLAYER | PhysicsLayer.NPC);
+            f.categoryBits = (short) physicsLayer;
+            f.maskBits = (short) (PhysicsLayer.OBSTACLE
+                                | PhysicsLayer.PLAYER
+                                | PhysicsLayer.NPC
+                                | PhysicsLayer.LASER_REFLECTOR);
             boxCollider.getFixture().setFilterData(f);
             boxCollider.getFixture().getBody().setAwake(true);
             appliedFilter = true;
@@ -249,35 +259,5 @@ public class MoveableBoxComponent extends Component {
         entity.setPosition(body.getPosition(), false);
         boxTexture.setRotation(body.getAngle() * MathUtils.radiansToDegrees);
 
-    }
-
-    @Deprecated
-    private void followPlayerOld() {
-        if (player == null || camera == null) return;
-
-        // player world pos
-        Vector2 playerPos = new Vector2();
-        playerPos.set(player.getCenterPosition()).sub(0.3f, 0.5f); // offset because of weird entity pos stuff
-
-        // mouse in world space
-        mouseTmp.set(Gdx.input.getX(), Gdx.input.getY(), 0f);
-        camera.unproject(mouseTmp);
-
-        // direction player -> mouse
-        dir.set(mouseTmp.x, mouseTmp.y).sub(playerPos);
-        if (dir.isZero(1e-4f)) dir.set(1f, 0f);
-        dir.nor();
-
-        // target = player + dir * CARRY_RANGE
-        tmp.set(playerPos).mulAdd(dir, CARRY_RANGE);
-
-        // face the mouse
-        float angle = MathUtils.atan2(dir.y, dir.x);
-
-        boxPhysics.getBody().setLinearVelocity(0, 0);
-        boxPhysics.getBody().setAngularVelocity(0);
-        //boxPhysics.getBody().setTransform(tmp, angle);
-        entity.setPosition(tmp);
-        boxTexture.setRotation((float) Math.toDegrees(angle));
     }
 }

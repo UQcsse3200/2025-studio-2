@@ -10,11 +10,26 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This component constructs a list of points where a laser beam would collide with objects.
+ * If the "beam" were to collide with a collider that has the {@code PhysicsLayer.LASER_REFLECTOR} layer
+ * than it calculates the reflected angle based on the normal of the surface and incoming angle.
+ * <p>
+ * The laser beam is limited to a max number of rebounds defined by {@code MAX_REBOUNDS} as well as a max distance
+ * defined by {@code MAX_DISTANCE}. If either of these limits are hit than the laser stops prematurely.
+ * <p>
+ * Additionally the laser will attempt to deal a set amount of damage to any entity with the {@code PhysicsLayer.PLAYER}
+ * layer, this can be extended to try to deal damage to other targets with different physics layers too.
+ * <p>
+ * The list of points in world space is then exposed globally by a getter method which can be accessed by the
+ * dedicated laser renderer to render lines between the points.
+ */
 public class LaserEmitterComponent extends Component {
     private static final int MAX_REBOUNDS = 8;
     private static final float MAX_DISTANCE = 50f;
@@ -33,6 +48,8 @@ public class LaserEmitterComponent extends Component {
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 
+    private AnimationRenderComponent animator;
+
     public LaserEmitterComponent() {
 
     }
@@ -48,13 +65,26 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
+        animator = entity.getComponent(AnimationRenderComponent.class);
     }
 
     @Override
     public void update() {
+        /*
+        * within this update a few calculations are done to construct out
+        * list of collisions our laser makes.
+        *
+        * firstly we start by getting the initial position of the laser which
+        * is offset by a set value. then from there we raycast until hitting any collider
+        * within out mask. after it's determined what type of collider layer is hit, if it's
+        * an obstacle than the laser stops. if the collider is a reflector then the angle of
+        * reflection is calculated using the impact angle and the normal vector of the surface
+        * hit. the process is repeated until we run out of rebounds or length.
+        * */
+
         positions.clear();
         // add initial point
-        Vector2 start = entity.getPosition().cpy();
+        Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
         positions.add(start.cpy());
 
         Vector2 dirVec = new Vector2(1f, 0f).rotateDeg(dir).nor();
@@ -103,6 +133,12 @@ public class LaserEmitterComponent extends Component {
         }
     }
 
+    /**
+     * A null safe wrapper for getting the category bits from a hit collider.
+     *
+     * @param hit the hit collider from a raycast
+     * @return the category bits of the collider
+     */
     private static short categoryBitsFromHit(RaycastHit hit) {
         if (hit.fixture != null) {
             return hit.fixture.getFilterData().categoryBits;
@@ -111,6 +147,14 @@ public class LaserEmitterComponent extends Component {
         return blockedOccluder;
     }
 
+    /**
+     * Calculates the reflected angle based off the impact vector {@code d}, and
+     * the normal vector of the hit surface {@code n}.
+     *
+     * @param d impact direction hit vector
+     * @param n surface normal vector
+     * @return reflected vector
+     */
     private static Vector2 reflect(Vector2 d, Vector2 n) {
         float dot = d.dot(n);
         return new Vector2(
@@ -119,6 +163,13 @@ public class LaserEmitterComponent extends Component {
         );
     }
 
+    /**
+     * A helper method that attempts to apply damage to a target based on a hit collider.
+     * <p>
+     * This code is essentially just taken from the {@code TouchAttackComponent}
+     *
+     * @param hit
+     */
     private void damagePlayer(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
         if (target == null) return;
@@ -139,6 +190,12 @@ public class LaserEmitterComponent extends Component {
         }
     }
 
+    /**
+     * Gets the list of collision positions generated from the laser emitter
+     * which can be used to render lines between the points.
+     *
+     * @return the list of collision points
+     */
     public List<Vector2> getPositions() {
         return positions;
     }
