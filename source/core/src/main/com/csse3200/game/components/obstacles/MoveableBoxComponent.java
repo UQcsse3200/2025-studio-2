@@ -166,6 +166,13 @@ public class MoveableBoxComponent extends Component {
         } else {
             body.setAngularVelocity(0f);
             //body.setLinearVelocity(0f, 0f);
+
+            // idk weird rounding stuff, im too tired to think about it rn so this works...
+            // this resets the angle of the box to the nearest 90 deg when dropped
+            float ang = Math.round(body.getAngle() / (MathUtils.PI / 2f)) * (MathUtils.PI / 2f);
+            body.setTransform(body.getPosition(), ang);
+            boxTexture.setRotation(ang * MathUtils.radiansToDegrees);
+
             // restore
             body.setGravityScale(BASE_GRAVITY_SCALE);
             body.setFixedRotation(savedFixedRotation);
@@ -223,8 +230,8 @@ public class MoveableBoxComponent extends Component {
         if (dir.isZero(1e-4f)) dir.set(1f, 0f);
         dir.nor();
 
-        // target = player + dir * CARRY_RANGE
-        Vector2 target = new Vector2(playerPos).mulAdd(dir, CARRY_RANGE);
+        // target = player + dir * CARRY_RANGE // also a small offset :3
+        Vector2 target = new Vector2(playerPos).mulAdd(dir, CARRY_RANGE).sub(0.1f, 0.125f);
 
         // target angle
         float targetAngle = MathUtils.atan2(dir.y, dir.x);
