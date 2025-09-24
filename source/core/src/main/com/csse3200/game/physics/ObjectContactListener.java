@@ -55,6 +55,9 @@ public class ObjectContactListener implements ContactListener {
         setPlayerOnPressurePlate(a, b, true);
         setPlayerOnPressurePlate(b, a, true);
 
+        setPlayerInRangeOfTerminal(a, b, true);
+        setPlayerInRangeOfTerminal(b, a, true);
+
         setPlayerInRangeOfTrap(a, b);
         setPlayerInRangeOfTrap(b, a);
 
@@ -205,6 +208,18 @@ public class ObjectContactListener implements ContactListener {
                     ? other.getComponent(ColliderComponent.class)
                     : null;
 
+        }
+    }
+
+    private void setPlayerInRangeOfTerminal(Entity colliding, Entity terminal, boolean inRange) {
+        PlayerActions player = colliding.getComponent(PlayerActions.class);
+        CodexTerminalComponent terminalComponent = terminal.getComponent(CodexTerminalComponent.class);
+
+        if (player != null && terminalComponent != null) {
+            ColliderComponent collider = inRange
+                    ? colliding.getComponent(ColliderComponent.class)
+                    : null;
+            terminalComponent.setPlayerInRange(collider);
         }
     }
 }

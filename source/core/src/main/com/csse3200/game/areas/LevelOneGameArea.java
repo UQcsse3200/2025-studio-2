@@ -90,6 +90,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
+            "images/terminal_on.png",
+            "images/terminal.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -139,6 +141,14 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
+        spawnTerminals();
+    }
+
+    private void spawnTerminals() {
+        GridPoint2 spawnPos = new GridPoint2(2, 4);
+        Entity terminal = CodexTerminalFactory.createTerminal();
+        terminal.addComponent(new TooltipSystem.TooltipComponent("Interact to add codex entry", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(terminal, spawnPos, true, true);
     }
 
     private void spawnDeathZone() {
