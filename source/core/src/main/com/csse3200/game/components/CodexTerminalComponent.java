@@ -1,6 +1,7 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -43,9 +44,13 @@ public class CodexTerminalComponent extends Component {
         float dx = Math.abs(playerPos.x - terminalPos.x);
         float dy = Math.abs(playerPos.y - terminalPos.y);
 
-        if (dx < 0.6f && dy < 0.6f) {
+        if (dx < 0.5f && dy < 0.5f) {
             // Update the texture of the terminal
-            entity.getComponent(TextureRenderComponent.class).setTexture("images/terminal_on.png");
+            entity.getComponent(TextureRenderComponent.class).setTexture("images/terminal_off.png");
+
+            // Disable light component
+            entity.getComponent(ConeLightComponent.class).dispose();
+
             interactedWith = true;
         }
     }
