@@ -17,10 +17,17 @@ import com.csse3200.game.services.ServiceLocator;
  * Factory class for spawning terminals used to unlock codex entries.
  */
 public class CodexTerminalFactory {
+    /**
+     * Constructor method should always invoke exception - class is practically static.
+     */
     private CodexTerminalFactory() {
         throw new IllegalStateException("Instantiating static util class");
     }
 
+    /**
+     * Creates a new terminal entity with all necessary components attached.
+     * @return The terminal entity created.
+     */
     public static Entity createTerminal() {
         Entity terminal = new Entity();
 
