@@ -204,7 +204,7 @@ public class ObjectContactListener implements ContactListener {
             ColliderComponent collider = inRange
                     ? other.getComponent(ColliderComponent.class)
                     : null;
-
+            plateComp.setPlayerOnPlate(collider);
         }
     }
 }

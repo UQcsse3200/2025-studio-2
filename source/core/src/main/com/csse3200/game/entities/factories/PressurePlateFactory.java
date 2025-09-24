@@ -23,7 +23,7 @@ public class PressurePlateFactory {
         plate.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
-        collider.setSensor(true);
+        collider.setSensor(false);
         plate.addComponent(collider);
         plate.addComponent(new PressurePlateComponent()); // generic plate
         plate.setScale(1f, 1f);
@@ -36,7 +36,7 @@ public class PressurePlateFactory {
         plate.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
-        collider.setSensor(true);
+        collider.setSensor(false);
         plate.addComponent(collider);
         plate.addComponent(new BoxPressurePlateComponent()); // boxes-only logic
         plate.setScale(1f, 1f);
