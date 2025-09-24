@@ -129,11 +129,10 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-        spawnLights();
         //spawnPatrollingDrone();
         //spawnBomberDrone();
         spawnSelfDestructDrone();
-        spawnPatrollingDrone();
+        //spawnPatrollingDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
@@ -381,11 +380,7 @@ public class LevelOneGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
-    private void spawnLights() {
-        // see the LightFactory class for more details on spawning these
-        Entity securityLight = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, "1");
-        spawnEntityAt(securityLight, new GridPoint2(20, 10), true, true);
-    }
+
     private void spawnPatrollingDrone() {
         GridPoint2 spawnTile = new GridPoint2(11, 4);
 
@@ -434,11 +429,11 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnSelfDestructDrone() {
-        GridPoint2 spawnTile = new GridPoint2(15, 15); // adjust position as needed
+        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
         Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
                 player,
                 terrain.tileToWorldPosition(spawnTile)
-        ).addComponent(new ActivationComponent("selfDestruct1"));
+        ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
