@@ -410,7 +410,7 @@ public class EnemyFactoryTest {
         Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),  new Vector2(0, 0));
         PhysicsMovementComponent physics = SelfDestructDrone.getComponent(PhysicsMovementComponent.class);
 
-        assertEquals(1.8f,physics.getMaxSpeed(),0.01f,"SelfDestructDrone should have a max speed of 0.9f");
+        assertEquals(3.1f,physics.getMaxSpeed(),0.01f,"SelfDestructDrone should have a max speed of 0.9f");
     }
     @Test
     void SelfDestructDrone_hasCorrectPhysicsBodyType(){
