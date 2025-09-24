@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.CodexTerminalComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
@@ -50,6 +51,12 @@ public class CodexTerminalFactory {
                 180f
         );
         terminal.addComponent(cone);
+
+        // Add tooltip
+        terminal.addComponent(new TooltipSystem.TooltipComponent(
+                "Interact to add codex entry",
+                TooltipSystem.TooltipStyle.DEFAULT)
+        );
 
         return terminal;
     }

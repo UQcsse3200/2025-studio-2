@@ -147,7 +147,6 @@ public class LevelOneGameArea extends GameArea {
     private void spawnTerminals() {
         GridPoint2 spawnPos = new GridPoint2(2, 4);
         Entity terminal = CodexTerminalFactory.createTerminal();
-        terminal.addComponent(new TooltipSystem.TooltipComponent("Interact to add codex entry", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(terminal, spawnPos, true, true);
     }
 
