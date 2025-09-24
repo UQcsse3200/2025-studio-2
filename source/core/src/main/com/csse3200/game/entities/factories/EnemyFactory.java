@@ -234,65 +234,56 @@ public class EnemyFactory {
 
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
-        Entity drone= createBaseEnemy();
+        Entity drone = createBaseEnemy();
         drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.8f);
 
-        //Explicitly ensure DynamicBody only if not already set by createBaseEnemy
+        // Explicitly ensure DynamicBody only if not already set by createBaseEnemy
         PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
-        if (physics.getBody()!= null && physics.getBody().getType()!= BodyDef.BodyType.DynamicBody) {
-            physics.setBodyType(BodyDef.BodyType.DynamicBody);
-        }
-        //add spawn if not provide
-        if(spawnPos!= null)drone.addComponent(new SpawnPositionComponent(spawnPos));
+        physics.setBodyType(BodyDef.BodyType.DynamicBody);
 
-        AnimationRenderComponent animator=
+        if (spawnPos!= null) drone.addComponent(new SpawnPositionComponent(spawnPos));
+
+        AnimationRenderComponent animator =
                 new AnimationRenderComponent(
                         ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
+
         animator.addAnimation("angry_float",0.1f,Animation.PlayMode.NORMAL);
         animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
-
         animator.addAnimation("bomb_effect",0.08f,Animation.PlayMode.NORMAL);
+        animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
-        //AITasks and selfDestruct behaviour is only added if valid target exists
-        if (target!=null){
+
+        // AITasks and selfDestruct behaviour is only added if valid target exists
+        if (target != null) {
             drone.addComponent(new SelfDestructComponent(target));
 
-            AITaskComponent aiComponent=drone.getComponent(AITaskComponent.class);
+            AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
             ChaseTask chaseTask= new ChaseTask(target,10f,2f);
-            aiComponent.addTask(chaseTask);
-            RayHandler rayHandle= ServiceLocator.getLightingService().getEngine().getRayHandler();
-            ConeLightComponent lightComponent =new ConeLightComponent(
-                    rayHandle,
-                    100,
-                    new Color(1f,0.3f,0.3f,1f),
-                    6f,-90f,60f
-            );
-            lightComponent.setFollowEntity(true);
-            drone.addComponent(lightComponent);
+            CooldownTask cooldownTask = new CooldownTask(3f);
 
-            ConeDetectorComponent detectorComponent= new ConeDetectorComponent(
-                    target,
-                    PhysicsLayer.OBSTACLE,
-                    "self-destruct-drone"
-            );
-            drone.addComponent(detectorComponent);
-            drone.getEvents().addListener("targetDetected",(Entity detectedTarget)->{
-                chaseTask.activate();
+            drone.getEvents().addListener("enemyActivated", () -> {
+                chaseTask.activate(); // Priority 10
+                cooldownTask.activate(); // Priority 5, so chase > cooldown
             });
 
+            aiComponent
+                    .addTask(chaseTask)
+                    .addTask(cooldownTask);
+
+            // Switch to float anim after teleport
+            // Trigger with listener since no default task
+            drone.getEvents().addListener("teleportFinish", () -> {
+                drone.getEvents().trigger("wanderStart");
+            });
         }
 
-//
         animator.scaleEntity();
         animator.startAnimation("float");
         return drone;
-
-
-
     }
 
     /**

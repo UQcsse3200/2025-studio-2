@@ -14,40 +14,38 @@ import com.csse3200.game.services.ServiceLocator;
  */
 public class SelfDestructComponent extends Component {
     private final Entity target;
-    private boolean exploded =false;
+    private boolean exploded = false;
 
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
-    private static final float MAX_DISTANCE=11f;
-    private static final float TELEPORT_OFFSET = 1.5f;
+//    private static final float MAX_DISTANCE=11f;
+//    private static final float TELEPORT_OFFSET = 1.5f;
+
     public SelfDestructComponent(Entity target){
-        this.target=target;
+        this.target = target;
     }
 
     @Override
     public void update(){
-        if(exploded) return;
-        if(target==null) return;
+        if (exploded || target == null) return;
 
         float distance = entity.getCenterPosition().dst(target.getCenterPosition());
-        if(distance > MAX_DISTANCE){
-            teleportNearPlayer();
-            //return;
-        }
-        if( distance<1.1f){
+
+        if (distance < 1.0f){
             explode();
         }
     }
-    private void teleportNearPlayer(){
-        Vector2 position=target.getCenterPosition();
 
-        float randomAngle = (float)(Math.random()*Math.PI*2);
-        Vector2 offset = new Vector2(
-                (float) Math.cos(randomAngle)*TELEPORT_OFFSET,
-                (float) Math.sin(randomAngle)*TELEPORT_OFFSET
-        );
-        Vector2 newPos = position.cpy().add(offset);
-        entity.setPosition(newPos);
-    }
+//    private void teleportNearPlayer(){
+//        Vector2 position=target.getCenterPosition();
+//
+//        float randomAngle = (float)(Math.random()*Math.PI*2);
+//        Vector2 offset = new Vector2(
+//                (float) Math.cos(randomAngle)*TELEPORT_OFFSET,
+//                (float) Math.sin(randomAngle)*TELEPORT_OFFSET
+//        );
+//        Vector2 newPos = position.cpy().add(offset);
+//        entity.setPosition(newPos);
+//    }
 
     private void explode(){
         if(exploded) return;
@@ -63,7 +61,7 @@ public class SelfDestructComponent extends Component {
         Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND,Sound.class);
         if (explosionSound!=null){
             long soundId = explosionSound.play(1.0f); // full volume
-            fadeOutSound(explosionSound,soundId,0.5f); // fade out over 0.5 secondes
+            fadeOutSound(explosionSound,soundId,0.5f); // fade out over 0.5 seconds
         }
 
         Timer.schedule(new Timer.Task(){

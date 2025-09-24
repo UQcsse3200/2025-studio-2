@@ -58,6 +58,7 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     public void deactivate() {
         if (!active) return;
         active = false;
+        owner.getEntity().getEvents().trigger("teleportFinish");
     }
 
     /**
