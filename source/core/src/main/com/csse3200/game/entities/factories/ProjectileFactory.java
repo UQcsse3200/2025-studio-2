@@ -111,6 +111,7 @@ public class ProjectileFactory {
         laser.setScale(0.5f, 0.1f);
         PhysicsUtils.setScaledCollider(laser, 0.5f, 0.1f);
 
+
         ServiceLocator.getEntityService().register(laser);
 
         return laser;
