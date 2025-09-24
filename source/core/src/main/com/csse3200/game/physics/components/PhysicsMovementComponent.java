@@ -69,6 +69,7 @@ public class PhysicsMovementComponent extends Component implements MovementContr
     this.targetPosition = target;
   }
   // speed of drone
+  public float getMaxSpeed(){return maxSpeed.x;}
 public void setMaxSpeed(float speed){
     this.maxSpeed.set(speed,speed);
 }

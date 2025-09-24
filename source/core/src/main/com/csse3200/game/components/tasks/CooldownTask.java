@@ -17,6 +17,8 @@ import com.csse3200.game.components.enemy.SpawnPositionComponent;
  * beelining back manually.
  */
 public class CooldownTask extends DefaultTask implements PriorityTask {
+    // control the teleport animation type
+    private final String teleportEvent;
     private final float waitTime;
     private boolean active = false;
     private Vector2 resetPos;
@@ -27,13 +29,18 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
     private Task currentTask;
 
     /**
-     * Creates a cooldown task with the given wait duration.
+     * Creates a cooldown task with the given wait duration and teleport type.(teleportStart by default)
      *
      * @param waitTime duration (in seconds) to wait before teleporting
      *                 the entity back to its original position
      */
     public CooldownTask(float waitTime) {
+        this(waitTime, "teleportStart");
+    }
+
+    public CooldownTask(float waitTime, String teleportEvent) {
         this.waitTime = waitTime;
+        this.teleportEvent = teleportEvent;
     }
 
     /**
@@ -95,7 +102,7 @@ public class CooldownTask extends DefaultTask implements PriorityTask {
 
         if (currentTask.getStatus() != Status.ACTIVE) {
             if (currentTask == waitTask) {
-                owner.getEntity().getEvents().trigger("teleportStart");
+                owner.getEntity().getEvents().trigger(teleportEvent);
                 swapTask(teleportWait);
             } else if (currentTask == teleportWait) {
                 owner.getEntity().setPosition(resetPos);

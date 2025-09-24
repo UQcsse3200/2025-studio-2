@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 /**
  * A render component for dynamically tiling a platform texture based on the entity's size.
- * It handles edge tiles, repeating middle tiles with variation, and stretching for a perfect fit.
+ * It handles edge tiles, repeating middle tiles, and stretching for a perfect fit.
  */
 public class TiledPlatformComponent extends RenderComponent {
   private final TextureRegion leftEdge;
@@ -15,10 +15,9 @@ public class TiledPlatformComponent extends RenderComponent {
   private final TextureRegion rightEdge;
   private final float tileAspectRatio;
 
-  // Pre-calculated regions for the merged tile to avoid object creation in the draw loop.
+  // Pre-calculated regions for the merged tile.
   private final TextureRegion leftEdgeHalf;
   private final TextureRegion rightEdgeHalf;
-
 
   /**
    * Creates a new TiledPlatformComponent.

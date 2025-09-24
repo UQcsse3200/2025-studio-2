@@ -41,58 +41,44 @@ public class CaveGameArea extends GameArea {
     "images/cave_2.png",
     "images/platform.png",
     "images/gate.png",
-    "images/box_boy_leaf.png",
-    "images/box_white.png",
-    "images/box_blue.png",
-    "images/tree.png",
-    "images/ghost_king.png",
-    "images/ghost_1.png",
-    "images/grass_1.png",
-    "images/grass_2.png",
-    "images/grass_3.png",
-    "images/key.png",
-    "images/door_open.png",
-    "images/door_closed.png",
-    "images/key.png",
-    "images/hex_grass_1.png",
-    "images/hex_grass_2.png",
-    "images/hex_grass_3.png",
-    "images/iso_grass_1.png",
-    "images/iso_grass_2.png",
-    "images/iso_grass_3.png",
-    "images/drone.png",
-    "images/bomb.png",
-    "images/button.png",
-    "images/button_pushed.png",
-    "images/blue_button.png",
-    "images/blue_button_pushed.png",
-    "images/red_button.png",
-    "images/red_button_pushed.png",
-    "images/box_blue.png",
-    "images/box_orange.png",
-    "images/box_red.png",
-    "images/box_white.png",
-    "images/spikes_sprite.png",
-    "images/blue_button.png",
-    "images/blue_button_pushed.png",
-    "images/red_button.png",
-    "images/red_button_pushed.png",
-    "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png",
-    "images/box_boy_leaf.png",
-    "images/tree.png",
-    "images/ghost_king.png",
-    "images/ghost_1.png",
-    "images/grass_1.png",
-    "images/grass_2.png",
-    "images/grass_3.png",
-    "images/hex_grass_1.png",
-    "images/hex_grass_2.png",
-    "images/hex_grass_3.png",
-    "images/iso_grass_1.png",
-    "images/iso_grass_2.png",
-    "images/iso_grass_3.png",
-    "images/minimap_player_marker.png"
+          "images/box_boy_leaf.png",
+          "images/box_white.png",
+          "images/box_blue.png",
+          "images/tree.png",
+          "images/ghost_king.png",
+          "images/ghost_1.png",
+          "images/grass_1.png",
+          "images/grass_2.png",
+          "images/grass_3.png",
+          "images/key.png",
+          "images/door_open.png",
+          "images/door_closed.png",
+          "images/key.png",
+          "images/hex_grass_1.png",
+          "images/hex_grass_2.png",
+          "images/hex_grass_3.png",
+          "images/iso_grass_1.png",
+          "images/iso_grass_2.png",
+          "images/iso_grass_3.png",
+          "images/drone.png",
+          "images/bomb.png",
+          "images/button.png",
+          "images/button_pushed.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/box_blue.png",
+          "images/box_orange.png",
+          "images/box_red.png",
+          "images/box_white.png",
+          "images/spikes_sprite.png",
+          "images/blue_button.png",
+          "images/blue_button_pushed.png",
+          "images/red_button.png",
+          "images/red_button_pushed.png",
+          "images/minimap_forest_area.png",
+          "images/minimap_player_marker.png"
   };
   private static final String[] forestTextureAtlases = {
     "images/terrain_iso_grass.atlas",
@@ -314,7 +300,7 @@ public class CaveGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "forest");
+    Entity gate = ObstacleFactory.createDoor("door", this);
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);
@@ -322,7 +308,7 @@ public class CaveGameArea extends GameArea {
 
   private void spawnDeathZone() {
     GridPoint2 spawnPos =  new GridPoint2(18,0);
-    Entity deathZone = DeathZoneFactory.createDeathZone(spawnPos, new Vector2(5,10));
+    Entity deathZone = DeathZoneFactory.createDeathZone();
     spawnEntityAt(deathZone, spawnPos, true,  true);
   }
 

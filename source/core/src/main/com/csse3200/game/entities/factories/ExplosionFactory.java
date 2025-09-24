@@ -21,9 +21,13 @@ public class ExplosionFactory {
      */
     public static Entity createExplosion(Vector2 position, float radius) {
         // Get the drone picture album because the explosion animation is inside
-        AnimationRenderComponent animator = new AnimationRenderComponent(
-                ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+        TextureAtlas droneAtlas = ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class);
 
+        if (droneAtlas == null) {
+            throw new RuntimeException("drone.atlas not loaded");
+        }
+
+        AnimationRenderComponent animator = new AnimationRenderComponent(droneAtlas);
         // Add bomb_effect animation, set to Animation.PlayMode.NORMAL to make sure it plays only once
         animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
 

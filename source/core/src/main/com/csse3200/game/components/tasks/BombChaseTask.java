@@ -93,7 +93,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         }
         movementTask.start();
 
-        owner.getEntity().getEvents().trigger("chaseStart");
+        owner.getEntity().getEvents().trigger("chaseBomber");
     }
 
     /**

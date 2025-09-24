@@ -102,7 +102,8 @@ public class ForestGameArea extends GameArea {
           "images/dash_powerup.png",
           "images/glide_powerup.png",
           "images/camera-body.png",
-          "images/camera-lens.png"
+          "images/camera-lens.png",
+          "images/PLAYER.png"
   };
   private static final String[] forestTextureAtlases = {
           "images/terrain_iso_grass.atlas",
@@ -110,10 +111,12 @@ public class ForestGameArea extends GameArea {
           "images/ghostKing.atlas",
           "images/drone.atlas",
           "images/security-camera.atlas",
-          "images/PLAYER.atlas"
+          "images/PLAYER.atlas",
+          // Bat sprites from https://todemann.itch.io/bat
+          "images/flying_bat.atlas"
   };
   private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-          "/chimesound.mp3"};
+          "/chimesound.mp3", "sounds/hurt.mp3"};
   private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
   private static final String[] forestMusic = {backgroundMusic};
 
@@ -159,6 +162,7 @@ public class ForestGameArea extends GameArea {
 
     spawnBoxes();  // uncomment this method when you want to play with boxes
     spawnButtons();
+    spawnBoxOnlyPlate();
 
     door = spawnDoor();
     spawnWalls();
@@ -168,9 +172,9 @@ public class ForestGameArea extends GameArea {
     spawnTraps();
     spawnGate();
 
-    spawnUpgrade("dash", 15, 19);
-    spawnUpgrade("glider", 15, 17);
-    spawnUpgrade("grappler", 15, 15);
+    spawnUpgrade("dash", 9, 6);
+    spawnUpgrade("glider", 7, 6);
+    spawnUpgrade("jetpack", 5, 6);
   }
 
   private void displayUI() {
@@ -270,17 +274,17 @@ public class ForestGameArea extends GameArea {
     spawnEntityAt(patrolDrone, spawnTile, true, true);
   }
 
-    private void spawnBomberDrone() {
-        // First bomber with cone light detection - patrols and uses its downward cone light
-        GridPoint2 spawnTile = new GridPoint2(3, 15);
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(11, 13))
-        };
+  private void spawnBomberDrone() {
+      // First bomber with cone light detection - patrols and uses its downward cone light
+      GridPoint2 spawnTile = new GridPoint2(3, 15);
+      Vector2[] patrolRoute = {
+          terrain.tileToWorldPosition(spawnTile),
+          terrain.tileToWorldPosition(new GridPoint2(11, 13))
+      };
 
-        // Create bomber with unique ID "bomber1"
-        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
-        spawnEntityAt(bomberDrone, spawnTile, true, true);
+      // Create bomber with unique ID "bomber1"
+      Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+      spawnEntityAt(bomberDrone, spawnTile, true, true);
 
         /*GridPoint2 spawnTile2 = new GridPoint2(30, 25);
         Vector2[] patrolRoute2 = {
@@ -296,14 +300,14 @@ public class ForestGameArea extends GameArea {
     }
 
     // Optional: Method for spawning a stationary bomber at a specific position
-    private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(
-                player,
-                terrain.tileToWorldPosition(position),
-                bomberId
-        );
-        spawnEntityAt(bomberDrone, position, true, true);
-    }
+  private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
+      Entity bomberDrone = EnemyFactory.createBomberDrone(
+           player,
+           terrain.tileToWorldPosition(position),
+           bomberId
+      );
+      spawnEntityAt(bomberDrone, position, true, true);
+  }
 
   private void spawnGhostKing() {
     GridPoint2 minPos = new GridPoint2(0, 0);
@@ -390,22 +394,26 @@ public class ForestGameArea extends GameArea {
     moveableBox.addComponent(new TooltipSystem.TooltipComponent("Moveable Box\nYou can push this box around!", TooltipSystem.TooltipStyle.SUCCESS));
     spawnEntityAt(moveableBox, new GridPoint2(17,17), true,  true);
 
-    // Autonomous box
-    float startX = 3f;
-    float endX = 10f;
-    float y = 17f;
-    float speed = 2f;
 
-    Entity autonomousBox = BoxFactory.createAutonomousBox(startX, endX, speed);
-    spawnEntityAt(autonomousBox, new GridPoint2((int)startX, (int)y), true, true);
   }
 
-  private void spawnTraps() {
-    GridPoint2 spawnPos =  new GridPoint2(7,15);
-    Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
-    Entity spikes = TrapFactory.createSpikes(spawnPos, safeSpotPos);
-    spawnEntityAt(spikes, spawnPos, true,  true);
-  }
+    private void spawnTraps() {
+        GridPoint2 spawnPos =  new GridPoint2(7,15);
+        Vector2 safeSpotPos = new Vector2(((spawnPos.x)/2)-2, ((spawnPos.y)/2)+2); // Need to be manually tweaked
+        Entity spikes = TrapFactory.createSpikes(safeSpotPos, 0f);
+        spawnEntityAt(spikes, spawnPos, true,  true);
+    }
+
+    private void spawnBoxOnlyPlate() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+        spawnEntityAt(plate, new GridPoint2(16, 17), true, true);
+
+        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed) {
+                showTooltip(plate, "Door unlocked", 2f);
+            }
+        });
+    }
 
   private void spawnElevatorPlatform() {
       float ts = terrain.getTileSize();
@@ -470,17 +478,37 @@ public class ForestGameArea extends GameArea {
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-
     if (upgradeID == "glider") {
       Entity upgrade = CollectableFactory.createGlideUpgrade();
       upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
-    if (upgradeID == "grappler") {
-      Entity upgrade = CollectableFactory.createGrappleUpgrade();
+    if (upgradeID == "jetpack") {
+      Entity upgrade = CollectableFactory.createJetpackUpgrade();
       spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
     }
   }
+    private void spawnBoxPressurePlate() {
+        // create a plate that ONLY boxes can press
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+
+        // put it near the existing moveable box (spawned at 17,17 in this area)
+        GridPoint2 platePos = new GridPoint2(17, 16); // adjust if you want
+        spawnEntityAt(plate, platePos, true, true);
+    }
+
+    private void showTooltip(Entity entity, String msg, float seconds) {
+        TooltipSystem.TooltipComponent tip =
+                new TooltipSystem.TooltipComponent(msg, TooltipSystem.TooltipStyle.SUCCESS);
+        entity.addComponent(tip);
+        Timer.schedule(new Timer.Task() {
+            @Override public void run() {
+                TooltipSystem.TooltipComponent existing = entity.getComponent(TooltipSystem.TooltipComponent.class);
+                if (existing != null) entity.removeComponent(existing);
+            }
+        }, seconds);
+    }
+
 
   private void spawnPressurePlates() {
     Entity plate = PressurePlateFactory.createPressurePlate();
@@ -493,6 +521,7 @@ public class ForestGameArea extends GameArea {
       if (pressed) {
         if (doorCloseTask != null) { doorCloseTask.cancel(); doorCloseTask = null; }
         door.getEvents().trigger("openDoor");
+        showTooltip(plate, "Door unlocked", 2f);
       } else {
         doorCloseTask = new Timer.Task() {
           @Override public void run() { door.getEvents().trigger("closeDoor"); doorCloseTask = null; }
@@ -506,7 +535,7 @@ public class ForestGameArea extends GameArea {
   }
 
   private Entity spawnDoor() {
-    Entity d = ObstacleFactory.createDoor("door", this, "sprint1");
+    Entity d = ObstacleFactory.createDoor("door", this);
     d.addComponent(new TooltipSystem.TooltipComponent(
             "Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
     d.addComponent(new com.csse3200.game.components.DoorControlComponent()); // <-- add this
@@ -527,7 +556,7 @@ public class ForestGameArea extends GameArea {
     Creates gate to test
     */
     GridPoint2 gatePos = new GridPoint2((int) 28, 5);
-    Entity gate = ObstacleFactory.createDoor("door", this, "cave");
+    Entity gate = ObstacleFactory.createDoor("door", this);
     gate.setScale(1, 2);
     gate.getComponent(DoorComponent.class).openDoor();
     spawnEntityAt(gate, gatePos, true, true);

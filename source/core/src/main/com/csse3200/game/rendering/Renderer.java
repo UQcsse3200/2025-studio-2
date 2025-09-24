@@ -3,16 +3,13 @@ package com.csse3200.game.rendering;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.csse3200.game.lighting.LightingEngine;
-import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,18 +93,36 @@ public class Renderer implements Disposable {
     return camera;
   }
 
-  /** Render everything to the render service. */
-  public void render() {
-    Matrix4 projMatrix = camera.getProjectionMatrix();
-    batch.setProjectionMatrix(projMatrix);
-    Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
+  private void renderBatch(int maxValue) {
+    batch.setProjectionMatrix(camera.getProjectionMatrix());
+    Gdx.gl.glClearColor(44f/255f, 44f/255f, 47f/255f, 1);
     Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    batch.begin();
-    renderService.render(batch);
-    batch.end();
-    debugRenderer.render(projMatrix);
+    VfxManager vfxManager = ServiceLocator.getVfxService();
+    if (vfxManager != null) {
+      vfxManager.cleanUpBuffers();
+      vfxManager.beginInputCapture();
+    }
 
+    batch.begin();
+    if (maxValue == Integer.MAX_VALUE) {
+      renderService.render(batch);
+    } else {
+      renderService.renderLayerRange(batch, Integer.MIN_VALUE, maxValue);
+    }
+    batch.end();
+
+    if (vfxManager != null) {
+      vfxManager.endInputCapture();
+      vfxManager.applyEffects();
+      vfxManager.renderToScreen();
+    }
+  }
+
+  /** Render everything to the render service. */
+  public void render() {
+    renderBatch(Integer.MAX_VALUE);
+    debugRenderer.render(camera.getProjectionMatrix());
     stage.act();
     stage.draw();
   }
@@ -117,28 +132,18 @@ public class Renderer implements Disposable {
    * @param lightingEngine The lighting engine used for rendering
    * */
   public void render(LightingEngine lightingEngine) {
-    Matrix4 projMatrix = camera.getProjectionMatrix();
+    renderBatch(AFTER_LIGHTS_LAYER - 1);
 
-    batch.setProjectionMatrix(projMatrix);
-    Gdx.gl.glClearColor(248f/255f, 249/255f, 178/255f, 1);
-    Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-    batch.begin();
-    renderService.renderLayerRange(batch, Integer.MIN_VALUE, AFTER_LIGHTS_LAYER);
-    batch.end();
-
-    //renderLightingHelper(lightingEngine);
     if (lightingEngine != null) {
       lightingEngine.render();
     }
 
     // draw after lights layer
     batch.begin();
-    renderService.renderLayer(batch, AFTER_LIGHTS_LAYER);
+    renderService.renderLayerRange(batch, AFTER_LIGHTS_LAYER, Integer.MAX_VALUE);
     batch.end();
 
-    debugRenderer.render(projMatrix);
-
+    debugRenderer.render(camera.getProjectionMatrix());
     stage.act();
     stage.draw();
   }

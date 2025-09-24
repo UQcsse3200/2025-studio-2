@@ -54,6 +54,20 @@ public class AnimationRenderComponent extends RenderComponent {
   }
 
   /**
+   * Copy constructor
+   * @param other - other AnimationRenderComponent
+   */
+  public AnimationRenderComponent(AnimationRenderComponent other) {
+    this.timeSource = other.timeSource;
+    this.atlas = other.atlas;
+    this.animations = other.animations;
+    this.currentAnimationName = other.currentAnimationName;
+    this.animationPlayTime = other.animationPlayTime;
+    this.isPaused = other.isPaused;
+    this.currentAnimation = other.currentAnimation;
+  }
+
+  /**
    * Register an animation from the texture atlas. Will play once when called with startAnimation()
    * @param name Name of the animation. Must match the name of this animation inside the texture
    *             atlas.
@@ -148,6 +162,16 @@ public class AnimationRenderComponent extends RenderComponent {
     currentAnimationName = null;
     animationPlayTime = 0f;
     return true;
+  }
+
+  /**
+   * Flips the entity horizontally by adjusting its X scale.
+   *
+   * @param flip whether to flip the entity horizontally
+   */
+  public void setFlipX(boolean flip) {
+      Vector2 scale = entity.getScale();
+      entity.setScale(flip ? -Math.abs(scale.x) : Math.abs(scale.x), scale.y);
   }
 
   /**

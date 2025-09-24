@@ -82,20 +82,10 @@ public class TerrainFactory {
    */
   public TerrainComponent createTerrain(TerrainType terrainType, GridPoint2 mapSize) {
     ResourceService resourceService = ServiceLocator.getResourceService();
-    TextureRegion variant1, variant2, variant3, baseTile;
+    TextureRegion variant1, variant2, variant3, base;
     switch (terrainType) {
-      case DEFAULT_ORTHO:
-        baseTile =
-                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
-        variant1 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        variant2 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        variant3 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        return createDefaultTerrain(0.5f, baseTile, variant1, variant2, variant3, mapSize);
       case SPRINT_ONE_ORTHO:
-        baseTile =
+        base =
                 new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
         variant1 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
@@ -103,7 +93,7 @@ public class TerrainFactory {
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
         variant3 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        return createSprintOneTerrain(0.5f, baseTile, variant1, variant2, variant3);
+        return createSprintOneTerrain(0.5f, base, variant1, variant2, variant3);
       case CAVE_ORTHO:
         TextureRegion orthoCave =
                 new TextureRegion(resourceService.getAsset("images/cave_1.png", Texture.class));
@@ -139,7 +129,7 @@ public class TerrainFactory {
     }
   }
 
-  public TerrainComponent createForestDemoTerrain(
+  private TerrainComponent createForestDemoTerrain(
       float tileWorldSize, TextureRegion grass, TextureRegion grassTuft, TextureRegion rocks) {
     GridPoint2 tilePixelSize = new GridPoint2(grass.getRegionWidth(), grass.getRegionHeight());
     TiledMap tiledMap = createForestDemoTiles(tilePixelSize, grass, grassTuft, rocks);
@@ -164,18 +154,8 @@ public class TerrainFactory {
     TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
     return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
   }
-  private TerrainComponent createDefaultTerrain(
-          float tileWorldSize,
-          TextureRegion baseTile,
-          TextureRegion variant1,
-          TextureRegion variant2,
-          TextureRegion variant3,
-          GridPoint2 mapSize) {
-    GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-    TiledMap tiledMap = createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
-    return new TerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
-  }
+
+
   private TiledMapRenderer createRenderer(TiledMap tiledMap, float tileScale) {
     switch (orientation) {
       case ORTHOGONAL:
@@ -187,6 +167,88 @@ public class TerrainFactory {
       default:
         return null;
     }
+  }
+
+  /**
+   * Used to generate invisible TerrainComponent within game areas
+   * @param tileWorldSize
+   * @param tiledMap
+   * @param tilePixelSize
+   * @return
+   */
+  public TerrainComponent createInvisibleFromTileMap(float tileWorldSize, TiledMap tiledMap, GridPoint2 tilePixelSize) {
+    TiledMapRenderer renderer = createRenderer(tiledMap, tileWorldSize / tilePixelSize.x);
+    return new InvisibleTerrainComponent(camera, tiledMap, renderer, orientation, tileWorldSize);
+  }
+
+  /**
+   * Create invisible terrain of the given type, using the orientation of the factory.
+   * @param terrainType Terrain to create
+   * @return Invisible terrain component which provides grid without rendering
+   */
+  public TerrainComponent createInvisibleTerrain(TerrainType terrainType) {
+    return createInvisibleTerrain(terrainType, MAP_SIZE);
+  }
+
+  /**
+   * Create invisible terrain with custom map size
+   * @param terrainType
+   * @param mapSize
+   * @return
+   */
+  public TerrainComponent createInvisibleTerrain(TerrainType terrainType, GridPoint2 mapSize) {
+    ResourceService resourceService = ServiceLocator.getResourceService();
+    // Use empty/transparent texture for invisible terrain
+    TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
+
+    switch (terrainType) {
+      case SPRINT_ONE_ORTHO:
+      case CAVE_ORTHO:
+      case FOREST_DEMO:
+      case FOREST_DEMO_ISO:
+      case FOREST_DEMO_HEX:
+        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
+        TiledMap tiledMap = createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
+        return createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
+      default:
+        return null;
+    }
+  }
+
+  /**
+   * Used to create/set ordering of background tiles with variants
+   * @param tileSize
+   * @param base
+   * @param variant1
+   * @param variant2
+   * @param variant3
+   * @param mapSize
+   * @return
+   */
+  public TiledMap createDefaultTiles(
+      GridPoint2 tileSize,
+      TextureRegion base,
+      TextureRegion variant1,
+      TextureRegion variant2,
+      TextureRegion variant3,
+      GridPoint2 mapSize) {
+    TiledMap tiledMap = new TiledMap();
+    TerrainTile baseTile = new TerrainTile(base);
+    TerrainTile variant1Tile = new TerrainTile(variant1);
+    TerrainTile variant2Tile = new TerrainTile(variant2);
+    TerrainTile variant3Tile = new TerrainTile(variant3);
+    TiledMapTileLayer layer = new TiledMapTileLayer(mapSize.x, mapSize.y, tileSize.x, tileSize.y);
+
+    // Create base grass
+    fillTiles(layer, mapSize, baseTile);
+
+    // Add some grass and rocks
+    fillTilesAtRandom(layer, mapSize, variant1Tile, VARIANT_TILE_COUNT);
+    fillTilesAtRandom(layer, mapSize, variant2Tile, VARIANT_TILE_COUNT);
+    fillTilesAtRandom(layer, mapSize, variant3Tile, VARIANT_TILE_COUNT);
+
+    tiledMap.getLayers().add(layer);
+    return tiledMap;
   }
 
   private TiledMap createForestDemoTiles(
@@ -250,42 +312,6 @@ public class TerrainFactory {
     return tiledMap;
   }
 
-  /**
-   * Used to create/set ordering of background tiles with variants
-   * @param tileSize
-   * @param base
-   * @param variant1
-   * @param variant2
-   * @param variant3
-   * @param mapSize
-   * @return
-   */
-  public TiledMap createDefaultTiles(
-          GridPoint2 tileSize,
-          TextureRegion base,
-          TextureRegion variant1,
-          TextureRegion variant2,
-          TextureRegion variant3,
-          GridPoint2 mapSize) {
-    TiledMap tiledMap = new TiledMap();
-    TerrainTile baseTile = new TerrainTile(base);
-    TerrainTile variant1Tile = new TerrainTile(variant1);
-    TerrainTile variant2Tile = new TerrainTile(variant2);
-    TerrainTile variant3Tile = new TerrainTile(variant3);
-    TiledMapTileLayer layer = new TiledMapTileLayer(mapSize.x, mapSize.y, tileSize.x, tileSize.y);
-
-    // Create base grass
-    fillTiles(layer, mapSize, baseTile);
-
-    // Add some grass and rocks
-    fillTilesAtRandom(layer, mapSize, variant1Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, mapSize, variant2Tile, VARIANT_TILE_COUNT);
-    fillTilesAtRandom(layer, mapSize, variant3Tile, VARIANT_TILE_COUNT);
-
-    tiledMap.getLayers().add(layer);
-    return tiledMap;
-  }
-
   private static void fillTilesAtRandom(
       TiledMapTileLayer layer, GridPoint2 mapSize, TerrainTile tile, int amount) {
     GridPoint2 min = new GridPoint2(0, 0);
@@ -313,15 +339,11 @@ public class TerrainFactory {
    * the same oerientation. But for demonstration purposes, the base code has the same level in 3
    * different orientations.
    */
-  /**
-   * Enum for different game areas to specify specific requirements
-   */
   public enum TerrainType {
     FOREST_DEMO,
     FOREST_DEMO_ISO,
     FOREST_DEMO_HEX,
     CAVE_ORTHO,
-    SPRINT_ONE_ORTHO,
-    DEFAULT_ORTHO
+    SPRINT_ONE_ORTHO
   }
 }

@@ -1,6 +1,7 @@
 package com.csse3200.game.components.pausemenu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,8 +10,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.inventory.InventoryNavigationComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
@@ -20,32 +24,51 @@ import com.csse3200.game.ui.inventoryscreen.SettingsTab;
 import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 
 public class PauseMenuDisplay extends UIComponent {
-    private MainGameScreen screen;
+    private final MainGameScreen screen;
     private Table rootTable;
     private final GdxGame game;
     private Texture blackTexture;
-    private Table tabBar;
     private Table tabContent;
     private Table bottomButtons;
-    private Entity player;
     private final InventoryTab inventoryTab;
-    private final UpgradesTab upgradesTab = new UpgradesTab();
+    private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
-    private final ObjectivesTab objectivesTab = new ObjectivesTab();
+    private final ObjectivesTab objectivesTab;
+    private InventoryNavigationComponent navigationComponent;
+    private PauseMenuNavigationComponent pauseMenuNavigationComponent;
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
     private Tab currentTab = Tab.INVENTORY;
 
-    public PauseMenuDisplay(MainGameScreen screen, Entity player, GdxGame game) {
+    public PauseMenuDisplay(MainGameScreen screen, GdxGame game) {
         this.screen = screen;
-        this.player = player;
-        this.inventoryTab = new InventoryTab(player);
+
+        this.inventoryTab = new InventoryTab(screen);
+        this.upgradesTab = new UpgradesTab(screen);
+        this.objectivesTab = new ObjectivesTab(screen);
         this.game = game;
     }
 
     @Override
     public void create() {
         super.create();
+
+        // Initialize the inventory navigation component
+        navigationComponent = new InventoryNavigationComponent(inventoryTab);
+        entity.addComponent(navigationComponent);
+        navigationComponent.create();
+        navigationComponent.disableNavigation();
+        // Wire up the navigation component with the inventory tab
+        inventoryTab.setNavigationComponent(navigationComponent);
+
+        // Initialize the pause menu navigation component
+        pauseMenuNavigationComponent = new PauseMenuNavigationComponent(this);
+        entity.addComponent(pauseMenuNavigationComponent);
+        pauseMenuNavigationComponent.create();
+        pauseMenuNavigationComponent.setEnabled(false);
+
+        // Add event listeners for navigation
+        entity.getEvents().addListener("refreshInventoryGrid", this::refreshInventoryGrid);
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -64,16 +87,13 @@ public class PauseMenuDisplay extends UIComponent {
         tabContent.center();
         stack.add(tabContent);
 
-        tabBar = new Table();
+        Table tabBar = new Table();
         tabBar.top().padTop(10);
-        addTabButton("Inventory", Tab.INVENTORY);
-        addTabButton("Upgrades", Tab.UPGRADES);
-        addTabButton("Objectives", Tab.OBJECTIVES);
-        addTabButton("Settings", Tab.SETTINGS);
         stack.add(tabBar);
 
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
+        addBottomButton("Settings", Tab.SETTINGS);
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
         addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
@@ -83,22 +103,6 @@ public class PauseMenuDisplay extends UIComponent {
         stage.addActor(rootTable);
         updateTabContent();
         setVisible(false);
-    }
-
-    // Tab button helper
-    private void addTabButton(String name, Tab tab) {
-        TextButton button = new TextButton(name, skin);
-        button.pad(25);
-        button.setWidth(150);
-        button.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                setTab(tab);
-                screen.reflectPauseTabClick(tab);
-            }
-        });
-
-        tabBar.add(button).padRight(100);
     }
 
     // Bottom button helper
@@ -113,13 +117,61 @@ public class PauseMenuDisplay extends UIComponent {
         bottomButtons.add(button).padRight(25);
     }
 
+    private void addBottomButton(String name, Tab tab) {
+        TextButton button = new TextButton(name, skin);
+        button.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                setTab(tab);
+                screen.reflectPauseTabClick(tab);
+            }
+        });
+        bottomButtons.add(button).padRight(25);
+    }
+
     public void setTab(Tab tab) {
         this.currentTab = tab;
         updateTabContent();
+
+        if (currentTab == Tab.INVENTORY) {
+            navigationComponent.enableNavigation();
+        } else {
+            navigationComponent.disableNavigation();
+        }
+        pauseMenuNavigationComponent.setEnabled(currentTab != Tab.SETTINGS);
+    }
+
+    public MainGameScreen getScreen() {
+        return this.screen;
+    }
+
+    public Tab getNextTab() {
+        return switch (currentTab) {
+            case INVENTORY -> Tab.UPGRADES;
+            case UPGRADES -> Tab.OBJECTIVES;
+            case OBJECTIVES -> Tab.INVENTORY;
+            //case SETTINGS -> Tab.SETTINGS;
+            default -> Tab.SETTINGS;
+        };
+    }
+
+    public Tab getPrevTab() {
+        return switch (currentTab) {
+            case INVENTORY -> Tab.OBJECTIVES;
+            case UPGRADES -> Tab.INVENTORY;
+            case OBJECTIVES -> Tab.UPGRADES;
+            //case SETTINGS -> Tab.SETTINGS;
+            default -> Tab.SETTINGS;
+        };
+    }
+
+    public Tab getCurrentTab() {
+        return currentTab;
     }
 
     private void updateTabContent() {
         tabContent.clear();
+        bottomButtons.clear();
         Actor ui = switch (currentTab) {
             case INVENTORY -> inventoryTab.build(skin);
             case UPGRADES -> upgradesTab.build(skin);
@@ -128,6 +180,14 @@ public class PauseMenuDisplay extends UIComponent {
         };
         // Ensure the returned actor from build() fills the tab content area.
         tabContent.add(ui).expand().fill();
+
+        // Only add settings tab while not in settings
+        if (currentTab != Tab.SETTINGS) {
+            addBottomButton("Settings", Tab.SETTINGS);
+        }
+        addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
+        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
     }
 
     public void setVisible(boolean visible) {
@@ -137,9 +197,60 @@ public class PauseMenuDisplay extends UIComponent {
         if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
             minimapDisplay.setVisible(!visible);
         }
+        Actor healthActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("health");
+        if (healthActor != null) {
+            healthActor.setVisible(!visible);
+        }
+        Actor staminaActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("stamina");
+        if (healthActor != null) {
+          staminaActor.setVisible(!visible);
+        }
+        Actor exitActor =  ServiceLocator.getRenderService().getStage().getRoot().findActor("exit");
+        if (exitActor != null) {
+            exitActor.setVisible(!visible);
+        }
+        Actor titleActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("title");
+        if (titleActor != null) {
+            titleActor.setVisible(!visible);
+        }
 
+        Entity player = screen.getGameArea().getPlayer();
         if (visible) {
             rootTable.toFront();
+            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
+            pauseMenuNavigationComponent.setEnabled(currentTab != Tab.SETTINGS);
+
+            // Enable navigation and register input component when the pause menu becomes visible
+            if (currentTab == Tab.INVENTORY) {
+                navigationComponent.enableNavigation();
+            } else {
+                navigationComponent.disableNavigation();
+            }
+        } else {
+            // Disable navigation and unregister input component when the pause menu is hidden
+            navigationComponent.disableNavigation();
+            KeyboardPlayerInputComponent playerInputComponent = player.getComponent(KeyboardPlayerInputComponent.class);
+            playerInputComponent.setEnabled(true);
+            playerInputComponent.resetInputState();
+
+            pauseMenuNavigationComponent.setEnabled(false);
+
+            if (Gdx.input.isKeyPressed(Input.Keys.Q)) {
+                pauseMenuNavigationComponent.keyUp(Input.Keys.Q);
+            }
+            if (Gdx.input.isKeyPressed(Input.Keys.E)) {
+                pauseMenuNavigationComponent.keyUp(Input.Keys.E);
+            }
+
+        }
+    }
+
+    /**
+     * Refreshes the inventory grid to update selection highlighting
+     */
+    private void refreshInventoryGrid() {
+        if (currentTab == Tab.INVENTORY) {
+            inventoryTab.refreshGrid();
         }
     }
 

@@ -145,7 +145,25 @@ public class TooltipSystem {
         }
         
         private Entity triggerZoneEntity; // Store reference to trigger zone
-        
+
+        /**
+         * Gets the tooltip text.
+         *
+         * @return the text displayed in the tooltip
+         */
+        public String getText() {
+            return text;
+        }
+
+        /**
+         * Gets the tooltip style
+         *
+         * @return the style of the tooltip
+         */
+        public TooltipSystem.TooltipStyle getStyle() {
+            return style;
+        }
+
         @Override
         public void create() {
             super.create();
@@ -209,6 +227,10 @@ public class TooltipSystem {
         @Override
         public void dispose() {
             super.dispose();
+            if (triggerZoneEntity != null) {
+                triggerZoneEntity.dispose();
+                triggerZoneEntity = null;
+            }
         }
     }
     
@@ -291,6 +313,9 @@ public class TooltipSystem {
             
             // Add table to root table instead of directly to stage
             rootTable.add(tooltipTable);
+            
+            // Ensure tooltip appears on top of all other UI elements (including pause menu)
+            rootTable.toFront();
         }
         
         @Override

@@ -37,8 +37,10 @@ public abstract class CollectableComponent extends Component {
         collected = onCollect(player);
         if (collected) {
             TextureRenderComponent renderComponent = entity.getComponent(TextureRenderComponent.class);
-            RenderService renderService = ServiceLocator.getRenderService();
-            renderService.unregister(renderComponent);
+            if (renderComponent != null) {
+                RenderService renderService = ServiceLocator.getRenderService();
+                renderService.unregister(renderComponent);
+            }
             entity.setEnabled(false);
         }
     }

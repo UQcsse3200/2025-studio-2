@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ExplosionAnimationController extends Component {
     private static final Logger logger = LoggerFactory.getLogger(ExplosionAnimationController.class);
-    private static final String ANIM = "bomb_effect";
 
     private AnimationRenderComponent animator;
     private boolean cleanedUp = false;
@@ -19,21 +18,23 @@ public class ExplosionAnimationController extends Component {
     @Override
     public void create() {
         super.create();
-        animator = this.entity.getComponent(AnimationRenderComponent.class);
-        animator.startAnimation(ANIM);
+        animator = entity.getComponent(AnimationRenderComponent.class);
+        if(animator!=null){
+            animator.startAnimation("explode");
+        }
     }
 
     @Override
     public void update() {
         if (cleanedUp || animator == null) return;
         if (animator.isFinished()) {
-            logger.info("Explosion animation finished. Cleaned up");
             cleanUp();
         }
     }
 
     private void cleanUp() {
         cleanedUp = true;
-        animator.stopAnimation();
+        if(animator!=null) animator.stopAnimation();
+        entity.dispose();
     }
 }

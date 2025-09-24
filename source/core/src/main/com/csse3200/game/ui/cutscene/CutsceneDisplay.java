@@ -121,7 +121,7 @@ public class CutsceneDisplay extends UIComponent {
                     public void changed(ChangeEvent event, Actor actor) {
                         // Do nothing for now if we are on last index
                         if (curTextBox == textBoxList.size() - 1) {
-                            area.trigger("cutsceneFinished", null, null);
+                            area.trigger("cutsceneFinished");
                         } else {
                             nextTextBox();
                         }

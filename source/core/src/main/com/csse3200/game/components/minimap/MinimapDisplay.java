@@ -25,9 +25,7 @@ import java.util.Map;
 public class MinimapDisplay extends UIComponent {
   private final Camera camera;
   private float minimapScaleFactor;
-  private final Map<Entity, Image> trackedEntities;
   private final Vector2 textureBottomLeft;
-  private final Vector2 textureTopRight;
   private final Vector2 fullMapSize;
   private final float displaySize;
   private final MinimapOptions options;
@@ -64,8 +62,7 @@ public class MinimapDisplay extends UIComponent {
     camera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
 
     MinimapService service = ServiceLocator.getMinimapService();
-    trackedEntities = service.getTrackedEntities();
-    textureTopRight = service.getTextureTopRight();
+    Vector2 textureTopRight = service.getTextureTopRight();
     this.textureBottomLeft = service.getTextureBottomLeft();
     fullMapSize = textureTopRight.cpy().sub(textureBottomLeft);
     this.options = options;
@@ -99,6 +96,8 @@ public class MinimapDisplay extends UIComponent {
   private void addActors() {
     rootTable = new Table();
     rootTable.setFillParent(true);
+    rootTable.setName("minimap");
+    rootTable.setUserObject(this);
 
     switch (options.position) {
       case TOP_LEFT -> rootTable.top().left();
