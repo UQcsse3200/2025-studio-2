@@ -97,6 +97,7 @@ public class PauseMenuDisplay extends UIComponent {
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
         addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Save level", () -> game.saveLevel(screen.getAreaEnum()));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -188,6 +189,7 @@ public class PauseMenuDisplay extends UIComponent {
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
         addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Save level", () -> game.saveLevel(screen.getAreaEnum()));
     }
 
     public void setVisible(boolean visible) {

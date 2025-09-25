@@ -3,6 +3,8 @@ package com.csse3200.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.csse3200.game.entities.configs.AreaConfig;
+import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
@@ -50,6 +52,14 @@ public class GdxGame extends Game {
     UserSettings.applySettings(settings);
   }
 
+  public void saveLevel(MainGameScreen.Areas area) {
+    logger.debug("Saving game level");
+    AreaConfig saveConfig = new AreaConfig();
+    saveConfig.area = area;
+    FileLoader.writeClass(saveConfig, "configs/save.json");
+    System.out.println("Saved.");
+  }
+
   /**
    * Sets the game's screen to a new screen of the provided type.
    * @param screenType screen type
@@ -78,14 +88,18 @@ public class GdxGame extends Game {
   private Screen newScreen(ScreenType screenType) {
     return switch (screenType) {
       case MAIN_MENU -> new MainMenuScreen(this);
-      case MAIN_GAME -> new MainGameScreen(this);
+      case MAIN_GAME -> new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
+      case LOAD_LEVEL -> {
+        AreaConfig areaConfig = FileLoader.readClass(AreaConfig.class, "configs/save.json");
+        yield new MainGameScreen(this, areaConfig.area);
+      }
     };
   }
 
   public enum ScreenType {
-    MAIN_MENU, MAIN_GAME, SETTINGS, STATISTICS
+    MAIN_MENU, MAIN_GAME, SETTINGS, STATISTICS, LOAD_LEVEL
   }
 
   /**

@@ -40,6 +40,7 @@ public class MainMenuActions extends Component {
    */
   private void onLoad() {
     logger.info("Load game");
+    game.setScreen(GdxGame.ScreenType.LOAD_LEVEL);
   }
 
   /**

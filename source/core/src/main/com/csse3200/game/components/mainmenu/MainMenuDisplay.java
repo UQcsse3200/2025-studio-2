@@ -78,15 +78,15 @@ public class MainMenuDisplay extends UIComponent {
           }
         });
 
-      statsBtn.addListener(
-          new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent changeEvent, Actor actor) {
+    statsBtn.addListener(
+      new ChangeListener() {
+        @Override
+        public void changed(ChangeEvent changeEvent, Actor actor) {
 
-              logger.debug("Stats button clicked");
-              entity.getEvents().trigger("stats");
-              }
-          });
+          logger.debug("Stats button clicked");
+          entity.getEvents().trigger("stats");
+          }
+      });
 
     exitBtn.addListener(
         new ChangeListener() {
