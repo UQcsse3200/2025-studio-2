@@ -89,7 +89,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/cavelevel/tile030.png",
             "images/glide_powerup.png"
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
+    private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/chimesound.mp3"};
