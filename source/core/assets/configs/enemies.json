@@ -1,6 +1,14 @@
 {
   "drone": {
-    "health": 100,
-    "baseAttack": 10
+    "health": 20,
+    "baseAttack": 5
+  },
+  "bomber": {
+    "health": 40,
+    "baseAttack": 15
+  },
+  "patrollingDrone": {
+    "health": 30,
+    "baseAttack": 8
   }
 }
