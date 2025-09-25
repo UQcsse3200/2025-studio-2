@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
 
 /**
  * A UI component for displaying the death screen overlay when the player dies.
@@ -40,6 +41,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * When visible, blocks all other input including pause menu and stops background music.
  */
 public class DeathScreenDisplay extends UIComponent {
+    static final Logger logger = Logger.getLogger(DeathScreenDisplay.class.getName());
     private Table rootTable;
     private final GdxGame game;
     private Texture blackTexture;
@@ -109,11 +111,11 @@ public class DeathScreenDisplay extends UIComponent {
             deathCause = attacker.toString();
           }
         }
-        System.out.println("Death Cause: " + deathCause);
+        logger.info("Death Cause: " + deathCause);
 
         if (random.nextFloat() < 0.1) {
           deathCause = "";
-          System.out.println("Death Cause Override: Using default prompt by chance.");
+          logger.info("Death Cause Override: Using default prompt by chance.");
         }
 
         ArrayList<String> prompts = deathPrompts.get(deathCause);

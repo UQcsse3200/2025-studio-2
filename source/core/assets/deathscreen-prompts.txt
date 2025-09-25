@@ -36,7 +36,7 @@ You have a magnetic personality. For pointy things.
 A rather {COLOR=RED}sharp{ENDCOLOR} lesson in situational awareness.
 {SHAKE}It's a spike pit, not a suggenstion to jump.{ENDSHAKE}
 You've been {COLOR=RED}perforated{ENDCOLOR}.
-I'm not even sure how you managed to hit it from that angle.{WAIT=0.4} It's almost{WAIT=0.4} impressive.
+How did you even hit it from that angle.{WAIT=0.4} It's almost{WAIT=0.4} impressive.
 That trap has a higher KD ratio than you.
 The trap was just doing its job. You, on the other hand...
 A pointy trap{WAIT=0.5}, and a blunt instrument.
