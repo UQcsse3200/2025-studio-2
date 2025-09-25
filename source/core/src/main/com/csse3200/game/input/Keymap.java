@@ -116,11 +116,6 @@ public class Keymap {
     registerAction("Enter", Input.Keys.ENTER, false);
     registerAction("Glide", Input.Keys.CONTROL_LEFT, false);
 
-    // Debug Terminal keybindings
-    registerAction("TerminalModifier", Input.Keys.CONTROL_LEFT, false);
-    registerAction("TerminalModifierAlt", Input.Keys.CONTROL_RIGHT, false);
-    registerAction("TerminalToggle", Input.Keys.GRAVE, false);
-
     // Pause
     registerAction("PauseSettings", Input.Keys.ESCAPE, true);
     registerAction("PauseInventory", Input.Keys.I, true);
