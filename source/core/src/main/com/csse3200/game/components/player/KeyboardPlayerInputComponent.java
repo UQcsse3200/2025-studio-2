@@ -404,29 +404,29 @@ public class KeyboardPlayerInputComponent extends InputComponent {
                 break;
             }
         }
-    // Update player's state on/off ladder
-    if (inFront) {
-        entity.getEvents().trigger("gravityForPlayerOff");
-        this.onLadder = true;
-    } else {
-        this.onLadder = false;
+        // Update player's state on/off ladder
+        if (inFront) {
+            entity.getEvents().trigger("gravityForPlayerOff");
+            this.onLadder = true;
+        } else {
+            this.onLadder = false;
+        }
+        return inFront;
     }
-    return inFront;
-}
 
-  /**
-   * Gets the current on ladder state of the player
-   * @return boolean value of the state.
-   */
-  public Boolean getOnLadder() {
-    return this.onLadder;
-  }
+    /**
+     * Gets the current on ladder state of the player
+     * @return boolean value of the state.
+     */
+    public Boolean getOnLadder() {
+        return this.onLadder;
+    }
 
-  /**
-   * Sets the on ladder state of the player to the given boolean value
-   * @param set boolean value to set the on ladder state too.
-   */
-  public void setOnLadder (boolean set) {
-    this.onLadder = set;
-  }
+    /**
+     * Sets the on ladder state of the player to the given boolean value
+     * @param set boolean value to set the on ladder state too.
+     */
+    public void setOnLadder (boolean set) {
+        this.onLadder = set;
+    }
 }

@@ -213,7 +213,7 @@ public class LevelOneGameArea extends GameArea {
         GridPoint2 upperLadderButtonPosition = new GridPoint2(x, y);
         Entity upperLadderButton = ButtonFactory.createButton(false, "upperLadder", "left");
         upperLadderButton.addComponent(new TooltipSystem.TooltipComponent(
-                "Push to release upper ladder",
+                "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(upperLadderButton, upperLadderButtonPosition, true, true);
 
@@ -242,7 +242,7 @@ public class LevelOneGameArea extends GameArea {
         GridPoint2 lowerLadderButtonPosition = new GridPoint2(x, y);
         Entity lowerLadderButton = ButtonFactory.createButton(false, "lowerLadder", "left");
         lowerLadderButton.addComponent(new TooltipSystem.TooltipComponent(
-                "Push to release lower ladder",
+                "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(lowerLadderButton, lowerLadderButtonPosition, true, true);
 
