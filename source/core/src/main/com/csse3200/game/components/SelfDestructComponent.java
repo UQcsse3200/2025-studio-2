@@ -15,6 +15,7 @@ import com.csse3200.game.services.ServiceLocator;
 public class SelfDestructComponent extends Component {
     private final Entity target;
     private boolean exploded = false;
+    private boolean isChasing = false;
 
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
     private static final float MAX_DISTANCE=11f;
@@ -27,9 +28,17 @@ public class SelfDestructComponent extends Component {
     @Override
     public void update(){
         if (exploded || target == null) return;
+        ConeLightComponent light = target.getComponent(ConeLightComponent.class);
+        if(!isChasing && light != null && isPlayerInLight(target.getCenterPosition(), light)){
+            isChasing = true;
+            //remove cone light once chase is activated
+            light.dispose();
+            entity.removeComponent(light);
+        }
+        if(isChasing){return;}
 
         float distance = entity.getCenterPosition().dst(target.getCenterPosition());
-        if(distance>11.0f){
+        if(distance>MAX_DISTANCE){
             teleportNearPlayer();
         }
 
@@ -116,5 +125,17 @@ public class SelfDestructComponent extends Component {
                 }
             },i*interval);
         }
+    }
+    /**
+     * checks is player is inside the drones light cone
+     */
+    private boolean isPlayerInLight(Vector2 playerPos, ConeLightComponent light) {
+        Vector2 lightPos = entity.getCenterPosition();
+        Vector2 toPlayer = playerPos.cpy().sub(lightPos);
+        if (toPlayer.len() > light.getDistance()) return false;
+        float lightDirRad = (float) Math.toRadians(light.getDirectionDeg());
+        Vector2 lightDir = new Vector2((float) Math.cos(lightDirRad), (float) Math.sin(lightDirRad));
+        float angleDeg = toPlayer.angleDeg(lightDir);//angle between light direction and vector to player
+        return angleDeg <=(light.getConeDegree()/2f);
     }
 }
