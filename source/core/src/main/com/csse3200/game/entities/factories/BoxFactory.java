@@ -88,6 +88,30 @@ public class BoxFactory {
     }
 
     /**
+     * Creates a dynamic box which has a stronger gravity and can press down pressure plates
+     *
+     * @return a new moveable weighted box entity
+     */
+    public static Entity createWeightedBox() {
+        Entity weightedBox = createMoveableBox();
+        weightedBox.getComponent(MoveableBoxComponent.class).setBaseGravityScale(0.85f);
+
+        return weightedBox;
+    }
+
+    /**
+     * Creates a dynamic box which has the ability to reflect laser beams.
+     *
+     * @return a new moveable reflector box
+     */
+    public static Entity createReflectorBox() {
+        Entity reflectorBox = createMoveableBox();
+        reflectorBox.getComponent(MoveableBoxComponent.class).setPhysicsLayer(PhysicsLayer.LASER_REFLECTOR);
+
+        return reflectorBox;
+    }
+
+    /**
      * Builder that creates autonomous (kinematic) box entities that can be used as moving game
      * obstacles.
      * <p>

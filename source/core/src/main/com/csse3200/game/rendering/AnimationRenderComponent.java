@@ -45,6 +45,8 @@ public class AnimationRenderComponent extends RenderComponent {
   private boolean isPaused = false;
   private boolean flipX = false;
   private boolean flipY = false;
+  private float rotation = 0f;
+  private Vector2 origin;
 
   /**
    * Create the component for a given texture atlas.
@@ -179,6 +181,31 @@ public class AnimationRenderComponent extends RenderComponent {
   }
 
   /**
+   * Rotates the animation around the origin which is {@code scale.w / 2f, scale.h / 2f}
+   * by default unless manually overrided with {@code setOrigin()}.
+   *
+   * @param rotation rotation in degrees
+   */
+  public void setRotation(float rotation) {
+    this.rotation = rotation;
+  }
+
+  /**
+   * Sets the origin to rotate around to {@code x, y}. <p>
+   * Overrides the default value of {@code scale.w / 2f, scale.h / 2f}
+   *
+   * @param x local x position in world units
+   * @param y local y position in world units
+   */
+  public void setOrigin(float x, float y) {
+      if (origin == null) {
+          origin = new Vector2(x, y);
+      } else {
+          origin.set(x, y);
+      }
+  }
+
+  /**
    * Get the name of the animation currently being played.
    * @return current animation name, or null if not playing.
    */
@@ -211,9 +238,12 @@ public class AnimationRenderComponent extends RenderComponent {
     float h = Math.abs(scale.y);
     float originX = w / 2;
     float originY = h / 2;
+    if (origin != null) {
+        originX = origin.x;
+        originY = origin.y;
+    }
     float sx = flipX ? -1f : 1f;
     float sy = flipY ? -1f : 1f;
-    float rotation = 0f;
     batch.draw(region, pos.x, pos.y, originX, originY, w, h, sx, sy, rotation);
     //batch.draw(region, pos.x, pos.y, scale.x, scale.y);
     if (!isPaused) {

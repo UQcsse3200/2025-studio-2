@@ -11,8 +11,11 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -26,9 +29,6 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
-import java.awt.*;
-import java.security.Provider;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +105,8 @@ public class LevelOneGameArea extends GameArea {
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas"
+            "images/doors.atlas",
+            "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -131,9 +132,9 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-//        spawnUpgrade("dash", 9, 6);
-//        spawnUpgrade("glider", 7, 6);
-//        spawnUpgrade("jetpack", 5, 6);
+        spawnUpgrade("dash", 9, 6);
+        spawnUpgrade("glider", 7, 6);
+        spawnUpgrade("jetpack", 5, 6);
         spawnSecurityCams();
         spawnButtons();
         spawnTraps();
@@ -145,11 +146,16 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
+        //spawnLasers();
     }
 
     private void spawnBoxes() {
-        Entity e = BoxFactory.createMoveableBox();
+        Entity e = BoxFactory.createReflectorBox();
         spawnEntityAt(e, new GridPoint2(15, 15), true, true);
+    }
+    private void spawnLasers() {
+        Entity e = LaserFactory.createLaserEmitter(-45f);
+        spawnEntityAt(e, new GridPoint2(40, 12), true, true);
     }
 
     private void spawnDeathZone() {
