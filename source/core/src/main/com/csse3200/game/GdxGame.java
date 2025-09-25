@@ -8,6 +8,7 @@ import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.screens.MainMenuScreen;
 import com.csse3200.game.screens.SettingsScreen;
+import com.csse3200.game.screens.StatisticsScreen;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,11 +80,12 @@ public class GdxGame extends Game {
       case MAIN_MENU -> new MainMenuScreen(this);
       case MAIN_GAME -> new MainGameScreen(this);
       case SETTINGS -> new SettingsScreen(this);
+      case STATISTICS -> new StatisticsScreen(this);
     };
   }
 
   public enum ScreenType {
-    MAIN_MENU, MAIN_GAME, SETTINGS
+    MAIN_MENU, MAIN_GAME, SETTINGS, STATISTICS
   }
 
   /**

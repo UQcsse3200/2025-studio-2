@@ -47,6 +47,7 @@ public class MainMenuDisplay extends UIComponent {
     TextButton startBtn = new TextButton("Start", skin);
     TextButton loadBtn = new TextButton("Load", skin);
     TextButton settingsBtn = new TextButton("Settings", skin);
+    TextButton statsBtn = new TextButton("Stats", skin);
     TextButton exitBtn = new TextButton("Exit", skin);
 
     // Triggers an event when the button is pressed
@@ -77,6 +78,16 @@ public class MainMenuDisplay extends UIComponent {
           }
         });
 
+      statsBtn.addListener(
+          new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+
+              logger.debug("Stats button clicked");
+              entity.getEvents().trigger("stats");
+              }
+          });
+
     exitBtn.addListener(
         new ChangeListener() {
           @Override
@@ -96,6 +107,7 @@ public class MainMenuDisplay extends UIComponent {
     row.add(startBtn).padLeft(15f).padRight(15f);
     row.add(loadBtn).padLeft(15f).padRight(15f);
     row.add(settingsBtn).padLeft(15f).padRight(15f);
+    row.add(statsBtn).padLeft(15f).padRight(15f);
     row.add(exitBtn).padLeft(15f).padRight(15f);
     table.add(row);
 
