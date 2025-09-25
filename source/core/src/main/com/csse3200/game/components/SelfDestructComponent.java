@@ -22,7 +22,7 @@ public class SelfDestructComponent extends Component {
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
     private static final float MAX_DISTANCE = 11f;
     private static final float TELEPORT_OFFSET = 1.5f;
-    private static final float COLLISION_RADIUS = 2.0f; // radius for explosion contact
+    private static final float COLLISION_RADIUS = 1.3f; // radius for explosion contact
 
     public SelfDestructComponent(Entity target) {
         this.target = target;
@@ -72,8 +72,8 @@ public class SelfDestructComponent extends Component {
         exploded = true;
 
         CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
-        if (targetStats != null &&(targetStats.getHealth()>=3)) {
-            targetStats.setHealth(Math.max(0, targetStats.getHealth() - 3));
+        if (targetStats != null) {
+            targetStats.setHealth(Math.max(0, targetStats.getHealth() - 2));
         }
 
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
