@@ -349,6 +349,10 @@ public class MainGameScreen extends ScreenAdapter {
    * Shows the death screen overlay
    */
   private void showDeathScreen() {
+    if (gameArea != null && gameArea.getPlayer() != null) {
+      gameArea.recordDeathLocation(gameArea.getPlayer().getPosition());
+    }
+
     deathScreenDisplay.setVisible(true);
   }
 
