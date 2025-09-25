@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
-@Disabled
+
 @ExtendWith(GameExtension.class)
 class InitializerTest {
   private Shell shell;

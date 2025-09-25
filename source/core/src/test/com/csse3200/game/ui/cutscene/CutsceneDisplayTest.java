@@ -30,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-@Disabled
+
 @ExtendWith(GameExtension.class)
 public class CutsceneDisplayTest {
     // Mocked classes used inside of component

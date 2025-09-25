@@ -28,7 +28,7 @@ import org.mockito.MockedStatic;
 
 import java.util.HashMap;
 import java.util.Map;
-@Disabled
+
 @ExtendWith(GameExtension.class)
 class SettingsMenuDisplayTest {
 
