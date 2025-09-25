@@ -37,6 +37,7 @@ import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
+import com.csse3200.game.components.LeaderboardComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
+  private static long lvlStartTime;
 
   private final GdxGame game;
   private final Renderer renderer;
@@ -69,6 +71,8 @@ public class MainGameScreen extends ScreenAdapter {
   private GameArea gameArea;
 
   private PauseInputComponent pauseInput;
+  private LeaderboardComponent leaderboardComponent;
+  private GameTime gameTime;
 
   public enum Areas {
           LEVEL_ONE, LEVEL_TWO, SPRINT_ONE, TEMPLATE, FOREST, CAVE, CUTSCENE_ONE, CUTSCENE_TWO
@@ -377,6 +381,11 @@ public class MainGameScreen extends ScreenAdapter {
     deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
+    leaderboardComponent = new LeaderboardComponent();
+    gameTime = new GameTime();
+
+    System.out.println("Starting Level Time!");
+    lvlStartTime = gameTime.getTime();
 
     Entity ui = new Entity();
     ui.addComponent(new InputDecorator(stage, 10))
