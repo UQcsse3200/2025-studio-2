@@ -110,7 +110,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       cheatPosition++;
 
       //Only moves the player up if they are in front of a ladder.
-      if (inFrontOfLadder(this.ladders)) {
+      if (inFrontOfLadder(findLadders())) {
         this.onLadder = true;
         //walkDirection.sub(Vector2Utils.DOWN);
         walkDirection.add(Vector2Utils.UP);
@@ -187,7 +187,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       walkDirection.sub(Vector2Utils.RIGHT);
       triggerWalkEvent();
     } else if (keycode == UP_KEY) {
-      if (inFrontOfLadder(this.ladders)) {
+      if (inFrontOfLadder(findLadders())) {
         //walkDirection.setZero();
         walkDirection.sub(Vector2Utils.UP);
         triggerWalkEvent();
