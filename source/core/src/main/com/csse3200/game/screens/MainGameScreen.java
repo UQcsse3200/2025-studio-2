@@ -330,7 +330,7 @@ public class MainGameScreen extends ScreenAdapter {
       throw new IllegalStateException("GameArea has a null player");
     }
     pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
-    deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
+    deathScreenDisplay = new DeathScreenDisplay(this, this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
