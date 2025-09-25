@@ -10,7 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
- * component for self destruction drones
+ * Component for self-destruction drones.
+ * Drone activates and teleports only when player enters its light cone.
+ * Explodes immediately upon contact with the player.
  */
 public class SelfDestructComponent extends Component {
     private final Entity target;
@@ -18,84 +20,84 @@ public class SelfDestructComponent extends Component {
     private boolean isChasing = false;
 
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
-    private static final float MAX_DISTANCE=11f;
+    private static final float MAX_DISTANCE = 11f;
     private static final float TELEPORT_OFFSET = 1.5f;
+    private static final float COLLISION_RADIUS = 2.0f; // radius for explosion contact
 
-    public SelfDestructComponent(Entity target){
+    public SelfDestructComponent(Entity target) {
         this.target = target;
     }
 
     @Override
-    public void update(){
+    public void update() {
         if (exploded || target == null) return;
-        ConeLightComponent light = target.getComponent(ConeLightComponent.class);
-        if(!isChasing && light != null && isPlayerInLight(target.getCenterPosition(), light)){
+
+        ConeLightComponent light = entity.getComponent(ConeLightComponent.class);
+
+        // Activate chasing only if player enters light cone
+        if (!isChasing && light != null && isPlayerInLight(target.getCenterPosition(), light)) {
             isChasing = true;
-            //remove cone light once chase is activated
+
+            // Remove/hide the cone light
             light.dispose();
             entity.removeComponent(light);
         }
-        if(isChasing){return;}
 
-        float distance = entity.getCenterPosition().dst(target.getCenterPosition());
-        if(distance>MAX_DISTANCE){
-            teleportNearPlayer();
-        }
+        if (!isChasing) return;
 
-
-        if (distance < 1.0f){
+        // Explode immediately if touching player
+        if (isTouchingPlayer()) {
             explode();
+            return;
+        }
+        // Teleport if far from player
+        if (entity.getCenterPosition().dst(target.getCenterPosition())> MAX_DISTANCE) {
+            teleportNearPlayer();
         }
     }
 
-    private void teleportNearPlayer(){
-        Vector2 position=target.getCenterPosition();
-
-       float randomAngle = (float)(Math.random()*Math.PI*2);
+    private void teleportNearPlayer() {
+        Vector2 position = target.getCenterPosition();
+        float randomAngle = (float) (Math.random() * Math.PI * 2);
         Vector2 offset = new Vector2(
-                (float) Math.cos(randomAngle)*TELEPORT_OFFSET,
-                (float) Math.sin(randomAngle)*TELEPORT_OFFSET
+                (float) Math.cos(randomAngle) * TELEPORT_OFFSET,
+                (float) Math.sin(randomAngle) * TELEPORT_OFFSET
         );
-       Vector2 newPos = position.cpy().add(offset);
+        Vector2 newPos = position.cpy().add(offset);
         entity.setPosition(newPos);
-       }
+    }
 
-    private void explode(){
-        if(exploded) return;
-        exploded =true;
-        CombatStatsComponent targetStats= target.getComponent(CombatStatsComponent.class);
-        if (targetStats!=null ){
-            targetStats.setHealth(Math.max(0,targetStats.getHealth()-2));
+    private void explode() {
+        if (exploded) return;
+        exploded = true;
+
+        CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
+        if (targetStats != null &&(targetStats.getHealth()>=3)) {
+            targetStats.setHealth(Math.max(0, targetStats.getHealth() - 3));
         }
-        AnimationRenderComponent animator= entity.getComponent(AnimationRenderComponent.class);
-        if(animator!=null){
+
+        AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
+        if (animator != null) {
             animator.startAnimation("bomb_effect");
         }
-        Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND,Sound.class);
-        if (explosionSound!=null){
-            long soundId = explosionSound.play(1.0f); // full volume
-            fadeOutSound(explosionSound,soundId,0.5f); // fade out over 0.5 seconds
+
+        Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND, Sound.class);
+        if (explosionSound != null) {
+            long soundId = explosionSound.play(1.0f);
+            fadeOutSound(explosionSound, soundId, 0.5f);
         }
 
-        Timer.schedule(new Timer.Task(){
+        Timer.schedule(new Timer.Task() {
             @Override
-            public void run(){
-                if(animator!=null){
+            public void run() {
+                if (animator != null) {
                     animator.stopAnimation();
                     entity.removeComponent(animator);
                 }
                 PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-                if(physics!=null){
-                    if(physics.getBody()!=null){
-                        physics.getBody().setActive(false);
-                    }
+                if (physics != null) {
+                    if (physics.getBody() != null) physics.getBody().setActive(false);
                     entity.removeComponent(physics);
-                }
-                ConeLightComponent light= entity.getComponent(ConeLightComponent.class);
-                if(light!=null){
-                    light.dispose();
-                    //physics.getBody().setActive(false);
-                    entity.removeComponent(light);
                 }
                 entity.getEvents().trigger("destroy");
                 entity.removeComponent(SelfDestructComponent.this);
@@ -103,39 +105,39 @@ public class SelfDestructComponent extends Component {
         }, 0.5f);
     }
 
-    /**
-     * Gradually fades out the given sound over specified duration
-     * @param sound Sound object
-     * @param soundId Sound instance ID
-     * @param duration Duration to fade out in seconds
-     */
     private void fadeOutSound(Sound sound, long soundId, float duration) {
-        final int steps =10;
-        final float interval = duration/steps;
+        final int steps = 10;
+        final float interval = duration / steps;
 
-        for(int i=0;i<steps;i++){
-            final float volume = 1.0f - (i/(float)steps);
+        for (int i = 0; i < steps; i++) {
+            final float volume = 1.0f - (i / (float) steps);
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     sound.setVolume(soundId, volume);
-                    if (volume <= 0f){
-                        sound.stop(soundId);
-                    }
+                    if (volume <= 0f) sound.stop(soundId);
                 }
-            },i*interval);
+            }, i * interval);
         }
     }
+
     /**
-     * checks is player is inside the drones light cone
+     * Checks if the player is inside the drone's light cone.
      */
-    private boolean isPlayerInLight(Vector2 playerPos, ConeLightComponent light) {
-        Vector2 lightPos = entity.getCenterPosition();
-        Vector2 toPlayer = playerPos.cpy().sub(lightPos);
+    private boolean isPlayerInLight(Vector2 playerPos, ConeLightComponent light) { Vector2 toPlayer = playerPos.cpy().sub(entity.getCenterPosition());
         if (toPlayer.len() > light.getDistance()) return false;
         float lightDirRad = (float) Math.toRadians(light.getDirectionDeg());
         Vector2 lightDir = new Vector2((float) Math.cos(lightDirRad), (float) Math.sin(lightDirRad));
-        float angleDeg = toPlayer.angleDeg(lightDir);//angle between light direction and vector to player
-        return angleDeg <=(light.getConeDegree()/2f);
+        return toPlayer.angleDeg(lightDir) <= light.getConeDegree() / 2f;
+    }
+
+    /**
+     * Checks if the drone is in contact with the player.
+     * Uses a circular collision radius to detect contact in all directions.
+     */
+    private boolean isTouchingPlayer() {
+        Vector2 dronePos = entity.getCenterPosition();
+        Vector2 playerPos = target.getCenterPosition();
+        return dronePos.dst(playerPos) <= COLLISION_RADIUS;
     }
 }
