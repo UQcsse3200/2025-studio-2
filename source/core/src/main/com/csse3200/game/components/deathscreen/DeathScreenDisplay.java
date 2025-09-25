@@ -54,7 +54,6 @@ public class DeathScreenDisplay extends UIComponent {
     public DeathScreenDisplay(MainGameScreen screen, GdxGame game) {
         this.game = game;
         this.screen = screen;
-        loadDeathPrompts();
     }
 
     /**
@@ -112,7 +111,7 @@ public class DeathScreenDisplay extends UIComponent {
         }
         System.out.println("Death Cause: " + deathCause);
 
-        if (random.nextFloat() < 0.01) {
+        if (random.nextFloat() < 0.1) {
           deathCause = "";
           System.out.println("Death Cause Override: Using default prompt by chance.");
         }
@@ -158,6 +157,7 @@ public class DeathScreenDisplay extends UIComponent {
 
     @Override
     public void create() {
+        loadDeathPrompts();
         super.create();
 
         rootTable = new Table();
