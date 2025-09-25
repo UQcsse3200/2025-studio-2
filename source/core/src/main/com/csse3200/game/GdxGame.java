@@ -92,7 +92,8 @@ public class GdxGame extends Game {
       case STATISTICS -> new StatisticsScreen(this);
       case LOAD_LEVEL -> {
         AreaConfig areaConfig = FileLoader.readClass(AreaConfig.class, "configs/save.json", FileLoader.Location.LOCAL);
-        yield new MainGameScreen(this, areaConfig.area);
+        if (areaConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+        else yield new MainGameScreen(this, areaConfig.area);
       }
     };
   }
