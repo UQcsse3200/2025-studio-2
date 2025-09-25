@@ -1,7 +1,16 @@
+:
+Have you considered a different hobby? Like {WAVE}breathing{ENDWAVE}?
+Maybe try plugging in the controller?
 Your journey ends here...
-this is a test prompt
-this is another test prompt but longer so that we can test this thing
+You are the reason games have an "easy" mode.
+Are you allergic to success?
+I'm not angry, I'm just {SICK}disappointed{ENDSICK}.
+That was, without a doubt, the least impressive thing I have ever seen
+This is another test prompt but longer so that we can test this thing
+Don't worry, your last save was...  a long, long time ago.
+I'd say "better luck next time" but.{WAIT=0.25}.{WAIT=0.25}.{WAIT=0.5} let's be realistic.
 {RAINBOW}you died a horrible death{ENDRAINBOW}
+{RAINBOW}A truly monumental failure.{ENDRAINBOW}
 Well, that was {WAVE}embarrassing{ENDWAVE}...
 {SHAKE}OOPS!{ENDSHAKE}
 {SICK}Skill issue{ENDSICK} detected
@@ -9,5 +18,88 @@ Maybe try the {WAVE}tutorial{ENDWAVE} next time?
 {COLOR=RED}{SHAKE}FATALITY!{ENDSHAKE}{ENDCOLOR}
 {COLOR=RED}{SHAKE}WASTED{ENDSHAKE}{ENDCOLOR}
 {SICK}Git gud{ENDSICK}
-Try again?
+{SHAKE}Pathetic.{ENDSHAKE}
+Try again? Maybe not.
 Congratulations! You've unlocked the {SHAKE}death screen{ENDSHAKE} achievement!
+I'm starting to think you're doing this on purpose.
+This is just getting sad. Please stop.
+Natural selection at work.
+That looked like it hurt. Noice.
+
+TrapComponent:
+Pro Tip: The pointy things are the bad things. Imagin that!
+That's one way to get some iron in your diet.
+You've been outsmarted by a stationary object.
+Congratulations, you've discovered another sharp object.
+It was literally right there. Open your eyes!
+You have a magnetic personality. For pointy things.
+A rather {COLOR=RED}sharp{ENDCOLOR} lesson in situational awareness.
+{SHAKE}It's a spike pit, not a suggenstion to jump.{ENDSHAKE}
+You've been {COLOR=RED}perforated{ENDCOLOR}.
+I'm not even sure how you managed to hit it from that angle.{WAIT=0.4} It's almost{WAIT=0.4} impressive.
+That trap has a higher KD ratio than you.
+The trap was just doing its job. You, on the other hand...
+A pointy trap{WAIT=0.5}, and a blunt instrument.
+
+DeathZoneComponent:
+Embraced the void.
+That landing was a perfect 10.{WAIT=0.75} On the Richter scale.
+It's a long way down.{WAIT=0.75} Or it was.
+You just ran out of ground...
+{WAVE}{FADE}Wiiiiieeeeeeeeee{WAIT=0.25}...{WAIT=0.25}{ENDFADE} splat.{ENDWAVE}
+Did you think there was an invisible floor there?{WAIT=0.75} {SICK}Adorable.{ENDSICK}
+You've explored the world's vertical limits.{WAIT=0.5} The lower ones.
+The abyss stared back{WAIT=0.25}.{WAIT=0.25}.{WAIT=0.25}. and laughed.
+You believe You can fly? {WAIT=0.5}The ground respectfully disagrees.
+You've found the express lane to the {SHAKE}game over screen{ENDSHAKE}.
+That wasn't a shortcut.{WAIT=0.75} It was a stupid-cut.
+Gravity: 1, You: 0.
+Congratulations, you've hit the Terminal velocity.
+Try {WAVE}flapping{ENDWAVE} your arms next time.
+That was a leap of faith.{WAIT=0.75} The faith was misplaced.
+You've become a permanent part of the landscape.
+
+Drone:
+Even the robots think you're obsolete.
+That thing's got better pathfinding than your life choices.
+That drone is telling its drone friends about how easy it was.
+{FADE}5{WAIT=0.125}3 {WAIT=0.125}6{WAIT=0.125}B {WAIT=0.125}6{WAIT=0.125}9 {WAIT=0.125}6{WAIT=0.125}C {WAIT=0.125}6{WAIT=0.125}C {WAIT=0.125}2{WAIT=0.125}0 {WAIT=0.125}4{WAIT=0.125}9 {WAIT=0.125}7{WAIT=0.125}3 {WAIT=0.125}73 {WAIT=0.125}7{WAIT=0.125}5 {WAIT=0.125}6{WAIT=0.125}5{ENDFADE}
+{COLOR=CYAN}Resistance is futile.{ENDCOLOR}
+Outsmarted by a flying toaster with an attitude problem.
+Calculating... {WAIT=1}Threat level -1.
+It's just following its programming. You on the other hand
+That drone runs on logic.{WAIT=0.25} You? {WAIT=0.5}excuses!
+
+AutonomousBoxComponent:
+The cave sends its regards.
+That was bat-tently a skill issue.
+That thing navigates in the dark better than you do in broad daylight.
+It moves in a predictable patterns.{WAIT=0.75} {SICK}Unlike your brain{ENDSICK}.
+It's got a simple flight path. Were you mesmerised by the flapping?
+You just got outplayed by a bird.
+It's not even trying to kill you.{WAIT=0.75} You're just in the way.
+{SHAKE}Defeated by a screensaver.{ENDSHAKE}
+Outmaneuvered by a rodent.
+That bat's brain is the size of a pea.{WAIT=0.75} It's than you were using.
+Holy smokes, {FADE}Batman!{ENDFADE} {WAIT=0.5}{SICK}You're really bad at this{ENDSICK}.
+Echolocation works better than your eyeballs apparently.
+HOWWW!{WAIT=0.75} It barely does any damage duuudeeee
+That thing. It barely has a hitbox!
+It has no strategy. Still one more strategy than apparently.
+
+BombComponent:
+You're officially a part of the blast radius.
+Some assembly required.{WAIT=0.8} Lots of it.
+{SHAKE}{COLOR=ORANGE}KABOOM!{ENDCOLOR}{ENDSHAKE} {WAIT=0.5} Were you expecting a hug?
+You're now an abstract painting on the ceiling.
+Achievement Unlocked: {COLOR=RED}Spontaneous combustion{ENDCOLOR}.
+We'll get a mop.{WAIT=0.8} Eventually.
+{FADE}You've been scattered across the room.{ENDFADE}
+That was a blast!
+You volunteered as tribute to the god of explosions.
+Looks like you're all over the place.
+That bomb had a short fuse but you had a shorter lifespan.
+You've been reduced to a soup.
+You have an {SICK}explosive{ENDSICK} personality.{WAIT=0.8} {SHAKE}*had{ENDSHAKE}.
+You've been {COLOR=RED}de-atomized.{ENDCOLOR}
+That's what happens when you bring a knife to a bomb fight.
