@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
@@ -25,6 +26,8 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +36,6 @@ public class LevelOneGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
-    private boolean isLowerLadderExtended = true;
-    private boolean isUpperLadderExtended = true;
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -121,6 +122,7 @@ public class LevelOneGameArea extends GameArea {
     protected void loadEntities() {
         keySpawned = false;
         spawnLadders();
+        spawnLowerLadderButton();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
@@ -195,47 +197,73 @@ public class LevelOneGameArea extends GameArea {
 //        }
 //    }
 
+    private final int lowerLadderX = 52;
+    private final int lowerLadderY = 4;
+    private final int lowerLadderHeight = 18;
+    private final int lowerLadderOffset = 13;
+    private boolean isLowerLadderExtended = false;
+
+    private final int upperLadderX = 59;
+    private final int upperLadderY = 36;
+    private final int upperLadderHeight = 16;
+    private final int upperLadderOffset = 11;
+    private boolean isUpperLadderExtended = false;
+
     private void spawnLadders() {
         // Lower ladder
-        int x = 52;
-        int y = 4;
-        int height = 18;
-        int offset = 13;
-        for(int i = offset; i < height; i++) {
-            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+        for(int i = lowerLadderOffset; i < lowerLadderHeight; i++) {
+            GridPoint2 ladderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + i));
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
-            spawnEntityAt(ladder, ladderPos, false, false);
+            spawnEntityAt(ladder, ladderPosition, false, false);
         }
-        if (isLowerLadderExtended) {
-            for (int i = offset - 1; i >= 0; i--) {
-                GridPoint2 ladderPos = new GridPoint2(x, (y + i));
-                Entity ladder = LadderFactory.createStaticLadder();
-                ladder.setScale(1f, 1f);
-                spawnEntityAt(ladder, ladderPos, false, false);
-            }
-        }
-
         // Upper ladder
-        x = 59;
-        y = 36;
-        height = 16;
-        offset = 11;
-        for(int i = offset; i < height; i++) {
-            GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+        for(int i = upperLadderOffset; i < upperLadderHeight; i++) {
+            GridPoint2 ladderPos = new GridPoint2(upperLadderX, (upperLadderY + i));
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPos, false, false);
         }
         if (isUpperLadderExtended) {
-            for (int i = offset - 1; i >= 0; i--) {
-                GridPoint2 ladderPos = new GridPoint2(x, (y + i));
+            for (int i = upperLadderOffset - 1; i >= 0; i--) {
+                GridPoint2 ladderPos = new GridPoint2(upperLadderX, (upperLadderY + i));
                 Entity ladder = LadderFactory.createStaticLadder();
                 ladder.setScale(1f, 1f);
                 spawnEntityAt(ladder, ladderPos, false, false);
             }
         }
     }
+
+    private void spawnLowerLadderButton() {
+        int x = 74;
+        int y = 5;
+        GridPoint2 lowerLadderButtonPosition = new GridPoint2(x, y);
+        Entity lowerLadderButton = ButtonFactory.createButton(false, "lowerLadder", "left");
+        lowerLadderButton.addComponent(new TooltipSystem.TooltipComponent(
+                "Push to release lower ladder",
+                TooltipSystem.TooltipStyle.DEFAULT ));
+        spawnEntityAt(lowerLadderButton, lowerLadderButtonPosition, true, true);
+
+        // Ladder extends on first press (not reversible)
+        lowerLadderButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+            if (isPressed && !isLowerLadderExtended) {
+                isLowerLadderExtended = true;
+                for (int i = lowerLadderOffset - 1; i >= 0; i--) {
+                    final int rung = i;
+                    Timer.schedule(new Timer.Task(){
+                        @Override
+                        public void run() {
+                            GridPoint2 ladderPos = new GridPoint2(lowerLadderX, (lowerLadderY + rung));
+                            Entity ladder = LadderFactory.createStaticLadder();
+                            ladder.setScale(1f, 1f);
+                            spawnEntityAt(ladder, ladderPos, false, false);
+                        }
+                    }, 0.05f * (lowerLadderOffset - 1 - i));
+                }
+            }
+        });
+    }
+
 
     private void spawnFloorsAndPlatforms(){
         spawnFloors();
