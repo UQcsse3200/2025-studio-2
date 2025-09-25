@@ -28,6 +28,18 @@ public class SelfDestructComponent extends Component {
         this.target = target;
     }
 
+    private void teleportNearPlayer() {
+        Vector2 position = target.getCenterPosition();
+        float randomAngle = (float) (Math.random() * Math.PI * 2);
+        Vector2 offset = new Vector2(
+                (float) Math.cos(randomAngle) * TELEPORT_OFFSET,
+                (float) Math.sin(randomAngle) * TELEPORT_OFFSET
+        );
+        Vector2 newPos = position.cpy().add(offset);
+        entity.setPosition(newPos);
+    }
+
+
     @Override
     public void update() {
         if (exploded || target == null) return;
@@ -56,17 +68,6 @@ public class SelfDestructComponent extends Component {
         }
     }
 
-    private void teleportNearPlayer() {
-        Vector2 position = target.getCenterPosition();
-        float randomAngle = (float) (Math.random() * Math.PI * 2);
-        Vector2 offset = new Vector2(
-                (float) Math.cos(randomAngle) * TELEPORT_OFFSET,
-                (float) Math.sin(randomAngle) * TELEPORT_OFFSET
-        );
-        Vector2 newPos = position.cpy().add(offset);
-        entity.setPosition(newPos);
-    }
-
     private void explode() {
         if (exploded) return;
         exploded = true;
@@ -80,7 +81,6 @@ public class SelfDestructComponent extends Component {
         if (animator != null) {
             animator.startAnimation("bomb_effect");
         }
-
         Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND, Sound.class);
         if (explosionSound != null) {
             long soundId = explosionSound.play(1.0f);
@@ -104,6 +104,9 @@ public class SelfDestructComponent extends Component {
             }
         }, 0.5f);
     }
+
+
+
 
     private void fadeOutSound(Sound sound, long soundId, float duration) {
         final int steps = 10;
