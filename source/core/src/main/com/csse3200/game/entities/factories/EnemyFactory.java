@@ -74,7 +74,7 @@ public class EnemyFactory {
     }
 
     /**
-     * Creates a patrolling drone (patrol + chase).
+     * Creates a patrolling drone (patrol + chase + cooldown).
      */
     public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
         BaseEntityConfig config = configs.patrollingDrone;
@@ -96,7 +96,25 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController());
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-        aiComponent.addTask(new PatrolTask(1f));
+
+        PatrolTask patrolTask = new PatrolTask(1f);
+        ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
+        CooldownTask cooldownTask = new CooldownTask(3f);
+
+        // ENEMY ACTIVATION/DEACTIVATION
+        drone.getEvents().addListener("enemyActivated", () -> {
+            chaseTask.activate();
+            cooldownTask.activate();
+        });
+        drone.getEvents().addListener("enemyDeactivated", () -> {
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
+
+        aiComponent
+                .addTask(patrolTask)
+                .addTask(chaseTask)
+                .addTask(cooldownTask);
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
