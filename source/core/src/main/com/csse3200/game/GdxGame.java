@@ -56,8 +56,7 @@ public class GdxGame extends Game {
     logger.debug("Saving game level");
     AreaConfig saveConfig = new AreaConfig();
     saveConfig.area = area;
-    FileLoader.writeClass(saveConfig, "configs/save.json");
-    System.out.println("Saved.");
+    FileLoader.writeClass(saveConfig, "configs/save.json", FileLoader.Location.LOCAL);
   }
 
   /**
@@ -92,7 +91,7 @@ public class GdxGame extends Game {
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
       case LOAD_LEVEL -> {
-        AreaConfig areaConfig = FileLoader.readClass(AreaConfig.class, "configs/save.json");
+        AreaConfig areaConfig = FileLoader.readClass(AreaConfig.class, "configs/save.json", FileLoader.Location.LOCAL);
         yield new MainGameScreen(this, areaConfig.area);
       }
     };
