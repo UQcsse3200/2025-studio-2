@@ -123,6 +123,7 @@ public class LevelOneGameArea extends GameArea {
         keySpawned = false;
         spawnLadders();
         spawnLowerLadderButton();
+        spawnUpperLadderButton();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
@@ -224,14 +225,6 @@ public class LevelOneGameArea extends GameArea {
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPos, false, false);
         }
-        if (isUpperLadderExtended) {
-            for (int i = upperLadderOffset - 1; i >= 0; i--) {
-                GridPoint2 ladderPos = new GridPoint2(upperLadderX, (upperLadderY + i));
-                Entity ladder = LadderFactory.createStaticLadder();
-                ladder.setScale(1f, 1f);
-                spawnEntityAt(ladder, ladderPos, false, false);
-            }
-        }
     }
 
     private void spawnLowerLadderButton() {
@@ -253,12 +246,42 @@ public class LevelOneGameArea extends GameArea {
                     Timer.schedule(new Timer.Task(){
                         @Override
                         public void run() {
-                            GridPoint2 ladderPos = new GridPoint2(lowerLadderX, (lowerLadderY + rung));
+                            GridPoint2 lowerLadderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + rung));
                             Entity ladder = LadderFactory.createStaticLadder();
                             ladder.setScale(1f, 1f);
-                            spawnEntityAt(ladder, ladderPos, false, false);
+                            spawnEntityAt(ladder, lowerLadderPosition, false, false);
                         }
                     }, 0.05f * (lowerLadderOffset - 1 - i));
+                }
+            }
+        });
+    }
+
+    private void spawnUpperLadderButton() {
+        int x = 63;
+        int y = 37;
+        GridPoint2 upperLadderButtonPosition = new GridPoint2(x, y);
+        Entity upperLadderButton = ButtonFactory.createButton(false, "upperLadder", "left");
+        upperLadderButton.addComponent(new TooltipSystem.TooltipComponent(
+                "Push to release upper ladder",
+                TooltipSystem.TooltipStyle.DEFAULT ));
+        spawnEntityAt(upperLadderButton, upperLadderButtonPosition, true, true);
+
+        // Ladder extends on first press (not reversible)
+        upperLadderButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+            if (isPressed && !isUpperLadderExtended) {
+                isUpperLadderExtended = true;
+                for (int i = upperLadderOffset - 1; i >= 0; i--) {
+                    final int rung = i;
+                    Timer.schedule(new Timer.Task(){
+                        @Override
+                        public void run() {
+                            GridPoint2 upperLadderPosition = new GridPoint2(upperLadderX, (upperLadderY + rung));
+                            Entity upperLadder = LadderFactory.createStaticLadder();
+                            upperLadder.setScale(1f, 1f);
+                            spawnEntityAt(upperLadder, upperLadderPosition, false, false);
+                        }
+                    }, 0.05f * (upperLadderOffset - 1 - i));
                 }
             }
         });
