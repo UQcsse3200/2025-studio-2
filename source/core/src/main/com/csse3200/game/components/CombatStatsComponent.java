@@ -94,18 +94,18 @@ public class CombatStatsComponent extends Component {
     }
 
     /**
-     * 受到攻击时调用
-     * @param attacker 攻击者的 CombatStatsComponent
+     * Called when this entity is hit by an attacker.
+     * @param attacker the attacker's CombatStatsComponent
      */
     public void hit(CombatStatsComponent attacker) {
         long currentFrame = Gdx.graphics.getFrameId();
         if (currentFrame - lastHitFrame > INVULN_FRAMES) {
             lastHitFrame = currentFrame;
 
-            int newHealth = getHealth() - attacker.getBaseAttack();
+            int newHealth = getHealth() - (attacker.getBaseAttack()/4);
             setHealth(newHealth);
 
-            // 触发受伤动画/事件
+            // Trigger hurt animation/event
             entity.getEvents().trigger("hurt");
         }
     }
