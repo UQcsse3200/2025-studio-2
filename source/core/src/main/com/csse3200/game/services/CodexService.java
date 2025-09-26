@@ -23,8 +23,18 @@ public class CodexService implements Disposable {
     }
 
     /**
+     * Returns all entries loaded at this point.
+     *
+     * @return All entries.
+     */
+    public Map<String, CodexEntry> getEntries() {
+        return entries;
+    }
+
+    /**
      * Reads the contents of a file and interprets it as title/text for entries. Even numbered lines
      * are the title of the entry, subsequent line is considered text description.
+     *
      * @param filePath The path to the file to read, with respect to the resources root.
      */
     public void loadEntries(String filePath) {
@@ -53,7 +63,7 @@ public class CodexService implements Disposable {
     }
 
     /**
-     * Clears the map of
+     * Clears the map of all entries.
      */
     @Override
     public void dispose() {
