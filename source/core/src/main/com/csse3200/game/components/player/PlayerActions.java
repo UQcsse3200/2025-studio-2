@@ -274,6 +274,9 @@ public class PlayerActions extends Component {
     isJumping = false;
     isDoubleJump = false;
 
+    Sound interactSound = ServiceLocator.getResourceService().getAsset(
+            "sounds/thudsound.mp3", Sound.class);
+    interactSound.play(0.05f);
   }
 
   /**
