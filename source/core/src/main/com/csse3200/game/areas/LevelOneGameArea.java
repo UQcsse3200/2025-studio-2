@@ -26,6 +26,7 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,9 +146,14 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnTerminals() {
-        GridPoint2 spawnPos = new GridPoint2(2, 4);
-        Entity terminal = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
-        spawnEntityAt(terminal, spawnPos, true, true);
+        try {
+            Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
+            Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
+            spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
+            spawnEntityAt(terminal2, new GridPoint2(8, 4), true, true);
+        } catch (IOException e) {
+            logger.error("{}", e.getMessage());
+        }
     }
 
     private void spawnDeathZone() {
