@@ -45,7 +45,7 @@ public class CodexTerminalFactory {
         terminal.addComponent(new CodexTerminalComponent());
 
         terminal.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(terminal, 0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(terminal, 3.0f, 3.0f);
 
         // Enable lighting effect
         Color coneColor = new Color(0f, 1f, 0f, 0.6f);

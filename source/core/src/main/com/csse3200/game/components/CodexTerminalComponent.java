@@ -6,17 +6,18 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Special component that can be attached to codex terminal entries.
  * Responsible for handling player interactions and performing side effects.
  */
 public class CodexTerminalComponent extends Component {
-
     /**
-     * Flag determining whether player is in range of the terminal
+     * Logger object
      */
-    private boolean playerInRange = false;
+    private static final Logger log = LoggerFactory.getLogger(CodexTerminalComponent.class);
     /**
      * Reference to the most recent collider interacting with object. Presumed to be player.
      */
@@ -38,13 +39,11 @@ public class CodexTerminalComponent extends Component {
     public void setPlayerInRange(ColliderComponent collider) {
         // Updates for null collider
         if (collider == null) {
-            playerInRange = false;
             playerCollider = null;
             return;
         }
 
         // Updates for non-null collider
-        playerInRange = true;
         playerCollider = collider;
 
         // Add event to player exactly once
@@ -63,18 +62,18 @@ public class CodexTerminalComponent extends Component {
     private void onPlayerInteract() {
         // Do nothing if player collider not detected, or in range, or terminal
         // already interacted with
-        if (!playerInRange || playerCollider == null || interactedWith) {
+        if (playerCollider == null || interactedWith) {
             return;
         }
 
         // Compare player position with terminal
-        Vector2 playerPos = playerCollider.getEntity().getPosition();
-        Vector2 terminalPos = entity.getPosition();
+        Vector2 playerPos = playerCollider.getEntity().getCenterPosition();
+        Vector2 terminalPos = entity.getCenterPosition();
         float dx = Math.abs(playerPos.x - terminalPos.x);
         float dy = Math.abs(playerPos.y - terminalPos.y);
 
         // Should the player be in range...
-        if (dx < 0.5f && dy < 0.5f) {
+        if (dx < 0.8f && dy < 0.8f) {
             // Update the texture of the terminal
             entity.getComponent(TextureRenderComponent.class).setTexture("images/terminal_off.png");
 
