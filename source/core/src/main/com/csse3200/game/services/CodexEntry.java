@@ -1,5 +1,6 @@
 package com.csse3200.game.services;
 
+import com.badlogic.gdx.Gdx;
 /**
  * Class representing a codex entry - storing all relevant data for an entry.
  */
@@ -31,6 +32,7 @@ public class CodexEntry {
      */
     public void setUnlocked() {
         unlocked = true;
+        Gdx.app.log("CodexEntry", "Unlocked '" + title + "'");
     }
 
     /**

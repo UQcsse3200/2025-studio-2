@@ -97,6 +97,9 @@ public class CodexTerminalComponent extends Component {
             // Disable tooltip component
             entity.getComponent(TooltipSystem.TooltipComponent.class).dispose();
 
+            // Set the codex entry to be unlocked
+            codexEntry.setUnlocked();
+
             // Prevent player from interacting after first interaction
             interactedWith = true;
         }
