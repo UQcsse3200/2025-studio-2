@@ -7,18 +7,12 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.CodexEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Special component that can be attached to codex terminal entries.
  * Responsible for handling player interactions and performing side effects.
  */
 public class CodexTerminalComponent extends Component {
-    /**
-     * Logger object
-     */
-    private static final Logger log = LoggerFactory.getLogger(CodexTerminalComponent.class);
     /**
      * Reference to the most recent collider interacting with object. Presumed to be player.
      */
@@ -34,7 +28,7 @@ public class CodexTerminalComponent extends Component {
     /**
      * Reference to entry stored by terminal
      */
-    private CodexEntry codexEntry;
+    private final CodexEntry codexEntry;
 
     /**
      * Codex terminal component constructor.
