@@ -47,6 +47,8 @@ public class LaserEmitterComponent extends Component {
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 
+    private List<Entity> lastReflectorsHit = new ArrayList<>();
+
     public LaserEmitterComponent() {
 
     }
@@ -87,6 +89,7 @@ public class LaserEmitterComponent extends Component {
 
         float remaining = MAX_DISTANCE;
         int rebounds = 0;
+        List<Entity> reflectorsHit = new ArrayList<>();
 
         while (rebounds <= MAX_REBOUNDS && remaining > 0f) {
             Vector2 end = start.cpy().mulAdd(dirVec, remaining);
@@ -119,6 +122,12 @@ public class LaserEmitterComponent extends Component {
                 // continue from just past the hit to avoid re-hit
                 start.set(hit.point).mulAdd(dirVec, 1e-4f);
                 rebounds++;
+
+                // add hit entity to reflectors hit list
+                Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+                if (e != null) {
+                    reflectorsHit.add(e);
+                }
             } else {
                 if (isPlayer) {
                     damagePlayer(hit);
@@ -127,6 +136,17 @@ public class LaserEmitterComponent extends Component {
                 break;
             }
         }
+
+        // trigger updates to reflectors (for texture changes)
+        for (Entity e : reflectorsHit) {
+            e.getEvents().trigger("laserHit", true);
+            lastReflectorsHit.remove(e);
+        }
+
+        for (Entity e : lastReflectorsHit) {
+            e.getEvents().trigger("laserOff", false);
+        }
+        lastReflectorsHit = reflectorsHit;
     }
 
     /**

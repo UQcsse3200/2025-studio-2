@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -152,6 +153,14 @@ public class ConeLightComponent extends Component {
     public ConeLightComponent setSoftnessLength (float softness) {
         if (coneLight != null) coneLight.setSoftnessLength(softness);
         return this;
+    }
+
+    public void setActive(boolean active) {
+        coneLight.setActive(active);
+    }
+
+    public boolean isActive() {
+        return coneLight.isActive();
     }
 
     public ConeLight getLight() {

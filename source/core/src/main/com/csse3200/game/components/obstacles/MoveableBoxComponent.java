@@ -1,5 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
+import box2dLight.ConeLight;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.math.MathUtils;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -36,6 +38,7 @@ public class MoveableBoxComponent extends Component {
     private PhysicsComponent boxPhysics;
     private ColliderComponent boxCollider;
     private TextureRenderComponent boxTexture;
+    private ConeLightComponent boxLight;
     private short physicsLayer = PhysicsLayer.OBSTACLE;
 
     private Camera camera;
@@ -47,6 +50,7 @@ public class MoveableBoxComponent extends Component {
 
     private boolean savedFixedRotation;
     private boolean savedBullet;
+    private final Vector2 initPos = new Vector2();
 
     /**
      * Sets the internal camera variable.
@@ -73,6 +77,7 @@ public class MoveableBoxComponent extends Component {
         boxPhysics = entity.getComponent(PhysicsComponent.class);
         boxCollider = entity.getComponent(ColliderComponent.class);
         boxTexture = entity.getComponent(TextureRenderComponent.class);
+        boxLight = entity.getComponent(ConeLightComponent.class);
 
         if (boxPhysics == null) {
             throw new IllegalStateException("Physics component is null");
@@ -88,6 +93,17 @@ public class MoveableBoxComponent extends Component {
 
         boxPhysics.getBody().setGravityScale(BASE_GRAVITY_SCALE);
         boxTexture.setOrigin(0f, 0f);
+        initPos.set(entity.getPosition());
+
+        // setup listener
+        if (boxLight != null) {
+            entity.getEvents().addListener("laserHit", this::toggleOn);
+            entity.getEvents().addListener("laserOff", this::toggleOn);
+        }
+        // set initial box state if mirror box
+        if (boxLight != null) {
+            toggleOn(false);
+        }
     }
 
     /**
@@ -138,6 +154,14 @@ public class MoveableBoxComponent extends Component {
         if (distance <= INTERACT_RANGE) {
             toggleLift();
         }
+    }
+
+    private void resetToInitPos() {
+        pickedUp = false;
+        Body body =  boxPhysics.getBody();
+        body.setTransform(initPos, 0f);
+        entity.setPosition(initPos, false); // this might not be needed but oh well
+        boxTexture.setRotation(0f);
     }
 
     /**
@@ -247,10 +271,39 @@ public class MoveableBoxComponent extends Component {
             appliedFilter = true;
         }
 
+        // check out of bounds
+        if (entity.getPosition().y <= -5f) {
+            resetToInitPos();
+        }
+
         // run following method if box is currently picked up
         if (pickedUp) {
             followPlayer();
         }
+        lightFollow();
+    }
+
+    private void toggleOn(boolean on) {
+        if (on) {
+            boxTexture.setTexture("images/mirror-cube-on.png");
+            if (boxLight != null) {
+                boxLight.setActive(true);
+            }
+        } else {
+            boxTexture.setTexture("images/mirror-cube-off.png");
+            if (boxLight != null) {
+                boxLight.setActive(false);
+            }
+        }
+    }
+
+    private void lightFollow() {
+        if (boxLight == null) return;
+        ConeLight light = boxLight.getLight();
+        if (light == null) return;
+
+        Vector2 pos = boxPhysics.getBody().getWorldCenter();
+        light.setPosition(pos.x, pos.y);
     }
 
     /**
