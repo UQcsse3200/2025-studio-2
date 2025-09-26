@@ -32,23 +32,6 @@ public class PressurePlateComponent extends Component {
         }
     }
 
-    private void onCollisionStart(Object me, Object other) {
-        // System.out.println("Pressure plate collision with: " + other);
-        if (isPressed) {
-            return; // Already pressed; ignore further collisions
-        }
-        if (!(other instanceof Entity)) {
-            return;
-        }
-        Entity otherEntity = (Entity) other;
-        // Only react when the player steps on the plate
-        if (otherEntity.getComponent(PlayerActions.class) != null) {
-            isPressed = true;
-            updateTexture();
-            entity.getEvents().trigger("plateToggled", true);
-        }
-    }
-
     private void updateTexture() {
         // Change the texture only if a pressed texture has been specified
         TextureRenderComponent render = entity.getComponent(TextureRenderComponent.class);

@@ -134,7 +134,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         door = spawnDoor();
-        spawnPressurePlates();
+        spawnBoxOnlyPlate();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
@@ -154,7 +154,9 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnBoxes() {
         Entity e = BoxFactory.createReflectorBox();
-        spawnEntityAt(e, new GridPoint2(15, 15), true, true);
+        spawnEntityAt(e, new GridPoint2(18, 15), true, true);
+        Entity testing = BoxFactory.createWeightedBox();
+        spawnEntityAt(testing, new GridPoint2(15, 15), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
@@ -494,6 +496,17 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 platePos = new GridPoint2(6, 5);
         spawnEntityAt(plate, platePos, true, true);
+    }
+
+    private void spawnBoxOnlyPlate() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+        spawnEntityAt(plate, new GridPoint2(6, 5), true, true);
+
+        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed) {
+
+            }
+        });
     }
 
     private TerrainComponent createDefaultTerrain() {

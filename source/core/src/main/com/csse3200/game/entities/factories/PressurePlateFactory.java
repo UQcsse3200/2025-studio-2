@@ -25,9 +25,9 @@ public class PressurePlateFactory {
         collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(false);
         plate.addComponent(collider);
-        plate.addComponent(new PressurePlateComponent()); // generic plate
+        plate.addComponent(new PressurePlateComponent());
         plate.setScale(1f, 1f);
-        return plate;  // <-- DON'T FORGET THIS
+        return plate;
     }
 
     public static Entity createBoxOnlyPlate() {
@@ -38,9 +38,9 @@ public class PressurePlateFactory {
         collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(false);
         plate.addComponent(collider);
-        plate.addComponent(new BoxPressurePlateComponent()); // boxes-only logic
+        plate.addComponent(new BoxPressurePlateComponent());
         plate.setScale(1f, 1f);
-        return plate;  // <-- AND THIS
+        return plate;
     }
 
 
