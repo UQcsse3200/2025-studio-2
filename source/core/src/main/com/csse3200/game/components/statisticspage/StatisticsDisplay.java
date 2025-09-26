@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -20,6 +21,8 @@ public class StatisticsDisplay extends UIComponent {
 
     private static final float Z_INDEX = 2f;
     private Table table;
+    private Table topTable;
+
 
     public StatisticsDisplay(GdxGame game) {
         super();
@@ -43,6 +46,27 @@ public class StatisticsDisplay extends UIComponent {
 
         table = new Table();
         table.setFillParent(true);
+        table.center();
+
+        Label title = new Label("Statistics", skin, "title");
+        topTable = new Table();
+        topTable.setFillParent(true);
+        topTable.top();
+        topTable.add(title).expandX().center().padTop(20f);
+        stage.addActor(topTable);
+
+        Label playtimeLabel = new Label("Total Playtime: 99999 mins", skin);
+        Label upgradesLabel = new Label("Upgrades picked up: 6", skin);
+        Label levelCompletedLabel = new Label("Levels completed: 7", skin);
+        Label deathCounterLabel = new Label("Deaths: 0", skin);
+        Label achievementCounterLabel = new Label("Achievements: 25", skin);
+
+        table.add(playtimeLabel).pad(10f).padLeft(50f).row();
+        table.add(upgradesLabel).pad(10f).padLeft(50f).row();
+        table.add(levelCompletedLabel).pad(10f).padLeft(50f).row();
+        table.add(deathCounterLabel).pad(10f).padLeft(50f).row();
+        table.add(achievementCounterLabel).pad(10f).padLeft(50f).row();
+
 
         TextButton exitBtn = new TextButton("Exit", skin);
 
@@ -57,11 +81,13 @@ public class StatisticsDisplay extends UIComponent {
                     }
                 });
 
-        // Add row containing buttons
-        Table row = new Table();
-        table.add(exitBtn).pad(15f).expand().bottom().left();
-        table.add(row);
+        Table bottomTable = new Table();
+        bottomTable.bottom().left();
+        bottomTable.setFillParent(true);
+        bottomTable.add(exitBtn).pad(15f);
+
         stage.addActor(table);
+        stage.addActor(bottomTable);
     }
 
     @Override
