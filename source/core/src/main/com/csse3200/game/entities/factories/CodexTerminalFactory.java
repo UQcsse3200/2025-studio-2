@@ -11,6 +11,7 @@ import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.CodexEntry;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -26,9 +27,10 @@ public class CodexTerminalFactory {
 
     /**
      * Creates a new terminal entity with all necessary components attached.
+     * @param codexEntry Reference to the codex entry the terminal stores.
      * @return The terminal entity created.
      */
-    public static Entity createTerminal() {
+    public static Entity createTerminal(CodexEntry codexEntry) {
         Entity terminal = new Entity();
 
         // Add texture
@@ -42,7 +44,7 @@ public class CodexTerminalFactory {
         terminal.addComponent(collider);
 
         // Add terminal-specific component
-        terminal.addComponent(new CodexTerminalComponent());
+        terminal.addComponent(new CodexTerminalComponent(codexEntry));
 
         terminal.setScale(0.5f, 0.5f);
         PhysicsUtils.setScaledCollider(terminal, 3.0f, 3.0f);

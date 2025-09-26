@@ -2,7 +2,6 @@ package com.csse3200.game.services;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
-import com.csse3200.game.ui.cutscene.CutsceneReaderComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +28,8 @@ public class CodexService implements Disposable {
         entries = new HashMap<>();
     }
     /**
-     * Returns all entries loaded at this point.
-     *
+     * Returns an entry held by the service using the key (or title) of the entry.
+     * @param title The title of the entry.
      * @return All entries.
      */
     public CodexEntry getEntry(String title) {

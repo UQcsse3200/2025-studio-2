@@ -146,7 +146,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnTerminals() {
         GridPoint2 spawnPos = new GridPoint2(2, 4);
-        Entity terminal = CodexTerminalFactory.createTerminal();
+        Entity terminal = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("Test Entry"));
         spawnEntityAt(terminal, spawnPos, true, true);
     }
 

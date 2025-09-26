@@ -6,6 +6,7 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.CodexEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +31,26 @@ public class CodexTerminalComponent extends Component {
      * Flag determining whether the terminal has been interacted with.
      */
     private boolean interactedWith = false;
+    /**
+     * Reference to entry stored by terminal
+     */
+    private CodexEntry codexEntry;
+
+    /**
+     * Codex terminal component constructor.
+     * @param codexEntry Reference to the entry this terminal gives to the player.
+     */
+    public CodexTerminalComponent(CodexEntry codexEntry) {
+        this.codexEntry = codexEntry;
+    }
+
+    /**
+     * Returns the codex entry stored by the terminal.
+     * @return The codex entry stored by the terminal.
+     */
+    public CodexEntry getCodexEntry() {
+        return codexEntry;
+    }
 
     /**
      * Decide if the player is considered in range given a collider input. If the collider is not
