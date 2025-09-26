@@ -116,10 +116,8 @@ public class MoveableBoxComponent extends Component {
         Filter f = boxCollider.getFixture().getFilterData();
         if (pickedUp) {
             f.maskBits = (short)(f.maskBits & (short) (~PhysicsLayer.PLAYER));
-            System.out.println("Filter toggled off");
         } else  {
             f.maskBits = (short) (f.maskBits | PhysicsLayer.PLAYER);
-            System.out.println("Filter toggled on");
         }
         boxCollider.getFixture().setFilterData(f);
         boxCollider.getFixture().refilter();
@@ -131,7 +129,6 @@ public class MoveableBoxComponent extends Component {
      * Only toggles the box lift if player is within the correct range.
      */
     private void onPlayerInteract() {
-        System.out.println("Box Interaction");
         if (player == null) {
             return;
         }
@@ -166,6 +163,9 @@ public class MoveableBoxComponent extends Component {
         } else {
             body.setAngularVelocity(0f);
             //body.setLinearVelocity(0f, 0f);
+
+            resetPos(body);
+
             // restore
             body.setGravityScale(BASE_GRAVITY_SCALE);
             body.setFixedRotation(savedFixedRotation);
@@ -174,6 +174,58 @@ public class MoveableBoxComponent extends Component {
             //boxPhysics.getBody().setTransform(boxPhysics.getBody().getPosition(), 0);
         }
         toggleFilter();
+    }
+
+    /**
+     * Very cursed helper method that attempts to reset the boxes
+     * position angle to the nearest 90 degrees.
+     * <p>
+     * However because it's all rotated about 0,0 the box can "teleport" sometimes
+     * this is what the helper method tries to fix...
+     *
+     * @param body physics body of the box
+     */
+    private void resetPos(Body body) {
+        // idk weird rounding stuff, im too tired to think about it rn so this works...
+        // this resets the angle of the box to the nearest 90 deg when dropped
+        float angRounded = Math.round(body.getAngle() / (MathUtils.PI / 2f)) * (MathUtils.PI / 2f);
+
+        Vector2 pos =  body.getPosition().cpy();
+        Vector2 offset = new  Vector2();
+        float angle = normAng(body.getAngle() * MathUtils.radiansToDegrees);
+        int x = (int) (angle / 45);
+        // PLEASE JUST DONT READ THIS...
+        // idk what even happening now
+        switch (x) {
+            case 0:
+                offset.x = -0.15f * ((angle % 45) / 45f);
+                break;
+            case 1:
+                offset.x = 0.15f * (1 - (angle % 45) / 45f);
+                break;
+            case 2:
+                offset.y = -0.15f * (1 - (angle % 45) / 45f);
+                break;
+            case 3:
+                offset.y = 0.15f * ((angle % 45) / 45f);
+                break;
+            default:
+                offset = Vector2.Zero;
+                break;
+        }
+        pos.add(offset);
+        // apply the new cursed offest
+        body.setTransform(pos, angRounded);
+        entity.setPosition(pos, false); // this might not be needed but oh well
+        boxTexture.setRotation(angRounded * MathUtils.radiansToDegrees);
+    }
+
+    private float normAng(float a) {
+        float x = a % 360;
+        if (x < 0) {
+            x += 360;
+        }
+        return x;
     }
 
     @Override
@@ -223,8 +275,8 @@ public class MoveableBoxComponent extends Component {
         if (dir.isZero(1e-4f)) dir.set(1f, 0f);
         dir.nor();
 
-        // target = player + dir * CARRY_RANGE
-        Vector2 target = new Vector2(playerPos).mulAdd(dir, CARRY_RANGE);
+        // target = player + dir * CARRY_RANGE // also a small offset :3
+        Vector2 target = new Vector2(playerPos).mulAdd(dir, CARRY_RANGE).sub(0.1f, 0.125f);
 
         // target angle
         float targetAngle = MathUtils.atan2(dir.y, dir.x);

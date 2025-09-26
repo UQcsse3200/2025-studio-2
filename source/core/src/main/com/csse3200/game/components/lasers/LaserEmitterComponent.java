@@ -10,7 +10,6 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -48,8 +47,6 @@ public class LaserEmitterComponent extends Component {
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 
-    private AnimationRenderComponent animator;
-
     public LaserEmitterComponent() {
 
     }
@@ -65,7 +62,6 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
-        animator = entity.getComponent(AnimationRenderComponent.class);
     }
 
     @Override
@@ -168,7 +164,7 @@ public class LaserEmitterComponent extends Component {
      * <p>
      * This code is essentially just taken from the {@code TouchAttackComponent}
      *
-     * @param hit
+     * @param hit the raycast hit result
      */
     private void damagePlayer(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
