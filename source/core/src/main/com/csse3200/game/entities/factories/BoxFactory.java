@@ -1,15 +1,18 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
@@ -73,7 +76,6 @@ public class BoxFactory {
         RenderService rs = ServiceLocator.getRenderService();
         Camera camera = rs.getRenderer() == null ? null : rs.getRenderer().getCamera().getCamera();
         Entity moveableBox = new Entity()
-                .addComponent(new TextureRenderComponent("images/box_blue.png"))
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.DynamicBody))
                 .addComponent(new ColliderComponent()
@@ -94,6 +96,7 @@ public class BoxFactory {
      */
     public static Entity createWeightedBox() {
         Entity weightedBox = createMoveableBox();
+        weightedBox.addComponent(new TextureRenderComponent("images/box_blue.png"));
         weightedBox.getComponent(MoveableBoxComponent.class).setBaseGravityScale(0.85f);
 
         return weightedBox;
@@ -106,6 +109,18 @@ public class BoxFactory {
      */
     public static Entity createReflectorBox() {
         Entity reflectorBox = createMoveableBox();
+
+        reflectorBox.addComponent(new TextureRenderComponent("images/mirror-cube-off.png"));
+        ConeLightComponent light = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                LightingDefaults.RAYS,
+                Color.RED,
+                1f,
+                0f,
+                180f
+        ).setFollowEntity(false);
+        reflectorBox.addComponent(light);
+
         reflectorBox.getComponent(MoveableBoxComponent.class).setPhysicsLayer(PhysicsLayer.LASER_REFLECTOR);
 
         return reflectorBox;

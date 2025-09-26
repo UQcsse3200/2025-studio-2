@@ -11,10 +11,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -94,6 +97,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/7.png",
             "images/pressure_plate_unpressed.png",
             "images/pressure_plate_pressed.png"
+            "images/mirror-cube-off.png",
+            "images/mirror-cube-on.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -111,9 +116,6 @@ public class LevelOneGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
-
-    private Entity door;
-    private Timer.Task doorCloseTask;
 
     public LevelOneGameArea(TerrainFactory terrainFactory) {
         super();
@@ -135,15 +137,15 @@ public class LevelOneGameArea extends GameArea {
         spawnVolatilePlatform();
         spawnDeathZone();
         spawnWalls();
-        door = spawnDoor();
+        spawnDoor();
         spawnBoxOnlyPlate();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
-        spawnSecurityCams();
+        //spawnSecurityCams();
         spawnButtons();
         spawnTraps();
-        spawnPlatformBat();
+        //spawnPlatformBat();
         spawnLevelOneBatRoom();
         spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
@@ -151,7 +153,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
-        //spawnLasers();
+        spawnLasers();
     }
 
     private void spawnBoxes() {
@@ -159,11 +161,14 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(e, new GridPoint2(18, 15), true, true);
         Entity testing = BoxFactory.createWeightedBox();
         spawnEntityAt(testing, new GridPoint2(15, 15), true, true);
+        spawnEntityAt(e, new GridPoint2(15, 15), true, true);
+
+        Entity e1 = BoxFactory.createReflectorBox();
+        spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
         spawnEntityAt(e, new GridPoint2(40, 12), true, true);
-
     }
 
     private void spawnDeathZone() {
@@ -436,13 +441,12 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(step13, step13Pos,false, false);
     }
 
-    public Entity spawnDoor() {
+    public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("key:door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
-        return door;
     }
 
     private void playMusic() {
