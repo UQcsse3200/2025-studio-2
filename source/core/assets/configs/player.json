@@ -1,6 +1,6 @@
 {
-  "health": 100,
-  "baseAttack": 10,
+  "health": 20,
+  "baseAttack": 1,
   "gold": 50,
   "favouriteColour": "peach",
   "maxStamina": 100,

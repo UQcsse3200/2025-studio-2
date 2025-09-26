@@ -1,6 +1,12 @@
-{
-  "drone": {
-    "health": 100,
-    "baseAttack": 10
-  }
+"drone": {
+"health": 40,       // 20 hearts = 40 half-hearts
+"baseAttack": 1     // 1 half-heart = 0.5 heart
+},
+"bomber": {
+"health": 80,       // 40 hearts = 80 half-hearts
+"baseAttack": 2     // 2 half-hearts = 1 heart
+},
+"patrollingDrone": {
+"health": 60,       // 30 hearts = 60 half-hearts
+"baseAttack": 3     // 3 half-hearts = 1.5 hearts
 }
