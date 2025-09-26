@@ -20,8 +20,7 @@ public class BoxPressurePlateComponent extends Component {
 
     private TextureRenderComponent renderer;
     private boolean pressed = false;
-    private int overlapCount = 0;
-    private final List<Entity> activePressers = new ArrayList<>();
+    private final List<Entity> activePressing = new ArrayList<>();
 
 
     @Override
@@ -34,11 +33,13 @@ public class BoxPressurePlateComponent extends Component {
         if (!isValid(other)) return;
 
         if (onPlate) {
-            overlapCount++;
+            if (!activePressing.contains(other)) {
+                activePressing.add(other);
+            }
         } else {
-            overlapCount = Math.max(0, overlapCount - 1);
+            activePressing.remove(other);
         }
-        setPressed(overlapCount > 0);
+        setPressed(!activePressing.isEmpty());
     }
 
     private boolean isValid(Entity other) {
@@ -60,7 +61,7 @@ public class BoxPressurePlateComponent extends Component {
     private boolean isAbove(Entity other) {
         float plateY = entity.getPosition().y;
         float otherY = other.getPosition().y;
-        return otherY > plateY + 0.1f;
+        return otherY > plateY + 0.5f;
     }
 
     private void setPressed(boolean pressed) {

@@ -96,7 +96,7 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
             "images/pressure_plate_unpressed.png",
-            "images/pressure_plate_pressed.png"
+            "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png"
     };
@@ -161,7 +161,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(e, new GridPoint2(18, 15), true, true);
         Entity testing = BoxFactory.createWeightedBox();
         spawnEntityAt(testing, new GridPoint2(15, 15), true, true);
-        spawnEntityAt(e, new GridPoint2(15, 15), true, true);
 
         Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
@@ -550,23 +549,6 @@ public class LevelOneGameArea extends GameArea {
 
         backgroundEntity.addComponent(parallaxBg);
         spawnEntity(backgroundEntity);
-    }
-
-    private void spawnPressurePlates() {
-        Entity plate = PressurePlateFactory.createPressurePlate();
-        PressurePlateComponent comp = plate.getComponent(PressurePlateComponent.class);
-        comp.setTextures("images/pressure_plate_unpressed.png", "images/pressure_plate_pressed.png");
-
-        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed) {
-
-            } else {
-
-            }
-        });
-
-        GridPoint2 platePos = new GridPoint2(6, 5);
-        spawnEntityAt(plate, platePos, true, true);
     }
 
     private void spawnBoxOnlyPlate() {
