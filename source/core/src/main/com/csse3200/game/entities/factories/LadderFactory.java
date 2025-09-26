@@ -42,7 +42,7 @@ public class LadderFactory {
     public static Entity createLadderBase() {
         Entity ladder =
                 new Entity()
-                        .addComponent(new TextureRenderComponent("images/ladder-base.png"))
+                        .addComponent(new TextureRenderComponent("images/ladder-base.png").setLayer(0))
                         .addComponent(new PhysicsComponent())
                         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NONE))
                         .addComponent(new LadderComponent());
