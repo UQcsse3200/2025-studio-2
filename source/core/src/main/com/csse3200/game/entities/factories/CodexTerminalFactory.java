@@ -63,7 +63,7 @@ public class CodexTerminalFactory {
 
         // Add tooltip
         terminal.addComponent(new TooltipSystem.TooltipComponent(
-                "Interact to add codex entry",
+                "Interact to add '" + codexEntry.getTitle() + "' to codex",
                 TooltipSystem.TooltipStyle.DEFAULT)
         );
 

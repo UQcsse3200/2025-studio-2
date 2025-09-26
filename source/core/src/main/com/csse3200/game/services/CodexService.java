@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 
@@ -25,19 +25,19 @@ public class CodexService implements Disposable {
      * Constructor for the codex service. Initialises a hash map for all entries
      */
     public CodexService() {
-        entries = new HashMap<>();
+        entries = new LinkedHashMap<>();
     }
     /**
-     * Returns an entry held by the service using the key (or title) of the entry.
-     * @param title The title of the entry.
+     * Returns an entry held by the service using the key (or id) of the entry.
+     * @param id The id of the entry.
      * @return All entries.
      */
-    public CodexEntry getEntry(String title) {
-        CodexEntry entry = entries.get(title);
+    public CodexEntry getEntry(String id) {
+        CodexEntry entry = entries.get(id);
 
         // Create error if entry with that title does not exist.
         if (entry != null) {
-            logger.error("Entry with title {} does not exist.", title);
+            logger.error("Entry with id {} does not exist.", id);
         }
 
         return entry;
@@ -57,17 +57,19 @@ public class CodexService implements Disposable {
         // Keep track of line index, and last recorded title in file
         int lineIndex = 0;
         String titleBuffer = null;
+        String idBuffer = null;
 
         // Iterate through file line by line
         for (String line : fileLines) {
-            if (lineIndex % 2 == 0) {
-                // Even line numbers are titles
+            if (lineIndex % 3 == 0) {
+                idBuffer = line;
+            } else if (lineIndex % 3 == 1) {
                 titleBuffer = line;
             } else {
-                // Odd line numbers are text
                 // Enough information for entry - add to codex map
-                entries.put(titleBuffer, new CodexEntry(line));
+                entries.put(idBuffer, new CodexEntry(titleBuffer, line));
                 titleBuffer = null;
+                idBuffer = null;
             }
 
             lineIndex++;

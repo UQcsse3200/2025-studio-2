@@ -9,6 +9,10 @@ public class CodexEntry {
      */
     private final String text;
     /**
+     * Title of the codex entry.
+     */
+    private final String title;
+    /**
      * Flag determining if codex entry has been unlocked.
      */
     private boolean unlocked = false;
@@ -17,8 +21,9 @@ public class CodexEntry {
      * Constructor that sets the text contents of the codex.
      * @param text A string (with formatting) for the codex entry.
      */
-    public CodexEntry(String text) {
+    public CodexEntry(String title, String text) {
         this.text = text;
+        this.title = title;
     }
 
     /**
@@ -43,4 +48,10 @@ public class CodexEntry {
     public String getText() {
         return text;
     }
+
+    /**
+     * Get the title of the entry.
+     * @return The title of the entry.
+     */
+    public String getTitle() { return title; }
 }
