@@ -109,6 +109,8 @@ public class MainGameScreen extends ScreenAdapter {
 
     loadAssets();
 
+    gameTime = new GameTime();
+
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
@@ -146,12 +148,15 @@ public class MainGameScreen extends ScreenAdapter {
         newArea = new LevelOneGameArea(terrainFactory);
       }
       case CUTSCENE_ONE -> {
+        leaderboardComponent.updateLeaderboard("TestNameLvl1", gameTime.getTimeSince(lvlStartTime));
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
       }
       case LEVEL_TWO -> {
+        lvlStartTime =  gameTime.getTime();
         newArea = new LevelTwoGameArea(terrainFactory);
       }
       case CUTSCENE_TWO -> {
+        leaderboardComponent.updateLeaderboard("TestNameLvl2", gameTime.getTimeSince(lvlStartTime));
         newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
       }
       case SPRINT_ONE -> {
@@ -382,7 +387,6 @@ public class MainGameScreen extends ScreenAdapter {
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
     leaderboardComponent = new LeaderboardComponent();
-    gameTime = new GameTime();
 
     System.out.println("Starting Level Time!");
     lvlStartTime = gameTime.getTime();

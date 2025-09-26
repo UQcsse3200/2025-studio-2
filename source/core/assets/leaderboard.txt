@@ -1,4 +1,4 @@
 {
-  "TestNameLvl1":15373,
-  "TestNameLvl2":35666
+  "TestNameLvl1":200000,
+  "TestNameLvl2":200000
 }
