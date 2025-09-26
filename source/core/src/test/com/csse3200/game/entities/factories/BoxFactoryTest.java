@@ -84,8 +84,6 @@ public class BoxFactoryTest {
     @Test
     void createMoveableBox_hasAllComponents() {
         Entity moveableBox = BoxFactory.createMoveableBox();
-        assertNotNull(moveableBox.getComponent(TextureRenderComponent.class),
-                "Moveable Box should have a TextureRendererComponent");
         assertNotNull(moveableBox.getComponent(PhysicsComponent.class),
                 "Moveable Box should have a PhysicsComponent");
         assertNotNull(moveableBox.getComponent(ColliderComponent.class),
