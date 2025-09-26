@@ -104,7 +104,7 @@ public class SettingsTab implements InventoryTabInterface {
         table.row().padTop(20f);
         
         // Apply button - better styling
-        TextButton applyBtn = new TextButton("Apply", skin);
+        TextButton applyBtn = new TextButton("Apply", skin, "settingsMenu");
         applyBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -159,7 +159,7 @@ public class SettingsTab implements InventoryTabInterface {
             table.add(actionLabel).right().padRight(15f);
             
             // Current key display button
-            TextButton keyButton = new TextButton(Input.Keys.toString(currentKeyCode), skin);
+            TextButton keyButton = new TextButton(Input.Keys.toString(currentKeyCode), skin, "settingsMenu");
             keyButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
@@ -175,7 +175,7 @@ public class SettingsTab implements InventoryTabInterface {
         
         // Add reset to defaults button
         table.row().padTop(15f);
-        TextButton resetButton = new TextButton("Restore Defaults", skin);
+        TextButton resetButton = new TextButton("Restore Defaults", skin, "settingsMenu");
         resetButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

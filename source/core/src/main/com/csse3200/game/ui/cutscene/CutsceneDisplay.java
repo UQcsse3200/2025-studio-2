@@ -108,7 +108,7 @@ public class CutsceneDisplay extends UIComponent {
         textBoxContainer.add(textTable).expandX().fillX().pad(20f);
 
         // Add button to text container
-        TextButton progressButton = new TextButton("Next", skin);
+        TextButton progressButton = new TextButton("Next", skin, "cutsceneNext");
         textBoxContainer.add(progressButton).pad(20f);
 
         // Add text box container to UI table

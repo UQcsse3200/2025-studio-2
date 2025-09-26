@@ -84,7 +84,7 @@ public class SettingsMenuDisplay extends UIComponent {
     background.setFillParent(true);
     stage.addActor(background);
 
-    Label title = new Label("Settings", skin, "title");
+    Label title = new Label("Settings", skin);
     Table settingsTable = makeSettingsTable();
     Table menuButtons = makeMenuButtons();
 
@@ -215,7 +215,7 @@ public class SettingsMenuDisplay extends UIComponent {
     });
 
     table.row().padTop(20f);
-    Label keyBindLabel = new Label("Key Bindings:", skin, "title");
+    Label keyBindLabel = new Label("Key Bindings:", skin);
     table.add(keyBindLabel).colspan(2).center();
 
     addKeyBindingControls(table);
@@ -248,7 +248,7 @@ public class SettingsMenuDisplay extends UIComponent {
       table.add(actionLabel).right().padRight(15f);
 
       // Current key display button
-      TextButton keyButton = new TextButton(Input.Keys.toString(currentKeyCode), skin);
+      TextButton keyButton = new TextButton(Input.Keys.toString(currentKeyCode), skin, "settingsMenu");
       keyButton.addListener(new ChangeListener() {
         @Override
         public void changed(ChangeEvent event, Actor actor) {
@@ -265,7 +265,7 @@ public class SettingsMenuDisplay extends UIComponent {
 
     // Create reset to default button
     table.row().padTop(15f);
-    TextButton defaultButton = new TextButton("Restore Defaults", skin);
+    TextButton defaultButton = new TextButton("Restore Defaults", skin, "settingsMenu");
     defaultButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
@@ -415,8 +415,8 @@ public class SettingsMenuDisplay extends UIComponent {
    * @return Table containing the menu navigation buttons
    */
   private Table makeMenuButtons() {
-    TextButton exitBtn = new TextButton("Exit", skin);
-    TextButton applyBtn = new TextButton("Apply", skin);
+    TextButton exitBtn = new TextButton("Exit", skin,"settingsMenu");
+    TextButton applyBtn = new TextButton("Apply", skin, "settingsMenu");
 
     exitBtn.addListener(
         new ChangeListener() {
