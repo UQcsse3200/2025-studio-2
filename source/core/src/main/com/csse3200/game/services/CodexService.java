@@ -2,9 +2,13 @@ package com.csse3200.game.services;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
+import com.csse3200.game.ui.cutscene.CutsceneReaderComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * Service for managing all codex entries in the game
@@ -14,21 +18,30 @@ public class CodexService implements Disposable {
      * Map that maps an entry title to an entry content's (text, unlock status)
      */
     private final Map<String, CodexEntry> entries;
-
+    /**
+     * Logger object for creating errors if any occur
+     */
+    private static final Logger logger = LoggerFactory.getLogger(CodexService.class);
     /**
      * Constructor for the codex service. Initialises a hash map for all entries
      */
     public CodexService() {
         entries = new HashMap<>();
     }
-
     /**
      * Returns all entries loaded at this point.
      *
      * @return All entries.
      */
-    public Map<String, CodexEntry> getEntries() {
-        return entries;
+    public CodexEntry getEntry(String title) {
+        CodexEntry entry = entries.get(title);
+
+        // Create error if entry with that title does not exist.
+        if (entry != null) {
+            logger.error("Entry with title {} does not exist.", title);
+        }
+
+        return entry;
     }
 
     /**
