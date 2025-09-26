@@ -90,7 +90,6 @@ public abstract class GameArea implements Disposable {
    * Sets the list of death locations.
    * This must be called only once because it spawns entities that are not cleaned up if this is set again.
    *
-   * @return the number of death locations.
    */
   public void setDeathLocations(ArrayList<Vector2> deathLocations) {
     assert(this.deathLocations.size() == 0);
