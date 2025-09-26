@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -37,6 +39,18 @@ public class CodexService implements Disposable {
         }
 
         return entry;
+    }
+
+    /**
+     * Returns all unlocked entries currently stored by the service as an array list.
+     * @return All unlocked entries stored by service as an array list.
+     */
+    public ArrayList<CodexEntry> getEntries() {
+        // Get an array list containing all unlocked entries
+        return entries.values()
+                .stream()
+                .filter(CodexEntry::isUnlocked)
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
