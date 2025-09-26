@@ -34,15 +34,13 @@ public class CodexTab implements InventoryTabInterface {
         // Create table holder that will contain all UI elements
         Table tableHolder = new Table();
 
+        // Create background
         Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pixmap.setColor(0.1f, 0.1f, 0.1f, 1f); // Grey color
         pixmap.fill();
         bgTexture = new Texture(pixmap);
         tableHolder.setBackground(new TextureRegionDrawable(bgTexture));
         pixmap.dispose();
-
-        // Define title
-        Label titleLabel = new Label("=== Codex ===", skin);
 
         // Create logical table (child of scroll pane)
         Table logicalTable = new Table();
@@ -75,7 +73,7 @@ public class CodexTab implements InventoryTabInterface {
         // Add scroll pane and title to table holder
         float canvasH = Gdx.graphics.getHeight() * (3f / 7f);
         float canvasW = Gdx.graphics.getWidth() * (2f / 5f);
-        tableHolder.add(titleLabel).pad(20f);
+        tableHolder.add(new Label("=== Codex ===", skin)).pad(20f);
         tableHolder.row();
         tableHolder.add(scrollPane).width(canvasW).height(canvasH);
 
