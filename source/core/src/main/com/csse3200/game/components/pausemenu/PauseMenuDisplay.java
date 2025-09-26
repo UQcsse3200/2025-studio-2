@@ -18,10 +18,7 @@ import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import com.csse3200.game.ui.inventoryscreen.InventoryTab;
-import com.csse3200.game.ui.inventoryscreen.ObjectivesTab;
-import com.csse3200.game.ui.inventoryscreen.SettingsTab;
-import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
+import com.csse3200.game.ui.inventoryscreen.*;
 
 public class PauseMenuDisplay extends UIComponent {
     private final MainGameScreen screen;
@@ -34,10 +31,11 @@ public class PauseMenuDisplay extends UIComponent {
     private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
     private final ObjectivesTab objectivesTab;
+    private final CodexTab codexTab;
     private InventoryNavigationComponent navigationComponent;
     private PauseMenuNavigationComponent pauseMenuNavigationComponent;
 
-    public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
+    public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES, CODEX}
     private Tab currentTab = Tab.INVENTORY;
 
     public PauseMenuDisplay(MainGameScreen screen, GdxGame game) {
@@ -46,6 +44,7 @@ public class PauseMenuDisplay extends UIComponent {
         this.inventoryTab = new InventoryTab(screen);
         this.upgradesTab = new UpgradesTab(screen);
         this.objectivesTab = new ObjectivesTab(screen);
+        this.codexTab = new CodexTab(screen);
         this.game = game;
     }
 
@@ -150,8 +149,8 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> Tab.UPGRADES;
             case UPGRADES -> Tab.OBJECTIVES;
             case OBJECTIVES -> Tab.INVENTORY;
-            //case SETTINGS -> Tab.SETTINGS;
-            default -> Tab.SETTINGS;
+            case SETTINGS -> Tab.SETTINGS;
+            case CODEX -> Tab.CODEX;
         };
     }
 
@@ -160,8 +159,8 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> Tab.OBJECTIVES;
             case UPGRADES -> Tab.INVENTORY;
             case OBJECTIVES -> Tab.UPGRADES;
-            //case SETTINGS -> Tab.SETTINGS;
-            default -> Tab.SETTINGS;
+            case SETTINGS -> Tab.SETTINGS;
+            case CODEX -> Tab.CODEX;
         };
     }
 
@@ -177,6 +176,7 @@ public class PauseMenuDisplay extends UIComponent {
             case UPGRADES -> upgradesTab.build(skin);
             case OBJECTIVES -> objectivesTab.build(skin);
             case SETTINGS -> settingsTab.build(skin);
+            case CODEX -> codexTab.build(skin);
         };
         // Ensure the returned actor from build() fills the tab content area.
         tabContent.add(ui).expand().fill();

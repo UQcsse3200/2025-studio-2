@@ -121,7 +121,7 @@ public class Keymap {
     registerAction("PauseInventory", Input.Keys.I, true);
     registerAction("PauseObjectives", Input.Keys.O, true);
     registerAction("PauseUpgrades", Input.Keys.U, true);
-
+    registerAction("PauseCodex", Input.Keys.J, true);
   }
 
   /**
