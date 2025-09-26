@@ -11,13 +11,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
-import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -130,15 +125,15 @@ public class LevelOneGameArea extends GameArea {
     protected void loadEntities() {
         keySpawned = false;
         spawnLadders();
-        spawnLowerLadderButton();
-        spawnUpperLadderButton();
+        spawnLowerLadderPressurePlate();
+        spawnUpperLadderPressurePlate();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-        spawnBoxOnlyPlate();
+        //spawnBoxOnlyPlate();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
@@ -157,8 +152,6 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnBoxes() {
-        Entity e = BoxFactory.createReflectorBox();
-        spawnEntityAt(e, new GridPoint2(18, 15), true, true);
         Entity testing = BoxFactory.createWeightedBox();
         spawnEntityAt(testing, new GridPoint2(15, 15), true, true);
 
@@ -219,19 +212,19 @@ public class LevelOneGameArea extends GameArea {
             spawnEntityAt(ladder, ladderPosition, false, false);
         }
     }
-    private void spawnUpperLadderButton() {
+    private void spawnUpperLadderPressurePlate() {
         int x = 63;
-        int y = 37;
-        GridPoint2 upperLadderButtonPosition = new GridPoint2(x, y);
-        Entity upperLadderButton = ButtonFactory.createButton(false, "upperLadder", "left");
-        upperLadderButton.addComponent(new TooltipSystem.TooltipComponent(
+        int y = 36;
+        GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
+        Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
+        upperLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
-        spawnEntityAt(upperLadderButton, upperLadderButtonPosition, true, true);
+        spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        upperLadderButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed && !isUpperLadderExtended) {
+        upperLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed && !isUpperLadderExtended) {
                 isUpperLadderExtended = true;
                 for (int i = upperLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -248,19 +241,20 @@ public class LevelOneGameArea extends GameArea {
             }
         });
     }
-    private void spawnLowerLadderButton() {
-        int x = 74;
-        int y = 5;
-        GridPoint2 lowerLadderButtonPosition = new GridPoint2(x, y);
-        Entity lowerLadderButton = ButtonFactory.createButton(false, "lowerLadder", "left");
-        lowerLadderButton.addComponent(new TooltipSystem.TooltipComponent(
+    private void spawnLowerLadderPressurePlate() {
+        int x = 73;
+        int y = 4;
+
+        GridPoint2 lowerLadderPressurePlatePosition = new GridPoint2(x, y);
+        Entity lowerLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
+        lowerLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
-        spawnEntityAt(lowerLadderButton, lowerLadderButtonPosition, true, true);
+        spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        lowerLadderButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed && !isLowerLadderExtended) {
+        lowerLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed && !isLowerLadderExtended) {
                 isLowerLadderExtended = true;
                 for (int i = lowerLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
