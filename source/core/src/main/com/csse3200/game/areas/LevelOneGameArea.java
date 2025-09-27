@@ -152,8 +152,10 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnBoxes() {
-        Entity testing = BoxFactory.createWeightedBox();
-        spawnEntityAt(testing, new GridPoint2(15, 15), true, true);
+        Entity one = BoxFactory.createWeightedBox();
+        spawnEntityAt(one, new GridPoint2(15, 15), true, true);
+        Entity two = BoxFactory.createWeightedBox();
+        spawnEntityAt(two, new GridPoint2(61, 36), true, true);
 
         Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
