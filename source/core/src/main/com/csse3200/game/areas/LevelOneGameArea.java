@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
@@ -169,6 +170,13 @@ public class LevelOneGameArea extends GameArea {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
             float x = X + i*spacing;
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
         }
     }
     private void spawnDeathZone() {
