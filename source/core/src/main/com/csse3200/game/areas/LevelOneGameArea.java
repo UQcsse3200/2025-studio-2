@@ -11,20 +11,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.DoorControlComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
-import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -139,7 +134,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         //spawnPatrollingDrone();
         //spawnBomberDrone();
-        spawnSelfDestructDrone();
+        //spawnSelfDestructDrone();
         //spawnPatrollingDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
@@ -155,7 +150,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
-        spawnLasers();
+        spawnLasers(4,15f);
     }
 
     private void spawnBoxes() {
@@ -165,11 +160,17 @@ public class LevelOneGameArea extends GameArea {
         Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
     }
-    private void spawnLasers() {
-        Entity e = LaserFactory.createLaserEmitter(-90f);
-        spawnEntityAt(e, new GridPoint2(40, 12), true, true);
+    private void spawnLasers(int numLasers,float spacing) {
+        GridPoint2 mapSize = terrain.getMapBounds(0);
+        float titleSize = terrain.getTileSize();
+        float Y = mapSize.y*titleSize;
+        float X = 15f;
+        for (int i = 0; i < numLasers; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + i*spacing;
+            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+        }
     }
-
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,-10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
@@ -621,7 +622,7 @@ public class LevelOneGameArea extends GameArea {
     }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
-        Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
+        Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,.5f);
         volatile1.setScale(2f,0.5f);
         spawnEntityAt(volatile1, volatile1Pos,false, false);
 

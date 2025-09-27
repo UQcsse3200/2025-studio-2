@@ -119,7 +119,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
-        spawnSelfDestructDrone();
+        //spawnSelfDestructDrone();
     }
 
     private void spawnDeathZone() {
