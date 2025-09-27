@@ -20,7 +20,7 @@ public class SelfDestructComponent extends Component {
     private boolean isChasing = false;
 
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
-    private static final float MAX_DISTANCE = 11f;
+    private static final float MAX_DISTANCE = 30f;
     //private static final float TELEPORT_OFFSET = 1.5f;
     private static final float COLLISION_RADIUS = 1.3f; // radius for explosion contact
 
