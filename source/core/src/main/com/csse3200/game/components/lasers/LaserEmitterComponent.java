@@ -139,12 +139,15 @@ public class LaserEmitterComponent extends Component {
 
         // trigger updates to reflectors (for texture changes)
         for (Entity e : reflectorsHit) {
-            e.getEvents().trigger("laserHit", true);
+            if (!lastReflectorsHit.contains(e)) {
+                e.getEvents().trigger("laserHit", true);
+            }
             lastReflectorsHit.remove(e);
         }
-
         for (Entity e : lastReflectorsHit) {
-            e.getEvents().trigger("laserOff", false);
+            if (!reflectorsHit.contains(e)) {
+                e.getEvents().trigger("laserOff", false);
+            }
         }
         lastReflectorsHit = reflectorsHit;
     }
