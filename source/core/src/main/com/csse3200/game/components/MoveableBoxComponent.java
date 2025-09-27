@@ -12,6 +12,7 @@ import com.csse3200.game.physics.components.PhysicsComponent;
  * <p>
  * Handles player interactions with a box, including lifting, carrying and dropping.
  */
+@Deprecated
 public class MoveableBoxComponent extends Component {
 
     /** Maximum distance for the player to lift the box */

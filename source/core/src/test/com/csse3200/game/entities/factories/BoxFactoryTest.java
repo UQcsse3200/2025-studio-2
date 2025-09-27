@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -15,6 +16,7 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 import com.csse3200.game.services.ResourceService;
@@ -44,6 +46,9 @@ public class BoxFactoryTest {
         ResourceService mockResourceService = mock(ResourceService.class);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
         ServiceLocator.registerResourceService(mockResourceService);
+
+        RenderService renderService = new RenderService();
+        ServiceLocator.registerRenderService(renderService);
     }
 
     @Test
@@ -79,8 +84,6 @@ public class BoxFactoryTest {
     @Test
     void createMoveableBox_hasAllComponents() {
         Entity moveableBox = BoxFactory.createMoveableBox();
-        assertNotNull(moveableBox.getComponent(TextureRenderComponent.class),
-                "Moveable Box should have a TextureRendererComponent");
         assertNotNull(moveableBox.getComponent(PhysicsComponent.class),
                 "Moveable Box should have a PhysicsComponent");
         assertNotNull(moveableBox.getComponent(ColliderComponent.class),

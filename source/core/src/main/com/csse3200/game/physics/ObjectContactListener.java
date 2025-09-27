@@ -2,8 +2,8 @@ package com.csse3200.game.physics;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
-import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.PressurePlateComponent; // <— import added
 import com.csse3200.game.components.player.PlayerActions;
