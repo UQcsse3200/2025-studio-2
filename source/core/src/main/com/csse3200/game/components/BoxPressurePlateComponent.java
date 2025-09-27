@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Pressure plate that ONLY responds to moveable boxes.
+ * Pressure plate that ONLY responds to weighted boxes.
  * Emits "plateToggled" (Boolean) when pressed/unpressed.
  */
 public class BoxPressurePlateComponent extends Component {
@@ -22,13 +22,21 @@ public class BoxPressurePlateComponent extends Component {
     private boolean pressed = false;
     private final List<Entity> activePressing = new ArrayList<>();
 
-
+    /**
+     * Called when component is created, intialises texture rendering
+     */
     @Override
     public void create() {
         renderer = entity.getComponent(TextureRenderComponent.class);
         updateTexture();
     }
 
+    /**
+     * Update's the plate's state when entity moves on or off the plate
+     * Only valid entities (weighted boxes or player) can trigger
+     * @param other
+     * @param onPlate
+     */
     public void setEntityOnPlate(Entity other, boolean onPlate) {
         if (!isValid(other)) return;
 
@@ -42,6 +50,14 @@ public class BoxPressurePlateComponent extends Component {
         setPressed(!activePressing.isEmpty());
     }
 
+    /**
+     * Determines if given entity is valid to be pressing down the pressure plate
+     * Valid only if it is a weighted box or player
+     *
+     * @param other the entity to validate
+     *
+     * @return true is entity can press plate, false otherwise
+     */
     private boolean isValid(Entity other) {
         if (other.getComponent(PlayerActions.class) != null) {
             return isAbove(other);
@@ -58,12 +74,24 @@ public class BoxPressurePlateComponent extends Component {
         return false;
     }
 
+    /**
+     * Checks whether entity pressing is positioned above plate
+     *
+     * @param other the entity to check
+     *
+     * @return true if entity vertically above, false otherwise
+     */
     private boolean isAbove(Entity other) {
         float plateY = entity.getPosition().y;
         float otherY = other.getPosition().y;
         return otherY > plateY + 0.5f;
     }
 
+    /**
+     * Updates the plate's pressed state and triggered the plateToggled event
+     *
+     * @param pressed true to set the plate as pressed, false otherwise
+     */
     private void setPressed(boolean pressed) {
         if(this.pressed == pressed) return;
         this.pressed = pressed;
@@ -71,6 +99,9 @@ public class BoxPressurePlateComponent extends Component {
         entity.getEvents().trigger("plateToggled", pressed);
     }
 
+    /**
+     * Updates plates texture based on its current pressed state
+     */
     private void updateTexture() {
         if (renderer == null) return;
         renderer.setTexture(pressed ? pressedTexture : unpressedTexture);

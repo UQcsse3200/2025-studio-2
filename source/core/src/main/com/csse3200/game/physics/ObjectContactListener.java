@@ -196,9 +196,17 @@ public class ObjectContactListener implements ContactListener {
         }
     }
 
+    /**
+     * Sets whether an entity is currently on top of a pressure plate
+     * If the pressure plate has a BoxPressurePlateComponent (i.e. boxes should press it down) it calls
+     *  setEntityOnPlate in BoxPressurePlateComponent
+     *
+     * @param plate the pressure plate entity
+     * @param other the entity interacting with the plate (weighted box or player)
+     * @param inRange whether the entity is currently in range (standing on top)
+     */
     private void setPlayerOnPressurePlate(Entity plate, Entity other, boolean inRange) {
         BoxPressurePlateComponent plateComp = plate.getComponent(BoxPressurePlateComponent.class);
-
         if (plateComp != null) {
             plateComp.setEntityOnPlate(other, inRange);
         }

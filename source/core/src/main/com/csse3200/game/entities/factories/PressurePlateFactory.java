@@ -14,9 +14,11 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  * Factory class for creating pressure plate entities.
  */
 public class PressurePlateFactory {
-
-    private static final float DEFAULT_SCALE = 1f;
-
+    /**
+     * Creates a general pressure plate that can be pressed by the player
+     *
+     * @return a new entity of the pressure plate
+     */
     public static Entity createPressurePlate() {
         Entity plate = new Entity();
         plate.addComponent(new TextureRenderComponent("images/pressure_plate_unpressed.png"));
@@ -30,6 +32,11 @@ public class PressurePlateFactory {
         return plate;
     }
 
+    /**
+     * Creates a pressure plate that can only be pressed down by weighted boxes and the player
+     *
+     * @return a new entity of the box pressable only pressure plate
+     */
     public static Entity createBoxOnlyPlate() {
         Entity plate = new Entity();
         plate.addComponent(new TextureRenderComponent("images/pressure_plate_unpressed.png"));
@@ -42,7 +49,6 @@ public class PressurePlateFactory {
         plate.setScale(1f, 1f);
         return plate;
     }
-
 
     private PressurePlateFactory() {
         throw new IllegalStateException("Cannot instantiate static factory class");
