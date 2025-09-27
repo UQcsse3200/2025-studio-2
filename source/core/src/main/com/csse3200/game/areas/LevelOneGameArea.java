@@ -166,7 +166,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
     }
     private void spawnLasers() {
-        Entity e = LaserFactory.createLaserEmitter(-45f);
+        Entity e = LaserFactory.createLaserEmitter(-90f);
         spawnEntityAt(e, new GridPoint2(40, 12), true, true);
     }
 
