@@ -159,7 +159,7 @@ public class LevelOneGameArea extends GameArea {
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
 
-        Entity e1 = BoxFactory.createWeightedBox();
+        Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
 
         Entity e2 = BoxFactory.createMoveableBox();

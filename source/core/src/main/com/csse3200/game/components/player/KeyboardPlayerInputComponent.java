@@ -41,6 +41,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private int cheatPosition = 0;
     private Boolean cheatsOn = false;
 
+    private boolean holdingBox = false;
+    private Entity heldBox = null;
+
     private HashMap<Integer, Boolean> pressedKeys = new HashMap<>();
 
     private Array<Entity> ladders = null;
@@ -420,6 +423,22 @@ public class KeyboardPlayerInputComponent extends InputComponent {
      */
     public Boolean getOnLadder() {
         return this.onLadder;
+    }
+
+    public boolean isHoldingBox() {
+        return this.holdingBox;
+    }
+
+    public void setHoldingBox(boolean holdingBox) {
+        this.holdingBox = holdingBox;
+    }
+
+    public void setHeldBox (Entity e) {
+        this.heldBox = e;
+    }
+
+    public Entity getHeldBox() {
+        return this.heldBox;
     }
 
     /**
