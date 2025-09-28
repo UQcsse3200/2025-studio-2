@@ -164,11 +164,28 @@ public class LevelOneGameArea extends GameArea {
     private void spawnLasers(int numLasers,float spacing) {
         GridPoint2 mapSize = terrain.getMapBounds(0);
         float titleSize = terrain.getTileSize();
-        float Y = mapSize.y*titleSize;
-        float X = 15f;
-        for (int i = 0; i < numLasers; i++) {
+        final float Y = mapSize.y*titleSize;
+        final float X = player.getPosition().x;
+
+        int laserInFront = numLasers/2;
+        int laserInBack = numLasers-laserInFront;
+
+        for (int i = 0; i <= laserInBack; i++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X + i*spacing;
+            float x = X - ((i+1)*spacing);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+
+        for (int j = 0; j <= laserInFront; j++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((j+1)*spacing);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
 
             Timer.schedule(new Timer.Task() {
