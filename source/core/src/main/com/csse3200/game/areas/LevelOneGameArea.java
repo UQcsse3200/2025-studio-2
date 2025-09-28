@@ -94,7 +94,9 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
             "images/mirror-cube-off.png",
-            "images/mirror-cube-on.png"
+            "images/mirror-cube-on.png",
+            "images/cube.png",
+            "images/heavy-cube.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -155,8 +157,11 @@ public class LevelOneGameArea extends GameArea {
         Entity e = BoxFactory.createReflectorBox();
         spawnEntityAt(e, new GridPoint2(15, 15), true, true);
 
-        Entity e1 = BoxFactory.createReflectorBox();
+        Entity e1 = BoxFactory.createWeightedBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
+
+        Entity e2 = BoxFactory.createMoveableBox();
+        spawnEntityAt(e2, new GridPoint2(36, 15), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
