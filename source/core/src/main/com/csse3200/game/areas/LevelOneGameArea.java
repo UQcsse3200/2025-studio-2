@@ -13,6 +13,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.DoorControlComponent;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -131,7 +132,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         //spawnPatrollingDrone();
         //spawnBomberDrone();
-        spawnSelfDestructDrone();
+        spawnSelfDestructDrone(3);
         //spawnPatrollingDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
@@ -428,12 +429,17 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(bomberDrone, position, true, true);
     }
 
-    private void spawnSelfDestructDrone() {
-        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
+    private void spawnSelfDestructDrone(int level) {
+        GridPoint2 spawnTile = new GridPoint2(20, 15); // adjust position as needed
         Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
                 player,
                 terrain.tileToWorldPosition(spawnTile)
-        ).addComponent(new ActivationComponent("1"));
+        );
+        SelfDestructComponent oldComp = selfDestructDrone.getComponent(SelfDestructComponent.class);
+        if (oldComp != null) selfDestructDrone.removeComponent(oldComp);
+        selfDestructDrone.addComponent(new SelfDestructComponent(player, level));
+
+
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
