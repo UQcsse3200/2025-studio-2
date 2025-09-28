@@ -5,7 +5,6 @@ import com.csse3200.game.components.*;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.ButtonComponent;
-import com.csse3200.game.components.PressurePlateComponent; // <— import added
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -197,14 +196,19 @@ public class ObjectContactListener implements ContactListener {
         }
     }
 
+    /**
+     * Sets whether an entity is currently on top of a pressure plate
+     * If the pressure plate has a BoxPressurePlateComponent (i.e. boxes should press it down) it calls
+     *  setEntityOnPlate in BoxPressurePlateComponent
+     *
+     * @param plate the pressure plate entity
+     * @param other the entity interacting with the plate (weighted box or player)
+     * @param inRange whether the entity is currently in range (standing on top)
+     */
     private void setPlayerOnPressurePlate(Entity plate, Entity other, boolean inRange) {
-        PressurePlateComponent plateComp = plate.getComponent(PressurePlateComponent.class);
-        PlayerActions player = other.getComponent(PlayerActions.class);
-        if (plateComp != null && player != null) {
-            ColliderComponent collider = inRange
-                    ? other.getComponent(ColliderComponent.class)
-                    : null;
-
+        BoxPressurePlateComponent plateComp = plate.getComponent(BoxPressurePlateComponent.class);
+        if (plateComp != null) {
+            plateComp.setEntityOnPlate(other, inRange);
         }
     }
 }
