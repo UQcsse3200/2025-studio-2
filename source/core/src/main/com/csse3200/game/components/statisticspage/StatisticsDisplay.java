@@ -55,11 +55,19 @@ public class StatisticsDisplay extends UIComponent {
         topTable.add(title).expandX().center().padTop(20f);
         stage.addActor(topTable);
 
-        Label playtimeLabel = new Label("Total Playtime: 99999 mins", skin);
-        Label upgradesLabel = new Label("Upgrades picked up: 6", skin);
-        Label levelCompletedLabel = new Label("Levels completed: 7", skin);
-        Label deathCounterLabel = new Label("Deaths: 0", skin);
-        Label achievementCounterLabel = new Label("Achievements: 25", skin);
+        Label playtimeLabel =
+                new Label("Total Playtime: " + StatsTracker.getPlaytimeMinutes() + " mins",
+                skin);
+        Label upgradesLabel =
+                new Label("Upgrades picked up: " + StatsTracker.getUpgradesCollected(), skin);
+        Label levelCompletedLabel =
+                new Label("Levels completed: " + StatsTracker.getLevelsCompleted(), skin);
+        Label deathCounterLabel =
+                new Label("Deaths: " + StatsTracker.getDeathCount(),
+                skin);
+        Label achievementCounterLabel =
+                new Label("Achievements: " + StatsTracker.getAchievementsUnlocked(),
+                skin);
 
         table.add(playtimeLabel).pad(10f).padLeft(50f).row();
         table.add(upgradesLabel).pad(10f).padLeft(50f).row();

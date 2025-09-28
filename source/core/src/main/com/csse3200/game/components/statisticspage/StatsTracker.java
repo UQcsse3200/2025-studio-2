@@ -1,13 +1,13 @@
 package com.csse3200.game.components.statisticspage;
 
 public class StatsTracker {
-    private long playtime; // in ms
-    private int upgradesCollected;
-    private int levelsCompleted;
-    private int deathCount;
-    private int achievementsUnlocked;
+    private static long playtime; // in ms
+    private static int upgradesCollected;
+    private static int levelsCompleted;
+    private static int deathCount;
+    private static int achievementsUnlocked;
 
-    private long sessionStartTime;
+    private static long sessionStartTime;
 
     public StatsTracker() {
         resetSession();
@@ -29,23 +29,23 @@ public class StatsTracker {
         achievementsUnlocked = 0;
     }
 
-    public void addUpgrade(){
+    public static void addUpgrade(){
         upgradesCollected++;
     }
 
-    public void completeLevel() {
+    public static void completeLevel() {
         levelsCompleted++;
     }
 
-    public void addDeath() {
+    public static void addDeath() {
         deathCount++;
     }
 
-    public void unlockAchievement() {
+    public static void unlockAchievement() {
         achievementsUnlocked++;
     }
 
-    public long getPlaytimeMinutes() {
+    public static long getPlaytimeMinutes() {
         long total = playtime;
         if (sessionStartTime > 0) {
             total += (System.currentTimeMillis() - sessionStartTime);
@@ -53,19 +53,19 @@ public class StatsTracker {
         return total / 60000; // ms to minutes
     }
 
-    public int getUpgradesCollected() {
+    public static int getUpgradesCollected() {
         return upgradesCollected;
     }
 
-    public int getLevelsCompleted() {
+    public static int getLevelsCompleted() {
         return levelsCompleted;
     }
 
-    public int getDeathCount() {
+    public static int getDeathCount() {
         return deathCount;
     }
 
-    public int getAchievementsUnlocked() {
+    public static int getAchievementsUnlocked() {
         return achievementsUnlocked;
     }
 }

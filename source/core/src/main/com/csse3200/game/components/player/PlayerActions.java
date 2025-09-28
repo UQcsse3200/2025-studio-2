@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.csse3200.game.components.*;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.physics.PhysicsService;

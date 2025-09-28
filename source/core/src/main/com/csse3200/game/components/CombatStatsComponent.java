@@ -1,6 +1,7 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +67,7 @@ public class CombatStatsComponent extends Component {
       // Trigger death event when health reaches 0 for the first time
       if (oldHealth > 0 && this.health == 0) {
         entity.getEvents().trigger("playerDied");
+        StatsTracker.addDeath();
       }
     }
   }
