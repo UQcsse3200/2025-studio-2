@@ -7,13 +7,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -120,6 +120,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnButtons();
         spawnSecurityCams();
         //spawnSelfDestructDrone();
+        spawnLasers();
     }
 
     private void spawnDeathZone() {
@@ -467,6 +468,41 @@ public class LevelTwoGameArea extends GameArea {
             Entity dashUpgrade = CollectableFactory.createJetpackUpgrade();
             spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
         });
+    }
+    private void spawnLasers() {
+        GridPoint2 mapSize = terrain.getMapBounds(0);
+        float titleSize = terrain.getTileSize();
+        final float Y = mapSize.y*titleSize;
+        final float X = player.getPosition().x;
+
+        int laserInFront = 4 /2;
+        int laserInBack = 4 -laserInFront;
+
+        for (int i = 0; i <= laserInBack; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i+1)* (float) 7.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+
+        for (int j = 0; j <= laserInFront; j++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((j+1)* (float) 7.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
     }
 
     public void spawnKey() {

@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimerTask;
 
 public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
@@ -151,7 +150,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
-        spawnLasers(4,15f);
+        spawnLasers();
     }
 
     private void spawnBoxes() {
@@ -161,18 +160,18 @@ public class LevelOneGameArea extends GameArea {
         Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
     }
-    private void spawnLasers(int numLasers,float spacing) {
+    private void spawnLasers() {
         GridPoint2 mapSize = terrain.getMapBounds(0);
         float titleSize = terrain.getTileSize();
         final float Y = mapSize.y*titleSize;
         final float X = player.getPosition().x;
 
-        int laserInFront = numLasers/2;
-        int laserInBack = numLasers-laserInFront;
+        int laserInFront = 4 /2;
+        int laserInBack = 4 -laserInFront;
 
         for (int i = 0; i <= laserInBack; i++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X - ((i+1)*spacing);
+            float x = X - ((i+1)* (float) 15.0);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
 
             Timer.schedule(new Timer.Task() {
@@ -185,7 +184,7 @@ public class LevelOneGameArea extends GameArea {
 
         for (int j = 0; j <= laserInFront; j++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X + ((j+1)*spacing);
+            float x = X + ((j+1)* (float) 15.0);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
 
             Timer.schedule(new Timer.Task() {
