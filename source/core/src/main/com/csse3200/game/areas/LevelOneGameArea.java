@@ -95,7 +95,9 @@ public class LevelOneGameArea extends GameArea {
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
             "images/cube.png",
-            "images/heavy-cube.png"
+            "images/heavy-cube.png",
+            "images/laser-detector-off.png",
+            "images/laser-detector-on.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -150,7 +152,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
-        //spawnLasers();
+        spawnLasers();
     }
 
     private void spawnBoxes() {
@@ -168,6 +170,9 @@ public class LevelOneGameArea extends GameArea {
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
         spawnEntityAt(e, new GridPoint2(40, 12), true, true);
+
+        Entity detector = LaserDetectorFactory.createLaserDetector(-54f);
+        spawnEntityAt(detector, new GridPoint2(36, 6), true, true);
     }
 
     private void spawnDeathZone() {

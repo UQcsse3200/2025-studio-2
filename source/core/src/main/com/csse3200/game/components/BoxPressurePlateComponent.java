@@ -84,7 +84,7 @@ public class BoxPressurePlateComponent extends Component {
     private boolean isAbove(Entity other) {
         float plateY = entity.getPosition().y;
         float otherY = other.getPosition().y;
-        return otherY > plateY + 0.5f;
+        return otherY > plateY + 0.3f;
     }
 
     /**

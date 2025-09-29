@@ -47,14 +47,15 @@ public class PressurePlateFactory {
         ColliderComponent collider = new ColliderComponent();
         plate.addComponent(collider);
 
-        /*
+        // scale down collider
         float scaleX = plate.getScale().x;
         float scaleY = plate.getScale().y;
         float unitsPerPx = scaleY / 21f;
         float down = 3f * unitsPerPx;
+        Vector2 p = plate.getCenterPosition().cpy().sub(0f, down - unitsPerPx);
 
-        collider.setAsBox(new Vector2(scaleX, scaleY - down));
-        */
+        // set new collider size
+        collider.setAsBox(new Vector2(scaleX, scaleY - down), p);
 
         collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(false);

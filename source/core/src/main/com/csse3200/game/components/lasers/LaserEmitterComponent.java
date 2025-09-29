@@ -1,10 +1,13 @@
 package com.csse3200.game.components.lasers;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -39,8 +42,13 @@ public class LaserEmitterComponent extends Component {
             PhysicsLayer.OBSTACLE
             // | PhysicsLayer.DEFAULT
             );
+    private static final short detectorOccluder = PhysicsLayer.LASER_DETECTOR;
     private static final short playerOccluder = PhysicsLayer.PLAYER;
-    private static final short hitMask = (short) (reboundOccluder | blockedOccluder |  playerOccluder);
+    private static final short hitMask = (short) (
+              reboundOccluder
+            | blockedOccluder
+            | playerOccluder
+            | detectorOccluder);
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;
@@ -48,6 +56,8 @@ public class LaserEmitterComponent extends Component {
     private CombatStatsComponent combatStats;
 
     private List<Entity> lastReflectorsHit = new ArrayList<>();
+    private Entity hitLight = null;
+    private Entity lastDetectorHit = null;
 
     public LaserEmitterComponent() {
 
@@ -81,6 +91,11 @@ public class LaserEmitterComponent extends Component {
         * */
 
         positions.clear();
+        if (hitLight != null) {
+            hitLight.dispose();
+            hitLight = null;
+        }
+
         // add initial point
         Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
         positions.add(start.cpy());
@@ -113,6 +128,7 @@ public class LaserEmitterComponent extends Component {
             short cat = categoryBitsFromHit(hit);
             boolean isReflector = (cat & reboundOccluder) != 0;
             boolean isPlayer = (cat & playerOccluder) != 0;
+            boolean isDetector = (cat & detectorOccluder) != 0;
 
             if (isReflector) {
                 // reflect r = d -2(d.n) n
@@ -129,8 +145,25 @@ public class LaserEmitterComponent extends Component {
                     reflectorsHit.add(e);
                 }
             } else {
+                if (isDetector) {
+                    //System.out.println("hit detector");
+                    triggerDetector(hit);
+                    break;
+                }
+
+                hitLight = createPointLight(hit);
+
                 if (isPlayer) {
                     damagePlayer(hit);
+                }
+
+                // check if the blocker is the last detector hit to update status
+                if (lastDetectorHit != null) {
+                    Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+                    if (e != null && !e.equals(lastDetectorHit)) {
+                        lastDetectorHit.getEvents().trigger("updateDetection", false);
+                        lastDetectorHit = null;
+                    }
                 }
                 // is blocker so stop
                 break;
@@ -150,6 +183,29 @@ public class LaserEmitterComponent extends Component {
             }
         }
         lastReflectorsHit = reflectorsHit;
+    }
+
+    private static Entity createPointLight(RaycastHit hit) {
+        Vector2 p = hit.point.cpy();
+
+        Entity light = new Entity();
+        ConeLightComponent coneLight = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                LightingDefaults.RAYS,
+                Color.RED,
+                0.75f,
+                0f,
+                180f
+        );
+        coneLight.setFollowEntity(false);
+
+        light.addComponent(coneLight);
+        light.setPosition(p);
+
+        ServiceLocator.getEntityService().register(light);
+        coneLight.getLight().setPosition(p);
+
+        return light;
     }
 
     /**
@@ -209,6 +265,21 @@ public class LaserEmitterComponent extends Component {
         }
     }
 
+    private void triggerDetector(RaycastHit hit) {
+        Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+        if (target == null) return;
+
+        // check for detector comp
+        LaserDetectorComponent detector = target.getComponent(LaserDetectorComponent.class);
+        if (detector == null) return;
+
+        // trigger detection
+        target.getEvents().trigger("updateDetection", true);
+        System.out.println("triggerDetector");
+
+        lastDetectorHit = target;
+    }
+
     /**
      * Gets the list of collision positions generated from the laser emitter
      * which can be used to render lines between the points.
@@ -222,5 +293,7 @@ public class LaserEmitterComponent extends Component {
     @Override
     public void dispose() {
         positions.clear();
+        hitLight.dispose();
+        hitLight = null;
     }
 }
