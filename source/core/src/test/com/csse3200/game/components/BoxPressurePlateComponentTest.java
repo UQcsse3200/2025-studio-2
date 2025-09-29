@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(GameExtension.class)
 class BoxPressurePlateComponentTest {
     private static final String[] PLATE_TEXTURES = {
-            "images/pressure_plate_unpressed.png",
-            "images/pressure_plate_pressed.png"
+            "images/plate.png",
+            "images/plate-pressed.png"
     };
 
     @BeforeEach
@@ -55,14 +55,14 @@ class BoxPressurePlateComponentTest {
         assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(), "Plate layer");
 
         // default scale
-        assertEquals(1f, plate.getScale().x, 0.0001f);
-        assertEquals(1f, plate.getScale().y, 0.0001f);
+        assertEquals(32f / 21f, plate.getScale().x, 0.0001f);
+        assertEquals(0.5f, plate.getScale().y, 0.0001f);
     }
 
     @Test
     void defaultScale_isOneByOne() {
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-        assertEquals(1f, plate.getScale().x, 0.0001f);
-        assertEquals(1f, plate.getScale().y, 0.0001f);
+        assertEquals(32f / 21f, plate.getScale().x, 0.0001f);
+        assertEquals(0.5f, plate.getScale().y, 0.0001f);
     }
 }

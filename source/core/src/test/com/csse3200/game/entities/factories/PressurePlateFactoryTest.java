@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(GameExtension.class)
 class PressurePlateFactoryTest {
     private static final String[] PLATE_TEXTURES = {
-            "images/pressure_plate_unpressed.png",
-            "images/pressure_plate_pressed.png"
+            "images/plate.png",
+            "images/plate-pressed.png"
     };
 
     @BeforeEach

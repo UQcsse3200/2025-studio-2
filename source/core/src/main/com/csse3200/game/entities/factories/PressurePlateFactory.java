@@ -58,7 +58,7 @@ public class PressurePlateFactory {
 
         collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(false);
-        
+
         plate.addComponent(new BoxPressurePlateComponent());
         return plate;
     }
