@@ -97,7 +97,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cube.png",
             "images/heavy-cube.png",
             "images/laser-detector-off.png",
-            "images/laser-detector-on.png"
+            "images/laser-detector-on.png",
+            "images/laser-end.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};

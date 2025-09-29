@@ -13,8 +13,18 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
+/**
+ * This is just a class of static methods used to assemble new laser detector
+ * entities. They're able to detect when a laser is hitting them and then trigger
+ * an event when the state is changed.
+ */
 public class LaserDetectorFactory {
 
+    /**
+     * Creates a new laser detector entity facing upright (unrotated)
+     *
+     * @return the newly created laser detector entity
+     */
     public static Entity createLaserDetector() {
         Entity e = new Entity();
         e.setScale(16f/ 25f, 0.5f);
@@ -51,6 +61,12 @@ public class LaserDetectorFactory {
         return e;
     }
 
+    /**
+     * Creates a new laser detector entity with a rotation of {@code dir}.
+     *
+     * @param dir the rotation in degrees
+     * @return the newly created laser detector entity
+     */
     public static Entity createLaserDetector(float dir) {
         Entity e = createLaserDetector();
 

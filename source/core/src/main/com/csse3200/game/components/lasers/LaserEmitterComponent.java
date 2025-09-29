@@ -13,6 +13,7 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -74,6 +75,8 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
+
+        hitLight = createPointLight();
     }
 
     @Override
@@ -91,10 +94,6 @@ public class LaserEmitterComponent extends Component {
         * */
 
         positions.clear();
-        if (hitLight != null) {
-            hitLight.dispose();
-            hitLight = null;
-        }
 
         // add initial point
         Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
@@ -146,12 +145,13 @@ public class LaserEmitterComponent extends Component {
                 }
             } else {
                 if (isDetector) {
-                    //System.out.println("hit detector");
                     triggerDetector(hit);
-                    break;
+                    hitLight.getComponent(ConeLightComponent.class).setActive(false);
+                } else {
+                    hitLight.getComponent(ConeLightComponent.class).setActive(true);
                 }
 
-                hitLight = createPointLight(hit);
+                updateHitLight(hit);
 
                 if (isPlayer) {
                     damagePlayer(hit);
@@ -185,9 +185,7 @@ public class LaserEmitterComponent extends Component {
         lastReflectorsHit = reflectorsHit;
     }
 
-    private static Entity createPointLight(RaycastHit hit) {
-        Vector2 p = hit.point.cpy();
-
+    private static Entity createPointLight() {
         Entity light = new Entity();
         ConeLightComponent coneLight = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
@@ -198,14 +196,26 @@ public class LaserEmitterComponent extends Component {
                 180f
         );
         coneLight.setFollowEntity(false);
-
         light.addComponent(coneLight);
-        light.setPosition(p);
+
+        TextureRenderComponent texture = new TextureRenderComponent("images/laser-end.png");
+        texture.setLayer(3);
+        light.addComponent(texture);
+        light.setScale(0.2f, 0.2f);
 
         ServiceLocator.getEntityService().register(light);
-        coneLight.getLight().setPosition(p);
 
         return light;
+    }
+
+    private void updateHitLight(RaycastHit hit) {
+        if (hitLight == null) return;
+
+        Vector2 p = hit.point.cpy();
+        ConeLightComponent coneLight = hitLight.getComponent(ConeLightComponent.class);
+
+        coneLight.getLight().setPosition(p);
+        hitLight.setPosition(p.x - hitLight.getScale().x / 2f, p.y - hitLight.getScale().y / 2f);
     }
 
     /**
