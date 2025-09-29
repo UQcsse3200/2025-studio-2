@@ -15,6 +15,9 @@ import org.slf4j.LoggerFactory;
  * A platform that disappears a few seconds after a player stands on it,
  * then respawns after a delay. Uses collider disabling and texture swapping
  * instead of scaling.
+ *
+ * The platform can also be linked to a pressure plate in which case it appears
+ * when plate pressed, and disappears when released
  */
 public class VolatilePlatformComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(VolatilePlatformComponent.class);
@@ -32,28 +35,43 @@ public class VolatilePlatformComponent extends Component {
     private ColliderComponent collider;
     private TextureRenderComponent texture;
 
-    private boolean linkedToPlate = false;
+    private boolean linkedToPlate = false; //whether platform controlled by pressure plate
 
     private final String visibleTexture = "images/platform.png";
     private final String hiddenTexture = "images/empty.png";
 
+    /**
+     * Creates a volatile platform with a lifetime and respawn delay
+     *
+     * @param lifetime time before platform disappears after being triggered (in seconds)
+     * @param respawnDelay time before platform respawns after disappearing (in seconds)
+     */
     public VolatilePlatformComponent(float lifetime, float respawnDelay) {
         this.lifetime = lifetime;
         this.respawnDelay = respawnDelay;
     }
 
+    /**
+     * Initialises volatile platform by getting subcomponents (time, collider and texture) and
+     * sets platform to be initially not visible
+     */
     @Override
     public void create() {
         timeSource = ServiceLocator.getTimeSource();
-        entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-
         collider = entity.getComponent(ColliderComponent.class);
         texture = entity.getComponent(TextureRenderComponent.class);
 
         setVisible(false);
 
+        if(!linkedToPlate) {
+            entity.getEvents().addListener("collisionStart", this::onCollisionStart);
+        }
     }
 
+    /**
+     * Updates the platform each frame, early return if it is linked to a pressure plate
+     * otherwise handles if time has passed enough for platform to appear or disappear
+     */
     @Override
     public void update() {
         if(linkedToPlate) return;
@@ -80,6 +98,12 @@ public class VolatilePlatformComponent extends Component {
         }
     }
 
+    /**
+     * Handles collision events to trigger the platform disappearing
+     *
+     * @param me fixture of this platform
+     * @param other fixture of the other entity colliding
+     */
     private void onCollisionStart(Fixture me, Fixture other) {
         if (triggered || disappeared || linkedToPlate) return;
 
@@ -90,6 +114,9 @@ public class VolatilePlatformComponent extends Component {
         }
     }
 
+    /**
+     * Makes the platform disappear by disabling collisions and hiding the texture
+     */
     private void disappear() {
         disappeared = true;
         disappearTime = timeSource.getTime();
@@ -100,12 +127,22 @@ public class VolatilePlatformComponent extends Component {
         logger.debug("Volatile platform disappeared, will respawn in {}s", respawnDelay);
     }
 
+    /**
+     * Respawns the platform by enabling collisions and showing the texture
+     */
     private void respawn() {
         disappeared = false;
         setVisible(true);
         logger.debug("Volatile platform respawned");
     }
 
+    /**
+     * Links this volatile platform to a pressure plate entity
+     * When plate is pressed, platform becomes visible. When released, it becomes hidden (through
+     * event listeners on plate press and release)
+     *
+     * @param plateEntity the pressure plate entity to link the platform to
+     */
     public void linkToPlate(Entity plateEntity) {
         if(plateEntity == null) return;
         linkedToPlate = true;
@@ -114,16 +151,27 @@ public class VolatilePlatformComponent extends Component {
         logger.debug("Volatile platform linking to plate");
     }
 
+    /**
+     * Makes the platform visible when linked pressure plate pressed
+     */
     private void onPlatePressed() {
         logger.debug("Plate pressed -> platform visible");
         setVisible(true);
     }
 
+    /**
+     * Makes the platform hidden when the linked pressure plate is released
+     */
     private void onPlateReleased() {
         logger.debug("Plate released -> platform hidden");
         setVisible(false);
     }
 
+    /**
+     * Set's the platforms visibility and collision state
+     *
+     * @param visible true to make platform visible and solid, false to be hidden and disable collisions
+     */
     private void setVisible(boolean visible) {
         if(collider != null) {
             collider.setSensor(!visible);
