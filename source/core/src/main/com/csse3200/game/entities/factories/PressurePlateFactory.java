@@ -14,35 +14,41 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  * Factory class for creating pressure plate entities.
  */
 public class PressurePlateFactory {
-
-    private static final float DEFAULT_SCALE = 1f;
-
+    /**
+     * Creates a general pressure plate that can be pressed by the player
+     *
+     * @return a new entity of the pressure plate
+     */
     public static Entity createPressurePlate() {
         Entity plate = new Entity();
         plate.addComponent(new TextureRenderComponent("images/pressure_plate_unpressed.png"));
         plate.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
-        collider.setSensor(true);
+        collider.setSensor(false);
         plate.addComponent(collider);
-        plate.addComponent(new PressurePlateComponent()); // generic plate
+        plate.addComponent(new PressurePlateComponent());
         plate.setScale(1f, 1f);
-        return plate;  // <-- DON'T FORGET THIS
+        return plate;
     }
 
+    /**
+     * Creates a pressure plate that can only be pressed down by weighted boxes and the player
+     *
+     * @return a new entity of the box pressable only pressure plate
+     */
     public static Entity createBoxOnlyPlate() {
         Entity plate = new Entity();
         plate.addComponent(new TextureRenderComponent("images/pressure_plate_unpressed.png"));
         plate.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);
-        collider.setSensor(true);
+        collider.setSensor(false);
         plate.addComponent(collider);
-        plate.addComponent(new BoxPressurePlateComponent()); // boxes-only logic
+        plate.addComponent(new BoxPressurePlateComponent());
         plate.setScale(1f, 1f);
-        return plate;  // <-- AND THIS
+        return plate;
     }
-
 
     private PressurePlateFactory() {
         throw new IllegalStateException("Cannot instantiate static factory class");

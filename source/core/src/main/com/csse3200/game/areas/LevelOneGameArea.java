@@ -11,9 +11,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -91,6 +94,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
+            "images/pressure_plate_unpressed.png",
+            "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png"
     };
@@ -124,8 +129,8 @@ public class LevelOneGameArea extends GameArea {
     protected void loadEntities() {
         keySpawned = false;
         spawnLadders();
-        spawnLowerLadderButton();
-        spawnUpperLadderButton();
+        spawnLowerLadderPressurePlate();
+        spawnUpperLadderPressurePlate();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
@@ -136,6 +141,7 @@ public class LevelOneGameArea extends GameArea {
         //spawnBomberDrone();
         //spawnSelfDestructDrone();
         //spawnPatrollingDrone();
+        //spawnBoxOnlyPlate();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
@@ -154,8 +160,10 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnBoxes() {
-        Entity e = BoxFactory.createReflectorBox();
-        spawnEntityAt(e, new GridPoint2(15, 15), true, true);
+        Entity one = BoxFactory.createWeightedBox();
+        spawnEntityAt(one, new GridPoint2(15, 15), true, true);
+        Entity two = BoxFactory.createWeightedBox();
+        spawnEntityAt(two, new GridPoint2(61, 36), true, true);
 
         Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
@@ -244,19 +252,19 @@ public class LevelOneGameArea extends GameArea {
             spawnEntityAt(ladder, ladderPosition, false, false);
         }
     }
-    private void spawnUpperLadderButton() {
+    private void spawnUpperLadderPressurePlate() {
         int x = 63;
-        int y = 37;
-        GridPoint2 upperLadderButtonPosition = new GridPoint2(x, y);
-        Entity upperLadderButton = ButtonFactory.createButton(false, "upperLadder", "left");
-        upperLadderButton.addComponent(new TooltipSystem.TooltipComponent(
+        int y = 36;
+        GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
+        Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
+        upperLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
-        spawnEntityAt(upperLadderButton, upperLadderButtonPosition, true, true);
+        spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        upperLadderButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed && !isUpperLadderExtended) {
+        upperLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed && !isUpperLadderExtended) {
                 isUpperLadderExtended = true;
                 for (int i = upperLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -273,19 +281,20 @@ public class LevelOneGameArea extends GameArea {
             }
         });
     }
-    private void spawnLowerLadderButton() {
-        int x = 74;
-        int y = 5;
-        GridPoint2 lowerLadderButtonPosition = new GridPoint2(x, y);
-        Entity lowerLadderButton = ButtonFactory.createButton(false, "lowerLadder", "left");
-        lowerLadderButton.addComponent(new TooltipSystem.TooltipComponent(
+    private void spawnLowerLadderPressurePlate() {
+        int x = 73;
+        int y = 4;
+
+        GridPoint2 lowerLadderPressurePlatePosition = new GridPoint2(x, y);
+        Entity lowerLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
+        lowerLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
-        spawnEntityAt(lowerLadderButton, lowerLadderButtonPosition, true, true);
+        spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        lowerLadderButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed && !isLowerLadderExtended) {
+        lowerLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed && !isLowerLadderExtended) {
                 isLowerLadderExtended = true;
                 for (int i = lowerLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -338,7 +347,6 @@ public class LevelOneGameArea extends GameArea {
         Entity puzzleGround = FloorFactory.createStaticFloor();
         puzzleGround.setScale(16f,2f);
         spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
-
 
     }
 
@@ -635,6 +643,17 @@ public class LevelOneGameArea extends GameArea {
         spawnEntity(backgroundEntity);
     }
 
+    private void spawnBoxOnlyPlate() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+        spawnEntityAt(plate, new GridPoint2(6, 5), true, true);
+
+        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
+            if (pressed) {
+
+            }
+        });
+    }
+
     private TerrainComponent createDefaultTerrain() {
         // Use empty texture for invisible terrain grid
         final ResourceService resourceService = ServiceLocator.getResourceService();
@@ -646,7 +665,7 @@ public class LevelOneGameArea extends GameArea {
     }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
-        Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,.5f);
+        Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         volatile1.setScale(2f,0.5f);
         spawnEntityAt(volatile1, volatile1Pos,false, false);
 
