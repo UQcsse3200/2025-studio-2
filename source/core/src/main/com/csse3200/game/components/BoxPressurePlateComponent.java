@@ -15,8 +15,8 @@ import java.util.List;
  * Emits "plateToggled" (Boolean) when pressed/unpressed.
  */
 public class BoxPressurePlateComponent extends Component {
-    private String unpressedTexture = "images/pressure_plate_unpressed.png";
-    private String pressedTexture = "images/pressure_plate_pressed.png";
+    private String unpressedTexture = "images/plate.png";
+    private String pressedTexture = "images/plate-pressed.png";
 
     private TextureRenderComponent renderer;
     private boolean pressed = false;

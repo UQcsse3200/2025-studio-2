@@ -90,8 +90,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
-            "images/pressure_plate_unpressed.png",
-            "images/pressure_plate_pressed.png",
+            "images/plate.png",
+            "images/plate-pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
             "images/cube.png",
@@ -150,7 +150,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
-        spawnLasers();
+        //spawnLasers();
     }
 
     private void spawnBoxes() {
