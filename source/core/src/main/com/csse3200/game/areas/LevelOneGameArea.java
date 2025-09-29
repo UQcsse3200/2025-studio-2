@@ -167,7 +167,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
 
         Entity e2 = BoxFactory.createMoveableBox();
-        spawnEntityAt(e2, new GridPoint2(36, 15), true, true);
+        spawnEntityAt(e2, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
@@ -562,10 +562,10 @@ public class LevelOneGameArea extends GameArea {
     private void spawnBoxOnlyPlate() {
         Entity pressurePlatePlatform = PlatformFactory.createPressurePlatePlatform();
         pressurePlatePlatform.setScale(2f,0.5f);
-        spawnEntityAt(pressurePlatePlatform, new GridPoint2(10,10), true, true);
+        spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
 
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-        spawnEntityAt(plate, new GridPoint2(6, 5), true, true);
+        spawnEntityAt(plate, new GridPoint2(24, 13), true, true);
 
         pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
     }

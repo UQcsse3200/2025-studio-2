@@ -64,7 +64,7 @@ public class VolatilePlatformComponent extends Component {
         if (triggered && !disappeared) {
             float elapsed = (now - triggerTime) / 1000f;
             entity.getEvents().trigger("platformBreak");
-            texture.setTexture("images/empty.png");
+            texture.setTexture(hiddenTexture);
             if (elapsed >= lifetime) {
                 disappear();
                 entity.getEvents().trigger("platformBlank");
