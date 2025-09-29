@@ -96,7 +96,11 @@ public class BoxPressurePlateComponent extends Component {
         if(this.pressed == pressed) return;
         this.pressed = pressed;
         updateTexture();
-        entity.getEvents().trigger("plateToggled", pressed);
+        if (pressed) {
+            entity.getEvents().trigger("platePressed");
+        } else {
+            entity.getEvents().trigger("plateReleased");
+        }
     }
 
     /**

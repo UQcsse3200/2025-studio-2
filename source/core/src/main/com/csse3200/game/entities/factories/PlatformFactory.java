@@ -115,4 +115,15 @@ public class PlatformFactory {
     return platform;
   }
 
+  public static Entity createPressurePlatePlatform() {
+    Entity platform = new Entity()
+            .addComponent(new TextureRenderComponent("images/empty.png"))
+            .addComponent(new PhysicsComponent())
+            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+            .addComponent(new VolatilePlatformComponent(0f, 0f));
+    platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
+    return platform;
+  }
+
+
 }

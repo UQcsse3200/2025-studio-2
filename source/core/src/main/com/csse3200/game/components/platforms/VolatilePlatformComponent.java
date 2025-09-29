@@ -2,6 +2,7 @@ package com.csse3200.game.components.platforms;
 
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -31,6 +32,11 @@ public class VolatilePlatformComponent extends Component {
     private ColliderComponent collider;
     private TextureRenderComponent texture;
 
+    private boolean linkedToPlate = false;
+
+    private final String visibleTexture = "images/platform.png";
+    private final String hiddenTexture = "images/empty.png";
+
     public VolatilePlatformComponent(float lifetime, float respawnDelay) {
         this.lifetime = lifetime;
         this.respawnDelay = respawnDelay;
@@ -43,10 +49,15 @@ public class VolatilePlatformComponent extends Component {
 
         collider = entity.getComponent(ColliderComponent.class);
         texture = entity.getComponent(TextureRenderComponent.class);
+
+        setVisible(false);
+
     }
 
     @Override
     public void update() {
+        if(linkedToPlate) return;
+
         long now = timeSource.getTime();
 
         // Waiting to disappear
@@ -70,7 +81,7 @@ public class VolatilePlatformComponent extends Component {
     }
 
     private void onCollisionStart(Fixture me, Fixture other) {
-        if (triggered || disappeared) return;
+        if (triggered || disappeared || linkedToPlate) return;
 
         if (PhysicsLayer.contains(PhysicsLayer.PLAYER, other.getFilterData().categoryBits)) {
             triggered = true;
@@ -84,34 +95,42 @@ public class VolatilePlatformComponent extends Component {
         disappearTime = timeSource.getTime();
         triggered = false;
 
-        if (collider != null) {
-//            collider.setSensor(true);
-//            collider.getFixture().getBody().setAwake(true); // force recheck
-            collider.getFixture().getBody().destroyFixture(collider.getFixture());
-//            collider.setFixture(null); // clear reference in your component
-        }
-
-        if (texture != null) {
-            texture.setTexture("images/empty.png");
-        }
+        setVisible(false);
 
         logger.debug("Volatile platform disappeared, will respawn in {}s", respawnDelay);
     }
 
     private void respawn() {
         disappeared = false;
-
-        if (collider != null) {
-//            collider.setSensor(false);
-//            collider.getFixture().getBody().setAwake(true); // force recheck
-            collider.create(); // or however your ColliderComponent builds the fixture
-        }
-
-        if (texture != null) {
-            texture.setTexture("images/platform.png");
-        }
-
+        setVisible(true);
         logger.debug("Volatile platform respawned");
+    }
+
+    public void linkToPlate(Entity plateEntity) {
+        if(plateEntity == null) return;
+        linkedToPlate = true;
+        plateEntity.getEvents().addListener("platePressed", this::onPlatePressed);
+        plateEntity.getEvents().addListener("plateReleased", this::onPlateReleased);
+        logger.debug("Volatile platform linking to plate");
+    }
+
+    private void onPlatePressed() {
+        logger.debug("Plate pressed -> platform visible");
+        setVisible(true);
+    }
+
+    private void onPlateReleased() {
+        logger.debug("Plate released -> platform hidden");
+        setVisible(false);
+    }
+
+    private void setVisible(boolean visible) {
+        if(collider != null) {
+            collider.setSensor(!visible);
+        }
+        if(texture != null) {
+            texture.setTexture(visible ? visibleTexture : hiddenTexture);
+        }
     }
 
 }
