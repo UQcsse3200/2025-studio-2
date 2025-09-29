@@ -1,6 +1,7 @@
 package com.csse3200.game.components.collectables;
 
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 public class UpgradesComponent extends CollectableComponent {
 
@@ -17,6 +18,7 @@ public class UpgradesComponent extends CollectableComponent {
         if (inventory != null) {
             if (!inventory.hasItem(InventoryComponent.Bag.UPGRADES, upgradeId)) {
                 inventory.addItem(InventoryComponent.Bag.UPGRADES, upgradeId);
+                StatsTracker.addUpgrade();
             }
             return true;
         }

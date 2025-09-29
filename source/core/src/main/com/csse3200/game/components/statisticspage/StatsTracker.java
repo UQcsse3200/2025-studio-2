@@ -13,11 +13,11 @@ public class StatsTracker {
         resetSession();
     }
 
-    public void startSession() {
+    public static void startSession() {
         sessionStartTime = System.currentTimeMillis();
     }
 
-    public void endSession() {
+    public static void endSession() {
         playtime += System.currentTimeMillis() - sessionStartTime;
     }
 

@@ -2,6 +2,7 @@ package com.csse3200.game.components.maingame;
 
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,7 @@ public class MainGameActions extends Component {
    */
   private void onExit() {
     logger.info("Exiting main game screen");
+    StatsTracker.endSession();
     game.setScreen(GdxGame.ScreenType.MAIN_MENU);
   }
 }

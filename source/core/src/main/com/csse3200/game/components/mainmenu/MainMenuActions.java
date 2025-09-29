@@ -2,6 +2,7 @@ package com.csse3200.game.components.mainmenu;
 
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,7 @@ public class MainMenuActions extends Component {
    */
   private void onStart() {
     logger.info("Start game");
+    StatsTracker.startSession();
     game.setScreen(GdxGame.ScreenType.MAIN_GAME);
   }
 

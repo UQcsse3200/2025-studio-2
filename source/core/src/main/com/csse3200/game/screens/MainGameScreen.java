@@ -20,6 +20,7 @@ import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
@@ -149,6 +150,7 @@ public class MainGameScreen extends ScreenAdapter {
       }
       case CUTSCENE_ONE -> {
         leaderboardComponent.updateLeaderboard("TestNameLvl1", gameTime.getTimeSince(lvlStartTime));
+        StatsTracker.completeLevel();
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
       }
       case LEVEL_TWO -> {
@@ -157,6 +159,7 @@ public class MainGameScreen extends ScreenAdapter {
       }
       case CUTSCENE_TWO -> {
         leaderboardComponent.updateLeaderboard("TestNameLvl2", gameTime.getTimeSince(lvlStartTime));
+        StatsTracker.completeLevel();
         newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
       }
       case SPRINT_ONE -> {
@@ -220,7 +223,9 @@ public class MainGameScreen extends ScreenAdapter {
 
     if (newArea != null) {
         gameArea = newArea;
-        gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(newLevel, play));
+        gameArea.getEvents().addListener("doorEntered", (Entity play) -> {
+          switchArea(newLevel, play);
+        });
         gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(newLevel, play));
 
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
