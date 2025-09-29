@@ -115,6 +115,12 @@ public class PlatformFactory {
     return platform;
   }
 
+  /**
+   * Creates volatile platform that is linked to a pressure plate. When the pressure plate is pressed, the platform
+   * appears, and when it is released the platform is hidden.
+   *
+   * @return pressure plate platform entity
+   */
   public static Entity createPressurePlatePlatform() {
     Entity platform = new Entity()
             .addComponent(new TextureRenderComponent("images/empty.png"))
