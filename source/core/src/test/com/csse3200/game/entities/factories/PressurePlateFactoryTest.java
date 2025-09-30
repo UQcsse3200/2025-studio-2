@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.BoxPressurePlateComponent;
 import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.entities.Entity;
@@ -29,7 +30,7 @@ class PressurePlateFactoryTest {
         ServiceLocator.registerResourceService(new ResourceService());
         ServiceLocator.registerPhysicsService(new PhysicsService());
         ServiceLocator.getResourceService().loadTextures(PLATE_TEXTURES);
-        while (!ServiceLocator.getResourceService().loadForMillis(5)) { /* spin */ }
+        while (!ServiceLocator.getResourceService().loadForMillis(5)) {}
     }
 
     @AfterEach
@@ -42,26 +43,67 @@ class PressurePlateFactoryTest {
     void createPressurePlate_hasExpectedComponents() {
         Entity plate = PressurePlateFactory.createPressurePlate();
 
-        assertNotNull(plate.getComponent(TextureRenderComponent.class));
-        assertNotNull(plate.getComponent(PhysicsComponent.class));
-        ColliderComponent collider = plate.getComponent(ColliderComponent.class);
-        assertNotNull(collider);
-        assertNotNull(plate.getComponent(PressurePlateComponent.class));
-
-        assertNotNull(collider);
-        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(), "Plate layer");
-        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer());
+        assertNotNull(plate.getComponent(TextureRenderComponent.class),
+                "Pressure Plate should have a TextureRendererComponent");
+        assertNotNull(plate.getComponent(PhysicsComponent.class),
+                "Pressure plate should have a PhysicsComponent");
+        assertNotNull(plate.getComponent(ColliderComponent.class),
+                "Pressure plate should have a ColliderComponent");
+        assertNotNull(plate.getComponent(PressurePlateComponent.class),
+                "Pressure plate should have a PressurePlateComponent");
+        assertNull(plate.getComponent(BoxPressurePlateComponent.class),
+                "Pressure plate should not have a BoxPressurePlateComponent");
     }
 
     @Test
-    void createBoxOnlyPlate_hasBoxPressurePlateComponent() {
+    void createPressurePlate_isStatic() {
+        Entity plate = PressurePlateFactory.createPressurePlate();
+
+        PhysicsComponent physics = plate.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
+                "Pressure Plate PhysicsComponent should have a static body type");
+    }
+
+    @Test
+    void createPressurePlate_isOnObstacleLayer() {
+        Entity plate = PressurePlateFactory.createPressurePlate();
+
+        ColliderComponent collider = plate.getComponent(ColliderComponent.class);
+        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
+                "Pressure Plate ColliderComponent should be on OBSTACLE layer");
+    }
+
+    @Test
+    void createBoxOnlyPlate_hasExpectedComponents() {
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
 
-        assertNotNull(plate.getComponent(TextureRenderComponent.class));
-        assertNotNull(plate.getComponent(PhysicsComponent.class));
-        assertNotNull(plate.getComponent(ColliderComponent.class));
-        assertNotNull(plate.getComponent(BoxPressurePlateComponent.class));
+        assertNotNull(plate.getComponent(TextureRenderComponent.class),
+                "Box only pressure plate should have a TextureRendererComponent");
+        assertNotNull(plate.getComponent(PhysicsComponent.class),
+                "Box only pressure plate should have a PhysicsComponent");
+        assertNotNull(plate.getComponent(ColliderComponent.class),
+                "Box only pressure plate should have a ColliderComponent");
+        assertNotNull(plate.getComponent(BoxPressurePlateComponent.class),
+                "Box only pressure plate should have a BoxPressurePlateComponent");
         assertNull(plate.getComponent(PressurePlateComponent.class),
-                "Box-only plate should not attach the generic player-pressable component");
+                "Box only pressure plate should not have PressurePlateComponent");
+    }
+
+    @Test
+    void createBoxOnlyPlate_isStatic() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+
+        PhysicsComponent physics = plate.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
+                "Box Only Pressure Plate PhysicsComponent should have a static body type");
+    }
+
+    @Test
+    void createBoxOnlyPlate_isOnObstacleLayer() {
+        Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+
+        ColliderComponent collider = plate.getComponent(ColliderComponent.class);
+        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
+                "Box Only Pressure Plate ColliderComponent should be on OBSTACLE layer");
     }
 }
