@@ -35,6 +35,7 @@ public class MoveableBoxComponentTest {
     private Entity player;
     private ColliderComponent playerCollider;
 
+    GameTime gameTime;
     private long time = 0L;
 
     @BeforeEach
@@ -49,7 +50,7 @@ public class MoveableBoxComponentTest {
         RenderService renderService = mock(RenderService.class);
         ServiceLocator.registerRenderService(renderService);
 
-        GameTime gameTime = mock(GameTime.class);
+        gameTime = mock(GameTime.class);
         when(gameTime.getTime()).thenReturn(time);
         when(gameTime.getDeltaTime()).thenReturn(0.5f);
         ServiceLocator.registerTimeSource(gameTime);
@@ -127,6 +128,10 @@ public class MoveableBoxComponentTest {
 
         pickedUp = (boolean) f.get(boxComponent);
         assertTrue(pickedUp);
+
+        // add on time for delay
+        time += 500L;
+        when(gameTime.getTime()).thenReturn(time);
 
         // trigger interaction
         player.getEvents().trigger("interact");
