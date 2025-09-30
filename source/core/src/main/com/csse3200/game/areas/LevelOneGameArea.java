@@ -132,7 +132,7 @@ public class LevelOneGameArea extends GameArea {
         spawnDoor();
         //spawnPatrollingDrone();
         //spawnBomberDrone();
-        spawnSelfDestructDrone(3);
+        spawnSelfDestructDrone();
         //spawnPatrollingDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
@@ -429,21 +429,15 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(bomberDrone, position, true, true);
     }
 
-    private void spawnSelfDestructDrone(int level) {
-        GridPoint2 spawnTile = new GridPoint2(20, 15); // adjust position as needed
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
         Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
                 player,
                 terrain.tileToWorldPosition(spawnTile)
-        );
-        SelfDestructComponent oldComp = selfDestructDrone.getComponent(SelfDestructComponent.class);
-        if (oldComp != null) selfDestructDrone.removeComponent(oldComp);
-        selfDestructDrone.addComponent(new SelfDestructComponent(player, level));
-
-
+        ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
-
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level one Game Area"));
