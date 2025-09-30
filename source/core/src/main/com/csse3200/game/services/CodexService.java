@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -46,14 +47,20 @@ public class CodexService implements Disposable {
     /**
      * Returns all unlocked entries currently stored by the service as an array list.
      *
+     * @param unlockedOnly Flag for filtering any codex entries which have not been unlocked.
      * @return All unlocked entries stored by service as an array list.
      */
-    public ArrayList<CodexEntry> getEntries() {
-        // Get an array list containing all unlocked entries
-        return entries.values()
-                .stream()
-                .filter(CodexEntry::isUnlocked)
-                .collect(Collectors.toCollection(ArrayList::new));
+    public ArrayList<CodexEntry> getEntries(boolean unlockedOnly) {
+        // Turn values in map into stream.
+        Stream<CodexEntry> codexEntryStream = entries.values().stream();
+
+        // Filter locked entries if flag is set
+        if (unlockedOnly) {
+            codexEntryStream = codexEntryStream.filter(CodexEntry::isUnlocked);
+        }
+
+        // Return stream as array list
+        return codexEntryStream.collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**

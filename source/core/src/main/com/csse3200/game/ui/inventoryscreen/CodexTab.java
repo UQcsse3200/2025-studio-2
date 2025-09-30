@@ -46,7 +46,7 @@ public class CodexTab implements InventoryTabInterface {
         Table logicalTable = new Table();
 
         // Add each unlocked entry
-        for (CodexEntry entry : ServiceLocator.getCodexService().getEntries()) {
+        for (CodexEntry entry : ServiceLocator.getCodexService().getEntries(true)) {
             // Add entry title
             String title = entry.getTitle();
             int titleLen = title.length();
@@ -62,7 +62,7 @@ public class CodexTab implements InventoryTabInterface {
         }
 
         // Add some text if user has not found any entries yet
-        if (ServiceLocator.getCodexService().getEntries().isEmpty()) {
+        if (ServiceLocator.getCodexService().getEntries(true).isEmpty()) {
             logicalTable.add(new Label("No entries found yet.", skin)).left().pad(20f).fillX().expandX();
             logicalTable.row();
         }
