@@ -61,9 +61,8 @@ public class VolatilePlatformComponent extends Component {
         collider = entity.getComponent(ColliderComponent.class);
         texture = entity.getComponent(TextureRenderComponent.class);
 
-        setVisible(false);
-
-        if(!linkedToPlate) {
+        if (!linkedToPlate) {
+            setVisible(true);
             entity.getEvents().addListener("collisionStart", this::onCollisionStart);
         }
     }
@@ -104,7 +103,7 @@ public class VolatilePlatformComponent extends Component {
      * @param me fixture of this platform
      * @param other fixture of the other entity colliding
      */
-    private void onCollisionStart(Fixture me, Fixture other) {
+    public void onCollisionStart(Fixture me, Fixture other) {
         if (triggered || disappeared || linkedToPlate) return;
 
         if (PhysicsLayer.contains(PhysicsLayer.PLAYER, other.getFilterData().categoryBits)) {
@@ -146,6 +145,7 @@ public class VolatilePlatformComponent extends Component {
     public void linkToPlate(Entity plateEntity) {
         if(plateEntity == null) return;
         linkedToPlate = true;
+        setVisible(false);
         plateEntity.getEvents().addListener("platePressed", this::onPlatePressed);
         plateEntity.getEvents().addListener("plateReleased", this::onPlateReleased);
         logger.debug("Volatile platform linking to plate");
@@ -172,7 +172,7 @@ public class VolatilePlatformComponent extends Component {
      *
      * @param visible true to make platform visible and solid, false to be hidden and disable collisions
      */
-    private void setVisible(boolean visible) {
+    public void setVisible(boolean visible) {
         if(collider != null) {
             collider.setSensor(!visible);
         }

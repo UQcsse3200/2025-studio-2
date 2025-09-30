@@ -565,6 +565,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
 
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
+        plate.addComponent(new TooltipSystem.TooltipComponent("Platform Plate\nPress to reveal platform", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(plate, new GridPoint2(24, 13), true, true);
 
         pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
