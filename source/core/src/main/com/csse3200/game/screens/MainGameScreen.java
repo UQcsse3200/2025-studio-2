@@ -89,7 +89,6 @@ public class MainGameScreen extends ScreenAdapter {
 
     // Register service for managing codex entries
     ServiceLocator.registerCodexService(new CodexService());
-    ServiceLocator.getCodexService().loadEntries("codex-entries.txt");
 
     renderer = RenderFactory.createRenderer();
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
