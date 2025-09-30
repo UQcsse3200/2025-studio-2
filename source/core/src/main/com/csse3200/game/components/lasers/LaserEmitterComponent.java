@@ -76,7 +76,9 @@ public class LaserEmitterComponent extends Component {
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
 
-        hitLight = createPointLight();
+        if (ServiceLocator.getLightingService() != null) {
+            hitLight = createPointLight();
+        }
     }
 
     @Override
@@ -139,16 +141,22 @@ public class LaserEmitterComponent extends Component {
                 rebounds++;
 
                 // add hit entity to reflectors hit list
-                Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
-                if (e != null) {
-                    reflectorsHit.add(e);
+                if (hit.fixture.getBody().getUserData() != null) {
+                    Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+                    if (e != null) {
+                        reflectorsHit.add(e);
+                    }
                 }
             } else {
                 if (isDetector) {
                     triggerDetector(hit);
-                    hitLight.getComponent(ConeLightComponent.class).setActive(false);
+                    if (hitLight != null) {
+                        hitLight.getComponent(ConeLightComponent.class).setActive(false);
+                    }
                 } else {
-                    hitLight.getComponent(ConeLightComponent.class).setActive(true);
+                    if (hitLight != null) {
+                        hitLight.getComponent(ConeLightComponent.class).setActive(true);
+                    }
                 }
 
                 updateHitLight(hit);
@@ -325,7 +333,9 @@ public class LaserEmitterComponent extends Component {
     @Override
     public void dispose() {
         positions.clear();
-        hitLight.dispose();
-        hitLight = null;
+        if (hitLight != null) {
+            hitLight.dispose();
+            hitLight = null;
+        }
     }
 }

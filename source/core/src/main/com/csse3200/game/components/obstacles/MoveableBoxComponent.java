@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
@@ -48,7 +47,6 @@ public class MoveableBoxComponent extends Component {
     private short physicsLayer = PhysicsLayer.OBSTACLE;
 
     private Camera camera;
-    private final Vector2 tmp = new Vector2();
     private final Vector2 dir = new Vector2();
     private final Vector3 mouseTmp = new Vector3();
 
