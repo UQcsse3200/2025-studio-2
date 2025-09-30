@@ -20,6 +20,7 @@ public class LaserDetectorComponent extends Component {
     private ConeLightComponent light;
 
     private boolean detecting = false;
+    private boolean init = false;
 
     private static final String[] textures = {"images/laser-detector-off.png", "images/laser-detector-on.png"};
 
@@ -38,7 +39,6 @@ public class LaserDetectorComponent extends Component {
         }
 
         // init config: turn light off and set texture to rotate about (0,0) so the collider isn't offset
-        light.setActive(false);
         texture.setOrigin(0f, 0f);
 
         Body body = entity.getComponent(PhysicsComponent.class).getBody();
@@ -71,5 +71,19 @@ public class LaserDetectorComponent extends Component {
         light.setActive(detecting);
         entity.getEvents().trigger(detecting ? "detectingStart" : "detectingEnd");
         this.detecting = detecting;
+    }
+
+    @Override
+    public void update() {
+        /*
+        * for whatever reason it start crashing when setting the cone light in the create()
+        * method. i know its because of the component creation order (the cone light has to be
+        * created before the laser detector comp) but i just cant be bothered to debug it rn and
+        * figure out how to change the component creation order.
+        * */
+        if (!init) {
+            light.setActive(false);
+            init = true;
+        }
     }
 }
