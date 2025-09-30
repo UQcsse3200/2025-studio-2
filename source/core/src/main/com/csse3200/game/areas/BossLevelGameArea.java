@@ -146,6 +146,16 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnBoxes();
         spawnLasers();
+        spawnBoss();
+    }
+
+    private void spawnBoss() {
+        GridPoint2 spawnPos = new GridPoint2(35, 6);
+        Entity boss = EnemyFactory.createBossEnemy(
+                player,
+                terrain.tileToWorldPosition(spawnPos)
+        );
+        spawnEntityAt(boss, spawnPos, true, true);
     }
 
     private void spawnBoxes() {

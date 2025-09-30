@@ -1,6 +1,5 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -177,9 +176,19 @@ public class EnemyFactory {
     }
 
     /**
-     * Minimal boss entity - !! In Progress !!
+     * !! WIP !!
+     * Creates a minimal Boss entity for the boss level.
+     * Current (placeholder) behaviour:
+     * - Reuses the drone atlas (scaled up)
+     * - Kinematic body with zero gravity, movement will be handled by camera
+     * - High health, no contact/kill logic wired yet
+     * - Empty AI task component for future boss behaviours (other drone spawns, lasers, etc.)
+     *
+     * @param target Player entity (unused for now)
+     * @param spawnPos Initial spawn position
+     * @return Boss entity
      */
-    public static Entity createBossEnemy(Entity player, Vector2 spawnPos) {
+    public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
                 .addComponent(new PhysicsComponent())
                 .addComponent(new ColliderComponent())
@@ -189,7 +198,8 @@ public class EnemyFactory {
 
         if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
 
-        // TODO: Add new boss animations
+        // TODO: Replace with dedicated boss atlas/animations
+        // Placeholder visuals: Reuse drone atlas so we can render something in the game area
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(ServiceLocator.getResourceService()
                         .getAsset("images/drone.atlas", TextureAtlas.class));
@@ -197,18 +207,20 @@ public class EnemyFactory {
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         boss.addComponent(animator);
 
-        // Physics (kinematic body)
+        // Temporary scaling up to differentiate boss from other drones (change w/ new assets)
+        animator.scaleEntity();
+        Vector2 size = boss.getScale();
+        boss.setScale(size.x * 3f, size.y * 3f);
+
+        animator.startAnimation("float");
+
+        // Physics (kinematic body). Position will be anchored to camera
         PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
         phys.getBody().setType(BodyDef.BodyType.KinematicBody);
         phys.getBody().setGravityScale(0f);
 
-        // Big vertical 'wall' collider
-        PhysicsUtils.setScaledCollider(boss, 1.5f, 8.0f);
-
-        // TODO: Add camera anchor
-
-        animator.scaleEntity();
-        animator.startAnimation("float");
+        // TODO: Anchor to camera so boss sticks to LHS of view
+        // TODO: Kill-on-contact to trigger death cutscene and level restart
 
         return boss;
     }
