@@ -43,8 +43,16 @@ public class CodexTerminalFactory {
         collider.setSensor(true);
         terminal.addComponent(collider);
 
-        // Add terminal-specific component
-        terminal.addComponent(new CodexTerminalComponent(codexEntry));
+        if (codexEntry != null) {
+            // Add terminal-specific component
+            terminal.addComponent(new CodexTerminalComponent(codexEntry));
+
+            // Add tooltip
+            terminal.addComponent(new TooltipSystem.TooltipComponent(
+                    "Interact to add '" + codexEntry.getTitle() + "' to codex",
+                    TooltipSystem.TooltipStyle.DEFAULT)
+            );
+        }
 
         terminal.setScale(0.5f, 0.5f);
         PhysicsUtils.setScaledCollider(terminal, 3.0f, 3.0f);
@@ -61,11 +69,6 @@ public class CodexTerminalFactory {
         );
         terminal.addComponent(cone);
 
-        // Add tooltip
-        terminal.addComponent(new TooltipSystem.TooltipComponent(
-                "Interact to add '" + codexEntry.getTitle() + "' to codex",
-                TooltipSystem.TooltipStyle.DEFAULT)
-        );
 
         return terminal;
     }

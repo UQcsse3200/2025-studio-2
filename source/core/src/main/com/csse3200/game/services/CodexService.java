@@ -2,8 +2,9 @@ package com.csse3200.game.services;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Disposable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -19,6 +20,10 @@ public class CodexService implements Disposable {
      * Map that maps an entry title to an entry content's (text, unlock status)
      */
     private final Map<String, CodexEntry> entries = new LinkedHashMap<>();
+    /**
+     * Logger for error handling
+     */
+    private static final Logger logger = LoggerFactory.getLogger(CodexService.class);
 
     /**
      * Constructor loads all codex entries from a special file.
@@ -31,14 +36,14 @@ public class CodexService implements Disposable {
      * Returns an entry held by the service using the key (or id) of the entry.
      *
      * @param id The id of the entry.
-     * @return All entries.
+     * @return The entry with the matching id, or null if it does not exist
      */
     public CodexEntry getEntry(String id) throws IllegalArgumentException {
         CodexEntry entry = entries.get(id);
 
         // Create error if entry with that title does not exist.
         if (entry == null) {
-            throw new IllegalArgumentException("No entry with id '" + id + "' in codex entries");
+            logger.error("No entry with id '{}' in codex entries", id);
         }
 
         return entry;
