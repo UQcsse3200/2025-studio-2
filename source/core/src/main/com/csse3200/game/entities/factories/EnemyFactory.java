@@ -1,9 +1,11 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
@@ -172,6 +174,43 @@ public class EnemyFactory {
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
+    }
+
+    /**
+     * Minimal boss entity - !! In Progress !!
+     */
+    public static Entity createBossEnemy(Entity player, Vector2 spawnPos) {
+        Entity boss = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent())
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new CombatStatsComponent(9999, 0))
+                .addComponent(new AITaskComponent());
+
+        if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
+
+        // TODO: Add new boss animations
+        AnimationRenderComponent animator =
+                new AnimationRenderComponent(ServiceLocator.getResourceService()
+                        .getAsset("images/drone.atlas", TextureAtlas.class));
+        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
+        boss.addComponent(animator);
+
+        // Physics (kinematic body)
+        PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
+        phys.getBody().setType(BodyDef.BodyType.KinematicBody);
+        phys.getBody().setGravityScale(0f);
+
+        // Big vertical 'wall' collider
+        PhysicsUtils.setScaledCollider(boss, 1.5f, 8.0f);
+
+        // TODO: Add camera anchor
+
+        animator.scaleEntity();
+        animator.startAnimation("float");
+
+        return boss;
     }
 
     private EnemyFactory() {throw new IllegalStateException("Instantiating static util class");}
