@@ -185,6 +185,9 @@ public class PauseMenuDisplay extends UIComponent {
         if (currentTab != Tab.SETTINGS) {
             addBottomButton("Settings", Tab.SETTINGS);
         }
+        if (currentTab != Tab.CODEX) {
+            addBottomButton("Codex", Tab.CODEX);
+        }
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
         addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
