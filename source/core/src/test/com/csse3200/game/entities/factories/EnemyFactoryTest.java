@@ -1,6 +1,8 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
@@ -384,6 +386,41 @@ public class EnemyFactoryTest {
         ai.update(); // Chasing
 
         assertEquals(List.of("chaseStart", "cooldownStart", "cooldownEnd", "chaseStart"), eventLog);
+    }
+
+    @Test
+    void boss_hasCoreComponents() {
+        Entity boss = EnemyFactory.createBossEnemy(null, null);
+        assertNotNull(boss.getComponent(PhysicsComponent.class),
+                "Boss should have a physics component");
+        assertNotNull(boss.getComponent(ColliderComponent.class),
+                "Boss should have a collider component");
+        assertNotNull(boss.getComponent(AITaskComponent.class),
+                "Boss should have an AI task component");
+        assertNotNull(boss.getComponent(AnimationRenderComponent.class),
+                "Boss should have an animation render component");
+
+        HitboxComponent hitbox = boss.getComponent(HitboxComponent.class);
+        assertNotNull(hitbox, "Boss should have a hitbox component");
+        assertEquals(PhysicsLayer.NPC, boss.getComponent(HitboxComponent.class).getLayer(),
+                "Hitbox layer should be set to 'NPC'");
+
+        CombatStatsComponent stats = boss.getComponent(CombatStatsComponent.class);
+        assertNotNull(stats, "Boss should have a combat stats component");
+        assertEquals(9999, stats.getHealth(), "Boss should have correct health");
+        assertEquals(0, stats.getBaseAttack(), "Boss should have correct base attack");
+    }
+
+    @Test
+    void boss_hasCorrectPhysicsBody() {
+        Entity boss = EnemyFactory.createBossEnemy(null, null);
+        boss.create();
+
+        PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.KinematicBody, phys.getBody().getType(),
+                "Boss should have a kinematic body");
+        assertEquals(0f, phys.getBody().getGravityScale(),
+                "Boss should have zero gravity");
     }
 
     private Entity createEntityWithPosition(Vector2 pos) {
