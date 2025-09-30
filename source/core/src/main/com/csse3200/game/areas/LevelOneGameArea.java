@@ -157,7 +157,7 @@ public class LevelOneGameArea extends GameArea {
             spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
             spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
             spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
-        } catch (IOException e) {
+        } catch (IllegalArgumentException e) {
             logger.error("{}", e.getMessage());
         }
     }
