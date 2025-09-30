@@ -33,12 +33,12 @@ public class CodexService implements Disposable {
      * @param id The id of the entry.
      * @return All entries.
      */
-    public CodexEntry getEntry(String id) throws IOException {
+    public CodexEntry getEntry(String id) throws IllegalArgumentException {
         CodexEntry entry = entries.get(id);
 
         // Create error if entry with that title does not exist.
         if (entry == null) {
-            throw new IOException("No entry with id '" + id + "' in codex entries");
+            throw new IllegalArgumentException("No entry with id '" + id + "' in codex entries");
         }
 
         return entry;
