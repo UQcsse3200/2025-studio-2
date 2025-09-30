@@ -16,26 +16,24 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 @ExtendWith(GameExtension.class)
 class PressurePlateFactoryTest {
-    private static final String[] PLATE_TEXTURES = {
-            "images/plate.png",
-            "images/plate-pressed.png"
-    };
+    private ResourceService mockResourceService;
+    private PhysicsService mockPhysicsService;
 
     @BeforeEach
     void setUp() {
         ServiceLocator.clear();
-        ServiceLocator.registerResourceService(new ResourceService());
-        ServiceLocator.registerPhysicsService(new PhysicsService());
-        ServiceLocator.getResourceService().loadTextures(PLATE_TEXTURES);
-        while (!ServiceLocator.getResourceService().loadForMillis(5)) {}
+        ServiceLocator.registerResourceService(mock(ResourceService.class));
+
+        PhysicsService physicsService = new PhysicsService();
+        ServiceLocator.registerPhysicsService(physicsService);
     }
 
     @AfterEach
     void tearDown() {
-        ServiceLocator.getResourceService().unloadAssets(PLATE_TEXTURES);
         ServiceLocator.clear();
     }
 
