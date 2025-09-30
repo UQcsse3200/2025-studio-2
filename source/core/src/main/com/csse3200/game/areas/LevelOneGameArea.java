@@ -13,6 +13,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -132,6 +133,7 @@ public class LevelOneGameArea extends GameArea {
         spawnLadders();
         spawnLowerLadderPressurePlate();
         spawnUpperLadderPressurePlate();
+        spawnBoxOnlyPlate();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
@@ -166,7 +168,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
 
         Entity e2 = BoxFactory.createMoveableBox();
-        spawnEntityAt(e2, new GridPoint2(36, 15), true, true);
+        spawnEntityAt(e2, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
@@ -236,8 +238,8 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        upperLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed && !isUpperLadderExtended) {
+        upperLadderPressurePlate.getEvents().addListener("platePressed", () -> {
+            if (!isUpperLadderExtended) {
                 isUpperLadderExtended = true;
                 for (int i = upperLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -266,8 +268,8 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        lowerLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed && !isLowerLadderExtended) {
+        lowerLadderPressurePlate.getEvents().addListener("platePressed", () -> {
+            if (!isLowerLadderExtended) {
                 isLowerLadderExtended = true;
                 for (int i = lowerLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -559,14 +561,15 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnBoxOnlyPlate() {
+        Entity pressurePlatePlatform = PlatformFactory.createPressurePlatePlatform();
+        pressurePlatePlatform.setScale(2f,0.5f);
+        spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
+
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-        spawnEntityAt(plate, new GridPoint2(6, 5), true, true);
+        plate.addComponent(new TooltipSystem.TooltipComponent("Platform Plate\nPress to reveal platform", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(plate, new GridPoint2(24, 13), true, true);
 
-        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed) {
-
-            }
-        });
+        pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
     }
 
     private TerrainComponent createDefaultTerrain() {
