@@ -270,9 +270,33 @@ public class LaserEmitterComponent extends Component {
         if (physics != null) {
             Body targetBody = physics.getBody();
             Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
-            Vector2 impulse = direction.setLength(KNOCKBACK);
+            float knockbackScale = correctImpulse(direction);
+            //direction.x += direction.y;
+            //direction.y = 0f;
+            Vector2 impulse = direction.setLength(KNOCKBACK + knockbackScale);
             targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
         }
+    }
+
+    /**
+     * Private helper which attempts to correct the knockback so it's not so vertical
+     * got no idea which way works better, to either remove all vertical knockback and
+     * convert it into horizontal, or to do what this does (weird math scaling stuff)
+     *
+     * @param impulse actually just the direction knockback is applied in
+     * @return the difference in y value
+     */
+    private float correctImpulse(Vector2 impulse) {
+        if (Math.abs(impulse.y) > Math.abs(impulse.x) / 1.5f) {
+            System.out.println("correcting knockback");
+            float diff =  Math.abs(impulse.y) -  Math.abs(impulse.x);
+
+            // rescale y
+            impulse.y = impulse.x / 2f;
+            // return diff to scale knockback off of
+            return diff;
+        }
+        return 0f;
     }
 
     private void triggerDetector(RaycastHit hit) {
@@ -285,8 +309,6 @@ public class LaserEmitterComponent extends Component {
 
         // trigger detection
         target.getEvents().trigger("updateDetection", true);
-        System.out.println("triggerDetector");
-
         lastDetectorHit = target;
     }
 
