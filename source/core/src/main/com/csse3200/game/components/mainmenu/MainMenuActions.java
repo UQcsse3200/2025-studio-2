@@ -66,6 +66,7 @@ public class MainMenuActions extends Component {
    */
   private void onStats() {
     logger.info("Launching stats screen");
+    StatsTracker.loadStats();
     game.setScreen(GdxGame.ScreenType.STATISTICS);
   }
 }
