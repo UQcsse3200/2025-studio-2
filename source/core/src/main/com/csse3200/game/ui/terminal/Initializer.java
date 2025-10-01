@@ -337,6 +337,53 @@ public class Initializer {
               print("Jetpack spawned!\n");
           });
           
+          setGlobal("spawnGlider", () {
+              es = entityService();
+              glider = .com.csse3200.game.entities.factories.CollectableFactory.createGlideUpgrade();
+              player = getPlayer();
+              physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+              body = physics.getBody();
+               
+              es.register(glider);
+              glider.setPosition(body.getWorldCenter());
+              
+              print("Glider spawned!\n");
+          });
+          
+          setGlobal("spawnDash", () {
+              es = entityService();
+              dash = .com.csse3200.game.entities.factories.CollectableFactory.createDashUpgrade();
+              player = getPlayer();
+              physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+              body = physics.getBody();
+               
+              es.register(dash);
+              dash.setPosition(body.getWorldCenter());
+              
+              print("Dash Upgrade spawned!\n");
+          });
+          
+          setGlobal("spawnAllUpgrades", () {
+              spawnGlider();
+              spawnJetpack();
+              spawnDash();
+              
+              print("All upgrades spawned!\n");
+          });
+          
+          setGlobal("spawnDoorKey", () {
+              es = entityService();
+              key = .com.csse3200.game.entities.factories.CollectableFactory.createCollectable("key:door");
+              player = getPlayer();
+              physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+              body = physics.getBody();
+              
+              es.register(key);
+              key.setPosition(body.getWorldCenter());
+              
+              print("Door Key Spawned!\n");
+          });
+          
                
           """;
 }
