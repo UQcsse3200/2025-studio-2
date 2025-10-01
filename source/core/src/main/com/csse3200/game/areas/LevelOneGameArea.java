@@ -558,9 +558,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
 
-//        if (keySpawned) {
-//            spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(45, 56), true, true);
-//        }
         spawnEntityAt(CollectableFactory.createObjective("dash_completed", 0.2f, 0.2f),    new GridPoint2(1, 37), true, true);
 
 //        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
