@@ -98,7 +98,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cube.png",
             "images/heavy-cube.png",
             "images/laser-detector-off.png",
-            "images/laser-detector-on.png"
+            "images/laser-detector-on.png",
+            "images/laser-end.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -143,7 +144,7 @@ public class LevelOneGameArea extends GameArea {
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
-        //spawnSecurityCams();
+        spawnSecurityCams();
         spawnButtons();
         spawnTraps();
         //spawnPlatformBat();
@@ -163,18 +164,18 @@ public class LevelOneGameArea extends GameArea {
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
 
-        Entity e1 = BoxFactory.createReflectorBox();
-        spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
+        Entity three = BoxFactory.createReflectorBox();
+        spawnEntityAt(three, new GridPoint2(32, 15), true, true);
 
-        Entity e2 = BoxFactory.createMoveableBox();
-        spawnEntityAt(e2, new GridPoint2(20, 18), true, true);
+        Entity four = BoxFactory.createMoveableBox();
+        spawnEntityAt(four, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
         spawnEntityAt(e, new GridPoint2(40, 12), true, true);
 
-        Entity detector = LaserDetectorFactory.createLaserDetector(-54f);
-        spawnEntityAt(detector, new GridPoint2(36, 6), true, true);
+        Entity detector = LaserDetectorFactory.createLaserDetector(0f);
+        spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
 
     private void spawnDeathZone() {
