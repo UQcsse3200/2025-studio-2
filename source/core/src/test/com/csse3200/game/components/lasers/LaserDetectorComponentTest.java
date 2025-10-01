@@ -38,6 +38,7 @@ class LaserDetectorComponentTest {
 
     @Test
     void update_firstTickTurnsLightOffOnce() {
+        reset(light);
         detector.update();
         verify(light, times(1)).setActive(false);
 
