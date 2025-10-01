@@ -75,7 +75,8 @@ public class ObjectivesTab implements InventoryTabInterface {
     objectiveTex.put("keycard", new Texture(Gdx.files.internal("images/objectives/keycard.png")));
     objectiveTex.put("tutorial", new Texture(Gdx.files.internal("images/objectives/crouch.png")));
 
-    objectiveTex.put("tutorial", new Texture(Gdx.files.internal("images/objectives/crouch.png")));
+    objectiveTex.put("keycard_completed", new Texture(Gdx.files.internal("images/objectives/keycard_completed.png")));
+    objectiveTex.put("dash_completed", new Texture(Gdx.files.internal("images/objectives/dash_completed.png")));
   }
 
   /**
