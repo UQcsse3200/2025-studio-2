@@ -146,7 +146,7 @@ public class VolatilePlatformComponent extends Component {
         disappeared = false;
         breakStarted = false;
 
-        if (collider != null) collider.create(); // safely recreate fixture
+        if (collider != null) collider.create();
         if (texture != null) texture.setTexture(visibleTexture);
 
         logger.debug("Volatile platform respawned");
