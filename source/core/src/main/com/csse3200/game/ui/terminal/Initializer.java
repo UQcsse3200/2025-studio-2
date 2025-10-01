@@ -232,20 +232,6 @@ public class Initializer {
                 });
               });
             });
-            
-            setGlobal("toggleGravity", (entity) {
-                
-                setGlobal(".entity", entity);
-                physics = entity.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
-                setGlobal(".physics", physics);
-                
-                ifElse(isNull(physics), () {
-                    print("Entity has no physics");
-                }, () {
-                    getGlobal(".physics").getBody().setGravityScale(0.0);
-                    print("Gravity off for", getGlobal(".entity").getId());
-                });
-            });
                            
                            
 
@@ -308,7 +294,49 @@ public class Initializer {
           debugInit();
           """;
 
-  private static final String custom_utils = """
-            
-           """;
+  private static final String cheats = """
+                     
+           setGlobal("kill", (entity) {
+                "Get the CombatStatsComponent from the target entity.";
+                "Note the use of .class to get the class object.";
+                     
+                stats = entity.getComponent(.com.csse3200.game.components.CombatStatsComponent);
+                ifElse(exists("stats"), () {
+                  stats = getParentVar("stats");
+                  stats.setHealth(0);
+                  entity = getParentVar("entity");
+                  print("Entity ", entity.getId(), " has been killed!\\n");
+                }, () {
+                  entity = getParentVar("entity");
+                  print("Entity ", entity.getId(), " has no health to set!\\n");
+                });
+              });
+              
+          setGlobal("godMode", () {
+              player = getPlayer();
+              stats = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
+              ifElse(exists("stats"), () {
+                stats = getParentVar("stats");
+                stats.setHealth(999999);
+                print("God mode enabled\n");
+              }, () {
+                print("Unable to enable god mode");
+              });
+          });
+         
+          setGlobal("spawnJetpack", () {
+              es = entityService();
+              jetpack = .com.csse3200.game.entities.factories.CollectableFactory.createJetpackUpgrade();
+              player = getPlayer();
+              physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+              body = physics.getBody();
+               
+              es.register(jetpack);
+              jetpack.setPosition(body.getWorldCenter());
+              
+              print("Jetpack spawned!\n");
+          });
+          
+               
+          """;
 }
