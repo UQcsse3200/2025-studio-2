@@ -22,7 +22,6 @@ public class ButtonManagerComponent extends Component {
 
     private Entity sign = null;
     private AnimationRenderComponent signAnimator;
-    private final String[] atlas = {"images/timer.atlas"};
 
     /**
      * Adds a button to the list of buttons managed by this manager
@@ -45,7 +44,9 @@ public class ButtonManagerComponent extends Component {
             Vector2 buttonPos = null;
             for (ButtonComponent button : buttons) {
                 if (button.isPushed()) {
-                    buttonPos = button.getEntity().getPosition().cpy();
+                    if (button.getEntity() != null) {
+                        buttonPos = button.getEntity().getPosition().cpy();
+                    }
                     break;
                 }
             }
