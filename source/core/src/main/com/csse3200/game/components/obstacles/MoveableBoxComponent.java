@@ -301,7 +301,8 @@ public class MoveableBoxComponent extends Component {
             f.maskBits = (short) (PhysicsLayer.OBSTACLE
                                 | PhysicsLayer.PLAYER
                                 | PhysicsLayer.NPC
-                                | PhysicsLayer.LASER_REFLECTOR);
+                                | PhysicsLayer.LASER_REFLECTOR
+                                | PhysicsLayer.LASER_DETECTOR);
             boxCollider.getFixture().setFilterData(f);
             boxCollider.getFixture().getBody().setAwake(true);
             appliedFilter = true;
