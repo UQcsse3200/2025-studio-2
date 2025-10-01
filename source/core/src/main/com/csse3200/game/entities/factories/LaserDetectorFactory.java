@@ -30,8 +30,9 @@ public class LaserDetectorFactory {
         e.setScale(16f/ 25f, 0.5f);
 
         e.addComponent(new TextureRenderComponent("images/laser-detector-off.png"));
-        ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.LASER_DETECTOR);
-        e.addComponent(collider);
+        ColliderComponent detectionCollider = new ColliderComponent().setLayer(PhysicsLayer.LASER_DETECTOR);
+        e.addComponent(detectionCollider);
+        e.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
 
         float scaleX = e.getScale().x;
         float scaleY = e.getScale().y;
@@ -41,9 +42,22 @@ public class LaserDetectorFactory {
         Vector2 newScale = new Vector2(14 * unitsPerPxX, 18 * unitsPerPxY);
         Vector2 newPos   = e.getCenterPosition().cpy().add(0f, 2f * unitsPerPxY);
 
+        detectionCollider.setAsBox(newScale, newPos);
+
+        // create child-entity to store other collider for lower portion of the detector
+        // theres probably a better way but im feeling lazy
+        // ========== child entity section
+        Entity child = new Entity();
+        ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);
+        child.addComponent(collider);
+        child.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
+
+        newScale.set(scaleX, 5f * unitsPerPxY);
+        newPos.set(e.getCenterPosition().cpy().add(0f, -10f * unitsPerPxY));
+
         collider.setAsBox(newScale, newPos);
 
-        e.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
+        // ==============================
 
         ConeLightComponent light = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
@@ -56,7 +70,7 @@ public class LaserDetectorFactory {
         light.setFollowEntity(false);
         e.addComponent(light);
 
-        e.addComponent(new LaserDetectorComponent());
+        e.addComponent(new LaserDetectorComponent().registerChild(child));
 
         return e;
     }

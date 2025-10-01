@@ -4,9 +4,11 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * This component is used on a laser detector entity and is responsible for initialising the
@@ -22,10 +24,17 @@ public class LaserDetectorComponent extends Component {
     private boolean detecting = false;
     private boolean init = false;
 
+    private Entity child;
+
     private static final String[] textures = {"images/laser-detector-off.png", "images/laser-detector-on.png"};
 
     public LaserDetectorComponent() {
 
+    }
+
+    public LaserDetectorComponent registerChild(Entity child) {
+        this.child = child;
+        return this;
     }
 
     @Override
@@ -41,7 +50,7 @@ public class LaserDetectorComponent extends Component {
         // init config: turn light off and set texture to rotate about (0,0) so the collider isn't offset
         texture.setOrigin(0f, 0f);
 
-        Body body = entity.getComponent(PhysicsComponent.class).getBody();
+        Body body = physics.getBody();
         float angle = (float) texture.getRotation();
 
         // get the offset (center pos) of the entity
@@ -53,6 +62,14 @@ public class LaserDetectorComponent extends Component {
         // attach the light to the physics body in the center
         light.getLight().attachToBody(body, offX, offY);
         body.setTransform(body.getPosition(), angle * MathUtils.degreesToRadians);
+
+        // setup child
+        if (child != null) {
+            ServiceLocator.getEntityService().register(child);
+            child.setPosition(entity.getPosition());
+            Body childBody = child.getComponent(PhysicsComponent.class).getBody();
+            childBody.setTransform(body.getPosition(), angle * MathUtils.degreesToRadians);
+        }
 
         entity.getEvents().addListener("updateDetection", this::updateDetection);
     }
@@ -84,6 +101,13 @@ public class LaserDetectorComponent extends Component {
         if (!init) {
             light.setActive(false);
             init = true;
+        }
+    }
+
+    @Override
+    public void dispose() {
+        if (child != null) {
+            child.dispose();
         }
     }
 }
