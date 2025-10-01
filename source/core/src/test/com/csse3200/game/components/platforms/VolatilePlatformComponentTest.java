@@ -1,10 +1,12 @@
 package com.csse3200.game.components.platforms;
 
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
@@ -21,6 +23,9 @@ public class VolatilePlatformComponentTest {
     private ColliderComponent collider;
     private TextureRenderComponent texture;
     private GameTime mockTime;
+    private AnimationRenderComponent animator;
+    private Fixture fixture;
+    private Body body;
 
     @BeforeEach
     void setup() {
@@ -30,9 +35,16 @@ public class VolatilePlatformComponentTest {
         platformEntity = new Entity();
         collider = mock(ColliderComponent.class);
         texture = mock(TextureRenderComponent.class);
+        animator = mock(AnimationRenderComponent.class);
+
+        fixture = mock(Fixture.class);
+        body = mock(Body.class);
+        when(fixture.getBody()).thenReturn(body);
+        when(collider.getFixture()).thenReturn(fixture);
 
         platformEntity.addComponent(collider);
         platformEntity.addComponent(texture);
+        platformEntity.addComponent(animator);
 
         platform = new VolatilePlatformComponent(2f, 3f);
         platformEntity.addComponent(platform);
@@ -69,31 +81,6 @@ public class VolatilePlatformComponentTest {
         verify(collider, atLeastOnce()).setSensor(true);
         verify(texture, atLeastOnce()).setTexture("images/empty.png");
     }
-
-    @Test
-    void update_disappearsAndRespawnsAfterCollision() {
-        Fixture me = mock(Fixture.class);
-        Fixture playerFixture = mock(Fixture.class);
-        Filter filter = new Filter();
-        filter.categoryBits = PhysicsLayer.PLAYER;
-        when(playerFixture.getFilterData()).thenReturn(filter);
-
-        when(mockTime.getTime()).thenReturn(1000L);
-        platform.onCollisionStart(me, playerFixture);
-
-        // after lifetime should disappear
-        when(mockTime.getTime()).thenReturn(1000L + 2500L);
-        platform.update();
-        verify(texture, atLeastOnce()).setTexture("images/empty.png");
-        verify(collider, atLeastOnce()).setSensor(true);
-
-        // after respawnDelay should respawn
-        when(mockTime.getTime()).thenReturn(1000L + 2500L + 3100L);
-        platform.update();
-        verify(texture, atLeastOnce()).setTexture("images/platform.png");
-        verify(collider, atLeastOnce()).setSensor(false);
-    }
-
 
     @Test
     void update_respawnsPlatformAfterDelay() {

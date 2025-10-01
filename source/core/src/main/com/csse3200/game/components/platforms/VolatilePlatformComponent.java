@@ -5,6 +5,7 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
@@ -30,7 +31,8 @@ public class VolatilePlatformComponent extends Component {
     private long triggerTime;
 
     private boolean disappeared = false;
-    private long disappearTime;
+    private long disappearTime = 0;
+    private boolean platePressed = false;
 
     private ColliderComponent collider;
     private TextureRenderComponent texture;
@@ -39,6 +41,8 @@ public class VolatilePlatformComponent extends Component {
 
     private final String visibleTexture = "images/platform.png";
     private final String hiddenTexture = "images/empty.png";
+    private AnimationRenderComponent animator;
+    private boolean breakStarted = false;
 
     /**
      * Creates a volatile platform with a lifetime and respawn delay
@@ -60,6 +64,7 @@ public class VolatilePlatformComponent extends Component {
         timeSource = ServiceLocator.getTimeSource();
         collider = entity.getComponent(ColliderComponent.class);
         texture = entity.getComponent(TextureRenderComponent.class);
+        animator = entity.getComponent(AnimationRenderComponent.class);
 
         if (!linkedToPlate) {
             setVisible(true);
@@ -73,22 +78,26 @@ public class VolatilePlatformComponent extends Component {
      */
     @Override
     public void update() {
-        if(linkedToPlate) return;
-
         long now = timeSource.getTime();
 
-        // Waiting to disappear
+        if (linkedToPlate) {
+            setVisible(platePressed);
+            return;
+        }
+
         if (triggered && !disappeared) {
             float elapsed = (now - triggerTime) / 1000f;
-            entity.getEvents().trigger("platformBreak");
-            texture.setTexture(hiddenTexture);
+            if (!breakStarted && animator != null) {
+                animator.startAnimation("break");
+                breakStarted = true;
+            }
             if (elapsed >= lifetime) {
                 disappear();
-                entity.getEvents().trigger("platformBlank");
+                triggered = false;
+                breakStarted = false;
             }
         }
 
-        // Waiting to respawn
         if (disappeared) {
             float elapsed = (now - disappearTime) / 1000f;
             if (elapsed >= respawnDelay) {
@@ -104,12 +113,13 @@ public class VolatilePlatformComponent extends Component {
      * @param other fixture of the other entity colliding
      */
     public void onCollisionStart(Fixture me, Fixture other) {
-        if (triggered || disappeared || linkedToPlate) return;
-
-        if (PhysicsLayer.contains(PhysicsLayer.PLAYER, other.getFilterData().categoryBits)) {
+        if (!disappeared && !triggered && PhysicsLayer.contains(PhysicsLayer.PLAYER, other.getFilterData().categoryBits)) {
             triggered = true;
             triggerTime = timeSource.getTime();
-            logger.debug("Volatile platform triggered, will disappear in {}s", lifetime);
+            breakStarted = true;
+
+            if (texture != null) texture.setTexture(hiddenTexture);
+            if (animator != null) animator.startAnimation("break");
         }
     }
 
@@ -119,10 +129,13 @@ public class VolatilePlatformComponent extends Component {
     private void disappear() {
         disappeared = true;
         disappearTime = timeSource.getTime();
-        triggered = false;
 
-        setVisible(false);
+        if (collider != null && collider.getFixture() != null) {
+            collider.getFixture().getBody().destroyFixture(collider.getFixture());
+        }
 
+        if (texture != null) texture.setTexture(hiddenTexture);
+        if (animator != null) animator.startAnimation("blank");
         logger.debug("Volatile platform disappeared, will respawn in {}s", respawnDelay);
     }
 
@@ -131,7 +144,11 @@ public class VolatilePlatformComponent extends Component {
      */
     private void respawn() {
         disappeared = false;
-        setVisible(true);
+        breakStarted = false;
+
+        if (collider != null) collider.create();
+        if (texture != null) texture.setTexture(visibleTexture);
+
         logger.debug("Volatile platform respawned");
     }
 
@@ -156,7 +173,7 @@ public class VolatilePlatformComponent extends Component {
      */
     private void onPlatePressed() {
         logger.debug("Plate pressed -> platform visible");
-        setVisible(true);
+        platePressed = true;
     }
 
     /**
@@ -164,7 +181,7 @@ public class VolatilePlatformComponent extends Component {
      */
     private void onPlateReleased() {
         logger.debug("Plate released -> platform hidden");
-        setVisible(false);
+        platePressed = false;
     }
 
     /**
@@ -173,7 +190,7 @@ public class VolatilePlatformComponent extends Component {
      * @param visible true to make platform visible and solid, false to be hidden and disable collisions
      */
     public void setVisible(boolean visible) {
-        if(collider != null) {
+        if(collider != null && collider.getFixture() != null) {
             collider.setSensor(!visible);
         }
         if(texture != null) {
