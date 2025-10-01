@@ -90,7 +90,8 @@ public class LevelTwoGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
-            "images/doors.atlas"
+            "images/doors.atlas",
+            "images/timer.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
