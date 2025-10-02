@@ -1,7 +1,10 @@
 package com.csse3200.game.components.lasers;
 
+
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
@@ -33,6 +36,8 @@ public class LaserEmitterComponent extends Component {
     private static final int MAX_REBOUNDS = 8;
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
+    private static final String LASER_SOUND = "sounds/laserShower.mp3";
+
 
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
     private static final short blockedOccluder = (short) (
@@ -79,7 +84,12 @@ public class LaserEmitterComponent extends Component {
         * reflection is calculated using the impact angle and the normal vector of the surface
         * hit. the process is repeated until we run out of rebounds or length.
         * */
-
+        Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
+        if (laserSound != null) {
+            long soundId = laserSound .play(1.0f);
+            fadeOutSound(laserSound , soundId);
+        }
+        
         positions.clear();
         // add initial point
         Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
@@ -152,6 +162,21 @@ public class LaserEmitterComponent extends Component {
         lastReflectorsHit = reflectorsHit;
     }
 
+    private void fadeOutSound(Sound sound, long soundId) {
+        final int steps = 10;
+        final float interval = (float) 1.0 / steps;
+
+        for (int i = 0; i < steps; i++) {
+            final float volume = 1.0f - (i / (float) steps);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    sound.setVolume(soundId, volume);
+                    if (volume <= 0f) sound.stop(soundId);
+                }
+            }, i * interval);
+        }
+    }
     /**
      * A null safe wrapper for getting the category bits from a hit collider.
      *
