@@ -2,7 +2,7 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
@@ -21,60 +21,82 @@ class SelfDestructComponentTest {
     private AnimationRenderComponent animator;
     private PhysicsComponent physics;
     private Sound sound;
+    private CombatStatsComponent playerStats;
 
     @BeforeEach
     void setUp() {
-        // Mock drone and player
         drone = mock(Entity.class);
         player = mock(Entity.class);
 
-        // Mock components
         animator = mock(AnimationRenderComponent.class);
         physics = mock(PhysicsComponent.class);
         sound = mock(Sound.class);
+        playerStats = mock(CombatStatsComponent.class);
 
+        // Resource service mock
         ResourceService resourceService = mock(ResourceService.class);
         when(resourceService.getAsset("sounds/explosion.mp3", Sound.class)).thenReturn(sound);
         ServiceLocator.registerResourceService(resourceService);
 
-        // Attach components to drone
+        // Default component stubbing
         when(drone.getComponent(AnimationRenderComponent.class)).thenReturn(animator);
         when(drone.getComponent(PhysicsComponent.class)).thenReturn(physics);
+        when(player.getComponent(CombatStatsComponent.class)).thenReturn(playerStats);
+
+        // Default positions
         when(drone.getCenterPosition()).thenReturn(new Vector2(0, 0));
         when(player.getCenterPosition()).thenReturn(new Vector2(10, 10));
 
-        // Initialize SelfDestructComponent
         selfDestruct = new SelfDestructComponent(player);
         selfDestruct.setEntity(drone);
     }
 
+    @Test
+    void testExplodesWhenTouchingPlayer() {
+        // Within collision radius
+        when(player.getCenterPosition()).thenReturn(new Vector2(0.5f, 0.5f));
+        when(playerStats.getHealth()).thenReturn(5);
+
+        selfDestruct.update();
+
+        verify(animator).startAnimation("bomb_effect");
+        verify(sound).play(1.0f);
+        verify(playerStats).setHealth(3); // 5 - 2 damage
+    }
 
     @Test
-    void testChaseActivatesWhenPlayerInLight() {
-        // Mock a light component
-        ConeLightComponent light = mock(ConeLightComponent.class);
-        when(light.getDistance()).thenReturn(20f);
-        when(light.getDirectionDeg()).thenReturn(45f);
-        when(light.getConeDegree()).thenReturn(90f);
-        when(drone.getComponent(ConeLightComponent.class)).thenReturn(light);
+    void testExplodesWhenTooFarFromPlayer() {
+        when(player.getCenterPosition()).thenReturn(new Vector2(100, 100));
+        when(playerStats.getHealth()).thenReturn(10);
 
+        selfDestruct.update();
+
+        verify(animator).startAnimation("bomb_effect");
+        verify(sound).play(1.0f);
+        verify(playerStats).setHealth(8); // 10 - 2 damage
+    }
+
+    @Test
+    void testNoExplosionIfInRangeButNotTouching() {
         when(player.getCenterPosition()).thenReturn(new Vector2(5, 5));
 
         selfDestruct.update();
 
-        verify(light).dispose();
-        verify(drone).removeComponent(light);
+        verify(animator, never()).startAnimation("bomb_effect");
+        verify(sound, never()).play(anyFloat());
+        verify(playerStats, never()).setHealth(anyInt());
     }
 
-
     @Test
-    void testNoExplosionWhenNotChasingAndNotInLight() {
-        when(player.getCenterPosition()).thenReturn(new Vector2(50, 50));
+    void testExplosionOnlyHappensOnce() {
+        when(player.getCenterPosition()).thenReturn(new Vector2(0, 0));
+        when(playerStats.getHealth()).thenReturn(10);
 
         selfDestruct.update();
+        selfDestruct.update();
 
-        verify(animator, never()).startAnimation(anyString());
-        verify(sound, never()).play(anyFloat());
-        verify(drone, never()).removeComponent(selfDestruct);
+        verify(animator, times(1)).startAnimation("bomb_effect");
+        verify(sound, times(1)).play(1.0f);
+        verify(playerStats, times(1)).setHealth(8);
     }
 }
