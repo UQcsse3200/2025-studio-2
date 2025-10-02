@@ -3,7 +3,9 @@ package com.csse3200.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.csse3200.game.entities.configs.AreaConfig;
+import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.SaveConfig;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
@@ -52,10 +54,16 @@ public class GdxGame extends Game {
     UserSettings.applySettings(settings);
   }
 
-  public void saveLevel(MainGameScreen.Areas area) {
+  public void saveLevel(MainGameScreen.Areas area, Entity player) {
     logger.debug("Saving game level");
-    AreaConfig saveConfig = new AreaConfig();
+
+    SaveConfig saveConfig = new SaveConfig();
     saveConfig.area = area;
+
+    InventoryComponent inventoryComponent = player.getComponent(InventoryComponent.class);
+    saveConfig.inventory = inventoryComponent.getInventoryCopy();
+    saveConfig.upgrades = inventoryComponent.getUpgradesCopy();
+
     FileLoader.writeClass(saveConfig, "configs/save.json", FileLoader.Location.LOCAL);
   }
 
@@ -91,9 +99,28 @@ public class GdxGame extends Game {
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
       case LOAD_LEVEL -> {
-        AreaConfig areaConfig = FileLoader.readClass(AreaConfig.class, "configs/save.json", FileLoader.Location.LOCAL);
-        if (areaConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
-        else yield new MainGameScreen(this, areaConfig.area);
+        SaveConfig saveConfig = FileLoader.readClass(SaveConfig.class, "configs/save.json", FileLoader.Location.LOCAL);
+
+        // If we don't already have a saved area, start from level one
+        if (saveConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+        else {
+          // Check that this is a valid area, if not, start from level 1
+          try {
+            MainGameScreen.Areas.valueOf(saveConfig.area.toString());
+          } catch (IllegalArgumentException e) {
+            yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+          }
+
+          System.out.println("We good");
+          // Load into the correct area, pass the player the old inventory.
+          MainGameScreen game = new MainGameScreen(this, saveConfig.area);
+
+          InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
+          inventoryComponent.setInventory(saveConfig.inventory);
+          inventoryComponent.setUpgrades(saveConfig.upgrades);
+
+          yield game;
+        }
       }
     };
   }
