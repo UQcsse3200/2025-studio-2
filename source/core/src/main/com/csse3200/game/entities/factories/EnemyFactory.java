@@ -240,7 +240,7 @@ public class EnemyFactory {
         PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
         physics.setBodyType(BodyDef.BodyType.DynamicBody);
 
-        if (spawnPos!= null) drone.addComponent(new SpawnPositionComponent(spawnPos));
+        if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
@@ -250,27 +250,18 @@ public class EnemyFactory {
         animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
         animator.addAnimation("bomb_effect",0.08f,Animation.PlayMode.NORMAL);
         animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
+
         drone
-                .addComponent(new CombatStatsComponent(config.health,config.baseAttack))
+                .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
-
-
-        RayHandler rayHandler= ServiceLocator.getLightingService().getEngine().getRayHandler();
-        ConeLightComponent coneLight =new ConeLightComponent(
-                rayHandler,
-                120,
-                new Color(1f,0f,0f,0.9f),7f,-90f,45f
-        );
-        coneLight.setFollowEntity(true);
-        drone.addComponent(coneLight);
 
         // AITasks and selfDestruct behaviour is only added if valid target exists
         if (target != null) {
             drone.addComponent(new SelfDestructComponent(target));
 
             AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
-            ChaseTask chaseTask= new ChaseTask(target,10f,2f);
+            ChaseTask chaseTask = new ChaseTask(target,10f,2f);
             CooldownTask cooldownTask = new CooldownTask(3f);
 
             drone.getEvents().addListener("enemyActivated", () -> {
@@ -283,7 +274,6 @@ public class EnemyFactory {
                     .addTask(cooldownTask);
 
             // Switch to float anim after teleport
-            // Trigger with listener since no default task
             drone.getEvents().addListener("teleportFinish", () -> {
                 drone.getEvents().trigger("wanderStart");
             });
