@@ -79,12 +79,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       //takes player off ladder if they are on one.
       this.onLadder = false;
 
+      walkDirection.setZero();
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
     } else if (keycode == RIGHT_KEY) {
       //takes player off ladder if they are on one.
       this.onLadder = false;
 
+      walkDirection.setZero();
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
     } else if (keycode == INTERACT_KEY) {
@@ -376,6 +378,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       }
     }
     this.onLadder = false;
+    walkDirection.setZero();
+    entity.getEvents().trigger("walkStop");
     return false;
   }
 
