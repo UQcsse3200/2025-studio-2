@@ -89,6 +89,9 @@ public class LevelTwoGameArea extends GameArea {
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/chimesound.mp3",
             "sounds/doorsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3",
+            "sounds/jetpacksound.mp3",
             "sounds/thudsound.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
