@@ -141,15 +141,15 @@ public class LevelOneGameArea extends GameArea {
         spawnWalls();
         spawnDoor();
         //spawnBoxOnlyPlate();
-        spawnUpgrade("dash", 9, 6);
-        spawnUpgrade("glider", 7, 6);
-        spawnUpgrade("jetpack", 5, 6);
+        spawnUpgrade("dash", 23, 4);
+        // spawnUpgrade("glider", 7, 6);  // won't be used in level one
+        // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
         spawnSecurityCams();
         spawnButtons();
         spawnTraps();
         //spawnPlatformBat();
         spawnLevelOneBatRoom();
-        spawnPlayerUpgrades();
+        // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
@@ -202,12 +202,14 @@ public class LevelOneGameArea extends GameArea {
     private final int upperLadderHeight = 16;
     private final int upperLadderOffset = 11;
     private boolean isUpperLadderExtended = true;
+    private final List<Entity> upperLadderBottomSegments = new ArrayList<>();
     // Lower Ladder dimensions
     private final int lowerLadderX = 52;
     private final int lowerLadderY = 4;
     private final int lowerLadderHeight = 18;
     private final int lowerLadderOffset = 13;
     private boolean isLowerLadderExtended = true;
+    private final List<Entity> lowerLadderBottomSegments = new ArrayList<>();
 
     private void spawnLadders() {
         // Upper ladder
@@ -238,8 +240,9 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        upperLadderPressurePlate.getEvents().addListener("platePressed", () -> {
-            if (!isUpperLadderExtended) {
+        upperLadderPressurePlate.getEvents().addListener("plateToggled", (Object pressedObj) -> {
+            boolean pressed = (Boolean) pressedObj;
+            if (pressed && !isUpperLadderExtended) {
                 isUpperLadderExtended = true;
                 for (int i = upperLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -250,9 +253,17 @@ public class LevelOneGameArea extends GameArea {
                             Entity upperLadder = LadderFactory.createStaticLadder();
                             upperLadder.setScale(1f, 1f);
                             spawnEntityAt(upperLadder, upperLadderPosition, false, false);
+                            upperLadderBottomSegments.add(upperLadder);
                         }
                     }, 0.05f * (upperLadderOffset - 1 - i));
                 }
+            } else if (!pressed && isUpperLadderExtended){
+                // Retract ladder
+                isUpperLadderExtended = false;
+                for (Entity rung : upperLadderBottomSegments) {
+                    rung.dispose();
+                }
+                upperLadderBottomSegments.clear();
             }
         });
     }
@@ -268,8 +279,9 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
         // Ladder extends on first press (not reversible)
-        lowerLadderPressurePlate.getEvents().addListener("platePressed", () -> {
-            if (!isLowerLadderExtended) {
+        lowerLadderPressurePlate.getEvents().addListener("plateToggled", (Object pressedObj) -> {
+            boolean pressed = (Boolean) pressedObj;
+            if (pressed && !isLowerLadderExtended) {
                 isLowerLadderExtended = true;
                 for (int i = lowerLadderOffset - 1; i >= 0; i--) {
                     final int rung = i;
@@ -277,12 +289,20 @@ public class LevelOneGameArea extends GameArea {
                         @Override
                         public void run() {
                             GridPoint2 lowerLadderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + rung));
-                            Entity ladder = LadderFactory.createStaticLadder();
-                            ladder.setScale(1f, 1f);
-                            spawnEntityAt(ladder, lowerLadderPosition, false, false);
+                            Entity lowerLadder = LadderFactory.createStaticLadder();
+                            lowerLadder.setScale(1f, 1f);
+                            spawnEntityAt(lowerLadder, lowerLadderPosition, false, false);
+                            lowerLadderBottomSegments.add(lowerLadder);
                         }
                     }, 0.05f * (lowerLadderOffset - 1 - i));
                 }
+            } else if (!pressed && isLowerLadderExtended){
+                // Retract ladder
+                isLowerLadderExtended = false;
+                for (Entity rung : lowerLadderBottomSegments) {
+                    rung.dispose();
+                }
+                lowerLadderBottomSegments.clear();
             }
         });
     }
@@ -630,10 +650,10 @@ public class LevelOneGameArea extends GameArea {
         });
     }
 
-    public void spawnPlayerUpgrades() {
-        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
-        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
-    }
+//    public void spawnPlayerUpgrades() {
+//        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
+//        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
+//    }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
@@ -779,5 +799,17 @@ public class LevelOneGameArea extends GameArea {
         super.dispose();
         ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
         this.unloadAssets();
+
+        // Dispose of upper ladder bottom segments
+        for (Entity rung : upperLadderBottomSegments) {
+            rung.dispose();
+        }
+        upperLadderBottomSegments.clear();
+
+        // Dispose of lower ladder bottom segments
+        for (Entity rung : lowerLadderBottomSegments) {
+            rung.dispose();
+        }
+        lowerLadderBottomSegments.clear();
     }
 }
