@@ -477,7 +477,7 @@ public class LevelOneGameArea extends GameArea {
     }
     private void displayUI() {
         Entity ui = new Entity();
-        ui.addComponent(new GameAreaDisplay("Level one Game Area"));
+        ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
