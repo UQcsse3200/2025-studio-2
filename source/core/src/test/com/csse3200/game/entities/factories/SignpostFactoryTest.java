@@ -69,8 +69,8 @@ class SignpostFactoryTest {
     @Test
     void createSignpost_textureRenderComponent_isLayerZero() {
         Entity signpost = SignpostFactory.createSignpost("up");
-        TextureRenderComponent tex = signpost.getComponent(TextureRenderComponent.class);
+        TextureRenderComponent texture = signpost.getComponent(TextureRenderComponent.class);
 
-        assertEquals(0, tex.getLayer(), "Signpost texture should be on layer 0");
+        assertEquals(0, texture.getLayer(), "Signpost texture should be on layer 0");
     }
 }
