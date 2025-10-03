@@ -143,7 +143,7 @@ public class DoorComponent extends Component {
 
         Sound interactSound = ServiceLocator.getResourceService().getAsset(
                 "sounds/doorsound.mp3", Sound.class);
-        interactSound.play();
+        interactSound.play(0.5f);
 
         // play door opening animation
         if (animationComponent != null) {
