@@ -489,8 +489,8 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnSignposts(){
-        Entity  downSign = SignpostFactory.createSignpost("no");
-        spawnEntityAt(downSign, new GridPoint2(5,5), true, true);
+        Entity  downSign = SignpostFactory.createSignpost("right");
+        spawnEntityAt(downSign, new GridPoint2(5,4), true, false);
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
