@@ -656,7 +656,7 @@ public class LevelOneGameArea extends GameArea {
 //    }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
-        spawnEntityAt(key, new GridPoint2(46,56), true, true);
+        spawnEntityAt(key, new GridPoint2(1,37), true, true);
     }
     public void spawnPotion(String type, int x, int y) {
         Entity potion = CollectableFactory.createCollectable("potion:" + type);
