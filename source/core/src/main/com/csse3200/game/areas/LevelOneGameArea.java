@@ -12,7 +12,11 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.collectables.CollectableComponentV2;
+import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -523,11 +527,19 @@ public class LevelOneGameArea extends GameArea {
     public void spawnPlayerUpgrades() {
         Entity dashUpgrade = CollectableFactory.createDashUpgrade();
         spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
+
+//        InventoryComponent inv = this.player.getComponent(InventoryComponent.class);
+//        inv.removeItem(InventoryComponent.Bag.OBJECTIVES, "dash");
     }
     public void spawnKey() {
-        Entity key = CollectableFactory.createCollectable("key:door");
+        Entity key = CollectableFactory.createKey("key:door");
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
-        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(45, 56), true, true);
+
+//        KeyComponent comp = key.getComponent();
+//        key.getEvents().addListener("objectiveCollected", "keycard");
+//        InventoryComponent inv = this.player.getComponent(InventoryComponent.class);
+//        inv.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(46, 56), true, true);
     }
     public void spawnPotion(String type, int x, int y) {
         Entity potion = CollectableFactory.createCollectable("potion:" + type);

@@ -49,6 +49,7 @@ public class KeyComponent extends CollectableComponent {
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
             inventory.addItem(keyId);
+            inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
             return true;
         }
         return false;
