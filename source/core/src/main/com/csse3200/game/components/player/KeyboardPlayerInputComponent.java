@@ -147,10 +147,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
             }
         } else if (keycode == ENTER_CHEAT_KEY) {
             enableCheats();
-        }else if (keycode == Keys.SPACE) {
+        }
+        /*else if (keycode == Keys.SPACE) {
             // Fire the laser when space is pressed
             entity.getEvents().trigger("shootLaser");
-        }
+        }*/
         else {
             return false;
         }

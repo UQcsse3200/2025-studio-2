@@ -117,6 +117,8 @@ public class LevelOneGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
     private float laserCooldown = 0f;
+    private int spacePressCount = 0; // counts space bar presses
+
     public LevelOneGameArea(TerrainFactory terrainFactory) {
         super();
         this.terrainFactory = terrainFactory;
@@ -205,10 +207,17 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     public void update(float delta) {
-        laserCooldown -= delta;
-        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && laserCooldown <= 0f) {
+        if (laserCooldown>0){
+            laserCooldown -= delta;
+        }
+        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            spacePressCount++;
+        }
+        int SPACE_THRESHOLD = 30;
+        if (spacePressCount == SPACE_THRESHOLD && laserCooldown <= 0f) {
             spawnLasers();
             laserCooldown = 1f;
+            spacePressCount = 0;
         }
     }
 

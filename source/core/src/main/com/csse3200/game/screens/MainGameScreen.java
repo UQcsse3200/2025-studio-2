@@ -199,9 +199,10 @@ public class MainGameScreen extends ScreenAdapter {
 
           physicsEngine.update();
           ServiceLocator.getEntityService().update();
+
           if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
               if (gameArea instanceof LevelOneGameArea levelOneArea) {
-                  levelOneArea.spawnLasers();
+                  levelOneArea.update(delta);
               }
           }
       }
