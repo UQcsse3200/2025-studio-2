@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.player.*;
 import com.csse3200.game.entities.Entity;
@@ -92,7 +93,8 @@ public class PlayerFactory {
 
     player
             .addComponent(animator)
-            .addComponent(new PlayerAnimationController());
+            .addComponent(new PlayerAnimationController())
+            .addComponent(new LaserEmitterComponent(0f)); ;
 
     // --- Stamina: add component, wire sprint, and TEMP logging ---
     StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);

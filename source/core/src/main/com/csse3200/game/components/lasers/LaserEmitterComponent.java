@@ -76,6 +76,33 @@ public class LaserEmitterComponent extends Component {
         entity.getEvents().addListener("shootLaser", () -> laserActive = true);
         entity.getEvents().addListener("laserOff", this::stopLaser);
     }
+    /**
+     * Stops the laser (clears positions and turns it off).
+     */
+    private void stopLaser() {
+        laserActive = false;
+        positions.clear();
+
+        // Turn off any reflector highlights
+        for (Entity e : lastReflectorsHit) {
+            e.getEvents().trigger("laserOff", false);
+        }
+        lastReflectorsHit.clear();
+    }
+
+    @Override
+    public void update() {
+        if (timeSinceLastShot > 0) {
+            timeSinceLastShot -= ServiceLocator.getTimeSource().getDeltaTime();
+        }
+
+        // Only fire if laser is active AND cooldown expired
+        if (laserActive && timeSinceLastShot <= 0f) {
+            fireLaser();
+            timeSinceLastShot = FIRE_COOLDOWN; // reset cooldown
+        }
+    }
+
 
     public void fireLaser() {
         /*
@@ -195,18 +222,6 @@ public class LaserEmitterComponent extends Component {
         // fallback to blocker
         return blockedOccluder;
     }
-    @Override
-    public void update() {
-        if (timeSinceLastShot > 0) {
-            timeSinceLastShot -= ServiceLocator.getTimeSource().getDeltaTime();
-        }
-
-        // Only fire if laser is active AND cooldown expired
-        if (laserActive && timeSinceLastShot <= 0f) {
-            fireLaser();
-            timeSinceLastShot = FIRE_COOLDOWN; // reset cooldown
-        }
-    }
 
 
 
@@ -261,19 +276,6 @@ public class LaserEmitterComponent extends Component {
      */
     public List<Vector2> getPositions() {
         return positions;
-    }
-    /**
-     * Stops the laser (clears positions and turns it off).
-     */
-    private void stopLaser() {
-        laserActive = false;
-        positions.clear();
-
-        // Turn off any reflector highlights
-        for (Entity e : lastReflectorsHit) {
-            e.getEvents().trigger("laserOff", false);
-        }
-        lastReflectorsHit.clear();
     }
 
 
