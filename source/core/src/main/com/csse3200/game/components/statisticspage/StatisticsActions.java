@@ -2,7 +2,6 @@ package com.csse3200.game.components.statisticspage;
 
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.mainmenu.MainMenuActions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

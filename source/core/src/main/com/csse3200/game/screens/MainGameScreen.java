@@ -144,7 +144,7 @@ public class MainGameScreen extends ScreenAdapter {
    * @param area - Areas area.
    * @return GameArea mapped.
    */
-  private GameArea getGameArea(Areas area) {
+  public GameArea getGameArea(Areas area) {
     GameArea newArea = null;
 
     switch (area) {
