@@ -230,16 +230,12 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
     public void update(float delta) {
-        if (laserCooldown>0){
-            laserCooldown -= delta;
-        }
         if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             spacePressCount++;
         }
         int SPACE_THRESHOLD = 3;
-        if (spacePressCount == SPACE_THRESHOLD && laserCooldown <= 0f) {
+        if (spacePressCount == SPACE_THRESHOLD) {
             spawnLasers();
-            laserCooldown = 1f;
             spacePressCount = 0;
         }
     }
