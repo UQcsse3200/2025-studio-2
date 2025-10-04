@@ -51,6 +51,10 @@ public class LaserEmitterComponent extends Component {
     private float dir = 90f;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
+    private static final float FIRE_COOLDOWN = 0.3f; // seconds between shots
+    private float timeSinceLastShot = 0f;
+    private boolean laserActive = false;
+
 
     private List<Entity> lastReflectorsHit = new ArrayList<>();
 
@@ -69,10 +73,11 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
+        entity.getEvents().addListener("shootLaser", () -> laserActive = true);
+        entity.getEvents().addListener("laserOff", this::stopLaser);
     }
 
-    @Override
-    public void update() {
+    public void fireLaser() {
         /*
         * within this update a few calculations are done to construct out
         * list of collisions our laser makes.
@@ -190,6 +195,20 @@ public class LaserEmitterComponent extends Component {
         // fallback to blocker
         return blockedOccluder;
     }
+    @Override
+    public void update() {
+        if (timeSinceLastShot > 0) {
+            timeSinceLastShot -= ServiceLocator.getTimeSource().getDeltaTime();
+        }
+
+        // Only fire if laser is active AND cooldown expired
+        if (laserActive && timeSinceLastShot <= 0f) {
+            fireLaser();
+            timeSinceLastShot = FIRE_COOLDOWN; // reset cooldown
+        }
+    }
+
+
 
     /**
      * Calculates the reflected angle based off the impact vector {@code d}, and
@@ -243,6 +262,20 @@ public class LaserEmitterComponent extends Component {
     public List<Vector2> getPositions() {
         return positions;
     }
+    /**
+     * Stops the laser (clears positions and turns it off).
+     */
+    private void stopLaser() {
+        laserActive = false;
+        positions.clear();
+
+        // Turn off any reflector highlights
+        for (Entity e : lastReflectorsHit) {
+            e.getEvents().trigger("laserOff", false);
+        }
+        lastReflectorsHit.clear();
+    }
+
 
     @Override
     public void dispose() {

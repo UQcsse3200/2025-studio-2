@@ -115,7 +115,7 @@ public class LevelOneGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
-
+    // Private boolean laserActive = false;
     public LevelOneGameArea(TerrainFactory terrainFactory) {
         super();
         this.terrainFactory = terrainFactory;

@@ -147,7 +147,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
             }
         } else if (keycode == ENTER_CHEAT_KEY) {
             enableCheats();
-        } else {
+        }else if (keycode == Keys.SPACE) {
+            // Fire the laser when space is pressed
+            entity.getEvents().trigger("shootLaser");
+        }
+        else {
             return false;
         }
 
@@ -233,7 +237,11 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         } else if (keycode == CROUCH_KEY) {
         } else if (keycode == ENTER_CHEAT_KEY) {
         } else if (keycode == RESET_KEY) {
-        } else {
+        } else if (keycode == Keys.SPACE) {
+            // Turn off laser when space is released
+            entity.getEvents().trigger("laserOff");
+        }
+        else {
             return false;
         }
 
