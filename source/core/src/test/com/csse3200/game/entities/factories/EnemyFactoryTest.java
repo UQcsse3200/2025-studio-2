@@ -26,7 +26,6 @@ import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -225,11 +224,11 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
-            ServiceLocator.getEntityService().register(bomberDrone);
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
+        ServiceLocator.getEntityService().register(bomberDrone);
 
-            assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
-                    "Drone should have AnimationController");
+        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                "Drone should have AnimationController");
     }
 
     @Test
@@ -242,14 +241,18 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasCorrectCombatStats() {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f));
-        ServiceLocator.getEntityService().register(bomberDrone);
+        Entity target = mock(Entity.class);
+        Entity bomberDrone = EnemyFactory.createBomberDrone(target, null);
 
-        CombatStatsComponent stats = bomberDrone.getComponent(CombatStatsComponent.class);
-        assertNotNull(stats, "Drone should have a CombatStatsComponent");
-        assertEquals(80, stats.getHealth(), "Drone health mismatch");
-        assertEquals(2, stats.getBaseAttack(), "Drone baseAttack mismatch");
+        CombatStatsComponent combatStats = bomberDrone.getComponent(CombatStatsComponent.class);
+        assertNotNull(combatStats, "Bomber Drone should have a CombatStatsComponent");
+
+        // According to enemies.json, bomber drones are configured with 80 health and 10 attack.
+        // If this value changes in the config, update the test accordingly.
+        assertEquals(80, combatStats.getHealth(), "Drone health mismatch");
+        assertEquals(10, combatStats.getBaseAttack(), "Drone attack mismatch");
     }
+
 
     @Test
     void createBomberDrone_addsSpawnPosition() {
