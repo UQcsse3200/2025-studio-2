@@ -1,8 +1,17 @@
 package com.csse3200.game.ui.terminal;
 
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.extensions.GameExtension;
+import static org.mockito.Mockito.*;
+
+import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.terminal.TerminalService;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.components.player.InventoryComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import com.csse3200.game.entities.Entity;
 import org.junit.jupiter.api.extension.ExtendWith;
 import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
@@ -10,6 +19,12 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(GameExtension.class)
 class InitializerTest {
   private Shell shell;
+
+  private Entity player;
+  private InventoryComponent inv;
+  private CombatStatsComponent cb;
+  private EntityService mockEntityService;
+
   private TestConsole console;
 
   // TestConsole implementation to capture output from the shell
@@ -54,6 +69,16 @@ class InitializerTest {
         // Ignore
       }
     }
+
+    player = mock(Entity.class);
+    inv = mock(InventoryComponent.class);
+    cb = mock(CombatStatsComponent.class);
+    mockEntityService = mock(EntityService.class);
+    ServiceLocator.registerEntityService(mockEntityService);
+
+    when(player.getComponent(CombatStatsComponent.class)).thenReturn(cb);
+    when(player.getComponent(InventoryComponent.class)).thenReturn(inv);
+    shell.setGlobal("player", player);
   }
 
   @Test
@@ -203,5 +228,20 @@ class InitializerTest {
       outer(99);
       """);
     assertEquals(99, result);
+  }
+
+  @Test
+  void testGodModeCommand() {
+    shell.eval("godMode();");
+
+    verify(player.getComponent(CombatStatsComponent.class)).setHealth(9999);
+  }
+
+  @Test
+  void testSpawnJetpackCommand() {
+    //shell.setGlobal("entityService", mockEntityService);
+    shell.eval("spawnJetpack();");
+
+    verify(mockEntityService, times(1)).register(any());
   }
 }
