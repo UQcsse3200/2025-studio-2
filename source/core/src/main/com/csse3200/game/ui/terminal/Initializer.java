@@ -317,7 +317,7 @@ public class Initializer {
               stats = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
               ifElse(exists("stats"), () {
                 stats = getParentVar("stats");
-                stats.setHealth(999999);
+                stats.setHealth(9999);
                 print("God mode enabled\n");
               }, () {
                 print("Unable to enable god mode");
@@ -418,8 +418,21 @@ public class Initializer {
                   print("Debug Renderer is Active!\n");
               });
           });
-               
-               
+                 
+          setGlobal("toggleOnAI", () {  
+          
+              forEachAI((droneEntity) {
+                setGlobal(".droneEntity", droneEntity);
+                ifElse(droneEntity.getEnabled, () {
+                    droneEntity = getGlobal(".droneEntity");
+                    droneEntity.setEnabled(false);
+                }, () {
+                    droneEntity = getGlobal(".droneEntity");
+                    droneEntity.setEnabled(true);
+                });
+              });
+              print("Drone AI toggled\n");
+          });
           
           """;
 }
