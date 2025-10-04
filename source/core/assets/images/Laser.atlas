@@ -1,0 +1,90 @@
+
+laser_final.png
+size: 256, 512
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+laser_attack
+  rotate: false
+  xy: 2, 394
+  size: 174, 96
+  orig: 240, 96
+  offset: 11, 0
+  index: 0
+laser_attack
+  rotate: false
+  xy: 2, 296
+  size: 168, 96
+  orig: 240, 96
+  offset: 59, 0
+  index: 1
+laser_attack
+  rotate: false
+  xy: 90, 100
+  size: 67, 96
+  orig: 240, 96
+  offset: 69, 0
+  index: 3
+laser_attack
+  rotate: false
+  xy: 181, 198
+  size: 67, 96
+  orig: 240, 96
+  offset: 114, 0
+  index: 2
+laser_effact
+  rotate: false
+  xy: 172, 296
+  size: 82, 96
+  orig: 96, 96
+  offset: 7, 0
+  index: 0
+laser_effact
+  rotate: false
+  xy: 178, 394
+  size: 73, 96
+  orig: 96, 96
+  offset: 13, 0
+  index: 1
+laser_effact
+  rotate: false
+  xy: 2, 198
+  size: 90, 96
+  orig: 96, 96
+  offset: 3, 0
+  index: 2
+laser_effact
+  rotate: false
+  xy: 2, 100
+  size: 86, 96
+  orig: 96, 96
+  offset: 5, 0
+  index: 3
+laser_effact
+  rotate: false
+  xy: 94, 198
+  size: 85, 96
+  orig: 96, 96
+  offset: 9, 0
+  index: 4
+laser_effact
+  rotate: false
+  xy: 2, 2
+  size: 78, 96
+  orig: 96, 96
+  offset: 11, 0
+  index: 5
+laser_effact
+  rotate: false
+  xy: 82, 2
+  size: 52, 96
+  orig: 96, 96
+  offset: 23, 0
+  index: 6
+laser_effact
+  rotate: false
+  xy: 159, 100
+  size: 22, 96
+  orig: 96, 96
+  offset: 37, 0
+  index: 7

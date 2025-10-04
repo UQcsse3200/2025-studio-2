@@ -1,5 +1,6 @@
 package com.csse3200.game.components.projectiles;
 
+
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 
@@ -25,6 +26,8 @@ public class LaserComponent extends Component {
 
     @Override
     public void create() {
+        entity.setPosition(shooter.getCenterPosition());
+
         // You can add logic here if the laser needs to do something the moment it is created.
     }
 }

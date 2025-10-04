@@ -108,7 +108,8 @@ public class LevelOneGameArea extends GameArea {
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas"
+            "images/doors.atlas",
+            "images/Laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -145,7 +146,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
-
+        spawnLaserDrone();
         spawnBomberDrone();
     }
 
@@ -378,6 +379,10 @@ public class LevelOneGameArea extends GameArea {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
+        // Add listener for laser hit to trigger animation
+        newPlayer.getEvents().addListener("laserHit", () -> {
+            newPlayer.getEvents().trigger("laser_effact");
+        });
         return newPlayer;
     }
 
@@ -415,7 +420,25 @@ public class LevelOneGameArea extends GameArea {
         );
         spawnEntityAt(bomberDrone, position, true, true);
     }
+    private void spawnLaserDrone() {
+// Example stationary laser drone
+        GridPoint2 spawnTile = new GridPoint2(10, 15); // choose tile
+        Vector2 spawnPos = terrain.tileToWorldPosition(spawnTile);
 
+        Entity laserDrone = EnemyFactory.createLaserDrone(player, spawnPos, "laser01");
+        spawnEntityAt(laserDrone, spawnTile, true, true);
+
+// Example patrolling laser drone
+        GridPoint2 patrolStart = new GridPoint2(20, 20);
+        GridPoint2 patrolEnd = new GridPoint2(30, 20);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(patrolStart),
+                terrain.tileToWorldPosition(patrolEnd)
+        };
+
+        Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
+        spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
+    }
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level one Game Area"));
@@ -686,6 +709,7 @@ public class LevelOneGameArea extends GameArea {
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(gameTextures);
         resourceService.loadTextureAtlases(gameTextureAtlases);
+        resourceService.loadTextureAtlases(new String[] { "images/Laser.atlas" });
         resourceService.loadSounds(gameSounds);
         resourceService.loadMusic(musics);
 

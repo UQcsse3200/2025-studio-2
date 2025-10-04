@@ -88,30 +88,36 @@ public class ProjectileFactory {
     }
 
     public static Entity createLaser(Entity shooter, Vector2 direction, float speed, int damage) {
-        // The factory creates a new Entity, then adds components to it.
         Entity laser = new Entity()
                 .addComponent(new PhysicsComponent())
                 .addComponent(new PhysicsMovementComponent())
                 .addComponent(new ColliderComponent().setSensor(true).setLayer(PhysicsLayer.PROJECTILE))
-                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 0f))
+                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, damage))
                 .addComponent(new CombatStatsComponent(1, damage))
                 .addComponent(new DisposalComponent(5f));
 
-        // Now, add the LaserComponent to the entity to manage its specific behavior.
+// Add LaserComponent for movement and behavior
         laser.addComponent(new LaserComponent(shooter, speed, damage));
 
-        // Use a TextureRenderComponent for the single image file.
-        // We are using a placeholder since you don't have a laser.png file.
-        laser.addComponent(new TextureRenderComponent("images/laser.png"));
+// Animation render using laser atlas
+        TextureAtlas laserAtlas = ServiceLocator.getResourceService()
+                .getAsset("images/laser.atlas", TextureAtlas.class);
+        AnimationRenderComponent animator = new AnimationRenderComponent(laserAtlas);
+        animator.addAnimation("laser_attack", 0.05f, Animation.PlayMode.LOOP); // moving laser
+        animator.addAnimation("laser_effact", 0.05f, Animation.PlayMode.NORMAL); // hit effect
+        animator.startAnimation("laser_attack");
+        laser.addComponent(animator);
 
-        // Sets initial velocity of the laser body.
-        laser.getComponent(PhysicsComponent.class).getBody().setLinearVelocity(direction.scl(speed));
+// Set initial velocity (preserve original direction vector)
+        laser.getComponent(PhysicsComponent.class)
+                .getBody()
+                .setLinearVelocity(direction.cpy().scl(speed));
 
-        // Set the scale to make it look like a laser beam.
+// Scale laser beam and collider
         laser.setScale(0.5f, 0.1f);
         PhysicsUtils.setScaledCollider(laser, 0.5f, 0.1f);
 
-
+// Register entity
         ServiceLocator.getEntityService().register(laser);
 
         return laser;

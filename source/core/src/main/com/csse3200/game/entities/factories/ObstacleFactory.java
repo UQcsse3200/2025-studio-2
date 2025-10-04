@@ -72,7 +72,7 @@ public class ObstacleFactory {
     animator.addAnimation("door_closed", 0.2f, Animation.PlayMode.LOOP);
     animator.addAnimation("door_opening", 0.1f, Animation.PlayMode.NORMAL);
     animator.addAnimation("door_open", 0.2f, Animation.PlayMode.LOOP);
-    animator.addAnimation("door_closing", 0.1f, Animation.PlayMode.NORMAL);
+
 
     door.addComponent(animator);
     door.addComponent(new DoorComponent(keyId, area));

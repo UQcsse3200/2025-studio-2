@@ -231,6 +231,90 @@ public class EnemyFactory {
         return drone;
     }
 
+    private static final Color LASER_IDLE_COLOR = new Color(0.5f, 1f, 0.5f, 0.8f); // Green-ish
+    private static final Color LASER_ALERT_COLOR = new Color(1f, 0.2f, 0.2f, 1f); // Red
+
+    public static Entity createLaserDrone(Entity target, Vector2 spawnPos, String laserId) {
+        BaseEntityConfig config = configs.drone;
+        Entity drone = createBaseEnemy();
+        if (spawnPos != null) {
+            drone.addComponent(new SpawnPositionComponent(spawnPos));
+        }
+
+// Animator setup - only valid animations from laser.atlas
+        AnimationRenderComponent animator = new AnimationRenderComponent(
+                ServiceLocator.getResourceService().getAsset("images/Laser.atlas", TextureAtlas.class));
+        animator.addAnimation("laser_attack", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser_effact", 0.15f, Animation.PlayMode.LOOP);
+
+// Add animator and other components to drone
+        drone.addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+                .addComponent(animator)
+                .addComponent(new DroneAnimationController());
+
+// Set animator entity before scaling
+
+            animator.setEntity(drone);
+            animator.scaleEntity();
+            animator.startAnimation("laser_attack");
+
+
+// Cone light setup
+        RayHandler rayHandler = ServiceLocator.getLightingService().getEngine().getRayHandler();
+        ConeLightComponent lightComponent = new ConeLightComponent(
+                rayHandler,
+                100,
+                LASER_IDLE_COLOR, // start green
+                6f,
+                -90f, // downward
+                60f
+        );
+        lightComponent.setFollowEntity(true);
+        drone.addComponent(lightComponent);
+
+// Detector component
+        ConeDetectorComponent detectorComponent = new ConeDetectorComponent(
+                target,
+                PhysicsLayer.OBSTACLE,
+                "laser_" + laserId
+        );
+        drone.addComponent(detectorComponent);
+
+// AI setup
+        AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
+        LaserAttackTask attackTask = new LaserAttackTask(drone, 15, 8f, 2f, 40); // high priority
+        LaserChaseTask chaseTask = new LaserChaseTask(target, 10, 8f, 3f, 0.5f); // chase behavior
+        CooldownTask cooldownTask = new CooldownTask(3f, "laser_attack");
+
+// Event wiring
+        drone.getEvents().addListener("targetDetected", (Entity detectedTarget) -> {
+            lightComponent.setColor(LASER_ALERT_COLOR);
+            chaseTask.activate();
+            cooldownTask.deactivate();
+        });
+        drone.getEvents().addListener("targetLost", (Entity lostTarget) -> {
+            lightComponent.setColor(LASER_IDLE_COLOR);
+            chaseTask.deactivate();
+            cooldownTask.activate();
+        });
+
+// Add tasks to AI component
+        aiComponent
+                .addTask(attackTask)
+                .addTask(chaseTask)
+                .addTask(cooldownTask);
+
+        PhysicsUtils.setScaledCollider(drone, 1f, 0.8f);
+        return drone;
+    }
+
+    public static Entity createPatrollingLaserDrone(Entity target, Vector2[] patrolRoute, String laserId) {
+        Entity drone = createLaserDrone(target, patrolRoute[0], laserId);
+        drone.addComponent(new PatrolRouteComponent(patrolRoute));
+        drone.getComponent(AITaskComponent.class).addTask(new PatrolTask(1f)); // lowest priority
+        return drone;
+    }
+
 
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
