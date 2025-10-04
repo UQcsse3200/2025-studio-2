@@ -117,7 +117,7 @@ public class UpgradesTab implements InventoryTabInterface {
     int bgW = bgTex.getWidth();
 
     // Center horizontally
-    int playerX = (bgW - playerTex.getWidth()) / 2;
+    int playerX = (bgW - playerTex.getWidth()) / 10;
     int playerY = PLAYER_TOP_Y;
 
     // Read upgrades bag (defensive default to empty)
@@ -132,12 +132,12 @@ public class UpgradesTab implements InventoryTabInterface {
 
     // Underlay the chosen pack beneath the player
     if (showJetpack) {
-      int px = (bgW - packTex.getWidth()) / 2;
+      int px = (bgW - packTex.getWidth()) / 10;
       int py = PLAYER_TOP_Y;
       placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(packTex),
               new Rect(px, py, packTex.getWidth(), packTex.getHeight()));
     } else if (showGlider) {
-      int px = (bgW - gliderTex.getWidth()) / 2;
+      int px = (bgW - gliderTex.getWidth()) / 10;
       int py = PLAYER_TOP_Y;
       placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(gliderTex),
               new Rect(px, py, gliderTex.getWidth(), gliderTex.getHeight()));
