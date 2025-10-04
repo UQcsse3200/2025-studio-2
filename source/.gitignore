@@ -115,5 +115,7 @@ Thumbs.db
 /ios/IOSLauncher.app.dSYM
 
 ## Other
-core/assets/configs/save.json
+/core/assets/configs/save.json
 /core/assets/configs/stats.json
+/core/assets/leaderboard.txt
+/core/assets/test.files/testsave.json
