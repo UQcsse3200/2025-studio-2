@@ -52,7 +52,10 @@ public class UpgradesTab implements InventoryTabInterface {
 
   // Textures owned by this tab
   private final Texture bgTex     = new Texture(Gdx.files.internal("inventory-screen/upgrades-selected.png"));
+  // Textures for upgrades tab titles
   private final Texture packUpgradeTex = new Texture(Gdx.files.internal("inventory-screen/jetpack-upgrade-slot.png"));
+  private final Texture gliderUpgradeTex = new Texture(Gdx.files.internal("inventory-screen/glider-upgrade-slot.png"));
+  private final Texture dashUpgradeTex = new Texture(Gdx.files.internal("inventory-screen/dash-upgrade-slot.png"));
 
   private final Texture playerTex = new Texture(Gdx.files.internal("images/upgradesTab/player.png"));
   private final Texture packTex   = new Texture(Gdx.files.internal("images/upgradesTab/jetpack.png"));
@@ -170,7 +173,7 @@ public class UpgradesTab implements InventoryTabInterface {
     int upgradeY = (int) ((bgW - packUpgradeTex.getHeight()) / 3.5f);
     int offset = (int) (packUpgradeTex.getHeight() * 1.1f);
     // [0] -> Jetpack, [1] -> Glider, [2] -> Dash
-    Texture[] slotTextures = {packUpgradeTex,packUpgradeTex,packUpgradeTex};
+    Texture[] slotTextures = {packUpgradeTex,gliderUpgradeTex,dashUpgradeTex};
     for (int i = 0; i<3; i++) {
       if (upgrades[i]) {
         placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(slotTextures[i]),
