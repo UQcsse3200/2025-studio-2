@@ -119,16 +119,19 @@ public class MainGameScreen extends ScreenAdapter {
     gameArea = getGameArea(area);
     gameArea.create();
 
+    // As some levels progress to the next level via doors and some via cutscenes ending, add both
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", player);
-      switchArea(Areas.CUTSCENE_ONE, player);
+      switchArea(getNextArea(area), player);
+    });
+    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
+      switchArea(getNextArea(area), play);
     });
 
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
     gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
 
-    // Have to createUI after the game area is created since createUI
-    // needs the player which is created in the game area
+    // Have to createUI after the game area .create() since createUI requires the player to exist,
+    // which is only done upon game area creation
     createUI();
   }
 
@@ -149,8 +152,6 @@ public class MainGameScreen extends ScreenAdapter {
         newArea = new LevelOneGameArea(terrainFactory);
       }
       case CUTSCENE_ONE -> {
-        leaderboardComponent.updateLeaderboard("TestNameLvl1", gameTime.getTimeSince(lvlStartTime));
-        StatsTracker.completeLevel();
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
       }
       case LEVEL_TWO -> {
@@ -158,8 +159,6 @@ public class MainGameScreen extends ScreenAdapter {
         newArea = new LevelTwoGameArea(terrainFactory);
       }
       case CUTSCENE_TWO -> {
-        leaderboardComponent.updateLeaderboard("TestNameLvl2", gameTime.getTimeSince(lvlStartTime));
-        StatsTracker.completeLevel();
         newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
       }
       case SPRINT_ONE -> {
@@ -213,7 +212,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     GameArea oldArea = gameArea;
     oldArea.dispose();
-    oldArea = null; // Garbage collector
+    oldArea = null; // Garbage collector?
 
     System.out.println("Area switched to " + area);
     //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
@@ -222,22 +221,27 @@ public class MainGameScreen extends ScreenAdapter {
     Areas newLevel = getNextArea(area);
 
     if (newArea != null) {
-        gameArea = newArea;
-        gameArea.getEvents().addListener("doorEntered", (Entity play) -> {
-          switchArea(newLevel, play);
-        });
-        gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(newLevel, play));
+      leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
+      StatsTracker.completeLevel();
 
-        InventoryComponent inv = player.getComponent(InventoryComponent.class);
-        if (inv != null) {
-            inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
-        }
+      gameArea = newArea;
+      gameAreaEnum = area;
+
+      gameArea.getEvents().addListener("doorEntered", (Entity play) -> {
+        switchArea(newLevel, play);
+      });
+      gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(newLevel, play));
+
+      InventoryComponent inv = player.getComponent(InventoryComponent.class);
+      if (inv != null) {
+          inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+      }
 
 //        System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-        gameArea.createWithPlayer(player);
+      gameArea.createWithPlayer(player);
 
-        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
-        gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+      gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+      gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
     }
   }
 
@@ -262,16 +266,12 @@ public class MainGameScreen extends ScreenAdapter {
     renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
-  private Entity getPlayer() {
-    return gameArea.getPlayer();
-  }
-
   /**
    * Updates the camera position to follow the player entity.
    * The camera only moves when the player is near the edge of the screen.
    */
   private void updateCameraFollow() {
-    Entity player = getPlayer();
+    Entity player = gameArea.getPlayer();
     if (player == null) return;
 
     final Camera camera = renderer.getCamera().getCamera();
