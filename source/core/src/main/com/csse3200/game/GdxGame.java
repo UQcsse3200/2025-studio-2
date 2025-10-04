@@ -11,6 +11,7 @@ import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.screens.MainMenuScreen;
 import com.csse3200.game.screens.SettingsScreen;
 import com.csse3200.game.screens.StatisticsScreen;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,7 +88,11 @@ public class GdxGame extends Game {
   private Screen newScreen(ScreenType screenType) {
     return switch (screenType) {
       case MAIN_MENU -> new MainMenuScreen(this);
-      case MAIN_GAME -> new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+      case MAIN_GAME -> {
+        MainGameScreen screen = new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+        ServiceLocator.registerMainGameScreen(screen);
+        yield screen;
+      }
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
       case LOAD_LEVEL -> {
