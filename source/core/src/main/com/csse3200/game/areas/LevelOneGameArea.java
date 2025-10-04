@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -115,7 +116,7 @@ public class LevelOneGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
-    // Private boolean laserActive = false;
+    private float laserCooldown = 0f;
     public LevelOneGameArea(TerrainFactory terrainFactory) {
         super();
         this.terrainFactory = terrainFactory;
@@ -156,7 +157,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnBoxes();
-        spawnLasers();
+        //spawnLasers();
     }
 
     private void spawnBoxes() {
@@ -168,10 +169,8 @@ public class LevelOneGameArea extends GameArea {
         Entity e1 = BoxFactory.createReflectorBox();
         spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
     }
-    private void spawnLasers() {
-        GridPoint2 mapSize = terrain.getMapBounds(0);
-        float titleSize = terrain.getTileSize();
-        final float Y = mapSize.y*titleSize;
+    public void spawnLasers() {
+        final float Y = player.getPosition().y;
         final float X = player.getPosition().x;
 
         int laserInFront = 4 /2;
@@ -203,6 +202,15 @@ public class LevelOneGameArea extends GameArea {
             },5f);
         }
     }
+    public void update(float delta) {
+        laserCooldown -= delta;
+        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && laserCooldown <= 0f) {
+            spawnLasers();
+            laserCooldown = 1f;
+        }
+    }
+
+
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,-10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
@@ -498,6 +506,17 @@ public class LevelOneGameArea extends GameArea {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
+
+        ServiceLocator.getRenderService().getStage().addActor(new com.badlogic.gdx.scenes.scene2d.Actor() {
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
+                    spawnLasers();
+                }
+            }
+        });
+
         return newPlayer;
     }
 

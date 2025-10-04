@@ -1,5 +1,7 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
@@ -75,7 +77,7 @@ public abstract class GameArea implements Disposable {
     loadEntities();
   }
 
-  /**
+    /**
    * Create the game area using components from a different player entity.
    * @param oldPlayer the older player entity
    */
@@ -98,7 +100,7 @@ public abstract class GameArea implements Disposable {
     loadEntities();
   }
 
-  /**
+    /**
    * Resets the game area
    */
   public void reset() {

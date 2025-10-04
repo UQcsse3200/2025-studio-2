@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -192,14 +193,19 @@ public class MainGameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
-    if (!paused) {
-      // Update camera position to follow player
-      updateCameraFollow();
+      if (!paused) {
+          // Update camera position to follow player
+          updateCameraFollow();
 
-      physicsEngine.update();
-      ServiceLocator.getEntityService().update();
-    }
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+          physicsEngine.update();
+          ServiceLocator.getEntityService().update();
+          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+              if (gameArea instanceof LevelOneGameArea levelOneArea) {
+                  levelOneArea.spawnLasers();
+              }
+          }
+      }
+      renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   private Entity getPlayer() {
