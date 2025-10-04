@@ -10,6 +10,7 @@ import com.csse3200.game.entities.configs.SaveConfig;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.CollectableService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ public class SaveFileTest {
     private MockedStatic<CollectableService> svcMock;
 
 
-    /** Thank you Jasmine for the config mockup */
+    /** Thank you Jasmine for the config mockup and code */
     private static CollectablesConfig cfg(String id) {
         var c = new CollectablesConfig();
         c.id = id;
@@ -50,9 +51,13 @@ public class SaveFileTest {
         svcMock.when(() -> CollectableService.get(anyString()))
                 .thenAnswer(invocation -> cfg(invocation.getArgument(0)));
     }
+    @AfterEach
+    void tearDown() {
+        if (svcMock != null) svcMock.close();
+    }
 
     @Test
-    void saveToValidFile() {
+    void saveToFile() {
         MainGameScreen.Areas area = MainGameScreen.Areas.LEVEL_TWO;
 
         Entity player = new Entity();
@@ -74,5 +79,21 @@ public class SaveFileTest {
 
         assertTrue(result.upgrades.containsKey("test2"));
         assertEquals(result.upgrades.get("test2"), inv.getUpgrades().get("test2"));
+    }
+
+    @Test
+    void loadFromFile() {
+        SaveConfig result = game.loadSave("test/files/loadtest.json");
+
+        assertNotNull(result);
+
+        assertTrue(result.area == MainGameScreen.Areas.LEVEL_TWO);
+
+        assertTrue(result.inventory.size() == 1);
+        assertTrue(result.inventory.get("test") == 5);
+
+        assertTrue(result.upgrades.size() == 2);
+        assertTrue(result.upgrades.get("test2") == 6);
+        assertTrue(result.upgrades.get("test3") == 7);
     }
 }
