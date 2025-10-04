@@ -180,6 +180,7 @@ public class LevelOneGameArea extends GameArea {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
             float x = X - ((i+1)* (float) 7.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
                 @Override
@@ -193,6 +194,7 @@ public class LevelOneGameArea extends GameArea {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
             float x = X + ((j+1)* (float) 7.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
                 @Override
