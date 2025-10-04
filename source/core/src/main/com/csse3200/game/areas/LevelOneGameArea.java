@@ -208,7 +208,6 @@ public class LevelOneGameArea extends GameArea {
     private final int upperLadderOffset = 11;
     private boolean isUpperLadderExtended = false;
     private boolean isUpperLadderSpawning = false;
-    private Vector2 upperLadderBoxInitialPosition;
     private final List<Entity> upperLadderBottomSegments = new ArrayList<>();
     // Lower Ladder dimensions
     private final int lowerLadderX = 52;
@@ -217,7 +216,6 @@ public class LevelOneGameArea extends GameArea {
     private final int lowerLadderOffset = 13;
     private boolean isLowerLadderExtended = false;
     private boolean isLowerLadderSpawning = false;
-    private Vector2 lowerLadderBoxInitialPosition;
     private final List<Entity> lowerLadderBottomSegments = new ArrayList<>();
 
     private void spawnLadders() {
@@ -249,7 +247,6 @@ public class LevelOneGameArea extends GameArea {
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
-        upperLadderBoxInitialPosition = new Vector2(upperLadderPressurePlate.getPosition());
 
         // Ladder extends and retracts when activating pressure plate
         upperLadderPressurePlate.getEvents().addListener("platePressed", () -> {
@@ -272,8 +269,6 @@ public class LevelOneGameArea extends GameArea {
                         upperLadderRung.setScale(1f, 1f);
                         spawnEntityAt(upperLadderRung, upperLadderPosition, false, false);
                         upperLadderBottomSegments.add(upperLadderRung);
-
-                        System.out.println("Spawned rung at y=" + (upperLadderY + rung) + " | Total rungs: " + upperLadderBottomSegments.size());
                         rung--;
                     }
                     // Initial delay, and delay between rungs (avoid partially spawned rungs)
@@ -283,7 +278,6 @@ public class LevelOneGameArea extends GameArea {
 
         upperLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
             if (isUpperLadderExtended && !isUpperLadderSpawning) {
-                System.out.println("Plate released: retracting upper ladder...");
                 isUpperLadderExtended = false;
 
                 Gdx.app.postRunnable(() -> {
@@ -294,7 +288,6 @@ public class LevelOneGameArea extends GameArea {
                     isUpperLadderSpawning = false;
                     isUpperLadderExtended = false;
                     upperLadderBottomSegments.clear();
-                    System.out.println("All rungs removed.  Size = " + upperLadderBottomSegments.size());
                 });
             }
         });
@@ -309,12 +302,10 @@ public class LevelOneGameArea extends GameArea {
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
-        lowerLadderBoxInitialPosition = new Vector2(lowerLadderPressurePlate.getPosition());
 
         // Ladder extends and retracts when activating pressure plate
         lowerLadderPressurePlate.getEvents().addListener("platePressed", () -> {
             if (!isLowerLadderExtended && lowerLadderBottomSegments.isEmpty() && !isLowerLadderSpawning) {
-                System.out.println("Plate pressed: extending lower ladder...");
                 isLowerLadderExtended = true;
                 isLowerLadderSpawning = true;
 
@@ -333,8 +324,6 @@ public class LevelOneGameArea extends GameArea {
                         lowerLadderRung.setScale(1f, 1f);
                         spawnEntityAt(lowerLadderRung, lowerLadderPosition, false, false);
                         lowerLadderBottomSegments.add(lowerLadderRung);
-
-                        System.out.println("Spawned rung at y=" + (lowerLadderY + rung) + " | Total rungs: " + lowerLadderBottomSegments.size());
                         rung--;
                     }
                     // Initial delay, and delay between rungs (avoid partially spawned rungs)
@@ -344,22 +333,17 @@ public class LevelOneGameArea extends GameArea {
 
         lowerLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
             if (isLowerLadderExtended && !isLowerLadderSpawning) {
-                System.out.println("Plate released: retracting lower ladder...");
                 isLowerLadderExtended = false;
 
-//                removeLowerLadderRungs();
-//                // TODO: Works
                 // Delays disposal of bottom ladder rungs until next frame to avoid physics engine lock
                 Gdx.app.postRunnable(() -> {
                     for (Entity rung : lowerLadderBottomSegments) {
                         rung.dispose();
-//                        ServiceLocator.getEntityService().unregister(rung);
                         areaEntities.remove(rung);
                     }
                     isLowerLadderSpawning = false;
                     isLowerLadderExtended = false;
                     lowerLadderBottomSegments.clear();
-                    System.out.println("All rungs removed. Size = " + lowerLadderBottomSegments.size());
                 });
             }
         });
