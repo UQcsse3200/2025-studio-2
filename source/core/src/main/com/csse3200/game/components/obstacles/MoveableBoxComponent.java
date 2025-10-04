@@ -313,6 +313,11 @@ public class MoveableBoxComponent extends Component {
             resetToInitPos();
         }
 
+        // Removes box from pressure plate when player dies
+        if (player != null && player.getPosition().y <= -3f) {
+            resetToInitPos();
+        }
+
         // run following method if box is currently picked up
         if (pickedUp) {
             followPlayer();

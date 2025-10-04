@@ -17,7 +17,7 @@ import java.util.List;
 public class BoxPressurePlateComponent extends Component {
     private String unpressedTexture = "images/plate.png";
     private String pressedTexture = "images/plate-pressed.png";
-
+    private boolean suppressEvents = false;
     private TextureRenderComponent renderer;
     private boolean pressed = false;
     private final List<Entity> activePressing = new ArrayList<>();
@@ -96,6 +96,9 @@ public class BoxPressurePlateComponent extends Component {
         if(this.pressed == pressed) return;
         this.pressed = pressed;
         updateTexture();
+        if (suppressEvents) {
+            return;
+        }
         if (pressed) {
             entity.getEvents().trigger("platePressed");
         } else {
@@ -109,5 +112,12 @@ public class BoxPressurePlateComponent extends Component {
     private void updateTexture() {
         if (renderer == null) return;
         renderer.setTexture(pressed ? pressedTexture : unpressedTexture);
+    }
+
+    public void resetPlate() {
+        suppressEvents = true;
+        activePressing.clear();
+        setPressed(false);
+        suppressEvents = false;
     }
 }
