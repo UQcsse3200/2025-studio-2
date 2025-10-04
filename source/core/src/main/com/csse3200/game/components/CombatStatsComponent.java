@@ -80,7 +80,7 @@ public class CombatStatsComponent extends Component {
         if (currentFrame - lastHitFrame > INVULN_FRAMES) {
             lastHitFrame = currentFrame;
 
-            int newHealth = getHealth() - (attacker.getBaseAttack()/4);
+            int newHealth = getHealth() - attacker.getBaseAttack();
             setHealth(newHealth);
 
             // Trigger hurt animation/event
