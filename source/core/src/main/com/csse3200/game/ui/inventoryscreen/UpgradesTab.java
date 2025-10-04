@@ -3,13 +3,17 @@ package com.csse3200.game.ui.inventoryscreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
@@ -60,7 +64,15 @@ public class UpgradesTab implements InventoryTabInterface {
   private final Texture playerTex = new Texture(Gdx.files.internal("images/upgradesTab/player.png"));
   private final Texture packTex   = new Texture(Gdx.files.internal("images/upgradesTab/jetpack.png"));
   private final Texture gliderTex = new Texture(Gdx.files.internal("images/upgradesTab/glider.png"));
-  // private final Texture dashTex = new Texture(Gdx.files.internal("images/upgradesTab/dash.png")); // (future)
+  private final Texture dashTex = new Texture(Gdx.files.internal("images/upgradesTab/dash.png"));
+  final String[] toolTipStrings= {
+          "A Jetpack! Who needs stairs?\n" +
+                  "Fly while you’ve got fuel, then catch your breath while it refuels." +
+          "Press \"w\" to soar!",
+          "The Glider! Why fall fast when you can fall fancy?\n" +
+                  "Hold Left Ctrl mid-air to glide gracefully and slow your descent.",
+          "Dash! Walking’s overrated.\n" +
+                  "Hit Left Shift to Blast forward like you forgot how to stop!"};
 
   /**
    * Creates an Upgrades tab bound to the given main game screen and player entity
@@ -152,34 +164,56 @@ public class UpgradesTab implements InventoryTabInterface {
               new Rect(px, py, gliderTex.getWidth(), gliderTex.getHeight()));
     }
 
+    // Dash overlay
+    if (haveDash) {
+      int px = (bgW - dashTex.getWidth()) / 10;
+      int py = PLAYER_TOP_Y;
+      placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(dashTex),
+              new Rect(px, py, dashTex.getWidth(), dashTex.getHeight()));
+    }
     // Player (always) on top
     placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(playerTex),
             new Rect(playerX, playerY, playerTex.getWidth(), playerTex.getHeight()));
-
-    // Dash overlay (keep commented until implemented)
-    /*
-    if (showDash) {
-      int dx = (bgW - dashTex.getWidth()) / 2;
-      int dy = PLAYER_TOP_Y;
-      placer.addOverlay(new Image(dashTex),
-          new Rect(dx, dy, dashTex.getWidth(), dashTex.getHeight()));
-    }
-    */
   }
 
+  /**
+   * addUpgradesList()
+   * Helper function to dynamically place in acquired upgrades in the upgrades tab
+   *
+   * @param upgrades boolean array of the form [0] -> Jetpack, [1] -> Glider, [2] -> Dash
+   * @param placer the PixelPerfectPlacer Object to place in textures
+   * @param bgW upgrades tab width
+   */
   private void addUpgradeList(Boolean[] upgrades, PixelPerfectPlacer placer, int bgW ) {
 
     int upgradeX = (int) ((bgW - packUpgradeTex.getWidth())  / 1.07f);
     int upgradeY = (int) ((bgW - packUpgradeTex.getHeight()) / 3.5f);
-    int offset = (int) (packUpgradeTex.getHeight() * 1.1f);
-    // [0] -> Jetpack, [1] -> Glider, [2] -> Dash
-    Texture[] slotTextures = {packUpgradeTex,gliderUpgradeTex,dashUpgradeTex};
-    for (int i = 0; i<3; i++) {
-      if (upgrades[i]) {
-        placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(slotTextures[i]),
-                new Rect(upgradeX, upgradeY, slotTextures[i].getWidth(), slotTextures[i].getHeight()));
-        upgradeY += offset;
 
+    int offset = (int) (packUpgradeTex.getHeight() * 1.1f);
+
+    Texture[] slotTextures = {packUpgradeTex,gliderUpgradeTex,dashUpgradeTex};
+
+    for (int i = 0; i < 3; i++) {
+      if (upgrades[i]) {
+        Image slotImage = new Image(slotTextures[i]);
+        placer.addOverlay(slotImage,
+                new Rect(upgradeX, upgradeY, slotTextures[i].getWidth(), slotTextures[i].getHeight()));
+        final int idx = i;
+
+        slotImage.addListener(new InputListener() {
+          @Override
+          public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+            slotImage.setColor(0.8f, 0.9f, 0.9f, 1f); // warm tint
+            TooltipSystem.TooltipManager.showTooltip(toolTipStrings[idx], TooltipSystem.TooltipStyle.DEFAULT);
+          }
+
+          @Override
+          public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+            slotImage.setColor(1, 1, 1, 1);
+            TooltipSystem.TooltipManager.hideTooltip();
+          }
+        });
+        upgradeY += offset;
       }
     }
   }
