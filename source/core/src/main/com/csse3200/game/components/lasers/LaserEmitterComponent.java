@@ -296,7 +296,6 @@ public class LaserEmitterComponent extends Component {
      */
     private float correctImpulse(Vector2 impulse) {
         if (Math.abs(impulse.y) > Math.abs(impulse.x) / 1.5f) {
-            System.out.println("correcting knockback");
             float diff =  Math.abs(impulse.y) -  Math.abs(impulse.x);
 
             // rescale y
