@@ -1,5 +1,6 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -86,7 +87,12 @@ public class LevelTwoGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/chimesound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/thudsound.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
@@ -118,6 +124,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
+        spawnObjectives();
     }
 
     private void spawnDeathZone() {
@@ -470,6 +477,7 @@ public class LevelTwoGameArea extends GameArea {
     public void spawnKey() {
         Entity key = CollectableFactory.createKey("key:door");
         spawnEntityAt(key, new GridPoint2(93,50), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(92, 50), true, true);
     }
 
     private void spawnVolatilePlatform(){
@@ -492,6 +500,17 @@ public class LevelTwoGameArea extends GameArea {
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
+    }
+
+    private void spawnObjectives() {
+        // Large, invisible sensors — easy to grab, no textures.
+        // IDs chosen to match the ObjectiveTab banner map.
+        Gdx.app.log("LevelOne", "Spawning objectives…");
+        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+
+        spawnEntityAt(CollectableFactory.createObjective("glider_completed", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
     }
 
     protected void loadAssets() {

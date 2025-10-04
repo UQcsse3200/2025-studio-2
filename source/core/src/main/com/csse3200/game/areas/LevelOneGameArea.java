@@ -12,7 +12,11 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.collectables.CollectableComponentV2;
+import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -94,7 +98,12 @@ public class LevelOneGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/chimesound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/thudsound.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
@@ -518,10 +527,19 @@ public class LevelOneGameArea extends GameArea {
     public void spawnPlayerUpgrades() {
         Entity dashUpgrade = CollectableFactory.createDashUpgrade();
         spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
+
+//        InventoryComponent inv = this.player.getComponent(InventoryComponent.class);
+//        inv.removeItem(InventoryComponent.Bag.OBJECTIVES, "dash");
     }
     public void spawnKey() {
-        Entity key = CollectableFactory.createCollectable("key:door");
+        Entity key = CollectableFactory.createKey("key:door");
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
+
+//        KeyComponent comp = key.getComponent();
+//        key.getEvents().addListener("objectiveCollected", "keycard");
+//        InventoryComponent inv = this.player.getComponent(InventoryComponent.class);
+//        inv.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(46, 56), true, true);
     }
     public void spawnPotion(String type, int x, int y) {
         Entity potion = CollectableFactory.createCollectable("potion:" + type);
@@ -553,12 +571,15 @@ public class LevelOneGameArea extends GameArea {
         // Large, invisible sensors — easy to grab, no textures.
         // IDs chosen to match the ObjectiveTab banner map.
         Gdx.app.log("LevelOne", "Spawning objectives…");
-//        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(14, 19), true, true);
-//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
-//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
-        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+
+        spawnEntityAt(CollectableFactory.createObjective("dash_completed", 0.2f, 0.2f),    new GridPoint2(1, 37), true, true);
+
+//        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
     }
 
     private void spawnLevelOneBatRoom() {

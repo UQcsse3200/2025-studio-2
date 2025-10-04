@@ -1,7 +1,9 @@
 package com.csse3200.game.components.collectables;
 
+import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * A collectable key component that allows the player to pick up and store keys
@@ -40,9 +42,14 @@ public class KeyComponent extends CollectableComponent {
     protected boolean onCollect(Entity player) {
         if (player == null) return false;
 
+        Sound interactSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/chimesound.mp3", Sound.class);
+        interactSound.play();
+
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
             inventory.addItem(keyId);
+            inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
             return true;
         }
         return false;

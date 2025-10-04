@@ -1,5 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
+import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
@@ -9,6 +10,7 @@ import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 public class DoorComponent extends Component {
     private final String keyId;
@@ -138,6 +140,10 @@ public class DoorComponent extends Component {
         isOpening = true;
         animationFinished = false;
         locked = false;
+
+        Sound interactSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/doorsound.mp3", Sound.class);
+        interactSound.play(0.5f);
 
         // play door opening animation
         if (animationComponent != null) {
