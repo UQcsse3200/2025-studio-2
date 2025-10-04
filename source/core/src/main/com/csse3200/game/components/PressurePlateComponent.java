@@ -11,8 +11,8 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  */
 public class PressurePlateComponent extends Component {
     private boolean isPressed = false;
-    private String unpressedTexture = "images/pressure_plate_unpressed.png";
-    private String pressedTexture = "images/pressure_plate_pressed.png";
+    private String unpressedTexture = "images/plate.png";
+    private String pressedTexture = "images/plate-pressed.png";
 
     /**
      * Called when component is created

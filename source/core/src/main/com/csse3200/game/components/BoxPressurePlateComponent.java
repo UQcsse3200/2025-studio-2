@@ -15,9 +15,9 @@ import java.util.List;
  * Emits "plateToggled" (Boolean) when pressed/unpressed.
  */
 public class BoxPressurePlateComponent extends Component {
-    private String unpressedTexture = "images/pressure_plate_unpressed.png";
-    private String pressedTexture = "images/pressure_plate_pressed.png";
-
+    private String unpressedTexture = "images/plate.png";
+    private String pressedTexture = "images/plate-pressed.png";
+    private boolean suppressEvents = false;
     private TextureRenderComponent renderer;
     private boolean pressed = false;
     private final List<Entity> activePressing = new ArrayList<>();
@@ -84,7 +84,7 @@ public class BoxPressurePlateComponent extends Component {
     private boolean isAbove(Entity other) {
         float plateY = entity.getPosition().y;
         float otherY = other.getPosition().y;
-        return otherY > plateY + 0.5f;
+        return otherY > plateY + 0.3f;
     }
 
     /**
@@ -96,7 +96,14 @@ public class BoxPressurePlateComponent extends Component {
         if(this.pressed == pressed) return;
         this.pressed = pressed;
         updateTexture();
-        entity.getEvents().trigger("plateToggled", pressed);
+        if (suppressEvents) {
+            return;
+        }
+        if (pressed) {
+            entity.getEvents().trigger("platePressed");
+        } else {
+            entity.getEvents().trigger("plateReleased");
+        }
     }
 
     /**
@@ -105,5 +112,12 @@ public class BoxPressurePlateComponent extends Component {
     private void updateTexture() {
         if (renderer == null) return;
         renderer.setTexture(pressed ? pressedTexture : unpressedTexture);
+    }
+
+    public void resetPlate() {
+        suppressEvents = true;
+        activePressing.clear();
+        setPressed(false);
+        suppressEvents = false;
     }
 }

@@ -83,7 +83,8 @@ public class BoxFactory {
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f))
-                .addComponent(new MoveableBoxComponent().setCamera(camera));
+                .addComponent(new MoveableBoxComponent().setCamera(camera))
+                .addComponent(new TextureRenderComponent("images/cube.png"));
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;
@@ -96,7 +97,7 @@ public class BoxFactory {
      */
     public static Entity createWeightedBox() {
         Entity weightedBox = createMoveableBox();
-        weightedBox.addComponent(new TextureRenderComponent("images/box_blue.png"));
+        weightedBox.getComponent(TextureRenderComponent.class).setTexture("images/heavy-cube.png");
         weightedBox.getComponent(MoveableBoxComponent.class).setBaseGravityScale(0.85f);
 
         return weightedBox;
@@ -110,7 +111,7 @@ public class BoxFactory {
     public static Entity createReflectorBox() {
         Entity reflectorBox = createMoveableBox();
 
-        reflectorBox.addComponent(new TextureRenderComponent("images/mirror-cube-off.png"));
+        reflectorBox.getComponent(TextureRenderComponent.class).setTexture("images/mirror-cube-off.png");
         ConeLightComponent light = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
                 LightingDefaults.RAYS,
