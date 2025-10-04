@@ -384,6 +384,24 @@ public class Initializer {
               print("Door Key Spawned!\n");
           });
           
+          setGlobal("getGameArea", () {
+          
+              screen = ServiceLocator.getMainGameScreen();
+              gameAreaEnum = screen.getAreaEnum();
+              gameArea = screen.getGameArea(gameAreaEnum);
+              returnN(1, gameArea);
+          });
+          
+          setGlobal("goNextLevel", () {
+              player = getPlayer();
+              screen = ServiceLocator.getMainGameScreen();
+              gameAreaEnum = screen.getAreaEnum();
+              nextArea = screen.getNextArea(gameAreaEnum);
+              
+              screen.switchAreaRunnable(nextArea, player);
+              print("Level Changed!\n");
+              
+          });
                
           """;
 }
