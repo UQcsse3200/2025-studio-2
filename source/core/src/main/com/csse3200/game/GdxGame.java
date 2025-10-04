@@ -55,7 +55,7 @@ public class GdxGame extends Game {
     UserSettings.applySettings(settings);
   }
 
-  public void saveLevel(MainGameScreen.Areas area, Entity player) {
+  public void saveLevel(MainGameScreen.Areas area, Entity player, String path) {
     logger.debug("Saving game level");
 
     SaveConfig saveConfig = new SaveConfig();
@@ -65,7 +65,7 @@ public class GdxGame extends Game {
     saveConfig.inventory = inventoryComponent.getInventoryCopy();
     saveConfig.upgrades = inventoryComponent.getUpgradesCopy();
 
-    FileLoader.writeClass(saveConfig, "configs/save.json", FileLoader.Location.LOCAL);
+    FileLoader.writeClass(saveConfig, path, FileLoader.Location.LOCAL);
   }
 
   /**
