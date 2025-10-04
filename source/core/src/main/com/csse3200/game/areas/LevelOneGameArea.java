@@ -99,7 +99,12 @@ public class LevelOneGameArea extends GameArea {
             "images/heavy-cube.png",
             "images/laser-detector-off.png",
             "images/laser-detector-on.png",
-            "images/laser-end.png"
+            "images/laser-end.png",
+            "images/upSignpost.png",
+            "images/downSignpost.png",
+            "images/rightSignpost.png",
+            "images/leftSignpost.png",
+            "images/signpost.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -131,6 +136,7 @@ public class LevelOneGameArea extends GameArea {
     protected void loadEntities() {
         keySpawned = false;
         spawnLadders();
+        spawnSignposts();
         spawnLowerLadderPressurePlate();
         spawnUpperLadderPressurePlate();
         spawnBoxOnlyPlate();
@@ -480,6 +486,11 @@ public class LevelOneGameArea extends GameArea {
         ui.addComponent(new GameAreaDisplay("Level one Game Area"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
+    }
+
+    private void spawnSignposts(){
+        Entity  downSign = SignpostFactory.createSignpost("right");
+        spawnEntityAt(downSign, new GridPoint2(5,4), true, false);
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
