@@ -7,12 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -49,6 +52,8 @@ public class UpgradesTab implements InventoryTabInterface {
 
   // Textures owned by this tab
   private final Texture bgTex     = new Texture(Gdx.files.internal("inventory-screen/upgrades-selected.png"));
+  private final Texture packUpgradeTex = new Texture(Gdx.files.internal("inventory-screen/jetpack-upgrade-slot.png"));
+
   private final Texture playerTex = new Texture(Gdx.files.internal("images/upgradesTab/player.png"));
   private final Texture packTex   = new Texture(Gdx.files.internal("images/upgradesTab/jetpack.png"));
   private final Texture gliderTex = new Texture(Gdx.files.internal("images/upgradesTab/glider.png"));
@@ -116,7 +121,7 @@ public class UpgradesTab implements InventoryTabInterface {
   private void addCharacterLayers(PixelPerfectPlacer placer) {
     int bgW = bgTex.getWidth();
 
-    // Center horizontally
+    // Align left
     int playerX = (bgW - playerTex.getWidth()) / 10;
     int playerY = PLAYER_TOP_Y;
 
@@ -126,17 +131,18 @@ public class UpgradesTab implements InventoryTabInterface {
     if (inv != null) upgrades = inv.getUpgrades();
 
     // Priority: jetpack > glider. Only one may be shown underneath the player.
-    boolean showJetpack = has(upgrades, "jetpack");
-    boolean showGlider  = !showJetpack && has(upgrades, "glider");
-    // boolean showDash = has(upgrades, "dash"); // (future)
-
+    boolean haveJetpack = has(upgrades, "jetpack");
+    boolean haveGlider  = has(upgrades, "glider");
+    boolean haveDash = has(upgrades, "dash");
+    Boolean[] haveUpgrades = {haveJetpack, haveGlider, haveDash};
+    addUpgradeList(haveUpgrades,placer, bgW);
     // Underlay the chosen pack beneath the player
-    if (showJetpack) {
+    if (haveJetpack) {
       int px = (bgW - packTex.getWidth()) / 10;
       int py = PLAYER_TOP_Y;
       placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(packTex),
               new Rect(px, py, packTex.getWidth(), packTex.getHeight()));
-    } else if (showGlider) {
+    } else if (haveGlider) {
       int px = (bgW - gliderTex.getWidth()) / 10;
       int py = PLAYER_TOP_Y;
       placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(gliderTex),
@@ -156,6 +162,23 @@ public class UpgradesTab implements InventoryTabInterface {
           new Rect(dx, dy, dashTex.getWidth(), dashTex.getHeight()));
     }
     */
+  }
+
+  private void addUpgradeList(Boolean[] upgrades, PixelPerfectPlacer placer, int bgW ) {
+
+    int upgradeX = (int) ((bgW - packUpgradeTex.getWidth())  / 1.07f);
+    int upgradeY = (int) ((bgW - packUpgradeTex.getHeight()) / 3.5f);
+    int offset = (int) (packUpgradeTex.getHeight() * 1.1f);
+    // [0] -> Jetpack, [1] -> Glider, [2] -> Dash
+    Texture[] slotTextures = {packUpgradeTex,packUpgradeTex,packUpgradeTex};
+    for (int i = 0; i<3; i++) {
+      if (upgrades[i]) {
+        placer.addOverlay(new com.badlogic.gdx.scenes.scene2d.ui.Image(slotTextures[i]),
+                new Rect(upgradeX, upgradeY, slotTextures[i].getWidth(), slotTextures[i].getHeight()));
+        upgradeY += offset;
+
+      }
+    }
   }
 
   /**
