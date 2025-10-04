@@ -399,9 +399,27 @@ public class Initializer {
               nextArea = screen.getNextArea(gameAreaEnum);
               
               screen.switchAreaRunnable(nextArea, player);
-              print("Level Changed!\n");
+              print("Level Changed!\n");   
+          });
+          
+          setGlobal("debugRender", () {
+              renderService = ServiceLocator.getRenderService();
+              renderer = renderService.getDebug();
+              active = renderer.getActive();
+              setGlobal(".renderer", renderer);
               
+              ifElse(active, () {
+                  renderer = getGlobal(".renderer");
+                  renderer.setActive(false);
+                  print("Debug Renderer is Off!\n");
+              }, () {
+                  renderer = getGlobal(".renderer");
+                  renderer.setActive(true);
+                  print("Debug Renderer is Active!\n");
+              });
           });
                
+               
+          
           """;
 }
