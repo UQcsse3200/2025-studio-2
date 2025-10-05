@@ -311,6 +311,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
   public Boolean getIsCheatsOn() {
     return cheatsOn;
   }
+  public void setIsCheatsOn(boolean on) {
+    cheatsOn = on;
+  }
 
   private void enableCheats() {
     if (Arrays.equals(CHEAT_INPUT_HISTORY, new int[]{UP_KEY, UP_KEY, DOWN_KEY, UP_KEY})){
