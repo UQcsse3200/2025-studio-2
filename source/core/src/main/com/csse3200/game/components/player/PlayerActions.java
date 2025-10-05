@@ -280,9 +280,9 @@ public class PlayerActions extends Component {
     isJumping = false;
     isDoubleJump = false;
 
-    Sound interactSound = ServiceLocator.getResourceService().getAsset(
-            "sounds/thudsound.mp3", Sound.class);
-    interactSound.play(0.08f);
+//    Sound interactSound = ServiceLocator.getResourceService().getAsset(
+//            "sounds/thudsound.mp3", Sound.class);
+//    interactSound.play(0.08f);
   }
 
   /**
@@ -388,6 +388,11 @@ public class PlayerActions extends Component {
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
 
     if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
+      if (isJumping || isDoubleJump) {
+        Sound interactSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/thudsound.mp3", Sound.class);
+        interactSound.play(0.08f);
+      }
       entity.getEvents().trigger("landed");
     }
   }
