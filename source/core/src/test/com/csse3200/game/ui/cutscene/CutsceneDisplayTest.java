@@ -1,5 +1,6 @@
 package com.csse3200.game.ui.cutscene;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -61,6 +62,7 @@ public class CutsceneDisplayTest {
 
         when(renderService.getStage()).thenReturn(stage);
         when(resourceService.getAsset(anyString(), eq(Texture.class))).thenReturn(mock(Texture.class));
+        when(resourceService.getAsset(anyString(), eq(Sound.class))).thenReturn(mock(Sound.class));
 
         // Register mocked services
         ServiceLocator.registerResourceService(resourceService);
