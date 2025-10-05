@@ -1,6 +1,7 @@
 package com.csse3200.game.components.mainmenu;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -26,10 +27,13 @@ public class MainMenuDisplay extends UIComponent {
   private static final Logger logger = LoggerFactory.getLogger(MainMenuDisplay.class);
   private static final float Z_INDEX = 2f;
   private Table table;
+  private Sound buttonClickSound;
 
   @Override
   public void create() {
     super.create();
+    buttonClickSound = ServiceLocator.getResourceService()
+            .getAsset("sounds/buttonsound.mp3", Sound.class);
     addActors();
   }
 
@@ -73,6 +77,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Start button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("start");
           }
         });
@@ -82,6 +87,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Load button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("load");
           }
         });
@@ -91,6 +97,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Settings button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("settings");
           }
         });
@@ -101,6 +108,7 @@ public class MainMenuDisplay extends UIComponent {
           public void changed(ChangeEvent changeEvent, Actor actor) {
 
             logger.debug("Exit button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("exit");
           }
         });
