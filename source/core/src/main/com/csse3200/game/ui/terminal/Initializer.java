@@ -420,7 +420,6 @@ public class Initializer {
           });
                  
           setGlobal("toggleOnAI", () {  
-          
               forEachAI((droneEntity) {
                 setGlobal(".droneEntity", droneEntity);
                 ifElse(droneEntity.getEnabled, () {
@@ -434,5 +433,24 @@ public class Initializer {
               print("Drone AI toggled\n");
           });
           
+          setGlobal("fly", () {
+              player = getPlayer();
+              keyBoardComponent = player.getComponent(.com.csse3200.game.components.player.KeyboardPlayerInputComponent);
+              setGlobal(".keyBoardComponent", keyBoardComponent);
+              ifElse(not(isNull(keyBoardComponent)), () {
+                  keyBoardComponent = getGlobal(".keyBoardComponent");
+                  ifElse(keyBoardComponent.getIsCheatsOn(), () {
+                      keyBoardComponent = getGlobal(".keyBoardComponent");
+                      keyBoardComponent.setIsCheatsOn(false);
+                      print("Flight disabled!\n");
+                  }, () {
+                      keyBoardComponent = getGlobal(".keyBoardComponent");
+                      keyBoardComponent.setIsCheatsOn(true);
+                      print("Flight enabled!\n");
+                  });
+              }, () {
+                  print("Keyboard component unable to be reached!\n");
+              });
+          });
           """;
 }
