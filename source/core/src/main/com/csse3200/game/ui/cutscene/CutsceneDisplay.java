@@ -1,6 +1,7 @@
 package com.csse3200.game.ui.cutscene;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -23,6 +24,7 @@ import java.util.List;
  * cutscene
  */
 public class CutsceneDisplay extends UIComponent {
+    private Sound buttonClickSound;
     /**
      * Ordered list of text boxes to be displayed in cutscene
      */
@@ -82,6 +84,9 @@ public class CutsceneDisplay extends UIComponent {
     public void create() {
         super.create();
 
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
+
         // Create root stack - fills screen
         rootStack = new Stack();
         rootStack.setFillParent(true);
@@ -123,6 +128,7 @@ public class CutsceneDisplay extends UIComponent {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        buttonClickSound.play();
                         // Do nothing for now if we are on last index
                         if (curTextBox == textBoxList.size() - 1) {
                             area.trigger("cutsceneFinished");
