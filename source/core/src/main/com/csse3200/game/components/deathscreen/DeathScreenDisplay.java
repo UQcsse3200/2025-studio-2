@@ -2,6 +2,7 @@ package com.csse3200.game.components.deathscreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -40,6 +41,8 @@ public class DeathScreenDisplay extends UIComponent {
     private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
     private final MainGameScreen screen;
+    private Sound buttonClickSound;
+
 
     public DeathScreenDisplay(MainGameScreen screen, Entity player, GdxGame game) {
         this.game = game;
@@ -111,6 +114,9 @@ public class DeathScreenDisplay extends UIComponent {
     @Override
     public void create() {
         super.create();
+
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
 
         rootTable = new Table();
         rootTable.setFillParent(true);
@@ -192,6 +198,7 @@ public class DeathScreenDisplay extends UIComponent {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play();
                 setVisible(false);
                 screen.reset();
             }
@@ -203,6 +210,7 @@ public class DeathScreenDisplay extends UIComponent {
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play();
                 game.setScreen(GdxGame.ScreenType.MAIN_MENU);
             }
         });
@@ -213,6 +221,7 @@ public class DeathScreenDisplay extends UIComponent {
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play();
                 Gdx.app.exit();
             }
         });
@@ -270,6 +279,10 @@ public class DeathScreenDisplay extends UIComponent {
                 buttonsTable.clearActions();
                 // Animation will be triggered by typewriter listener
             }
+
+            Sound deathSound = ServiceLocator.getResourceService().getAsset(
+                    "sounds/deathsound.mp3", Sound.class);
+            deathSound.play();
         } else {
             // Re-enable player input
             screen.getGameArea().getPlayer().getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
