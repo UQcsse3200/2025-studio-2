@@ -162,7 +162,7 @@ public class CollectableFactory {
         Entity jetpack = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
+                .addComponent(new TextureRenderComponent("images/jetpack_powerup.png"))
                 .addComponent(new UpgradesComponent("jetpack"));
 
         jetpack.setScale(0.5f, 0.5f);

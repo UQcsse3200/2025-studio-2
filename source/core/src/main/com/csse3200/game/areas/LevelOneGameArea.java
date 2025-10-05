@@ -76,6 +76,7 @@ public class LevelOneGameArea extends GameArea {
             "images/glide_powerup.png",
             "images/wall.png",
             "images/dash_powerup.png",
+            "images/jetpack_powerup.png",
             "images/ladder.png",
             "images/ladder-base.png",
             "images/cavelevel/tile000.png",
