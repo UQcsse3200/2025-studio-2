@@ -42,10 +42,6 @@ public class KeyComponent extends CollectableComponent {
     protected boolean onCollect(Entity player) {
         if (player == null) return false;
 
-        Sound interactSound = ServiceLocator.getResourceService().getAsset(
-                "sounds/chimesound.mp3", Sound.class);
-        interactSound.play();
-
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
             inventory.addItem(keyId);
