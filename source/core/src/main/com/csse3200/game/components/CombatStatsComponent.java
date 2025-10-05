@@ -12,18 +12,14 @@ import org.slf4j.LoggerFactory;
 public class CombatStatsComponent extends Component {
 
     private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
-    private int health;       // 玩家当前生命值
-    private int baseAttack;   // 攻击力
+    private int health;
+    private int baseAttack;
 
-    // "Grace period" between hits (无敌帧，防止连击过快)
+    // "Grace period" between hits
     private static final long INVULN_FRAMES = 30;
     private long lastHitFrame = -100;
 
-    /**
-     * 构造函数
-     * @param health 初始生命值（每2点 = 1整心，每1点 = 半心）
-     * @param baseAttack 攻击力
-     */
+
     public CombatStatsComponent(int health, int baseAttack) {
         setHealth(health);
         setBaseAttack(baseAttack);
@@ -36,23 +32,14 @@ public class CombatStatsComponent extends Component {
         this.lastHitFrame = other.lastHitFrame;
     }
 
-    /**
-     * 返回是否死亡（生命值 <= 0）
-     */
     public Boolean isDead() {
         return health <= 0;
     }
 
-    /**
-     * 获取当前生命值
-     */
     public int getHealth() {
         return health;
     }
 
-    /**
-     * 设置生命值，最低为 0
-     */
     public void setHealth(int health) {
         int oldHealth = this.health;
         this.health = Math.max(0, health);
@@ -68,23 +55,14 @@ public class CombatStatsComponent extends Component {
         }
     }
 
-    /**
-     * 增加生命值（可以传负数表示扣血）
-     */
     public void addHealth(int health) {
         setHealth(this.health + health);
     }
 
-    /**
-     * 获取攻击力
-     */
     public int getBaseAttack() {
         return baseAttack;
     }
 
-    /**
-     * 设置攻击力（不能为负数）
-     */
     public void setBaseAttack(int attack) {
         if (attack >= 0) {
             this.baseAttack = attack;
@@ -102,7 +80,7 @@ public class CombatStatsComponent extends Component {
         if (currentFrame - lastHitFrame > INVULN_FRAMES) {
             lastHitFrame = currentFrame;
 
-            int newHealth = getHealth() - (attacker.getBaseAttack()/4);
+            int newHealth = getHealth() - attacker.getBaseAttack();
             setHealth(newHealth);
 
             // Trigger hurt animation/event

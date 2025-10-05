@@ -20,7 +20,7 @@ public class HoverEffectHelper {
                 public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                     // Shrink all first
                     for (TextButton b : menuButtons) {
-                        b.addAction(Actions.scaleTo(0.9f, 0.9f, 0.15f));
+                        b.addAction(Actions.scaleTo(0.95f, 0.95f, 0.15f));
                     }
                     // Enlarge hovered
                     button.addAction(Actions.scaleTo(1.2f, 1.2f, 0.15f));

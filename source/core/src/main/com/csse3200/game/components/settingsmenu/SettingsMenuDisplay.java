@@ -111,7 +111,14 @@ public class SettingsMenuDisplay extends UIComponent {
   private Table makeSettingsTable() {
     // Get current values
     UserSettings.Settings settings = UserSettings.get();
+    Table table = new Table();
+    table.columnDefaults(0).right().padRight(15f);
+    table.columnDefaults(1).left();
 
+    // --- Display Section ---
+    Label displayHeader = new Label("Display", skin, "title");
+    table.add(displayHeader).colspan(2).center().padBottom(10f);
+    table.row().padTop(10f);
     // Create components
     Label fpsLabel = new Label("FPS Cap:", skin);
     fpsText = new TextField(Integer.toString(settings.fps), skin);
@@ -128,17 +135,21 @@ public class SettingsMenuDisplay extends UIComponent {
 //    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
 //    uiScaleSlider.setValue(settings.uiScale);
 //    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
-
+    // --- Audio Section ---
+    table.row().padTop(20f);
+    Label audioHeader = new Label("Audio", skin, "title");
+    table.add(audioHeader).colspan(2).center();
+    table.row().padTop(10f);
+    // Master volume + music volume rows follow here
     Label masterVolumeLabel = new Label("Master Volume:", skin);
-    masterVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    masterVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
     masterVolumeSlider.setValue(settings.masterVolume);
-    Label masterVolumeValue = new Label(String.format("%.2fx", settings.masterVolume), skin);
+    Label masterVolumeValue = new Label((int)(settings.masterVolume * 100) + "%", skin);
 
     Label musicVolumeLabel = new Label("Music Volume:", skin);
-    musicVolumeSlider = new Slider(0f, 1f, 0.1f, false, skin);
+    musicVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
     musicVolumeSlider.setValue(settings.musicVolume);
-    Label musicVolumeValue = new Label(String.format("%.2fx", settings.musicVolume), skin);
-
+    Label musicVolumeValue = new Label((int)(settings.musicVolume * 100) + "%", skin);
     Label displayModeLabel = new Label("Resolution:", skin);
     displayModeSelect = new SelectBox<>(skin);
     Monitor selectedMonitor = Gdx.graphics.getMonitor();
@@ -150,9 +161,6 @@ public class SettingsMenuDisplay extends UIComponent {
     if (currentMode != null) {
       displayModeSelect.setSelected(currentMode);
     }
-
-    // Position Components on table
-    Table table = new Table();
 
     table.add(fpsLabel).right().padRight(15f);
     table.add(fpsText).width(100).left();
@@ -203,18 +211,25 @@ public class SettingsMenuDisplay extends UIComponent {
 
     // Handle slider events
     masterVolumeSlider.addListener((Event event) -> {
-      float value = masterVolumeSlider.getValue();
-      masterVolumeValue.setText(String.format("%.2fx", value));
-      return true;
+        float value = masterVolumeSlider.getValue();
+        int percent = (int)(masterVolumeSlider.getValue() * 100);
+        masterVolumeValue.setText(percent + "%");
+        return true;
     });
 
     musicVolumeSlider.addListener((Event event) -> {
-      float value = musicVolumeSlider.getValue();
-      musicVolumeValue.setText(String.format("%.2fx", value));
+        int percent = (int)(musicVolumeSlider.getValue() * 100);
+        musicVolumeValue.setText(percent + "%");
       return true;
     });
 
+    // --- Controls Section ---
     table.row().padTop(20f);
+    Label controlsHeader = new Label("Controls", skin, "title");
+    table.add(controlsHeader).colspan(2).center();
+    table.row().padTop(10f);
+
+    // Key bindings + restore defaults follow here
     Label keyBindLabel = new Label("Key Bindings:", skin);
     table.add(keyBindLabel).colspan(2).center();
 

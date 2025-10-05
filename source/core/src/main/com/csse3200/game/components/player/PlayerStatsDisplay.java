@@ -128,16 +128,16 @@ public class PlayerStatsDisplay extends UIComponent {
      * Supports full hearts and half hearts.
      */
     private void updateHealthTable(int playerHealth) {
-        // Clear old UI
         healthTable.clear();
-
-        // 1 heart = 2 health points
-        int fullHearts = playerHealth / 2;
-        boolean hasHalfHeart = (playerHealth % 2 == 1);
 
         float heartSideLength = 30f;
 
-        // Health label
+        // Each heart = 10 HP
+        int healthPerHeart = 10;
+        int fullHearts = playerHealth / healthPerHeart;
+        int remainder = playerHealth % healthPerHeart;
+
+        // Label
         healthLabel = new Label("Health: ", skin, "large");
         healthTable.add(healthLabel).pad(5);
 
@@ -148,8 +148,8 @@ public class PlayerStatsDisplay extends UIComponent {
             healthTable.add(fullHeart).size(heartSideLength).pad(5);
         }
 
-        // Add half heart
-        if (hasHalfHeart) {
+        // Add half heart if remainder >= 5
+        if (remainder >= 5) {
             Texture heartTexture = ServiceLocator.getResourceService()
                     .getAsset("images/playerstats/health.png", Texture.class);
 
@@ -160,6 +160,8 @@ public class PlayerStatsDisplay extends UIComponent {
             healthTable.add(halfHeart).size(heartSideLength / 2, heartSideLength).pad(5);
         }
     }
+
+
 
     /** Updates the player's health on the UI. */
     public void updatePlayerHealthUI(int health) {
