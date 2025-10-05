@@ -71,6 +71,9 @@ public class SettingsScreen extends ScreenAdapter {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(settingsMenuTextures);
+    resourceService.loadSounds(new String[] {
+            "sounds/buttonsound.mp3"
+    });
     ServiceLocator.getResourceService().loadAll();
   }
 
