@@ -141,9 +141,9 @@ public class DoorComponent extends Component {
         animationFinished = false;
         locked = false;
 
-        Sound interactSound = ServiceLocator.getResourceService().getAsset(
+        Sound doorSound = ServiceLocator.getResourceService().getAsset(
                 "sounds/doorsound.mp3", Sound.class);
-        interactSound.play(0.5f);
+        doorSound.play(0.3f);
 
         // play door opening animation
         if (animationComponent != null) {
