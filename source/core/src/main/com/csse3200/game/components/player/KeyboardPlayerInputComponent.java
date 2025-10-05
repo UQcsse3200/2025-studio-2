@@ -78,17 +78,14 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     } else if (keycode == LEFT_KEY) {
       //takes player off ladder if they are on one.
       this.onLadder = false;
-
-      walkDirection.setZero();
       walkDirection.add(Vector2Utils.LEFT);
       triggerWalkEvent();
     } else if (keycode == RIGHT_KEY) {
       //takes player off ladder if they are on one.
       this.onLadder = false;
-
-      walkDirection.setZero();
       walkDirection.add(Vector2Utils.RIGHT);
       triggerWalkEvent();
+
     } else if (keycode == INTERACT_KEY) {
       entity.getEvents().trigger("interact");
     } else if (keycode == ADRENALINE_KEY) {
@@ -247,6 +244,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     if (walkDirection.epsilonEquals(Vector2.Zero)) {
       entity.getEvents().trigger("walkStop");
     } else {
+      if (!onLadder && Math.abs(walkDirection.y) > 0f) {
+        walkDirection.y = 0f;
+      }
       entity.getEvents().trigger("walk", walkDirection);
     }
   }
@@ -378,8 +378,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
       }
     }
     this.onLadder = false;
-    walkDirection.setZero();
-    entity.getEvents().trigger("walkStop");
     return false;
   }
 
