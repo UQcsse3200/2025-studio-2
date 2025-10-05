@@ -3,6 +3,7 @@ package com.csse3200.game.components.settingsmenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Graphics.Monitor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -47,6 +48,8 @@ public class SettingsMenuDisplay extends UIComponent {
 
   private SettingsInputComponent settingsInputComponent;
 
+  private Sound buttonClickSound;
+
 
   public SettingsMenuDisplay(GdxGame game) {
     super();
@@ -60,6 +63,9 @@ public class SettingsMenuDisplay extends UIComponent {
   @Override
   public void create() {
     super.create();
+
+    buttonClickSound = ServiceLocator.getResourceService()
+            .getAsset("sounds/buttonsound.mp3", Sound.class);
 
     // Create and add the settings input component
     settingsInputComponent = entity.getComponent(SettingsInputComponent.class);
@@ -267,6 +273,7 @@ public class SettingsMenuDisplay extends UIComponent {
       keyButton.addListener(new ChangeListener() {
         @Override
         public void changed(ChangeEvent event, Actor actor) {
+          buttonClickSound.play();
           settingsInputComponent.startRebinding(actionName, keyButton);
           keyButton.setText("Press Key");
         }
@@ -284,6 +291,7 @@ public class SettingsMenuDisplay extends UIComponent {
     defaultButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
+        buttonClickSound.play();
         UserSettings.resetKeybindsToDefaults();
         updateAllKeybindButtons();
       }
@@ -438,6 +446,7 @@ public class SettingsMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Exit button clicked");
+            buttonClickSound.play();
             exitMenu();
           }
         });
@@ -447,6 +456,7 @@ public class SettingsMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Apply button clicked");
+            buttonClickSound.play();
             applyChanges();
           }
         });
