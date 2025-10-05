@@ -92,6 +92,8 @@ public class LevelTwoGameArea extends GameArea {
             "sounds/walksound.mp3",
             "sounds/whooshsound.mp3",
             "sounds/jetpacksound.mp3",
+            "sounds/deathsound.mp3",
+            "sounds/damagesound.mp3",
             "sounds/thudsound.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
