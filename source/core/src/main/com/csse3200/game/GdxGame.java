@@ -26,6 +26,8 @@ import static com.badlogic.gdx.Gdx.app;
  * machine (See the State Pattern).
  */
 public class GdxGame extends Game {
+  public static final String savePath = "configs/save.json";
+
   private static final Logger logger = LoggerFactory.getLogger(GdxGame.class);
 
   @Override
@@ -55,7 +57,7 @@ public class GdxGame extends Game {
     UserSettings.applySettings(settings);
   }
 
-  public void saveLevel(MainGameScreen.Areas area, Entity player) {
+  public void saveLevel(MainGameScreen.Areas area, Entity player, String path) {
     logger.debug("Saving game level");
 
     SaveConfig saveConfig = new SaveConfig();
@@ -65,7 +67,7 @@ public class GdxGame extends Game {
     saveConfig.inventory = inventoryComponent.getInventoryCopy();
     saveConfig.upgrades = inventoryComponent.getUpgradesCopy();
 
-    FileLoader.writeClass(saveConfig, "configs/save.json", FileLoader.Location.LOCAL);
+    FileLoader.writeClass(saveConfig, path, FileLoader.Location.LOCAL);
   }
 
   /**
@@ -104,7 +106,7 @@ public class GdxGame extends Game {
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
       case LOAD_LEVEL -> {
-        SaveConfig saveConfig = FileLoader.readClass(SaveConfig.class, "configs/save.json", FileLoader.Location.LOCAL);
+        SaveConfig saveConfig = loadSave(savePath);
 
         // If we don't already have a saved area, start from level one
         if (saveConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
@@ -128,6 +130,15 @@ public class GdxGame extends Game {
         }
       }
     };
+  }
+
+  /**
+   * Return save config
+   * @param path - file path
+   * @return SaveConfig
+   */
+  public SaveConfig loadSave(String path) {
+    return FileLoader.readClass(SaveConfig.class, path, FileLoader.Location.LOCAL);
   }
 
   public enum ScreenType {

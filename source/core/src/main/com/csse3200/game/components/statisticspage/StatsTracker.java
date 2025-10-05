@@ -26,7 +26,7 @@ public class StatsTracker {
         saveStats();
     }
 
-    public void resetSession() {
+    public static void resetSession() {
         playtime = 0;
         upgradesCollected = 0;
         levelsCompleted = 0;
@@ -98,6 +98,12 @@ public class StatsTracker {
             levelsCompleted = data.levelsCompleted;
             deathCount = data.deathCount;
             achievementsUnlocked = data.achievementsUnlocked;
+        } else {
+            playtime = 0;
+            upgradesCollected = 0;
+            levelsCompleted = 0;
+            deathCount = 0;
+            achievementsUnlocked = 0;
         }
     }
 }

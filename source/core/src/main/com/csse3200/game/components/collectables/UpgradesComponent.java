@@ -11,7 +11,7 @@ public class UpgradesComponent extends CollectableComponent {
         this.upgradeId = upgradeId;
     }
 
-    protected boolean onCollect(Entity player) {
+    public boolean onCollect(Entity player) {
         if (player == null) return false;
 
         InventoryComponent inventory = player.getComponent(InventoryComponent.class);

@@ -72,7 +72,7 @@ public class MainGameScreen extends ScreenAdapter {
   private GameArea gameArea;
 
   private PauseInputComponent pauseInput;
-  //private LeaderboardComponent leaderboardComponent;
+  private LeaderboardComponent leaderboardComponent;
   private GameTime gameTime;
 
   public enum Areas {
@@ -144,7 +144,7 @@ public class MainGameScreen extends ScreenAdapter {
    * @param area - Areas area.
    * @return GameArea mapped.
    */
-  private GameArea getGameArea(Areas area) {
+  public GameArea getGameArea(Areas area) {
     GameArea newArea = null;
 
     switch (area) {
@@ -221,7 +221,7 @@ public class MainGameScreen extends ScreenAdapter {
     Areas newLevel = getNextArea(area);
 
     if (newArea != null) {
-      //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
+      leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
       StatsTracker.completeLevel();
 
       gameArea = newArea;
@@ -391,7 +391,7 @@ public class MainGameScreen extends ScreenAdapter {
     deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
-    //leaderboardComponent = new LeaderboardComponent();
+    leaderboardComponent = new LeaderboardComponent();
 
     System.out.println("Starting Level Time!");
     lvlStartTime = gameTime.getTime();
