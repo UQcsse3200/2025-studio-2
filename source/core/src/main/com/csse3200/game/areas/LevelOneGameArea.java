@@ -233,7 +233,7 @@ public class LevelOneGameArea extends GameArea {
         if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             spacePressCount++;
         }
-        int SPACE_THRESHOLD = 3;
+        int SPACE_THRESHOLD = 30;
         if (spacePressCount == SPACE_THRESHOLD) {
             spawnLasers();
             spacePressCount = 0;
