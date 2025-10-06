@@ -46,6 +46,8 @@ public abstract class GameArea implements Disposable {
 
   protected Entity player;
 
+  protected boolean isResetting = false;
+
   // Components we want to keep in between levels, new list for every GameArea
   protected CombatStatsComponent combatStats; // health
   protected InventoryComponent inventory; // keys, upgrades, etc.
@@ -102,6 +104,7 @@ public abstract class GameArea implements Disposable {
    * Resets the game area
    */
   public void reset() {
+    isResetting = true;
     final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
@@ -126,6 +129,7 @@ public abstract class GameArea implements Disposable {
     }
 
     this.trigger("reset");
+    isResetting = false;
   }
 
   /**
