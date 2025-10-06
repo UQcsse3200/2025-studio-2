@@ -102,6 +102,7 @@ public class Component {
 
   @Override
   public String toString() {
+    if (entity == null) return getClass().getSimpleName() + "{" + "enabled=" + enabled + "}";
     return getClass().getSimpleName() + "{id=" + entity.getId() + ", enabled=" + enabled + "}";
   }
 }

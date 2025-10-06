@@ -1,6 +1,5 @@
 package com.csse3200.game.ui.terminal;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
@@ -14,7 +13,6 @@ public class TerminalService {
   private static final Logger logger = LoggerFactory.getLogger(TerminalService.class);
   private static final Terminal terminalComponent = new Terminal();
   private static final TerminalDisplay terminalDisplay = new TerminalDisplay();
-  private static Stage stage;
   private static final Shell shell = Initializer.getInitializedShell();
 
   /* This field will be used by the shell and therefore must not be final */
@@ -25,28 +23,20 @@ public class TerminalService {
   }
 
   /**
-   * Called by the RenderService when a new Stage is set.
    * This allows the terminal to attach its UI to the current screen's stage.
-   *
-   * @param stageValue The newly active Stage.
-   */
-  static public void setStage(Stage stageValue) {
-    stage = stageValue;
-
+   **/
+  static public void register() {
     logger.debug("Creating global terminal UI entity");
-    Entity terminalEntity = new Entity()
+    Entity entity = new Entity()
         .addComponent(terminalComponent)
         .addComponent(new GlobalTerminalInputComponent())
         .addComponent(terminalDisplay);
 
-    ServiceLocator.getEntityService().register(terminalEntity);
+    ServiceLocator.getEntityService().register(entity);
 
     // Attach the UI to the new stage. This also works when switching screens.
-    if (stage != null) {
-      logger.debug("Attaching terminal display to new stage");
-      terminalDisplay.getRoot().remove(); // Remove from old parent
-      stage.addActor(terminalDisplay.getRoot());
-    }
+    logger.debug("Attaching terminal display to new stage");
+    terminalDisplay.getRoot().remove(); // Remove from old parent
   }
 
   /**
@@ -62,6 +52,7 @@ public class TerminalService {
    * Toggle the terminal display on or off
    */
   static public void toggle() {
+    logger.debug("Toggling terminal");
     terminalComponent.toggleIsOpen();
     terminalDisplay.getRoot().toFront();
     focusTerminalInput();
@@ -81,12 +72,11 @@ public class TerminalService {
    * Focus the terminal input (the bottom pane where text is entered)
    */
   static public void focusTerminalInput() {
-    if (stage != null) {
-      if (terminalComponent.isOpen()) {
-        stage.setKeyboardFocus(terminalDisplay.getInputField());
-      } else {
-        stage.setKeyboardFocus(null);
-      }
+    if (terminalComponent.isOpen()) {
+      ServiceLocator.getRenderService().getStage().addActor(terminalDisplay.getRoot());
+      ServiceLocator.getRenderService().getStage().setKeyboardFocus(terminalDisplay.getInputField());
+    } else {
+      ServiceLocator.getRenderService().getStage().setKeyboardFocus(null);
     }
   }
 
