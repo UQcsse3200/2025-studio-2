@@ -528,7 +528,7 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     public void spawnKey() {
-        Entity key = CollectableFactory.createKey("key:door");
+        Entity key = CollectableFactory.createCollectable("key:door");
         spawnEntityAt(key, new GridPoint2(93,50), true, true);
     }
 
