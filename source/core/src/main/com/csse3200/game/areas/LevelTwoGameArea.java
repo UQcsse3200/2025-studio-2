@@ -119,7 +119,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
-        spawnMovingTraps();
+        //spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
     }
 
     private void spawnDeathZone() {
@@ -405,6 +405,14 @@ public class LevelTwoGameArea extends GameArea {
         Entity ButtonPlat4 = PlatformFactory.createStaticPlatform();
         ButtonPlat4.setScale(2,0.5f);
         spawnEntityAt(ButtonPlat4, buttonPlat4Pos,false, false);
+
+        //platforms between traps
+        for(int j = 27; j<= 48; j = j+7) {
+            GridPoint2 platPos = new GridPoint2(j, 30);
+            Entity plat = PlatformFactory.createStaticPlatform();
+            plat.setScale(1, 0.5f);
+            spawnEntityAt(plat, platPos, true, true);
+        }
     }
 
     private void spawnSecurityCams() {
@@ -417,6 +425,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(cam3, new GridPoint2(75,65), true, true);
     }
 
+    /*
     private void spawnMovingTraps() {
         //moving traps
         for(int i = 45; i>23; i = i-7) {
@@ -435,7 +444,7 @@ public class LevelTwoGameArea extends GameArea {
             Entity spikesTrap = TrapFactory.createSpikes(safeSpotStart, 0f);
             GridPoint2 trapGridPos = new GridPoint2(platformGridPos.x, platformGridPos.y + 1);
 
-            spikesTrap.addComponent(new MovingTrapComponent(movingPlatform));
+            spikesTrap.addComponent(new PositionSyncComponent(movingPlatform));
             spawnEntityAt(spikesTrap, trapGridPos, true, true);
 
             //platform above
@@ -451,20 +460,12 @@ public class LevelTwoGameArea extends GameArea {
             Entity spikesTrap2 = TrapFactory.createSpikes(safeSpotStart, 180f);
             GridPoint2 trapGridPos2 = new GridPoint2(platformGridPos2.x, platformGridPos2.y - 1);
 
-            spikesTrap2.addComponent(new MovingTrapComponent(movingPlatform2));
+            spikesTrap2.addComponent(new PositionSyncComponent(movingPlatform2));
             spawnEntityAt(spikesTrap2, trapGridPos2, true, true);
         }
-
-        //platforms between traps
-        for(int j = 27; j<= 48; j = j+7) {
-            GridPoint2 platPos = new GridPoint2(j, 30);
-            Entity plat = PlatformFactory.createStaticPlatform();
-            plat.setScale(1, 0.5f);
-            spawnEntityAt(plat, platPos, true, true);
-        }
-
-
     }
+
+     */
 
 
     private void spawnTraps() {
