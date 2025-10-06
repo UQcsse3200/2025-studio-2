@@ -8,12 +8,10 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -22,9 +20,6 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.ColliderComponent;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -32,6 +27,7 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,6 +92,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
+            "images/terminal_on.png",
+            "images/terminal_off.png",
             "images/plate.png",
             "images/plate-pressed.png",
             "images/mirror-cube-off.png",
@@ -166,8 +164,23 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
+        spawnTerminals();
         spawnBoxes();
         spawnLasers();
+    }
+
+    private void spawnTerminals() {
+        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
+        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
+        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test3"));
+        Entity terminal4 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test4"));
+        Entity terminal5 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test5"));
+        spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
+        spawnEntityAt(terminal2, new GridPoint2(6, 4), true, true);
+        spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
+        spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
+        spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
+
     }
 
     private void spawnBoxes() {
@@ -688,8 +701,14 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnSignposts(){
-        Entity  downSign = SignpostFactory.createSignpost("right");
-        spawnEntityAt(downSign, new GridPoint2(5,4), true, false);
+        Entity rightSign = SignpostFactory.createSignpost("right");
+        spawnEntityAt(rightSign, new GridPoint2(8,4), true, false);
+
+        Entity upSign = SignpostFactory.createSignpost("up");
+        spawnEntityAt(upSign, new GridPoint2(55,4), true, false);
+
+        Entity leftSign = SignpostFactory.createSignpost("left");
+        spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be

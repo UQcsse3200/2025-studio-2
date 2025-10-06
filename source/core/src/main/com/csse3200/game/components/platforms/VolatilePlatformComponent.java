@@ -81,7 +81,19 @@ public class VolatilePlatformComponent extends Component {
         long now = timeSource.getTime();
 
         if (linkedToPlate) {
-            setVisible(platePressed);
+            if (platePressed && disappeared) {
+                if (collider != null) collider.create();
+                if (texture != null) texture.setTexture(visibleTexture);
+                disappeared = false;
+            }
+
+            if (!platePressed && !disappeared) {
+                if (collider != null && collider.getFixture() != null) {
+                    collider.getFixture().getBody().destroyFixture(collider.getFixture());
+                }
+                if (texture != null) texture.setTexture(hiddenTexture);
+                disappeared = true;
+            }
             return;
         }
 
@@ -113,6 +125,7 @@ public class VolatilePlatformComponent extends Component {
      * @param other fixture of the other entity colliding
      */
     public void onCollisionStart(Fixture me, Fixture other) {
+        if(linkedToPlate) return;
         if (!disappeared && !triggered && PhysicsLayer.contains(PhysicsLayer.PLAYER, other.getFilterData().categoryBits)) {
             triggered = true;
             triggerTime = timeSource.getTime();
