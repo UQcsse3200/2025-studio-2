@@ -215,6 +215,7 @@ public class LevelOneGameArea extends GameArea {
     private boolean isUpperLadderExtended = false;
     private boolean isUpperLadderSpawning = false;
     private final List<Entity> upperLadderBottomSegments = new ArrayList<>();
+    Timer.Task upperLadderTask;
     // Lower Ladder dimensions
     private final int lowerLadderX = 52;
     private final int lowerLadderY = 4;
@@ -223,10 +224,13 @@ public class LevelOneGameArea extends GameArea {
     private boolean isLowerLadderExtended = false;
     private boolean isLowerLadderSpawning = false;
     private final List<Entity> lowerLadderBottomSegments = new ArrayList<>();
+    Timer.Task lowerLadderTask;
 
     private void spawnLadders() {
         // Upper ladder
+        upperLadderBottomSegments.clear();
         isUpperLadderExtended = false;
+        isUpperLadderSpawning = false;
         for(int i = upperLadderOffset; i < upperLadderHeight; i++) {
             GridPoint2 ladderPos = new GridPoint2(upperLadderX, (upperLadderY + i));
             Entity ladder = LadderFactory.createStaticLadder();
@@ -235,7 +239,9 @@ public class LevelOneGameArea extends GameArea {
 
         }
         // Lower ladder
+        lowerLadderBottomSegments.clear();
         isLowerLadderExtended = false;
+        isLowerLadderSpawning = false;
         for(int i = lowerLadderOffset; i < lowerLadderHeight; i++) {
             GridPoint2 ladderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + i));
             Entity ladder = LadderFactory.createStaticLadder();
@@ -260,7 +266,7 @@ public class LevelOneGameArea extends GameArea {
                 isUpperLadderExtended = true;
                 isUpperLadderSpawning = true;
 
-                Timer.schedule(new Timer.Task() {
+                upperLadderTask = new Timer.Task() {
                     int rung = upperLadderOffset - 1;
 
                     @Override
@@ -277,13 +283,18 @@ public class LevelOneGameArea extends GameArea {
                         upperLadderBottomSegments.add(upperLadderRung);
                         rung--;
                     }
-                    // Initial delay, and delay between rungs (avoid partially spawned rungs)
-                }, 0.05f, 0.05f);
+                };
+                // Initial delay, and delay between rungs (avoid partially spawned rungs)
+                Timer.schedule(upperLadderTask, 0.05f, 0.05f);
             }
         });
 
         upperLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
-            if (isUpperLadderExtended && !isUpperLadderSpawning) {
+            if (isUpperLadderSpawning && upperLadderTask != null) {
+                upperLadderTask.cancel();
+                isUpperLadderSpawning = false;
+            }
+            if (isUpperLadderExtended && !isUpperLadderSpawning && !isResetting) {
                 isUpperLadderExtended = false;
 
                 Gdx.app.postRunnable(() -> {
@@ -315,7 +326,7 @@ public class LevelOneGameArea extends GameArea {
                 isLowerLadderExtended = true;
                 isLowerLadderSpawning = true;
 
-                Timer.schedule(new Timer.Task() {
+                lowerLadderTask = new Timer.Task() {
                     int rung = lowerLadderOffset - 1;
 
                     @Override
@@ -332,13 +343,18 @@ public class LevelOneGameArea extends GameArea {
                         lowerLadderBottomSegments.add(lowerLadderRung);
                         rung--;
                     }
-                    // Initial delay, and delay between rungs (avoid partially spawned rungs)
-                }, 0.05f, 0.05f);
+                };
+                // Initial delay, and delay between rungs (avoid partially spawned rungs)
+                Timer.schedule(lowerLadderTask, 0.05f, 0.05f);
             }
         });
 
         lowerLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
-            if (isLowerLadderExtended && !isLowerLadderSpawning) {
+            if (isLowerLadderSpawning && lowerLadderTask != null) {
+                lowerLadderTask.cancel();
+                isLowerLadderSpawning = false;
+            }
+            if (isLowerLadderExtended && !isLowerLadderSpawning && !isResetting) {
                 isLowerLadderExtended = false;
 
                 // Delays disposal of bottom ladder rungs until next frame to avoid physics engine lock
