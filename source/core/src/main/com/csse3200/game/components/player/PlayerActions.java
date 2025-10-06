@@ -32,7 +32,7 @@ import java.awt.*;
  */
 public class PlayerActions extends Component {
   private static final float MAX_ACCELERATION = 70f;
-  private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
+  private static Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
   private static final float   SPRINT_MULT = 2.3f;
@@ -460,6 +460,10 @@ public class PlayerActions extends Component {
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  public void setWalkSpeed(int x, int y) {
+      WALK_SPEED = new Vector2((float)x, (float)y);
   }
 
   private void gravityOff() {
