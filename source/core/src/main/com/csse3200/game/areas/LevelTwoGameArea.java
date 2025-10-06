@@ -1,5 +1,7 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -97,7 +99,7 @@ public class LevelTwoGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
-
+    private int spacePressCount = 0;
     public LevelTwoGameArea(TerrainFactory terrainFactory) {
         super();
         this.terrainFactory = terrainFactory;
@@ -196,6 +198,15 @@ public class LevelTwoGameArea extends GameArea {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
+        ServiceLocator.getRenderService().getStage().addActor(new com.badlogic.gdx.scenes.scene2d.Actor() {
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
+                    spawnLasers();
+                }
+            }
+        });
         return newPlayer;
     }
 
@@ -530,10 +541,8 @@ public class LevelTwoGameArea extends GameArea {
             spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
         });
     }
-    private void spawnLasers() {
-        GridPoint2 mapSize = terrain.getMapBounds(0);
-        float titleSize = terrain.getTileSize();
-        final float Y = mapSize.y*titleSize;
+    public void spawnLasers() {
+        final float Y = player.getPosition().y + 10f;
         final float X = player.getPosition().x;
 
         int laserInFront = 4 /2;
@@ -541,8 +550,9 @@ public class LevelTwoGameArea extends GameArea {
 
         for (int i = 0; i <= laserInBack; i++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X - ((i+1)* (float) 7.5);
+            float x = X - ((i+1)* (float) 5.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
                 @Override
@@ -554,8 +564,9 @@ public class LevelTwoGameArea extends GameArea {
 
         for (int j = 0; j <= laserInFront; j++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X + ((j+1)* (float) 7.5);
+            float x = X + ((j+1)* (float) 5.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
                 @Override
@@ -563,6 +574,18 @@ public class LevelTwoGameArea extends GameArea {
                     laser.dispose();
                 }
             },5f);
+        }
+        Entity detector = LaserDetectorFactory.createLaserDetector(0f);
+        spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
+    }
+    public void update(float delta) {
+        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            spacePressCount++;
+        }
+        int SPACE_THRESHOLD = 15;
+        if (spacePressCount == SPACE_THRESHOLD) {
+            spawnLasers();
+            spacePressCount = 0;
         }
     }
 

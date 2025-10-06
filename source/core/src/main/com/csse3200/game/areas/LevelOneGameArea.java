@@ -130,7 +130,6 @@ public class LevelOneGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
-    private float laserCooldown = 0f;
     private int spacePressCount = 0; // counts space bar presses
 
     public LevelOneGameArea(TerrainFactory terrainFactory) {
