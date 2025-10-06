@@ -8,14 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.obstacles.MovingTrapComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -23,9 +20,6 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.ColliderComponent;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -566,8 +560,14 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnSignposts(){
-        Entity  downSign = SignpostFactory.createSignpost("right");
-        spawnEntityAt(downSign, new GridPoint2(5,4), true, false);
+        Entity rightSign = SignpostFactory.createSignpost("right");
+        spawnEntityAt(rightSign, new GridPoint2(8,4), true, false);
+
+        Entity upSign = SignpostFactory.createSignpost("up");
+        spawnEntityAt(upSign, new GridPoint2(55,4), true, false);
+
+        Entity leftSign = SignpostFactory.createSignpost("left");
+        spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
