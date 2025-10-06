@@ -177,7 +177,6 @@ class LaserEmitterComponentTest {
         LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
         laser.fireLaser();
         List<Vector2> points = laser.getPositions();
-
         assertEquals(3, points.size());
         // start
         assertEquals(start.x, points.get(0).x, 1e-4);

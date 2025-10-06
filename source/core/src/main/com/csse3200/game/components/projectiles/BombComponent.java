@@ -1,5 +1,6 @@
 package com.csse3200.game.components.projectiles;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
@@ -184,10 +185,12 @@ public class BombComponent extends Component {
     }
 
     private void createExplosionEffect() {
-        Entity explosion = ExplosionFactory.createExplosion(entity.getCenterPosition(), this.explosionRadius);
-        ServiceLocator.getEntityService().register(explosion);
-
-        logger.debug("Created explosion effect entity at {}", entity.getCenterPosition());
+        // Defer entity registration to the next frame to avoid nested iteration
+        Gdx.app.postRunnable(() -> {
+            Entity explosion = ExplosionFactory.createExplosion(entity.getCenterPosition(), this.explosionRadius);
+            ServiceLocator.getEntityService().register(explosion);
+            logger.debug("Created explosion effect entity at {}", entity.getCenterPosition());
+        });
     }
 
     public boolean hasExploded() {

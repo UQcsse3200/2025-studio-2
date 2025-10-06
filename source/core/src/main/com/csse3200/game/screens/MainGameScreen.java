@@ -209,6 +209,8 @@ public class MainGameScreen extends ScreenAdapter {
           if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
               if (gameArea instanceof LevelOneGameArea levelOneArea) {
                   levelOneArea.update(delta);
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
+                  levelTwoArea.update(delta);
               }
           }
       }
