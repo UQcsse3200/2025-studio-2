@@ -648,17 +648,17 @@ public class LevelOneGameArea extends GameArea {
 
 
     public void spawnUpgrade(String upgradeID, int posx, int posy) {
-        if (upgradeID == "dash") {
-            Entity upgrade = CollectableFactory.createDashUpgrade();
-            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
-            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-        }
-
-        if (upgradeID == "glider") {
-            Entity upgrade = CollectableFactory.createGlideUpgrade();
-            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
-            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-        }
+//        if (upgradeID == "dash") {
+//            Entity upgrade = CollectableFactory.createDashUpgrade();
+//            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+//        }
+//
+//        if (upgradeID == "glider") {
+//            Entity upgrade = CollectableFactory.createGlideUpgrade();
+//            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+//        }
 //        if (upgradeID == "jetpack") {
 //            Entity upgrade = CollectableFactory.createJetpackUpgrade();
 //            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
