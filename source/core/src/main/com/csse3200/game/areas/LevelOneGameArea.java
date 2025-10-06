@@ -271,7 +271,7 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     private void spawnUpperLadderPressurePlate() {
-        int x = 63;
+        int x = 65;
         int y = 36;
         GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
         Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
@@ -578,9 +578,9 @@ public class LevelOneGameArea extends GameArea {
 
 //        RIGHT PATH
         //GridPoint2 step8Pos = new GridPoint2(58,18);
-       // Entity step8 = PlatformFactory.createStaticPlatform();
-       // step8.setScale(2f,0.5f);
-       // spawnEntityAt(step8, step8Pos,false, false);
+        // Entity step8 = PlatformFactory.createStaticPlatform();
+        // step8.setScale(2f,0.5f);
+        // spawnEntityAt(step8, step8Pos,false, false);
 
         // MOVING PLATFORM WITH BUTTONS
         GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
@@ -647,7 +647,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step9Pos = new GridPoint2(57,35);
         Entity step9 = PlatformFactory.createStaticPlatform();
-        step9.setScale(4f,0.5f);
+        step9.setScale(5f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
 
@@ -859,7 +859,7 @@ public class LevelOneGameArea extends GameArea {
         });
     }
 
-//    public void spawnPlayerUpgrades() {
+    //    public void spawnPlayerUpgrades() {
 //        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
 //        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
 //    }
