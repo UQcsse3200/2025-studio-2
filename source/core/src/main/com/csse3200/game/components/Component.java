@@ -13,6 +13,7 @@ public class Component {
   private static final Logger logger = LoggerFactory.getLogger(Component.class);
   protected Entity entity;
   protected boolean enabled = true;
+  protected ComponentPriority prio = ComponentPriority.LOW;
 
   /**
    * Called when the entity is created and registered. Initial logic such as calls to GetComponent
@@ -60,6 +61,14 @@ public class Component {
    */
   public Entity getEntity() {
     return entity;
+  }
+
+    /**
+     * Get the priority of which the component should be made
+     * @return ComponentPriority
+     */
+  public ComponentPriority getPrio() {
+      return prio;
   }
 
   /**
