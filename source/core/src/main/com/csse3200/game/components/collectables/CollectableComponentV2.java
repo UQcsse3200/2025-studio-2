@@ -1,17 +1,19 @@
 package com.csse3200.game.components.collectables;
 
-import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
-import com.csse3200.game.rendering.Renderable;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract component for collectable items in the game world.
@@ -19,10 +21,14 @@ import com.csse3200.game.services.ServiceLocator;
  * when picked up. Subclasses define what happens on collection
  * (e.g., adding to inventory, increasing score).
  */
-
 public class CollectableComponentV2 extends Component {
     private final String itemId;
     private boolean collected = false;
+
+    ConeLightComponent cone;
+    ColliderComponent collider;
+
+    private static final Logger logger = LoggerFactory.getLogger(CollectableComponentV2.class);
 
     public CollectableComponentV2(String itemId) {
         this.itemId = itemId;
@@ -34,6 +40,8 @@ public class CollectableComponentV2 extends Component {
     @Override
     public void create() {
         entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
+        cone = entity.getComponent(ConeLightComponent.class);
+        collider = entity.getComponent(ColliderComponent.class);
     }
 
     /**
@@ -83,9 +91,49 @@ public class CollectableComponentV2 extends Component {
 
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
-            inventory.addItem(itemId);
+            inventory.addItem(InventoryComponent.Bag.INVENTORY, itemId);
             return true;
         }
         return false;
     }
+
+    /**
+     * Toggles the visibility state of this entity and updates its components accordingly.
+     * <p>
+     * When hidden:
+     * <ul>
+     *   <li>Animations are disabled.</li>
+     *   <li>The texture is unregistered from the render service.</li>
+     *   <li>Lights (cone) are deactivated.</li>
+     *   <li>Collider layer is set to {@code PhysicsLayer.NONE}.</li>
+     * </ul>
+     * When visible:
+     * <ul>
+     *   <li>Animations are enabled.</li>
+     *   <li>The texture is registered with the render service.</li>
+     *   <li>Lights (cone) are activated.</li>
+     *   <li>Collider layer is set to {@code PhysicsLayer.COLLECTABLE}.</li>
+     * </ul>
+     */
+    public void setVisible(boolean visible ) {
+        AnimationRenderComponent animation = entity.getComponent(AnimationRenderComponent.class);
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+
+        if (animation != null) animation.setEnabled(visible);
+
+        if (texture != null) {
+            texture.setEnabled(visible);
+            texture.
+        }
+
+        if (cone != null) {
+            cone.setActive(visible);
+        }
+
+        if (collider != null) {
+            collider.setLayer(visible ? PhysicsLayer.COLLECTABLE : PhysicsLayer.NONE);
+            collider.setSensor(visible);
+        }
+    }
+
 }
