@@ -68,7 +68,7 @@ class LaserEmitterComponentTest {
         LaserEmitterComponent laser = makeLaserAt(startPos, 0f, engine);
 
         // run calculations
-        laser.update();
+        laser.fireLaser();
         List<Vector2> points = laser.getPositions();
 
         // first point is start pos + center offset (0.5, 0.5)
@@ -97,7 +97,7 @@ class LaserEmitterComponentTest {
 
         LaserEmitterComponent laser = makeLaserAt(startPos, 0f, engine);
 
-        laser.update();
+        laser.fireLaser();
         List<Vector2> points = laser.getPositions();
 
         assertEquals(2, points.size());
@@ -114,7 +114,7 @@ class LaserEmitterComponentTest {
         Vector2 startPos =  new Vector2(15f, 5f);
         LaserEmitterComponent laser = makeLaserAt(startPos, 90f, engine);
 
-        laser.update();
+        laser.fireLaser();
         List<Vector2> points = laser.getPositions();
 
         Vector2 start = startPos.cpy().add(0.5f, 0.5f);
@@ -142,7 +142,7 @@ class LaserEmitterComponentTest {
         ));
 
         LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
-        laser.update();
+        laser.fireLaser();
         List<Vector2> points = laser.getPositions();
 
         assertEquals(3, points.size());
@@ -175,7 +175,7 @@ class LaserEmitterComponentTest {
         ));
 
         LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
-        laser.update();
+        laser.fireLaser();
         List<Vector2> points = laser.getPositions();
 
         assertEquals(3, points.size());
@@ -224,7 +224,7 @@ class LaserEmitterComponentTest {
         ));
 
         LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
-        laser.update();
+        laser.fireLaser();
 
         List<Vector2> points = laser.getPositions();
         assertEquals(4, points.size());
