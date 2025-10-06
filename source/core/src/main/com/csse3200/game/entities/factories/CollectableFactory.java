@@ -127,7 +127,7 @@ public class CollectableFactory {
                 .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
                 .addComponent(new UpgradesComponent("dash"));
 
-        dash.setScale(0.5f, 0.5f);
+        dash.setScale(0.8f, 0.5f);
         PhysicsUtils.setScaledCollider(dash, 0.5f, 0.5f);
 
         return dash;
