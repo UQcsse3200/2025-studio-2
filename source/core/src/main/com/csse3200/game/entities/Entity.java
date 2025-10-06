@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntMap;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.ComponentPriority;
 import com.csse3200.game.components.ComponentType;
 import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.services.ServiceLocator;
@@ -261,8 +262,14 @@ public class Entity {
       return;
     }
     createdComponents = components.values().toArray();
+    // null friendly comparator so testing doesn't blow up
     createdComponents.sort(
-            Comparator.comparingInt(c -> c.getPrio().getValue())
+            Comparator.nullsLast(
+                    Comparator.comparingInt(c -> {
+                        var p = (c != null) ? c.getPrio() : null;
+                        return (p != null) ? p.getValue() : ComponentPriority.LOW.getValue();
+                    })
+            )
     );
     for (Component component : createdComponents) {
       component.create();
