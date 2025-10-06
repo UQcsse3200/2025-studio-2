@@ -389,4 +389,42 @@ public class InventoryComponent extends Component {
     }
   }
 
+    /**
+     * Turns the contents of the bags of the inventory into a readable string - used
+     * for shell commands.
+     * @return String - The constructed string of bag contents
+     */
+  public String printItems() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("=== Player Inventory + Upgrades + Objectives ===\n");
+
+      appendContents(sb, "Inventory", inventory);
+      appendContents(sb, "Upgrades", upgrades);
+      appendContents(sb, "Objectives", objectives);
+
+      sb.append("================================================\n");
+      return sb.toString();
+  }
+
+
+    /**
+     * Appends the contents of an inventory bag into a StringBuilder for
+     * the function printItems().
+     * @param sb - the string builder to append to
+     * @param title - title of the bag
+     * @param bag - bag of collectables to be appended to sb
+     */
+  private void appendContents(StringBuilder sb, String title, Map<String, Integer> bag) {
+      sb.append(title).append(":\n");
+      if (bag.isEmpty()) {
+          sb.append("  (empty)\n");
+      } else {
+          for (Map.Entry<String, Integer> entry : bag.entrySet()) {
+              sb.append("  - ").append(entry.getKey())
+                      .append(" x").append(entry.getValue())
+                      .append("\n");
+          }
+      }
+  }
+
 }
