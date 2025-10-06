@@ -452,5 +452,21 @@ public class Initializer {
                   print("Keyboard component unable to be reached!\n");
               });
           });
+          
+          setGlobal("teleport", (x, y) {
+              player = getPlayer();
+              physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+              body = physics.getBody();
+              vector = .com.badlogic.gdx.math.Vector2(x, y);
+              body.setTransform(vector, body.getAngle());
+              print("Player teleported to: (", x, ",", y, ")\n");
+          });
+          
+          setGlobal("setSpeed", (x, y) {
+              player = getPlayer();
+              playerActions = player.getComponent(.com.csse3200.game.components.player.PlayerActions);
+              playerActions.setWalkSpeed(x, y);
+              print("Horizontal walk speed set to ", x, " and vertical walk speed set to ", y, "\n");
+          });
           """;
 }
