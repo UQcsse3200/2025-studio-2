@@ -202,9 +202,11 @@ public class EnemyFactory {
         // Placeholder visuals: Reuse drone atlas so we can render something in the game area
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(ServiceLocator.getResourceService()
-                        .getAsset("images/drone.atlas", TextureAtlas.class));
-        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
+                        .getAsset("images/boss.atlas", TextureAtlas.class));
+        animator.addAnimation("bossChase", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bossGenerateDrone", 1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossTouchKill", 2f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossShootLaser", 2f, Animation.PlayMode.NORMAL);
         boss.addComponent(animator);
 
         // Temporary scaling up to differentiate boss from other drones (change w/ new assets)
@@ -212,7 +214,7 @@ public class EnemyFactory {
         Vector2 size = boss.getScale();
         boss.setScale(size.x * 3f, size.y * 3f);
 
-        animator.startAnimation("float");
+        animator.startAnimation("bossChase");
 
         // Physics (kinematic body). Position will be anchored to camera
         PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);

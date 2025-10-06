@@ -63,6 +63,7 @@ public class BossLevelGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
+            "images/boss.png",
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
@@ -99,6 +100,7 @@ public class BossLevelGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
+            "images/boss.atlas",
             "images/volatile_platform.atlas",
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
@@ -150,7 +152,7 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnBoss() {
-        GridPoint2 spawnPos = new GridPoint2(35, 6);
+        GridPoint2 spawnPos = new GridPoint2(35, 9);
         Entity boss = EnemyFactory.createBossEnemy(
                 player,
                 terrain.tileToWorldPosition(spawnPos)
