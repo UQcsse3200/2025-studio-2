@@ -38,7 +38,7 @@ bidle
   size: 83, 28
   orig: 96, 96
   offset: 7, 30
-  index: -1
+  index: 0
 bidle
   rotate: false
   xy: 409, 153
@@ -157,7 +157,7 @@ bscan
   size: 83, 27
   orig: 96, 96
   offset: 7, 31
-  index: -1
+  index: 0
 bscan
   rotate: false
   xy: 834, 154
@@ -252,42 +252,42 @@ death
 drop
   rotate: false
   xy: 1174, 156
-  size: 83, 25
+  size: 83, 27
   orig: 96, 96
   offset: 7, 33
   index: 4
 drop
   rotate: false
   xy: 1259, 156
-  size: 83, 25
+  size: 83, 27
   orig: 96, 96
   offset: 7, 33
   index: 5
 drop
   rotate: false
   xy: 1344, 157
-  size: 83, 24
+  size: 83, 27
   orig: 96, 96
   offset: 7, 34
   index: 3
 drop
   rotate: false
   xy: 1429, 163
-  size: 83, 21
+  size: 83, 27
   orig: 96, 96
   offset: 7, 37
   index: 0
 drop
   rotate: false
   xy: 1514, 169
-  size: 83, 21
+  size: 83, 27
   orig: 96, 96
   offset: 7, 37
   index: 1
 drop
   rotate: false
   xy: 1599, 175
-  size: 83, 21
+  size: 83, 27
   orig: 96, 96
   offset: 7, 37
   index: 2

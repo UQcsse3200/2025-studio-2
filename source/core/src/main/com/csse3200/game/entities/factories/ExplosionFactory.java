@@ -8,38 +8,27 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
-/**
- * Factory to create explosion entities.
- */
 public class ExplosionFactory {
 
-    /**
-     * Creates an explosion entity. The entity will play its animation and then dispose of itself.
-     * @param position The position where the explosion should occur.
-     * @param radius The radius of the explosion, used to calculate the visual size of the animation.
-     * @return A new explosion entity.
-     */
     public static Entity createExplosion(Vector2 position, float radius) {
-        // Get the drone picture album because the explosion animation is inside
-        TextureAtlas droneAtlas = ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class);
+        TextureAtlas droneAtlas = ServiceLocator.getResourceService()
+                .getAsset("images/drone.atlas", TextureAtlas.class);
 
         if (droneAtlas == null) {
             throw new RuntimeException("drone.atlas not loaded");
         }
 
         AnimationRenderComponent animator = new AnimationRenderComponent(droneAtlas);
-        // Add bomb_effect animation, set to Animation.PlayMode.NORMAL to make sure it plays only once
+        // All explosions use the same animation name from the atlas
         animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
 
         Entity explosion = new Entity()
                 .addComponent(animator)
-                .addComponent(new ExplosionAnimationController()); // This controller will destroy the entity after the animation is over
+                .addComponent(new ExplosionAnimationController());
 
-        float visualScale = radius * 0.5f; // Adjust this coefficient to match the actual explosion range
+        float visualScale = radius * 0.5f;
         explosion.setScale(visualScale, visualScale);
 
-        // The 'position' argument is the desired CENTER of the explosion.
-        // We need to calculate the correct bottom-left position.
         Vector2 bottomLeftPos = getExplosionPosition(position, visualScale);
         explosion.setPosition(bottomLeftPos);
 
@@ -47,9 +36,7 @@ public class ExplosionFactory {
     }
 
     public static Vector2 getExplosionPosition(Vector2 position, float visualScale) {
-        Vector2 centerPos = position;
         float halfSize = visualScale / 2f;
-        Vector2 bottomLeftPos = new Vector2(centerPos.x - halfSize, centerPos.y - halfSize);
-        return bottomLeftPos;
+        return new Vector2(position.x - halfSize, position.y - halfSize);
     }
 }

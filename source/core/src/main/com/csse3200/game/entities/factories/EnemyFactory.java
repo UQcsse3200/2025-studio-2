@@ -7,10 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
-import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.SelfDestructComponent;
-import com.csse3200.game.components.DeathOnTrapComponent;
-import com.csse3200.game.components.DisposalComponent;
+import com.csse3200.game.components.*;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -23,7 +20,6 @@ import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
-import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -227,6 +223,53 @@ public class EnemyFactory {
         // Add patrol task with lowest priority
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent.addTask(new BombPatrolTask(1f)); // Priority 1 - default behavior
+
+        return drone;
+    }
+
+    /**
+     * Create an automatic bomber drone that continuously drops bombs while patrolling.
+     * The bomber stays in drop animation and drops bombs every second while moving.
+     * The bomb drop task briefly takes priority every second to drop a bomb, then
+     * immediately yields back to patrol.
+     * @param target reference entity (usually player) for bomb direction
+     * @param patrolRoute array of waypoints defining the patrol route
+     * @param bomberId unique ID for this bomber
+     * @return an automatic bombing patrol drone entity
+     */
+    public static Entity createAutoBomberDrone(Entity target, Vector2[] patrolRoute, String bomberId) {
+        BaseEntityConfig config = configs.drone;
+        Entity drone = createBaseEnemy();
+
+        // Set spawn position to first patrol point and add patrol route
+        if (patrolRoute != null && patrolRoute.length > 0) {
+            drone.addComponent(new SpawnPositionComponent(patrolRoute[0]));
+            drone.addComponent(new PatrolRouteComponent(patrolRoute));
+        }
+
+        AnimationRenderComponent animator =
+                new AnimationRenderComponent(
+                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+        // Only add the drop animation
+        animator.addAnimation("drop", 0.2f, Animation.PlayMode.LOOP);
+
+        drone
+                .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+                .addComponent(animator)
+                // DO NOT add DroneAnimationController - it will override the animation
+                .addComponent(new AutoBombDropComponent(target, 1f)); // Add bomb dropping component
+
+        // AI setup with just patrol
+        AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
+        BombPatrolTask patrolTask = new BombPatrolTask(1f);
+        aiComponent.addTask(patrolTask);
+
+        // Start and keep the drop animation
+        AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
+        arc.scaleEntity();
+        arc.startAnimation("drop"); // Start in drop animation
+
+        PhysicsUtils.setScaledCollider(drone, 1f, 0.8f);
 
         return drone;
     }

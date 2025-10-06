@@ -131,9 +131,9 @@ public class LevelOneGameArea extends GameArea {
         spawnWalls();
         spawnDoor();
         //spawnPatrollingDrone();
-        //spawnBomberDrone();
-        spawnSelfDestructDrone();
-        //spawnPatrollingDrone();
+        spawnBomberDrone();
+        //spawnSelfDestructDrone();
+        //spawnAutoBomberDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);
@@ -227,7 +227,6 @@ public class LevelOneGameArea extends GameArea {
         Entity puzzleGround = FloorFactory.createStaticFloor();
         puzzleGround.setScale(16f,2f);
         spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
-
 
     }
 
@@ -438,6 +437,25 @@ public class LevelOneGameArea extends GameArea {
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
+
+    private void spawnAutoBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(15, 15);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(45, 15))
+        };
+
+        // Create the auto bomber
+        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
+                player,           // target reference
+                patrolRoute,      // patrol waypoints
+                "auto_bomber_1"   // unique ID
+        );
+
+
+        spawnEntityAt(autoBomber, spawnTile, true, true);
+    }
+
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level one Game Area"));
