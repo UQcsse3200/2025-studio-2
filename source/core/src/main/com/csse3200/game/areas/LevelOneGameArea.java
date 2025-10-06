@@ -15,6 +15,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.PressurePlateComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.obstacles.MovingTrapComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -142,6 +143,7 @@ public class LevelOneGameArea extends GameArea {
         keySpawned = false;
         spawnLadders();
         spawnSignposts();
+        //spawnMovingTraps();
         spawnLowerLadderPressurePlate();
         spawnUpperLadderPressurePlate();
         spawnBoxOnlyPlate();
@@ -546,6 +548,27 @@ public class LevelOneGameArea extends GameArea {
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
+    }
+
+    private void spawnMovingTraps(){
+        Vector2 offsetWorld = new Vector2(1f, 0f);
+        float platformSpeed = 2f;
+        GridPoint2 platformGridPos = new GridPoint2(20, 8);
+
+        Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, platformSpeed);
+        movingPlatform.setScale(2f, 0.5f);
+        spawnEntityAt(movingPlatform, platformGridPos, false, false);
+
+        Vector2 safeSpotStart = new Vector2(2, 3);
+        Entity spikesTrap = TrapFactory.createSpikes(safeSpotStart, 90f);
+
+        GridPoint2 trapGridPos = new GridPoint2(platformGridPos.x, platformGridPos.y + 1);
+        spawnEntityAt(spikesTrap, trapGridPos, true, true);
+
+        spikesTrap.addComponent(new MovingTrapComponent());
+
+        spikesTrap.create();
+
     }
 
     private void spawnSignposts(){

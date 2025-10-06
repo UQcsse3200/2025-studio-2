@@ -1,4 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
-public class MovingTrapComponent {
+import com.csse3200.game.components.Component;
+
+public class MovingTrapComponent extends Component {
 }
