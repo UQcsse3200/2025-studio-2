@@ -10,6 +10,8 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
+
 /**
  * Core entity class. Entities exist in the game and are updated each frame. All entities have a
  * position and scale, but have no default behaviour. Components should be added to an entity to
@@ -259,6 +261,9 @@ public class Entity {
       return;
     }
     createdComponents = components.values().toArray();
+    createdComponents.sort(
+            Comparator.comparingInt(c -> c.getPrio().getValue())
+    );
     for (Component component : createdComponents) {
       component.create();
     }
