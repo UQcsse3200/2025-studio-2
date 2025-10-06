@@ -91,7 +91,7 @@ public class BoxPressurePlateComponent extends Component {
         float otherX = physics == null ? plateX : physics.getBody().getWorldCenter().x;
         float deltaX = Math.abs(otherX - plateX);
 
-        return otherY > plateY + 0.3f && deltaX < 0.6;
+        return otherY > plateY + 0.3f && deltaX < 0.75;
     }
 
     /**

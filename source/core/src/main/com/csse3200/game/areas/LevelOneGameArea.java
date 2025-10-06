@@ -93,7 +93,7 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
             "images/terminal_on.png",
-            "images/terminal_off.png"
+            "images/terminal_off.png",
             "images/plate.png",
             "images/plate-pressed.png",
             "images/mirror-cube-off.png",
