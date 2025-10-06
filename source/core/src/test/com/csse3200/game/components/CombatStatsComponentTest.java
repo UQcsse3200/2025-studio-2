@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,5 +52,19 @@ class CombatStatsComponentTest {
 
     combat.setBaseAttack(-50);
     assertEquals(150, combat.getBaseAttack());
+  }
+
+  @Test
+  void shouldSetLastAttackerOnHit() {
+    CombatStatsComponent targetStats = new CombatStatsComponent(100, 0);
+    final Entity target = new Entity().addComponent(targetStats);
+    target.create();
+
+    CombatStatsComponent attackerStats = new CombatStatsComponent(100, 10);
+    Entity attacker = new Entity().addComponent(attackerStats);
+    attacker.create();
+
+    targetStats.hit(attackerStats);
+    assertEquals(attacker, targetStats.getLastAttacker());
   }
 }

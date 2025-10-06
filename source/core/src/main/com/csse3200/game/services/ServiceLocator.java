@@ -30,6 +30,7 @@ public class ServiceLocator {
   private static MinimapService minimapService;
   private static SecurityCamRetrievalService securityCamRetrievalService;
   private static VfxManager vfxService;
+  private static CodexService codexService;
 
   public static LightingService getLightingService() {
     return lightingService;
@@ -70,6 +71,8 @@ public class ServiceLocator {
   public static MinimapService getMinimapService() {
     return minimapService;
   }
+
+  public static CodexService getCodexService() { return codexService; }
 
   public static void registerLightingService(LightingService service) {
     logger.debug("Registering lighting service {}", service);
@@ -121,6 +124,11 @@ public class ServiceLocator {
     vfxService = service;
   }
 
+  public static void registerCodexService(CodexService source) {
+    logger.debug("Registering codex service {}", source);
+    codexService = source;
+  }
+
   public static void clear() {
     entityService = null;
     renderService = null;
@@ -132,6 +140,7 @@ public class ServiceLocator {
     minimapService = null;
     securityCamRetrievalService = null;
     vfxService = null;
+    codexService = null;
   }
 
   private ServiceLocator() {

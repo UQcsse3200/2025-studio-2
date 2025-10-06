@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -26,6 +25,7 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +90,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
+            "images/terminal_on.png",
+            "images/terminal_off.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -139,6 +141,20 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
+        spawnTerminals();
+    }
+
+    private void spawnTerminals() {
+        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
+        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
+        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test3"));
+        Entity terminal4 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test4"));
+        Entity terminal5 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test5"));
+        spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
+        spawnEntityAt(terminal2, new GridPoint2(6, 4), true, true);
+        spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
+        spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
+        spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
     }
 
     private void spawnDeathZone() {
