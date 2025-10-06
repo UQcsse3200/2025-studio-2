@@ -14,6 +14,9 @@ import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Statistics Page UI Class
+ */
 public class StatisticsDisplay extends UIComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(StatisticsDisplay.class);
@@ -24,6 +27,9 @@ public class StatisticsDisplay extends UIComponent {
     private Table topTable;
 
 
+    /**
+     * Constructor
+     */
     public StatisticsDisplay(GdxGame game) {
         super();
         this.game = game;
@@ -35,6 +41,9 @@ public class StatisticsDisplay extends UIComponent {
         addActors();
     }
 
+    /**
+     * Add UI parts in
+     */
     private void addActors() {
         Image background =
                 new Image(

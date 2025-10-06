@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * when one of the events is triggered.
  */
 public class StatisticsActions extends Component {
-    private static final Logger logger = LoggerFactory.getLogger(StatisticsActions.class);
     private GdxGame game;
 
     public StatisticsActions(GdxGame game) {
