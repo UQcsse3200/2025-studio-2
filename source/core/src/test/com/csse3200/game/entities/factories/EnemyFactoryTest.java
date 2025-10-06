@@ -60,6 +60,7 @@ public class EnemyFactoryTest {
         rs = new ResourceService();
         ServiceLocator.registerResourceService(rs);
         rs.loadTextureAtlases(new String[]{"images/drone.atlas"});
+        rs.loadTextureAtlases(new String[]{"images/boss.atlas"});
         rs.loadAll();
 
         // Mock time source needed for AI tasks
@@ -71,6 +72,7 @@ public class EnemyFactoryTest {
     @AfterEach
     void cleanUp() {
         rs.unloadAssets(new String[]{"images/drone.atlas"});
+        rs.unloadAssets(new String[]{"images/boss.atlas"});
         rs.dispose();
         ServiceLocator.clear();
     }
@@ -390,7 +392,7 @@ public class EnemyFactoryTest {
 
     @Test
     void boss_hasCoreComponents() {
-        Entity boss = EnemyFactory.createBossEnemy(null, null);
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
         assertNotNull(boss.getComponent(PhysicsComponent.class),
                 "Boss should have a physics component");
         assertNotNull(boss.getComponent(ColliderComponent.class),
@@ -413,7 +415,7 @@ public class EnemyFactoryTest {
 
     @Test
     void boss_hasCorrectPhysicsBody() {
-        Entity boss = EnemyFactory.createBossEnemy(null, null);
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
         boss.create();
 
         PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
