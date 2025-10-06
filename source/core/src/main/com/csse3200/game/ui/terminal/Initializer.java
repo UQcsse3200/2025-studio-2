@@ -468,5 +468,19 @@ public class Initializer {
               playerActions.setWalkSpeed(x, y);
               print("Horizontal walk speed set to ", x, " and vertical walk speed set to ", y, "\n");
           });
+          
+          setGlobal("printInventory", () {
+              player = getPlayer();
+              inv = player.getComponent(.com.csse3200.game.components.player.InventoryComponent);
+              print(inv.printItems());
+          });
+          
+          setGlobal("setHealth", (amount) {
+              player = getPlayer();
+              cbs = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
+              
+              cbs.setHealth(amount);
+              print("Player health set to ", amount, "!\n");
+          });
           """;
 }
