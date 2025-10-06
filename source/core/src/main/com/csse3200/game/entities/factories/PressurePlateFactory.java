@@ -50,12 +50,16 @@ public class PressurePlateFactory {
         // scale down collider
         float scaleX = plate.getScale().x;
         float scaleY = plate.getScale().y;
-        float unitsPerPx = scaleY / 21f;
-        float down = 3f * unitsPerPx;
-        Vector2 p = plate.getCenterPosition().cpy().sub(0f, down - unitsPerPx);
+        float unitsPerPxY = scaleY / 21f;
+        float down = 3f * unitsPerPxY;
+
+        float unitsPerPxX = scaleX / 64f;
+        float width = 40f * unitsPerPxX;
+
+        Vector2 p = plate.getCenterPosition().cpy().sub(unitsPerPxX, down - unitsPerPxY);
 
         // set new collider size
-        collider.setAsBox(new Vector2(scaleX, scaleY - down), p);
+        collider.setAsBox(new Vector2(width, scaleY - down), p);
 
         collider.setLayer(PhysicsLayer.OBSTACLE);
         collider.setSensor(false);

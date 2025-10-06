@@ -5,6 +5,7 @@ import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 import java.util.ArrayList;
@@ -60,14 +61,14 @@ public class BoxPressurePlateComponent extends Component {
      */
     private boolean isValid(Entity other) {
         if (other.getComponent(PlayerActions.class) != null) {
-            return isAbove(other);
+            return isAbove(other) || pressed;
         }
 
         com.csse3200.game.components.obstacles.MoveableBoxComponent box = other.getComponent(MoveableBoxComponent.class);
         if (box != null) {
             ColliderComponent collider = box.getEntity().getComponent(ColliderComponent.class);
             if (collider != null && collider.getLayer() != PhysicsLayer.LASER_REFLECTOR) {
-                return isAbove(other);
+                return isAbove(other) || pressed;
             }
         }
 
@@ -84,7 +85,13 @@ public class BoxPressurePlateComponent extends Component {
     private boolean isAbove(Entity other) {
         float plateY = entity.getPosition().y;
         float otherY = other.getPosition().y;
-        return otherY > plateY + 0.3f;
+
+        float plateX = entity.getCenterPosition().x;
+        PhysicsComponent physics = other.getComponent(PhysicsComponent.class);
+        float otherX = physics == null ? plateX : physics.getBody().getWorldCenter().x;
+        float deltaX = Math.abs(otherX - plateX);
+
+        return otherY > plateY + 0.3f && deltaX < 0.75;
     }
 
     /**
