@@ -616,11 +616,11 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
     }
     private void spawnSelfDestructDrone() {
-        GridPoint2 spawnTile = new GridPoint2(25, 15); // adjust position as needed
+        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
         Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
                 player,
                 terrain.tileToWorldPosition(spawnTile)
-        ).addComponent(new ActivationComponent("selfDestruct1"));
+        ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }

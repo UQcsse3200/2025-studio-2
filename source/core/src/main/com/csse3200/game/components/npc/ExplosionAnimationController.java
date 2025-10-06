@@ -1,14 +1,11 @@
 package com.csse3200.game.components.npc;
 
+import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * Controls the explosion animation and disposes the entity after the animation is finished.
- */
 public class ExplosionAnimationController extends Component {
     private static final Logger logger = LoggerFactory.getLogger(ExplosionAnimationController.class);
 
@@ -19,14 +16,16 @@ public class ExplosionAnimationController extends Component {
     public void create() {
         super.create();
         animator = entity.getComponent(AnimationRenderComponent.class);
-        if(animator!=null){
-            animator.startAnimation("explode");
+        if (animator != null) {
+            animator.startAnimation("bomb_effect");
+            logger.debug("Started explosion animation for entity {}", entity.getId());
         }
     }
 
     @Override
     public void update() {
         if (cleanedUp || animator == null) return;
+
         if (animator.isFinished()) {
             cleanUp();
         }
@@ -34,7 +33,11 @@ public class ExplosionAnimationController extends Component {
 
     private void cleanUp() {
         cleanedUp = true;
-        if(animator!=null) animator.stopAnimation();
-        entity.dispose();
+        logger.debug("Cleaning up explosion for entity {}", entity.getId());
+        if (animator != null) {
+            animator.stopAnimation();
+        }
+        // Defer disposal to the next frame to avoid nested iteration
+        Gdx.app.postRunnable(() -> entity.dispose());
     }
 }

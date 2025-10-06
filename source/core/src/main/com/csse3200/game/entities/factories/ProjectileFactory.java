@@ -36,13 +36,8 @@ public class ProjectileFactory {
                 .addComponent(new CombatStatsComponent(1, damage))
                 .addComponent(new BombComponent(explosionDelay, explosionRadius, PhysicsLayer.PLAYER));
 
-        // Try to add texture, use a default if bomb.png doesn't exist
-        try {
-            bomb.addComponent(new TextureRenderComponent("images/bomb.png"));
-        } catch (Exception e) {
-            // Use a small box as placeholder for bomb
-            bomb.addComponent(new TextureRenderComponent("images/box_boy_leaf.png"));
-        }
+        TextureRenderComponent bomb_render = new TextureRenderComponent("images/bomb.png");
+        bomb.addComponent(bomb_render);
 
         // Position bomb at spawn position (drone's location)
         bomb.setPosition(spawnPosition);
@@ -68,7 +63,7 @@ public class ProjectileFactory {
                 .setRestitution(0.1f); // Low bounce
 
         // Scale the bomb to be small
-        bomb.setScale(0.3f, 0.3f);
+        bomb.setScale(0.5f, 0.5f);
         PhysicsUtils.setScaledCollider(bomb, 0.3f, 0.3f);
 
         return bomb;

@@ -183,8 +183,8 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
                 bombSpawnPos,
                 target.getPosition().cpy(),
                 2.0f,  // explosion delay
-                2.5f,  // explosion radius
-                50     // damage
+                2f,  // explosion radius
+                25     // damage
         );
 
         ServiceLocator.getEntityService().register(bomb);

@@ -34,7 +34,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     // State tracking
     private boolean targetAcquired = false;
 
-    private static final long CHASE_GRACE_MS = 1500L; // 追击宽限期：1.5秒
+    private static final long CHASE_GRACE_MS = 1500L;
     private long lastSpottedTime = 0L;
     private boolean everSpottedTarget = false;
 
@@ -177,32 +177,32 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         if (detectorComponent.isDetected()) {
             lastSpottedTime = timeSource.getTime();
             everSpottedTarget = true;
-            // 如果已在最佳位置，则让BombDropTask接管（返回-1）
+            // If already in the best position, let BombDropTask take over (return -1)
             if (isAtOptimalPosition()) {
                 return -1;
             }
-            // 否则保持高优先级追击
+            // Otherwise, keep high priority chase
             return priority;
         }
 
-        // --- 如果光锥探测不到目标 ---
+        // --- If the light cone cannot detect the target ---
 
-        // 如果从未发现过目标，则不追击
+        // If you have never found a target, you won't chase it
         if (!everSpottedTarget) {
             return -1;
         }
 
-        // 如果曾经发现过目标，检查宽限期是否结束
+        // If you have ever discovered a goal, check if the grace period is over
         long timeSinceSpotted = timeSource.getTime() - lastSpottedTime;
         if (timeSinceSpotted <= CHASE_GRACE_MS) {
-            // 仍在宽限期内，继续追击
+            // Still in grace period, continue to chase
             if (isAtOptimalPosition()) {
-                return -1; // 即使在宽限期，到达位置也应尝试投弹
+                return -1; // Even during grace period, you should try to drop bullets when you arrive at your location
             }
             return priority;
         }
 
-        // 宽限期结束，停止追击，并重置状态以便下次触发
+        // The grace period ends, stop the pursuit, and reset the status for the next trigger
         everSpottedTarget = false;
         return -1;
     }

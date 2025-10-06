@@ -15,6 +15,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
@@ -26,6 +27,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -159,11 +161,15 @@ public class LevelOneGameArea extends GameArea {
         //spawnPatrollingDrone();
         //spawnBomberDrone();
         //spawnSelfDestructDrone();
-        //spawnPatrollingDrone();
         //spawnBoxOnlyPlate();
         spawnUpgrade("dash", 23, 4);
         // spawnUpgrade("glider", 7, 6);  // won't be used in level one
         // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
+        spawnBomberDrone();
+        //spawnAutoBomberDrone();
+        spawnUpgrade("dash", 9, 6);
+        spawnUpgrade("glider", 7, 6);
+        spawnUpgrade("jetpack", 5, 6);
         spawnSecurityCams();
         spawnButtons();
         spawnTraps();
@@ -591,6 +597,7 @@ public class LevelOneGameArea extends GameArea {
         puzzleGround.setScale(16f,2f);
         spawnEntityAt(puzzleGround, puzzleGroundPos, false, false);
 
+
     }
 
     private void spawnElevatedPlatforms() {
@@ -810,6 +817,24 @@ public class LevelOneGameArea extends GameArea {
         ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
+
+    private void spawnAutoBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(15, 15);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(45, 15))
+        };
+
+        // Create the auto bomber
+        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
+                player,           // target reference
+                patrolRoute,      // patrol waypoints
+                "auto_bomber_1"   // unique ID
+        );
+
+
+        spawnEntityAt(autoBomber, spawnTile, true, true);
     }
 
     private void displayUI() {
