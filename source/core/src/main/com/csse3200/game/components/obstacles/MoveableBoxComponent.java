@@ -104,10 +104,6 @@ public class MoveableBoxComponent extends Component {
             entity.getEvents().addListener("laserHit", this::toggleOn);
             entity.getEvents().addListener("laserOff", this::toggleOn);
         }
-        // set initial box state if mirror box
-        if (boxLight != null) {
-            toggleOn(false);
-        }
     }
 
     /**
@@ -306,6 +302,11 @@ public class MoveableBoxComponent extends Component {
             boxCollider.getFixture().setFilterData(f);
             boxCollider.getFixture().getBody().setAwake(true);
             appliedFilter = true;
+
+            // set initial box state if mirror box
+            if (boxLight != null) {
+                toggleOn(false);
+            }
         }
 
         // check out of bounds
