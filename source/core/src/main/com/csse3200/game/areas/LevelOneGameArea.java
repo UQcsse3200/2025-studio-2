@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -18,9 +20,14 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +99,7 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/7.png",
             "images/terminal_on.png",
             "images/terminal_off.png",
+            "images/lost_hardware.png",
             "images/tutorials/jump.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
@@ -144,6 +152,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnTerminals();
+        spawnCollectables();
         spawnTutorials();
     }
 
@@ -661,6 +670,30 @@ public class LevelOneGameArea extends GameArea {
 //            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
 //        }
     }
+
+    public void spawnCollectable(Vector2 pos) {
+        PhysicsComponent physics  = new PhysicsComponent();
+        physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Entity collectable = new Entity()
+                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(physics)
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
+                .addComponent(new ItemCollectableComponent());
+        collectable.setPosition(pos);
+        collectable.setScale(0.6f, 0.6f);
+        ServiceLocator.getEntityService().register(collectable);
+    }
+
+    public void spawnCollectables() {
+        Vector2 playerPos = player.getPosition();
+        CollectableCounter.reset();
+        CollectableCounter.setTotal(3);
+
+        spawnCollectable(new Vector2(33.5f, -1.5f));
+        spawnCollectable(new Vector2(0f, 23f));
+        spawnCollectable(new Vector2(39.5f, 30f));
+    }
+
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
