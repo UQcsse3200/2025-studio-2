@@ -9,7 +9,6 @@ import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.CodexEntry;
 import com.csse3200.game.services.ResourceService;
@@ -19,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -48,5 +48,21 @@ public class CodexTerminalFactoryTest {
         assertNotNull(terminal.getComponent(CodexTerminalComponent.class));
         assertNotNull(terminal.getComponent(TooltipSystem.TooltipComponent.class));
         assertNotNull(terminal.getComponent(ConeLightComponent.class));
+    }
+
+    @Test
+    @DisplayName("Terminals hold reference to codex entry")
+    void holdsCodexEntry() {
+        // Create terminal that holds entry
+        CodexEntry entry = new CodexEntry("Test Title", "Test Content");
+        Entity terminal = CodexTerminalFactory.createTerminal(entry);
+
+        // Ensure the terminal holds a codex, and stores correct title and text
+        CodexTerminalComponent terminalComponent =
+                terminal.getComponent(CodexTerminalComponent.class);
+        assertNotNull(terminalComponent);
+        assertNotNull(terminalComponent.getCodexEntry());
+        assertEquals("Test Title", terminalComponent.getCodexEntry().getTitle());
+        assertEquals("Test Content", terminalComponent.getCodexEntry().getText());
     }
 }
