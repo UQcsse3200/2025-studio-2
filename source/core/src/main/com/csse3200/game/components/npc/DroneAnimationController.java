@@ -12,10 +12,7 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 public class DroneAnimationController extends Component {
     AnimationRenderComponent animator;
     private String currentAnimation = "";
-//    private boolean isDropping = false;
-//    private float dropAnimationTime = 0f;
-//    private static final float DROP_ANIMATION_DURATION = 1.0f; // Duration of drop animation
-//    private final GameTime timeSource = ServiceLocator.getTimeSource();
+    private boolean endFired = false;
 
     @Override
     public void create() {
@@ -32,12 +29,24 @@ public class DroneAnimationController extends Component {
         entity.getEvents().addListener("selfExplosion", this::animateSelfExplosion);
     }
 
-    void animateSelfExplosion() {
-        setAnimation("selfExplosion");
+    @Override
+    public void update() {
+        if (animator == null || currentAnimation.isEmpty() || endFired) return;
+
+        if (animator.isFinished()) {
+            entity.getEvents().trigger(currentAnimation + "End");
+            endFired = true;
+        }
     }
+
+    void animateSelfExplosion() {
+        setAnimation("bomb_effect");
+    }
+
     void animateTeleBomber() {
         setAnimation("teleBomber");
     }
+
     void animateTeleport() {
         setAnimation("teleport");
     }
@@ -73,6 +82,7 @@ public class DroneAnimationController extends Component {
         if (!animationName.equals(currentAnimation)) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
+            endFired = false;
         }
     }
 }

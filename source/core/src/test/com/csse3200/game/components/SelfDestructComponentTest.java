@@ -3,7 +3,9 @@ package com.csse3200.game.components;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ResourceService;
@@ -25,6 +27,8 @@ class SelfDestructComponentTest {
 
     @BeforeEach
     void setUp() {
+        ServiceLocator.clear();
+
         drone = mock(Entity.class);
         player = mock(Entity.class);
 
@@ -33,12 +37,9 @@ class SelfDestructComponentTest {
         sound = mock(Sound.class);
         playerStats = mock(CombatStatsComponent.class);
 
-        // Resource service mock
-        ResourceService resourceService = mock(ResourceService.class);
-        when(resourceService.getAsset("sounds/explosion.mp3", Sound.class)).thenReturn(sound);
-        ServiceLocator.registerResourceService(resourceService);
+        EventHandler events = new EventHandler();
+        when(drone.getEvents()).thenReturn(events);
 
-        // Default component stubbing
         when(drone.getComponent(AnimationRenderComponent.class)).thenReturn(animator);
         when(drone.getComponent(PhysicsComponent.class)).thenReturn(physics);
         when(player.getComponent(CombatStatsComponent.class)).thenReturn(playerStats);
@@ -47,8 +48,19 @@ class SelfDestructComponentTest {
         when(drone.getCenterPosition()).thenReturn(new Vector2(0, 0));
         when(player.getCenterPosition()).thenReturn(new Vector2(10, 10));
 
+        // Resource service mock
+        ResourceService resourceService = mock(ResourceService.class);
+        when(resourceService.getAsset("sounds/explosion.mp3", Sound.class)).thenReturn(sound);
+        when(sound.play(anyFloat())).thenReturn(1L);
+        ServiceLocator.registerResourceService(resourceService);
+
+        DroneAnimationController controller = new DroneAnimationController();
+        controller.setEntity(drone);
+        controller.create();
+
         selfDestruct = new SelfDestructComponent(player);
         selfDestruct.setEntity(drone);
+        selfDestruct.create();
     }
 
     @Test

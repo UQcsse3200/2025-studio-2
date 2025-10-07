@@ -1,6 +1,5 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
@@ -9,6 +8,9 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.services.ServiceLocator;
 
+/**
+ * Handles logic for a drone that self-destructs within collision radius of player.
+ */
 public class SelfDestructComponent extends Component {
     private final Entity target;
     private boolean exploded = false;
@@ -22,8 +24,35 @@ public class SelfDestructComponent extends Component {
     }
 
     @Override
+    public void create() {
+        // Handle drone clean up after explosion
+        entity.getEvents().addListener("bomb_effectEnd", this::disable);
+    }
+
+    private void disable() {
+        // Kill physics to remove ghost collider after explosion
+        PhysicsComponent phys = entity.getComponent(PhysicsComponent.class);
+        if (phys != null && phys.getBody() != null) {
+            var body = phys.getBody();
+            var world = body.getWorld();
+            if (world != null) world.destroyBody(body);
+            entity.removeComponent(phys);
+        }
+
+        // Stop and remove rendering after explosion
+        AnimationRenderComponent arc = entity.getComponent(AnimationRenderComponent.class);
+        if (arc != null) {
+            arc.stopAnimation();
+            entity.removeComponent(arc);
+        }
+        entity.setEnabled(false);
+    }
+
+    @Override
     public void update() {
-        if (exploded || target == null) return;
+        if (target == null) return;
+
+        if (exploded) return;
 
         // Explode immediately if touching player
         if (isTouchingPlayer()) {
@@ -46,41 +75,16 @@ public class SelfDestructComponent extends Component {
             targetStats.setHealth(Math.max(0, targetStats.getHealth() - 2));
         }
 
-        AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null) {
-            animator.startAnimation("bomb_effect");
-        }
+        entity.getEvents().trigger("selfExplosion");
 
-        Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND, Sound.class);
-        if (explosionSound != null) {
-            long soundId = explosionSound.play(1.0f);
-            fadeOutSound(explosionSound, soundId, 0.5f);
-        }
-
-        Timer.schedule(new Timer.Task() {
-            @Override
-            public void run() {
-                try{
-                    if (animator != null) {
-                        animator.stopAnimation();
-                        entity.removeComponent(animator);
-                    }
-                    PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-                    if (physics != null) {
-                        if (physics.getBody() != null) physics.getBody().setActive(false);
-                        entity.removeComponent(physics);
-                    }
-
-                    ServiceLocator.getEntityService().unregister(entity);
-
-                    entity.getEvents().trigger("destroy");
-                    entity.removeComponent(SelfDestructComponent.this);
-                    dispose();
-                }catch (Exception e){
-                    Gdx.app.error("SelfDestructComponent", "Error during cleanup: " + e.getMessage());
-                }
+        var rs = ServiceLocator.getResourceService();
+        if (rs != null) {
+            Sound explosionSound = rs.getAsset(EXPLOSION_SOUND, Sound.class);
+            if (explosionSound != null) {
+                long soundId = explosionSound.play(1.0f);
+                fadeOutSound(explosionSound, soundId, 0.5f);
             }
-        }, 0.5f);
+        }
     }
 
     private void fadeOutSound(Sound sound, long soundId, float duration) {

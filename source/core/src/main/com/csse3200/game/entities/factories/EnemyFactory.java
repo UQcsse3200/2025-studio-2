@@ -344,7 +344,6 @@ public class EnemyFactory {
                         .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
                         .addComponent(new AITaskComponent())// Want this empty for base enemies
                         .addComponent(new DeathOnTrapComponent());
-                        //.addComponent(new DisposalComponent(0.5f));
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 
