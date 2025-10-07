@@ -259,7 +259,8 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 // DO NOT add DroneAnimationController - it will override the animation
-                .addComponent(new AutoBombDropComponent(target, 1f)); // Add bomb dropping component
+                .addComponent(new AutoBombDropComponent(target, 2f)) // 2 sec auto bomb drop
+                .addComponent(new BombTrackerComponent());
 
         // AI setup with just patrol
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);

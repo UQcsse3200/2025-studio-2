@@ -3,6 +3,7 @@ package com.csse3200.game.components;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.math.Vector2;
@@ -30,20 +31,19 @@ public class SelfDestructComponent extends Component {
     }
 
     private void disable() {
-        // Kill physics to remove ghost collider after explosion
+        // Make sure no more interactions after explosions
         PhysicsComponent phys = entity.getComponent(PhysicsComponent.class);
         if (phys != null && phys.getBody() != null) {
             var body = phys.getBody();
-            var world = body.getWorld();
-            if (world != null) world.destroyBody(body);
-            entity.removeComponent(phys);
+            body.setLinearVelocity(0f, 0f);
+            body.setAngularVelocity(0f);
+            body.setActive(false);
         }
 
-        // Stop and remove rendering after explosion
+        // Stop explosion anim
         AnimationRenderComponent arc = entity.getComponent(AnimationRenderComponent.class);
         if (arc != null) {
             arc.stopAnimation();
-            entity.removeComponent(arc);
         }
         entity.setEnabled(false);
     }

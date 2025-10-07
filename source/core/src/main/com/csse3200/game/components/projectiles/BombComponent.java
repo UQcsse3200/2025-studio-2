@@ -173,7 +173,7 @@ public class BombComponent extends Component {
                         PhysicsComponent physics = target.getComponent(PhysicsComponent.class);
                         if (physics != null) {
                             Vector2 knockback = targetPos.cpy().sub(bombPos).nor();
-                            float force = (explosionRadius - distance) * 10f;
+                            float force = (explosionRadius - distance) * 5f;
                             knockback.scl(force);
                             physics.getBody().applyLinearImpulse(knockback,
                                     physics.getBody().getWorldCenter(), true);

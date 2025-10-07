@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.ProjectileFactory;
 import com.csse3200.game.services.GameTime;
@@ -72,6 +73,10 @@ public class AutoBombDropComponent extends Component {
             );
             ServiceLocator.getEntityService().register(bomb);
             logger.debug("Auto-bomb dropped at {}", bombSpawnPos);
+            BombTrackerComponent bomberComp = entity.getComponent(BombTrackerComponent.class);
+            if (bomberComp != null) {
+                bomberComp.trackBomb(bomb);
+            }
         });
     }
 }
