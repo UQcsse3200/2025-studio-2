@@ -32,7 +32,6 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,7 +99,7 @@ public class LevelOneGameArea extends GameArea {
             "images/terminal_on.png",
             "images/terminal_off.png",
             "images/lost_hardware.png",
-            "images/tutorials/jump.png"
+            //"images/tutorials/jump.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -153,13 +152,13 @@ public class LevelOneGameArea extends GameArea {
         spawnObjectives();
         spawnTerminals();
         spawnCollectables();
-        spawnTutorials();
+        //spawnTutorials();
     }
 
-    private void spawnTutorials() {
-        Entity jumpTutorial = TutorialFactory.createJumpTutorial();
-        spawnEntityAt(jumpTutorial, new GridPoint2(8, 12), true, true);
-    }
+//    private void spawnTutorials() {
+//        Entity jumpTutorial = TutorialFactory.createJumpTutorial();
+//        spawnEntityAt(jumpTutorial, new GridPoint2(8, 12), true, true);
+//    }
 
     private void spawnTerminals() {
         Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
