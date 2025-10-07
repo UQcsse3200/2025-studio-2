@@ -50,6 +50,10 @@ public class PlayerStatsDisplay extends UIComponent {
    * Image icon used in stamina bar
    */
   private Image staminaImage;
+  /**
+   * Collectable Label
+   */
+  private Label collectableLabel;
 
   /**
    * Creates reusable ui styles and adds actors to the stage.
@@ -74,6 +78,9 @@ public class PlayerStatsDisplay extends UIComponent {
     // Create stamina table
     createStaminaTable();
     stage.addActor(staminaTable);
+    // Create collectable table
+    collectableLabel = new Label("Lost Hardware collected: 0 / 3", skin, "large");
+    stage.addActor(collectableLabel);
   }
 
   /**
