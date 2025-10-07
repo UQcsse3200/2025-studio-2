@@ -87,8 +87,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
             "images/glide_powerup.png",
-            "images/lost_hardware.png"
-
+            "images/lost_hardware.png",
+            "images/tutorials/dash.png",
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -127,7 +127,13 @@ public class LevelTwoGameArea extends GameArea {
         spawnButtons();
         spawnSecurityCams();
         spawnCollectables();
-      //spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
+        // spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
+        spawnTutorials();
+      }
+
+    private void spawnTutorials() {
+        // TODO: Comment this if the player should not have a dash upgrade by this point
+        spawnEntityAt(TutorialFactory.createDashTutorial(), new GridPoint2(14, 8), true, true);
     }
 
     private void spawnDeathZone() {
