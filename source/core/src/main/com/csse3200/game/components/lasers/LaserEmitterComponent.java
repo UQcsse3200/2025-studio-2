@@ -69,10 +69,16 @@ public class LaserEmitterComponent extends Component {
     private Entity hitLight = null;
     private Entity lastDetectorHit = null;
 
+    /**
+     * defalult constructor
+     */
     public LaserEmitterComponent() {
 
     }
-
+    /**
+     * Creates a laser emitter pointing in the specified direction.
+     * @param dir initial laser angle in degrees
+     */
     public LaserEmitterComponent(float dir) {
         this.dir = dir;
     }
@@ -121,7 +127,7 @@ public class LaserEmitterComponent extends Component {
 
     public void fireLaser() {
         /*
-        * within this update a few calculations are done to construct out
+        * within this a few calculations are done to construct out
         * list of collisions our laser makes.
         *
         * firstly we start by getting the initial position of the laser which
@@ -233,7 +239,11 @@ public class LaserEmitterComponent extends Component {
         }
         lastReflectorsHit = reflectorsHit;
     }
-
+    /**
+     * Gradually fades out the sound over 1 second.
+     * @param sound Sound to fade
+     * @param soundId ID of the playing sound
+     */
     private void fadeOutSound(Sound sound, long soundId) {
         final int steps = 10;
         final float interval = (float) 1.0 / steps;
@@ -249,6 +259,11 @@ public class LaserEmitterComponent extends Component {
             }, i * interval);
         }
     }
+
+    /**
+     * Creates a point light entity to visualize laser hits.
+     * @return point light entity
+     */
     private static Entity createPointLight() {
         Entity light = new Entity();
         ConeLightComponent coneLight = new ConeLightComponent(
@@ -271,7 +286,10 @@ public class LaserEmitterComponent extends Component {
 
         return light;
     }
-
+    /**
+     * Updates the laser hit light position.
+     * @param hit the raycast hit
+     */
     private void updateHitLight(RaycastHit hit) {
         if (hitLight == null) return;
 
@@ -361,7 +379,10 @@ public class LaserEmitterComponent extends Component {
         }
         return 0f;
     }
-
+    /**
+     * Triggers a laser detector entity.
+     * @param hit raycast hit
+     */
     private void triggerDetector(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
         if (target == null) return;
