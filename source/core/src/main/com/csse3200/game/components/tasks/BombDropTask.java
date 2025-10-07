@@ -172,15 +172,12 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
      * Spawn a bomb entity at the bomber's current position
      */
     private void dropBomb() {
-        Vector2 dronePos = owner.getEntity().getPosition().cpy();
-        Vector2 bombSpawnPos = new Vector2(
-                dronePos.x + owner.getEntity().getScale().x / 2,
-                dronePos.y - 0.5f  // Spawn slightly below drone
-        );
+        Vector2 origin = owner.getEntity().getCenterPosition();
+        Vector2 bombSpawnCenter = new Vector2(origin.x, origin.y - 0.5f); // Drop below bomber
 
         Entity bomb = ProjectileFactory.createBomb(
                 owner.getEntity(),
-                bombSpawnPos,
+                bombSpawnCenter,
                 target.getPosition().cpy(),
                 2.0f,  // explosion delay
                 2f,  // explosion radius
@@ -188,7 +185,7 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         );
 
         ServiceLocator.getEntityService().register(bomb);
-        logger.debug("Bomb dropped at {} - target detected by cone light", bombSpawnPos);
+        logger.debug("Bomb dropped at {} - target detected by cone light", bombSpawnCenter);
     }
 
     /**
