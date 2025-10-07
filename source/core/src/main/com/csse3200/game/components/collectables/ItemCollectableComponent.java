@@ -1,6 +1,5 @@
 package com.csse3200.game.components.collectables;
 
-import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.utils.CollectableCounter;
 
