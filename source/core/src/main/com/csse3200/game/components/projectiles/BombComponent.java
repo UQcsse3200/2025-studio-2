@@ -55,8 +55,6 @@ public class BombComponent extends Component {
         entity.getEvents().addListener("collisionStart", this::onCollisionStart);
         dropTime = timeSource.getTime();
         logger.debug("Bomb created with {}s delay", explosionDelay);
-        // Replaced disposal component with post runnable in explode()
-        //entity.addComponent(new DisposalComponent(0.1f));
     }
 
     /** Update the bomb each frame. Handles blinking and triggers explosion after delay */
@@ -112,7 +110,7 @@ public class BombComponent extends Component {
         }
     }
 
-    /** Trigger explosion, deal damage, spawn effect, trigger disposal */
+    /** Trigger explosion, deal damage, spawn effect, disposal */
     private void explode() {
         if (hasExploded) return;
         hasExploded = true;
@@ -134,12 +132,7 @@ public class BombComponent extends Component {
         // Hide the bomb immediately
         entity.setScale(0f, 0f);
 
-        // Start disposal countdown
-        //entity.getEvents().trigger("scheduleDisposal");
-        entity.getEvents().trigger("bombDisposalQueued");
-        Gdx.app.postRunnable(entity::dispose);
-
-        // Disable this component to prevent further updates
+        entity.getEvents().trigger("bomb:disposeRequested");
         this.setEnabled(false);
     }
 
@@ -206,5 +199,11 @@ public class BombComponent extends Component {
 
     public boolean hasExploded() {
         return hasExploded;
+    }
+
+    @Override
+    public void dispose() {
+        entity.getEvents().trigger("bomb:disposed");
+        super.dispose();
     }
 }

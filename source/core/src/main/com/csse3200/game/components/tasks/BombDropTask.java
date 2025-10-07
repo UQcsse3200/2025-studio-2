@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.TaskRunner;
+import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.ProjectileFactory;
@@ -185,6 +186,11 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
         );
 
         ServiceLocator.getEntityService().register(bomb);
+        BombTrackerComponent bomberComp = owner.getEntity().getComponent(BombTrackerComponent.class);
+        if (bomberComp != null) {
+            bomberComp.trackBomb(bomb);
+        }
+
         logger.debug("Bomb dropped at {} - target detected by cone light", bombSpawnCenter);
     }
 

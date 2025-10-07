@@ -56,23 +56,26 @@ public class BombComponentTest {
     }
 
     @Test
-    void disposesNextFrame() {
+    void disposesNextUpdate() {
         Entity e = makeBombEntity(0f, 2.5f, (short) 0);
         BombComponent bomb = e.getComponent(BombComponent.class);
 
         List<String> eventLog = new ArrayList<>();
-        e.getEvents().addListener("bombDisposalQueued", () -> eventLog.add("bombDisposalQueued"));
+        e.getEvents().addListener("bomb:disposeRequested", () -> eventLog.add("bomb:disposeRequested"));
 
-        bomb.update(); // Explodes here
+        // First update: explode immediately
+        bomb.update();
 
         assertTrue(bomb.hasExploded(), "Bomb should explode on first update");
-        assertEquals(1, eventLog.size(), "Event should be fired once");
-        assertEquals("bombDisposalQueued", eventLog.getFirst());
+        assertEquals(1, eventLog.size(), "Exactly one dispose request event should fire");
+        assertEquals("bomb:disposeRequested", eventLog.getFirst());
 
+        // Component should be disabled after explode()
         String desc = bomb.toString();
         assertTrue(desc.contains("enabled=false"),
                 "Component should be disabled after exploding; got: " + desc);
 
+        // Check no more events fired
         bomb.update();
         assertEquals(1, eventLog.size(), "No more events fired after explode");
     }
