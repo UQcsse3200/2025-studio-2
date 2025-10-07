@@ -1,17 +1,22 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.math.Octree;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.CodexEntry;
 import com.csse3200.game.ui.terminal.Terminal;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 public class CodexTerminalComponentTest {
@@ -56,5 +61,28 @@ public class CodexTerminalComponentTest {
                 .addComponent(coneLightComponent)
                 .addComponent(tooltipComponent);
         terminal.create();
+    }
+
+    @Test
+    @DisplayName("Interacting with the terminal unlocks entry and changes state")
+    void interactingUnlocksEntryChangesState() {
+        // Create simple player entity for testing on top of terminal
+        Entity player = new Entity();
+        ColliderComponent mockedCollider = mock(ColliderComponent.class);
+        when(mockedCollider.getEntity()).thenReturn(player);
+        player.addComponent(mockedCollider);
+        player.setPosition(terminal.getCenterPosition());
+        player.create();
+
+        // Make player interact with the terminal
+        terminalComponent.setPlayerInRange(player.getComponent(ColliderComponent.class));
+        player.getEvents().trigger("interact");
+
+        // Ensure codex entry got unlocked
+        assertTrue(codexEntry.isUnlocked());
+        // Make sure texture updated, and cone light/tooltip disposed
+        verify(textureRenderComponent).setTexture("images/terminal_off.png");
+        verify(coneLightComponent).dispose();
+        verify(tooltipComponent).dispose();
     }
 }
