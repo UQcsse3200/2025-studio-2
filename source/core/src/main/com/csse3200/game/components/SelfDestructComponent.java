@@ -70,6 +70,9 @@ public class SelfDestructComponent extends Component {
                         if (physics.getBody() != null) physics.getBody().setActive(false);
                         entity.removeComponent(physics);
                     }
+
+                    ServiceLocator.getEntityService().unregister(entity);
+
                     entity.getEvents().trigger("destroy");
                     entity.removeComponent(SelfDestructComponent.this);
                     dispose();
