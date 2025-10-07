@@ -155,6 +155,14 @@ public final class Spawners {
 
             return button;
         });
+
+        // --- Laser Detector ---
+        SpawnRegistry.register("laser_detector", a -> {
+            if (a.rotation != null) {
+                return LaserDetectorFactory.createLaserDetector(a.rotation);
+            }
+            return LaserDetectorFactory.createLaserDetector();
+        });
     }
 
     // --- Helpers ---

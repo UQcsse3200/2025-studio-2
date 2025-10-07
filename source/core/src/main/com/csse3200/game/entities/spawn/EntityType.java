@@ -11,7 +11,8 @@ public enum EntityType {
     CAMERA,
     TRAP,
     LASER,
-    BUTTON;
+    BUTTON,
+    LASER_DETECTOR;
 
     @Override public String toString() { return name().toLowerCase(); }
 
