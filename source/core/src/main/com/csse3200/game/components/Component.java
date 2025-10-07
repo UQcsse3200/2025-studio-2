@@ -13,6 +13,7 @@ public class Component {
   private static final Logger logger = LoggerFactory.getLogger(Component.class);
   protected Entity entity;
   protected boolean enabled = true;
+  protected ComponentPriority prio = ComponentPriority.LOW;
 
   /**
    * Called when the entity is created and registered. Initial logic such as calls to GetComponent
@@ -62,6 +63,14 @@ public class Component {
     return entity;
   }
 
+    /**
+     * Get the priority of which the component should be made
+     * @return ComponentPriority
+     */
+  public ComponentPriority getPrio() {
+      return prio;
+  }
+
   /**
    * Enable or disable the component. While disabled, a component does not run update() or
    * earlyUpdate(). Other events inside the component may still fire. The component can still be
@@ -93,6 +102,7 @@ public class Component {
 
   @Override
   public String toString() {
+    if (entity == null) return getClass().getSimpleName() + "{" + "enabled=" + enabled + "}";
     return getClass().getSimpleName() + "{id=" + entity.getId() + ", enabled=" + enabled + "}";
   }
 }

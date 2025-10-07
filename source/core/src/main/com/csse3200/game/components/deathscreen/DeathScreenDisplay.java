@@ -15,7 +15,13 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.components.AutonomousBoxComponent;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.DeathZoneComponent;
+import com.csse3200.game.components.npc.DroneAnimationController;
+import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.projectiles.BombComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.screens.MainGameScreen;
@@ -24,30 +30,35 @@ import com.csse3200.game.ui.UIComponent;
 import com.github.tommyettinger.textra.TypingLabel;
 import com.github.tommyettinger.textra.TypingListener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Logger;
+
 /**
  * A UI component for displaying the death screen overlay when the player dies.
  * Shows a semi-transparent background with death message and options to restart or exit.
  * When visible, blocks all other input including pause menu and stops background music.
  */
 public class DeathScreenDisplay extends UIComponent {
+    static final Logger logger = Logger.getLogger(DeathScreenDisplay.class.getName());
     private Table rootTable;
     private final GdxGame game;
     private Texture blackTexture;
     private InputComponent inputBlocker;
     private TypingLabel typewriterLabel;
     private Table buttonsTable;
-    private String[] deathPrompts;
+    private HashMap<String, ArrayList<String>> deathPrompts = new HashMap<>();
     private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
     private final MainGameScreen screen;
     private Sound buttonClickSound;
 
 
-    public DeathScreenDisplay(MainGameScreen screen, Entity player, GdxGame game) {
+    public DeathScreenDisplay(MainGameScreen screen, GdxGame game) {
         this.game = game;
         this.screen = screen;
-        loadDeathPrompts();
     }
 
     /**
@@ -56,20 +67,28 @@ public class DeathScreenDisplay extends UIComponent {
     private void loadDeathPrompts() {
         try {
             String fileContent = Gdx.files.internal("deathscreen-prompts.txt").readString();
-            deathPrompts = fileContent.split("\\r?\\n");
-
-            // Remove empty lines
-            java.util.List<String> validPrompts = new java.util.ArrayList<>();
-            for (String prompt : deathPrompts) {
-                String trimmed = prompt.trim();
-                if (trimmed.length() > 0) {
-                    validPrompts.add(trimmed);
-                }
+            String causeName = "";
+            for (String line : fileContent.lines().toList()) {
+              line = line.trim();
+              if (line.isEmpty() || line.startsWith("#")) continue;
+              // System.out.println("Prodessing: " + line);
+              if (line.endsWith(":")) {
+                causeName = line.substring(0, line.length() - 1);
+                continue;
+              }
+              String finalLine = line;
+              deathPrompts.compute(causeName, (k, v) -> {
+                  if (v == null) v = new ArrayList<>();
+                  v.add(finalLine);
+                  return v;
+              });
             }
-            deathPrompts = validPrompts.toArray(new String[0]);
         } catch (Exception e) {
+            throw e;
             // Fallback to default message if file can't be read
-            deathPrompts = new String[]{"Your journey ends here..."};
+        } finally {
+            final ArrayList<String> defaults = deathPrompts.getOrDefault("", new  ArrayList<>());
+            if (defaults.isEmpty()) defaults.add("Your journey ends here...");
         }
     }
 
@@ -77,10 +96,40 @@ public class DeathScreenDisplay extends UIComponent {
      * Get a random death prompt
      */
     private String getRandomDeathPrompt() {
-        if (deathPrompts == null || deathPrompts.length == 0) {
-            return "Your journey ends here...";
+        final Entity attacker =
+            screen.getGameArea().getPlayer().getComponent(CombatStatsComponent.class).getLastAttacker();
+        String deathCause = "";
+        if (attacker != null) {
+          if (attacker.getComponent(TrapComponent.class) != null) {
+            deathCause = "TrapComponent";
+          } else if (attacker.getComponent(DeathZoneComponent.class) != null) {
+            deathCause = "DeathZoneComponent";
+          } else if (attacker.getComponent(BombComponent.class) != null) {
+            deathCause = "BombComponent";
+          } else if (attacker.getComponent(AutonomousBoxComponent.class) != null) {
+            deathCause = "AutonomousBoxComponent";
+          } else if (attacker.getComponent(DroneAnimationController.class) != null) {
+            deathCause = "Drone";
+          } else {
+            deathCause = attacker.toString();
+          }
         }
-        return deathPrompts[random.nextInt(deathPrompts.length)];
+        logger.info("Death Cause: " + deathCause);
+
+        if (random.nextFloat() < 0.1) {
+          deathCause = "";
+          logger.info("Death Cause Override: Using default prompt by chance.");
+        }
+
+        ArrayList<String> prompts = deathPrompts.get(deathCause);
+        if (prompts == null || prompts.isEmpty()) {
+          prompts = deathPrompts.get("");
+        }
+        if (prompts == null || prompts.isEmpty()) {
+            throw new IllegalStateException("No death prompt found!");
+        }
+
+        return prompts.get(random.nextInt(prompts.size()));
     }
 
     /**
@@ -113,6 +162,7 @@ public class DeathScreenDisplay extends UIComponent {
 
     @Override
     public void create() {
+        loadDeathPrompts();
         super.create();
 
         buttonClickSound = ServiceLocator.getResourceService()

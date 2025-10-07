@@ -20,6 +20,7 @@ public class DoorComponent extends Component {
     private boolean animationFinished = false;
     private final GameArea area;
     private AnimationRenderComponent animationComponent;
+    private boolean isPlayerInside = false;
 
     /**
      * A component that represents a door which can be locked or unlocked with a specific key.
@@ -32,7 +33,6 @@ public class DoorComponent extends Component {
         this.area = area;
 //        this.levelId = levelId;
     }
-
 
     /**
      * Registers listeners for collision and door events when the component is created.
@@ -61,6 +61,7 @@ public class DoorComponent extends Component {
             if (animationComponent.isFinished()) {
                 onAnimationFinished();
                 animationFinished = true;
+
             }
         }
     }
@@ -72,6 +73,10 @@ public class DoorComponent extends Component {
         }
 
         isOpening = false;
+
+        if (isPlayerInside) {
+            onCollisionStart(area.getPlayer());
+        }
     }
 
     /**
@@ -83,7 +88,7 @@ public class DoorComponent extends Component {
     private void onCollisionStart(Entity other) {
         HitboxComponent cc = other.getComponent(HitboxComponent.class);
         if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
-
+        isPlayerInside = true;
 
         if (locked) {
             tryUnlock(other);
@@ -104,6 +109,7 @@ public class DoorComponent extends Component {
     private void onCollisionEnd(Entity other) {
         HitboxComponent cc = other.getComponent(HitboxComponent.class);
         if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
+        isPlayerInside = false;
 
         // When player leaves the door area, reset it
         if (!locked) {
