@@ -132,8 +132,28 @@ public class StatisticsDisplay extends UIComponent {
         bottomTable.setFillParent(true);
         bottomTable.add(exitBtn).pad(15f);
 
+        TextButton resetBtn = new TextButton("Reset", skin);
+
+        // Triggers an event when the button is pressed
+        resetBtn.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent changeEvent, Actor actor) {
+
+                        logger.debug("Reset button clicked");
+                        entity.getEvents().trigger("reset");
+                        entity.getEvents().trigger("exit");
+                    }
+                });
+
+        Table bottomRight = new Table();
+        bottomRight.bottom().right();
+        bottomRight.setFillParent(true);
+        bottomRight.add(resetBtn).pad(15f);
+
         stage.addActor(table);
         stage.addActor(bottomTable);
+        stage.addActor(bottomRight);
     }
 
     @Override

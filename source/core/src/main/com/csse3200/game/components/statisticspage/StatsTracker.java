@@ -151,4 +151,12 @@ public class StatsTracker {
             achievementsUnlocked = 0;
         }
     }
+
+    /**
+     * Resets stats file back to default all 0's
+     */
+    public static void resetStatsFile() {
+        resetSession();
+        saveStats();
+    }
 }
