@@ -448,7 +448,7 @@ public class BossLevelGameArea extends GameArea {
 
     private void spawnEvilMovingPlatform() {
         GridPoint2 buttonPlatformPos = new GridPoint2(62, tileBounds.y - 9);
-        Vector2 offsetWorldButton = new Vector2(-15f, 0f);
+        Vector2 offsetWorldButton = new Vector2(-10f, 0f);
         float speed = 5f;
 
         Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speed);
