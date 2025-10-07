@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
+/** Entity subtypes, each bound to a parent {@link EntityType}. */
 public enum EntitySubtype {
     // Platforms
     VOLATILE(EntityType.PLATFORM),
@@ -20,10 +21,12 @@ public enum EntitySubtype {
     STATIC_FLOOR(EntityType.FLOOR),
     DECORATIVE(EntityType.FLOOR);
 
+    /** Parent type for this subtype. */
     private final EntityType type;
     EntitySubtype(EntityType type) { this.type = type; }
     public EntityType getType() { return type; }
 
+    /** Case-insensitive parse; returns null for null/blank. */
     public static EntitySubtype fromString(String s) {
         if (s == null || s.isBlank()) return null;
         try {
@@ -33,7 +36,7 @@ public enum EntitySubtype {
         }
     }
 
-    /** Ensure subtype belongs to its parent type. */
+    /** Throws if subtype (when non-null) doesn’t belong to type. */
     public static void validateMatch(EntityType type, EntitySubtype subtype) {
         if (subtype != null && subtype.getType() != type) {
             throw new IllegalArgumentException("Subtype " + subtype + " is not valid for type " + type);
