@@ -32,6 +32,7 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
   protected TerrainComponent terrain;
+  protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
 
   private final EventHandler events = new EventHandler();
