@@ -244,7 +244,7 @@ public abstract class GameArea implements Disposable {
 
     MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
     options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-    MinimapDisplay minimapDisplay = new MinimapDisplay(150f, options);
+    MinimapDisplay minimapDisplay = new MinimapDisplay(300f, options);
     minimapService.setDisplay(minimapDisplay);
 
     Entity minimapEntity = new Entity();
