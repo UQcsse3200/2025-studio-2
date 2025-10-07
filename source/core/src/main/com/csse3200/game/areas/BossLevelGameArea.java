@@ -18,6 +18,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossLevelGameArea extends GameArea {
-    private static final GridPoint2 mapSize = new GridPoint2(80,70);
+    private static final GridPoint2 mapSize = new GridPoint2(80,57);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     private static boolean keySpawned;
@@ -127,9 +128,49 @@ public class BossLevelGameArea extends GameArea {
         spawnParallaxBackground();
         spawnPlatforms();
         spawnStaticObstacles();
-        spawnButtons();
+        spawnGate();
         spawnObjectives();
+        spawnLasers();
 //        spawnBoss();
+    }
+
+    /**
+     * Spawn all lasers used in game
+     */
+    private void spawnLasers() {
+        spawnFirstBlockingLasers();
+        spawnLaserPuzzle();
+    }
+
+    /**
+     * Spawn the first laser(s) that go through into the left half of screen
+     */
+    private void spawnFirstBlockingLasers() {
+
+    }
+
+    /**
+     * Create the laser puzzle room
+     */
+    private void spawnLaserPuzzle() {
+
+    }
+
+    /**
+     * Spawn the gate that goes between the two stages, as well as the wall below it
+     */
+    private void spawnGate() {
+        // Lower wall
+        Entity wall = WallFactory.createWall(20,0,1,5f,"");
+        wall.setScale(2f,11f);
+        spawnEntityAt(wall, new GridPoint2(65, -3),
+                false, false);
+
+        // Upper "wall" (gate stand-in)
+        Entity gate = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        gate.setScale(2f,17f);
+        spawnEntityAt(gate, new GridPoint2(65, tileBounds.y - 35),
+                false, false);
     }
 
     private void spawnStaticObstacles() {
@@ -140,6 +181,48 @@ public class BossLevelGameArea extends GameArea {
 
     private void spawnPlatforms() {
         spawnFirstDrop();
+        spawnRedHerringPath();
+        spawnButtonPuzzleRoom();
+    }
+
+    /**
+     * Spawns the platforms (left half of screen, upper path)
+     * leading towards the shut gate and evil button.
+     */
+    private void spawnRedHerringPath() {
+        // Jumping along four platforms:
+        GridPoint2 firstPos = new GridPoint2(40, tileBounds.y - 27);
+        Entity firstPlatform = PlatformFactory.createStaticPlatform();
+        firstPlatform.setScale(1, 0.5f);
+        spawnEntityAt(firstPlatform, firstPos,false, false);
+
+        GridPoint2 secondPos = new GridPoint2(50, tileBounds.y - 25);
+        Entity secondPlatform = PlatformFactory.createVolatilePlatform(1f, 3f);
+        secondPlatform.setScale(2, 0.5f);
+        spawnEntityAt(secondPlatform, secondPos,false, false);
+
+        GridPoint2 thirdPos = new GridPoint2(62, tileBounds.y - 23);
+        Entity thirdPlatform = PlatformFactory.createStaticPlatform();
+        thirdPlatform.setScale(1.5f, 0.5f);
+        spawnEntityAt(thirdPlatform, thirdPos,false, false);
+
+        GridPoint2 fourthPos = new GridPoint2(57, tileBounds.y - 16);
+        Entity fourthPlatform = PlatformFactory.createStaticPlatform();
+        fourthPlatform.setScale(1.5f, 0.5f);
+        spawnEntityAt(fourthPlatform, fourthPos,false, false);
+
+        spawnEvilMovingPlatform();
+    }
+
+    /**
+     * Spawns the floor and platforms for the timed-button puzzle room in the first section.
+     */
+    private void spawnButtonPuzzleRoom() {
+        // Spawn floor to act as room's ceiling
+        GridPoint2 ceilingPos = new GridPoint2(25, tileBounds.y - 40);
+        Entity gateFloor = FloorFactory.createStaticFloor();
+        gateFloor.setScale(20f, 1);
+        spawnEntityAt(gateFloor, ceilingPos, false, false);
     }
 
     /**
@@ -172,10 +255,10 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(deathPitPlatform, deathPitPos,false, false);
 
         // Safe standing platform
-        GridPoint2 safePos = new GridPoint2(28, tileBounds.y - 30);
+        GridPoint2 safePlatformPos = new GridPoint2(28, tileBounds.y - 30);
         Entity safePlatform = PlatformFactory.createStaticPlatform();
         safePlatform.setScale(2, 0.5f);
-        spawnEntityAt(safePlatform, safePos,false, false);
+        spawnEntityAt(safePlatform, safePlatformPos,false, false);
     }
 
     /**
@@ -186,12 +269,12 @@ public class BossLevelGameArea extends GameArea {
         Entity spikes = TrapFactory.createSpikes(firstSafePos, 90f);
         spawnEntityAt(spikes,
                 new GridPoint2(15,tileBounds.y - 17), true,  true);
-        Entity spikes2 = TrapFactory.createSpikes(firstSafePos, 90f);
-        spawnEntityAt(spikes2,
-                new GridPoint2(15,tileBounds.y - 15), true,  true);
-        Entity spikes3 = TrapFactory.createSpikes(firstSafePos, 90f);
-        spawnEntityAt(spikes3,
-                new GridPoint2(15,tileBounds.y - 13), true,  true);
+
+        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        wall.setScale(1f,8f);
+        spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
+                false, false);
+
     }
 
     private void spawnBats() {
@@ -205,7 +288,7 @@ public class BossLevelGameArea extends GameArea {
 //         First bat blocking jumps between initial platforms
         BoxFactory.AutonomousBoxBuilder firstBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity verticalBat = firstBatBuilder
-                .moveX(5.5f, 5.5f).moveY(20f, 33f)
+                .moveX(5.5f, 5.5f).moveY(13f, 25f)
                 .texture("images/flying_bat.atlas")
                 .speed(15f) // very hyperactive bat but it's ok we don't need realism
                 .build();
@@ -234,13 +317,14 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(12,tileBounds.y - 34);
+        GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
         Entity deathZone = DeathZoneFactory.createDeathZone();
         deathZone.setScale(10,0.5f);
         deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(0.8f),
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
-        spawnEntityAt(deathZone, spawnPos, true,  true);
+        spawnEntityAt(deathZone, spawnPos, true,  false);
+        // TODO add visuals to indicate this is a death zone & the surrounding areas aren't
     }
 
     private void playMusic() {
@@ -271,9 +355,10 @@ public class BossLevelGameArea extends GameArea {
         spawnEntity(ui);
     }
     private void spawnTerrain() {
-        // Need to decide how large the area is going to be
+        // Need to decide how large the area is going to be todo make screen shorter (y)
         terrain = createDefaultTerrain();
         spawnEntity(new Entity().addComponent(terrain));
+        /*todo: fix lower wall accordingly*/
 
         // Terrain walls
         float tileSize = terrain.getTileSize();
@@ -296,8 +381,9 @@ public class BossLevelGameArea extends GameArea {
                 false,
                 false);
 //        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, 0), false, false);
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS)
+                        .addComponent(new TextureRenderComponent("images/gate.png")),
+                new GridPoint2(0, -3), false, false);
     }
 
     private void spawnParallaxBackground() {
@@ -360,12 +446,30 @@ public class BossLevelGameArea extends GameArea {
         return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
 
-    private void spawnButtons() {
-        Entity button = ButtonFactory.createButton(false, "door", "left");
-        button.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-//        spawnEntityAt(button, new GridPoint2(79 ,20), true,  true);
+    private void spawnEvilMovingPlatform() {
+        GridPoint2 buttonPlatformPos = new GridPoint2(62, tileBounds.y - 9);
+        Vector2 offsetWorldButton = new Vector2(-15f, 0f);
+        float speed = 5f;
 
-        button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speed);
+        buttonPlatform.setScale(1.5f, 0.5f);
+        spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
+        logger.info("Moving platform spawned at {}", buttonPlatformPos);
+
+        //start button
+        Entity button = ButtonFactory.createButton(false, "platform", "left");
+        GridPoint2 buttonStartPos = new GridPoint2(64, 50);
+        spawnEntityAt(button, buttonStartPos, true, true);
+        logger.info("Platform button spawned at {}", buttonStartPos);
+
+        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+            if (isPressed) {
+                logger.info("Button pressed — activating platform");
+                buttonPlatform.getEvents().trigger("activatePlatform");
+            } else {
+                logger.info("Button unpressed — deactivating platform");
+                buttonPlatform.getEvents().trigger("deactivatePlatform");
+            }
         });
     }
 
