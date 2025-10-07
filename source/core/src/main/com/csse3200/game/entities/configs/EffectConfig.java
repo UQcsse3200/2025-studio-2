@@ -1,5 +1,8 @@
 package com.csse3200.game.entities.configs;
 
+/**
+ * Defines properties for effect types to be loaded in ItemEffectRegistry.
+ */
 public class EffectConfig {
     public String type;
     public double value;
