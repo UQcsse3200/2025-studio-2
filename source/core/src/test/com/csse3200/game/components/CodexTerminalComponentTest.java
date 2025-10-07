@@ -3,7 +3,6 @@ package com.csse3200.game.components;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -113,8 +112,9 @@ public class CodexTerminalComponentTest {
     void interactingMultipleTimesDoesNothing() {
         // Create simply player entity on top of terminal
         Entity player = new Entity();
-        player.addComponent(mock(ColliderComponent.class));
-        player.getComponent(ColliderComponent.class).setEntity(player);
+        ColliderComponent mockedCollider = mock(ColliderComponent.class);
+        when(mockedCollider.getEntity()).thenReturn(player);
+        player.addComponent(mockedCollider);
         player.setPosition(terminal.getCenterPosition());
         player.create();
 
