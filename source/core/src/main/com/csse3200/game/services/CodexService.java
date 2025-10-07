@@ -38,7 +38,7 @@ public class CodexService implements Disposable {
      * @param id The id of the entry.
      * @return The entry with the matching id, or null if it does not exist
      */
-    public CodexEntry getEntry(String id) throws IllegalArgumentException {
+    public CodexEntry getEntry(String id) {
         CodexEntry entry = entries.get(id);
 
         // Create error if entry with that title does not exist.
