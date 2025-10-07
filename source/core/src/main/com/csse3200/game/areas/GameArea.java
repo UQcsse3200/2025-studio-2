@@ -57,6 +57,16 @@ public abstract class GameArea implements Disposable {
 
   protected GameArea() {
     areaEntities = new ArrayList<>();
+    createDeathMarkerTexture();
+  }
+
+  private void createDeathMarkerTexture() {
+    Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+    pixmap.setColor(Color.RED);
+    pixmap.drawLine(0, 0, 15, 15);
+    pixmap.drawLine(15, 0, 0, 15);
+    deathMarkerTexture = new Texture(pixmap);
+    pixmap.dispose();
   }
 
   /**
@@ -103,7 +113,7 @@ public abstract class GameArea implements Disposable {
    */
   protected void spawnDeathMarker(Vector2 location) {
     Entity marker = new Entity();
-    marker.addComponent(new TextureRenderComponent(deathMarkerTexture));
+    marker.addComponent(new TextureRenderComponent(deathMarkerTexture).setLayer(0));
     marker.setPosition(location);
     marker.setScale(0.5f, 0.5f);
     spawnEntity(marker);
@@ -113,17 +123,6 @@ public abstract class GameArea implements Disposable {
    * Spawns a death marker at the death location.
    */
   public void spawnDeathMarkers() {
-    if (deathMarkerTexture == null) {
-      // fallback for testing
-      Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-      pixmap.setColor(Color.RED);
-      pixmap.drawLine(0, 0, 15, 15);
-      pixmap.drawLine(15, 0, 0, 15);
-      deathMarkerTexture = new Texture(pixmap);
-      pixmap.dispose();
-      // throw new RuntimeException("Death marker texture not set");
-    }
-
     for (Vector2 location : deathLocations) spawnDeathMarker(location);
   }
 
@@ -187,6 +186,7 @@ public abstract class GameArea implements Disposable {
     // the start of the level. Copies are used in order to not lose the original components when
     // the original player is disposed.
     player = spawnPlayer(getComponents());
+    createDeathMarkerTexture();
     spawnDeathMarkers();
 
     loadEntities();

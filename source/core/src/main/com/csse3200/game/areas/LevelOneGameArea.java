@@ -91,7 +91,8 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
             "images/terminal_on.png",
-            "images/terminal_off.png"
+            "images/terminal_off.png",
+            "images/tutorials/jump.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -119,6 +120,7 @@ public class LevelOneGameArea extends GameArea {
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
     }
+
     protected void loadEntities() {
         keySpawned = false;
         spawnLadder();
@@ -142,6 +144,12 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnTerminals();
+        spawnTutorials();
+    }
+
+    private void spawnTutorials() {
+        Entity jumpTutorial = TutorialFactory.createJumpTutorial();
+        spawnEntityAt(jumpTutorial, new GridPoint2(8, 12), true, true);
     }
 
     private void spawnTerminals() {
