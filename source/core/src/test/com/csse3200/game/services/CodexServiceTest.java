@@ -3,10 +3,12 @@ package com.csse3200.game.services;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.csse3200.game.extensions.GameExtension;
-import org.junit.jupiter.api.Disabled;
+import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -48,5 +50,17 @@ public class CodexServiceTest {
         // Ensure non-existent entry is null
         CodexEntry entry = service.getEntry("test_id_1");
         assertNull(entry);
+    }
+
+    @Test
+    @DisplayName("getEntries() returns only unlocked entries when requesting unlocked entries")
+    void getEntriesReturnsUnlocked() {
+        // Service loads mock file
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1");
+        CodexService service = new CodexService();
+
+        // Entries are locked by default. Ensure getEntries() is empty
+        ArrayList<CodexEntry> result = service.getEntries(true);
+        assertTrue(result.isEmpty());
     }
 }
