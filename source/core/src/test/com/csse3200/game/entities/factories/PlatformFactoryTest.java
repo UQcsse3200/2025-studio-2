@@ -47,6 +47,7 @@ public class PlatformFactoryTest {
         ServiceLocator.registerResourceService(rs);
         rs.loadTextureAtlases(new String[]{"images/volatile_platform.atlas"});
         rs.loadTextures(new String[]{"images/platform.png"});
+        rs.loadTextures(new String[]{"images/empty.png"});
         rs.loadAll();
     }
 
@@ -107,5 +108,35 @@ public class PlatformFactoryTest {
     void createVolatilePlatform_disappears() {
         Entity volatilePlatform = PlatformFactory.createVolatilePlatform(5,5);
 
+    }
+
+    @Test
+    void createPressurePlatePlatform_hasAllComponents() {
+        Entity platePlatform = PlatformFactory.createPressurePlatePlatform();
+
+        assertNotNull(platePlatform.getComponent(TextureRenderComponent.class),
+                "Pressure plate platform should have TextureRenderComponent");
+        assertNotNull(platePlatform.getComponent(PhysicsComponent.class),
+                "Pressure plate platform should have PhysicsComponent");
+        assertNotNull(platePlatform.getComponent(ColliderComponent.class),
+                "Pressure plate platform should have ColliderComponent");
+        assertNotNull(platePlatform.getComponent(VolatilePlatformComponent.class),
+                "Pressure plate platform should have VolatilePlatformComponent");
+    }
+
+    @Test
+    void createPressurePlatePlatform_isOnObstacleLayer() {
+        Entity platePlatform = PlatformFactory.createPressurePlatePlatform();
+        ColliderComponent collider = platePlatform.getComponent(ColliderComponent.class);
+        assertEquals(PhysicsLayer.OBSTACLE, collider.getLayer(),
+                "Pressure plate platform should be on OBSTACLE layer");
+    }
+
+    @Test
+    void createPressurePlatePlatform_isStatic() {
+        Entity platePlatform = PlatformFactory.createPressurePlatePlatform();
+        PhysicsComponent physics = platePlatform.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
+                "Pressure plate platform should have static body type");
     }
 }
