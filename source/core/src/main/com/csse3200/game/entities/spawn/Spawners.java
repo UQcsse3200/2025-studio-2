@@ -163,6 +163,13 @@ public final class Spawners {
             }
             return LaserDetectorFactory.createLaserDetector();
         });
+
+        // --- Sign Posts ---
+        SpawnRegistry.register("sign_post", a -> {
+            if (a.direction == null) a.direction = "right";
+            SignpostFactory.createSignpost(a.direction);
+            return SignpostFactory.createSignpost(a.direction);
+        });
     }
 
     // --- Helpers ---
