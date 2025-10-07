@@ -57,9 +57,6 @@ public class ButtonFactory {
         button.addComponent(render);
         //add physics and collider components
         button.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
-        if (type.equals("door")) {
-            button.addComponent(new MinimapComponent("images/red_button.png"));
-        }
 
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);

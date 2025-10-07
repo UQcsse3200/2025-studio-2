@@ -300,14 +300,18 @@ public class BoxFactory {
                         autonomousBox.addComponent(new TextureRenderComponent(texturePath));
                     }
 
+
+
                     autonomousBox
                             .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
                             .addComponent(new HitboxComponent())
                             .addComponent(new CombatStatsComponent(1, damage))
                             .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                            .addComponent(new AutonomousBoxComponent())
-                            .addComponent(new MinimapComponent("images/flying_bat_map.png"));
+                            .addComponent(new AutonomousBoxComponent());
+
+
+
 
             AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);
             autonomousBox.setScale(scaleX, scaleY);
@@ -315,6 +319,7 @@ public class BoxFactory {
             autonomousBoxComponent.setSpeed(speed);
             autonomousBox.getComponent(PhysicsComponent.class).getBody().setTransform(spawnX, spawnY, 0);
             autonomousBox.addComponent(new TooltipSystem.TooltipComponent(tooltipText, tooltipStyle));
+            //
             return autonomousBox;
         }
     }

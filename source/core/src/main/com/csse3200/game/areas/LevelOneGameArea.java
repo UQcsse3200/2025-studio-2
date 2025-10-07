@@ -868,6 +868,7 @@ public class LevelOneGameArea extends GameArea {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(79 ,20), true,  true);
+        button2.addComponent(new MinimapComponent("images/red_button.png"));
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -947,6 +948,7 @@ public class LevelOneGameArea extends GameArea {
                 .moveX(1f + offsetX, 10f + offsetX).moveY(46f + offsetY, 46f + offsetY)
                 .texture("images/flying_bat.atlas")
                 .build();
+        highHorizontalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(highHorizontalBat1, new GridPoint2(
                         (int) batBuilder2.getSpawnX() + offsetX,
                         (int) batBuilder2.getSpawnY() + offsetY),
@@ -958,6 +960,7 @@ public class LevelOneGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(6f)
                 .build();
+        highHorizontalBat2.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(highHorizontalBat2, new GridPoint2(
                         (int) batBuilder3.getSpawnX() + offsetX,
                         (int) batBuilder3.getSpawnY() + offsetY),
@@ -969,6 +972,7 @@ public class LevelOneGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(4f)
                 .build();
+        diagonalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(diagonalBat1, new GridPoint2(
                         (int) batBuilder4.getSpawnX() + offsetX,
                         (int) batBuilder4.getSpawnY() + offsetY),
@@ -980,6 +984,7 @@ public class LevelOneGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(4f)
                 .build();
+        verticalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(verticalBat1, new GridPoint2(
                         (int) batBuilder5.getSpawnX() + offsetX,
                         (int) batBuilder5.getSpawnY() + offsetY),

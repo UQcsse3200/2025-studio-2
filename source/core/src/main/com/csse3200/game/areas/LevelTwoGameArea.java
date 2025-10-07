@@ -506,6 +506,8 @@ public class LevelTwoGameArea extends GameArea {
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(0 ,58), true,  true);
 
+        button2.addComponent(new MinimapComponent("images/red_button.png"));
+
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed && !keySpawned) {
                 spawnKey();
