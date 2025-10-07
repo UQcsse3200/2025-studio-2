@@ -477,6 +477,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void retractLowerLadder() {
         isLowerLadderExtended = false;
+        if (isResetting) return;
 
         // Delays disposal of bottom ladder rungs until next frame to avoid physics engine lock
         Gdx.app.postRunnable(() -> {
