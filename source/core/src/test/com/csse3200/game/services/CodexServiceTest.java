@@ -3,12 +3,12 @@ package com.csse3200.game.services;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.csse3200.game.extensions.GameExtension;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -36,5 +36,17 @@ public class CodexServiceTest {
         assertNotNull(entry);
         assertEquals("Test Title 1", entry.getTitle());
         assertEquals("Test Content 1", entry.getText());
+    }
+
+    @Test
+    @DisplayName("getEntry() returns null for non-existent entry")
+    void getEntryReturnsNull() {
+        // Service loads empty string
+        setupMockFile("");
+        CodexService service = new CodexService();
+
+        // Ensure non-existent entry is null
+        CodexEntry entry = service.getEntry("test_id_1");
+        assertNull(entry);
     }
 }
