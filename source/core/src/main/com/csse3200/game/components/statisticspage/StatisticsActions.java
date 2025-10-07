@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * when one of the events is triggered.
  */
 public class StatisticsActions extends Component {
-    private static final Logger logger = LoggerFactory.getLogger(StatisticsActions.class);
     private GdxGame game;
 
     public StatisticsActions(GdxGame game) {
@@ -20,12 +19,20 @@ public class StatisticsActions extends Component {
     @Override
     public void create() {
         entity.getEvents().addListener("exit", this::onExit);
+        entity.getEvents().addListener("reset", this::resetStats);
     }
 
     /**
-     * Exits the game.
+     * Exits the stats screen.
      */
     private void onExit() {
         game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+    }
+
+    /**
+     * Resets the stats.
+     */
+    private void resetStats() {
+        StatsTracker.resetStatsFile();
     }
 }

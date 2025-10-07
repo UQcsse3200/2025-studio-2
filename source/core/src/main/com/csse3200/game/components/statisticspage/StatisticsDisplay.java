@@ -14,6 +14,9 @@ import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Statistics Page UI Class
+ */
 public class StatisticsDisplay extends UIComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(StatisticsDisplay.class);
@@ -24,6 +27,9 @@ public class StatisticsDisplay extends UIComponent {
     private Table topTable;
 
 
+    /**
+     * Constructor
+     */
     public StatisticsDisplay(GdxGame game) {
         super();
         this.game = game;
@@ -35,6 +41,9 @@ public class StatisticsDisplay extends UIComponent {
         addActors();
     }
 
+    /**
+     * Add UI parts in
+     */
     private void addActors() {
         Image background =
                 new Image(
@@ -55,26 +64,55 @@ public class StatisticsDisplay extends UIComponent {
         topTable.add(title).expandX().center().padTop(20f);
         stage.addActor(topTable);
 
-        Label playtimeLabel =
-                new Label("Total Playtime: " + StatsTracker.getPlaytimeMinutes() + " mins",
-                skin);
-        Label upgradesLabel =
-                new Label("Upgrades picked up: " + StatsTracker.getUpgradesCollected(), skin);
-        Label levelCompletedLabel =
-                new Label("Levels completed: " + StatsTracker.getLevelsCompleted(), skin);
-        Label deathCounterLabel =
-                new Label("Deaths: " + StatsTracker.getDeathCount(),
-                skin);
-        Label achievementCounterLabel =
-                new Label("Achievements: " + StatsTracker.getAchievementsUnlocked(),
-                skin);
+//        Label playtimeLabel =
+//                new Label("Total Playtime: " + StatsTracker.getPlaytimeMinutes() + " mins",
+//                skin);
+//        Label upgradesLabel =
+//                new Label("Upgrades picked up: " + StatsTracker.getUpgradesCollected(), skin);
+//        Label levelCompletedLabel =
+//                new Label("Levels completed: " + StatsTracker.getLevelsCompleted(), skin);
+//        Label deathCounterLabel =
+//                new Label("Deaths: " + StatsTracker.getDeathCount(),
+//                skin);
+//        Label achievementCounterLabel =
+//                new Label("Achievements: " + StatsTracker.getAchievementsUnlocked(),
+//                skin);
+//
+//        table.add(playtimeLabel).pad(10f).padLeft(50f).row();
+//        table.add(upgradesLabel).pad(10f).padLeft(50f).row();
+//        table.add(levelCompletedLabel).pad(10f).padLeft(50f).row();
+//        table.add(deathCounterLabel).pad(10f).padLeft(50f).row();
+//        table.add(achievementCounterLabel).pad(10f).padLeft(50f).row();
 
-        table.add(playtimeLabel).pad(10f).padLeft(50f).row();
-        table.add(upgradesLabel).pad(10f).padLeft(50f).row();
-        table.add(levelCompletedLabel).pad(10f).padLeft(50f).row();
-        table.add(deathCounterLabel).pad(10f).padLeft(50f).row();
-        table.add(achievementCounterLabel).pad(10f).padLeft(50f).row();
+        Label playtimeLabel = new Label("Total Playtime:", skin);
+        Label playtimeValue = new Label(StatsTracker.getPlaytimeMinutes() + " mins", skin);
 
+        Label upgradesLabel = new Label("Upgrades picked up:", skin);
+        Label upgradesValue = new Label(String.valueOf(StatsTracker.getUpgradesCollected()), skin);
+
+        Label levelCompletedLabel = new Label("Levels completed:", skin);
+        Label levelCompletedValue = new Label(String.valueOf(StatsTracker.getLevelsCompleted()), skin);
+
+        Label deathCounterLabel = new Label("Deaths:", skin);
+        Label deathCounterValue = new Label(String.valueOf(StatsTracker.getDeathCount()), skin);
+
+        Label achievementCounterLabel = new Label("Achievements:", skin);
+        Label achievementCounterValue = new Label(String.valueOf(StatsTracker.getAchievementsUnlocked()), skin);
+
+        table.add(playtimeLabel).pad(10f).padLeft(50f).right();
+        table.add(playtimeValue).pad(10f).left().row();
+
+        table.add(upgradesLabel).pad(10f).padLeft(50f).right();
+        table.add(upgradesValue).pad(10f).left().row();
+
+        table.add(levelCompletedLabel).pad(10f).padLeft(50f).right();
+        table.add(levelCompletedValue).pad(10f).left().row();
+
+        table.add(deathCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(deathCounterValue).pad(10f).left().row();
+
+        table.add(achievementCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(achievementCounterValue).pad(10f).left().row();
 
         TextButton exitBtn = new TextButton("Exit", skin);
 
@@ -94,8 +132,28 @@ public class StatisticsDisplay extends UIComponent {
         bottomTable.setFillParent(true);
         bottomTable.add(exitBtn).pad(15f);
 
+        TextButton resetBtn = new TextButton("Reset", skin);
+
+        // Triggers an event when the button is pressed
+        resetBtn.addListener(
+                new ChangeListener() {
+                    @Override
+                    public void changed(ChangeEvent changeEvent, Actor actor) {
+
+                        logger.debug("Reset button clicked");
+                        entity.getEvents().trigger("reset");
+                        entity.getEvents().trigger("exit");
+                    }
+                });
+
+        Table bottomRight = new Table();
+        bottomRight.bottom().right();
+        bottomRight.setFillParent(true);
+        bottomRight.add(resetBtn).pad(15f);
+
         stage.addActor(table);
         stage.addActor(bottomTable);
+        stage.addActor(bottomRight);
     }
 
     @Override
