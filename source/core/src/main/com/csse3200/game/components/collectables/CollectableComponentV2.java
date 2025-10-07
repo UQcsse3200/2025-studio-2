@@ -124,18 +124,9 @@ public class CollectableComponentV2 extends Component {
         texture = entity.getComponent(TextureRenderComponent.class);
 
         if (collected) return;
-
-        if (animation != null) {
-            animation.setEnabled(visible);
-        }
-
-        if (texture != null) {
-            texture.setEnabled(visible);
-        }
-
-        if (cone != null) {
-            cone.setActive(visible);
-        }
+        if (animation != null) animation.setEnabled(visible);
+        if (texture != null) texture.setEnabled(visible);
+        if (cone != null) cone.setActive(visible);
 
         if (collider != null) {
             collider.setLayer(visible ? PhysicsLayer.COLLECTABLE : PhysicsLayer.NONE);
