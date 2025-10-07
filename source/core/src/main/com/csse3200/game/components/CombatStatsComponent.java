@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.statisticspage.StatsTracker;
+import com.csse3200.game.entities.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,10 +12,10 @@ import org.slf4j.LoggerFactory;
  * extended for more specific combat needs.
  */
 public class CombatStatsComponent extends Component {
-
   private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
   private int health;
   private int baseAttack;
+  private Entity lastAttacker = null;
 
   // "Grace period" between hits
   private static final long INVULN_FRAMES = 30;
@@ -30,6 +31,7 @@ public class CombatStatsComponent extends Component {
     this.health = other.health;
     this.baseAttack = other.baseAttack;
     this.lastHitFrame = other.lastHitFrame;
+    this.lastAttacker = null;
   }
 
   /**
@@ -38,7 +40,7 @@ public class CombatStatsComponent extends Component {
    * @return is player dead
    */
   public Boolean isDead() {
-    return health == 0;
+    return health <= 0;
   }
 
   /**
@@ -91,6 +93,26 @@ public class CombatStatsComponent extends Component {
   }
 
   /**
+   * Gets the last attacker which caused the entity to take damage.
+   *
+   * @return the entity that last attacked this entity
+   */
+  public Entity getLastAttacker() {
+    return lastAttacker;
+  }
+
+  /**
+   * Sets the last attacker which caused the entity to take damage.
+   * This is public so that if something calls setHealth, we can still
+   * register the death cause by manually calling this.
+   *
+   * @param lastAttacker the entity that last attacked this entity
+   */
+  public void setLastAttacker(Entity lastAttacker) {
+    this.lastAttacker = lastAttacker;
+  }
+
+  /**
    * Sets the entity's attack damage. Attack damage has a minimum bound of 0.
    *
    * @param attack Attack damage
@@ -106,6 +128,7 @@ public class CombatStatsComponent extends Component {
   public void hit(CombatStatsComponent attacker) {
     long currentFrame = Gdx.graphics.getFrameId();
     if (currentFrame - lastHitFrame > INVULN_FRAMES) {
+      setLastAttacker(attacker.entity);
       lastHitFrame = currentFrame;
       int newHealth = getHealth() - attacker.getBaseAttack();
       setHealth(newHealth);
