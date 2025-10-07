@@ -681,7 +681,9 @@ public class LevelOneGameArea extends GameArea {
         CollectableCounter.reset();
         CollectableCounter.setTotal(3);
 
-        spawnCollectable(new Vector2(playerPos.x, playerPos.y + 2f));
+        spawnCollectable(new Vector2(33.5f, -1.5f));
+        spawnCollectable(new Vector2(0f, 23f));
+        spawnCollectable(new Vector2(39.5f, 30f));
     }
 
     protected void loadAssets() {
