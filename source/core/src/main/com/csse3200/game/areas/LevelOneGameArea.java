@@ -884,9 +884,10 @@ public class LevelOneGameArea extends GameArea {
 //        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
 //    }
     public void spawnKey() {
-        Entity key = CollectableFactory.createCollectable("key:door");
+        Entity key = CollectableFactory.createKey("key:door");
         key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f),    new GridPoint2(46, 56), true, true);
     }
     public void spawnPotion(String type, int x, int y) {
         Entity potion = CollectableFactory.createCollectable("potion:" + type);
@@ -918,11 +919,11 @@ public class LevelOneGameArea extends GameArea {
         // Large, invisible sensors — easy to grab, no textures.
         // IDs chosen to match the ObjectiveTab banner map.
         Gdx.app.log("LevelOne", "Spawning objectives…");
-        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(1, 3), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
 
-        spawnEntityAt(CollectableFactory.createObjective("dash_completed", 0.2f, 0.2f),    new GridPoint2(1, 37), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("dash_completed", 0.2f, 0.2f),    new GridPoint2(1, 37), true, true);
 
 //        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
 //        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
