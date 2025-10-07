@@ -85,4 +85,16 @@ public class CodexServiceTest {
         assertTrue(result.contains(service.getEntry("test_id_1")));
         assertTrue(result.contains(service.getEntry("test_id_2")));
     }
+
+    @Test
+    @DisplayName("Disposing the service clears all entries")
+    void disposeClearsEntries() {
+        // Service loads mock file and is disposed
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
+        CodexService service = new CodexService();
+        service.dispose();
+
+        // Ensure all entries are removed
+        assertTrue(service.getEntries(false).isEmpty());
+    }
 }
