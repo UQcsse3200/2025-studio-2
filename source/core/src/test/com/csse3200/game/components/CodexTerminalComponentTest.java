@@ -1,6 +1,5 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.math.Octree;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -8,7 +7,6 @@ import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.CodexEntry;
-import com.csse3200.game.ui.terminal.Terminal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -64,7 +62,7 @@ public class CodexTerminalComponentTest {
     }
 
     @Test
-    @DisplayName("Interacting with the terminal unlocks entry and changes state")
+    @DisplayName("Interacting with the terminal in range unlocks entry and changes state")
     void interactingUnlocksEntryChangesState() {
         // Create simple player entity for testing on top of terminal
         Entity player = new Entity();
@@ -84,5 +82,28 @@ public class CodexTerminalComponentTest {
         verify(textureRenderComponent).setTexture("images/terminal_off.png");
         verify(coneLightComponent).dispose();
         verify(tooltipComponent).dispose();
+    }
+
+    @Test
+    @DisplayName("Interacting with the terminal out of range does nothing")
+    void interactingOutOfRangeDoesNothing() {
+        // Create simple entity for testing when player is far away
+        Entity player = new Entity();
+        ColliderComponent mockedCollider = mock(ColliderComponent.class);
+        when(mockedCollider.getEntity()).thenReturn(player);
+        player.addComponent(mockedCollider);
+        player.setPosition(terminal.getCenterPosition().x + 100f,
+                terminal.getCenterPosition().y + 100f);
+        player.create();
+
+        // Make player interact with the terminal
+        terminalComponent.setPlayerInRange(player.getComponent(ColliderComponent.class));
+        player.getEvents().trigger("interact");
+
+        // Verify no state changes occurred
+        assertFalse(codexEntry.isUnlocked());
+        verify(textureRenderComponent, never()).setTexture(anyString());
+        verify(coneLightComponent, never()).dispose();
+        verify(tooltipComponent, never()).dispose();
     }
 }
