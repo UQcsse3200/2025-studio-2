@@ -2,6 +2,7 @@ package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
@@ -12,6 +13,7 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.UUID;
 
 public final class Spawners {
@@ -129,7 +131,9 @@ public final class Spawners {
         // --- Trap ---
         SpawnRegistry.register("trap", a -> {
             Entity trap = TrapFactory.createSpikes(new Vector2(a.safeX, a.safeY), a.rotation);
+
             linkEntities(trap, a.linked);
+            addTooltip(trap, a.tooltip);
             trap.setScale(a.sx, a.sy);
 
             return trap;
@@ -139,14 +143,19 @@ public final class Spawners {
         SpawnRegistry.register("laser", a -> LaserFactory.createLaserEmitter(a.rotation));
 
         // --- Buttons ---
-//        SpawnRegistry.register("button", a -> {
-//            if (a.direction == null) a.direction = "right";
-//
-//
-//            // isPressed, type, direction
-//        });
-    }
+        SpawnRegistry.register("button", a -> {
+            if (a.direction == null) a.direction = "right";
+            Entity button = ButtonFactory.createButton(false, a.subtype, a.direction);
 
+            // buttonToggled listener
+
+            linkEntities(button, a.linked);
+            addTooltip(button, a.tooltip);
+            addIdentifier(button, String.valueOf(a.id));
+
+            return button;
+        });
+    }
 
     // --- Helpers ---
 
