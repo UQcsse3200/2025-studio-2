@@ -55,7 +55,8 @@ public class CodexServiceTest {
     @DisplayName("getEntries() returns only unlocked entries when requesting unlocked entries")
     void getEntriesReturnsUnlocked() {
         // Service loads mock file
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest " +
+                "Content 2");
         CodexService service = new CodexService();
 
         // Unlock exactly one entry
@@ -72,7 +73,8 @@ public class CodexServiceTest {
     @DisplayName("getEntries() returns all entries when not equesting just unlocked entries")
     void getEntriesReturnsAll() {
         // Service loads mock file
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest " +
+                "Content 2");
         CodexService service = new CodexService();
 
         // Unlock exactly one entry
@@ -90,11 +92,38 @@ public class CodexServiceTest {
     @DisplayName("Disposing the service clears all entries")
     void disposeClearsEntries() {
         // Service loads mock file and is disposed
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest " +
+                "Content 2");
         CodexService service = new CodexService();
         service.dispose();
 
         // Ensure all entries are removed
         assertTrue(service.getEntries(false).isEmpty());
+    }
+
+    @Test
+    @DisplayName("Service ignores entries that are incorrectly formatted")
+    void ignoresIncorrectlyFormatted() {
+        // Service loads mock file with an entry missing a line
+        setupMockFile("test_id_1\nTest Title 1");
+        CodexService service = new CodexService();
+
+        // Ensure that no entries have been loaded
+        assertTrue(service.getEntries(false).isEmpty());
+    }
+
+    @Test
+    @DisplayName("Service ignores entries with a missing title/ID")
+    void ignoresMissingDetails() {
+        // Service loads mock file wth empty strings for an ID and title
+        setupMockFile("\nTest Title 1\nTest Content 1\ntest_id_2\n\nTest Content " +
+                "2\ntest_id_3\nTest Title 3\nTest Content 3");
+        CodexService service = new CodexService();
+
+        // Ensure invalid entries did not load, and valid ones did
+        assertEquals(1, service.getEntries(false).size());
+        assertNull(service.getEntry("test_id_1"));
+        assertNull(service.getEntry("test_id_2"));
+        assertNotNull(service.getEntry("test_id_3"));
     }
 }
