@@ -35,6 +35,13 @@ public class DeathOnTrapComponent extends Component {
             animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
         }
     }
+    /**
+     * Handles collisions between the drone and other entities.
+     * If the drone collides with a trap or death zone, the explosion sequence is triggered.
+     *
+     * @param me    The fixture of this entity.
+     * @param other The fixture of the colliding entity.
+     */
 
     private void onCollisionStart(Fixture me, Fixture other) {
         if (triggered || other == null || other.getBody() == null) return;
@@ -53,6 +60,11 @@ public class DeathOnTrapComponent extends Component {
             explode();
         }
     }
+
+    /**
+     * Initiates the explosion sequence, disabling physics and collider components,
+     * playing explosion effects, and cleaning up the entity safely after a delay.
+     */
 
     private void explode() {
         if (triggered) return;
@@ -103,6 +115,13 @@ public class DeathOnTrapComponent extends Component {
         }, ANIMATION_DURATION);
     }
 
+    /**
+     * Gradually fades out the explosion sound over a specified duration.
+     *
+     * @param sound    The sound instance to fade.
+     * @param soundId  The specific sound playback ID.
+     * @param duration The total fade-out duration in seconds.
+     */
 
         private void fadeOutSound(Sound sound, long soundId, float duration) {
         final int steps = 10;
