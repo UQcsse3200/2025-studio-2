@@ -24,6 +24,7 @@ public class ConeLightComponent extends Component {
     private float distance;
     private float directionDeg;
     private float coneDegree;
+    private boolean isActive = true;
 
     // Movement/rotation
     private Vector2 velocity = new Vector2(0f, 0f);
@@ -69,6 +70,10 @@ public class ConeLightComponent extends Component {
 
     @Override
     public void update() {
+        if (coneLight.isActive() != isActive) {
+            coneLight.setActive(isActive);
+        }
+
         // get the amount of time passed
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
         if (dt <= 0f) dt = 0f;
@@ -156,11 +161,11 @@ public class ConeLightComponent extends Component {
     }
 
     public void setActive(boolean active) {
-        coneLight.setActive(active);
+        this.isActive = active;
     }
 
     public boolean isActive() {
-        return coneLight.isActive();
+        return this.isActive;
     }
 
     public ConeLight getLight() {
