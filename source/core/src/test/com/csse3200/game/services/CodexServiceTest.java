@@ -7,6 +7,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -21,5 +23,18 @@ public class CodexServiceTest {
         // Reading a file returns mocked file handle
         when(Gdx.files.internal("codex-entries.txt")).thenReturn(fileHandle);
     }
-   }
+
+    @Test
+    @DisplayName("getEntry() returns the correct entry")
+    void getEntryReturnsCorrectEntry() {
+        // Service loads string and creates entries
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1");
+        CodexService service = new CodexService();
+
+        // Test whether entry is valid
+        CodexEntry entry = service.getEntry("test_id_1");
+        assertNotNull(entry);
+        assertEquals("Test Title 1", entry.getTitle());
+        assertEquals("Test Content 1", entry.getText());
+    }
 }
