@@ -1,5 +1,6 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.entities.Entity;
@@ -59,17 +60,22 @@ public class SelfDestructComponent extends Component {
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-                if (animator != null) {
-                    animator.stopAnimation();
-                    entity.removeComponent(animator);
+                try{
+                    if (animator != null) {
+                        animator.stopAnimation();
+                        entity.removeComponent(animator);
+                    }
+                    PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+                    if (physics != null) {
+                        if (physics.getBody() != null) physics.getBody().setActive(false);
+                        entity.removeComponent(physics);
+                    }
+                    entity.getEvents().trigger("destroy");
+                    entity.removeComponent(SelfDestructComponent.this);
+                    dispose();
+                }catch (Exception e){
+                    Gdx.app.error("SelfDestructComponent", "Error during cleanup: " + e.getMessage());
                 }
-                PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-                if (physics != null) {
-                    if (physics.getBody() != null) physics.getBody().setActive(false);
-                    entity.removeComponent(physics);
-                }
-                entity.getEvents().trigger("destroy");
-                entity.removeComponent(SelfDestructComponent.this);
             }
         }, 0.5f);
     }
