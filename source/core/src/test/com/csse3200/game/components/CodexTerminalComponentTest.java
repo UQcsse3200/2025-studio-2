@@ -3,6 +3,7 @@ package com.csse3200.game.components;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
@@ -105,5 +106,30 @@ public class CodexTerminalComponentTest {
         verify(textureRenderComponent, never()).setTexture(anyString());
         verify(coneLightComponent, never()).dispose();
         verify(tooltipComponent, never()).dispose();
+    }
+
+    @Test
+    @DisplayName("Interacting with the terminal more than once does nothing")
+    void interactingMultipleTimesDoesNothing() {
+        // Create simply player entity on top of terminal
+        Entity player = new Entity();
+        player.addComponent(mock(ColliderComponent.class));
+        player.getComponent(ColliderComponent.class).setEntity(player);
+        player.setPosition(terminal.getCenterPosition());
+        player.create();
+
+        terminalComponent.setPlayerInRange(player.getComponent(ColliderComponent.class));
+
+        // First interaction
+        player.getEvents().trigger("interact");
+        assertTrue(codexEntry.isUnlocked());
+
+        // Second interaction
+        player.getEvents().trigger("interact");
+
+        // Verify methods were only called once
+        verify(textureRenderComponent, times(1)).setTexture("images/terminal_off.png");
+        verify(coneLightComponent, times(1)).dispose();
+        verify(tooltipComponent, times(1)).dispose();
     }
 }
