@@ -78,14 +78,21 @@ public class CodexService implements Disposable {
         String[] fileLines = fileContents.split("\\r?\\n");
 
         // Iterate through file by three lines each
-        for (int i = 0; i + 2 < fileLines.length; i += 3) {
-            String id = fileLines[i];
-            String title = fileLines[i + 1];
-            String text = fileLines[i + 2];
+        for (int i = 0; i < fileLines.length; i += 3) {
+            // Only parse if there's enough lines left
+            if (i + 2 < fileLines.length) {
+                String id = fileLines[i];
+                String title = fileLines[i + 1];
+                String text = fileLines[i + 2];
 
-            // Prevent adding entries with no ID or title
-            if (id != null && !id.trim().isEmpty() && title != null) {
-                entries.put(id, new CodexEntry(title, text));
+                // Skip invalid codex entries
+                if (id != null && !id.trim().isEmpty() && title != null && !title.trim().isEmpty()) {
+                    entries.put(id, new CodexEntry(title, text));
+                } else {
+                    logger.warn("Skipping malformed codex entry at line {}", i + 1);
+                }
+            } else {
+                logger.warn("Incomplete codex entry found starting at line {}", i + 1);
             }
         }
     }
