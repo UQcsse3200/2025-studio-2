@@ -1,18 +1,24 @@
 package com.csse3200.game.components.mainmenu;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.security.Provider;
+import java.util.Arrays;
 
 /**
  * A ui component for displaying the Main menu.
@@ -21,10 +27,13 @@ public class MainMenuDisplay extends UIComponent {
   private static final Logger logger = LoggerFactory.getLogger(MainMenuDisplay.class);
   private static final float Z_INDEX = 2f;
   private Table table;
+  private Sound buttonClickSound;
 
   @Override
   public void create() {
     super.create();
+    buttonClickSound = ServiceLocator.getResourceService()
+            .getAsset("sounds/buttonsound.mp3", Sound.class);
     addActors();
   }
 
@@ -48,13 +57,27 @@ public class MainMenuDisplay extends UIComponent {
     TextButton loadBtn = new TextButton("Load", skin, "mainMenu");
     TextButton settingsBtn = new TextButton("Settings", skin, "mainMenu");
     TextButton exitBtn = new TextButton("Exit", skin, "mainMenu");
+    startBtn.setTransform(true);
+    startBtn.setOrigin(Align.center);
 
+    loadBtn.setTransform(true);
+    loadBtn.setOrigin(Align.center);
+
+    settingsBtn.setTransform(true);
+    settingsBtn.setOrigin(Align.center);
+
+    exitBtn.setTransform(true);
+    exitBtn.setOrigin(Align.center);
+
+
+      HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, settingsBtn, exitBtn));
     // Triggers an event when the button is pressed
     startBtn.addListener(
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Start button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("start");
           }
         });
@@ -64,6 +87,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Load button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("load");
           }
         });
@@ -73,6 +97,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Settings button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("settings");
           }
         });
@@ -83,6 +108,7 @@ public class MainMenuDisplay extends UIComponent {
           public void changed(ChangeEvent changeEvent, Actor actor) {
 
             logger.debug("Exit button clicked");
+            buttonClickSound.play();
             entity.getEvents().trigger("exit");
           }
         });
@@ -93,6 +119,7 @@ public class MainMenuDisplay extends UIComponent {
 
     // Add row containing buttons
     Table row = new Table();
+    row.setTransform(true);
     row.add(startBtn).padLeft(15f).padRight(15f);
     row.add(loadBtn).padLeft(15f).padRight(15f);
     row.add(settingsBtn).padLeft(15f).padRight(15f);

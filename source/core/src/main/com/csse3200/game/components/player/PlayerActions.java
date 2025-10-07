@@ -67,7 +67,9 @@ public class PlayerActions extends Component {
   private boolean isGliding = false;
 
   private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
-          "sounds/Impact4.ogg", Sound.class);
+          "sounds/jetpacksound.mp3", Sound.class);
+  private Sound walkSound = ServiceLocator.getResourceService().getAsset(
+          "sounds/walksound.mp3", Sound.class);
 
   @Override
   public void create() {
@@ -75,6 +77,8 @@ public class PlayerActions extends Component {
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
     cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
+    walkSound.loop();
+    walkSound.pause();
 
     entity.getEvents().addListener("walk", this::walk);
     entity.getEvents().addListener("walkStop", this::stopWalking);
@@ -148,6 +152,7 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       // Stop player movement when dead
       moving = false;
+      setEnabled(false); // Disable repeated death events and like a thousand function calls!!
       entity.getEvents().trigger("death");
       // Death screen component will handle the reset when user chooses to restart
     }
@@ -214,6 +219,7 @@ public class PlayerActions extends Component {
    */
   void walk(Vector2 direction) {
       this.walkDirection.set(direction); // <- keep/make this
+      walkSound.resume();
       moving = true;
   }
 
@@ -232,6 +238,7 @@ public class PlayerActions extends Component {
   void stopWalking() {
     this.walkDirection.setZero();
     updateSpeed(); // apply zero desired velocity so we decelerate immediately
+    walkSound.pause();
     moving = false;
   }
 
@@ -274,6 +281,9 @@ public class PlayerActions extends Component {
     isJumping = false;
     isDoubleJump = false;
 
+//    Sound interactSound = ServiceLocator.getResourceService().getAsset(
+//            "sounds/thudsound.mp3", Sound.class);
+//    interactSound.play(0.08f);
   }
 
   /**
@@ -304,6 +314,11 @@ public class PlayerActions extends Component {
 
     // Scale the direction vector to increase speed
     this.walkDirection.scl(DASH_SPEED_MULTIPLIER);
+
+    Sound interactSound = ServiceLocator.getResourceService().getAsset(
+            "sounds/whooshsound.mp3", Sound.class);
+    interactSound.play(0.2f);
+
     body.applyLinearImpulse(new Vector2(this.walkDirection.x, 0f), body.getWorldCenter(), true);
     // Unscale the direction vector to ensure player does not infinitely dash in one direction
     this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
@@ -323,7 +338,7 @@ public class PlayerActions extends Component {
    */
   void interact() {
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
-            "sounds/chimesound.mp3", Sound.class);
+            "sounds/pickupsound.mp3", Sound.class);
     interactSound.play();
     soundPlayed = true;
   }
@@ -374,6 +389,11 @@ public class PlayerActions extends Component {
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
 
     if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
+      if (isJumping || isDoubleJump) {
+        Sound interactSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/thudsound.mp3", Sound.class);
+        interactSound.play(0.08f);
+      }
       entity.getEvents().trigger("landed");
     }
   }

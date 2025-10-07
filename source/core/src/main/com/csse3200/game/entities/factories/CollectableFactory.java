@@ -128,7 +128,7 @@ public class CollectableFactory {
                 .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
                 .addComponent(new UpgradesComponent("dash"));
 
-        dash.setScale(0.5f, 0.5f);
+        dash.setScale(0.8f, 0.5f);
         PhysicsUtils.setScaledCollider(dash, 0.5f, 0.5f);
 
         return dash;
@@ -163,7 +163,7 @@ public class CollectableFactory {
         Entity jetpack = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
+                .addComponent(new TextureRenderComponent("images/jetpack_powerup.png"))
                 .addComponent(new UpgradesComponent("jetpack"));
 
         jetpack.setScale(0.5f, 0.5f);

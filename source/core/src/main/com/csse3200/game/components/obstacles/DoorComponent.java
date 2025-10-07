@@ -1,5 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
+import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
@@ -9,6 +10,7 @@ import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 public class DoorComponent extends Component {
     private final String keyId;
@@ -18,6 +20,7 @@ public class DoorComponent extends Component {
     private boolean animationFinished = false;
     private final GameArea area;
     private AnimationRenderComponent animationComponent;
+    private boolean isPlayerInside = false;
 
     /**
      * A component that represents a door which can be locked or unlocked with a specific key.
@@ -30,7 +33,6 @@ public class DoorComponent extends Component {
         this.area = area;
 //        this.levelId = levelId;
     }
-
 
     /**
      * Registers listeners for collision and door events when the component is created.
@@ -59,6 +61,7 @@ public class DoorComponent extends Component {
             if (animationComponent.isFinished()) {
                 onAnimationFinished();
                 animationFinished = true;
+
             }
         }
     }
@@ -70,6 +73,10 @@ public class DoorComponent extends Component {
         }
 
         isOpening = false;
+
+        if (isPlayerInside) {
+            onCollisionStart(area.getPlayer());
+        }
     }
 
     /**
@@ -81,7 +88,7 @@ public class DoorComponent extends Component {
     private void onCollisionStart(Entity other) {
         HitboxComponent cc = other.getComponent(HitboxComponent.class);
         if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
-
+        isPlayerInside = true;
 
         if (locked) {
             tryUnlock(other);
@@ -102,6 +109,7 @@ public class DoorComponent extends Component {
     private void onCollisionEnd(Entity other) {
         HitboxComponent cc = other.getComponent(HitboxComponent.class);
         if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER)) return;
+        isPlayerInside = false;
 
         // When player leaves the door area, reset it
         if (!locked) {
@@ -138,6 +146,10 @@ public class DoorComponent extends Component {
         isOpening = true;
         animationFinished = false;
         locked = false;
+
+        Sound doorSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/doorsound.mp3", Sound.class);
+        doorSound.play(0.3f);
 
         // play door opening animation
         if (animationComponent != null) {

@@ -2,6 +2,7 @@ package com.csse3200.game.components.pausemenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,10 +19,7 @@ import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import com.csse3200.game.ui.inventoryscreen.InventoryTab;
-import com.csse3200.game.ui.inventoryscreen.ObjectivesTab;
-import com.csse3200.game.ui.inventoryscreen.SettingsTab;
-import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
+import com.csse3200.game.ui.inventoryscreen.*;
 
 public class PauseMenuDisplay extends UIComponent {
     private final MainGameScreen screen;
@@ -34,10 +32,12 @@ public class PauseMenuDisplay extends UIComponent {
     private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
     private final ObjectivesTab objectivesTab;
+    private final CodexTab codexTab;
     private InventoryNavigationComponent navigationComponent;
     private PauseMenuNavigationComponent pauseMenuNavigationComponent;
+    private Sound buttonClickSound;
 
-    public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
+    public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES, CODEX}
     private Tab currentTab = Tab.INVENTORY;
 
     public PauseMenuDisplay(MainGameScreen screen, GdxGame game) {
@@ -46,12 +46,16 @@ public class PauseMenuDisplay extends UIComponent {
         this.inventoryTab = new InventoryTab(screen);
         this.upgradesTab = new UpgradesTab(screen);
         this.objectivesTab = new ObjectivesTab(screen);
+        this.codexTab = new CodexTab();
         this.game = game;
     }
 
     @Override
     public void create() {
         super.create();
+
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
 
         // Initialize the inventory navigation component
         navigationComponent = new InventoryNavigationComponent(inventoryTab);
@@ -111,6 +115,7 @@ public class PauseMenuDisplay extends UIComponent {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play();
                 action.run();
             }
         });
@@ -122,6 +127,7 @@ public class PauseMenuDisplay extends UIComponent {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play();
                 setTab(tab);
                 screen.reflectPauseTabClick(tab);
             }
@@ -150,8 +156,8 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> Tab.UPGRADES;
             case UPGRADES -> Tab.OBJECTIVES;
             case OBJECTIVES -> Tab.INVENTORY;
-            //case SETTINGS -> Tab.SETTINGS;
-            default -> Tab.SETTINGS;
+            case SETTINGS -> Tab.SETTINGS;
+            case CODEX -> Tab.CODEX;
         };
     }
 
@@ -160,8 +166,8 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> Tab.OBJECTIVES;
             case UPGRADES -> Tab.INVENTORY;
             case OBJECTIVES -> Tab.UPGRADES;
-            //case SETTINGS -> Tab.SETTINGS;
-            default -> Tab.SETTINGS;
+            case SETTINGS -> Tab.SETTINGS;
+            case CODEX -> Tab.CODEX;
         };
     }
 
@@ -177,6 +183,7 @@ public class PauseMenuDisplay extends UIComponent {
             case UPGRADES -> upgradesTab.build(skin);
             case OBJECTIVES -> objectivesTab.build(skin);
             case SETTINGS -> settingsTab.build(skin);
+            case CODEX -> codexTab.build(skin);
         };
         // Ensure the returned actor from build() fills the tab content area.
         tabContent.add(ui).expand().fill();
@@ -184,6 +191,9 @@ public class PauseMenuDisplay extends UIComponent {
         // Only add settings tab while not in settings
         if (currentTab != Tab.SETTINGS) {
             addBottomButton("Settings", Tab.SETTINGS);
+        }
+        if (currentTab != Tab.CODEX) {
+            addBottomButton("Codex", Tab.CODEX);
         }
         addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
         addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));

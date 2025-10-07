@@ -1,6 +1,7 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
+import com.csse3200.game.entities.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,48 +12,55 @@ import org.slf4j.LoggerFactory;
  */
 public class CombatStatsComponent extends Component {
 
-    private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
-    private int health;       // 玩家当前生命值
-    private int baseAttack;   // 攻击力
 
-    // "Grace period" between hits (无敌帧，防止连击过快)
+    private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
+    private int health;
+    private int baseAttack;
+    private Entity lastAttacker = null;
+
+
+    // "Grace period" between hits
     private static final long INVULN_FRAMES = 30;
     private long lastHitFrame = -100;
 
-    /**
-     * 构造函数
-     * @param health 初始生命值（每2点 = 1整心，每1点 = 半心）
-     * @param baseAttack 攻击力
-     */
+
+
     public CombatStatsComponent(int health, int baseAttack) {
         setHealth(health);
         setBaseAttack(baseAttack);
     }
 
-    // Copy constructor
-    public CombatStatsComponent(CombatStatsComponent other) {
-        this.health = other.health;
-        this.baseAttack = other.baseAttack;
-        this.lastHitFrame = other.lastHitFrame;
-    }
+  // Copy constructor
+  public CombatStatsComponent(CombatStatsComponent other) {
+    this.health = other.health;
+    this.baseAttack = other.baseAttack;
+    this.lastHitFrame = other.lastHitFrame;
+    this.lastAttacker = null;
+  }
 
-    /**
-     * 返回是否死亡（生命值 <= 0）
-     */
-    public Boolean isDead() {
-        return health <= 0;
-    }
+  /**
+   * Returns true if the entity's has 0 health, otherwise false.
+   *
+   * @return is player dead
+   */
+  public Boolean isDead() {
+    return health <= 0;
+  }
 
-    /**
-     * 获取当前生命值
-     */
-    public int getHealth() {
-        return health;
-    }
+  /**
+   * Returns the entity's health.
+   *
+   * @return entity's health
+   */
+  public int getHealth() {
+    return health;
+  }
 
-    /**
-     * 设置生命值，最低为 0
-     */
+  /**
+   * Sets the entity's health. Health has a minimum bound of 0.
+   *
+   * @param health health
+   */
     public void setHealth(int health) {
         int oldHealth = this.health;
         this.health = Math.max(0, health);
@@ -68,22 +76,49 @@ public class CombatStatsComponent extends Component {
         }
     }
 
-    /**
-     * 增加生命值（可以传负数表示扣血）
-     */
-    public void addHealth(int health) {
-        setHealth(this.health + health);
-    }
 
+  /**
+   * Adds to the player's health. The amount added can be negative.
+   *
+   * @param health health to add
+   */
+  public void addHealth(int health) {
+    setHealth(this.health + health);
+  }
+
+
+
+  /**
+   * Gets the last attacker which caused the entity to take damage.
+   *
+   * @return the entity that last attacked this entity
+   */
+  public Entity getLastAttacker() {
+    return lastAttacker;
+  }
+
+  /**
+   * Sets the last attacker which caused the entity to take damage.
+   * This is public so that if something calls setHealth, we can still
+   * register the death cause by manually calling this.
+   *
+   * @param lastAttacker the entity that last attacked this entity
+   */
+  public void setLastAttacker(Entity lastAttacker) {
+    this.lastAttacker = lastAttacker;
+  }
     /**
-     * 获取攻击力
+     * Returns the entity's base attack damage.
+     *
+     * @return base attack damage
      */
     public int getBaseAttack() {
         return baseAttack;
     }
-
     /**
-     * 设置攻击力（不能为负数）
+     * Sets the entity's attack damage. Attack damage has a minimum bound of 0.
+     *
+     * @param attack Attack damage
      */
     public void setBaseAttack(int attack) {
         if (attack >= 0) {
@@ -97,16 +132,16 @@ public class CombatStatsComponent extends Component {
      * Called when this entity is hit by an attacker.
      * @param attacker the attacker's CombatStatsComponent
      */
-    public void hit(CombatStatsComponent attacker) {
-        long currentFrame = Gdx.graphics.getFrameId();
-        if (currentFrame - lastHitFrame > INVULN_FRAMES) {
-            lastHitFrame = currentFrame;
+        public void hit (CombatStatsComponent attacker){
+            long currentFrame = Gdx.graphics.getFrameId();
+            if (currentFrame - lastHitFrame > INVULN_FRAMES) {
+                setLastAttacker(attacker.entity);
+                lastHitFrame = currentFrame;
+                int newHealth = getHealth() - attacker.getBaseAttack();
+                setHealth(newHealth);
 
-            int newHealth = getHealth() - (attacker.getBaseAttack()/4);
-            setHealth(newHealth);
-
-            // Trigger hurt animation/event
-            entity.getEvents().trigger("hurt");
+                // Animate hurt
+                entity.getEvents().trigger("hurt");
+            }
         }
-    }
 }

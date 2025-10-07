@@ -52,10 +52,11 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
     mainMenu: {
       font: commodore-64,
       fontColor: white,
-      downFontColor: dark_grey,
+      downFontColor: grey,
       up: button,
       down: button-down,
-      over: button-hover-cyan
+      over: button-down,
+      overFontColor: dark_grey
     }
     settingsMenu: {
       font: commodore-64,
@@ -63,7 +64,8 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
       downFontColor: dark_grey,
       up: button,
       down: button-down,
-      over: button-hover-grey
+      over: button-down,
+      overFontColor: dark_grey
     }
     cutsceneNext: {
       font: commodore-64,

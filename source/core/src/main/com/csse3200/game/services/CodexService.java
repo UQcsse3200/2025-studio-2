@@ -1,0 +1,101 @@
+package com.csse3200.game.services;
+
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.utils.Disposable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+
+/**
+ * Service for managing all codex entries in the game
+ */
+public class CodexService implements Disposable {
+    /**
+     * Map that maps an entry title to an entry content's (text, unlock status)
+     */
+    private final Map<String, CodexEntry> entries = new LinkedHashMap<>();
+    /**
+     * Logger for error handling
+     */
+    private static final Logger logger = LoggerFactory.getLogger(CodexService.class);
+
+    /**
+     * Constructor loads all codex entries from a special file.
+     */
+    public CodexService() {
+        loadEntries();
+    }
+
+    /**
+     * Returns an entry held by the service using the key (or id) of the entry.
+     *
+     * @param id The id of the entry.
+     * @return The entry with the matching id, or null if it does not exist
+     */
+    public CodexEntry getEntry(String id) throws IllegalArgumentException {
+        CodexEntry entry = entries.get(id);
+
+        // Create error if entry with that title does not exist.
+        if (entry == null) {
+            logger.error("No entry with id '{}' in codex entries", id);
+        }
+
+        return entry;
+    }
+
+    /**
+     * Returns all unlocked entries currently stored by the service as an array list.
+     *
+     * @param unlockedOnly Flag for filtering any codex entries which have not been unlocked.
+     * @return All unlocked entries stored by service as an array list.
+     */
+    public ArrayList<CodexEntry> getEntries(boolean unlockedOnly) {
+        // Turn values in map into stream.
+        Stream<CodexEntry> codexEntryStream = entries.values().stream();
+
+        // Filter locked entries if flag is set
+        if (unlockedOnly) {
+            codexEntryStream = codexEntryStream.filter(CodexEntry::isUnlocked);
+        }
+
+        // Return stream as array list
+        return codexEntryStream.collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
+     * Reads the contents of 'codex-entries.txt' and interprets it as ID, title, and text for
+     * entries.
+     */
+    private void loadEntries() {
+        // Read the contents of the file
+        String fileContents = Gdx.files.internal("codex-entries.txt").readString();
+        String[] fileLines = fileContents.split("\\r?\\n");
+
+        // Iterate through file by three lines each
+        for (int i = 0; i + 2 < fileLines.length; i += 3) {
+            String id = fileLines[i];
+            String title = fileLines[i + 1];
+            String text = fileLines[i + 2];
+
+            // Prevent adding entries with no ID or title
+            if (id != null && !id.trim().isEmpty() && title != null) {
+                entries.put(id, new CodexEntry(title, text));
+            }
+        }
+    }
+
+    /**
+     * Clears the map of all entries.
+     */
+    @Override
+    public void dispose() {
+        entries.clear();
+    }
+}
+

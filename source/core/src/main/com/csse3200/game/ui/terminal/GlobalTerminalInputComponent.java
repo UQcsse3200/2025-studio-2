@@ -3,7 +3,6 @@ package com.csse3200.game.ui.terminal;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.input.Keymap;
 
 public class GlobalTerminalInputComponent extends InputComponent {
   private Terminal terminal;
@@ -22,11 +21,10 @@ public class GlobalTerminalInputComponent extends InputComponent {
 
   @Override
   public boolean keyDown(int keycode) {
-    if (keycode == Keymap.getActionKeyCode("TerminalToggle") && modifierHeld) {
+    if ((keycode == Input.Keys.GRAVE || keycode == Input.Keys.SYM) && modifierHeld) {
       TerminalService.toggle();
       return true;
-    } else if (keycode == Keymap.getActionKeyCode("TerminalModifier")
-            || keycode == Keymap.getActionKeyCode("TerminalModifierAlt")) {
+    } else if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
       modifierHeld = true;
     }
     handleFocusChange(keycode);
@@ -35,8 +33,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
 
   @Override
   public boolean keyUp(int keycode) {
-    if (keycode == Keymap.getActionKeyCode("TerminalModifier")
-            || keycode == Keymap.getActionKeyCode("TerminalModifierAlt")) {
+    if (keycode == Input.Keys.CONTROL_LEFT || keycode == Input.Keys.CONTROL_RIGHT) {
       modifierHeld = false;
     }
     handleFocusChange(keycode);
