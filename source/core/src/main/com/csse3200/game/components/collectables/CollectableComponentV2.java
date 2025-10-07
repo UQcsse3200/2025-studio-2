@@ -27,6 +27,8 @@ public class CollectableComponentV2 extends Component {
 
     ConeLightComponent cone;
     ColliderComponent collider;
+    TextureRenderComponent texture;
+    AnimationRenderComponent animation;
 
     private static final Logger logger = LoggerFactory.getLogger(CollectableComponentV2.class);
 
@@ -40,8 +42,6 @@ public class CollectableComponentV2 extends Component {
     @Override
     public void create() {
         entity.getEvents().addListener("onCollisionStart", this::onCollisionStart);
-        cone = entity.getComponent(ConeLightComponent.class);
-        collider = entity.getComponent(ColliderComponent.class);
     }
 
     /**
@@ -114,16 +114,23 @@ public class CollectableComponentV2 extends Component {
      *   <li>Lights (cone) are activated.</li>
      *   <li>Collider layer is set to {@code PhysicsLayer.COLLECTABLE}.</li>
      * </ul>
+     *
+     * @param visible the visibility of the entity
      */
-    public void setVisible(boolean visible ) {
-        AnimationRenderComponent animation = entity.getComponent(AnimationRenderComponent.class);
-        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+    public void toggleVisibility(boolean visible) {
+        animation = entity.getComponent(AnimationRenderComponent.class);
+        cone = entity.getComponent(ConeLightComponent.class);
+        collider = entity.getComponent(ColliderComponent.class);
+        texture = entity.getComponent(TextureRenderComponent.class);
 
-        if (animation != null) animation.setEnabled(visible);
+        if (collected) return;
+
+        if (animation != null) {
+            animation.setEnabled(visible);
+        }
 
         if (texture != null) {
             texture.setEnabled(visible);
-            texture.
         }
 
         if (cone != null) {
