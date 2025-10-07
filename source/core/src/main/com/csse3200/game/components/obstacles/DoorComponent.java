@@ -161,7 +161,7 @@ public class DoorComponent extends Component {
 
         // play door closing animation
         if (animationComponent != null) {
-            animationComponent.startAnimation("door_closing");
+            animationComponent.startAnimation("door_closed");
         }
 
         locked = true;

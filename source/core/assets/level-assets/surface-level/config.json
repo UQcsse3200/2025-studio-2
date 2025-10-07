@@ -1,0 +1,29 @@
+{
+  "name": "The Surface",
+  "mapSize": [100, 70],
+  "playerSpawn": [2, 10],
+  "walls": { "thickness": 0.1 },
+  "miniMap": "images/minimap_forest_area.png",
+
+  "entities": [
+    { "type": "floor", "subtype": "ground", "x": 0, "y": -20, "sx": 3, "sy": 12, "centerX": false, "centerY": false },
+    { "type": "floor", "subtype": "ground", "x": 10, "y": -20, "sx": 10.4, "sy": 12, "centerX": false, "centerY": false },
+
+    { "type": "platform", "subtype": "volatile", "x": 0,  "y": 13, "sx": 2, "sy": 0.5, "speed": 0.5, "centerX": false, "centerY": false },
+    { "type": "platform", "subtype": "volatile", "x": 10, "y": 20, "sx": 2, "sy": 0.5, "speed": 0.5 },
+    { "type": "platform", "subtype": "static_platform",   "x": 0,  "y": 25, "sx": 2, "sy": 0.5 },
+    { "type": "platform", "subtype": "moving", "id": "pressurePlatePlatform", "x": 15, "y": 5, "sx": 3, "sy": 0.5, "dy": 0, "dx": -4, "speed": 1.5},
+
+    { "type": "pressure_plate", "x": 15, "y": 6, "id": "keyPressurePlate", "linked": "pressurePlatePlatform"},
+
+    { "type": "box", "subtype": "moveable", "x": 10, "y": 25 },
+
+    { "type": "camera", "id": "camera", "x": 20, "y": 13, "rotation": 270, "speed": 25 },
+
+    { "type": "door", "id": "key:door", "x": 20, "y": 5, "sx": 1, "sy": 2 },
+
+    { "type": "collectable", "subtype": "potion", "target": "health", "x": 8, "y": 30 },
+    { "type": "collectable", "subtype": "key", "target": "door", "x": 1, "y": 15, "extra": "keyPressurePlate" },
+
+  ]
+}
