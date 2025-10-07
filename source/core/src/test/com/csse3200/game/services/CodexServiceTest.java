@@ -3,7 +3,6 @@ package com.csse3200.game.services;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.csse3200.game.extensions.GameExtension;
-import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -56,11 +55,34 @@ public class CodexServiceTest {
     @DisplayName("getEntries() returns only unlocked entries when requesting unlocked entries")
     void getEntriesReturnsUnlocked() {
         // Service loads mock file
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
         CodexService service = new CodexService();
 
-        // Entries are locked by default. Ensure getEntries() is empty
+        // Unlock exactly one entry
+        service.getEntry("test_id_1").setUnlocked();
+
+        // Entries are locked by default. Ensure getEntries() only contains the one unlocked entry
         ArrayList<CodexEntry> result = service.getEntries(true);
-        assertTrue(result.isEmpty());
+
+        assertEquals(1, result.size());
+        assertEquals(result.getFirst(), service.getEntry("test_id_1"));
+    }
+
+    @Test
+    @DisplayName("getEntries() returns all entries when not equesting just unlocked entries")
+    void getEntriesReturnsAll() {
+        // Service loads mock file
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
+        CodexService service = new CodexService();
+
+        // Unlock exactly one entry
+        service.getEntry("test_id_1").setUnlocked();
+
+        // Ensure getEntries() returns all entries
+        ArrayList<CodexEntry> result = service.getEntries(false);
+
+        assertEquals(2, result.size());
+        assertTrue(result.contains(service.getEntry("test_id_1")));
+        assertTrue(result.contains(service.getEntry("test_id_2")));
     }
 }
