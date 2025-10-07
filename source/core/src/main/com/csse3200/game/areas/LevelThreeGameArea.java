@@ -14,9 +14,6 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.LevelAssetsConfig;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.configs.LevelConfig;
-import com.csse3200.game.entities.spawn.EntitySpawner;
-import com.csse3200.game.entities.spawn.EntitySpawner.Subtype;
-import com.csse3200.game.entities.spawn.EntitySpawner.eType;
 import com.csse3200.game.entities.spawn.SpawnRegistry;
 import com.csse3200.game.entities.spawn.Spawners;
 import com.csse3200.game.services.ResourceService;
@@ -84,34 +81,14 @@ public class LevelThreeGameArea extends GameArea {
         if (cfg.entities == null) throw new IllegalArgumentException("'entities' missing in level config");
 
         for (var e : cfg.entities) {
-            var args = new EntitySpawner.Args();
-
-            args.type = eType.fromString(e.type);
-            args.subtype = (e.subtype == null) ? null : Subtype.fromString(e.subtype);
-            Subtype.validateMatch(args.type, args.subtype);
-
-            args.id = e.id;
-            args.tooltip = e.tooltip;
-            args.linked = e.linked;
-            args.target = e.target;
-            args.extra = e.extra;
-            args.x = e.x;
-            args.y = e.y;
-            args.sx = e.sx;
-            args.sy = e.sy;
-            args.speed = e.speed;
-            args.rotation = e.rotation;
-            args.dx = e.dx;
-            args.dy = e .dy;
-            args.linked = e.linked;
-
-            var entity = SpawnRegistry.build(args.type.toString(), args);
-
+            var entity = SpawnRegistry.build(e.type, e);
             var centerX = e.centerX == null || e.centerX;
             var centerY = e.centerY == null || e.centerY;
-
-            spawnEntityAt(entity, new GridPoint2(args.x, args.y), centerX, centerY);
+            spawnEntityAt(entity, new GridPoint2(e.x, e.y), centerX, centerY);
         }
+
+        Entity floor = FloorFactory.createGroundFloor();
+        spawnEntityAt(floor, new GridPoint2(-10, -20), false, false);
     }
 
     @Override

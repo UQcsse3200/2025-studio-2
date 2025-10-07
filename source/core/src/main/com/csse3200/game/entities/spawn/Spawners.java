@@ -14,29 +14,27 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
-
 public final class Spawners {
     private Spawners(){}
 
     public static void registerAll(Entity player, GameArea area) {
         Logger logger = LoggerFactory.getLogger(Spawners.class);
 
-
         // --- Box ---
         SpawnRegistry.register("box", a -> {
-            Entity box = switch (a.subtype) {
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+
+            Entity box = switch (subtype) {
                 case MOVEABLE -> BoxFactory.createMoveableBox();
                 case WEIGHTED -> BoxFactory.createWeightedBox();
                 case REFLECTABLE -> BoxFactory.createReflectorBox();
                 case null, default -> BoxFactory.createStaticBox();
             };
-
             linkEntities(box, a.linked);
             addIdentifier(box, String.valueOf(a.id));
 
             return box;
         });
-
 
         // --- Collectable ---
         SpawnRegistry.register("collectable", a -> {
@@ -90,28 +88,25 @@ public final class Spawners {
 
         // --- Floor ---
         SpawnRegistry.register("floor", a -> {
-            EntitySpawner.Subtype st = (a.subtype == null) ? EntitySpawner.Subtype.STATIC_FLOOR : a.subtype;
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
 
-            Entity floor = switch (st) {
-                case GROUND -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
-                case DECORATIVE -> PlatformFactory.createVolatilePlatform(a.speed, a.delay);
-                default -> PlatformFactory.createStaticPlatform();
+            Entity floor = switch (subtype) {
+                case GROUND -> FloorFactory.createGroundFloor();
+                case DECORATIVE -> FloorFactory.createDecorativeFloor();
+                default -> FloorFactory.createStaticFloor();
             };
 
-            linkEntities(floor, a.linked);
-            addIdentifier(floor, String.valueOf(a.id));
             floor.setScale(a.sx, a.sy);
-
             return floor;
         });
 
         // --- Platform ---
         SpawnRegistry.register("platform", a -> {
-            EntitySpawner.Subtype st = (a.subtype == null) ? EntitySpawner.Subtype.STATIC_PLATFORM : a.subtype;
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
 
-            Entity platform = switch (st) {
+            Entity platform = switch (subtype) {
                 case MOVING -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
-                case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, a.delay);
+                case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, 1f);
                 default -> PlatformFactory.createStaticPlatform();
             };
 
@@ -141,9 +136,7 @@ public final class Spawners {
         });
 
         // --- lasers ---
-        SpawnRegistry.register("laser", a -> {
-            return LaserFactory.createLaserEmitter(a.rotation);
-        });
+        SpawnRegistry.register("laser", a -> LaserFactory.createLaserEmitter(a.rotation));
 
         // --- Buttons ---
 //        SpawnRegistry.register("button", a -> {

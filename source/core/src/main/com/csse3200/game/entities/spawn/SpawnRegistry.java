@@ -1,6 +1,8 @@
 package com.csse3200.game.entities.spawn;
 
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.LevelConfig;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +29,7 @@ public final class SpawnRegistry {
         Registry.put(type, spawner);
     }
 
-    public static Entity build(String type, EntitySpawner.Args a){
+    public static Entity build(String type, LevelConfig.E a){
         var spawner = Registry.get(type);
         if (spawner == null) {
             throw new IllegalArgumentException("No spawner: " + type);
