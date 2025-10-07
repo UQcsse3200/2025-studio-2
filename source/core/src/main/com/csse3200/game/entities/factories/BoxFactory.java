@@ -1,24 +1,26 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-
-import java.security.Provider;
 
 /**
  * Factory class for creating box entities in the game.
@@ -71,8 +73,9 @@ public class BoxFactory {
      * @return A new moveable box Entity
      */
     public static Entity createMoveableBox() {
+        RenderService rs = ServiceLocator.getRenderService();
+        Camera camera = rs.getRenderer() == null ? null : rs.getRenderer().getCamera().getCamera();
         Entity moveableBox = new Entity()
-                .addComponent(new TextureRenderComponent("images/box_blue.png"))
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.DynamicBody))
                 .addComponent(new ColliderComponent()
@@ -80,10 +83,48 @@ public class BoxFactory {
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f))
-                .addComponent(new MoveableBoxComponent());
+                .addComponent(new MoveableBoxComponent().setCamera(camera))
+                .addComponent(new TextureRenderComponent("images/cube.png"));
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;
+    }
+
+    /**
+     * Creates a dynamic box which has a stronger gravity and can press down pressure plates
+     *
+     * @return a new moveable weighted box entity
+     */
+    public static Entity createWeightedBox() {
+        Entity weightedBox = createMoveableBox();
+        weightedBox.getComponent(TextureRenderComponent.class).setTexture("images/heavy-cube.png");
+        weightedBox.getComponent(MoveableBoxComponent.class).setBaseGravityScale(0.85f);
+
+        return weightedBox;
+    }
+
+    /**
+     * Creates a dynamic box which has the ability to reflect laser beams.
+     *
+     * @return a new moveable reflector box
+     */
+    public static Entity createReflectorBox() {
+        Entity reflectorBox = createMoveableBox();
+
+        reflectorBox.getComponent(TextureRenderComponent.class).setTexture("images/mirror-cube-off.png");
+        ConeLightComponent light = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                LightingDefaults.RAYS,
+                Color.RED,
+                1f,
+                0f,
+                180f
+        ).setFollowEntity(false);
+        reflectorBox.addComponent(light);
+
+        reflectorBox.getComponent(MoveableBoxComponent.class).setPhysicsLayer(PhysicsLayer.LASER_REFLECTOR);
+
+        return reflectorBox;
     }
 
     /**

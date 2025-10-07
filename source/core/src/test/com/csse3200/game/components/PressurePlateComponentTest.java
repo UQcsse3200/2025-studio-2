@@ -18,7 +18,7 @@ public class PressurePlateComponentTest {
         plate.getEvents().addListener("plateToggled", (Boolean p) -> pressedEvent[0] = p);
 
         // textures optional; updateTexture() no-ops if no renderer
-        comp.setTextures("images/pressure_plate_unpressed.png", "images/pressure_plate_pressed.png");
+        comp.setTextures("images/plate.png", "images/plate-pressed.png");
 
         // simulate stepping on the plate
         comp.setPlayerOnPlate(new ColliderComponent());

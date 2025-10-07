@@ -1,6 +1,7 @@
 package com.csse3200.game.components;
 
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.*;
@@ -22,6 +23,9 @@ public class ButtonManagerComponentTest {
 
         Entity dummyEntity = new Entity().addComponent(manager);
         dummyEntity.create();
+        
+        EntityService entityService = new EntityService();
+        ServiceLocator.registerEntityService(entityService);
     }
 
     @AfterEach
