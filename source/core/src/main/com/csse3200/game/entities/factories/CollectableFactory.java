@@ -9,6 +9,7 @@ import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ObjectivesComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -108,7 +109,7 @@ public class CollectableFactory {
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new TextureRenderComponent("images/key.png"))
                 .addComponent(new KeyComponent(target));
-
+        
         key.setScale(0.5f, 0.5f);
         PhysicsUtils.setScaledCollider(key, 0.5f, 0.5f);
 

@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -56,6 +57,9 @@ public class ButtonFactory {
         button.addComponent(render);
         //add physics and collider components
         button.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
+        if (type.equals("door")) {
+            button.addComponent(new MinimapComponent("images/red_button.png"));
+        }
 
         ColliderComponent collider = new ColliderComponent();
         collider.setLayer(PhysicsLayer.OBSTACLE);

@@ -39,7 +39,6 @@ public class KeyComponent extends CollectableComponent {
     @Override
     protected boolean onCollect(Entity player) {
         if (player == null) return false;
-
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
             inventory.addItem(keyId);

@@ -13,6 +13,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -90,6 +91,7 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
+            "images/flying_bat_map.png"
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -521,6 +523,7 @@ public class LevelOneGameArea extends GameArea {
     }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
+        key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
     }
     public void spawnPotion(String type, int x, int y) {

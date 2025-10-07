@@ -12,6 +12,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -469,6 +470,7 @@ public class LevelTwoGameArea extends GameArea {
 
     public void spawnKey() {
         Entity key = CollectableFactory.createKey("key:door");
+        key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(93,50), true, true);
     }
 
