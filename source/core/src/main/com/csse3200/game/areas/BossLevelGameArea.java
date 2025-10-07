@@ -16,6 +16,8 @@ import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -89,7 +91,8 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_unpressed.png",
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
-            "images/mirror-cube-on.png"
+            "images/mirror-cube-on.png",
+            "images/boss.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -122,12 +125,17 @@ public class BossLevelGameArea extends GameArea {
     }
     protected void loadEntities() {
         spawnParallaxBackground();
-//        spawnFloors();
         spawnPlatforms();
-        spawnDeathZone();
+        spawnStaticObstacles();
         spawnButtons();
         spawnObjectives();
 //        spawnBoss();
+    }
+
+    private void spawnStaticObstacles() {
+        spawnDeathZone();
+        spawnTraps();
+        spawnBats();
     }
 
     private void spawnPlatforms() {
@@ -141,17 +149,15 @@ public class BossLevelGameArea extends GameArea {
     private void spawnFirstDrop() {
         // Volatile platform player initially spawns on
         GridPoint2 initialPos = new GridPoint2(3,tileBounds.y - 10);
-        Entity initialPlatform = PlatformFactory.createVolatilePlatform(0.45f, 3.5f);
+        Entity initialPlatform = PlatformFactory.createVolatilePlatform(0.6f, 1f);
         initialPlatform.setScale(2,0.5f);
         spawnEntityAt(initialPlatform, initialPos,false, false);
 
         // Jump-down platforms
         GridPoint2 firstJumpPos = new GridPoint2(13, tileBounds.y - 18);
         Entity firstJumpPlatform = PlatformFactory.createStaticPlatform();
-        firstJumpPlatform.setScale(1.5f, 0.5f);
+        firstJumpPlatform.setScale(1.8f, 0.5f);
         spawnEntityAt(firstJumpPlatform, firstJumpPos,false, false);
-        // Vertical-flying bat is spawned just next to this platform in spawnBats method todo
-        // Trap (TALL!! prevents skipping without double-jump) next to this todo
 
         GridPoint2 secondJumpPos = new GridPoint2(8, tileBounds.y - 23);
         Entity secondJumpPlatform = PlatformFactory.createStaticPlatform();
@@ -161,16 +167,61 @@ public class BossLevelGameArea extends GameArea {
 
         // Volatile platform over death pit
         GridPoint2 deathPitPos = new GridPoint2(13, tileBounds.y - 33);
-        Entity deathPitPlatform = PlatformFactory.createVolatilePlatform(0.3f, 2);
-        deathPitPlatform.setScale(2, 0.5f);
+        Entity deathPitPlatform = PlatformFactory.createVolatilePlatform(30.3f, 2);
+        deathPitPlatform.setScale(1, 0.5f);
         spawnEntityAt(deathPitPlatform, deathPitPos,false, false);
-        // Bat is spawned just above this platform in spawnBats method todo
 
         // Safe standing platform
-        GridPoint2 safePos = new GridPoint2(25, tileBounds.y - 30);
+        GridPoint2 safePos = new GridPoint2(28, tileBounds.y - 30);
         Entity safePlatform = PlatformFactory.createStaticPlatform();
         safePlatform.setScale(2, 0.5f);
         spawnEntityAt(safePlatform, safePos,false, false);
+    }
+
+    /**
+     * Spawns the traps at the start of the boss level
+     */
+    private void spawnTraps() {
+        Vector2 firstSafePos = new Vector2((float) PLAYER_SPAWN.x / 2, (float) (PLAYER_SPAWN.y) / 2);
+        Entity spikes = TrapFactory.createSpikes(firstSafePos, 90f);
+        spawnEntityAt(spikes,
+                new GridPoint2(15,tileBounds.y - 17), true,  true);
+        Entity spikes2 = TrapFactory.createSpikes(firstSafePos, 90f);
+        spawnEntityAt(spikes2,
+                new GridPoint2(15,tileBounds.y - 15), true,  true);
+        Entity spikes3 = TrapFactory.createSpikes(firstSafePos, 90f);
+        spawnEntityAt(spikes3,
+                new GridPoint2(15,tileBounds.y - 13), true,  true);
+    }
+
+    private void spawnBats() {
+        spawnBatsInitial();
+    }
+
+    /**
+     * Spawn the bats at the beginning of the level (during the FirstDrop platforming section).
+     */
+    private void spawnBatsInitial() {
+//         First bat blocking jumps between initial platforms
+        BoxFactory.AutonomousBoxBuilder firstBatBuilder = new BoxFactory.AutonomousBoxBuilder();
+        Entity verticalBat = firstBatBuilder
+                .moveX(5.5f, 5.5f).moveY(20f, 33f)
+                .texture("images/flying_bat.atlas")
+                .speed(15f) // very hyperactive bat but it's ok we don't need realism
+                .build();
+        spawnEntityAt(verticalBat, new GridPoint2(
+                (int) (firstBatBuilder.getSpawnX() * 2),
+                (int) firstBatBuilder.getSpawnY()), true, true);
+
+        // Second bat over jump to safe platform
+        BoxFactory.AutonomousBoxBuilder safeBatBuilder = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalBat = safeBatBuilder
+                .moveX(8, 13).moveY(tileBounds.y - 30, tileBounds.y - 30)
+                .texture("images/flying_bat.atlas")
+                .build();
+        spawnEntityAt(horizontalBat, new GridPoint2(
+                (int) safeBatBuilder.getSpawnX() * 2,
+                (int) safeBatBuilder.getSpawnY()), true, true);
     }
 
     private void spawnBoss() {
@@ -183,8 +234,12 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        GridPoint2 spawnPos =  new GridPoint2(12,-10);
+        GridPoint2 spawnPos =  new GridPoint2(12,tileBounds.y - 34);
         Entity deathZone = DeathZoneFactory.createDeathZone();
+        deathZone.setScale(10,0.5f);
+        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(0.8f),
+                PhysicsComponent.AlignX.CENTER,
+                PhysicsComponent.AlignY.BOTTOM);
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
 
