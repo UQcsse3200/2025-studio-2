@@ -14,16 +14,26 @@ public class TutorialFactory {
     throw new IllegalStateException("Instantiating static util class");
   }
 
+  private static Entity create(String path, String action) {
+    Entity tutorial = new Entity()
+        .addComponent(new TutorialComponent(path, Input.Keys.toString(Keymap.getActionKeyCode(action))));
+    tutorial.setScale(0.5f, 0.5f);
+    return tutorial;
+  }
+
   /**
    * Creates a tutorial entity that displays the jump action image and the corresponding key.
    * @return A new jump tutorial entity.
    */
   public static Entity createJumpTutorial() {
+    return create("images/tutorials/jump.png", "PlayerJump");
+  }
 
-    Entity tutorial = new Entity()
-        .addComponent(new TutorialComponent("images/tutorials/jump.png", Input.Keys.toString(Keymap.getActionKeyCode("PlayerJump"))));
-    tutorial.setScale(0.5f, 0.5f);
-
-    return tutorial;
+  /**
+   * Creates a tutorial entity that displays the double jump action image and the corresponding key.
+   * @return A new double jump tutorial entity.
+   */
+  public static Entity createDoubleJumpTutorial() {
+    return create("images/tutorials/double_jump.png", "PlayerJump");
   }
 }

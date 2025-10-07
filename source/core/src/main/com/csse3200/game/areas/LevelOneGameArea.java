@@ -115,7 +115,8 @@ public class LevelOneGameArea extends GameArea {
             "images/leftSignpost.png",
             "images/signpost.png",
             "images/lost_hardware.png",
-            "images/tutorials/jump.png"
+            "images/tutorials/jump.png",
+            "images/tutorials/double_jump.png",
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -181,8 +182,8 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnTutorials() {
-        Entity jumpTutorial = TutorialFactory.createJumpTutorial();
-        spawnEntityAt(jumpTutorial, new GridPoint2(8, 12), true, true);
+      spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
+      spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
     }
 
     private void spawnTerminals() {
