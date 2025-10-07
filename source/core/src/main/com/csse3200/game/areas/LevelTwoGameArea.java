@@ -7,10 +7,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -18,9 +20,14 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,7 +87,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/labforeground.png",
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
-            "images/glide_powerup.png"
+            "images/glide_powerup.png",
+            "images/lost_hardware.png"
 
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
@@ -118,6 +126,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
+        spawnCollectables();
     }
 
     private void spawnDeathZone() {
@@ -492,6 +501,28 @@ public class LevelTwoGameArea extends GameArea {
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
+    }
+
+    public void spawnCollectable(Vector2 pos) {
+        PhysicsComponent physics  = new PhysicsComponent();
+        physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Entity collectable = new Entity()
+                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(physics)
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
+                .addComponent(new ItemCollectableComponent());
+        collectable.setPosition(pos);
+        collectable.setScale(0.6f, 0.6f);
+        ServiceLocator.getEntityService().register(collectable);
+    }
+
+    public void spawnCollectables() {
+        Vector2 playerPos = player.getPosition();
+        CollectableCounter.reset();
+
+        spawnCollectable(new Vector2(playerPos.x, playerPos.y + 2f));
+        spawnCollectable(new Vector2(30f, 30f));
+        spawnCollectable(new Vector2(4f, 4f));
     }
 
     protected void loadAssets() {

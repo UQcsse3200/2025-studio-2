@@ -671,6 +671,7 @@ public class LevelOneGameArea extends GameArea {
                 .addComponent(physics)
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
                 .addComponent(new ItemCollectableComponent());
+                //.addComponent(new CollectableComponentV2("hardware"));
         collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
         ServiceLocator.getEntityService().register(collectable);
@@ -679,7 +680,6 @@ public class LevelOneGameArea extends GameArea {
     public void spawnCollectables() {
         Vector2 playerPos = player.getPosition();
         CollectableCounter.reset();
-        CollectableCounter.setTotal(3);
 
         spawnCollectable(new Vector2(33.5f, -1.5f));
         spawnCollectable(new Vector2(0f, 23f));
