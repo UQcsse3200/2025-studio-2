@@ -44,19 +44,14 @@ public class ProjectileFactory {
                 .addComponent(new BombComponent(explosionDelay, explosionRadius, PhysicsLayer.PLAYER));
 
         // Bomb size
-        final float SIZE_W = 0.5f;
-        final float SIZE_H = 0.5f;
+        final float SIZE_W = 0.5f, SIZE_H = 0.5f;
 
-        TextureRenderComponent bomb_render = new TextureRenderComponent("images/bomb.png");
-        bomb.addComponent(bomb_render);
-
-        // Visual scale
+        bomb.addComponent(new TextureRenderComponent("images/bomb.png"));
         bomb.setScale(SIZE_W, SIZE_H);
 
         // Physics collider
         PhysicsUtils.setScaledCollider(bomb, SIZE_W, SIZE_H);
 
-        // Place sprite
         Vector2 bottomLeft = new Vector2(spawnCenter.x - SIZE_W * 0.5f, spawnCenter.y - SIZE_H * 0.5f);
         bomb.setPosition(bottomLeft);
 
@@ -64,17 +59,8 @@ public class ProjectileFactory {
         PhysicsComponent physics = bomb.getComponent(PhysicsComponent.class);
         physics.setBodyType(BodyDef.BodyType.DynamicBody);
         physics.getBody().setTransform(spawnCenter, 0f);
-
-        // Calculate horizontal velocity to reach target
-        float horizontalDistance = targetPosition.x - spawnCenter.x;
-        float fallTime = 1.5f; // Approximate time to fall
-        float horizontalVelocity = horizontalDistance / fallTime;
-
-        // Set initial velocity - horizontal movement toward target, vertical falling
-        physics.getBody().setLinearVelocity(
-                horizontalVelocity,  // Horizontal velocity toward target
-                -2f                  // Initial downward velocity
-        );
+        physics.getBody().setGravityScale(1f);
+        physics.getBody().setLinearVelocity(0f, 0f);
 
         // Set collision properties
         bomb.getComponent(ColliderComponent.class)

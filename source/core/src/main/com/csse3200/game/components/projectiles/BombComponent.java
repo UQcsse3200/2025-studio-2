@@ -6,11 +6,11 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.DisposalComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.ExplosionFactory;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
@@ -55,8 +55,8 @@ public class BombComponent extends Component {
         entity.getEvents().addListener("collisionStart", this::onCollisionStart);
         dropTime = timeSource.getTime();
         logger.debug("Bomb created with {}s delay", explosionDelay);
-        // Add disposal component for safe cleanup after 0.1 seconds
-        entity.addComponent(new DisposalComponent(0.1f));
+        // Replaced disposal component with post runnable in explode()
+        //entity.addComponent(new DisposalComponent(0.1f));
     }
 
     /** Update the bomb each frame. Handles blinking and triggers explosion after delay */
@@ -116,6 +116,13 @@ public class BombComponent extends Component {
     private void explode() {
         if (hasExploded) return;
         hasExploded = true;
+
+        ColliderComponent col = entity.getComponent(ColliderComponent.class);
+        if (col != null) {
+            col.setSensor(true);
+            col.setLayer(PhysicsLayer.NONE);
+        }
+
         logger.debug("Bomb exploding at position {}", entity.getPosition());
 
         // Deal area damage
@@ -128,7 +135,9 @@ public class BombComponent extends Component {
         entity.setScale(0f, 0f);
 
         // Start disposal countdown
-        entity.getEvents().trigger("scheduleDisposal");
+        //entity.getEvents().trigger("scheduleDisposal");
+        entity.getEvents().trigger("bombDisposalQueued");
+        Gdx.app.postRunnable(entity::dispose);
 
         // Disable this component to prevent further updates
         this.setEnabled(false);
@@ -185,11 +194,13 @@ public class BombComponent extends Component {
     }
 
     private void createExplosionEffect() {
-        // Defer entity registration to the next frame to avoid nested iteration
+        final Vector2 pos = entity.getCenterPosition().cpy();
+        final float r = this.explosionRadius;
+
         Gdx.app.postRunnable(() -> {
-            Entity explosion = ExplosionFactory.createExplosion(entity.getCenterPosition(), this.explosionRadius);
+            Entity explosion = ExplosionFactory.createExplosion(pos, r);
             ServiceLocator.getEntityService().register(explosion);
-            logger.debug("Created explosion effect entity at {}", entity.getCenterPosition());
+            logger.debug("Created explosion effect entity at {}", pos);
         });
     }
 
