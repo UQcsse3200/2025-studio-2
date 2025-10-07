@@ -520,9 +520,9 @@ public class LevelTwoGameArea extends GameArea {
         Vector2 playerPos = player.getPosition();
         CollectableCounter.reset();
 
-        spawnCollectable(new Vector2(playerPos.x, playerPos.y + 2f));
-        spawnCollectable(new Vector2(30f, 30f));
-        spawnCollectable(new Vector2(4f, 4f));
+        spawnCollectable(new Vector2(30.5f, 32.75f));
+        spawnCollectable(new Vector2(47.5f, 18f));
+        spawnCollectable(new Vector2(8.5f, 0.4f));
     }
 
     protected void loadAssets() {
