@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
+/** High-level entity types used for spawning. */
 public enum EntityType {
     COLLECTABLE,
     DOOR,
@@ -14,6 +15,7 @@ public enum EntityType {
 
     @Override public String toString() { return name().toLowerCase(); }
 
+    /** Case-insensitive parse; throws on null/unknown. */
     public static EntityType fromString(String s) {
         if (s == null) throw new IllegalArgumentException("Type is null");
         try {
