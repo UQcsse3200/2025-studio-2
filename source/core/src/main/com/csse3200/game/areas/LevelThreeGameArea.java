@@ -25,6 +25,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+/**
+ * Game area implementation for Level Three (Surface level).
+ * <p>
+ * Loads level configuration and asset manifests from JSON, initialises terrain and
+ * world boundaries, spawns entities via {@link SpawnRegistry}, and creates the player.
+ * </p>
+ */
 public class LevelThreeGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(LevelThreeGameArea.class);
 
@@ -41,12 +48,21 @@ public class LevelThreeGameArea extends GameArea {
     private LevelConfig cfg;
     private LevelAssetsConfig assets;
 
+    /**
+     * Creates a Level Three game area.
+     *
+     * @param terrainFactory factory used to build tile maps and terrain components
+     */
     public LevelThreeGameArea(TerrainFactory terrainFactory) {
         super();
         this.terrainFactory = terrainFactory;
 
     }
 
+    /**
+     * Loads config files, derives level constants (map size, spawn, wall thickness),
+     * sets up UI/minimap, and spawns terrain.
+     */
     @Override
     protected void loadPrerequisites() {
         cfg = Objects.requireNonNull(FileLoader.readClass(LevelConfig.class, cfgFileName));
@@ -62,6 +78,9 @@ public class LevelThreeGameArea extends GameArea {
         //        spawnParallaxBackground();
     }
 
+    /**
+     * Loads textures, atlases, and sounds declared in the asset json.
+     */
     @Override
     protected void loadAssets() {
         assets = Objects.requireNonNull(FileLoader.readClass(LevelAssetsConfig.class, assetsFileName));
@@ -75,6 +94,13 @@ public class LevelThreeGameArea extends GameArea {
         }
     }
 
+    /**
+     * Spawns all entities defined in {@link LevelConfig#entities} via {@link SpawnRegistry},
+     * respecting per-entity centering flags, and adds a base ground floor.
+     *
+     * @throws IllegalStateException    if the level config hasn't been loaded
+     * @throws IllegalArgumentException if the config is missing the {@code entities} array
+     */
     @Override
     protected void loadEntities() {
         if (cfg == null) throw new IllegalStateException("Level config not loaded");
@@ -91,6 +117,11 @@ public class LevelThreeGameArea extends GameArea {
         spawnEntityAt(floor, new GridPoint2(-10, -20), false, false);
     }
 
+    /**
+     * Creates and spawns the default player at {@link #PLAYER_SPAWN}
+     *
+     * @return the created player entity
+     */
     @Override
     protected Entity spawnPlayer() {
         Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
@@ -100,6 +131,13 @@ public class LevelThreeGameArea extends GameArea {
         return newPlayer;
     }
 
+    /**
+     * Creates and spawns the player with a given component list,
+     * and registers level spawners.
+     *
+     * @param componentList components to add to the player
+     * @return the created player entity
+     */
     @Override
     protected Entity spawnPlayer(java.util.List<Component> componentList) {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
@@ -111,6 +149,11 @@ public class LevelThreeGameArea extends GameArea {
 
     // --- Helpers ---
 
+    /**
+     * Spawns HUD for this level.
+     *
+     * @param name level name to display
+     */
     private void displayUI(String name) {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay(name));
@@ -118,6 +161,10 @@ public class LevelThreeGameArea extends GameArea {
         spawnEntity(ui);
     }
 
+    /**
+     * Builds the underlying terrain and spawns world-boundary walls
+     * using the current tile map bounds.
+     */
     private void spawnTerrain() {
         terrain = createSurfaceTerrain();
         spawnEntity(new Entity().addComponent(terrain));
@@ -144,6 +191,12 @@ public class LevelThreeGameArea extends GameArea {
         );
     }
 
+    /**
+     * Creates an invisible collision terrain from a generated tile map
+     * using a placeholder tile for layout.
+     *
+     * @return the constructed {@link TerrainComponent}
+     */
     private TerrainComponent createSurfaceTerrain() {
         TextureRegion emptyTile =
                 new TextureRegion(rs.getAsset("images/empty.png", Texture.class));
@@ -156,6 +209,10 @@ public class LevelThreeGameArea extends GameArea {
         return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
 
+//    /**
+//     * Spawns a parallax background defined by an external config,
+//     * bound to the main camera and scaled to {@link #MAP_SIZE}.
+//     */
 //    private void spawnParallaxBackground() {
 //        Entity background = ParallaxFactory.createParallax(
 //                "configs/surface_parallax.json",
