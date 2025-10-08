@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.boss.BossAnchorComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
@@ -31,6 +32,9 @@ import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import box2dLight.RayHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Factory for creating different types of enemies.
@@ -335,6 +339,63 @@ public class EnemyFactory {
         return drone;
     }
 
+
+    /**
+     * Creates a self-destruct drone for boss spawning (no teleport/cooldown behavior)
+     * @param target Player entity to chase and self-destruct on
+     * @param spawnPos Spawn position
+     * @return Self-destruct chase drone
+     */
+    public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos) {
+        BaseEntityConfig config = configs.drone;
+        Entity drone = createBaseEnemy();
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(3.1f);
+
+        PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
+        physics.setBodyType(BodyDef.BodyType.DynamicBody);
+
+        AnimationRenderComponent animator =
+                new AnimationRenderComponent(
+                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+
+        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bomb_effect", 0.08f, Animation.PlayMode.NORMAL);
+
+        drone
+                .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+                .addComponent(animator)
+                .addComponent(new DroneAnimationController());
+
+        // Add self-destruct component
+        if (target != null) {
+            drone.addComponent(new SelfDestructComponent(target));
+
+            AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
+
+            // Only chase task - no cooldown/teleport task
+            ChaseTask chaseTask = new ChaseTask(target, 80f, 2f); // Large chase distance
+
+            // Activate immediately and permanently
+            chaseTask.activate();
+
+            aiComponent.addTask(chaseTask);
+
+            // Start in permanent chase mode
+            drone.getEvents().trigger("enemyActivated");
+        }
+
+        animator.scaleEntity();
+        animator.startAnimation("angry_float"); // Permanent chase animation
+
+        // Set position directly
+        if (spawnPos != null) {
+            drone.setPosition(spawnPos);
+        }
+
+        return drone;
+    }
+
     /**
      * Creates a base enemy entity with a minimal, reusable set of components that all enemies share
      * (physics, movement, collider, hitbox and AI task holder (with no tasks).
@@ -377,13 +438,14 @@ public class EnemyFactory {
      */
     public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
-                .addComponent(new PhysicsComponent())
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                 .addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
-                .addComponent(new BossSpawnerComponent(target))
+                //.addComponent(new BossSpawnerComponent(target))
                 .addComponent(new BossAnimationController())
+                .addComponent(new BossAnchorComponent(1.0f, 0f))
                 .addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
 
 
@@ -404,17 +466,24 @@ public class EnemyFactory {
         // Temporary scaling up to differentiate boss from other drones (change w/ new assets)
         animator.scaleEntity();
         Vector2 size = boss.getScale();
-        boss.setScale(size.x * 3f, size.y * 3f);
+        boss.setScale(size.x * 2.5f, size.y * 2.5f);
 
         animator.startAnimation("bossChase");
 
-        // Physics (kinematic body). Position will be anchored to camera
-        PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
-        phys.getBody().setType(BodyDef.BodyType.KinematicBody);
-        phys.getBody().setGravityScale(0f);
+        // Add drone spawning component with default triggers
+        //  can configure these in BossLevelGameArea by getting the component and calling addSpawnTrigger()
+        List<Vector2> defaultTriggers = new ArrayList<>();
+        defaultTriggers.add(new Vector2(10f, 0f));  // Default trigger 1
+        defaultTriggers.add(new Vector2(40f, 0f));  // Default trigger 2
+        defaultTriggers.add(new Vector2(60f, 0f));  // Default trigger 3
 
-        // TODO: Anchor to camera so boss sticks to LHS of view
-        // TODO: Kill-on-contact to trigger death cutscene and level restart
+        BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(defaultTriggers, 4f);
+        boss.addComponent(droneSpawner);
+
+        // Wire up drone spawning events to animations
+        boss.getEvents().addListener("spawningPhaseStart", (Integer phase) -> {
+            boss.getEvents().trigger("generateDroneStart");
+        });
 
         return boss;
     }

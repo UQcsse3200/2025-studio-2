@@ -12,6 +12,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -83,6 +84,7 @@ public class BossLevelGameArea extends GameArea {
             "images/cavelevel/tile028.png",
             "images/cavelevel/tile029.png",
             "images/cavelevel/tile030.png",
+            "images/blackSquare.png",
             "images/cavelevel/background/1.png",
             "images/cavelevel/background/2.png",
             "images/cavelevel/background/3.png",
@@ -94,7 +96,6 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
-            "images/boss.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -156,7 +157,6 @@ public class BossLevelGameArea extends GameArea {
         spawnLaserPuzzle();
         spawnEndgameButton();
         spawnBoss();
-
     }
 
     /**
@@ -572,23 +572,40 @@ public class BossLevelGameArea extends GameArea {
 
     private void spawnBoss() {
         GridPoint2 spawnPos = new GridPoint2(1, 40);
-        Entity boss = EnemyFactory.createBossEnemy(
-                player,
-                terrain.tileToWorldPosition(spawnPos)
-        );
-        boss.addComponent(new com.csse3200.game.components.boss.BossSpawnMiniTest());
+
+        Entity boss = EnemyFactory.createBossEnemy(player, terrain.tileToWorldPosition(spawnPos));
+
+        BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
+        if (spawnComp != null) {
+            spawnComp.resetTriggers();
+
+            // You can change these values to trigger when it spawns the drones
+            spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
+
+        }
         spawnEntityAt(boss, spawnPos, true, true);
+
+        boss.getEvents().addListener("reset", () -> {
+            BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
+            if (spawnComponent != null) {
+                spawnComponent.resetTriggers();
+                spawnComponent.cleanupDrones();
+            }
+        });
     }
 
     private void spawnDeathZone() {
         // Death zone at the start of level
-        GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
+        GridPoint2 spawnPos =  new GridPoint2(2, -10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
-        deathZone.setScale(10,0.5f);
-        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(0.8f),
+        deathZone.setScale(9,16.5f);
+        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(1f),
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
-        spawnEntityAt(deathZone, spawnPos, true,  false);
+        deathZone.addComponent(new TextureRenderComponent("images/blackSquare.png"));
+        spawnEntityAt(deathZone, spawnPos, false,  false);
 
         // Death zone beneath lasers
         Entity deathZone2 = DeathZoneFactory.createDeathZone();
