@@ -15,7 +15,6 @@ import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.obstacles.Door.DoorComponent;
-import com.csse3200.game.components.obstacles.Door.DoorMetaComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -108,9 +107,9 @@ public class MainGameScreen extends ScreenAdapter {
 
 
 //    gameArea = new SprintOneGameArea(terrainFactory);
-//    gameArea = new LevelOneGameArea(terrainFactory);
-    //gameArea = new LevelTwoGameArea(terrainFactory);
-    gameArea = new LevelThreeGameArea(terrainFactory);
+    gameArea = new LevelOneGameArea(terrainFactory);
+//    gameArea = new LevelTwoGameArea(terrainFactory);
+//    gameArea = new LevelThreeGameArea(terrainFactory);
 
     gameArea.create();
 

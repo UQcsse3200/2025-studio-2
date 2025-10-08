@@ -75,7 +75,6 @@ public class DoorComponent extends Component {
         }
     }
 
-
     /**
      * Switch to {@code door_open}; emit {@code doorEntered} for non-static doors with a target.
      */
