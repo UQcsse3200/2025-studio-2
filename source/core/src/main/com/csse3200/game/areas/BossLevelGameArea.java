@@ -146,14 +146,14 @@ public class BossLevelGameArea extends GameArea {
     }
     protected void loadEntities() {
         spawnParallaxBackground();
-        spawnPlatforms();
+        //spawnPlatforms();
         spawnWalls();
         spawnStaticObstacles();
         Entity[] toBeDestroyed = spawnCeilingObstacles();
         // Pass toBeDestroyed to this.destroyFloor() when triggering.
         spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
-        spawnLaserPuzzle();
+        //spawnLaserPuzzle();
         spawnEndgameButton();
         spawnBoss();
 
