@@ -3,6 +3,7 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
@@ -162,7 +163,7 @@ public class PlayerAnimationController extends Component {
     public void animateHurt() {
         Sound damageSound = ServiceLocator.getResourceService().getAsset(
                 "sounds/damagesound.mp3", Sound.class);
-        damageSound.play();
+        damageSound.play(UserSettings.get().masterVolume);
 
         if (xDirection == 1) {
             setAnimation("HURT");

@@ -77,7 +77,7 @@ public class PlayerActions extends Component {
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
     cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
-    walkSound.loop();
+    walkSound.loop(UserSettings.get().masterVolume);
     walkSound.pause();
 
     entity.getEvents().addListener("walk", this::walk);
@@ -317,7 +317,7 @@ public class PlayerActions extends Component {
 
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/whooshsound.mp3", Sound.class);
-    interactSound.play(0.2f);
+    interactSound.play(UserSettings.get().masterVolume*0.2f);
 
     body.applyLinearImpulse(new Vector2(this.walkDirection.x, 0f), body.getWorldCenter(), true);
     // Unscale the direction vector to ensure player does not infinitely dash in one direction
@@ -339,7 +339,7 @@ public class PlayerActions extends Component {
   void interact() {
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/pickupsound.mp3", Sound.class);
-    interactSound.play();
+    interactSound.play(UserSettings.get().masterVolume);
     soundPlayed = true;
   }
 
@@ -392,7 +392,7 @@ public class PlayerActions extends Component {
       if (isJumping || isDoubleJump) {
         Sound interactSound = ServiceLocator.getResourceService().getAsset(
                 "sounds/thudsound.mp3", Sound.class);
-        interactSound.play(0.08f);
+        interactSound.play(UserSettings.get().masterVolume*0.08f);
       }
       entity.getEvents().trigger("landed");
     }

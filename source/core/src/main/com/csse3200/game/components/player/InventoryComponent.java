@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.entities.configs.CollectablesConfig;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -92,7 +93,7 @@ public class InventoryComponent extends Component {
   public void addItem(Bag bag, String itemId) {
       Sound pickupSound = ServiceLocator.getResourceService().getAsset(
               "sounds/pickupsound.mp3", Sound.class);
-      pickupSound.play();
+      pickupSound.play(UserSettings.get().masterVolume);
 
       addItems(bag, itemId, 1);
   }

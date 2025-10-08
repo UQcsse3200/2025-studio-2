@@ -24,6 +24,7 @@ import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.projectiles.BombComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
@@ -254,7 +255,7 @@ public class DeathScreenDisplay extends UIComponent {
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buttonClickSound.play();
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 setVisible(false);
                 screen.reset();
             }
@@ -269,7 +270,7 @@ public class DeathScreenDisplay extends UIComponent {
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buttonClickSound.play();
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 game.setScreen(GdxGame.ScreenType.MAIN_MENU);
             }
         });
@@ -288,7 +289,7 @@ public class DeathScreenDisplay extends UIComponent {
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buttonClickSound.play();
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 Gdx.app.exit();
             }
         });
@@ -349,7 +350,7 @@ public class DeathScreenDisplay extends UIComponent {
 
             Sound deathSound = ServiceLocator.getResourceService().getAsset(
                     "sounds/deathsound.mp3", Sound.class);
-            deathSound.play();
+            deathSound.play(UserSettings.get().masterVolume);
         } else {
             // Re-enable player input
             screen.getGameArea().getPlayer().getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);

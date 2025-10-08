@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.cutscene.CutsceneReaderComponent.TextBox;
@@ -128,7 +129,7 @@ public class CutsceneDisplay extends UIComponent {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
-                        buttonClickSound.play();
+                        buttonClickSound.play(UserSettings.get().masterVolume);
                         // Do nothing for now if we are on last index
                         if (curTextBox == textBoxList.size() - 1) {
                             area.trigger("cutsceneFinished");

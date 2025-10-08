@@ -2,6 +2,7 @@ package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -40,6 +41,8 @@ public class SettingsTab implements InventoryTabInterface {
     // Labels for real-time value updates
     private Label masterVolumeValue;
     private Label musicVolumeValue;
+
+    private Sound buttonClickSound;
     
     // Key binding management  
     private final Map<String, TextButton> keyBindButtons = new HashMap<>();
@@ -52,6 +55,9 @@ public class SettingsTab implements InventoryTabInterface {
     private static final Logger logger = LoggerFactory.getLogger(SettingsTab.class);
     @Override
     public Actor build(Skin skin) {
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
+
         // Get current settings
         UserSettings.Settings settings = UserSettings.get();
         
@@ -110,6 +116,7 @@ public class SettingsTab implements InventoryTabInterface {
         applyBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 applyChanges();
             }
         });
@@ -174,6 +181,7 @@ public class SettingsTab implements InventoryTabInterface {
             keyButton.addListener(new ChangeListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
+                    buttonClickSound.play(UserSettings.get().masterVolume);
                     startRebinding(actionName, keyButton);
                 }
             });
@@ -190,6 +198,7 @@ public class SettingsTab implements InventoryTabInterface {
         resetButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 resetKeybindsToDefaults();
             }
         });

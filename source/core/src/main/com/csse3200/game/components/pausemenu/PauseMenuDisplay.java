@@ -15,6 +15,7 @@ import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
@@ -115,7 +116,7 @@ public class PauseMenuDisplay extends UIComponent {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buttonClickSound.play();
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 action.run();
             }
         });
@@ -127,7 +128,7 @@ public class PauseMenuDisplay extends UIComponent {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                buttonClickSound.play();
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 setTab(tab);
                 screen.reflectPauseTabClick(tab);
             }

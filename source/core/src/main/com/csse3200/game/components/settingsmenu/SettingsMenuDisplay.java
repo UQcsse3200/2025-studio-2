@@ -273,7 +273,7 @@ public class SettingsMenuDisplay extends UIComponent {
       keyButton.addListener(new ChangeListener() {
         @Override
         public void changed(ChangeEvent event, Actor actor) {
-          buttonClickSound.play();
+          buttonClickSound.play(UserSettings.get().masterVolume);
           settingsInputComponent.startRebinding(actionName, keyButton);
           keyButton.setText("Press Key");
         }
@@ -291,7 +291,7 @@ public class SettingsMenuDisplay extends UIComponent {
     defaultButton.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
-        buttonClickSound.play();
+        buttonClickSound.play(UserSettings.get().masterVolume);
         UserSettings.resetKeybindsToDefaults();
         updateAllKeybindButtons();
       }
@@ -446,7 +446,7 @@ public class SettingsMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Exit button clicked");
-            buttonClickSound.play();
+            buttonClickSound.play(UserSettings.get().masterVolume);
             exitMenu();
           }
         });
@@ -456,7 +456,7 @@ public class SettingsMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Apply button clicked");
-            buttonClickSound.play();
+            buttonClickSound.play(UserSettings.get().masterVolume);
             applyChanges();
           }
         });

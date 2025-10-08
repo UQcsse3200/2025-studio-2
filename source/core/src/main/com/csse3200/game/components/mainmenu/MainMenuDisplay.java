@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
@@ -77,7 +78,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Start button clicked");
-            buttonClickSound.play();
+            buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("start");
           }
         });
@@ -87,7 +88,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Load button clicked");
-            buttonClickSound.play();
+            buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("load");
           }
         });
@@ -97,7 +98,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Settings button clicked");
-            buttonClickSound.play();
+            buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("settings");
           }
         });
@@ -108,7 +109,7 @@ public class MainMenuDisplay extends UIComponent {
           public void changed(ChangeEvent changeEvent, Actor actor) {
 
             logger.debug("Exit button clicked");
-            buttonClickSound.play();
+            buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("exit");
           }
         });

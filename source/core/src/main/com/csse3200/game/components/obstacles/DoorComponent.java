@@ -4,6 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.areas.GameArea;
@@ -149,7 +150,7 @@ public class DoorComponent extends Component {
 
         Sound doorSound = ServiceLocator.getResourceService().getAsset(
                 "sounds/doorsound.mp3", Sound.class);
-        doorSound.play(0.3f);
+        doorSound.play(UserSettings.get().masterVolume*0.3f);
 
         // play door opening animation
         if (animationComponent != null) {
