@@ -84,6 +84,7 @@ public class BossLevelGameArea extends GameArea {
             "images/cavelevel/tile028.png",
             "images/cavelevel/tile029.png",
             "images/cavelevel/tile030.png",
+            "images/blackSquare.png",
             "images/cavelevel/background/1.png",
             "images/cavelevel/background/2.png",
             "images/cavelevel/background/3.png",
@@ -594,20 +595,18 @@ public class BossLevelGameArea extends GameArea {
                 spawnComponent.cleanupDrones();
             }
         });
-
-
-
     }
 
     private void spawnDeathZone() {
         // Death zone at the start of level
-        GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
+        GridPoint2 spawnPos =  new GridPoint2(2, -10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
-        deathZone.setScale(10,0.5f);
-        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(0.8f),
+        deathZone.setScale(9,16.5f);
+        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(1f),
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
-        spawnEntityAt(deathZone, spawnPos, true,  false);
+        deathZone.addComponent(new TextureRenderComponent("images/blackSquare.png"));
+        spawnEntityAt(deathZone, spawnPos, false,  false);
 
         // Death zone beneath lasers
         Entity deathZone2 = DeathZoneFactory.createDeathZone();
