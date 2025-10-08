@@ -11,6 +11,7 @@ com.csse3200.game.components.enemy
 com.csse3200.game.components.gamearea
 com.csse3200.game.components.inventory
 com.csse3200.game.components.lasers
+com.csse3200.game.components.leaderboardpage
 com.csse3200.game.components.lighting
 com.csse3200.game.components.maingame
 com.csse3200.game.components.mainmenu
@@ -22,6 +23,7 @@ com.csse3200.game.components.platforms
 com.csse3200.game.components.player
 com.csse3200.game.components.projectiles
 com.csse3200.game.components.settingsmenu
+com.csse3200.game.components.statisticspage
 com.csse3200.game.components.tasks
 com.csse3200.game.components.tooltip
 com.csse3200.game.concurrency
