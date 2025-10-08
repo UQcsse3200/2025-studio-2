@@ -2,6 +2,7 @@ package com.csse3200.game.components.pausemenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +16,7 @@ import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
@@ -37,6 +39,7 @@ public class PauseMenuDisplay extends UIComponent {
     private final CodexTab codexTab;
     private InventoryNavigationComponent navigationComponent;
     private PauseMenuNavigationComponent pauseMenuNavigationComponent;
+    private Sound buttonClickSound;
 
     public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES, CODEX}
     private Tab currentTab = Tab.INVENTORY;
@@ -62,6 +65,9 @@ public class PauseMenuDisplay extends UIComponent {
     @Override
     public void create() {
         super.create();
+
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
 
         // Initialize the inventory navigation component
         navigationComponent = new InventoryNavigationComponent(inventoryTab);
@@ -121,6 +127,7 @@ public class PauseMenuDisplay extends UIComponent {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 action.run();
             }
         });
@@ -132,6 +139,7 @@ public class PauseMenuDisplay extends UIComponent {
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 setTab(tab);
                 screen.reflectPauseTabClick(tab);
             }
