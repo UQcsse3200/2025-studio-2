@@ -161,7 +161,7 @@ public class MainGameScreen extends ScreenAdapter {
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
       }
       case LEVEL_TWO -> {
-        lvlStartTime =  gameTime.getTime();
+        lvlStartTime = gameTime.getTime();
         newArea = new LevelTwoGameArea(terrainFactory);
       }
       case CUTSCENE_TWO -> {
@@ -227,6 +227,7 @@ public class MainGameScreen extends ScreenAdapter {
     Areas newLevel = getNextArea(area);
 
     if (newArea != null) {
+      System.out.println("TIME" + lvlStartTime);
       leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
       if (newArea instanceof CutsceneArea) {
         StatsTracker.completeLevel();
@@ -401,7 +402,6 @@ public class MainGameScreen extends ScreenAdapter {
     Stage stage = ServiceLocator.getRenderService().getStage();
     leaderboardComponent = new LeaderboardComponent();
 
-    System.out.println("Starting Level Time!");
     lvlStartTime = gameTime.getTime();
 
     Entity ui = new Entity();

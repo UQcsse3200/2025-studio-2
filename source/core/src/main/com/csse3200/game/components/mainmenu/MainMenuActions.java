@@ -22,6 +22,7 @@ public class MainMenuActions extends Component {
   public void create() {
     entity.getEvents().addListener("start", this::onStart);
     entity.getEvents().addListener("load", this::onLoad);
+    entity.getEvents().addListener("leaderboard", this::onLeaderboard);
     entity.getEvents().addListener("exit", this::onExit);
     entity.getEvents().addListener("settings", this::onSettings);
     entity.getEvents().addListener("stats", this::onStats);
@@ -38,11 +39,18 @@ public class MainMenuActions extends Component {
 
   /**
    * Intended for loading a saved game state.
-   * Load functionality is not actually implemented.
    */
   private void onLoad() {
     logger.info("Load game");
     game.setScreen(GdxGame.ScreenType.LOAD_LEVEL);
+  }
+
+  /**
+   * Displays the leaderboard names and times on screen.
+   */
+  private void onLeaderboard() {
+    logger.info("Leaderboard Displayed");
+    game.setScreen(GdxGame.ScreenType.LEADERBOARD);
   }
 
   /**
