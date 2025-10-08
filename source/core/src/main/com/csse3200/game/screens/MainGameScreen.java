@@ -57,8 +57,9 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
+  private float laserTimer = 0f;
 
-  private final GdxGame game;
+    private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
@@ -221,6 +222,15 @@ public class MainGameScreen extends ScreenAdapter {
               }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
                   levelTwoArea.laserShowerChecker(delta);
               }
+          }
+          laserTimer += delta;
+
+          // Check if 50 seconds have passed
+          if (laserTimer >= 50f) {
+              if (gameArea instanceof BossLevelGameArea bossLevel) {
+                  bossLevel.spawnLaserShower(); // spawn lasers
+              }
+              laserTimer = 0f; // reset timer
           }
 
       }

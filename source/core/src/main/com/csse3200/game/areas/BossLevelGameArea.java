@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
@@ -33,6 +35,7 @@ public class BossLevelGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,57);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
+    boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
@@ -94,7 +97,8 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
-            "images/boss.png"
+            "images/boss.png",
+            "images/laser-end"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -116,7 +120,8 @@ public class BossLevelGameArea extends GameArea {
             "sounds/pickupsound.mp3",
             "sounds/thudsound.mp3",
             "sounds/walksound.mp3",
-            "sounds/whooshsound.mp3"
+            "sounds/whooshsound.mp3",
+            "sounds/laserShower.mp3"
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
@@ -130,6 +135,7 @@ public class BossLevelGameArea extends GameArea {
             "images/doors.atlas",
             "images/laser.atlas"
     };
+    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -237,6 +243,44 @@ public class BossLevelGameArea extends GameArea {
         endgamePlatform.setScale(6f, 0.8f);
         spawnEntityAt(endgamePlatform, endgamePos,false, false);
     }
+    public void spawnLaserShower() {
+        if (player == null) return; // safety check
+
+        final float Y = player.getPosition().y + 20f; // spawn above player
+        final float X = player.getPosition().x;
+
+        // Spawn 3 lasers to the left
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i + 1) * 7.5f); // offset left
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            // Remove laser after 5 seconds
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+
+        // Spawn 3 lasers to the right
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((i + 1) * 7.5f); // offset right
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+    }
+
 
     /**
      * Spawn the walls between the two halves of the level, as well as next to the death pit
