@@ -15,6 +15,8 @@ import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+
 import static com.badlogic.gdx.Gdx.app;
 
 /**
