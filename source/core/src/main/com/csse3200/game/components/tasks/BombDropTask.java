@@ -159,7 +159,7 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
 
         // Check horizontal alignment (bomber should be relatively above target)
         float horizontalDistance = Math.abs(bomberPos.x - targetPos.x);
-        return horizontalDistance < 2f; // Within 2 units horizontally
+        return horizontalDistance < 1f; // Within 1 unit horizontally
     }
 
     /**
