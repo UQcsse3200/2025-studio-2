@@ -18,6 +18,8 @@ import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+
 import static com.badlogic.gdx.Gdx.app;
 
 /**
@@ -111,14 +113,6 @@ public class GdxGame extends Game {
         // If we don't already have a saved area, start from level one
         if (saveConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
         else {
-          // Check that this is a valid area, if not, start from level 1
-          try {
-            MainGameScreen.Areas.valueOf(saveConfig.area.toString());
-          } catch (IllegalArgumentException e) {
-            yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
-          }
-
-          System.out.println("We good");
           // Load into the correct area, pass the player the old inventory.
           MainGameScreen game = new MainGameScreen(this, saveConfig.area);
 
@@ -133,12 +127,33 @@ public class GdxGame extends Game {
   }
 
   /**
-   * Return save config
-   * @param path - file path
-   * @return SaveConfig
+   * Return a valid save config
+   * @param path - save file path
+   * @return valid SaveConfig
    */
   public SaveConfig loadSave(String path) {
-    return FileLoader.readClass(SaveConfig.class, path, FileLoader.Location.LOCAL);
+    SaveConfig save = FileLoader.readClass(SaveConfig.class, path, FileLoader.Location.LOCAL);
+    // If the save is null, return with no modifications.
+    if (save == null) {
+      return save;
+    }
+
+    // Make sure area is valid
+    try {
+      MainGameScreen.Areas.valueOf(save.area.toString());
+    } catch (IllegalArgumentException e) {
+      save.area = MainGameScreen.Areas.LEVEL_ONE;
+    }
+
+    // Make sure inventory and upgrades exist
+    if (save.inventory == null) {
+      save.inventory = new HashMap<String, Integer>();
+    }
+    if (save.upgrades == null) {
+      save.upgrades = new HashMap<String, Integer>();
+    }
+
+    return save;
   }
 
   public enum ScreenType {
