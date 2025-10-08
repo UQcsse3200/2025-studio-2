@@ -10,7 +10,6 @@ import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
@@ -117,7 +116,7 @@ public class MainGameScreen extends ScreenAdapter {
     if (startAreaId != null && !startAreaId.isEmpty()) {
       // Start at the specified area (e.g., for tutorials/practice)
       switch (startAreaId) {
-        case "tutorial2" -> gameArea = new TutorialTwoGameArea(terrainFactory);
+        case "tutorial2" -> gameArea = new TutorialGameArea(terrainFactory);
         case "level2" -> gameArea = new LevelTwoGameArea(terrainFactory);
         case "sprint1" -> gameArea = new SprintOneGameArea(terrainFactory);
         default -> {
@@ -185,7 +184,7 @@ public class MainGameScreen extends ScreenAdapter {
               newLevel = "level2";
           }
       case "tutorial2" -> {
-        newArea = new TutorialTwoGameArea(terrainFactory);
+        newArea = new TutorialGameArea(terrainFactory);
         newLevel = ""; // No next level for tutorial practice
       }
       }
