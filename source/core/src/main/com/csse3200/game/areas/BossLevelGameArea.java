@@ -131,9 +131,9 @@ public class BossLevelGameArea extends GameArea {
         spawnPlatforms();
         spawnWalls();
         spawnStaticObstacles();
-        Entity[] toBeDestroyed = spawnCeilingObstacles();
+//        Entity[] toBeDestroyed = spawnCeilingObstacles();
         // Pass toBeDestroyed to this.destroyFloor() when triggering.
-        spawnButtonPuzzleRoom(toBeDestroyed);
+//        spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
@@ -561,6 +561,7 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
+        // Death zone at the start of level
         GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
         Entity deathZone = DeathZoneFactory.createDeathZone();
         deathZone.setScale(10,0.5f);
@@ -568,6 +569,15 @@ public class BossLevelGameArea extends GameArea {
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
         spawnEntityAt(deathZone, spawnPos, true,  false);
+
+        // Death zone beneath lasers
+        Entity deathZone2 = DeathZoneFactory.createDeathZone();
+        deathZone2.setScale(100,0.5f);
+        deathZone2.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone2.getScale().scl(0.8f),
+                PhysicsComponent.AlignX.CENTER,
+                PhysicsComponent.AlignY.BOTTOM);
+        spawnEntityAt(deathZone2, new GridPoint2(42, -3), false,  false);
+
     }
 
     private void playMusic() {
