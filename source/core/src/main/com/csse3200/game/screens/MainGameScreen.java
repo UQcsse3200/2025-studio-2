@@ -213,13 +213,7 @@ public class MainGameScreen extends ScreenAdapter {
           physicsEngine.update();
           ServiceLocator.getEntityService().update();
 
-          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              if (gameArea instanceof LevelOneGameArea levelOneArea) {
-                  levelOneArea.laserShowerChecker(delta);
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
-                  levelTwoArea.laserShowerChecker(delta);
-              }
-          }
+
       }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }

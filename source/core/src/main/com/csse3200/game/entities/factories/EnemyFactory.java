@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
@@ -114,7 +115,7 @@ public class EnemyFactory {
      * @return a bomber drone entity with light detection
      */
     public static Entity createBomberDrone(Entity target, Vector2 spawnPos, String bomberId) {
-        BaseEntityConfig config = configs.bomber;
+        BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
 
@@ -378,7 +379,9 @@ public class EnemyFactory {
                 .addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 0))
-                .addComponent(new AITaskComponent());
+                .addComponent(new AITaskComponent())
+                .addComponent(new BossSpawnerComponent(target));
+
 
         if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
 
