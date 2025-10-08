@@ -58,7 +58,7 @@ public class MainMenuDisplay extends UIComponent {
     TextButton loadBtn = new TextButton("Load", skin, "mainMenu");
     TextButton leaderboardBtn = new TextButton("Leaderboard", skin, "mainMenu");
     TextButton settingsBtn = new TextButton("Settings", skin, "mainMenu");
-    TextButton statsBtn = new TextButton("Stats", skin);
+    TextButton statsBtn = new TextButton("Stats", skin, "mainMenu");
     TextButton exitBtn = new TextButton("Exit", skin, "mainMenu");
 
     startBtn.setTransform(true);
@@ -80,7 +80,7 @@ public class MainMenuDisplay extends UIComponent {
     exitBtn.setOrigin(Align.center);
 
 
-    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, settingsBtn, exitBtn));
+    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, leaderboardBtn, settingsBtn, statsBtn, exitBtn));
     // Triggers an event when the button is pressed
     startBtn.addListener(
         new ChangeListener() {
@@ -107,6 +107,7 @@ public class MainMenuDisplay extends UIComponent {
             @Override
             public void changed(ChangeEvent changeEvent, Actor actor) {
                 logger.debug("Leaderboard button clicked");
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 entity.getEvents().trigger("leaderboard");
             }
         });
@@ -125,8 +126,8 @@ public class MainMenuDisplay extends UIComponent {
       new ChangeListener() {
         @Override
         public void changed(ChangeEvent changeEvent, Actor actor) {
-
           logger.debug("Stats button clicked");
+          buttonClickSound.play(UserSettings.get().masterVolume);
           entity.getEvents().trigger("stats");
           }
       });
@@ -135,7 +136,6 @@ public class MainMenuDisplay extends UIComponent {
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
-
             logger.debug("Exit button clicked");
             buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("exit");
