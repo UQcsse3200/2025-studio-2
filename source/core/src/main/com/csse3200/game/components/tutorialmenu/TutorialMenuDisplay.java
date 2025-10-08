@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.input.Keymap;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
@@ -390,11 +391,21 @@ public class TutorialMenuDisplay extends UIComponent {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
         logger.debug("Practice Level button clicked");
-        // TODO: Launch practice tutorial level 1 here.
+        // Launch the practice tutorial area directly
+        launchPracticeLevel("tutorial2");
       }
     });
     
     contentTable.add(practiceBtn).width(300).height(60).padTop(40).center().colspan(2).row();
+  }
+
+  /**
+   * Launches a practice tutorial level by starting the main game at a specific area.
+   * @param areaId The area ID to start in (e.g., "tutorial2")
+   */
+  private void launchPracticeLevel(String areaId) {
+    logger.info("Launching practice level: {}", areaId);
+    game.setScreen(new MainGameScreen(game, areaId));
   }
 
   /**

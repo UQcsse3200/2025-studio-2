@@ -15,11 +15,22 @@ public class CollectablesSave {
     public static int getCollectedCount() {
         return prefs.getInteger(COLLECTABLE_COUNT, 0);
     }
+    /*
+    public static int getCollectedCount(int level) {
+        return prefs.getInteger("collectableCount_level" + level, 0);
+    }
+    */
 
     public static void incrementCollectedCount() {
         prefs.putInteger(COLLECTABLE_COUNT, getCollectedCount() + 1);
         prefs.flush(); // Saves value to disk
     }
+    /*
+    public static void incrementCollectedCount(int level) {
+        prefs.putInteger("collectableCount_level" + level, getCollectedCount(level));
+        prefs.flush();
+    }
+    */
 
     // For testing and debugging
     public static void resetCollectedCount() {
@@ -29,6 +40,12 @@ public class CollectablesSave {
         }
         prefs.flush(); // Saves value to disk
     }
+    /*
+    public static void resetCollectedCount(int level) {
+        prefs.putInteger("collectableCount_level" + level, 0);
+        prefs.flush();
+    }
+    */
 
     public static void saveCollectedPositions(Vector2[] positions) {
         for (int i = 0; i < positions.length; i++) {
