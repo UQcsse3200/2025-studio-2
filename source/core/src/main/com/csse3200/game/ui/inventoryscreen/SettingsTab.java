@@ -405,16 +405,17 @@ public class SettingsTab implements InventoryTabInterface {
             settings.keyBindSettings = new UserSettings.KeyBindSettings();
         }
         settings.keyBindSettings.customKeybinds = new HashMap<>(Keymap.getKeyMap());
-        
-        // Clear pending changes and update display
-        pendingKeybinds.clear();
-        updateAllKeybindButtons();
-        
+
         // Save and apply immediately with updated keybinds
         UserSettings.set(settings, true);
 
         // Update currently playing music volume immediately
         updateCurrentMusicVolume();
+        
+        // Clear pending changes and update display
+        pendingKeybinds.clear();
+        updateAllKeybindButtons();
+
         logger.info("[Apply] Saved settings: master={} music={}", settings.masterVolume, settings.musicVolume);
     }
 
