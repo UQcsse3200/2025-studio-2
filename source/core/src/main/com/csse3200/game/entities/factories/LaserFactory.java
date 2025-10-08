@@ -17,7 +17,7 @@ import com.csse3200.game.services.ServiceLocator;
  */
 public class LaserFactory {
 
-    private static final int ATTACK_DAMAGE = 0;
+    private static final int ATTACK_DAMAGE = 20;
 
     /**
      * Creates a new laser emitter entity which is rotated by {@code dir} degrees.
@@ -29,14 +29,12 @@ public class LaserFactory {
      */
     public static Entity createLaserEmitter(float dir) {
         // setup animations
-        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class);
-        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
-        if (atlas != null) {
-            animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
-            animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
-            animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
-            animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
-        }
+        AnimationRenderComponent animator = new AnimationRenderComponent(
+                ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class));
+        animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
         animator.setOrigin(0.5f, 0.5f);
         animator.setRotation(dir);
         animator.setLayer(3);

@@ -30,7 +30,15 @@ public class MinimapComponent extends Component {
 
   private static Image loadImageWithDefaultSize(String markerAsset) {
     Image marker = new Image(ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class));
-    marker.setSize(10f, 10f); // Default marker size
+    if (markerAsset.equals("images/door_open.png")) {
+      marker.setSize(20f, 30f);
+    }
+    else if(markerAsset.equals("images/flying_bat_map.png")) {
+      marker.setSize(20f, 20f);
+    } else {
+      marker.setSize(10f, 10f); // Default marker size
+    }
+
     return marker;
   }
 

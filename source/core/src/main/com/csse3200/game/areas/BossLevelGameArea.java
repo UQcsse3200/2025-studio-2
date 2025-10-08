@@ -99,12 +99,31 @@ public class BossLevelGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/buttonsound.mp3",
+            "sounds/chimesound.mp3",
+            "sounds/CircuitGoodness.mp3",
+            "sounds/damagesound.mp3",
+            "sounds/deathsound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/explosion.mp3",
+            "sounds/Flow.mp3",
+            "sounds/gamemusic.mp3",
+            "sounds/hurt.mp3",
+            "sounds/interactsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/KindaLikeTycho.mp3",
+            "sounds/laddersound.mp3",
+            "sounds/pickupsound.mp3",
+            "sounds/thudsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3"
+    };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
             "images/boss.atlas",
             "images/volatile_platform.atlas",
+            "images/timer.atlas",
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
@@ -131,8 +150,8 @@ public class BossLevelGameArea extends GameArea {
         spawnWalls();
         spawnStaticObstacles();
         Entity[] toBeDestroyed = spawnCeilingObstacles();
-        // Entities to be destroyed using entity.dispose() when bombers finish.
-//        spawnButtonPuzzleRoom();
+        // Pass toBeDestroyed to this.destroyFloor() when triggering.
+        spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
@@ -149,21 +168,30 @@ public class BossLevelGameArea extends GameArea {
         Entity reflectorBox = BoxFactory.createReflectorBox();
         spawnEntityAt(reflectorBox, new GridPoint2(63, 15), false, false);
 
-        // Laser slicing diagonally down-right over platform1
+        // Laser attached to the upper wall
         Entity laser0 = LaserFactory.createLaserEmitter(335f);
         spawnEntityAt(laser0, new GridPoint2(63, 25), false, false);
 
-        // Laser from the end platform horizontally across screen
+        // Laser attached to the end platform
         Entity laser1 = LaserFactory.createLaserEmitter(180f);
         spawnEntityAt(laser1, new GridPoint2(tileBounds.x - 10, 23), false, false);
 
-        // Laser going down over the second platform, intersecting the others
-        Entity laser2 = LaserFactory.createLaserEmitter(45f);
-        spawnEntityAt(laser2, new GridPoint2(tileBounds.x - 10, 3), false, false);
+        // Laser attached to the lower wall
+        Entity laser2 = LaserFactory.createLaserEmitter(65f);
+        spawnEntityAt(laser2, new GridPoint2(63, 2), false, false);
 
         // Button-blocking laser at end
         Entity endLaser = LaserFactory.createLaserEmitter(270f);
         spawnEntityAt(endLaser, new GridPoint2(tileBounds.x - 5, tileBounds.y - 5), false, false);
+    }
+
+    /**
+     * Destroys the floor object and the items on it.
+     */
+    private void destroyFloor(Entity[] toDestroy) {
+        for (Entity entity: toDestroy) {
+            entity.dispose();
+        }
     }
 
     /**
@@ -176,9 +204,9 @@ public class BossLevelGameArea extends GameArea {
         firstPlatform.setScale(2f, 0.5f);
         spawnEntityAt(firstPlatform, boxPos,false, false);
 
-        // From here on, the platforms are numbered by the order in which they should be traversed
+        // Normal jumping platforms are numbered by the order in which they should be traversed
         GridPoint2 pos1 = new GridPoint2(74, 17); // I swear I'm not 1-indexing; boxPos is platform0
-        Entity platform1 = PlatformFactory.createVolatilePlatform(51.5f, 5f);
+        Entity platform1 = PlatformFactory.createStaticPlatform();
         platform1.setScale(1f, 0.5f);
         spawnEntityAt(platform1, pos1,false, false);
 
@@ -192,10 +220,16 @@ public class BossLevelGameArea extends GameArea {
         platform3.setScale(1f, 0.5f);
         spawnEntityAt(platform3, pos3,false, true);
 
-        GridPoint2 pos4 = new GridPoint2(80, 20);
+        GridPoint2 pos4 = new GridPoint2(70, 30);
         Entity platform4 = PlatformFactory.createStaticPlatform();
         platform4.setScale(1f, 0.5f);
         spawnEntityAt(platform4, pos4,false, true);
+
+        // Reflector platform for the laser at the top
+        GridPoint2 reflectorPos = new GridPoint2(78, 35);
+        Entity reflectorPlatform = PlatformFactory.createReflectivePlatform();
+        reflectorPlatform.setScale(3f, 0.5f);
+        spawnEntityAt(reflectorPlatform, reflectorPos,true, true);
 
         // Platform to stand on to hit endgame button
         GridPoint2 endgamePos = new GridPoint2(tileBounds.x - 10, 23);
@@ -273,8 +307,11 @@ public class BossLevelGameArea extends GameArea {
      * Includes: Moving platform to exit room, the buttons themselves,
      * and the lasers that will be turned off upon puzzle completion.
      * Does NOT include the platforms within the area, which are part of spawnPlatforms()
+     *
+     * @param toDestroy: The floor object and objects on it, to be destroyed when the bomber drones
+     *                 blow up the floor. For demonstration purposes only.
      */
-    private void spawnButtonPuzzleRoom() {
+    private void spawnButtonPuzzleRoom(Entity[] toDestroy) {
         spawnExitMovingPlatform();
         Entity laser1 = LaserFactory.createLaserEmitter(0f);
         spawnEntityAt(laser1, new GridPoint2(28, tileBounds.y - 36), false, false);
@@ -314,6 +351,7 @@ public class BossLevelGameArea extends GameArea {
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
             laser1.dispose();
             laser2.dispose();
+            destroyFloor(toDestroy); // TODO this is ONLY for demonstration purposes. Should be boss-triggered
         });
     }
 
@@ -428,11 +466,11 @@ public class BossLevelGameArea extends GameArea {
         firstJumpPlatform.setScale(1.8f, 0.5f);
         spawnEntityAt(firstJumpPlatform, firstJumpPos,false, false);
 
+        // TODO when landing on this platform, trigger self-destruct drone at player's location
         GridPoint2 secondJumpPos = new GridPoint2(8, tileBounds.y - 23);
         Entity secondJumpPlatform = PlatformFactory.createStaticPlatform();
         secondJumpPlatform.setScale(1, 0.5f);
         spawnEntityAt(secondJumpPlatform, secondJumpPos,false, false);
-        // Pressure plate on top of this one todo
 
         // Volatile platform over death pit
         GridPoint2 deathPitPos = new GridPoint2(13, tileBounds.y - 33);
@@ -448,9 +486,11 @@ public class BossLevelGameArea extends GameArea {
     }
 
     /**
-     * Spawns the traps at the start of the boss level
+     * Spawns the traps in the boss level, with the exception of the one on the floor that will be destroyed,
+     * which is created in that method so it can be in the same list of entities to be destroyed
      */
     private void spawnTraps() {
+        // Spawn trap on first platform
         Vector2 firstSafePos = new Vector2((float) PLAYER_SPAWN.x / 2, (float) (PLAYER_SPAWN.y) / 2);
         Entity spikes1 = TrapFactory.createSpikes(firstSafePos, 90f);
         spawnEntityAt(spikes1,
@@ -463,6 +503,15 @@ public class BossLevelGameArea extends GameArea {
         wall.setScale(1f,8f);
         spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
                 false, false);
+
+        // Spawn trap on wall
+        Vector2 highPlatformSafePos = new Vector2(28, 17);
+        Entity spikes3 = TrapFactory.createSpikes(highPlatformSafePos, 0f);
+        spawnEntityAt(spikes3,
+                new GridPoint2(60,17), false,  true);
+        Entity spikes4 = TrapFactory.createSpikes(highPlatformSafePos, 0f);
+        spawnEntityAt(spikes4,
+                new GridPoint2(62,17), false,  true);
     }
 
     private void spawnBats() {
@@ -532,6 +581,7 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
+        // Death zone at the start of level
         GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
         Entity deathZone = DeathZoneFactory.createDeathZone();
         deathZone.setScale(10,0.5f);
@@ -539,6 +589,15 @@ public class BossLevelGameArea extends GameArea {
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
         spawnEntityAt(deathZone, spawnPos, true,  false);
+
+        // Death zone beneath lasers
+        Entity deathZone2 = DeathZoneFactory.createDeathZone();
+        deathZone2.setScale(100,0.5f);
+        deathZone2.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone2.getScale().scl(0.8f),
+                PhysicsComponent.AlignX.CENTER,
+                PhysicsComponent.AlignY.BOTTOM);
+        spawnEntityAt(deathZone2, new GridPoint2(42, -3), false,  false);
+
     }
 
     private void playMusic() {
