@@ -9,10 +9,7 @@ import com.csse3200.game.entities.configs.SaveConfig;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
-import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.screens.MainMenuScreen;
-import com.csse3200.game.screens.SettingsScreen;
-import com.csse3200.game.screens.StatisticsScreen;
+import com.csse3200.game.screens.*;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
@@ -105,6 +102,7 @@ public class GdxGame extends Game {
       }
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
+      case LEADERBOARD -> new LeaderboardScreen(this);
       case LOAD_LEVEL -> {
         SaveConfig saveConfig = loadSave(savePath);
 
@@ -118,7 +116,6 @@ public class GdxGame extends Game {
             yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
           }
 
-          System.out.println("We good");
           // Load into the correct area, pass the player the old inventory.
           MainGameScreen game = new MainGameScreen(this, saveConfig.area);
 
@@ -142,7 +139,7 @@ public class GdxGame extends Game {
   }
 
   public enum ScreenType {
-    MAIN_MENU, MAIN_GAME, SETTINGS, STATISTICS, LOAD_LEVEL
+    MAIN_MENU, MAIN_GAME, SETTINGS, STATISTICS, LOAD_LEVEL, LEADERBOARD
   }
 
   /**

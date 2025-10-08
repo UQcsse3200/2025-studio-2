@@ -55,6 +55,19 @@ public class LeaderboardComponent {
         }
     }
 
+    public void updateLeaderboard(String name, long score, boolean force) {
+        HashMap<String, Long> leaderboard = readData();
+        Long time = leaderboard.get(name);
+
+        if (force) {
+            leaderboard.put(name, score);
+        } else if (time == null || time > score) {
+            leaderboard.put(name, score);
+        }
+
+        writeData(leaderboard);
+    }
+
     public void updateLeaderboard(String name, long score) {
         HashMap<String, Long> leaderboard = readData();
         Long time = leaderboard.get(name);
@@ -62,7 +75,6 @@ public class LeaderboardComponent {
         if (time == null || time > score) {
             leaderboard.put(name, score);
         }
-//            leaderboard.put(name, score);
 
         writeData(leaderboard);
     }
