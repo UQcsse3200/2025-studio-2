@@ -83,6 +83,9 @@ public class MainMenuScreen extends ScreenAdapter {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(mainMenuTextures);
+    resourceService.loadSounds(new String[] {
+            "sounds/buttonsound.mp3"
+    });
     ServiceLocator.getResourceService().loadAll();
   }
 

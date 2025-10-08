@@ -37,6 +37,7 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
   protected TerrainComponent terrain;
+  protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
   protected ArrayList<Vector2> deathLocations = new ArrayList<>();
   private Texture deathMarkerTexture = null;
@@ -330,7 +331,7 @@ public abstract class GameArea implements Disposable {
 
     MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
     options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-    MinimapDisplay minimapDisplay = new MinimapDisplay(150f, options);
+    MinimapDisplay minimapDisplay = new MinimapDisplay(300f, options);
     minimapService.setDisplay(minimapDisplay);
 
     Entity minimapEntity = new Entity();

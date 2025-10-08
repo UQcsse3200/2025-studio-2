@@ -114,7 +114,7 @@ public class EnemyFactory {
      * @return a bomber drone entity with light detection
      */
     public static Entity createBomberDrone(Entity target, Vector2 spawnPos, String bomberId) {
-        BaseEntityConfig config = configs.drone;
+        BaseEntityConfig config = configs.bomber;
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
 
@@ -357,6 +357,58 @@ public class EnemyFactory {
 
         PhysicsUtils.setScaledCollider(enemy, 1f, 1f);
         return enemy;
+    }
+
+    /**
+     * !! WIP !!
+     * Creates a minimal Boss entity for the boss level.
+     * Current (placeholder) behaviour:
+     * - Reuses the drone atlas (scaled up)
+     * - Kinematic body with zero gravity, movement will be handled by camera
+     * - High health, no contact/kill logic wired yet
+     * - Empty AI task component for future boss behaviours (other drone spawns, lasers, etc.)
+     *
+     * @param target Player entity (unused for now)
+     * @param spawnPos Initial spawn position
+     * @return Boss entity
+     */
+    public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
+        Entity boss = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new ColliderComponent())
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new CombatStatsComponent(9999, 0))
+                .addComponent(new AITaskComponent());
+
+        if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
+
+        // TODO: Replace with dedicated boss atlas/animations
+        // Placeholder visuals: Reuse drone atlas so we can render something in the game area
+        AnimationRenderComponent animator =
+                new AnimationRenderComponent(ServiceLocator.getResourceService()
+                        .getAsset("images/boss.atlas", TextureAtlas.class));
+        animator.addAnimation("bossChase", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bossGenerateDrone", 1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossTouchKill", 2f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossShootLaser", 2f, Animation.PlayMode.NORMAL);
+        boss.addComponent(animator);
+
+        // Temporary scaling up to differentiate boss from other drones (change w/ new assets)
+        animator.scaleEntity();
+        Vector2 size = boss.getScale();
+        boss.setScale(size.x * 3f, size.y * 3f);
+
+        animator.startAnimation("bossChase");
+
+        // Physics (kinematic body). Position will be anchored to camera
+        PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
+        phys.getBody().setType(BodyDef.BodyType.KinematicBody);
+        phys.getBody().setGravityScale(0f);
+
+        // TODO: Anchor to camera so boss sticks to LHS of view
+        // TODO: Kill-on-contact to trigger death cutscene and level restart
+
+        return boss;
     }
 
     private EnemyFactory() {throw new IllegalStateException("Instantiating static util class");}

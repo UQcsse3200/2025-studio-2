@@ -40,7 +40,10 @@ public class CutsceneArea extends GameArea {
             "images/PLAYER.atlas"
     };
     private static final String[] dummySounds = {
-            "sounds/Impact4.ogg"
+            "sounds/Impact4.ogg",
+            "sounds/jetpacksound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/buttonsound.mp3"
     };
 
     /**

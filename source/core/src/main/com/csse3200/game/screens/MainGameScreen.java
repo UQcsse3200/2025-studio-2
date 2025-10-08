@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.areas.LevelOneGameArea;
-import com.csse3200.game.areas.LevelTwoGameArea;
-import com.csse3200.game.areas.SprintOneGameArea;
+import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
@@ -110,7 +107,7 @@ public class MainGameScreen extends ScreenAdapter {
 
 
     //gameArea = new SprintOneGameArea(terrainFactory);
-    gameArea = new LevelOneGameArea(terrainFactory);
+    gameArea = new BossLevelGameArea(terrainFactory);
     //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
@@ -129,6 +126,11 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private void switchArea(String key, Entity player) {
+    System.out.println("Attempting to switch area from " + gameArea + " to " + key);
+    if (key == null) {
+      game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+      return;
+    }
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
     if (gameArea instanceof CutsceneArea) {
       Gdx.app.postRunnable(runnable);
@@ -167,6 +169,11 @@ public class MainGameScreen extends ScreenAdapter {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
           }
+      case "bossLevel" -> {
+        System.out.println("TRIGGERED THE EVENT TO SWITCH AREA!!!!");
+        newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt"); // todo change path
+        newLevel = null; // This currently loads to level2 because it finishes cutscene 1, but that'll change.
+      }
       }
 
       if (newArea != null) {

@@ -1,8 +1,8 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -13,8 +13,13 @@ import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.collectables.CollectableComponentV2;
+import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -38,7 +43,6 @@ public class LevelOneGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
-    boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -77,6 +81,7 @@ public class LevelOneGameArea extends GameArea {
             "images/glide_powerup.png",
             "images/wall.png",
             "images/dash_powerup.png",
+            "images/jetpack_powerup.png",
             "images/ladder.png",
             "images/ladder-base.png",
             "images/cavelevel/tile000.png",
@@ -95,6 +100,7 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
+            "images/flying_bat_map.png",
             "images/terminal_on.png",
             "images/terminal_off.png",
             "images/plate.png",
@@ -112,10 +118,24 @@ public class LevelOneGameArea extends GameArea {
             "images/leftSignpost.png",
             "images/signpost.png"
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
+    private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3", "sounds/explosion.mp3","sounds/laserShower.mp3"};
+            "sounds/chimesound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/deathsound.mp3",
+            "sounds/damagesound.mp3",
+            "sounds/pickupsound.mp3",
+            "sounds/interactsound.mp3",
+            "sounds/buttonsound.mp3",
+            "sounds/laddersound.mp3",
+            "sounds/thudsound.mp3",
+            "sounds/chimesound.mp3",
+            "sounds/explosion.mp3"};
+
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
@@ -128,7 +148,6 @@ public class LevelOneGameArea extends GameArea {
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
-    private int spacePressCount = 0; // counts space bar presses
 
     public LevelOneGameArea(TerrainFactory terrainFactory) {
         super();
@@ -154,16 +173,14 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-        //spawnPatrollingDrone();
-        //spawnBomberDrone();
-        //spawnSelfDestructDrone();
         //spawnBoxOnlyPlate();
         spawnUpgrade("dash", 23, 4);
         // spawnUpgrade("glider", 7, 6);  // won't be used in level one
-        // spawnUpgrade("jetpack", 5, 6); // won't be used in level on
-        //spawnAutoBomberDrone();
-        spawnUpgrade("dash", 9, 6);
+        // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
         spawnSecurityCams();
+        //spawnBomberDrone();
+        //spawnSelfDestructDrone();
+        spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
         //spawnPlatformBat();
@@ -211,59 +228,6 @@ public class LevelOneGameArea extends GameArea {
         Entity detector = LaserDetectorFactory.createLaserDetector(0f);
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
-    public void spawnLaserShower() {
-        final float Y = player.getPosition().y + 10f;
-        final float X = player.getPosition().x;
-
-
-        for (int i = 0; i <= 2; i++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X - ((i+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
-            laser.getEvents().trigger("shootLaser");
-
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    laser.dispose();
-                }
-            },5f);
-        }
-
-        for (int j = 0; j <=2; j++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X + ((j+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
-            laser.getEvents().trigger("shootLaser");
-
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    laser.dispose();
-                }
-            },5f);
-        }
-    }
-    public void laserShowerChecker(float delta) {
-        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            spacePressCount++;
-        }
-        int SPACE_THRESHOLD = 30;
-        if (spacePressCount == SPACE_THRESHOLD) {
-            if (has_laser==false) {
-                spawnLaserShower();
-                has_laser = true;
-                Timer.schedule(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        has_laser = false;
-                    }
-                },5f);
-            }
-            spacePressCount = 0;
-        }
-    }
-
 
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,-10);
@@ -318,6 +282,7 @@ public class LevelOneGameArea extends GameArea {
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPos, false, false);
+
         }
         // Lower ladder
         lowerLadderBottomSegments.clear();
@@ -328,6 +293,7 @@ public class LevelOneGameArea extends GameArea {
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPosition, false, false);
+
         }
     }
     private void spawnUpperLadderPressurePlate() {
@@ -467,6 +433,10 @@ public class LevelOneGameArea extends GameArea {
             isUpperLadderExtended = true;
             isUpperLadderSpawning = true;
 
+            Sound ladderSound = ServiceLocator.getResourceService().getAsset(
+                    "sounds/laddersound.mp3", Sound.class);
+            ladderSound.play(UserSettings.get().masterVolume);
+
             upperLadderTask = new Timer.Task() {
                 int rung = upperLadderOffset - 1;
 
@@ -510,6 +480,10 @@ public class LevelOneGameArea extends GameArea {
         if (!isLowerLadderExtended && lowerLadderBottomSegments.isEmpty() && !isLowerLadderSpawning) {
             isLowerLadderExtended = true;
             isLowerLadderSpawning = true;
+
+            Sound ladderSound = ServiceLocator.getResourceService().getAsset(
+                    "sounds/laddersound.mp3", Sound.class);
+            ladderSound.play(UserSettings.get().masterVolume);
 
             lowerLadderTask = new Timer.Task() {
                 int rung = lowerLadderOffset - 1;
@@ -755,82 +729,6 @@ public class LevelOneGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
-
-    private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(11, 4);
-
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(14, 4))
-        };
-        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
-                .addComponent(new ActivationComponent("1"));
-        spawnEntityAt(patrolDrone, spawnTile, true, true);
-    }
-
-    private void spawnBomberDrone() {
-        // First bomber with cone light detection - patrols and uses its downward cone light
-        GridPoint2 spawnTile = new GridPoint2(3, 15);
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(11, 13))
-        };
-
-        // Create bomber with unique ID "bomber1"
-        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
-        spawnEntityAt(bomberDrone, spawnTile, true, true);
-
-        /*GridPoint2 spawnTile2 = new GridPoint2(30, 25);
-        Vector2[] patrolRoute2 = {
-                terrain.tileToWorldPosition(spawnTile2),
-                terrain.tileToWorldPosition(new GridPoint2(38, 25)),
-                terrain.tileToWorldPosition(new GridPoint2(38, 30)),
-                terrain.tileToWorldPosition(new GridPoint2(30, 30))
-        };
-
-        // Create second bomber with unique ID "bomber2"
-        Entity bomberDrone2 = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute2, "bomber2");
-        spawnEntityAt(bomberDrone2, spawnTile2, true, true);*/
-    }
-
-    // Optional: Method for spawning a stationary bomber at a specific position
-    private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(
-                player,
-                terrain.tileToWorldPosition(position),
-                bomberId
-        );
-        spawnEntityAt(bomberDrone, position, true, true);
-    }
-
-    private void spawnSelfDestructDrone() {
-        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
-        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
-                player,
-                terrain.tileToWorldPosition(spawnTile)
-        ).addComponent(new ActivationComponent("1"));
-
-        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
-    }
-
-    private void spawnAutoBomberDrone() {
-        GridPoint2 spawnTile = new GridPoint2(15, 15);
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(45, 15))
-        };
-
-        // Create the auto bomber
-        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
-                player,           // target reference
-                patrolRoute,      // patrol waypoints
-                "auto_bomber_1"   // unique ID
-        );
-
-
-        spawnEntityAt(autoBomber, spawnTile, true, true);
-    }
-
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
@@ -987,6 +885,7 @@ public class LevelOneGameArea extends GameArea {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(79 ,20), true,  true);
+        button2.addComponent(new MinimapComponent("images/red_button.png"));
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -1003,7 +902,9 @@ public class LevelOneGameArea extends GameArea {
 //    }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
+        key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(1,37), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f),    new GridPoint2(1, 37), true, true);
     }
     public void spawnPotion(String type, int x, int y) {
         Entity potion = CollectableFactory.createCollectable("potion:" + type);
@@ -1018,6 +919,46 @@ public class LevelOneGameArea extends GameArea {
         Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 270f, "2");
         spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
     }
+
+    private void spawnBomberDrone() {
+        // Patrolling bomber with cone light detector
+        GridPoint2 spawnTile = new GridPoint2(55, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+        };
+
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(40, 15);
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
+
+    private void spawnAutoBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(55, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+        };
+
+        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
+                player,           // target reference
+                patrolRoute,      // patrol waypoints
+                "auto_bomber_1"   // unique ID
+        );
+
+        spawnEntityAt(autoBomber, spawnTile, true, true);
+    }
+
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalPlatformBat = platformBatBuilder
@@ -1035,12 +976,15 @@ public class LevelOneGameArea extends GameArea {
         // Large, invisible sensors — easy to grab, no textures.
         // IDs chosen to match the ObjectiveTab banner map.
         Gdx.app.log("LevelOne", "Spawning objectives…");
-//        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(14, 19), true, true);
-//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
-//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("dash", 2.0f, 2.0f),    new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
-        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+
+        spawnEntityAt(CollectableFactory.createObjective("dash_completed", 0.2f, 0.2f),    new GridPoint2(23, 4), true, true);
+
+//        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
+//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
     }
 
     private void spawnLevelOneBatRoom() {
@@ -1062,6 +1006,7 @@ public class LevelOneGameArea extends GameArea {
                 .moveX(1f + offsetX, 10f + offsetX).moveY(46f + offsetY, 46f + offsetY)
                 .texture("images/flying_bat.atlas")
                 .build();
+        highHorizontalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(highHorizontalBat1, new GridPoint2(
                         (int) batBuilder2.getSpawnX() + offsetX,
                         (int) batBuilder2.getSpawnY() + offsetY),
@@ -1073,6 +1018,7 @@ public class LevelOneGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(6f)
                 .build();
+        highHorizontalBat2.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(highHorizontalBat2, new GridPoint2(
                         (int) batBuilder3.getSpawnX() + offsetX,
                         (int) batBuilder3.getSpawnY() + offsetY),
@@ -1084,6 +1030,7 @@ public class LevelOneGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(4f)
                 .build();
+        diagonalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(diagonalBat1, new GridPoint2(
                         (int) batBuilder4.getSpawnX() + offsetX,
                         (int) batBuilder4.getSpawnY() + offsetY),
@@ -1095,6 +1042,7 @@ public class LevelOneGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(4f)
                 .build();
+        verticalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(verticalBat1, new GridPoint2(
                         (int) batBuilder5.getSpawnX() + offsetX,
                         (int) batBuilder5.getSpawnY() + offsetY),
@@ -1108,12 +1056,12 @@ public class LevelOneGameArea extends GameArea {
             upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
             spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
         }
-
-        if (upgradeID == "glider") {
-            Entity upgrade = CollectableFactory.createGlideUpgrade();
-            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
-            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-        }
+//
+//        if (upgradeID == "glider") {
+//            Entity upgrade = CollectableFactory.createGlideUpgrade();
+//            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
+//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
+//        }
 //        if (upgradeID == "jetpack") {
 //            Entity upgrade = CollectableFactory.createJetpackUpgrade();
 //            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);

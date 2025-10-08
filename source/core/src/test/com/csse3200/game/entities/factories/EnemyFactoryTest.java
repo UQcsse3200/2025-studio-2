@@ -2,7 +2,9 @@ package com.csse3200.game.entities.factories;
 
 import box2dLight.ConeLight;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.csse3200.game.ai.tasks.AITaskComponent;
@@ -74,6 +76,7 @@ public class EnemyFactoryTest {
         rs = new ResourceService();
         ServiceLocator.registerResourceService(rs);
         rs.loadTextureAtlases(new String[]{"images/drone.atlas"});
+        rs.loadTextureAtlases(new String[]{"images/boss.atlas"});
         rs.loadAll();
 
         // Mock time source needed for AI tasks
@@ -101,6 +104,7 @@ public class EnemyFactoryTest {
     @AfterEach
     void cleanUp() {
         rs.unloadAssets(new String[]{"images/drone.atlas"});
+        rs.unloadAssets(new String[]{"images/boss.atlas"});
         rs.dispose();
         ServiceLocator.clear();
         if (rhCons != null) {
@@ -228,6 +232,7 @@ public class EnemyFactoryTest {
         assertNotNull(sp);
         assertEquals(route[0], sp.getSpawnPos());
     }
+
     @Test
     void createBomberDrone_hasBaseEnemyComponents() {
         Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
@@ -260,10 +265,11 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasAnimationController() {
-            Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
 
-            assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
-                    "Drone should have AnimationController");
+        Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
+
+        assertNotNull(bomberDrone.getComponent(DroneAnimationController.class),
+                "Drone should have AnimationController");
     }
 
     @Test
@@ -276,13 +282,18 @@ public class EnemyFactoryTest {
 
     @Test
     void createBomberDrone_hasCorrectCombatStats() {
+
         Entity bomberDrone = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0f, 0f), "bomber1");
 
-        CombatStatsComponent stats = bomberDrone.getComponent(CombatStatsComponent.class);
-        assertNotNull(stats, "Drone should have a CombatStatsComponent");
-        assertEquals(droneConfig.health, stats.getHealth(), "Drone health mismatch");
-        assertEquals(droneConfig.baseAttack, stats.getBaseAttack(), "Drone baseAttack mismatch");
+        CombatStatsComponent combatStats = bomberDrone.getComponent(CombatStatsComponent.class);
+        assertNotNull(combatStats, "Bomber Drone should have a CombatStatsComponent");
+
+        // According to enemies.json, bomber drones are configured with 80 health and 10 attack.
+        // If this value changes in the config, update the test accordingly.
+        assertEquals(80, combatStats.getHealth(), "Drone health mismatch");
+        assertEquals(10, combatStats.getBaseAttack(), "Drone attack mismatch");
     }
+
 
     @Test
     void createBomberDrone_addsSpawnPosition() {
@@ -570,6 +581,41 @@ public class EnemyFactoryTest {
     }
 
      */
+
+    @Test
+    void boss_hasCoreComponents() {
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
+        assertNotNull(boss.getComponent(PhysicsComponent.class),
+                "Boss should have a physics component");
+        assertNotNull(boss.getComponent(ColliderComponent.class),
+                "Boss should have a collider component");
+        assertNotNull(boss.getComponent(AITaskComponent.class),
+                "Boss should have an AI task component");
+        assertNotNull(boss.getComponent(AnimationRenderComponent.class),
+                "Boss should have an animation render component");
+
+        HitboxComponent hitbox = boss.getComponent(HitboxComponent.class);
+        assertNotNull(hitbox, "Boss should have a hitbox component");
+        assertEquals(PhysicsLayer.NPC, boss.getComponent(HitboxComponent.class).getLayer(),
+                "Hitbox layer should be set to 'NPC'");
+
+        CombatStatsComponent stats = boss.getComponent(CombatStatsComponent.class);
+        assertNotNull(stats, "Boss should have a combat stats component");
+        assertEquals(9999, stats.getHealth(), "Boss should have correct health");
+        assertEquals(0, stats.getBaseAttack(), "Boss should have correct base attack");
+    }
+
+    @Test
+    void boss_hasCorrectPhysicsBody() {
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
+        boss.create();
+
+        PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.KinematicBody, phys.getBody().getType(),
+                "Boss should have a kinematic body");
+        assertEquals(0f, phys.getBody().getGravityScale(),
+                "Boss should have zero gravity");
+    }
 
     private Entity createEntityWithPosition(Vector2 pos) {
         Entity e = new Entity();
