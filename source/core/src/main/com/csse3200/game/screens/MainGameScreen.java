@@ -83,7 +83,15 @@ public class MainGameScreen extends ScreenAdapter {
   private GameTime gameTime;
 
   public enum Areas {
-    LEVEL_ONE, LEVEL_TWO, SPRINT_ONE, TEMPLATE, FOREST, CAVE, CUTSCENE_ONE, CUTSCENE_TWO
+    LEVEL_ONE,
+    LEVEL_TWO,
+    SPRINT_ONE,
+    TEMPLATE,
+    FOREST,
+    CAVE,
+    CUTSCENE_ONE,
+    CUTSCENE_TWO,
+    TUTORIAL,
   }
 
   public MainGameScreen(GdxGame game) {
@@ -162,28 +170,16 @@ public class MainGameScreen extends ScreenAdapter {
    * @return GameArea mapped.
    */
   public GameArea getGameArea(Areas area) {
-    GameArea newArea = null;
-
-    switch (area) {
-      case LEVEL_ONE -> {
-        newArea = new LevelOneGameArea(terrainFactory);
-      }
-      case CUTSCENE_ONE -> {
-        newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-      }
-      case LEVEL_TWO -> {
-        lvlStartTime = gameTime.getTime();
-        newArea = new LevelTwoGameArea(terrainFactory);
-      }
-      case CUTSCENE_TWO -> {
-        newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-      }
-      case SPRINT_ONE -> {
-        newArea = new SprintOneGameArea(terrainFactory);
-      }
-    }
-
-    return newArea;
+    lvlStartTime = gameTime.getTime();
+    return switch (area) {
+      case TUTORIAL ->  new TutorialGameArea(terrainFactory);
+      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
+      case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
+      case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
+      case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
+      case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
+      default -> throw new IllegalStateException("Unexpected value: " + area);
+    };
   }
 
   /**
@@ -192,27 +188,13 @@ public class MainGameScreen extends ScreenAdapter {
    * @return next Areas game area.
    */
   private Areas getNextArea(Areas area) {
-    Areas nextArea = null;
-
-    switch (area) {
-      case LEVEL_ONE -> {
-        nextArea = Areas.CUTSCENE_ONE;
-      }
-      case CUTSCENE_ONE -> {
-        nextArea = Areas.LEVEL_TWO;
-      }
-      case LEVEL_TWO -> {
-        nextArea = Areas.CUTSCENE_TWO;
-      }
-      case CUTSCENE_TWO -> {
-        nextArea = Areas.SPRINT_ONE;
-      }
-      case SPRINT_ONE -> {
-        nextArea = Areas.LEVEL_TWO;
-      }
-    }
-
-    return nextArea;
+    return switch (area) {
+      case LEVEL_ONE -> Areas.CUTSCENE_ONE;
+      case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
+      case LEVEL_TWO -> Areas.CUTSCENE_TWO;
+      case CUTSCENE_TWO -> Areas.SPRINT_ONE;
+      default -> throw new IllegalStateException("Unexpected value: " + area);
+    };
   }
 
   private void switchArea(Areas area, Entity player) {
