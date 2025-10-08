@@ -68,6 +68,7 @@ public class PlayerFactory {
     animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
     animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
     animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
+    animator.addAnimation("laser_effact", 0.1f, Animation.PlayMode.NORMAL);
 
 
     Entity player =
@@ -77,6 +78,8 @@ public class PlayerFactory {
                     .addComponent(new CrouchingColliderComponent())
                     .addComponent(new FootColliderComponent())
                     .addComponent(new ColliderComponent()) // Interactions
+                    .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
+                    .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                     .addComponent(new PlayerActions())
                     .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
@@ -93,6 +96,16 @@ public class PlayerFactory {
     player
             .addComponent(animator)
             .addComponent(new PlayerAnimationController());
+
+
+
+// Laser hit listener
+      player.getEvents().addListener("laserHit", (Vector2 pos) -> {
+          AnimationRenderComponent anim = player.getComponent(AnimationRenderComponent.class);
+          if (anim != null && anim.hasAnimation("laser_effact")) {
+              anim.startAnimation("laser_effact");
+          }
+      });
 
     // --- Stamina: add component, wire sprint, and TEMP logging ---
     StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);

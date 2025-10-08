@@ -92,30 +92,35 @@ public class ProjectileFactory {
                 .addComponent(new PhysicsComponent())
                 .addComponent(new PhysicsMovementComponent())
                 .addComponent(new ColliderComponent().setSensor(true).setLayer(PhysicsLayer.PROJECTILE))
-                .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, damage))
-                .addComponent(new CombatStatsComponent(1, damage))
                 .addComponent(new DisposalComponent(5f));
 
-// Add LaserComponent for movement and behavior
+// Create CombatStatsComponent for the laser
+        CombatStatsComponent laserStats = new CombatStatsComponent(1, damage);
+        laser.addComponent(laserStats);
+        laser.addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 0f, laserStats));
+
+        laser.addComponent(new HitboxComponent().setLayer(PhysicsLayer.PROJECTILE));
         laser.addComponent(new LaserComponent(shooter, speed, damage));
 
 // Animation render using laser atlas
         TextureAtlas laserAtlas = ServiceLocator.getResourceService()
-                .getAsset("images/laser.atlas", TextureAtlas.class);
+                .getAsset("images/Laser.atlas", TextureAtlas.class);
         AnimationRenderComponent animator = new AnimationRenderComponent(laserAtlas);
         animator.addAnimation("laser_attack", 0.05f, Animation.PlayMode.LOOP); // moving laser
         animator.addAnimation("laser_effact", 0.05f, Animation.PlayMode.NORMAL); // hit effect
         animator.startAnimation("laser_attack");
         laser.addComponent(animator);
 
-// Set initial velocity (preserve original direction vector)
+// Set initial velocity
+        laser.getComponent(PhysicsComponent.class)
+                .setBodyType(BodyDef.BodyType.DynamicBody);
         laser.getComponent(PhysicsComponent.class)
                 .getBody()
                 .setLinearVelocity(direction.cpy().scl(speed));
 
 // Scale laser beam and collider
-        laser.setScale(0.5f, 0.1f);
-        PhysicsUtils.setScaledCollider(laser, 0.5f, 0.1f);
+        laser.setScale(1.8f, 0.8f);
+        PhysicsUtils.setScaledCollider(laser, 1.8f, 0.8f);
 
 // Register entity
         ServiceLocator.getEntityService().register(laser);

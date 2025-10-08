@@ -10,9 +10,11 @@ import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.rendering.DebugRenderer;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.physics.PhysicsLayer;
 
 /**
  * Task that makes a laser drone chase its target and maintain an optimal height.
+ * If the player enters the detection zone (cone light), the drone moves to optimal height.
  */
 public class LaserChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
@@ -26,22 +28,11 @@ public class LaserChaseTask extends DefaultTask implements PriorityTask {
     private final GameTime timeSource;
     private MovementTask movementTask;
 
-    // State tracking
     private boolean targetAcquired = false;
-
     private static final long CHASE_GRACE_MS = 1500L; // 1.5 seconds
     private long lastSpottedTime = 0L;
     private boolean everSpottedTarget = false;
 
-    /**
-     * Creates a chase task for a laser drone.
-     *
-     * @param target the entity to chase
-     * @param priority task priority when chasing
-     * @param maxChaseDistance maximum distance before chase stops
-     * @param optimalHeight height to maintain above the target
-     * @param heightTolerance tolerance for height positioning
-     */
     public LaserChaseTask(Entity target, int priority, float maxChaseDistance,
                           float optimalHeight, float heightTolerance) {
         this.target = target;
@@ -80,7 +71,7 @@ public class LaserChaseTask extends DefaultTask implements PriorityTask {
 
     @Override
     public void update() {
-        if (movementTask == null) return;
+        if (movementTask == null || target == null) return;
 
         if (!targetAcquired) {
             movementTask.setTarget(getSearchPosition());
@@ -105,7 +96,11 @@ public class LaserChaseTask extends DefaultTask implements PriorityTask {
     public int getPriority() {
         if (target == null) return -1;
 
-        if (targetAcquired) {
+        float distance = owner.getEntity().getPosition().dst(target.getPosition());
+        boolean visible = isTargetVisible();
+
+        if (distance <= maxChaseDistance && visible) {
+            targetAcquired = true;
             lastSpottedTime = timeSource.getTime();
             everSpottedTarget = true;
             return priority;
@@ -114,15 +109,14 @@ public class LaserChaseTask extends DefaultTask implements PriorityTask {
         if (!everSpottedTarget) return -1;
 
         long timeSinceSpotted = timeSource.getTime() - lastSpottedTime;
-        if (timeSinceSpotted <= CHASE_GRACE_MS) {
-            return priority;
-        }
+        if (timeSinceSpotted <= CHASE_GRACE_MS) return priority;
 
+        targetAcquired = false;
         everSpottedTarget = false;
         return -1;
     }
 
-    /** Calculate the desired chase position above the target */
+    /** Returns the position above the target to maintain optimal height */
     private Vector2 getChaseTarget() {
         Vector2 targetPos = target.getPosition().cpy();
         Vector2 currentPos = owner.getEntity().getPosition();
@@ -134,11 +128,28 @@ public class LaserChaseTask extends DefaultTask implements PriorityTask {
         return targetPos;
     }
 
-    /** Get a search position when target is lost */
+    /** Returns a search position when target is lost */
     private Vector2 getSearchPosition() {
         Vector2 lastKnownPos = target.getPosition().cpy();
         lastKnownPos.y += optimalHeight * 1.5f;
         return lastKnownPos;
+    }
+
+    /** Checks if the target is currently visible (raycast) */
+    private boolean isTargetVisible() {
+        if (target == null) return false;
+
+        Vector2 from = owner.getEntity().getCenterPosition();
+        Vector2 to = target.getCenterPosition();
+
+// Prevent zero-length raycast errors
+        if (from.epsilonEquals(to, 0.01f)) return true;
+
+// Check obstacles
+        if (physics.raycast(from, to, PhysicsLayer.OBSTACLE, hit)) {
+            return hit.fixture.getBody().getUserData() == target;
+        }
+        return true;
     }
 
     /** Returns whether the target is currently acquired */

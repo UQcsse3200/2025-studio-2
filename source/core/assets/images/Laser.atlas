@@ -24,14 +24,14 @@ laser_attack
   size: 67, 96
   orig: 240, 96
   offset: 69, 0
-  index: 3
+  index: 2
 laser_attack
   rotate: false
   xy: 181, 198
   size: 67, 96
   orig: 240, 96
   offset: 114, 0
-  index: 2
+  index: 3
 laser_effact
   rotate: false
   xy: 172, 296
@@ -81,10 +81,10 @@ laser_effact
   orig: 96, 96
   offset: 23, 0
   index: 6
-laser_effact
+default
   rotate: false
-  xy: 159, 100
-  size: 22, 96
-  orig: 96, 96
-  offset: 37, 0
-  index: 7
+  xy: 0, 0
+  size: 1, 1
+  orig: 1, 1
+  offset: 0, 0
+  index: 0

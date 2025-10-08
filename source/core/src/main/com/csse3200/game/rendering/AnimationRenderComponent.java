@@ -107,6 +107,7 @@ public class AnimationRenderComponent extends RenderComponent {
   /** Scale the entity to a width of 1 and a height matching the texture's ratio */
   public void scaleEntity() {
     TextureRegion defaultTexture = this.atlas.findRegion("default");
+
     entity.setScale(1f, (float) defaultTexture.getRegionHeight() / defaultTexture.getRegionWidth());
   }
 
@@ -123,7 +124,7 @@ public class AnimationRenderComponent extends RenderComponent {
   /**
    * Whether the animator has added the given animation.
    * @param name Name of the added animation.
-   * @return true if added, false otherwise.
+   * @return true if added, fzalse otherwise.
    */
   public boolean hasAnimation(String name) {
     return animations.containsKey(name);

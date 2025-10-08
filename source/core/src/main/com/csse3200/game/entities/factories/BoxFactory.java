@@ -261,9 +261,11 @@ public class BoxFactory {
                     autonomousBox
                             .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                            .addComponent(new HitboxComponent())
-                            .addComponent(new CombatStatsComponent(1, damage))
-                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+                            .addComponent(new HitboxComponent().setLayer(PhysicsLayer.ENEMY));
+            CombatStatsComponent boxStats = new CombatStatsComponent(1, damage);
+            autonomousBox
+                            .addComponent(boxStats)
+                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,knockback, boxStats))
                             .addComponent(new AutonomousBoxComponent());
 
             AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);

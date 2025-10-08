@@ -31,6 +31,11 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.ai.tasks.AITaskComponent;
+import com.csse3200.game.components.tasks.LaserAttackTask;
+import com.csse3200.game.ai.tasks.PriorityTask;
+import com.csse3200.game.components.tasks.LaserChaseTask;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +78,7 @@ public class LevelOneGameArea extends GameArea {
             "images/blue_button.png",
             "images/drone.png",
             "images/bomb.png",
+            "images/laser_final.png",
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/glide_powerup.png",
@@ -380,7 +386,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
         // Add listener for laser hit to trigger animation
-        newPlayer.getEvents().addListener("laserHit", () -> {
+        newPlayer.getEvents().addListener("laser_effact", () -> {
             newPlayer.getEvents().trigger("laser_effact");
         });
         return newPlayer;
@@ -421,23 +427,45 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(bomberDrone, position, true, true);
     }
     private void spawnLaserDrone() {
-// Example stationary laser drone
-        GridPoint2 spawnTile = new GridPoint2(10, 15); // choose tile
+        // Stationary laser drone
+        GridPoint2 spawnTile = new GridPoint2(10, 15);
         Vector2 spawnPos = terrain.tileToWorldPosition(spawnTile);
-
         Entity laserDrone = EnemyFactory.createLaserDrone(player, spawnPos, "laser01");
         spawnEntityAt(laserDrone, spawnTile, true, true);
 
-// Example patrolling laser drone
+        // Patrolling laser drone
         GridPoint2 patrolStart = new GridPoint2(20, 20);
         GridPoint2 patrolEnd = new GridPoint2(30, 20);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(patrolStart),
                 terrain.tileToWorldPosition(patrolEnd)
         };
-
         Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
         spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
+
+        // --- Setup AI tasks for stationary drone ---
+        AITaskComponent ai = laserDrone.getComponent(AITaskComponent.class);
+        if (ai == null) {
+            ai = new AITaskComponent();
+            laserDrone.addComponent(ai);
+        }
+
+        LaserChaseTask chaseTask = new LaserChaseTask(player, 10, 8f, 3f, 0.5f);
+        LaserAttackTask attackTask = new LaserAttackTask(player, 15, 8f, 15f, 10);
+        ai.addTask(chaseTask).addTask(attackTask);
+
+        // Add detection events so drone fires when player enters cone
+        ConeDetectorComponent detector = laserDrone.getComponent(ConeDetectorComponent.class);
+        if (detector != null) {
+            detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
+                chaseTask.activate();
+                attackTask.setTargetDetected(true); // Enable laser firing
+            });
+            detector.getEntity().getEvents().addListener("targetLost", (Entity e) -> {
+                chaseTask.deactivate();
+                attackTask.setTargetDetected(false); // Stop firing
+            });
+        }
     }
     private void displayUI() {
         Entity ui = new Entity();
@@ -707,9 +735,9 @@ public class LevelOneGameArea extends GameArea {
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
-        resourceService.loadTextures(gameTextures);
+        resourceService.loadTextureAtlases(new String[]{"images/drone.atlas","images/Laser.atlas"});
         resourceService.loadTextureAtlases(gameTextureAtlases);
-        resourceService.loadTextureAtlases(new String[] { "images/Laser.atlas" });
+        resourceService.loadTextures(gameTextures);
         resourceService.loadSounds(gameSounds);
         resourceService.loadMusic(musics);
 
