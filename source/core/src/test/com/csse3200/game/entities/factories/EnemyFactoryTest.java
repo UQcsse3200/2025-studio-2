@@ -603,9 +603,8 @@ public class EnemyFactoryTest {
     @Test
     void boss_hasCorrectPhysicsBody() {
         Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
-        boss.create();
-
         PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
+        assertNotNull(phys, "Boss should have PhysicsComponent");
         assertEquals(BodyDef.BodyType.KinematicBody, phys.getBody().getType(),
                 "Boss should have a kinematic body");
     }

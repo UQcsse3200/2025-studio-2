@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.boss.BossAnchorComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
@@ -452,6 +453,7 @@ public class EnemyFactory {
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 0))
                 .addComponent(animator)
+                .addComponent(new BossAnchorComponent(1.0f, 0f))
                 .addComponent(new AITaskComponent());
 
         animator.scaleEntity();
