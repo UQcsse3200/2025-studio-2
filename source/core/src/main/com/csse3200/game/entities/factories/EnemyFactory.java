@@ -379,8 +379,10 @@ public class EnemyFactory {
                 .addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 0))
-                .addComponent(new AITaskComponent());
-                //.addComponent(new BossSpawnerComponent(target));
+                .addComponent(new AITaskComponent())
+                .addComponent(new BossLaserSpawnerComponent(target));
+
+                 //.addComponent(new BossSpawnerComponent(target));
 
 
         if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));

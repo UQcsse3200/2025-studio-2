@@ -4,7 +4,6 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.BossLaserFactory;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.areas.GameArea;
 
 /**
  * Component that allows a boss to spawn lasers periodically.
@@ -12,7 +11,7 @@ import com.csse3200.game.areas.GameArea;
 public class BossLaserSpawnerComponent extends Component {
     private final Entity player;       // Player to target
     private boolean spawningEnabled = false;
-    private float cooldownSec = 6f;    // default seconds between laser shots
+    private float cooldownSec = 6f;    // seconds between laser shots
     private float timer = 0f;
 
     public BossLaserSpawnerComponent(Entity player) {
@@ -21,6 +20,7 @@ public class BossLaserSpawnerComponent extends Component {
 
     @Override
     public void create() {
+        // Listen for start/stop events from the boss
         entity.getEvents().addListener("boss:startSpawning", () -> spawningEnabled = true);
         entity.getEvents().addListener("boss:stopSpawning", () -> spawningEnabled = false);
     }
@@ -32,16 +32,26 @@ public class BossLaserSpawnerComponent extends Component {
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
         timer += dt;
         if (timer < cooldownSec) return;
-        timer = 0f;
 
+        timer = 0f;
         spawnLaser();
     }
 
     private void spawnLaser() {
-        //Entity laser = BossLaserFactory.createBossLaser(player);
-        // position laser at boss
+        // Create a new laser entity targeting the player
+        Entity laser = BossLaserFactory.createBossLaser(player);
 
-// Register with the EntityService, which will automatically add it to the active GameArea
-        //erviceLocator.getEntityService().register(laser);
+        // Position the laser at the boss's current position
+        laser.setPosition(entity.getPosition());
+
+        // Register the laser so it is added to the active GameArea
+        ServiceLocator.getEntityService().register(laser);
+    }
+
+    /**
+     * Optional: allows you to adjust cooldown dynamically
+     */
+    public void setCooldown(float seconds) {
+        this.cooldownSec = seconds;
     }
 }
