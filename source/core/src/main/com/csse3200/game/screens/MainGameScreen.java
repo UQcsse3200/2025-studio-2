@@ -72,7 +72,7 @@ public class MainGameScreen extends ScreenAdapter {
   /**
    * Create the main game screen, optionally starting at a specific area.
    * @param game The game instance
-   * @param startAreaId The area ID to start in (e.g., "tutorial2"), or null for default (LevelOneGameArea)
+   * @param startAreaId The area ID to start in (e.g., "tutorial"), or null for default (LevelOneGameArea)
    */
   public MainGameScreen(GdxGame game, String startAreaId) {
     this.game = game;
@@ -116,7 +116,7 @@ public class MainGameScreen extends ScreenAdapter {
     if (startAreaId != null && !startAreaId.isEmpty()) {
       // Start at the specified area (e.g., for tutorials/practice)
       switch (startAreaId) {
-        case "tutorial2" -> gameArea = new TutorialGameArea(terrainFactory);
+        case "tutorial" -> gameArea = new TutorialGameArea(terrainFactory);
         case "level2" -> gameArea = new LevelTwoGameArea(terrainFactory);
         case "sprint1" -> gameArea = new SprintOneGameArea(terrainFactory);
         default -> {
@@ -183,7 +183,7 @@ public class MainGameScreen extends ScreenAdapter {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
           }
-      case "tutorial2" -> {
+      case "tutorial" -> {
         newArea = new TutorialGameArea(terrainFactory);
         newLevel = ""; // No next level for tutorial practice
       }
