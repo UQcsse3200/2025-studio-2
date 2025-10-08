@@ -12,6 +12,9 @@ public enum EntityType {
     TRAP,
     LASER,
     BUTTON,
+    DEATH_ZONE,
+    SIGN_POST,
+    UPGRADE,
     LASER_DETECTOR;
 
     @Override public String toString() { return name().toLowerCase(); }

@@ -19,7 +19,14 @@ public enum EntitySubtype {
     // Floors
     GROUND(EntityType.FLOOR),
     STATIC_FLOOR(EntityType.FLOOR),
-    DECORATIVE(EntityType.FLOOR);
+    DECORATIVE(EntityType.FLOOR),
+
+    // Upgrades
+    JETPACK(EntityType.UPGRADE),
+
+    // Door
+    STATIC(EntityType.DOOR),
+    TRANSITION(EntityType.DOOR);
 
     /** Parent type for this subtype. */
     private final EntityType type;

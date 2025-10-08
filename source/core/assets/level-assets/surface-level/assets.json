@@ -76,7 +76,11 @@
     "images/surfacelevel/background/1.png",
     "images/surfacelevel/background/2.png",
     "images/surfacelevel/background/3.png",
-    "images/surfacelevel/background/4.png"
+    "images/surfacelevel/background/4.png",
+    "images/rightSignpost.png",
+    "images/leftSignpost.png",
+    "images/upSignpost.png",
+    "images/downSignpost.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",

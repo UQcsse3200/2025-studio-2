@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonManagerComponent;
@@ -128,6 +129,20 @@ public final class Spawners {
             return door;
         });
 
+        // --- Door ---
+        SpawnRegistry.register("door", a -> {
+            String id = String.valueOf(a.id);
+            String target    = a.target != null ? a.target : "";
+            boolean isStatic = a.subtype != null && a.subtype.equalsIgnoreCase("static");
+
+            Entity door = ObstacleFactory.createDoor(id, area, target, isStatic);
+            door.setScale(a.sx, a.sy);
+            addTooltip(door, a.tooltip);
+
+            return door;
+        });
+
+
         // --- Trap ---
         SpawnRegistry.register("trap", a -> {
             Entity trap = TrapFactory.createSpikes(new Vector2(a.safeX, a.safeY), a.rotation);
@@ -170,6 +185,15 @@ public final class Spawners {
             SignpostFactory.createSignpost(a.direction);
             return SignpostFactory.createSignpost(a.direction);
         });
+
+        // --- Death Zone ---
+        SpawnRegistry.register("death_zone", a -> DeathZoneFactory.createDeathZone());
+
+        // --- Upgrade ---
+        SpawnRegistry.register("upgrade", a -> {
+            return CollectableFactory.createJetpackUpgrade();
+        });
+
     }
 
     // --- Helpers ---

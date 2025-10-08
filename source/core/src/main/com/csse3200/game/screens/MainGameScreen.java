@@ -14,6 +14,8 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
+import com.csse3200.game.components.obstacles.Door.DoorComponent;
+import com.csse3200.game.components.obstacles.Door.DoorMetaComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -105,25 +107,43 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
 
-    //gameArea = new SprintOneGameArea(terrainFactory);
+//    gameArea = new SprintOneGameArea(terrainFactory);
 //    gameArea = new LevelOneGameArea(terrainFactory);
     //gameArea = new LevelTwoGameArea(terrainFactory);
-      gameArea = new LevelThreeGameArea(terrainFactory);
+    gameArea = new LevelThreeGameArea(terrainFactory);
 
     gameArea.create();
 
-    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("cutscene1", player);
-    });
-
-    gameArea.getEvents().addListener("reset", this::onGameAreaReset);
-    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+      gameArea.getEvents().addListener("doorEntered", this::handleDoorEntered);
+      gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+      gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
 
     // Have to createUI after the game area is created since createUI
     // needs the player which is created in the game area
     createUI();
   }
+
+    private void handleDoorEntered(Entity player, Entity door) {
+        if (player == null || door == null) {
+            logger.warn("doorEntered: missing player or door; aborting transition.");
+            return;
+        }
+
+        DoorComponent dc = door.getComponent(DoorComponent.class);
+        if (dc == null) {
+            logger.warn("doorEntered: DoorComponent missing on door {}; skipping.", door);
+            return;
+        }
+
+        String target = dc.getTargetArea();
+        if (target == null || target.isEmpty()) {
+            logger.warn("doorEntered: targetArea empty; skipping transition.");
+            return;
+        }
+
+        switchArea(target, player);
+    }
+
 
   private void switchArea(String key, Entity player) {
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
@@ -160,6 +180,9 @@ public class MainGameScreen extends ScreenAdapter {
         newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
         newLevel = "sprint1";
       }
+      case "level3" -> {
+          newArea = new LevelThreeGameArea(terrainFactory);
+      }
       case "sprint1" -> {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
@@ -169,8 +192,7 @@ public class MainGameScreen extends ScreenAdapter {
       if (newArea != null) {
           gameArea = newArea;
           String finalNewLevel = newLevel;
-          gameArea.getEvents().addListener("doorEntered", (Entity play) -> switchArea(finalNewLevel, play));
-          gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
+          gameArea.getEvents().addListener("doorEntered", (Entity play, Entity door) -> handleDoorEntered(play, door));          gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(finalNewLevel, play));
 
           InventoryComponent inv = player.getComponent(InventoryComponent.class);
           if (inv != null) {

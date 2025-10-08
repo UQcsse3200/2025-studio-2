@@ -11,6 +11,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -118,7 +119,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
-        //spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
+        spawnMovingTraps();
     }
 
     private void spawnDeathZone() {
@@ -424,7 +425,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(cam3, new GridPoint2(75,65), true, true);
     }
 
-    /*
+
     private void spawnMovingTraps() {
         //moving traps
         for(int i = 45; i>23; i = i-7) {
@@ -463,9 +464,6 @@ public class LevelTwoGameArea extends GameArea {
             spawnEntityAt(spikesTrap2, trapGridPos2, true, true);
         }
     }
-
-     */
-
 
     private void spawnTraps() {
         //spikes below volatile platforms
