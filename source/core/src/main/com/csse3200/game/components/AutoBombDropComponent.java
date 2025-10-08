@@ -1,7 +1,7 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.ProjectileFactory;
 import com.csse3200.game.services.GameTime;
@@ -60,18 +60,19 @@ public class AutoBombDropComponent extends Component {
         Vector2 targetPos = target != null ? target.getPosition().cpy() :
                 new Vector2(bombSpawnPos.x, bombSpawnPos.y - 5f);
 
-        // Defer entity registration to avoid nested iterator exception
-        Gdx.app.postRunnable(() -> {
-            Entity bomb = ProjectileFactory.createBomb(
-                    entity,
-                    bombSpawnPos,
-                    targetPos,
-                    2.0f,
-                    2f,
-                    25
-            );
-            ServiceLocator.getEntityService().register(bomb);
-            logger.debug("Auto-bomb dropped at {}", bombSpawnPos);
-        });
+        Entity bomb = ProjectileFactory.createBomb(
+                entity,
+                bombSpawnPos,
+                targetPos,
+                2.0f,
+                2f,
+                30
+        );
+        ServiceLocator.getEntityService().register(bomb);
+        BombTrackerComponent bomberComp = entity.getComponent(BombTrackerComponent.class);
+        if (bomberComp != null) {
+            bomberComp.trackBomb(bomb);
+        }
+        logger.debug("Auto-bomb dropped at {}", bombSpawnPos);
     }
 }

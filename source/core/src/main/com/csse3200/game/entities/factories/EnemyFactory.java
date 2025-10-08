@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -128,7 +129,8 @@ public class EnemyFactory {
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
-                .addComponent(new DroneAnimationController());
+                .addComponent(new DroneAnimationController())
+                .addComponent(new BombTrackerComponent());
 
         // Add cone light for downward detection
         RayHandler rayHandler = ServiceLocator.getLightingService().getEngine().getRayHandler();
@@ -243,8 +245,10 @@ public class EnemyFactory {
 
         // Set spawn position to first patrol point and add patrol route
         if (patrolRoute != null && patrolRoute.length > 0) {
-            drone.addComponent(new SpawnPositionComponent(patrolRoute[0]));
-            drone.addComponent(new PatrolRouteComponent(patrolRoute));
+            drone
+                    .addComponent(new SpawnPositionComponent(patrolRoute[0]))
+                    .addComponent(new PatrolRouteComponent(patrolRoute))
+                    .addComponent(new BombTrackerComponent());
         }
 
         AnimationRenderComponent animator =
@@ -257,7 +261,8 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 // DO NOT add DroneAnimationController - it will override the animation
-                .addComponent(new AutoBombDropComponent(target, 1f)); // Add bomb dropping component
+                .addComponent(new AutoBombDropComponent(target, 2f)) // 2 sec auto bomb drop
+                .addComponent(new BombTrackerComponent());
 
         // AI setup with just patrol
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
@@ -341,8 +346,7 @@ public class EnemyFactory {
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                         .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
                         .addComponent(new AITaskComponent())// Want this empty for base enemies
-                        .addComponent(new DeathOnTrapComponent())
-                        .addComponent(new DisposalComponent(0.5f));
+                        .addComponent(new DeathOnTrapComponent());
 
         enemy.getComponent(PhysicsMovementComponent.class).setMaxSpeed(1.4f); // Faster movement
 

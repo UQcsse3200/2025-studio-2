@@ -58,9 +58,7 @@ class ProjectileFactoryTest {
                 "Bomb should have a PhysicsComponent");
         assertNotNull(bomb.getComponent(ColliderComponent.class),
                 "Bomb should have a ColliderComponent.class");
-        assertNotNull(bomb.getComponent(HitboxComponent.class),
-                "Bomb should have a HitboxComponent");
-        assertEquals(PhysicsLayer.NPC, bomb.getComponent(HitboxComponent.class).getLayer(),
+        assertEquals(PhysicsLayer.NPC, bomb.getComponent(ColliderComponent.class).getLayer(),
                 "Bomb PhysicsLayer should be NPC");
         assertNotNull(bomb.getComponent(CombatStatsComponent.class),
                 "Bomb should have a CombatStatsComponent");
@@ -77,9 +75,18 @@ class ProjectileFactoryTest {
 
         Entity bomb = ProjectileFactory.createBomb(new Entity(), spawnPos, new Vector2(5, 0), 1.5f, 2.5f, damage);
 
-        assertEquals(spawnPos, bomb.getPosition());
-        assertEquals(BodyDef.BodyType.DynamicBody, bomb.getComponent(PhysicsComponent.class).getBody().getType());
-        assertEquals(PhysicsLayer.NPC, bomb.getComponent(HitboxComponent.class).getLayer());
+        Vector2 expectedBL = new Vector2(spawnPos.x - 0.25f, spawnPos.y - 0.25f);
+        assertEquals(expectedBL.x, bomb.getPosition().x, 1e-6);
+        assertEquals(expectedBL.y, bomb.getPosition().y, 1e-6);
+
+        PhysicsComponent phys = bomb.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.DynamicBody, phys.getBody().getType());
+
+        assertEquals(0f, phys.getBody().getLinearVelocity().x, 1e-6, "vx should start at 0");
+        assertEquals(0f, phys.getBody().getLinearVelocity().y, 1e-6, "vy should start at 0");
+        assertEquals(1f, phys.getBody().getGravityScale(), 1e-6, "gravityScale should be 1");
+
+        assertEquals(PhysicsLayer.NPC, bomb.getComponent(ColliderComponent.class).getLayer());
         assertEquals(damage, bomb.getComponent(CombatStatsComponent.class).getBaseAttack());
     }
 
