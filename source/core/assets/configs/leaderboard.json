@@ -1,5 +1,7 @@
 {
-  "BigJam": 150000,
-  "Seva": 12345,
-  "Bruce": 999999
+  "Bruce":999999,
+  "BigJam":150000,
+  "CUTSCENE_ONE":0,
+  "LEVEL_ONE":10286,
+  "Seva":12345
 }

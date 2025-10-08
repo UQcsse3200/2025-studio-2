@@ -1,8 +1,11 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.services.CollectableService;
+import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +20,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 
 import com.csse3200.game.components.player.InventoryComponent.Bag;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests for the three-bag InventoryComponent:
@@ -48,6 +56,11 @@ class InventoryComponentTest {
         svcMock = Mockito.mockStatic(CollectableService.class);
         svcMock.when(() -> CollectableService.get(anyString()))
                 .thenAnswer(invocation -> cfg(invocation.getArgument(0)));
+
+        ResourceService rs = mock(ResourceService.class);
+        when(rs.getAsset(anyString(), eq(Sound.class))).thenReturn(mock(Sound.class));
+
+        ServiceLocator.registerResourceService(rs);
     }
     @AfterEach
     void tearDown() {

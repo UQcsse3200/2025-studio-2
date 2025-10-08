@@ -1,5 +1,6 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.csse3200.game.components.collectables.UpgradesComponent;
@@ -47,6 +48,7 @@ public class UpgradesComponentTest {
         ResourceService rs = mock(ResourceService.class);
         when(rs.getAsset(anyString(), eq(Texture.class))).thenReturn(mock(Texture.class));
         when(rs.getAsset(anyString(), eq(Pixmap.class))).thenReturn(mock(Pixmap.class));
+        when(rs.getAsset(anyString(), eq(Sound.class))).thenReturn(mock(Sound.class));
         doNothing().when(rs).loadTextures(any(String[].class));
         doNothing().when(rs).loadAll();
         ServiceLocator.registerResourceService(rs);

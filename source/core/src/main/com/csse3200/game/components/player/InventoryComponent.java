@@ -1,9 +1,12 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.entities.configs.CollectablesConfig;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.CollectableService;
+import com.csse3200.game.services.ServiceLocator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -122,8 +125,12 @@ public class InventoryComponent extends Component {
      * @throws NullPointerException if bag or itemId is null
      */
     public void addItem(Bag bag, String itemId) {
-    addItems(bag, itemId, 1);
-  }
+        Sound pickupSound = ServiceLocator.getResourceService().getAsset(
+              "sounds/pickupsound.mp3", Sound.class);
+        pickupSound.play(UserSettings.get().masterVolume);
+
+        addItems(bag, itemId, 1);
+    }
 
     /**
      * Adds {@code amount} instances of itemId to the specified bag.
