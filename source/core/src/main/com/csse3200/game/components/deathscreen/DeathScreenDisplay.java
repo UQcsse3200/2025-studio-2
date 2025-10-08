@@ -2,6 +2,7 @@ package com.csse3200.game.components.deathscreen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -22,14 +24,17 @@ import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.projectiles.BombComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
 import com.github.tommyettinger.textra.TypingLabel;
 import com.github.tommyettinger.textra.TypingListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
@@ -52,6 +57,8 @@ public class DeathScreenDisplay extends UIComponent {
     private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
     private final MainGameScreen screen;
+    private Sound buttonClickSound;
+
 
     public DeathScreenDisplay(MainGameScreen screen, GdxGame game) {
         this.game = game;
@@ -162,6 +169,9 @@ public class DeathScreenDisplay extends UIComponent {
         loadDeathPrompts();
         super.create();
 
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
+
         rootTable = new Table();
         rootTable.setFillParent(true);
 
@@ -239,9 +249,13 @@ public class DeathScreenDisplay extends UIComponent {
 
         // Restart button - taller and more spaced
         TextButton restartButton = new TextButton("Restart Level", skin);
+        restartButton.setTransform(true);
+        restartButton.setOrigin(Align.center);
+//        HoverEffectHelper.applySubtlePulse(restartButton, 1.05f, 0.5f); // grows to 105% then back
         restartButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 setVisible(false);
                 screen.reset();
             }
@@ -250,9 +264,13 @@ public class DeathScreenDisplay extends UIComponent {
 
         // Main menu button - taller and more spaced
         TextButton mainMenuButton = new TextButton("Main Menu", skin);
+        mainMenuButton.setTransform(true);
+        mainMenuButton.setOrigin(Align.center);
+//        HoverEffectHelper.applySubtlePulse(mainMenuButton, 1.05f, 0.7f); // grows to 105% then back
         mainMenuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 game.setScreen(GdxGame.ScreenType.MAIN_MENU);
             }
         });
@@ -260,9 +278,18 @@ public class DeathScreenDisplay extends UIComponent {
 
         // Exit button - taller
         TextButton exitButton = new TextButton("Exit Game", skin);
+        exitButton.setTransform(true);
+        exitButton.setOrigin(Align.center);
+//        HoverEffectHelper.applySubtlePulse(exitButton, 1.05f, 0.9f); // grows to 105% then back
+        HoverEffectHelper.applyHoverEffects(Arrays.asList(restartButton,mainMenuButton,exitButton));
+        HoverEffectHelper.applySlinkyEffect(Arrays.asList(restartButton,mainMenuButton,exitButton), 1.2f, 0.3f, 0.2f);
+        HoverEffectHelper.applyHoverInterruptiblePulse(restartButton, 1.05f, 0.6f);
+        HoverEffectHelper.applyHoverInterruptiblePulse(mainMenuButton, 1.05f, 0.6f);
+        HoverEffectHelper.applyHoverInterruptiblePulse(exitButton, 1.05f, 0.6f);
         exitButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 Gdx.app.exit();
             }
         });
@@ -320,6 +347,10 @@ public class DeathScreenDisplay extends UIComponent {
                 buttonsTable.clearActions();
                 // Animation will be triggered by typewriter listener
             }
+
+            Sound deathSound = ServiceLocator.getResourceService().getAsset(
+                    "sounds/deathsound.mp3", Sound.class);
+            deathSound.play(UserSettings.get().masterVolume);
         } else {
             // Re-enable player input
             screen.getGameArea().getPlayer().getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);

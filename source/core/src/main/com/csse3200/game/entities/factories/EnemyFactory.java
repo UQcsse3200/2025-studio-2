@@ -114,7 +114,7 @@ public class EnemyFactory {
      * @return a bomber drone entity with light detection
      */
     public static Entity createBomberDrone(Entity target, Vector2 spawnPos, String bomberId) {
-        BaseEntityConfig config = configs.drone;
+        BaseEntityConfig config = configs.bomber;
         Entity drone = createBaseEnemy();
         if (spawnPos != null) drone.addComponent(new SpawnPositionComponent(spawnPos));
 

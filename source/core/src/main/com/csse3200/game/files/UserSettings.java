@@ -2,8 +2,10 @@ package com.csse3200.game.files;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
+import com.badlogic.gdx.audio.Music;
 import com.csse3200.game.files.FileLoader.Location;
 import com.csse3200.game.input.Keymap;
+import com.csse3200.game.services.ServiceLocator;
 
 import java.io.File;
 import java.util.HashMap;
@@ -64,6 +66,15 @@ public class UserSettings {
     }
 
     applyKeybindSettings(settings.keyBindSettings);
+      try {
+          String bgm = "sounds/BGM_03_mp3.mp3";
+          Music music = ServiceLocator.getResourceService().getAsset(bgm, Music.class);
+          if (music != null && music.isPlaying()) {
+              music.setVolume(settings.masterVolume * settings.musicVolume);
+          }
+      } catch (Exception e) {
+          // ignore if not loaded
+      }
   }
 
   /**

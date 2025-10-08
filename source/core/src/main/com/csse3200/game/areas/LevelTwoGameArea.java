@@ -1,5 +1,6 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,6 +14,8 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -80,13 +83,26 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/labforeground.png",
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
-            "images/glide_powerup.png"
+            "images/glide_powerup.png",
+            "images/jetpack_powerup.png"
 
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
+    private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3", "sounds/explosion.mp3"};
+            "sounds/chimesound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/deathsound.mp3",
+            "sounds/pickupsound.mp3",
+            "sounds/interactsound.mp3",
+            "sounds/buttonsound.mp3",
+            "sounds/damagesound.mp3",
+            "sounds/thudsound.mp3",
+            "sounds/chimesound.mp3",
+            "sounds/explosion.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
@@ -120,6 +136,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
+        spawnObjectives();
         //spawnBomberDrone();
         spawnSelfDestructDrone();
         spawnAutoBomberDrone();
@@ -534,6 +551,8 @@ public class LevelTwoGameArea extends GameArea {
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(0 ,58), true,  true);
 
+        button2.addComponent(new MinimapComponent("images/red_button.png"));
+
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed && !keySpawned) {
                 spawnKey();
@@ -565,14 +584,18 @@ public class LevelTwoGameArea extends GameArea {
 
         //spawn upgrade
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
-            Entity dashUpgrade = CollectableFactory.createJetpackUpgrade();
-            spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
+            Entity jetpackUpgrade = CollectableFactory.createJetpackUpgrade();
+            spawnEntityAt(jetpackUpgrade, new GridPoint2(91,6), true,  true);
+
+            spawnEntityAt(CollectableFactory.createObjective("jetpack_completed", 0.2f, 0.2f), new GridPoint2(91, 6), true, true);
         });
     }
 
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
+        key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(93,50), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(92, 50), true, true);
     }
 
     private void spawnVolatilePlatform(){
@@ -595,6 +618,15 @@ public class LevelTwoGameArea extends GameArea {
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
+    }
+
+    private void spawnObjectives() {
+        // Large, invisible sensors — easy to grab, no textures.
+        // IDs chosen to match the ObjectiveTab banner map.
+        Gdx.app.log("LevelOne", "Spawning objectives…");
+        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
     }
 
     protected void loadAssets() {
