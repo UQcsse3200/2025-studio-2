@@ -1,15 +1,17 @@
 package com.csse3200.game.ui.cutscene;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.cutscene.CutsceneReaderComponent.TextBox;
@@ -23,6 +25,7 @@ import java.util.List;
  * cutscene
  */
 public class CutsceneDisplay extends UIComponent {
+    private Sound buttonClickSound;
     /**
      * Ordered list of text boxes to be displayed in cutscene
      */
@@ -51,7 +54,10 @@ public class CutsceneDisplay extends UIComponent {
      * Texture for background behind the text
      */
     private Texture textBgTexture;
-
+    /**
+     * For the hint in the top screen of cutscenes
+     */
+    private Table skipHintTable;
     /**
      * Initialises the UI for the cutscene
      *
@@ -78,6 +84,9 @@ public class CutsceneDisplay extends UIComponent {
     @Override
     public void create() {
         super.create();
+
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
 
         // Create root stack - fills screen
         rootStack = new Stack();
@@ -108,8 +117,9 @@ public class CutsceneDisplay extends UIComponent {
         textBoxContainer.add(textTable).expandX().fillX().pad(20f);
 
         // Add button to text container
-        TextButton progressButton = new TextButton("Next", skin);
+        TextButton progressButton = new TextButton("Next", skin, "cutsceneNext");
         textBoxContainer.add(progressButton).pad(20f);
+
 
         // Add text box container to UI table
         uiTable.add(textBoxContainer).expandX().fillX().pad(20f);
@@ -119,9 +129,11 @@ public class CutsceneDisplay extends UIComponent {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent event, Actor actor) {
+                        buttonClickSound.play(UserSettings.get().masterVolume);
                         // Do nothing for now if we are on last index
                         if (curTextBox == textBoxList.size() - 1) {
                             area.trigger("cutsceneFinished");
+                            entity.dispose();
                         } else {
                             nextTextBox();
                         }
@@ -134,6 +146,19 @@ public class CutsceneDisplay extends UIComponent {
 
         // Add stack to scene
         stage.addActor(rootStack);
+        // Create skip hint label
+        Label skipHint = new Label("(Press SPACE to skip)", skin, "small");
+        skipHint.setFontScale(0.7f);
+
+        // Create a table just for positioning
+        skipHintTable = new Table();
+        skipHintTable.top().right();   // align top-right
+        skipHintTable.setFillParent(true);
+        skipHintTable.add(skipHint).pad(10f).right().top();
+
+        // Add to stage separately
+        stage.addActor(skipHintTable);
+
     }
 
     /**
@@ -155,12 +180,24 @@ public class CutsceneDisplay extends UIComponent {
 
         // If background associated with new text box is null, don't change
         if (textBox.background() != null) {
-            imageTable.clear();
-            Image background =
-                    new Image(ServiceLocator.getResourceService().getAsset(textBox.background(),
-                            Texture.class));
-            background.setFillParent(true);
-            imageTable.addActor(background);
+            // Fade out old background if it exists
+            if (imageTable.getChildren().size > 0) {
+                Actor oldBg = imageTable.getChildren().first();
+                oldBg.addAction(Actions.sequence(
+                        Actions.fadeOut(0.5f),          // fade out over 0.5s
+                        Actions.run(oldBg::remove)      // remove after fade
+                ));
+            }
+
+            // Add new background, start invisible
+            Image newBg = new Image(ServiceLocator.getResourceService()
+                    .getAsset(textBox.background(), Texture.class));
+            newBg.setFillParent(true);
+            newBg.getColor().a = 0f; // start transparent
+            imageTable.addActor(newBg);
+
+            // Fade in new background
+            newBg.addAction(Actions.fadeIn(0.5f));
         }
     }
 
@@ -180,6 +217,21 @@ public class CutsceneDisplay extends UIComponent {
     protected void draw(SpriteBatch batch) {
         // Handled by Scene2D
     }
+    @Override
+    public void update() {
+        super.update();
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            if (curTextBox == textBoxList.size() - 1) {
+                // Last one → finish cutscene
+                area.trigger("cutsceneFinished");
+                //entity.dispose();
+            } else {
+                // Otherwise → go to next text box
+                nextTextBox();
+            }
+        }
+    }
 
     /**
      * Correctly removes all widgets registered in the root stack object
@@ -190,6 +242,9 @@ public class CutsceneDisplay extends UIComponent {
 
         if (rootStack != null) {
             rootStack.remove();
+        }
+        if (skipHintTable != null) {
+            skipHintTable.remove();
         }
         if (textBgTexture != null) {
             textBgTexture.dispose();

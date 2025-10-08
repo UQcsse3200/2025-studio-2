@@ -1,5 +1,9 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.factories.TimerSignFactory;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +19,9 @@ public class ButtonManagerComponent extends Component {
     private boolean puzzleActive = false;
     private static final float PUZZLE_TIME_LIMIT = 15f;
     private boolean puzzleCompleted = false;
+
+    private Entity sign = null;
+    private AnimationRenderComponent signAnimator;
 
     /**
      * Adds a button to the list of buttons managed by this manager
@@ -32,6 +39,29 @@ public class ButtonManagerComponent extends Component {
         if (!puzzleActive) {
             puzzleActive = true;
             puzzleTimer = PUZZLE_TIME_LIMIT;
+
+            // find pushed button position
+            Vector2 buttonPos = null;
+            for (ButtonComponent button : buttons) {
+                if (button.isPushed()) {
+                    if (button.getEntity() != null) {
+                        buttonPos = button.getEntity().getPosition().cpy();
+                    }
+                    break;
+                }
+            }
+            if (buttonPos == null) return;
+
+            // create sign
+            if (sign == null) {
+                sign = TimerSignFactory.createTimer(PUZZLE_TIME_LIMIT, buttonPos);
+                signAnimator = sign.getComponent(AnimationRenderComponent.class);
+                ServiceLocator.getEntityService().register(sign);
+            } else  {
+                // if it already exists change the pos and start the animation
+                sign.setPosition(buttonPos.x, buttonPos.y + 0.5f);
+                signAnimator.startAnimation("timer");
+            }
         }
     }
 
@@ -60,12 +90,18 @@ public class ButtonManagerComponent extends Component {
             if (!puzzleCompleted) {
                 puzzleCompleted = true;
                 puzzleActive = false;
+                if (sign != null) {
+                    signAnimator.setPaused(true);
+                }
                 entity.getEvents().trigger("puzzleCompleted");
             }
         } else if (puzzleTimer <= 0f) {
             puzzleActive = false;
             for (ButtonComponent button : buttons) {
                 button.forceUnpress();
+            }
+            if (sign != null) {
+                signAnimator.stopAnimation();
             }
         }
     }
@@ -111,5 +147,10 @@ public class ButtonManagerComponent extends Component {
      */
     public List<ButtonComponent> getButtons() {
         return buttons;
+    }
+
+    @Override
+    public void dispose() {
+        if (sign != null) sign.dispose();
     }
 }

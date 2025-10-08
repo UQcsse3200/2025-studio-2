@@ -1,5 +1,6 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,7 +12,9 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -80,17 +83,32 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/labforeground.png",
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
-            "images/glide_powerup.png"
+            "images/glide_powerup.png",
+            "images/jetpack_powerup.png"
 
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
+    private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/chimesound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/deathsound.mp3",
+            "sounds/pickupsound.mp3",
+            "sounds/interactsound.mp3",
+            "sounds/buttonsound.mp3",
+            "sounds/damagesound.mp3",
+            "sounds/thudsound.mp3",
+            "sounds/chimesound.mp3",
+            "sounds/explosion.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
-            "images/doors.atlas"
+            "images/doors.atlas",
+            "images/timer.atlas",
+            "images/drone.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -118,6 +136,11 @@ public class LevelTwoGameArea extends GameArea {
         spawnTraps();
         spawnButtons();
         spawnSecurityCams();
+        spawnObjectives();
+        //spawnBomberDrone();
+        spawnSelfDestructDrone();
+        spawnAutoBomberDrone();
+        //spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
     }
 
     private void spawnDeathZone() {
@@ -403,6 +426,14 @@ public class LevelTwoGameArea extends GameArea {
         Entity ButtonPlat4 = PlatformFactory.createStaticPlatform();
         ButtonPlat4.setScale(2,0.5f);
         spawnEntityAt(ButtonPlat4, buttonPlat4Pos,false, false);
+
+        //platforms between traps
+        for(int j = 27; j<= 48; j = j+7) {
+            GridPoint2 platPos = new GridPoint2(j, 30);
+            Entity plat = PlatformFactory.createStaticPlatform();
+            plat.setScale(1, 0.5f);
+            spawnEntityAt(plat, platPos, true, true);
+        }
     }
 
     private void spawnSecurityCams() {
@@ -415,13 +446,102 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(cam3, new GridPoint2(75,65), true, true);
     }
 
+    private void spawnBomberDrone() {
+        // Spawn with cone light detection - patrols and uses its downward cone light
+        GridPoint2 spawnTile = new GridPoint2(3, 15);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+        };
+
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
+    }
+
+    private void spawnAutoBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(15, 15);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(30, 15))
+        };
+        // Create the auto bomber
+        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
+                player,           // target reference
+                patrolRoute,      // patrol waypoints
+                "auto_bomber_1"   // unique ID
+        );
+        spawnEntityAt(autoBomber, spawnTile, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
+
+    /*
+    private void spawnMovingTraps() {
+        //moving traps
+        for(int i = 45; i>23; i = i-7) {
+            //platform below
+            Vector2 offsetWorld = new Vector2(0f, 3f);
+            float platformSpeed = 4f;
+            GridPoint2 platformGridPos = new GridPoint2(i, 26);
+
+            Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, platformSpeed);
+            movingPlatform.setScale(1f, 0.5f);
+            spawnEntityAt(movingPlatform, platformGridPos, true, true);
+
+            //trap below
+            Vector2 safeSpotStart = new Vector2(23, 17);
+
+            Entity spikesTrap = TrapFactory.createSpikes(safeSpotStart, 0f);
+            GridPoint2 trapGridPos = new GridPoint2(platformGridPos.x, platformGridPos.y + 1);
+
+            spikesTrap.addComponent(new PositionSyncComponent(movingPlatform));
+            spawnEntityAt(spikesTrap, trapGridPos, true, true);
+
+            //platform above
+            Vector2 offsetWorld2 = new Vector2(0f, -3f);
+            float platformSpeed2 = 4f;
+            GridPoint2 platformGridPos2 = new GridPoint2(i, 39);
+
+            Entity movingPlatform2 = PlatformFactory.createMovingPlatform(offsetWorld2, platformSpeed2);
+            movingPlatform2.setScale(1f, 0.5f);
+            spawnEntityAt(movingPlatform2, platformGridPos2, true, true);
+
+            //trap above
+            Entity spikesTrap2 = TrapFactory.createSpikes(safeSpotStart, 180f);
+            GridPoint2 trapGridPos2 = new GridPoint2(platformGridPos2.x, platformGridPos2.y - 1);
+
+            spikesTrap2.addComponent(new PositionSyncComponent(movingPlatform2));
+            spawnEntityAt(spikesTrap2, trapGridPos2, true, true);
+        }
+    }
+
+     */
+
 
     private void spawnTraps() {
+        //spikes below volatile platforms
         Vector2 safeSpotStart = new Vector2(41, 12);
 
         for(int i=59; i<=77; i++) {
             Entity spikesUp = TrapFactory.createSpikes(safeSpotStart, 0f);
             spawnEntityAt(spikesUp, new GridPoint2(i,24), true,  true);
+        }
+
+        //spikes below moving traps
+        Vector2 safeSpotStart2 = new Vector2(23, 17);
+
+        for(int i=23; i<=45; i++) {
+            Entity spikes = TrapFactory.createSpikes(safeSpotStart2, 0f);
+            spawnEntityAt(spikes, new GridPoint2(i,24), true,  true);
         }
     }
 
@@ -430,6 +550,8 @@ public class LevelTwoGameArea extends GameArea {
         Entity button2 = ButtonFactory.createButton(false, "door", "right");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(0 ,58), true,  true);
+
+        button2.addComponent(new MinimapComponent("images/red_button.png"));
 
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed && !keySpawned) {
@@ -462,14 +584,18 @@ public class LevelTwoGameArea extends GameArea {
 
         //spawn upgrade
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
-            Entity dashUpgrade = CollectableFactory.createJetpackUpgrade();
-            spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
+            Entity jetpackUpgrade = CollectableFactory.createJetpackUpgrade();
+            spawnEntityAt(jetpackUpgrade, new GridPoint2(91,6), true,  true);
+
+            spawnEntityAt(CollectableFactory.createObjective("jetpack_completed", 0.2f, 0.2f), new GridPoint2(91, 6), true, true);
         });
     }
 
     public void spawnKey() {
-        Entity key = CollectableFactory.createKey("key:door");
+        Entity key = CollectableFactory.createCollectable("key:door");
+        key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(93,50), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f), new GridPoint2(92, 50), true, true);
     }
 
     private void spawnVolatilePlatform(){
@@ -492,6 +618,15 @@ public class LevelTwoGameArea extends GameArea {
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
+    }
+
+    private void spawnObjectives() {
+        // Large, invisible sensors — easy to grab, no textures.
+        // IDs chosen to match the ObjectiveTab banner map.
+        Gdx.app.log("LevelOne", "Spawning objectives…");
+        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
+        spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
     }
 
     protected void loadAssets() {
