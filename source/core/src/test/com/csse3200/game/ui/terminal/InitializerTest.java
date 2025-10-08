@@ -1,18 +1,29 @@
 package com.csse3200.game.ui.terminal;
 
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.EntityService;
+import com.csse3200.game.entities.factories.CollectableFactory;
 import com.csse3200.game.extensions.GameExtension;
 import static org.mockito.Mockito.*;
-
+import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.physics.PhysicsService;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.terminal.TerminalService;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.components.player.InventoryComponent;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import com.csse3200.game.entities.Entity;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+
 import java.lang.reflect.Field;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,6 +35,10 @@ class InitializerTest {
   private InventoryComponent inv;
   private CombatStatsComponent cb;
   private EntityService mockEntityService;
+  private MockedStatic<CollectableFactory> collectableFactory;
+  private PhysicsComponent physicsComponent;
+  private GameArea mockGameArea;
+  private MainGameScreen mainGameScreen;
 
   private TestConsole console;
 
@@ -75,6 +90,32 @@ class InitializerTest {
     cb = mock(CombatStatsComponent.class);
     mockEntityService = mock(EntityService.class);
     ServiceLocator.registerEntityService(mockEntityService);
+
+    physicsComponent = mock(PhysicsComponent.class);
+    Body mockBody = mock(Body.class);
+    when(physicsComponent.getBody()).thenReturn(mockBody);
+    when(player.getComponent(PhysicsComponent.class)).thenReturn(physicsComponent);
+
+    Entity fakeEntity = mock(Entity.class);
+    when(fakeEntity.getComponent(any())).thenReturn(null);
+
+    collectableFactory = mockStatic(CollectableFactory.class);
+    collectableFactory.when(CollectableFactory::createJetpackUpgrade)
+                    .thenReturn(fakeEntity);
+    collectableFactory.when(CollectableFactory::createDashUpgrade)
+            .thenReturn(fakeEntity);
+    collectableFactory.when(CollectableFactory::createGlideUpgrade)
+            .thenReturn(fakeEntity);
+    collectableFactory.when(() -> CollectableFactory.createCollectable("key:door"))
+            .thenReturn(fakeEntity);
+
+    mockGameArea = mock(GameArea.class);
+    mainGameScreen = mock(MainGameScreen.class);
+    ServiceLocator.registerMainGameScreen(mainGameScreen);
+    GameArea shellAreaMock = mock(GameArea.class);
+    shell.setGlobal("gameAreaEnum", shellAreaMock);
+    when(mainGameScreen.getGameArea(any(MainGameScreen.Areas.class))).thenReturn(mockGameArea);
+
 
     when(player.getComponent(CombatStatsComponent.class)).thenReturn(cb);
     when(player.getComponent(InventoryComponent.class)).thenReturn(inv);
@@ -237,11 +278,56 @@ class InitializerTest {
     verify(player.getComponent(CombatStatsComponent.class)).setHealth(9999);
   }
 
-  /*@Test
+  @Test
   void testSpawnJetpackCommand() {
     //shell.setGlobal("entityService", mockEntityService);
     shell.eval("spawnJetpack();");
 
     verify(mockEntityService, times(1)).register(any());
-  }*/
+  }
+
+  @Test
+  void testSpawnDashCommand() {
+
+    shell.eval("spawnDash();");
+
+    verify(mockEntityService, times(1)).register(any());
+  }
+
+  @Test
+  void testSpawnGliderCommand() {
+    //shell.setGlobal("entityService", mockEntityService);
+    shell.eval("spawnGlider();");
+
+    verify(mockEntityService, times(1)).register(any());
+  }
+
+  @Test
+  void testSpawnAllUpgradesCommand() {
+    //shell.setGlobal("entityService", mockEntityService);
+    shell.eval("spawnAllUpgrades();");
+
+    verify(mockEntityService, times(3)).register(any());
+  }
+
+  @Test
+  void testSpawnDoorKey() {
+    shell.eval("spawnDoorKey();");
+
+    verify(mockEntityService, times(1)).register(any());
+  }
+
+  @Test
+  void testGetGameArea() {
+    //Object result = shell.eval("getGameArea();");
+
+    //assertEquals(mockGameArea, result);
+  }
+
+  @AfterEach
+  void tearDownFactories() {
+    if (collectableFactory != null) {
+      collectableFactory.close();
+    }
+  }
 }
