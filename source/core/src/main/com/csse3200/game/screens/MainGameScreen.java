@@ -24,8 +24,6 @@ import com.csse3200.game.entities.factories.RenderFactory;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.PauseInputComponent;
-import com.csse3200.game.areas.LevelOneGameArea;
-import com.csse3200.game.areas.LevelTwoGameArea;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.lighting.SecurityCamRetrievalService;
@@ -116,9 +114,17 @@ public class MainGameScreen extends ScreenAdapter {
 
     gameArea.create();
 
-    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("cutscene1", player);
+    String nextArea;
+    if (gameArea instanceof LevelOneGameArea) {
+      nextArea = "cutscene1";
+    } else if (gameArea instanceof LevelTwoGameArea) {
+        nextArea = "cutscene2";
+    } else {
+      nextArea = "cutscenePostgame";
+    }
+
+      gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
+      switchArea(nextArea, player);
     });
 
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
@@ -131,10 +137,6 @@ public class MainGameScreen extends ScreenAdapter {
 
   private void switchArea(String key, Entity player) {
     System.out.println("Attempting to switch area from " + gameArea + " to " + key);
-    if (key == null) {
-      game.setScreen(GdxGame.ScreenType.MAIN_MENU);
-      return;
-    }
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
     if (gameArea instanceof CutsceneArea) {
       Gdx.app.postRunnable(runnable);
@@ -158,6 +160,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     switch (levelId) {
       case "cutscene1" -> {
+        System.out.println("Thinks it's cutscene 1");
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
         newLevel = "level2";
       }
@@ -167,16 +170,15 @@ public class MainGameScreen extends ScreenAdapter {
       }
       case "cutscene2" -> {
         newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-        newLevel = "sprint1";
+        newLevel = "bossLevel";
       }
-      case "sprint1" -> {
-              newArea = new SprintOneGameArea(terrainFactory);
-              newLevel = "level2";
-          }
       case "bossLevel" -> {
-        System.out.println("TRIGGERED THE EVENT TO SWITCH AREA!!!!");
+        newArea = new BossLevelGameArea(terrainFactory);
+        newLevel = "cutscenePostgame";
+      }
+      case "cutscenePostgame" -> {
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt"); // todo change path
-        newLevel = null; // This currently loads to level2 because it finishes cutscene 1, but that'll change.
+        newLevel = "level1"; // todo go to some post game or main menu or something
       }
       }
 
