@@ -15,6 +15,7 @@ public enum EntityType {
     DEATH_ZONE,
     SIGN_POST,
     UPGRADE,
+    WALL,
     LASER_DETECTOR;
 
     @Override public String toString() { return name().toLowerCase(); }

@@ -1,5 +1,6 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -207,6 +208,21 @@ public class LevelThreeGameArea extends GameArea {
                 tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, MAP_SIZE
         );
         return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
+    }
+
+    private void unloadAssets() {
+        logger.debug("Unloading assets");
+        ResourceService resourceService = ServiceLocator.getResourceService();
+        resourceService.unloadAssets(assets.atlases.toArray(new String[0]));
+        resourceService.unloadAssets(assets.sounds.toArray(new String[0]));
+        resourceService.unloadAssets(assets.textures.toArray(new String[0]));
+    }
+    @Override
+    public void dispose() {
+        isResetting = true;
+        super.dispose();
+        this.unloadAssets();
+        isResetting = false;
     }
 
 //    /**
