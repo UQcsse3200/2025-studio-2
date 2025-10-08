@@ -19,127 +19,156 @@ import static org.mockito.Mockito.*;
 public class ActivationComponentTest {
     private SecurityCamRetrievalService camService;
 
+    private static Entity newCamera() {
+        Entity cam = new Entity();
+        cam.create();
+        return cam;
+    }
+
     @BeforeEach
     void setUp() {
         ServiceLocator.clear();
-
-        // Mock cam service
         camService = mock(SecurityCamRetrievalService.class);
         ServiceLocator.registerSecurityCamRetrievalService(camService);
     }
 
     @Test
     void activation_linksImmediately() {
-        // Camera exists before enemy.create()
-        Entity camera = new Entity();
-        camera.create();
+        Entity camera = newCamera();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
-        Entity e = new Entity();
-        e.addComponent(new ActivationComponent("1"));
-        e.create();
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("1"));
+        drone.create();
 
-        ActivationComponent ac = e.getComponent(ActivationComponent.class);
-        assertTrue(ac.isLinked(), "Camera should be linked on create()");
+        ActivationComponent ac = drone.getComponent(ActivationComponent.class);
+        assertTrue(ac.isLinked(), "Camera should be linked on create() when present");
     }
 
     @Test
     void activation_linksOnUpdate() {
-        // Initially no camera
+        // Initially no camera (test spawn order race)
         when(camService.getSecurityCam("1")).thenReturn(null);
-        Entity e = new Entity();
-        e.addComponent(new ActivationComponent("1"));
-        e.create();
 
-        ActivationComponent ac = e.getComponent(ActivationComponent.class);
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("1"));
+        drone.create();
+
+        ActivationComponent ac = drone.getComponent(ActivationComponent.class);
         assertFalse(ac.isLinked(), "Should not be linked before camera appears");
 
-        // Camera appears later
-        Entity camera = new Entity();
-        camera.create();
+        // Add camera
+        Entity camera = newCamera();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
-        e.update();
-        assertTrue(ac.isLinked(), "Camera should link on update()");
+        drone.update();
+        assertTrue(ac.isLinked(), "Camera should link on update() when it becomes available");
     }
 
     @Test
     void activation_mismatchIdNoLink() {
         // Camera exists under different id
-        Entity camera = new Entity();
-        camera.create();
+        Entity camera = newCamera();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
-        Entity e = new Entity();
-        e.addComponent(new ActivationComponent("2"));
-        e.create();
-        e.update();
+        when(camService.getSecurityCam("2")).thenReturn(null);
 
-        ActivationComponent ac = e.getComponent(ActivationComponent.class);
-        assertFalse(ac.isLinked(), "Should not link when camera IDs mismatch");
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("2"));
+        drone.create();
+        drone.update();
+
+        ActivationComponent ac = drone.getComponent(ActivationComponent.class);
+        assertFalse(ac.isLinked(), "Should not link when camera ID does not match");
     }
 
     @Test
     void activation_triggersEnemyActivate() {
-        Entity camera = new Entity();
-        camera.create();
+        Entity camera = newCamera();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
-        Entity e = new Entity();
-        e.addComponent(new ActivationComponent("1"));
-        e.create();
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("1"));
+        drone.create();
+        drone.update();
 
         EventListener0 onActivated = mock(EventListener0.class);
-        e.getEvents().addListener("enemyActivated", onActivated);
+        drone.getEvents().addListener("enemyActivated", onActivated);
 
-        camera.getEvents().trigger("targetDetected", e);
+        camera.getEvents().trigger("targetDetected", drone);
         verify(onActivated, times(1)).handle();
+        verifyNoMoreInteractions(onActivated);
     }
 
     @Test
     void activation_triggersEnemyDeactivate() {
-        Entity camera = new Entity();
-        camera.create();
+        Entity camera = newCamera();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
-        Entity e = new Entity();
-        e.addComponent(new ActivationComponent("1"));
-        e.create();
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("1"));
+        drone.create();
+        drone.update();
 
         EventListener0 onDeactivated = mock(EventListener0.class);
-        e.getEvents().addListener("enemyDeactivated", onDeactivated);
+        drone.getEvents().addListener("enemyDeactivated", onDeactivated);
 
-        camera.getEvents().trigger("targetLost", e);
+        camera.getEvents().trigger("targetLost", drone);
         verify(onDeactivated, times(1)).handle();
+        verifyNoMoreInteractions(onDeactivated);
     }
 
     @Test
     void activation_noDupListeners() {
-        Entity camera = new Entity();
-        camera.create();
+        Entity camera = newCamera();
         when(camService.getSecurityCam("1")).thenReturn(camera);
 
-        Entity e = new Entity();
-        e.addComponent(new ActivationComponent("1"));
-        e.create();
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("1"));
+        drone.create();
+        drone.update();
 
         // Spam updates
-        for (int i = 0; i < 10; i++) {
-            e.update();
+        for (int i = 0; i < 20; i++) {
+            drone.update();
         }
 
-        // Check listeners
+        // One camera trigger should map to one enemyActivated call
         EventListener0 onActivated = mock(EventListener0.class);
-        e.getEvents().addListener("enemyActivated", onActivated);
+        drone.getEvents().addListener("enemyActivated", onActivated);
 
-        // One camera trigger -> one activation
-        camera.getEvents().trigger("targetDetected", e);
+        camera.getEvents().trigger("targetDetected", drone);
         verify(onActivated, times(1)).handle();
 
-        // Second trigger
-        camera.getEvents().trigger("targetDetected", e);
+        camera.getEvents().trigger("targetDetected", drone);
         verify(onActivated, times(2)).handle();
 
         verifyNoMoreInteractions(onActivated);
+    }
+
+    @Test
+    void activation_reLinksAfterReset() {
+        Entity cam1 = newCamera();
+        when(camService.getSecurityCam("1")).thenReturn(cam1);
+
+        Entity drone = new Entity();
+        drone.addComponent(new ActivationComponent("1"));
+        drone.create();
+        drone.update();
+        assertTrue(drone.getComponent(ActivationComponent.class).isLinked());
+
+        // New camera same id
+        Entity cam2 = newCamera();
+        when(camService.getSecurityCam("1")).thenReturn(cam2);
+
+        // Should relink for new instance
+        drone.update();
+
+        // Check events from new camera instance reach the drone
+        EventListener0 onActivated = mock(EventListener0.class);
+        drone.getEvents().addListener("enemyActivated", onActivated);
+
+        cam2.getEvents().trigger("targetDetected", drone);
+        verify(onActivated, times(1)).handle();
     }
 }
