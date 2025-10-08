@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -31,7 +32,7 @@ class LaserFactoryTest {
 
         // Mock ResourceService so assets won't throw exceptions
         ResourceService mockResourceService = mock(ResourceService.class);
-        when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
+        when(mockResourceService.getAsset(anyString(), any())).thenReturn(new TextureAtlas());
         ServiceLocator.registerResourceService(mockResourceService);
 
         // mock time source
