@@ -1,0 +1,9 @@
+{
+area: LEVEL_ONE
+inventory: {
+	class: java.util.HashMap
+}
+upgrades: {
+	class: java.util.HashMap
+}
+}

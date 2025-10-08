@@ -245,8 +245,10 @@ public class EnemyFactory {
 
         // Set spawn position to first patrol point and add patrol route
         if (patrolRoute != null && patrolRoute.length > 0) {
-            drone.addComponent(new SpawnPositionComponent(patrolRoute[0]));
-            drone.addComponent(new PatrolRouteComponent(patrolRoute));
+            drone
+                    .addComponent(new SpawnPositionComponent(patrolRoute[0]))
+                    .addComponent(new PatrolRouteComponent(patrolRoute))
+                    .addComponent(new BombTrackerComponent());
         }
 
         AnimationRenderComponent animator =

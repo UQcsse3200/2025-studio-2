@@ -75,6 +75,7 @@ public class SelfDestructComponent extends Component {
 
                     entity.getEvents().trigger("destroy");
                     entity.removeComponent(SelfDestructComponent.this);
+                    entity.getComponent(PhysicsComponent.class).dispose();
                     dispose();
                 }catch (Exception e){
                     Gdx.app.error("SelfDestructComponent", "Error during cleanup: " + e.getMessage());

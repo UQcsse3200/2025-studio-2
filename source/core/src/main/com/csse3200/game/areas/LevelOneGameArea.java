@@ -133,7 +133,7 @@ public class LevelOneGameArea extends GameArea {
         //spawnPatrollingDrone();
         spawnBomberDrone();
         //spawnSelfDestructDrone();
-        //spawnAutoBomberDrone();
+        spawnAutoBomberDrone();
         spawnUpgrade("dash", 9, 6);
         spawnUpgrade("glider", 7, 6);
         spawnUpgrade("jetpack", 5, 6);

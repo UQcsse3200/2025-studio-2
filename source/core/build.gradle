@@ -25,8 +25,8 @@ jacocoTestReport {
 }
 
 javadoc {
-    options.addStringOption('Xdoclint:none', '-quiet')
-    failOnError = false
-    // Disable external links
-    options.links = []
+    options {
+        links 'https://javadoc.io/doc/com.badlogicgames.gdx/gdx/latest/com/badlogic/gdx/package-summary.html'
+        tags = ['require', 'requires', 'ensure', 'ensures']
+    }
 }
