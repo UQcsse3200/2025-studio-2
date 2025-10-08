@@ -82,8 +82,8 @@ public class SaveFileTest {
     }
 
     @Test
-    void loadFromFile() {
-        SaveConfig result = game.loadSave("test/files/loadtest.json");
+    void loadValidFromFile() {
+        SaveConfig result = game.loadSave("test/files/validloadtest.json");
 
         assertNotNull(result);
 
@@ -95,5 +95,51 @@ public class SaveFileTest {
         assertTrue(result.upgrades.size() == 2);
         assertTrue(result.upgrades.get("test2") == 6);
         assertTrue(result.upgrades.get("test3") == 7);
+    }
+
+    @Test
+    void loadInvalidArea() {
+        SaveConfig result = game.loadSave("test/files/invalidarealoadtest.json");
+
+        assertNotNull(result);
+
+        // Invalid names get set to LEVEL_ONE
+        assertTrue(result.area == MainGameScreen.Areas.LEVEL_ONE);
+    }
+
+    @Test
+    void loadInvalidInventory() {
+        SaveConfig result = game.loadSave("test/files/noinventoryloadtest.json");
+
+        assertNotNull(result);
+
+        // Creates empty inventories while loading
+        assertNotNull(result.inventory);
+        assertNotNull(result.upgrades);
+
+        assertEquals(0, result.inventory.size());
+        assertEquals(0, result.upgrades.size());
+    }
+
+    @Test
+    void loadEmptyFile() {
+        SaveConfig result = game.loadSave("test/files/emptyfile.json");
+
+        assertNotNull(result);
+
+        assertTrue(result.area == MainGameScreen.Areas.LEVEL_ONE);
+        assertNotNull(result.inventory);
+        assertNotNull(result.upgrades);
+    }
+
+    @Test
+    void loadNonExistentFile() {
+        SaveConfig result = game.loadSave("test/files/hdsaljslhgkjhsagi.json");
+
+        assertNotNull(result);
+
+        assertTrue(result.area == MainGameScreen.Areas.LEVEL_ONE);
+        assertNotNull(result.inventory);
+        assertNotNull(result.upgrades);
     }
 }
