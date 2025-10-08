@@ -98,9 +98,9 @@ loadScripts(document, 'script');</script>
 <hr>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">CombatStatsComponent</span>
 <span class="extends-implements">extends <a href="Component.html" title="class in com.csse3200.game.components">Component</a></span></div>
-<div class="block">Component used to store information related to combat such as health, attack, etc. Any entities
- which engage it combat should have an instance of this class registered. This class can be
- extended for more specific combat needs.</div>
+<div class="block">Component used to store information related to combat such as health, attack, etc.
+ Any entities which engage in combat should have an instance of this class registered.
+ This class can be extended for more specific combat needs.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -162,7 +162,9 @@ loadScripts(document, 'script');</script>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#hit(com.csse3200.game.components.CombatStatsComponent)" class="member-name-link">hit</a><wbr>(<a href="CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a>&nbsp;attacker)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Called when this entity is hit by an attacker.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Boolean.html" title="class or interface in java.lang" class="external-link">Boolean</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isDead()" class="member-name-link">isDead</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -269,17 +271,6 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="getBaseAttack()">
-<h3>getBaseAttack</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getBaseAttack</span>()</div>
-<div class="block">Returns the entity's base attack damage.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>base attack damage</dd>
-</dl>
-</section>
-</li>
-<li>
 <section class="detail" id="getLastAttacker()">
 <h3>getLastAttacker</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">getLastAttacker</span>()</div>
@@ -304,6 +295,17 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="getBaseAttack()">
+<h3>getBaseAttack</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getBaseAttack</span>()</div>
+<div class="block">Returns the entity's base attack damage.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>base attack damage</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="setBaseAttack(int)">
 <h3>setBaseAttack</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setBaseAttack</span><wbr><span class="parameters">(int&nbsp;attack)</span></div>
@@ -318,6 +320,11 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="hit(com.csse3200.game.components.CombatStatsComponent)">
 <h3>hit</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">hit</span><wbr><span class="parameters">(<a href="CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a>&nbsp;attacker)</span></div>
+<div class="block">Called when this entity is hit by an attacker.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>attacker</code> - the attacker's CombatStatsComponent</dd>
+</dl>
 </section>
 </li>
 </ul>

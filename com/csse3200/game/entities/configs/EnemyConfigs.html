@@ -93,8 +93,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">EnemyConfigs</span>
 <span class="extends-implements">extends <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Object.html" title="class or interface in java.lang" class="external-link">Object</a></span></div>
 <div class="block">Defines properties for enemy types to be loaded in EnemyFactory.
- Each field corresponds to a specific enemy (i.e. drone) and contains its base stats. Can be
- extended to add properties unique to specific enemies.</div>
+ Each field corresponds to a specific enemy (i.e. drone, bomber, patrollingDrone)
+ and contains its base stats. Can be extended to add properties unique to specific enemies.</div>
 </section>
 <section class="summary">
 <ul class="summary-list">
@@ -108,9 +108,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Field</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color"><code><a href="BaseEntityConfig.html" title="class in com.csse3200.game.entities.configs">BaseEntityConfig</a></code></div>
-<div class="col-second even-row-color"><code><a href="#drone" class="member-name-link">drone</a></code></div>
+<div class="col-second even-row-color"><code><a href="#bomber" class="member-name-link">bomber</a></code></div>
 <div class="col-last even-row-color">
-<div class="block">Configuration for drone enemy type</div>
+<div class="block">Configuration for bomber drone enemy type</div>
+</div>
+<div class="col-first odd-row-color"><code><a href="BaseEntityConfig.html" title="class in com.csse3200.game.entities.configs">BaseEntityConfig</a></code></div>
+<div class="col-second odd-row-color"><code><a href="#drone" class="member-name-link">drone</a></code></div>
+<div class="col-last odd-row-color">
+<div class="block">Configuration for basic drone enemy type</div>
+</div>
+<div class="col-first even-row-color"><code><a href="BaseEntityConfig.html" title="class in com.csse3200.game.entities.configs">BaseEntityConfig</a></code></div>
+<div class="col-second even-row-color"><code><a href="#patrollingDrone" class="member-name-link">patrollingDrone</a></code></div>
+<div class="col-last even-row-color">
+<div class="block">Configuration for patrolling drone enemy type</div>
 </div>
 </div>
 </section>
@@ -150,7 +160,21 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="drone">
 <h3>drone</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="BaseEntityConfig.html" title="class in com.csse3200.game.entities.configs">BaseEntityConfig</a></span>&nbsp;<span class="element-name">drone</span></div>
-<div class="block">Configuration for drone enemy type</div>
+<div class="block">Configuration for basic drone enemy type</div>
+</section>
+</li>
+<li>
+<section class="detail" id="bomber">
+<h3>bomber</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="BaseEntityConfig.html" title="class in com.csse3200.game.entities.configs">BaseEntityConfig</a></span>&nbsp;<span class="element-name">bomber</span></div>
+<div class="block">Configuration for bomber drone enemy type</div>
+</section>
+</li>
+<li>
+<section class="detail" id="patrollingDrone">
+<h3>patrollingDrone</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="BaseEntityConfig.html" title="class in com.csse3200.game.entities.configs">BaseEntityConfig</a></span>&nbsp;<span class="element-name">patrollingDrone</span></div>
+<div class="block">Configuration for patrolling drone enemy type</div>
 </section>
 </li>
 </ul>
