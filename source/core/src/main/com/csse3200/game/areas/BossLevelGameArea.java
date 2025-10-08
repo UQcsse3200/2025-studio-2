@@ -12,6 +12,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -156,7 +157,6 @@ public class BossLevelGameArea extends GameArea {
         spawnLaserPuzzle();
         spawnEndgameButton();
         spawnBoss();
-
     }
 
     /**
@@ -572,12 +572,31 @@ public class BossLevelGameArea extends GameArea {
 
     private void spawnBoss() {
         GridPoint2 spawnPos = new GridPoint2(1, 40);
-        Entity boss = EnemyFactory.createBossEnemy(
-                player,
-                terrain.tileToWorldPosition(spawnPos)
-        );
-        boss.addComponent(new com.csse3200.game.components.boss.BossSpawnMiniTest());
+
+        Entity boss = EnemyFactory.createBossEnemy(player, terrain.tileToWorldPosition(spawnPos));
+
+        BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
+        if (spawnComp != null) {
+            spawnComp.resetTriggers();
+
+            // You can change these values to trigger when it spawns the drones
+            spawnComp.addSpawnTrigger(new Vector2(5f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(50f, 0f));
+
+        }
         spawnEntityAt(boss, spawnPos, true, true);
+
+        boss.getEvents().addListener("reset", () -> {
+            BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
+            if (spawnComponent != null) {
+                spawnComponent.resetTriggers();
+                spawnComponent.cleanupDrones();
+            }
+        });
+
+
+
     }
 
     private void spawnDeathZone() {
