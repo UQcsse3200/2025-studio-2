@@ -113,7 +113,7 @@ class InitializerTest {
     mainGameScreen = mock(MainGameScreen.class);
     ServiceLocator.registerMainGameScreen(mainGameScreen);
     GameArea shellAreaMock = mock(GameArea.class);
-    shell.setGlobal("gameAreaEnum", shellAreaMock);
+    when(mainGameScreen.getAreaEnum()).thenReturn(mock(MainGameScreen.Areas.class));
     when(mainGameScreen.getGameArea(any(MainGameScreen.Areas.class))).thenReturn(mockGameArea);
 
 
@@ -280,7 +280,7 @@ class InitializerTest {
 
   @Test
   void testSpawnJetpackCommand() {
-    //shell.setGlobal("entityService", mockEntityService);
+
     shell.eval("spawnJetpack();");
 
     verify(mockEntityService, times(1)).register(any());
@@ -296,7 +296,7 @@ class InitializerTest {
 
   @Test
   void testSpawnGliderCommand() {
-    //shell.setGlobal("entityService", mockEntityService);
+
     shell.eval("spawnGlider();");
 
     verify(mockEntityService, times(1)).register(any());
@@ -304,7 +304,7 @@ class InitializerTest {
 
   @Test
   void testSpawnAllUpgradesCommand() {
-    //shell.setGlobal("entityService", mockEntityService);
+
     shell.eval("spawnAllUpgrades();");
 
     verify(mockEntityService, times(3)).register(any());
@@ -319,10 +319,12 @@ class InitializerTest {
 
   @Test
   void testGetGameArea() {
-    //Object result = shell.eval("getGameArea();");
+    Object result = shell.eval("getGameArea();");
 
-    //assertEquals(mockGameArea, result);
+    assertEquals(mockGameArea, result);
   }
+
+  void testGet
 
   @AfterEach
   void tearDownFactories() {
