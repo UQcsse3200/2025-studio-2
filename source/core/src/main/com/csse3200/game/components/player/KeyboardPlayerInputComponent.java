@@ -24,6 +24,7 @@ import static java.lang.Math.abs;
  */
 public class KeyboardPlayerInputComponent extends InputComponent {
     private final Vector2 walkDirection = Vector2.Zero.cpy();
+    private boolean isGliding;
 
     private final int LEFT_KEY = Keymap.getActionKeyCode("PlayerLeft");
     private final int RIGHT_KEY = Keymap.getActionKeyCode("PlayerRight");
@@ -86,12 +87,18 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
             walkDirection.add(Vector2Utils.LEFT);
             triggerWalkEvent();
+            if (isGliding) {
+                triggerGlideEvent(true);
+            }
         } else if (keycode == RIGHT_KEY) {
             //takes player off ladder if they are on one.
             this.onLadder = false;
 
             walkDirection.add(Vector2Utils.RIGHT);
             triggerWalkEvent();
+            if (isGliding) {
+                triggerGlideEvent(true);
+            }
         } else if (keycode == INTERACT_KEY) {
             entity.getEvents().trigger("interact");
         } else if (keycode == ADRENALINE_KEY) {
@@ -279,6 +286,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "glider")) {
             entity.getEvents().trigger("glide", status);
         }
+        isGliding = status;
     }
 
     private void triggerJetpackEvent() {

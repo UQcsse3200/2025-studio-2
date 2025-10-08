@@ -195,18 +195,20 @@ public class PlayerActions extends Component {
       impulseY = 1.1f * 1.2f * body.getMass();
     } else {
       //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
-      entity.getEvents().trigger("gravityForPlayerOn");
+        if (!isGliding) {
+           entity.getEvents().trigger("gravityForPlayerOn");
+        }
       impulseY = 0f;
     }
 
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+    body.applyLinearImpulse(new Vector2(impulse.x, impulseY), body.getWorldCenter(), true);
 
-    /**
-    Vector2 impulse =
-            new Vector2((desiredVelocity.x - velocity.x) * inAirControl, 0).scl(body.getMass());
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-     */
+
+    /*Vector2 impulse =
+            new Vector2((desiredVelocity.x - velocity.x), 0).scl(body.getMass());
+    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);*/
+
   }
 
   /**
