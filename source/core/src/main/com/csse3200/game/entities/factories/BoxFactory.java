@@ -269,7 +269,6 @@ public class BoxFactory {
          * @return spawn location's x coordinate.
          */
         public float getSpawnX() {
-            System.out.println("spawnX = " + spawnX);
             return spawnX;
         }
 
@@ -279,7 +278,6 @@ public class BoxFactory {
          * @return spawn location's y coordinate.
          */
         public float getSpawnY() {
-            System.out.println("spawnY = " + spawnY);
             return spawnY;
         }
 

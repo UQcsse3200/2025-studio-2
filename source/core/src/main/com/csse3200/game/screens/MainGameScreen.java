@@ -119,6 +119,11 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private void switchArea(String key, Entity player) {
+    System.out.println("Attempting to switch area from " + gameArea + " to " + key);
+    if (key == null) {
+      game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+      return;
+    }
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
     if (gameArea instanceof CutsceneArea) {
       Gdx.app.postRunnable(runnable);
@@ -157,6 +162,11 @@ public class MainGameScreen extends ScreenAdapter {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
           }
+      case "bossLevel" -> {
+        System.out.println("TRIGGERED THE EVENT TO SWITCH AREA!!!!");
+        newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt"); // todo change path
+        newLevel = null; // This currently loads to level2 because it finishes cutscene 1, but that'll change.
+      }
       }
 
       if (newArea != null) {
