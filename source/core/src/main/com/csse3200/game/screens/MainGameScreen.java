@@ -8,10 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.areas.LevelOneGameArea;
-import com.csse3200.game.areas.LevelTwoGameArea;
-import com.csse3200.game.areas.SprintOneGameArea;
+import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
 import com.csse3200.game.components.computerterminal.SpritesheetSpec;
@@ -78,6 +75,15 @@ public class MainGameScreen extends ScreenAdapter {
   private PauseInputComponent pauseInput;
 
   public MainGameScreen(GdxGame game) {
+    this(game, null);
+  }
+
+  /**
+   * Create the main game screen, optionally starting at a specific area.
+   * @param game The game instance
+   * @param startAreaId The area ID to start in (e.g., "tutorial"), or null for default (LevelOneGameArea)
+   */
+  public MainGameScreen(GdxGame game, String startAreaId) {
     this.game = game;
 
     logger.debug("Initialising main game screen services");
@@ -117,16 +123,32 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
-
-    //gameArea = new SprintOneGameArea(terrainFactory);
-    gameArea = new LevelOneGameArea(terrainFactory);
-    //gameArea = new LevelTwoGameArea(terrainFactory);
+    // Create the appropriate area based on startAreaId (needed for tutorial mode)
+    if (startAreaId != null && !startAreaId.isEmpty()) {
+      // Start at the specified area (e.g., for tutorials/practice)
+      switch (startAreaId) {
+        case "tutorial" -> gameArea = new TutorialGameArea(terrainFactory);
+        case "level2" -> gameArea = new LevelTwoGameArea(terrainFactory);
+        case "sprint1" -> gameArea = new SprintOneGameArea(terrainFactory);
+        default -> {
+          logger.warn("Unknown start area: {}, defaulting to LevelOneGameArea", startAreaId);
+          gameArea = new LevelOneGameArea(terrainFactory);
+        }
+      }
+    } else {
+      // Default starting area
+      gameArea = new LevelOneGameArea(terrainFactory);
+    }
 
     gameArea.create();
 
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("cutscene1", player);
+      if (gameArea instanceof TutorialGameArea) {
+        game.setScreen(new TutorialMenuScreen(game));
+      } else {
+        logger.info("Door entered in sprint1 with key {}", player);
+        switchArea("cutscene1", player);
+      }
     });
 
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
@@ -176,6 +198,10 @@ public class MainGameScreen extends ScreenAdapter {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
           }
+      case "tutorial" -> {
+        newArea = new TutorialGameArea(terrainFactory);
+        newLevel = ""; // No next level for tutorial practice
+      }
       }
 
       if (newArea != null) {
@@ -393,7 +419,6 @@ public class MainGameScreen extends ScreenAdapter {
             .addComponent(new TerminalUiComponent(this).setCaptchaBank(bank));
 
     ServiceLocator.getEntityService().register(ui);
-    ServiceLocator.getComputerTerminalService().registerUiEntity(ui);
   }
 
   /**

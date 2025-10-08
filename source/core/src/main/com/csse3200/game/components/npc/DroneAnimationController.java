@@ -12,10 +12,7 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 public class DroneAnimationController extends Component {
     AnimationRenderComponent animator;
     private String currentAnimation = "";
-//    private boolean isDropping = false;
-//    private float dropAnimationTime = 0f;
-//    private static final float DROP_ANIMATION_DURATION = 1.0f; // Duration of drop animation
-//    private final GameTime timeSource = ServiceLocator.getTimeSource();
+    private boolean endFired = false;
 
     @Override
     public void create() {
@@ -25,8 +22,34 @@ public class DroneAnimationController extends Component {
         entity.getEvents().addListener("chaseStart", this::animateChase);
         entity.getEvents().addListener("patrolStart", this::animatePatrol);
         entity.getEvents().addListener("dropStart", this::animateDrop);
+        entity.getEvents().addListener("teleportStart", this::animateTeleport);
+        entity.getEvents().addListener("teleBomber", this::animateTeleBomber);
+        entity.getEvents().addListener("patrolBomber", this::animatePatrolBomber);
+        entity.getEvents().addListener("chaseBomber", this::animateChaseBomber);
+        entity.getEvents().addListener("selfExplosion", this::animateSelfExplosion);
     }
 
+    @Override
+    public void update() {
+        if (animator == null || currentAnimation.isEmpty() || endFired) return;
+
+        if (animator.isFinished()) {
+            entity.getEvents().trigger(currentAnimation + "End");
+            endFired = true;
+        }
+    }
+
+    void animateSelfExplosion() {
+        setAnimation("bomb_effect");
+    }
+
+    void animateTeleBomber() {
+        setAnimation("teleBomber");
+    }
+
+    void animateTeleport() {
+        setAnimation("teleport");
+    }
 
     void animateWander() {
         setAnimation("float");
@@ -44,6 +67,14 @@ public class DroneAnimationController extends Component {
         setAnimation("float");
     }
 
+    void animatePatrolBomber() {
+        setAnimation("bidle");
+    }
+
+    void animateChaseBomber() {
+        setAnimation("bscan");
+    }
+
     /**
      * setAnimation: to avoid repeated startup of the same animations
      */
@@ -51,6 +82,7 @@ public class DroneAnimationController extends Component {
         if (!animationName.equals(currentAnimation)) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
+            endFired = false;
         }
     }
 }

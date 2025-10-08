@@ -10,6 +10,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
+import com.csse3200.game.utils.CollectablesSave;
 
 /**
  * A ui component for displaying player stats, e.g. health.
@@ -50,6 +51,14 @@ public class PlayerStatsDisplay extends UIComponent {
    * Image icon used in stamina bar
    */
   private Image staminaImage;
+  /**
+   * Collectable Label
+   */
+  private Label collectableLabel;
+  /**
+   * count of number of collectable items collected
+   */
+  private int count = CollectablesSave.getCollectedCount();
 
   /**
    * Creates reusable ui styles and adds actors to the stage.
@@ -61,6 +70,7 @@ public class PlayerStatsDisplay extends UIComponent {
 
     entity.getEvents().addListener("updateHealth", this::updatePlayerHealthUI);
     entity.getEvents().addListener("updateStamina", this::updatePlayerStaminaUI);
+    entity.getEvents().addListener("updateCollectables", this::updateCollectableUI);
   }
 
   /**
@@ -74,6 +84,9 @@ public class PlayerStatsDisplay extends UIComponent {
     // Create stamina table
     createStaminaTable();
     stage.addActor(staminaTable);
+    // Create collectable table
+    collectableLabel = new Label("Lost Hardware collected: " + count + " / 9", skin, "large");
+    stage.addActor(collectableLabel);
   }
 
   /**
@@ -165,10 +178,19 @@ public class PlayerStatsDisplay extends UIComponent {
     staminaBar.setValue(stamina);
   }
 
+  /**
+   * Updates the number of collected items on the UI.
+   * @param count the number of items collected
+   */
+  public void updateCollectableUI(int count) {
+      collectableLabel.setText("Lost hardware collected: " + count + " / 9");
+  }
+
   @Override
   public void dispose() {
     super.dispose();
     if (healthTable != null) healthTable.remove();
     if (staminaTable != null) staminaTable.remove();
+    if (collectableLabel != null) collectableLabel.remove();
   }
 }

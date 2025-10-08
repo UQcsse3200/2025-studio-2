@@ -1,22 +1,33 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
+import com.csse3200.game.components.DeathZoneComponent;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.physics.ObjectContactListener;
+import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -81,7 +92,8 @@ public class SprintOneGameArea extends GameArea {
             "images/tile.png",
             "images/wall.png",
             "images/PLAYER.png",
-            "images/ladder.png"
+            "images/ladder.png",
+            "images/cube.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images" +
@@ -94,7 +106,7 @@ public class SprintOneGameArea extends GameArea {
             "images/flying_bat.atlas" // Bat sprites from https://todemann.itch.io/bat (see Wiki)
     };
     private static final String[] forestSounds = {"sounds/Impact4.ogg", "sounds" +
-            "/chimesound.mp3", "sounds/hurt.mp3"};
+            "/chimesound.mp3", "sounds/hurt.mp3","sounds/explosion.mp3"};
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] forestMusic = {backgroundMusic};
 
@@ -147,7 +159,8 @@ public class SprintOneGameArea extends GameArea {
         spawnLevelOneBatRoom();
 //        spawnDrone();
         spawnPatrollingDrone();
-//        spawnBomberDrone();
+        //spawnBomberDrone();  // WIP do not use
+        spawnSelfDestructDrone();
         spawnDoor();
         spawnLadder();
     }
@@ -429,12 +442,46 @@ public class SprintOneGameArea extends GameArea {
 
     private void spawnBomberDrone() {
         GridPoint2 spawnTile = new GridPoint2(3, 15);
-        Vector2 spawnWorldPos = terrain.tileToWorldPosition(spawnTile);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+        };
 
-        Entity bomberDrone = EnemyFactory.createBomberDrone(player, spawnWorldPos);
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
         spawnEntityAt(bomberDrone, spawnTile, true, true);
+
+        /*GridPoint2 spawnTile2 = new GridPoint2(30, 25);
+        Vector2[] patrolRoute2 = {
+                terrain.tileToWorldPosition(spawnTile2),
+                terrain.tileToWorldPosition(new GridPoint2(38, 25)),
+                terrain.tileToWorldPosition(new GridPoint2(38, 30)),
+                terrain.tileToWorldPosition(new GridPoint2(30, 30))
+        };
+
+        // Create second bomber with unique ID "bomber2"
+        Entity bomberDrone2 = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute2, "bomber2");
+        spawnEntityAt(bomberDrone2, spawnTile2, true, true);*/
     }
 
+    // Optional: Method for spawning a stationary bomber at a specific position
+    private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
+        Entity bomberDrone = EnemyFactory.createBomberDrone(
+                player,
+                terrain.tileToWorldPosition(position),
+                bomberId
+        );
+        spawnEntityAt(bomberDrone, position, true, true);
+    }
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(25, 15); // adjust position as needed
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("selfDestruct1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
     private void spawnElevatorPlatform() {
         float ts = terrain.getTileSize();
 

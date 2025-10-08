@@ -2,6 +2,7 @@ package com.csse3200.game.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
@@ -45,6 +46,12 @@ public class Renderer implements Disposable {
         new Stage(new ScreenViewport(), spriteBatch),
         ServiceLocator.getRenderService(),
         debugRenderer);
+
+    /* TODO: Remove prior to production
+    Temporary zoom adjustment for whole-level screenshots.  Meant for development/debugging only.
+    */
+//     OrthographicCamera screenshotCamera = (OrthographicCamera) this.camera.getCamera();
+//     screenshotCamera.zoom = 5f;
   }
 
   /**
