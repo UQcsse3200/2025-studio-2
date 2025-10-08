@@ -5,6 +5,7 @@ import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 import java.util.ArrayList;
@@ -15,9 +16,9 @@ import java.util.List;
  * Emits "plateToggled" (Boolean) when pressed/unpressed.
  */
 public class BoxPressurePlateComponent extends Component {
-    private String unpressedTexture = "images/pressure_plate_unpressed.png";
-    private String pressedTexture = "images/pressure_plate_pressed.png";
-
+    private String unpressedTexture = "images/plate.png";
+    private String pressedTexture = "images/plate-pressed.png";
+    private boolean suppressEvents = false;
     private TextureRenderComponent renderer;
     private boolean pressed = false;
     private final List<Entity> activePressing = new ArrayList<>();
@@ -60,14 +61,14 @@ public class BoxPressurePlateComponent extends Component {
      */
     private boolean isValid(Entity other) {
         if (other.getComponent(PlayerActions.class) != null) {
-            return isAbove(other);
+            return isAbove(other) || pressed;
         }
 
         com.csse3200.game.components.obstacles.MoveableBoxComponent box = other.getComponent(MoveableBoxComponent.class);
         if (box != null) {
             ColliderComponent collider = box.getEntity().getComponent(ColliderComponent.class);
             if (collider != null && collider.getLayer() != PhysicsLayer.LASER_REFLECTOR) {
-                return isAbove(other);
+                return isAbove(other) || pressed;
             }
         }
 
@@ -84,7 +85,13 @@ public class BoxPressurePlateComponent extends Component {
     private boolean isAbove(Entity other) {
         float plateY = entity.getPosition().y;
         float otherY = other.getPosition().y;
-        return otherY > plateY + 0.5f;
+
+        float plateX = entity.getCenterPosition().x;
+        PhysicsComponent physics = other.getComponent(PhysicsComponent.class);
+        float otherX = physics == null ? plateX : physics.getBody().getWorldCenter().x;
+        float deltaX = Math.abs(otherX - plateX);
+
+        return otherY > plateY + 0.3f && deltaX < 0.75;
     }
 
     /**
@@ -96,7 +103,14 @@ public class BoxPressurePlateComponent extends Component {
         if(this.pressed == pressed) return;
         this.pressed = pressed;
         updateTexture();
-        entity.getEvents().trigger("plateToggled", pressed);
+        if (suppressEvents) {
+            return;
+        }
+        if (pressed) {
+            entity.getEvents().trigger("platePressed");
+        } else {
+            entity.getEvents().trigger("plateReleased");
+        }
     }
 
     /**
@@ -105,5 +119,12 @@ public class BoxPressurePlateComponent extends Component {
     private void updateTexture() {
         if (renderer == null) return;
         renderer.setTexture(pressed ? pressedTexture : unpressedTexture);
+    }
+
+    public void resetPlate() {
+        suppressEvents = true;
+        activePressing.clear();
+        setPressed(false);
+        suppressEvents = false;
     }
 }

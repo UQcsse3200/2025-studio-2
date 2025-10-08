@@ -1,15 +1,19 @@
 package com.csse3200.game.components.lasers;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -39,8 +43,13 @@ public class LaserEmitterComponent extends Component {
             PhysicsLayer.OBSTACLE
             // | PhysicsLayer.DEFAULT
             );
+    private static final short detectorOccluder = PhysicsLayer.LASER_DETECTOR;
     private static final short playerOccluder = PhysicsLayer.PLAYER;
-    private static final short hitMask = (short) (reboundOccluder | blockedOccluder |  playerOccluder);
+    private static final short hitMask = (short) (
+              reboundOccluder
+            | blockedOccluder
+            | playerOccluder
+            | detectorOccluder);
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;
@@ -48,6 +57,8 @@ public class LaserEmitterComponent extends Component {
     private CombatStatsComponent combatStats;
 
     private List<Entity> lastReflectorsHit = new ArrayList<>();
+    private Entity hitLight = null;
+    private Entity lastDetectorHit = null;
 
     public LaserEmitterComponent() {
 
@@ -64,6 +75,10 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
+
+        if (ServiceLocator.getLightingService() != null) {
+            hitLight = createPointLight();
+        }
     }
 
     @Override
@@ -81,6 +96,7 @@ public class LaserEmitterComponent extends Component {
         * */
 
         positions.clear();
+
         // add initial point
         Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
         positions.add(start.cpy());
@@ -113,6 +129,7 @@ public class LaserEmitterComponent extends Component {
             short cat = categoryBitsFromHit(hit);
             boolean isReflector = (cat & reboundOccluder) != 0;
             boolean isPlayer = (cat & playerOccluder) != 0;
+            boolean isDetector = (cat & detectorOccluder) != 0;
 
             if (isReflector) {
                 // reflect r = d -2(d.n) n
@@ -124,13 +141,37 @@ public class LaserEmitterComponent extends Component {
                 rebounds++;
 
                 // add hit entity to reflectors hit list
-                Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
-                if (e != null) {
-                    reflectorsHit.add(e);
+                if (hit.fixture.getBody().getUserData() != null) {
+                    Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+                    if (e != null) {
+                        reflectorsHit.add(e);
+                    }
                 }
             } else {
+                if (isDetector) {
+                    triggerDetector(hit);
+                    if (hitLight != null) {
+                        hitLight.getComponent(ConeLightComponent.class).setActive(false);
+                    }
+                } else {
+                    if (hitLight != null) {
+                        hitLight.getComponent(ConeLightComponent.class).setActive(true);
+                    }
+                }
+
+                updateHitLight(hit);
+
                 if (isPlayer) {
                     damagePlayer(hit);
+                }
+
+                // check if the blocker is the last detector hit to update status
+                if (lastDetectorHit != null) {
+                    Entity e = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+                    if (e != null && !e.equals(lastDetectorHit)) {
+                        lastDetectorHit.getEvents().trigger("updateDetection", false);
+                        lastDetectorHit = null;
+                    }
                 }
                 // is blocker so stop
                 break;
@@ -150,6 +191,39 @@ public class LaserEmitterComponent extends Component {
             }
         }
         lastReflectorsHit = reflectorsHit;
+    }
+
+    private static Entity createPointLight() {
+        Entity light = new Entity();
+        ConeLightComponent coneLight = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                LightingDefaults.RAYS,
+                Color.RED,
+                0.75f,
+                0f,
+                180f
+        );
+        coneLight.setFollowEntity(false);
+        light.addComponent(coneLight);
+
+        TextureRenderComponent texture = new TextureRenderComponent("images/laser-end.png");
+        texture.setLayer(3);
+        light.addComponent(texture);
+        light.setScale(0.2f, 0.2f);
+
+        ServiceLocator.getEntityService().register(light);
+
+        return light;
+    }
+
+    private void updateHitLight(RaycastHit hit) {
+        if (hitLight == null) return;
+
+        Vector2 p = hit.point.cpy();
+        ConeLightComponent coneLight = hitLight.getComponent(ConeLightComponent.class);
+
+        coneLight.getLight().setPosition(p);
+        hitLight.setPosition(p.x - hitLight.getScale().x / 2f, p.y - hitLight.getScale().y / 2f);
     }
 
     /**
@@ -204,9 +278,45 @@ public class LaserEmitterComponent extends Component {
         if (physics != null) {
             Body targetBody = physics.getBody();
             Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
-            Vector2 impulse = direction.setLength(KNOCKBACK);
+            float knockbackScale = correctImpulse(direction);
+            //direction.x += direction.y;
+            //direction.y = 0f;
+            Vector2 impulse = direction.setLength(KNOCKBACK + knockbackScale);
             targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
         }
+    }
+
+    /**
+     * Private helper which attempts to correct the knockback so it's not so vertical
+     * got no idea which way works better, to either remove all vertical knockback and
+     * convert it into horizontal, or to do what this does (weird math scaling stuff)
+     *
+     * @param impulse actually just the direction knockback is applied in
+     * @return the difference in y value
+     */
+    private float correctImpulse(Vector2 impulse) {
+        if (Math.abs(impulse.y) > Math.abs(impulse.x) / 1.5f) {
+            float diff =  Math.abs(impulse.y) -  Math.abs(impulse.x);
+
+            // rescale y
+            impulse.y = impulse.x / 2f;
+            // return diff to scale knockback off of
+            return diff;
+        }
+        return 0f;
+    }
+
+    private void triggerDetector(RaycastHit hit) {
+        Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+        if (target == null) return;
+
+        // check for detector comp
+        LaserDetectorComponent detector = target.getComponent(LaserDetectorComponent.class);
+        if (detector == null) return;
+
+        // trigger detection
+        target.getEvents().trigger("updateDetection", true);
+        lastDetectorHit = target;
     }
 
     /**
@@ -222,5 +332,9 @@ public class LaserEmitterComponent extends Component {
     @Override
     public void dispose() {
         positions.clear();
+        if (hitLight != null) {
+            hitLight.dispose();
+            hitLight = null;
+        }
     }
 }

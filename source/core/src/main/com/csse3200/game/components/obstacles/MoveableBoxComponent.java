@@ -10,11 +10,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * This component is used to do the interactions between the player and the box entity. It is responsible for both
@@ -25,6 +27,8 @@ import com.csse3200.game.rendering.TextureRenderComponent;
 public class MoveableBoxComponent extends Component {
     private static final float INTERACT_RANGE = 1.5f;
     private static final float CARRY_RANGE = 1f;
+    private static final long INTERACT_COOLDOWN_MS = 200;
+    private long nextAllowedToggleMs = 0L;
 
     private static final float CARRY_GAIN = 18f; // how aggressively it homes
     private static final float CARRY_MAX_SPEED = 10f; // homing speed cap
@@ -33,6 +37,7 @@ public class MoveableBoxComponent extends Component {
     private static final float BASE_LINEAR_DAMPING = 1.5f;
 
     private Entity player;
+    private KeyboardPlayerInputComponent inputComp;
     private boolean seenPlayer = false;
     private boolean pickedUp = false;
     private PhysicsComponent boxPhysics;
@@ -42,7 +47,6 @@ public class MoveableBoxComponent extends Component {
     private short physicsLayer = PhysicsLayer.OBSTACLE;
 
     private Camera camera;
-    private final Vector2 tmp = new Vector2();
     private final Vector2 dir = new Vector2();
     private final Vector3 mouseTmp = new Vector3();
 
@@ -100,10 +104,6 @@ public class MoveableBoxComponent extends Component {
             entity.getEvents().addListener("laserHit", this::toggleOn);
             entity.getEvents().addListener("laserOff", this::toggleOn);
         }
-        // set initial box state if mirror box
-        if (boxLight != null) {
-            toggleOn(false);
-        }
     }
 
     /**
@@ -121,7 +121,12 @@ public class MoveableBoxComponent extends Component {
         if (!seenPlayer) {
             seenPlayer = true;
             player = collider.getEntity();
+            inputComp = player.getComponent(KeyboardPlayerInputComponent.class);
             player.getEvents().addListener("interact", this::onPlayerInteract);
+            player.getEvents().addListener("death", () -> {
+                pickedUp = true;
+                toggleLift();
+            });
         }
     }
 
@@ -145,14 +150,29 @@ public class MoveableBoxComponent extends Component {
      * Only toggles the box lift if player is within the correct range.
      */
     private void onPlayerInteract() {
-        if (player == null) {
+        if (player == null || inputComp == null) {
             return;
         }
 
+        // cooldown
+        if (ServiceLocator.getTimeSource().getTime() < nextAllowedToggleMs) return;
+
         float distance = player.getCenterPosition().dst(entity.getCenterPosition());
 
-        if (distance <= INTERACT_RANGE) {
+        // if we're currently picked up allow dropping regardless of distance
+        // but only if it is the one the player is holding
+        if (pickedUp) {
+            if (inputComp.isHoldingBox() && inputComp.getHeldBox().equals(entity)) {
+                toggleLift();
+                nextAllowedToggleMs = ServiceLocator.getTimeSource().getTime() + INTERACT_COOLDOWN_MS;
+            }
+            return;
+        }
+
+        // not picked up yet, only pick up if player isnt holding any box
+        if (!inputComp.isHoldingBox() && distance <= INTERACT_RANGE) {
             toggleLift();
+            nextAllowedToggleMs = ServiceLocator.getTimeSource().getTime() + INTERACT_COOLDOWN_MS;
         }
     }
 
@@ -174,6 +194,12 @@ public class MoveableBoxComponent extends Component {
         Body body = boxPhysics.getBody();
 
         if (pickedUp) {
+            // claim ownership on the player
+            if (inputComp != null) {
+                inputComp.setHoldingBox(true);
+                inputComp.setHeldBox(entity);
+            }
+
             // save
             savedFixedRotation = body.isFixedRotation();
             savedBullet = body.isBullet();
@@ -185,6 +211,12 @@ public class MoveableBoxComponent extends Component {
             body.setAngularVelocity(0f);
             body.setLinearVelocity(0f, 0f);
         } else {
+            // release ownership
+            if (inputComp != null) {
+                inputComp.setHoldingBox(false);
+                inputComp.setHeldBox(null);
+            }
+
             body.setAngularVelocity(0f);
             //body.setLinearVelocity(0f, 0f);
 
@@ -265,14 +297,25 @@ public class MoveableBoxComponent extends Component {
             f.maskBits = (short) (PhysicsLayer.OBSTACLE
                                 | PhysicsLayer.PLAYER
                                 | PhysicsLayer.NPC
-                                | PhysicsLayer.LASER_REFLECTOR);
+                                | PhysicsLayer.LASER_REFLECTOR
+                                | PhysicsLayer.LASER_DETECTOR);
             boxCollider.getFixture().setFilterData(f);
             boxCollider.getFixture().getBody().setAwake(true);
             appliedFilter = true;
+
+            // set initial box state if mirror box
+            if (boxLight != null) {
+                toggleOn(false);
+            }
         }
 
         // check out of bounds
         if (entity.getPosition().y <= -5f) {
+            resetToInitPos();
+        }
+
+        // Removes box from pressure plate when player dies
+        if (player != null && player.getPosition().y <= -3f) {
             resetToInitPos();
         }
 
@@ -317,7 +360,7 @@ public class MoveableBoxComponent extends Component {
 
         // player world pos
         Vector2 playerPos = new Vector2();
-        playerPos.set(player.getCenterPosition()); // offset because of weird entity pos stuff
+        playerPos.set(player.getCenterPosition());
 
         // mouse in world space
         mouseTmp.set(Gdx.input.getX(), Gdx.input.getY(), 0f);

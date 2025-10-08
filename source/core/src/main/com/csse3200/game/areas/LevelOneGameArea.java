@@ -13,6 +13,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -26,6 +27,7 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,10 +92,22 @@ public class LevelOneGameArea extends GameArea {
             "images/cavelevel/background/5.png",
             "images/cavelevel/background/6.png",
             "images/cavelevel/background/7.png",
-            "images/pressure_plate_unpressed.png",
-            "images/pressure_plate_pressed.png",
+            "images/terminal_on.png",
+            "images/terminal_off.png",
+            "images/plate.png",
+            "images/plate-pressed.png",
             "images/mirror-cube-off.png",
-            "images/mirror-cube-on.png"
+            "images/mirror-cube-on.png",
+            "images/cube.png",
+            "images/heavy-cube.png",
+            "images/laser-detector-off.png",
+            "images/laser-detector-on.png",
+            "images/laser-end.png",
+            "images/upSignpost.png",
+            "images/downSignpost.png",
+            "images/rightSignpost.png",
+            "images/leftSignpost.png",
+            "images/signpost.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -123,10 +137,13 @@ public class LevelOneGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        cancelPlateDebouncers();
         keySpawned = false;
         spawnLadders();
+        spawnSignposts();
         spawnLowerLadderPressurePlate();
         spawnUpperLadderPressurePlate();
+        spawnBoxOnlyPlate();
         spawnParallaxBackground();
         spawnFloorsAndPlatforms();
         spawnVolatilePlatform();
@@ -134,21 +151,36 @@ public class LevelOneGameArea extends GameArea {
         spawnWalls();
         spawnDoor();
         //spawnBoxOnlyPlate();
-        spawnUpgrade("dash", 9, 6);
-        spawnUpgrade("glider", 7, 6);
-        spawnUpgrade("jetpack", 5, 6);
-        //spawnSecurityCams();
+        spawnUpgrade("dash", 23, 4);
+        // spawnUpgrade("glider", 7, 6);  // won't be used in level one
+        // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
+        spawnSecurityCams();
         spawnButtons();
         spawnTraps();
         //spawnPlatformBat();
         spawnLevelOneBatRoom();
-        spawnPlayerUpgrades();
+        // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
+        spawnTerminals();
         spawnBoxes();
         spawnLasers();
+    }
+
+    private void spawnTerminals() {
+        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
+        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
+        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test3"));
+        Entity terminal4 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test4"));
+        Entity terminal5 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test5"));
+        spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
+        spawnEntityAt(terminal2, new GridPoint2(6, 4), true, true);
+        spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
+        spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
+        spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
+
     }
 
     private void spawnBoxes() {
@@ -157,12 +189,18 @@ public class LevelOneGameArea extends GameArea {
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
 
-        Entity e1 = BoxFactory.createReflectorBox();
-        spawnEntityAt(e1, new GridPoint2(28, 15), true, true);
+        Entity three = BoxFactory.createReflectorBox();
+        spawnEntityAt(three, new GridPoint2(32, 15), true, true);
+
+        Entity four = BoxFactory.createMoveableBox();
+        spawnEntityAt(four, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
         spawnEntityAt(e, new GridPoint2(40, 12), true, true);
+
+        Entity detector = LaserDetectorFactory.createLaserDetector(0f);
+        spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
 
     private void spawnDeathZone() {
@@ -183,39 +221,57 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
 
+    private static final float PLATE_DEBOUNCE = 0.12f;
     // Upper Ladder dimensions
     private final int upperLadderX = 59;
     private final int upperLadderY = 36;
     private final int upperLadderHeight = 16;
     private final int upperLadderOffset = 11;
-    private boolean isUpperLadderExtended = true;
+    private boolean isUpperLadderExtended = false;
+    private boolean isUpperLadderSpawning = false;
+    private final List<Entity> upperLadderBottomSegments = new ArrayList<>();
+    private Timer.Task upperLadderTask;
+    private boolean upperPlateDown = false;
+    private Timer.Task upperPressDebounceTask, upperReleaseDebounceTask;
     // Lower Ladder dimensions
     private final int lowerLadderX = 52;
     private final int lowerLadderY = 4;
     private final int lowerLadderHeight = 18;
     private final int lowerLadderOffset = 13;
-    private boolean isLowerLadderExtended = true;
+    private boolean isLowerLadderExtended = false;
+    private boolean isLowerLadderSpawning = false;
+    private final List<Entity> lowerLadderBottomSegments = new ArrayList<>();
+    private Timer.Task lowerLadderTask;
+    private boolean lowerPlateDown = false;
+    private Timer.Task lowerPressDebounceTask, lowerReleaseDebounceTask;
+
 
     private void spawnLadders() {
         // Upper ladder
+        upperLadderBottomSegments.clear();
         isUpperLadderExtended = false;
+        isUpperLadderSpawning = false;
         for(int i = upperLadderOffset; i < upperLadderHeight; i++) {
             GridPoint2 ladderPos = new GridPoint2(upperLadderX, (upperLadderY + i));
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPos, false, false);
+
         }
         // Lower ladder
+        lowerLadderBottomSegments.clear();
         isLowerLadderExtended = false;
+        isLowerLadderSpawning = false;
         for(int i = lowerLadderOffset; i < lowerLadderHeight; i++) {
             GridPoint2 ladderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + i));
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPosition, false, false);
+
         }
     }
     private void spawnUpperLadderPressurePlate() {
-        int x = 63;
+        int x = 65;
         int y = 36;
         GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
         Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
@@ -224,29 +280,65 @@ public class LevelOneGameArea extends GameArea {
                 TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
 
-        // Ladder extends on first press (not reversible)
-        upperLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed && !isUpperLadderExtended) {
-                isUpperLadderExtended = true;
-                for (int i = upperLadderOffset - 1; i >= 0; i--) {
-                    final int rung = i;
-                    Timer.schedule(new Timer.Task(){
-                        @Override
-                        public void run() {
-                            GridPoint2 upperLadderPosition = new GridPoint2(upperLadderX, (upperLadderY + rung));
-                            Entity upperLadder = LadderFactory.createStaticLadder();
-                            upperLadder.setScale(1f, 1f);
-                            spawnEntityAt(upperLadder, upperLadderPosition, false, false);
-                        }
-                    }, 0.05f * (upperLadderOffset - 1 - i));
-                }
+        // Ladder extends and retracts when activating pressure plate
+        upperLadderPressurePlate.getEvents().addListener("platePressed", () -> {
+            // cancel any release confirmation that might be pending
+            if (upperReleaseDebounceTask != null) {
+                upperReleaseDebounceTask.cancel();
+                upperReleaseDebounceTask = null;
             }
+            if (upperPlateDown) return;
+
+            // replace prior press debounce
+            if (upperPressDebounceTask != null) {
+                upperPressDebounceTask.cancel();
+            }
+            upperPressDebounceTask = new Timer.Task() {
+                @Override
+                public void run() {
+                    upperPlateDown = true;
+                    extendUpperLadder();
+                    upperPressDebounceTask = null;
+                }
+            };
+            Timer.schedule(upperPressDebounceTask, PLATE_DEBOUNCE);
+        });
+
+        upperLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
+            // cancel any press confirmation that might be pending
+            if (upperPressDebounceTask != null) {
+                upperPressDebounceTask.cancel();
+                upperPressDebounceTask = null;
+            }
+            if (!upperPlateDown) return;
+
+            if (upperReleaseDebounceTask != null) {
+                upperReleaseDebounceTask.cancel();
+            }
+            upperReleaseDebounceTask = new Timer.Task() {
+                @Override
+                public void run() {
+                    upperPlateDown = false;
+
+                    if (isUpperLadderSpawning && upperLadderTask != null) {
+                        upperLadderTask.cancel();
+                        upperLadderTask = null;
+                        isUpperLadderSpawning = false;
+                    }
+                    // retract only if not currently resetting level
+                    if (isUpperLadderExtended && !isUpperLadderSpawning && !isResetting) {
+                        retractUpperLadder();
+                    }
+                    upperReleaseDebounceTask = null;
+                }
+            };
+            Timer.schedule(upperReleaseDebounceTask, PLATE_DEBOUNCE);
         });
     }
+
     private void spawnLowerLadderPressurePlate() {
         int x = 73;
         int y = 4;
-
         GridPoint2 lowerLadderPressurePlatePosition = new GridPoint2(x, y);
         Entity lowerLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
         lowerLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
@@ -254,28 +346,167 @@ public class LevelOneGameArea extends GameArea {
                 TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
-        // Ladder extends on first press (not reversible)
-        lowerLadderPressurePlate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed && !isLowerLadderExtended) {
-                isLowerLadderExtended = true;
-                for (int i = lowerLadderOffset - 1; i >= 0; i--) {
-                    final int rung = i;
-                    Timer.schedule(new Timer.Task(){
-                        @Override
-                        public void run() {
-                            GridPoint2 lowerLadderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + rung));
-                            Entity ladder = LadderFactory.createStaticLadder();
-                            ladder.setScale(1f, 1f);
-                            spawnEntityAt(ladder, lowerLadderPosition, false, false);
-                        }
-                    }, 0.05f * (lowerLadderOffset - 1 - i));
-                }
+        // Ladder extends and retracts when activating pressure plate
+        lowerLadderPressurePlate.getEvents().addListener("platePressed", () -> {
+            // cancel any release confirmation that might be pending
+            if (lowerReleaseDebounceTask != null) {
+                lowerReleaseDebounceTask.cancel();
+                lowerReleaseDebounceTask = null;
             }
+            if (lowerPlateDown) return;
+
+            // replace prior press debounce
+            if (lowerPressDebounceTask != null) {
+                lowerPressDebounceTask.cancel();
+            }
+            lowerPressDebounceTask = new Timer.Task() {
+                @Override
+                public void run() {
+                    lowerPlateDown = true;
+                    extendLowerLadder();
+                    lowerPressDebounceTask = null;
+                }
+            };
+            Timer.schedule(lowerPressDebounceTask, PLATE_DEBOUNCE);
+        });
+
+        lowerLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
+            // cancel any press confirmation that might be pending
+            if (lowerPressDebounceTask != null) {
+                lowerPressDebounceTask.cancel();
+                lowerPressDebounceTask = null;
+            }
+            if (!lowerPlateDown) return;
+
+            if (lowerReleaseDebounceTask != null) {
+                lowerReleaseDebounceTask.cancel();
+            }
+            lowerReleaseDebounceTask = new Timer.Task() {
+                @Override
+                public void run() {
+                    lowerPlateDown = false;
+
+                    if (isLowerLadderSpawning && lowerLadderTask != null) {
+                        lowerLadderTask.cancel();
+                        lowerLadderTask = null;
+                        isLowerLadderSpawning = false;
+                    }
+                    // retract only if not currently resetting level
+                    if (isLowerLadderExtended && !isLowerLadderSpawning && !isResetting) {
+                        retractLowerLadder();
+                    }
+                    lowerReleaseDebounceTask = null;
+                }
+            };
+            Timer.schedule(lowerReleaseDebounceTask, PLATE_DEBOUNCE);
         });
     }
 
+    private void extendUpperLadder() {
+        if (!isUpperLadderExtended && upperLadderBottomSegments.isEmpty() && !isUpperLadderSpawning) {
+            isUpperLadderExtended = true;
+            isUpperLadderSpawning = true;
 
+            upperLadderTask = new Timer.Task() {
+                int rung = upperLadderOffset - 1;
 
+                @Override
+                public void run() {
+                    if (rung < 0) {
+                        this.cancel();
+                        upperLadderTask = null;
+                        isUpperLadderSpawning = false;
+                        return;
+                    }
+                    GridPoint2 upperLadderPosition = new GridPoint2(upperLadderX, upperLadderY + rung);
+                    Entity upperLadderRung = LadderFactory.createStaticLadder();
+                    upperLadderRung.setScale(1f, 1f);
+                    spawnEntityAt(upperLadderRung, upperLadderPosition, false, false);
+                    upperLadderBottomSegments.add(upperLadderRung);
+                    rung--;
+                }
+            };
+            // Initial delay, and delay between rungs (avoid partially spawned rungs)
+            Timer.schedule(upperLadderTask, 0.05f, 0.05f);
+        }
+    }
+
+    private void retractUpperLadder() {
+        isUpperLadderExtended = false;
+
+        Gdx.app.postRunnable(() -> {
+            for (Entity rung : upperLadderBottomSegments) {
+                rung.dispose();
+                areaEntities.remove(rung);
+            }
+            isUpperLadderSpawning = false;
+            isUpperLadderExtended = false;
+            upperLadderBottomSegments.clear();
+        });
+    }
+
+    private void extendLowerLadder() {
+        if (!isLowerLadderExtended && lowerLadderBottomSegments.isEmpty() && !isLowerLadderSpawning) {
+            isLowerLadderExtended = true;
+            isLowerLadderSpawning = true;
+
+            lowerLadderTask = new Timer.Task() {
+                int rung = lowerLadderOffset - 1;
+
+                @Override
+                public void run() {
+                    if (rung < 0) {
+                        this.cancel();
+                        lowerLadderTask = null;
+                        isLowerLadderSpawning = false;
+                        return;
+                    }
+                    GridPoint2 lowerLadderPosition = new GridPoint2(lowerLadderX, lowerLadderY + rung);
+                    Entity lowerLadderRung = LadderFactory.createStaticLadder();
+                    lowerLadderRung.setScale(1f, 1f);
+                    spawnEntityAt(lowerLadderRung, lowerLadderPosition, false, false);
+                    lowerLadderBottomSegments.add(lowerLadderRung);
+                    rung--;
+                }
+            };
+            // Initial delay, and delay between rungs (avoid partially spawned rungs)
+            Timer.schedule(lowerLadderTask, 0.05f, 0.05f);
+        }
+    }
+
+    private void retractLowerLadder() {
+        isLowerLadderExtended = false;
+
+        // Delays disposal of bottom ladder rungs until next frame to avoid physics engine lock
+        Gdx.app.postRunnable(() -> {
+            for (Entity rung : lowerLadderBottomSegments) {
+                rung.dispose();
+                areaEntities.remove(rung);
+            }
+            isLowerLadderSpawning = false;
+            isLowerLadderExtended = false;
+            lowerLadderBottomSegments.clear();
+        });
+    }
+
+    private void cancelPlateDebouncers() {
+        if (upperPressDebounceTask != null) {
+            upperPressDebounceTask.cancel();
+            upperPressDebounceTask = null;
+        }
+        if (lowerPressDebounceTask != null) {
+            lowerPressDebounceTask.cancel();
+            lowerPressDebounceTask = null;
+        }
+        if (upperReleaseDebounceTask != null) {
+            upperReleaseDebounceTask.cancel();
+            upperReleaseDebounceTask = null;
+        }
+        if (lowerReleaseDebounceTask != null) {
+            lowerReleaseDebounceTask.cancel();
+            lowerReleaseDebounceTask = null;
+        }
+    }
 
     private void spawnFloorsAndPlatforms(){
         spawnFloors();
@@ -347,9 +578,9 @@ public class LevelOneGameArea extends GameArea {
 
 //        RIGHT PATH
         //GridPoint2 step8Pos = new GridPoint2(58,18);
-       // Entity step8 = PlatformFactory.createStaticPlatform();
-       // step8.setScale(2f,0.5f);
-       // spawnEntityAt(step8, step8Pos,false, false);
+        // Entity step8 = PlatformFactory.createStaticPlatform();
+        // step8.setScale(2f,0.5f);
+        // spawnEntityAt(step8, step8Pos,false, false);
 
         // MOVING PLATFORM WITH BUTTONS
         GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
@@ -416,7 +647,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step9Pos = new GridPoint2(57,35);
         Entity step9 = PlatformFactory.createStaticPlatform();
-        step9.setScale(4f,0.5f);
+        step9.setScale(5f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
 
@@ -464,9 +695,20 @@ public class LevelOneGameArea extends GameArea {
     }
     private void displayUI() {
         Entity ui = new Entity();
-        ui.addComponent(new GameAreaDisplay("Level one Game Area"));
+        ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
+    }
+
+    private void spawnSignposts(){
+        Entity rightSign = SignpostFactory.createSignpost("right");
+        spawnEntityAt(rightSign, new GridPoint2(8,4), true, false);
+
+        Entity upSign = SignpostFactory.createSignpost("up");
+        spawnEntityAt(upSign, new GridPoint2(55,4), true, false);
+
+        Entity leftSign = SignpostFactory.createSignpost("left");
+        spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
@@ -548,14 +790,15 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnBoxOnlyPlate() {
+        Entity pressurePlatePlatform = PlatformFactory.createPressurePlatePlatform();
+        pressurePlatePlatform.setScale(2f,0.5f);
+        spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
+
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-        spawnEntityAt(plate, new GridPoint2(6, 5), true, true);
+        plate.addComponent(new TooltipSystem.TooltipComponent("Platform Plate\nPress to reveal platform", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(plate, new GridPoint2(24, 13), true, true);
 
-        plate.getEvents().addListener("plateToggled", (Boolean pressed) -> {
-            if (pressed) {
-
-            }
-        });
+        pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
     }
 
     private TerrainComponent createDefaultTerrain() {
@@ -616,13 +859,13 @@ public class LevelOneGameArea extends GameArea {
         });
     }
 
-    public void spawnPlayerUpgrades() {
-        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
-        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
-    }
+    //    public void spawnPlayerUpgrades() {
+//        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
+//        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
+//    }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
-        spawnEntityAt(key, new GridPoint2(46,56), true, true);
+        spawnEntityAt(key, new GridPoint2(1,37), true, true);
     }
     public void spawnPotion(String type, int x, int y) {
         Entity potion = CollectableFactory.createCollectable("potion:" + type);
@@ -762,6 +1005,7 @@ public class LevelOneGameArea extends GameArea {
     }
     @Override
     public void dispose() {
+        cancelPlateDebouncers();
         super.dispose();
         ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
         this.unloadAssets();

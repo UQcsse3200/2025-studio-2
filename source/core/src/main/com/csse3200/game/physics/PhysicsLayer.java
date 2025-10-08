@@ -12,6 +12,7 @@ public class PhysicsLayer {
   // Tooltip trigger zones and Tooltip colliders
   public static final short TOOLTIP = (1 << 5);
   public static final short LASER_REFLECTOR = (1 << 6);
+  public static final short LASER_DETECTOR = (1 << 7);
   public static final short ALL = ~0;
 
   public static boolean contains(short filterBits, short layer) {

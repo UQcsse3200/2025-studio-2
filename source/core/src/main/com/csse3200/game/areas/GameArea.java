@@ -1,5 +1,7 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
@@ -15,6 +17,7 @@ import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.events.EventHandler;
 import org.slf4j.Logger;
@@ -34,6 +37,8 @@ public abstract class GameArea implements Disposable {
   protected TerrainComponent terrain;
   protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
+  protected ArrayList<Vector2> deathLocations = new ArrayList<>();
+  private Texture deathMarkerTexture = null;
 
   private final EventHandler events = new EventHandler();
 
@@ -47,12 +52,82 @@ public abstract class GameArea implements Disposable {
 
   protected Entity player;
 
+  protected boolean isResetting = false;
+
   // Components we want to keep in between levels, new list for every GameArea
   protected CombatStatsComponent combatStats; // health
   protected InventoryComponent inventory; // keys, upgrades, etc.
 
   protected GameArea() {
     areaEntities = new ArrayList<>();
+  }
+
+  /**
+   * Sets the texture to use for the death marker.
+   *
+   * @param texture the texture to use for the death marker.
+   */
+  protected void setDeathMarkerTexture(Texture texture) {
+    deathMarkerTexture = texture;
+  }
+
+  /**
+   * Records the death location of the player (does NOT copy the location).
+   *
+   * @param location the location of the player's death.
+   */
+  public void recordDeathLocation(Vector2 location) {
+    deathLocations.add(location);
+  }
+
+  /**
+   * Returns the list of death locations.
+   *
+   * @return the list of death locations.
+   */
+  public ArrayList<Vector2> getDeathLocations() {
+    return deathLocations;
+  }
+
+  /**
+   * Sets the list of death locations.
+   * This must be called only once because it spawns entities that are not cleaned up if this is set again.
+   *
+   */
+  public void setDeathLocations(ArrayList<Vector2> deathLocations) {
+    assert(this.deathLocations.size() == 0);
+    this.deathLocations = deathLocations;
+  }
+
+  /**
+   * Spawns a death marker at the given location.
+   *
+   * @param location the location to spawn the death marker at.
+   */
+  protected void spawnDeathMarker(Vector2 location) {
+    Entity marker = new Entity();
+    marker.addComponent(new TextureRenderComponent(deathMarkerTexture));
+    marker.setPosition(location);
+    marker.setScale(0.5f, 0.5f);
+    spawnEntity(marker);
+  }
+
+  /**
+   * Spawns a death marker at the death location.
+   */
+  public void spawnDeathMarkers() {
+    if (deathMarkerTexture == null) {
+      // fallback for testing
+      Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+      pixmap.setColor(Color.RED);
+      pixmap.drawLine(0, 0, 15, 15);
+      pixmap.drawLine(15, 0, 0, 15);
+      deathMarkerTexture = new Texture(pixmap);
+      pixmap.dispose();
+      // throw new RuntimeException("Death marker texture not set");
+    }
+
+    for (Vector2 location : deathLocations) spawnDeathMarker(location);
   }
 
   /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
@@ -103,6 +178,7 @@ public abstract class GameArea implements Disposable {
    * Resets the game area
    */
   public void reset() {
+    isResetting = true;
     final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
@@ -115,6 +191,7 @@ public abstract class GameArea implements Disposable {
     // the start of the level. Copies are used in order to not lose the original components when
     // the original player is disposed.
     player = spawnPlayer(getComponents());
+    spawnDeathMarkers();
 
     loadEntities();
 
@@ -126,7 +203,9 @@ public abstract class GameArea implements Disposable {
       );
     }
 
+    // This is listened to by the MainGameScreen to show the death screen.
     this.trigger("reset");
+    isResetting = false;
   }
 
   /**
@@ -190,6 +269,11 @@ public abstract class GameArea implements Disposable {
 
     // Clear list of entities.
     areaEntities.clear();
+
+    if (deathMarkerTexture != null) {
+      deathMarkerTexture.dispose();
+      deathMarkerTexture = null;
+    }
   }
 
   public Entity getPlayer() {
