@@ -67,14 +67,28 @@ public class TutorialMenuDisplay extends UIComponent {
     Table contentContainer = new Table();
     contentContainer.top().left();
     
-    // semi-transparent dark background for content area
+    // Create border background
+    Pixmap borderPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+    borderPixmap.setColor(new Color(0.3f, 0.3f, 0.3f, 0.8f));
+    borderPixmap.fill();
+    Texture borderTexture = new Texture(borderPixmap);
+    borderPixmap.dispose();
+    
+    // Create semi-transparent dark background for content area
     Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-    pixmap.setColor(new Color(0, 0, 0, 0.7f)); // Black with 70% opacity
+    pixmap.setColor(new Color(0, 0, 0, 0.7f));
     pixmap.fill();
     Texture backgroundTexture = new Texture(pixmap);
     pixmap.dispose();
     
-    contentContainer.setBackground(new TextureRegionDrawable(backgroundTexture));
+    // Set border as background with padding to create border effect
+    contentContainer.setBackground(new TextureRegionDrawable(borderTexture));
+    contentContainer.pad(3); // Border width
+    
+    // Inner table with dark background
+    Table innerContent = new Table();
+    innerContent.setBackground(new TextureRegionDrawable(backgroundTexture));
+    innerContent.top().left();
     
     // actual content table
     contentTable = new Table();
@@ -82,7 +96,8 @@ public class TutorialMenuDisplay extends UIComponent {
     contentTable.pad(20); // Add padding inside the dark background
     updateContent(currentSection);
     
-    contentContainer.add(contentTable).expand().fill();
+    innerContent.add(contentTable).expand().fill();
+    contentContainer.add(innerContent).expand().fill();
 
     // Add sidebar and content to root table
     rootTable.add(sidebar).width(280).expandY().fillY().padRight(40);
@@ -101,6 +116,7 @@ public class TutorialMenuDisplay extends UIComponent {
     // Title
     Label titleLabel = new Label("Tutorial", skin);
     titleLabel.setFontScale(2f);
+    titleLabel.setColor(Color.BLACK);
     sidebar.add(titleLabel).padBottom(60).row();
     
     // Category buttons - save as instance variables
