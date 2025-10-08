@@ -56,7 +56,7 @@ public class GdxGame extends Game {
     UserSettings.applySettings(settings);
   }
 
-  public static void saveLevel(MainGameScreen.Areas area, Entity player, String path) {
+  public void saveLevel(MainGameScreen.Areas area, Entity player, String path) {
     logger.debug("Saving game level");
 
     SaveConfig saveConfig = new SaveConfig();
@@ -108,8 +108,6 @@ public class GdxGame extends Game {
       case LOAD_LEVEL -> {
         SaveConfig saveConfig = loadSave(savePath);
 
-        // Load into the correct area, pass the player the old inventory.
-        MainGameScreen game = new MainGameScreen(this, saveConfig.area);
         // If we don't already have a saved area, start from level one
         if (saveConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
         else {
@@ -123,47 +121,23 @@ public class GdxGame extends Game {
           // Load into the correct area, pass the player the old inventory.
           MainGameScreen game = new MainGameScreen(this, saveConfig.area);
 
-        InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
-        inventoryComponent.setInventory(saveConfig.inventory);
-        inventoryComponent.setUpgrades(saveConfig.upgrades);
+          InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
+          inventoryComponent.setInventory(saveConfig.inventory);
+          inventoryComponent.setUpgrades(saveConfig.upgrades);
 
-        yield game;
+          yield game;
+        }
       }
     };
   }
 
   /**
-   * Return a valid save config
-   * @param path - save file path
-   * @return valid SaveConfig
+   * Return save config
+   * @param path - file path
+   * @return SaveConfig
    */
-  public static SaveConfig loadSave(String path) {
-    SaveConfig save = FileLoader.readClass(SaveConfig.class, path, FileLoader.Location.LOCAL);
-    // If the save is null, create a basic one, with default values coming from null checks.
-    if (save == null) {
-      save = new SaveConfig();
-    }
-
-    // Make sure area is valid
-    try {
-      MainGameScreen.Areas.valueOf(save.area.toString());
-    } catch (IllegalArgumentException e) {
-      // Level is not in the list, start from level 1
-      save.area = MainGameScreen.Areas.LEVEL_ONE;
-    } catch (NullPointerException e) {
-      // No level initialized, start from level 1
-      save.area = MainGameScreen.Areas.LEVEL_ONE;
-    }
-
-    // Make sure inventory and upgrades exist
-    if (save.inventory == null) {
-      save.inventory = new HashMap<String, Integer>();
-    }
-    if (save.upgrades == null) {
-      save.upgrades = new HashMap<String, Integer>();
-    }
-
-    return save;
+  public SaveConfig loadSave(String path) {
+    return FileLoader.readClass(SaveConfig.class, path, FileLoader.Location.LOCAL);
   }
 
   public enum ScreenType {
