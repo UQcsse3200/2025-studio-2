@@ -99,7 +99,25 @@ public class BossLevelGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/buttonsound.mp3",
+            "sounds/chimesound.mp3",
+            "sounds/CircuitGoodness.mp3",
+            "sounds/damagesound.mp3",
+            "sounds/deathsound.mp3",
+            "sounds/doorsound.mp3",
+            "sounds/explosion.mp3",
+            "sounds/Flow.mp3",
+            "sounds/gamemusic.mp3",
+            "sounds/hurt.mp3",
+            "sounds/interactsound.mp3",
+            "sounds/jetpacksound.mp3",
+            "sounds/KindaLikeTycho.mp3",
+            "sounds/laddersound.mp3",
+            "sounds/pickupsound.mp3",
+            "sounds/thudsound.mp3",
+            "sounds/walksound.mp3",
+            "sounds/whooshsound.mp3"
+    };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
@@ -131,9 +149,9 @@ public class BossLevelGameArea extends GameArea {
         spawnPlatforms();
         spawnWalls();
         spawnStaticObstacles();
-//        Entity[] toBeDestroyed = spawnCeilingObstacles();
+        Entity[] toBeDestroyed = spawnCeilingObstacles();
         // Pass toBeDestroyed to this.destroyFloor() when triggering.
-//        spawnButtonPuzzleRoom(toBeDestroyed);
+        spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
