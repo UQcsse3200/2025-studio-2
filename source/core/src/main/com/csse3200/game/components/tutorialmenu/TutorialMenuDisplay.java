@@ -286,11 +286,64 @@ public class TutorialMenuDisplay extends UIComponent {
       spriteTable.add(rightColumn).padLeft(10).padRight(10).padBottom(10);
     }
     
+    // Create animated sprite for crouching
+    Array<TextureAtlas.AtlasRegion> crouchFrames = playerAtlas.findRegions("CROUCH");
+    if (crouchFrames.size > 0) {
+      Animation<TextureRegion> crouchAnimation = new Animation<>(0.1f, crouchFrames, Animation.PlayMode.LOOP);
+      AnimatedImage crouchSprite = new AnimatedImage(crouchAnimation);
+      
+      // Create vertical layout: sprite on top, keybind below
+      Table crouchColumn = new Table();
+      crouchColumn.add(crouchSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
+      
+      // Get the actual keybind from user settings
+      int crouchKeyCode = Keymap.getActionKeyCode("PlayerCrouch");
+      String crouchKeyName = Input.Keys.toString(crouchKeyCode);
+      Label crouchKeyLabel = new Label(crouchKeyName, skin);
+      crouchKeyLabel.setFontScale(1.5f);  // Bigger text
+      crouchKeyLabel.setColor(Color.RED);  // Red color
+      
+      // Add padding to shift right and center under the actual sprite visual
+      crouchColumn.add(crouchKeyLabel).center().padLeft(22).padTop(5).row();
+      
+      // Add description label
+      Label crouchDescLabel = new Label("Crouch", skin);
+      crouchDescLabel.setFontScale(1.0f);
+      crouchColumn.add(crouchDescLabel).center().padLeft(22).padTop(5).row();
+      
+      spriteTable.add(crouchColumn).padLeft(10).padRight(10).padBottom(10);
+    }
+    
+    // Create animated sprite for jumping
+    Array<TextureAtlas.AtlasRegion> jumpFrames = playerAtlas.findRegions("JUMP");
+    if (jumpFrames.size > 0) {
+      Animation<TextureRegion> jumpAnimation = new Animation<>(0.1f, jumpFrames, Animation.PlayMode.LOOP);
+      AnimatedImage jumpSprite = new AnimatedImage(jumpAnimation);
+      
+      // Create vertical layout: sprite on top, keybind below
+      Table jumpColumn = new Table();
+      jumpColumn.add(jumpSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
+      
+      // Get the actual keybind from user settings
+      int jumpKeyCode = Keymap.getActionKeyCode("PlayerJump");
+      String jumpKeyName = Input.Keys.toString(jumpKeyCode);
+      Label jumpKeyLabel = new Label(jumpKeyName, skin);
+      jumpKeyLabel.setFontScale(1.5f);  // Bigger text
+      jumpKeyLabel.setColor(Color.RED);  // Red color
+      
+      // Add padding to shift right and center under the actual sprite visual
+      jumpColumn.add(jumpKeyLabel).center().padLeft(22).padTop(5).row();
+      
+      // Add description label
+      Label jumpDescLabel = new Label("Jump", skin);
+      jumpDescLabel.setFontScale(1.0f);
+      jumpColumn.add(jumpDescLabel).center().padLeft(22).padTop(5).row();
+      
+      spriteTable.add(jumpColumn).padLeft(10).padRight(10).padBottom(10);
+    }
+    
     contentTable.add(spriteTable).left().colspan(2).row();
     
-    // Placeholder for more controls
-    Label placeholder = new Label("\nMore controls will be added here...", skin);
-    contentTable.add(placeholder).left().colspan(2).padTop(20).row();
   }
 
   /**
