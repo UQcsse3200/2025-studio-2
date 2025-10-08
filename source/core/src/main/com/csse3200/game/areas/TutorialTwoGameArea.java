@@ -766,7 +766,7 @@ public class TutorialTwoGameArea extends GameArea {
             .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
             .addComponent(physics)
             .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
-            .addComponent(new ItemCollectableComponent());
+            .addComponent(new ItemCollectableComponent(this));
         //.addComponent(new CollectableComponentV2("hardware"));
         collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
