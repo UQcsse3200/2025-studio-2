@@ -490,6 +490,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void retractUpperLadder() {
         isUpperLadderExtended = false;
+        if (isResetting) return;
 
         Gdx.app.postRunnable(() -> {
             for (Entity rung : upperLadderBottomSegments) {
@@ -533,6 +534,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void retractLowerLadder() {
         isLowerLadderExtended = false;
+        if (isResetting) return;
 
         // Delays disposal of bottom ladder rungs until next frame to avoid physics engine lock
         Gdx.app.postRunnable(() -> {
@@ -1151,9 +1153,13 @@ public class LevelOneGameArea extends GameArea {
     }
     @Override
     public void dispose() {
+        isResetting = true;
+        retractLowerLadder();
+        retractUpperLadder();
         cancelPlateDebouncers();
         super.dispose();
         ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
         this.unloadAssets();
+        isResetting = false;
     }
 }
