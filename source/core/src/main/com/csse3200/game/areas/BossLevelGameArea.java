@@ -148,17 +148,17 @@ public class BossLevelGameArea extends GameArea {
         Entity reflectorBox = BoxFactory.createReflectorBox();
         spawnEntityAt(reflectorBox, new GridPoint2(63, 15), false, false);
 
-        // Laser slicing diagonally down-right over platform1
+        // Laser attached to the upper wall
         Entity laser0 = LaserFactory.createLaserEmitter(335f);
         spawnEntityAt(laser0, new GridPoint2(63, 25), false, false);
 
-        // Laser from the end platform horizontally across screen
+        // Laser attached to the end platform
         Entity laser1 = LaserFactory.createLaserEmitter(180f);
         spawnEntityAt(laser1, new GridPoint2(tileBounds.x - 10, 23), false, false);
 
-        // Laser going down over the second platform, intersecting the others
-        Entity laser2 = LaserFactory.createLaserEmitter(45f);
-        spawnEntityAt(laser2, new GridPoint2(tileBounds.x - 10, 3), false, false);
+        // Laser attached to the lower wall
+        Entity laser2 = LaserFactory.createLaserEmitter(65f);
+        spawnEntityAt(laser2, new GridPoint2(63, 2), false, false);
 
         // Button-blocking laser at end
         Entity endLaser = LaserFactory.createLaserEmitter(270f);
@@ -175,9 +175,9 @@ public class BossLevelGameArea extends GameArea {
         firstPlatform.setScale(2f, 0.5f);
         spawnEntityAt(firstPlatform, boxPos,false, false);
 
-        // From here on, the platforms are numbered by the order in which they should be traversed
+        // Normal jumping platforms are numbered by the order in which they should be traversed
         GridPoint2 pos1 = new GridPoint2(74, 17); // I swear I'm not 1-indexing; boxPos is platform0
-        Entity platform1 = PlatformFactory.createVolatilePlatform(51.5f, 5f);
+        Entity platform1 = PlatformFactory.createStaticPlatform();
         platform1.setScale(1f, 0.5f);
         spawnEntityAt(platform1, pos1,false, false);
 
@@ -191,10 +191,16 @@ public class BossLevelGameArea extends GameArea {
         platform3.setScale(1f, 0.5f);
         spawnEntityAt(platform3, pos3,false, true);
 
-        GridPoint2 pos4 = new GridPoint2(80, 20);
+        GridPoint2 pos4 = new GridPoint2(70, 30);
         Entity platform4 = PlatformFactory.createStaticPlatform();
         platform4.setScale(1f, 0.5f);
         spawnEntityAt(platform4, pos4,false, true);
+
+        // Reflector platform for the laser at the top
+        GridPoint2 reflectorPos = new GridPoint2(78, 35);
+        Entity reflectorPlatform = PlatformFactory.createReflectivePlatform();
+        reflectorPlatform.setScale(3f, 0.5f);
+        spawnEntityAt(reflectorPlatform, reflectorPos,true, true);
 
         // Platform to stand on to hit endgame button
         GridPoint2 endgamePos = new GridPoint2(tileBounds.x - 10, 23);
