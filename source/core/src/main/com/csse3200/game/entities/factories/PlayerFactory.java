@@ -20,6 +20,8 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.player.DamageIndicatorUI;
+import com.csse3200.game.components.achievements.AchievementsTrackerComponent;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 
 import java.util.List;
 
@@ -84,6 +86,9 @@ public class PlayerFactory {
                     .addComponent(inputComponent)
                     .addComponent(new PlayerStatsDisplay())
                     .addComponent(new DamageIndicatorUI())
+                    .addComponent(new AchievementsTrackerComponent())
+                    .addComponent(new AchievementToastUI())
+
                     .addComponent(new CameraComponent())
                     .addComponent(new PlayerScreenTransitionComponent())
                     .addComponent(new PlayerDeathEffectComponent())
