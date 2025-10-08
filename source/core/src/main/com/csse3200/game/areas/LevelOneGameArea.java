@@ -243,14 +243,12 @@ public class LevelOneGameArea extends GameArea {
                 }
             },5f);
         }
-        Entity detector = LaserDetectorFactory.createLaserDetector(0f);
-        spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
     public void laserShowerChecker(float delta) {
         if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             spacePressCount++;
         }
-        int SPACE_THRESHOLD = 10;
+        int SPACE_THRESHOLD = 30;
         if (spacePressCount == SPACE_THRESHOLD) {
             if (has_laser==false) {
                 spawnLaserShower();
@@ -755,17 +753,6 @@ public class LevelOneGameArea extends GameArea {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
-
-        ServiceLocator.getRenderService().getStage().addActor(new com.badlogic.gdx.scenes.scene2d.Actor() {
-            @Override
-            public void act(float delta) {
-                super.act(delta);
-                if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
-                    spawnLaserShower();
-                }
-            }
-        });
-
         return newPlayer;
     }
 
