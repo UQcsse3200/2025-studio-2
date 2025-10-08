@@ -29,8 +29,7 @@ public class BossLaserAttack extends Component {
     private float attackTimer = 0f;
     private boolean attacking = true;
 
-    private Entity target;
-    private final GameArea gameArea;// player to track
+    private Entity target;// player to track
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 
@@ -40,9 +39,8 @@ public class BossLaserAttack extends Component {
     private static final short playerOccluder = PhysicsLayer.PLAYER;
     private static final short hitMask = (short) ( blockedOccluder | playerOccluder);
 
-    public BossLaserAttack(Entity target, GameArea gameArea) {
+    public BossLaserAttack(Entity target) {
         this.target = target;
-        this.gameArea = gameArea;
     }
 
     @Override

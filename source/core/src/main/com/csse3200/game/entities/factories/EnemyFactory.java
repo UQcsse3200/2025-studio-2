@@ -410,11 +410,6 @@ public class EnemyFactory {
 
         // TODO: Anchor to camera so boss sticks to LHS of view
         // TODO: Kill-on-contact to trigger death cutscene and level restart
-        Entity bossLaser = BossLaserFactory.createBossLaser(target, 0f); // initial angle = 0
-        // Optionally, attach laser to boss so it moves with it
-        bossLaser.setPosition(boss.getCenterPosition());
-        // Add the laser to the same game area
-        ServiceLocator.getEntityService().register(bossLaser);
         return boss;
     }
 

@@ -23,7 +23,7 @@ public class BossLaserFactory {
      * @param target the entity the laser will target
      * @return the newly created laser emitter entity
      */
-    public static Entity createBossLaser(Entity target, GameArea gameArea) {
+    public static Entity createBossLaser(Entity target) {
         // setup animation
         TextureAtlas atlas = ServiceLocator.getResourceService()
                 .getAsset("images/boss.atlas", TextureAtlas.class);
@@ -34,7 +34,7 @@ public class BossLaserFactory {
         }
 
         Entity laser = new Entity()
-                .addComponent(new BossLaserAttack(target,gameArea))
+                .addComponent(new BossLaserAttack(target))
                 .addComponent(new CombatStatsComponent(1, ATTACK_DAMAGE))
                 .addComponent(animator);
 
