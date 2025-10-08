@@ -31,7 +31,6 @@ import java.util.List;
 
 public class BossLevelGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,57);
-    // todo may make longer (x) if want more laser puzzle
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     private static final String[] gameTextures = {
@@ -66,6 +65,8 @@ public class BossLevelGameArea extends GameArea {
             "images/drone.png",
             "images/boss.png",
             "images/bomb.png",
+            "images/cube.png",
+            "images/laser-end.png",
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/glide_powerup.png",
@@ -156,6 +157,8 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(laser1, new GridPoint2(tileBounds.x - 10, 23), false, false);
 
         // Laser going down over the second platform, intersecting the others
+        Entity laser2 = LaserFactory.createLaserEmitter(45f);
+        spawnEntityAt(laser2, new GridPoint2(tileBounds.x - 10, 3), false, false);
 
         // Button-blocking laser at end
         Entity endLaser = LaserFactory.createLaserEmitter(270f);
