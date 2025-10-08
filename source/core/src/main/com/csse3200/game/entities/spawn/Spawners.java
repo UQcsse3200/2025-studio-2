@@ -6,7 +6,9 @@ import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
+import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
+import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class Spawners {
@@ -86,6 +89,20 @@ public final class Spawners {
             addIdentifier(plate, String.valueOf(a.id));
             addTooltip(plate, a.tooltip);
 
+            if (a.target != null && a.extra != null) {
+                if (a.extra.equals("platform")) {
+                    Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
+                    target.getEvents().trigger("stop");
+
+                    plate.getEvents().addListener("platePressed", () -> {
+                        target.getEvents().trigger("start");
+                    });
+
+                    plate.getEvents().addListener("plateReleased", () -> {
+                        target.getEvents().trigger("stop");
+                    });
+                }
+            }
             return plate;
         });
 
@@ -103,6 +120,13 @@ public final class Spawners {
             return floor;
         });
 
+        // -- Wall ---
+        SpawnRegistry.register("wall", a -> {
+            Entity wall =  WallFactory.createWall(a.x, a.y, a.sx, a.sy, "");
+            wall.setScale(a.sx, a.sy);
+            return wall;
+        });
+
         // --- Platform ---
         SpawnRegistry.register("platform", a -> {
             EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
@@ -118,15 +142,6 @@ public final class Spawners {
             platform.setScale(a.sx, a.sy);
 
             return platform;
-        });
-
-        // --- Door ---
-        SpawnRegistry.register("door", a -> {
-            Entity door = ObstacleFactory.createDoor(String.valueOf(a.id), area);
-            door.setScale(a.sx, a.sy);
-            addTooltip(door, a.tooltip);
-
-            return door;
         });
 
         // --- Door ---
@@ -155,14 +170,26 @@ public final class Spawners {
         });
 
         // --- lasers ---
-        SpawnRegistry.register("laser", a -> LaserFactory.createLaserEmitter(a.rotation));
+        SpawnRegistry.register("laser", a -> {
+            Entity laser = LaserFactory.createLaserEmitter(a.rotation);
+            addIdentifier(laser, String.valueOf(a.id));
+            laser.setScale(a.sx, a.sy);
+            return  laser;
+        });
 
         // --- Buttons ---
         SpawnRegistry.register("button", a -> {
             if (a.direction == null) a.direction = "right";
+            if (a.subtype == null) a.subtype = "standard";
             Entity button = ButtonFactory.createButton(false, a.subtype, a.direction);
 
-            // buttonToggled listener
+            if (a.target != null) {
+                Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
+                target.getEvents().trigger("disable");
+                button.getEvents().addListener("buttonPressed", () -> {
+                    target.getEvents().trigger("laserOff", false);
+                });
+            }
 
             linkEntities(button, a.linked);
             addTooltip(button, a.tooltip);
@@ -173,10 +200,18 @@ public final class Spawners {
 
         // --- Laser Detector ---
         SpawnRegistry.register("laser_detector", a -> {
-            if (a.rotation != null) {
-                return LaserDetectorFactory.createLaserDetector(a.rotation);
+            Entity laserDetector = LaserDetectorFactory.createLaserDetector(a.rotation);
+
+            if (a.target != null) {
+                if (a.target.equals("jetpack")) {
+                    Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
+                    laserDetector.getEvents().addListener("detectingStart", () -> {
+                        UpgradesComponent cc = target.getComponent(UpgradesComponent.class);
+                        cc.toggleVisibility(true);
+                    });
+                }
             }
-            return LaserDetectorFactory.createLaserDetector();
+            return laserDetector;
         });
 
         // --- Sign Posts ---
@@ -191,7 +226,10 @@ public final class Spawners {
 
         // --- Upgrade ---
         SpawnRegistry.register("upgrade", a -> {
-            return CollectableFactory.createJetpackUpgrade();
+            Entity upgrade = CollectableFactory.createJetpackUpgrade();
+            if (a.isVisible == false) upgrade.getComponent(UpgradesComponent.class).toggleVisibility(false);
+            addIdentifier(upgrade, String.valueOf(a.id));
+            return  upgrade;
         });
 
     }

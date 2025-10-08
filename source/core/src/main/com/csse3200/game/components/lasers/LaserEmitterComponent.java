@@ -98,7 +98,7 @@ public class LaserEmitterComponent extends Component {
         positions.clear();
 
         // add initial point
-        Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
+        Vector2 start = entity.getPosition().cpy().add(entity.getScale().x / 2f, entity.getScale().y / 2f); // offset to centre
         positions.add(start.cpy());
 
         Vector2 dirVec = new Vector2(1f, 0f).rotateDeg(dir).nor();

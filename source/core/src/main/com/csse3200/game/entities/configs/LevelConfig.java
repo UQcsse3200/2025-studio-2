@@ -95,5 +95,8 @@ public class LevelConfig {
 
         /** Whether the entity should be centered along the y-axis. (optional) */
         public Boolean centerY = true;
+
+        /** Initial collectable visibility */
+        public Boolean isVisible = true;
     }
 }

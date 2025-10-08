@@ -1,9 +1,12 @@
 package com.csse3200.game.components.collectables;
 
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -17,6 +20,11 @@ import com.csse3200.game.services.ServiceLocator;
 
 public abstract class CollectableComponent extends Component {
     private boolean collected = false;
+    ConeLightComponent cone;
+    ColliderComponent collider;
+    TextureRenderComponent texture;
+    AnimationRenderComponent animation;
+    boolean isVisible = true;
 
     /**
      * Registers a listener for {@code "onCollisionStart"} events to trigger collection logic.
@@ -52,4 +60,47 @@ public abstract class CollectableComponent extends Component {
      * @return true if collection succeeded (and the item should be removed), false otherwise
      */
     protected abstract boolean onCollect(Entity collector);
+
+    /**
+     * Toggles the visibility state of this entity and updates its components accordingly.
+     * <p>
+     * When hidden:
+     * <ul>
+     *   <li>Animations are disabled.</li>
+     *   <li>The texture is unregistered from the render service.</li>
+     *   <li>Lights (cone) are deactivated.</li>
+     *   <li>Collider layer is set to {@code PhysicsLayer.NONE}.</li>
+     * </ul>
+     * When visible:
+     * <ul>
+     *   <li>Animations are enabled.</li>
+     *   <li>The texture is registered with the render service.</li>
+     *   <li>Lights (cone) are activated.</li>
+     *   <li>Collider layer is set to {@code PhysicsLayer.COLLECTABLE}.</li>
+     * </ul>
+     *
+     * @param visible the visibility of the entity
+     */
+    public void toggleVisibility(boolean visible) {
+        this.isVisible = visible;
+
+        animation = entity.getComponent(AnimationRenderComponent.class);
+        cone = entity.getComponent(ConeLightComponent.class);
+        collider = entity.getComponent(ColliderComponent.class);
+        texture = entity.getComponent(TextureRenderComponent.class);
+
+        if (collected) return;
+        if (animation != null) animation.setEnabled(visible);
+        if (texture != null) texture.setEnabled(visible);
+        if (cone != null) cone.setActive(visible);
+
+        if (collider != null) {
+            collider.setLayer(visible ? PhysicsLayer.COLLECTABLE : PhysicsLayer.NONE);
+            collider.setSensor(visible);
+        }
+    }
+
+    public boolean isVisible() {
+        return this.isVisible;
+    }
 }

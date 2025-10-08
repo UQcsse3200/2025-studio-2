@@ -37,7 +37,7 @@ public class LaserFactory {
             animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
             animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
         }
-        animator.setOrigin(0.5f, 0.5f);
+        //animator.setOrigin(0.5f, 0.5f);
         animator.setRotation(dir);
         animator.setLayer(3);
 
