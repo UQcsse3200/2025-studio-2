@@ -91,7 +91,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
             entity.getEvents().trigger("interact");
         } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
-            triggerAdrenalineEvent();
+            if (cheatsOn) {
+                triggerAdrenalineEvent();
+            }
         } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
             //takes player off ladder if they are on one.
             this.onLadder = false;
