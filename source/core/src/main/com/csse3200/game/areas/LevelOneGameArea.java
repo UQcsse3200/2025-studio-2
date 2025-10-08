@@ -2,6 +2,7 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -129,6 +130,7 @@ public class LevelOneGameArea extends GameArea {
             "sounds/pickupsound.mp3",
             "sounds/interactsound.mp3",
             "sounds/buttonsound.mp3",
+            "sounds/laddersound.mp3",
             "sounds/thudsound.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
@@ -424,6 +426,10 @@ public class LevelOneGameArea extends GameArea {
             isUpperLadderExtended = true;
             isUpperLadderSpawning = true;
 
+            Sound ladderSound = ServiceLocator.getResourceService().getAsset(
+                    "sounds/laddersound.mp3", Sound.class);
+            ladderSound.play(UserSettings.get().masterVolume);
+
             upperLadderTask = new Timer.Task() {
                 int rung = upperLadderOffset - 1;
 
@@ -467,6 +473,10 @@ public class LevelOneGameArea extends GameArea {
         if (!isLowerLadderExtended && lowerLadderBottomSegments.isEmpty() && !isLowerLadderSpawning) {
             isLowerLadderExtended = true;
             isLowerLadderSpawning = true;
+
+            Sound ladderSound = ServiceLocator.getResourceService().getAsset(
+                    "sounds/laddersound.mp3", Sound.class);
+            ladderSound.play(UserSettings.get().masterVolume);
 
             lowerLadderTask = new Timer.Task() {
                 int rung = lowerLadderOffset - 1;
