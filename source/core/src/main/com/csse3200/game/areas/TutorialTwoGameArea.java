@@ -163,6 +163,7 @@ public class TutorialTwoGameArea extends GameArea {
 //        spawnObjectives();
 //        spawnTerminals();
         spawnBoxes();
+        spawnTutorialBats();
 //        spawnCollectables();
 //        spawnTutorials();
          spawnUpgrade("glider", 9, 39);
@@ -373,7 +374,7 @@ public class TutorialTwoGameArea extends GameArea {
         groundFloor3.setScale(25, 12);
         spawnEntityAt(groundFloor3, groundFloor3Pos, false, false);
 
-        GridPoint2 doorFloorPos = new GridPoint2(66, 51);
+        GridPoint2 doorFloorPos = new GridPoint2(62, 51);
         Entity gateFloor = FloorFactory.createStaticFloor();
         gateFloor.setScale(5f, 0.8f);
         spawnEntityAt(gateFloor, doorFloorPos, false, false);
@@ -408,16 +409,18 @@ public class TutorialTwoGameArea extends GameArea {
         step4.setScale(3.5f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
 
+
         // Top of ladder platform
         GridPoint2 step6Pos = new GridPoint2(8,38);
         Entity step6 = PlatformFactory.createStaticPlatform();
         step6.setScale(5f,0.5f);
         spawnEntityAt(step6, step6Pos,false, false);
 
-        GridPoint2 step7Pos = new GridPoint2(45,18);
-        Entity step7 = PlatformFactory.createStaticPlatform();
-        step7.setScale(3.5f,0.5f);
-        spawnEntityAt(step7, step7Pos,false, false);
+
+//        GridPoint2 step7Pos = new GridPoint2(45,18);
+//        Entity step7 = PlatformFactory.createStaticPlatform();
+//        step7.setScale(3.5f,0.5f);
+//        spawnEntityAt(step7, step7Pos,false, false);
 
 //        RIGHT PATH
         //GridPoint2 step8Pos = new GridPoint2(58,18);
@@ -510,12 +513,62 @@ public class TutorialTwoGameArea extends GameArea {
 //        spawnEntityAt(step13, step13Pos,false, false);
     }
 
+    private void spawnTutorialBats() {
+        // Bat 1
+        BoxFactory.AutonomousBoxBuilder batBuilder1 = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalBat1 = batBuilder1
+            .moveX(35f, 40f).moveY(15f, 15f)
+            .texture("images/flying_bat.atlas")
+            .speed(2f)
+            .build();
+        spawnEntityAt(horizontalBat1, new GridPoint2(
+                (int) batBuilder1.getSpawnX(),
+                (int) batBuilder1.getSpawnY()),
+            true, true);
+
+        // Bat 2
+        BoxFactory.AutonomousBoxBuilder batBuilder2 = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalBat2 = batBuilder2
+            .moveX(35f, 40f).moveY(23f, 23f)
+            .texture("images/flying_bat.atlas")
+            .speed(3.5f)
+            .build();
+        spawnEntityAt(horizontalBat2, new GridPoint2(
+                (int) batBuilder2.getSpawnX(),
+                (int) batBuilder2.getSpawnY()),
+            true, true);
+
+        // Bat 3
+        BoxFactory.AutonomousBoxBuilder batBuilder3 = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalBat3 = batBuilder3
+            .moveX(35f, 40f).moveY(36f, 36f)
+            .texture("images/flying_bat.atlas")
+            .speed(5f)
+            .build();
+        spawnEntityAt(horizontalBat3, new GridPoint2(
+                (int) batBuilder3.getSpawnX(),
+                (int) batBuilder3.getSpawnY()),
+            true, true);
+
+        // Bat 4
+        BoxFactory.AutonomousBoxBuilder batBuilder4 = new BoxFactory.AutonomousBoxBuilder();
+        Entity horizontalBat4 = batBuilder4
+            .moveX(35f, 40f).moveY(50f, 50f)
+            .texture("images/flying_bat.atlas")
+            .speed(6f)
+            .build();
+        spawnEntityAt(horizontalBat4, new GridPoint2(
+                (int) batBuilder4.getSpawnX(),
+                (int) batBuilder4.getSpawnY()),
+            true, true);
+    }
+
     public void spawnDoor() {
         Entity door = ObstacleFactory.createDoor("key:door", this);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(70,53), true, true);
+        spawnEntityAt(door, new GridPoint2(66,53), true, true);
     }
 
     private void playMusic() {
