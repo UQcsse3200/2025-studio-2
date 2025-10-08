@@ -392,7 +392,7 @@ public class TutorialMenuDisplay extends UIComponent {
       public void changed(ChangeEvent event, Actor actor) {
         logger.debug("Practice Level button clicked");
         // Launch the practice tutorial area directly
-        launchPracticeLevel("tutorial2");
+        launchPracticeLevel("tutorial");
       }
     });
     
@@ -401,7 +401,7 @@ public class TutorialMenuDisplay extends UIComponent {
 
   /**
    * Launches a practice tutorial level by starting the main game at a specific area.
-   * @param areaId The area ID to start in (e.g., "tutorial2")
+   * @param areaId The area ID to start in (e.g., "tutorial")
    */
   private void launchPracticeLevel(String areaId) {
     logger.info("Launching practice level: {}", areaId);
