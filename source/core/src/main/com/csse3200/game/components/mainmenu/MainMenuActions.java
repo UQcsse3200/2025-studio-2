@@ -2,6 +2,7 @@ package com.csse3200.game.components.mainmenu;
 
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +22,11 @@ public class MainMenuActions extends Component {
   public void create() {
     entity.getEvents().addListener("start", this::onStart);
     entity.getEvents().addListener("load", this::onLoad);
+    entity.getEvents().addListener("leaderboard", this::onLeaderboard);
     entity.getEvents().addListener("exit", this::onExit);
     entity.getEvents().addListener("settings", this::onSettings);
     entity.getEvents().addListener("tutorial", this::onTutorial);
+    entity.getEvents().addListener("stats", this::onStats);
   }
 
   /**
@@ -31,15 +34,25 @@ public class MainMenuActions extends Component {
    */
   private void onStart() {
     logger.info("Start game");
+    StatsTracker.startSession();
     game.setScreen(GdxGame.ScreenType.MAIN_GAME);
   }
 
   /**
    * Intended for loading a saved game state.
-   * Load functionality is not actually implemented.
    */
   private void onLoad() {
     logger.info("Load game");
+    StatsTracker.startSession();
+    game.setScreen(GdxGame.ScreenType.LOAD_LEVEL);
+  }
+
+  /**
+   * Displays the leaderboard names and times on screen.
+   */
+  private void onLeaderboard() {
+    logger.info("Leaderboard Displayed");
+    game.setScreen(GdxGame.ScreenType.LEADERBOARD);
   }
 
   /**
@@ -64,5 +77,14 @@ public class MainMenuActions extends Component {
   private void onTutorial() {
     logger.info("Launching tutorial screen");
     game.setScreen(GdxGame.ScreenType.TUTORIAL);
+  }
+
+  /**
+   * Swaps to the Stats screen.
+   */
+  private void onStats() {
+    logger.info("Launching stats screen");
+    StatsTracker.loadStats();
+    game.setScreen(GdxGame.ScreenType.STATISTICS);
   }
 }
