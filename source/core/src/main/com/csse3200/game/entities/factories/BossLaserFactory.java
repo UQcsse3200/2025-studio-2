@@ -5,14 +5,12 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.BossLaserAttack;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.rendering.LaserRenderComponent;
+import com.csse3200.game.rendering.BossLaserRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.BossLaserAttack;
 
 import java.lang.annotation.Target;
 
@@ -31,7 +29,7 @@ public class BossLaserFactory {
      * @param dir direction for the initial laser beam to face in degrees
      * @return the newly created laser emitter entity
      */
-    public static Entity createLaserEmitter(Entity target, float dir) {
+    public static Entity createBossLaser(Entity target, float dir) {
         // setup animation
         TextureAtlas atlas = ServiceLocator.getResourceService()
                 .getAsset("images/boss.atlas", TextureAtlas.class);
@@ -56,9 +54,8 @@ public class BossLaserFactory {
         );
 
         Entity laser = new Entity()
-                .addComponent(new LaserEmitterComponent(dir))
                 .addComponent(new BossLaserAttack(target))
-                .addComponent(new LaserRenderComponent())
+                .addComponent(new BossLaserRenderComponent())
                 .addComponent(new CombatStatsComponent(1, ATTACK_DAMAGE))
                 .addComponent(animator)
                 .addComponent(light);

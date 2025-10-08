@@ -9,6 +9,7 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.rendering.BossLaserRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -35,9 +36,9 @@ public class BossLaserAttack extends Component {
     private boolean attacking = true;
 
     private Entity target; // player to track
-    private ShapeRenderer shapeRenderer;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
+    private BossLaserRenderComponent renderComponent;
 
     // Raycast collision masks
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
@@ -51,10 +52,10 @@ public class BossLaserAttack extends Component {
 
     @Override
     public void create() {
-        shapeRenderer = new ShapeRenderer();
         physicsEngine = ServiceLocator.getPhysicsService().getPhysics();
         if (physicsEngine == null) throw new IllegalStateException("Physics engine not found");
         combatStats = entity.getComponent(CombatStatsComponent.class);
+        renderComponent = entity.getComponent(BossLaserRenderComponent.class);
         attacking = true;
         attackTimer = 0f;
     }
@@ -84,6 +85,7 @@ public class BossLaserAttack extends Component {
         }
 
         buildLaser();
+        updateRender();
     }
 
     private void buildLaser() {
@@ -125,29 +127,10 @@ public class BossLaserAttack extends Component {
             }
         }
     }
-
-    public void render() {
-        if (!attacking || positions.size() < 2) return;
-
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        shapeRenderer.setColor(Color.RED);
-
-        for (int i = 0; i < positions.size() - 1; i++) {
-            Vector2 start = positions.get(i);
-            Vector2 end = positions.get(i + 1);
-
-            // Draw dotted laser
-            int segments = 10; // number of dots per segment
-            for (int j = 0; j < segments; j++) {
-                float t = j / (float) segments;
-                Vector2 pos = start.cpy().lerp(end, t);
-                if (j % 2 == 0) { // skip every second point for dotted effect
-                    shapeRenderer.point(pos.x, pos.y, 0f);
-                }
-            }
+    private void updateRender() {
+        if (renderComponent != null) {
+            renderComponent.setLaserPositions(positions);
         }
-
-        shapeRenderer.end();
     }
 
     private static short categoryBitsFromHit(RaycastHit hit) {
@@ -175,12 +158,6 @@ public class BossLaserAttack extends Component {
     }
 
     public List<Vector2> getPositions() { return positions; }
-
     @Override
-    public void dispose() {
-        if (shapeRenderer != null) {
-            shapeRenderer.dispose();
-            shapeRenderer = null;
-        }
-    }
+    public void dispose(){}
 }
