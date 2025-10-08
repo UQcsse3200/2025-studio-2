@@ -368,7 +368,7 @@ public class PlayerActions extends Component {
   private void jetpackOn() {
     isJetpackOn = true;
     isJumping = true;
-    jetpackSound.loop();
+    jetpackSound.loop(UserSettings.get().masterVolume);
   }
 
   /**
