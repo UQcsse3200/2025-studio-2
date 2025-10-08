@@ -884,7 +884,7 @@ public class LevelOneGameArea extends GameArea {
 //        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
 //    }
     public void spawnKey() {
-        Entity key = CollectableFactory.createKey("key:door");
+        Entity key = CollectableFactory.createCollectable("key:door");
         key.addComponent(new MinimapComponent("images/key.png"));
         spawnEntityAt(key, new GridPoint2(46,56), true, true);
         spawnEntityAt(CollectableFactory.createObjective("keycard_completed", 0.2f, 0.2f),    new GridPoint2(46, 56), true, true);
