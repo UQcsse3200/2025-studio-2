@@ -152,7 +152,7 @@ public class TutorialGameArea extends GameArea {
         spawnDeathZone();
 //        spawnWalls();
         spawnDoor();
-//        spawnButtons();
+        spawnButtons();
 //        spawnObjectives();
 //        spawnTerminals();
         spawnBoxes();
@@ -563,7 +563,7 @@ public class TutorialGameArea extends GameArea {
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(66,53), true, true);
+        spawnEntityAt(door, new GridPoint2(63,53), true, true);
     }
 
     private void playMusic() {
@@ -721,7 +721,7 @@ public class TutorialGameArea extends GameArea {
     private void spawnButtons() {
         Entity button2 = ButtonFactory.createButton(false, "door", "left");
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(button2, new GridPoint2(79 ,20), true,  true);
+        spawnEntityAt(button2, new GridPoint2(79 ,4), true,  true);
 
         //listener to spawn key when door button pushed
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
@@ -738,7 +738,7 @@ public class TutorialGameArea extends GameArea {
 //    }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
-        spawnEntityAt(key, new GridPoint2(1,37), true, true);
+        spawnEntityAt(key, new GridPoint2(68,53), true, true);
     }
 
     private void spawnObjectives() {
