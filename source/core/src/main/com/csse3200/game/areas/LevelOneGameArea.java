@@ -69,7 +69,6 @@ public class LevelOneGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
-            "images/boss.png",
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png",
@@ -118,7 +117,6 @@ public class LevelOneGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
-            "images/boss.atlas",
             "images/volatile_platform.atlas",
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
@@ -157,14 +155,10 @@ public class LevelOneGameArea extends GameArea {
         spawnUpgrade("dash", 23, 4);
         // spawnUpgrade("glider", 7, 6);  // won't be used in level one
         // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
-        //spawnPatrollingDrone();
-        spawnBomberDrone();
-        spawnSelfDestructDrone();
-        spawnAutoBomberDrone();
-        spawnUpgrade("dash", 9, 6);
-        spawnUpgrade("glider", 7, 6);
-        spawnUpgrade("jetpack", 5, 6);
         spawnSecurityCams();
+        //spawnBomberDrone();
+        //spawnSelfDestructDrone();
+        spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
         //spawnPlatformBat();
@@ -705,82 +699,6 @@ public class LevelOneGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
-
-    private void spawnPatrollingDrone() {
-        GridPoint2 spawnTile = new GridPoint2(11, 4);
-
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(14, 4))
-        };
-        Entity patrolDrone = EnemyFactory.createPatrollingDrone(player, patrolRoute)
-                .addComponent(new ActivationComponent("1"));
-        spawnEntityAt(patrolDrone, spawnTile, true, true);
-    }
-
-    private void spawnBomberDrone() {
-        // First bomber with cone light detection - patrols and uses its downward cone light
-        GridPoint2 spawnTile = new GridPoint2(3, 15);
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(11, 13))
-        };
-
-        // Create bomber with unique ID "bomber1"
-        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
-        spawnEntityAt(bomberDrone, spawnTile, true, true);
-
-        /*GridPoint2 spawnTile2 = new GridPoint2(30, 25);
-        Vector2[] patrolRoute2 = {
-                terrain.tileToWorldPosition(spawnTile2),
-                terrain.tileToWorldPosition(new GridPoint2(38, 25)),
-                terrain.tileToWorldPosition(new GridPoint2(38, 30)),
-                terrain.tileToWorldPosition(new GridPoint2(30, 30))
-        };
-
-        // Create second bomber with unique ID "bomber2"
-        Entity bomberDrone2 = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute2, "bomber2");
-        spawnEntityAt(bomberDrone2, spawnTile2, true, true);*/
-    }
-
-    // Optional: Method for spawning a stationary bomber at a specific position
-    private void spawnStationaryBomber(GridPoint2 position, String bomberId) {
-        Entity bomberDrone = EnemyFactory.createBomberDrone(
-                player,
-                terrain.tileToWorldPosition(position),
-                bomberId
-        );
-        spawnEntityAt(bomberDrone, position, true, true);
-    }
-
-    private void spawnSelfDestructDrone() {
-        GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
-        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
-                player,
-                terrain.tileToWorldPosition(spawnTile)
-        ).addComponent(new ActivationComponent("1"));
-
-        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
-    }
-
-    private void spawnAutoBomberDrone() {
-        GridPoint2 spawnTile = new GridPoint2(15, 15);
-        Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(45, 15))
-        };
-
-        // Create the auto bomber
-        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
-                player,           // target reference
-                patrolRoute,      // patrol waypoints
-                "auto_bomber_1"   // unique ID
-        );
-
-
-        spawnEntityAt(autoBomber, spawnTile, true, true);
-    }
-
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
@@ -968,6 +886,46 @@ public class LevelOneGameArea extends GameArea {
         Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 270f, "2");
         spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
     }
+
+    private void spawnBomberDrone() {
+        // Patrolling bomber with cone light detector
+        GridPoint2 spawnTile = new GridPoint2(55, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+        };
+
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(40, 15);
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
+
+    private void spawnAutoBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(55, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+        };
+
+        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
+                player,           // target reference
+                patrolRoute,      // patrol waypoints
+                "auto_bomber_1"   // unique ID
+        );
+
+        spawnEntityAt(autoBomber, spawnTile, true, true);
+    }
+
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalPlatformBat = platformBatBuilder
