@@ -60,7 +60,7 @@ public class LaserEmitterComponent extends Component {
     private float dir = 90f;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
-    private static final float FIRE_COOLDOWN = 0.3f; // seconds between shots
+    private static final float FIRE_COOLDOWN = 0f; // seconds between shots
     private float timeSinceLastShot = 0f;
     private boolean laserActive = false;
 
