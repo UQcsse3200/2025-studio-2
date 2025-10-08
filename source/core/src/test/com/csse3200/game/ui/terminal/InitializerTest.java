@@ -2,6 +2,7 @@ package com.csse3200.game.ui.terminal;
 
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.EntityService;
@@ -39,6 +40,7 @@ class InitializerTest {
   private PhysicsComponent physicsComponent;
   private GameArea mockGameArea;
   private MainGameScreen mainGameScreen;
+  private PlayerActions playerActions;
 
   private TestConsole console;
 
@@ -311,20 +313,28 @@ class InitializerTest {
   }
 
   @Test
-  void testSpawnDoorKey() {
+  void testSpawnDoorKeyCommand() {
     shell.eval("spawnDoorKey();");
 
     verify(mockEntityService, times(1)).register(any());
   }
 
   @Test
-  void testGetGameArea() {
+  void testGetGameAreaCommand() {
     Object result = shell.eval("getGameArea();");
 
     assertEquals(mockGameArea, result);
   }
 
-  void testGet
+  @Test
+  void testFlyCommand() {
+
+  }
+
+  @Test
+  void testTeleportCommand() {
+
+  }
 
   @AfterEach
   void tearDownFactories() {
