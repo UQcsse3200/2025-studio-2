@@ -12,163 +12,117 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 
 /**
- * A ui component for displaying player stats, e.g. health.
+ * A ui component for displaying player stats, e.g. health and stamina.
  */
 public class PlayerStatsDisplay extends UIComponent {
+    private Table healthTable;
+    private Table staminaTable;
 
-  /**
-   * Table used for storing all UI actors related to health bar
-   */
-  Table healthTable;
+    private Image heartImage;
+    private Label healthLabel;
+    private Label staminaLabel;
+    private ProgressBar staminaBar;
+    private Image staminaImage;
 
-  /**
-   * Image icon used in health bar
-   */
-  private Image heartImage;
-  /**
-   * Health label
-   */
-  private Label healthLabel;
-  /**
-   * The maximum number of hearts to represent max health
-   */
-  private static final int MAX_HEARTS = 10;
+    private static final int MAX_HEARTS = 10;
 
-  /**
-   * Table used for storing all UI actors related to stamina bar
-   */
-  private Table staminaTable;
-  /**
-   * Stamina label
-   */
-  private Label staminaLabel;
-  /**
-   * Progress bar used to visually show stamina
-   */
-  private ProgressBar staminaBar;
-  /**
-   * Image icon used in stamina bar
-   */
-  private Image staminaImage;
+    private boolean visible = false; // start hidden
 
-  /**
-   * Creates reusable ui styles and adds actors to the stage.
-   */
-  @Override
-  public void create() {
-    super.create();
-    addActors();
+    @Override
+    public void create() {
+        super.create();
+        addActors();
+        setVisible(false); // ensure hidden at start
 
-    entity.getEvents().addListener("updateHealth", this::updatePlayerHealthUI);
-    entity.getEvents().addListener("updateStamina", this::updatePlayerStaminaUI);
-  }
-
-  /**
-   * Creates actors and positions them on the stage using a table.
-   * @see Table for positioning options
-   */
-  private void addActors() {
-    // Create health table
-    createHealthTable();
-    stage.addActor(healthTable);
-    // Create stamina table
-    createStaminaTable();
-    stage.addActor(staminaTable);
-  }
-
-  /**
-   * Helper method that creates and sets up the initial stamina table
-   */
-  private void createStaminaTable() {
-    // Create stamina table
-    staminaTable = new Table();
-    staminaTable.top().left();
-    staminaTable.setFillParent(true);
-    staminaTable.padTop(45f).padLeft(5f);
-    staminaTable.setName("stamina");
-    staminaTable.setUserObject(entity);
-
-    // Stamina image
-    float staminaSideLength = 30f;
-    staminaImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/stamina.png", Texture.class));
-
-    // Stamina label
-    staminaLabel = new Label("Stamina: ", skin, "large");
-
-    // Stamina bar
-    StaminaComponent staminaComp = entity.getComponent(StaminaComponent.class);
-    staminaBar = new ProgressBar(-5f, (float) staminaComp.getMaxStamina(), 1f, false, skin);
-    staminaBar.setValue((float) staminaComp.getCurrentStamina());
-
-    // Add actors to stamina table
-    staminaTable.add(staminaImage).size(staminaSideLength).pad(5);
-    staminaTable.add(staminaLabel);
-    staminaTable.add(staminaBar);
-  }
-
-  /**
-   * Helper method that creates and sets up the initial health table
-   */
-  private void createHealthTable() {
-    // Create health table
-    healthTable = new Table();
-    healthTable.top().left();
-    healthTable.setFillParent(true);
-    healthTable.padTop(5f).padLeft(5f);
-    healthTable.setName("health");
-    healthTable.setUserObject(entity);
-    updateHealthTable(entity.getComponent(CombatStatsComponent.class).getHealth());
-  }
-
-  /**
-   * Update the health table with correct label and number of hearts
-   * @param playerHealth The player health, as it currently stands
-   */
-  private void updateHealthTable(int playerHealth) {
-    // Heart image
-    float heartSideLength = 30f;
-    heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
-
-    // Player hearts
-    int numHearts = playerHealth / MAX_HEARTS;
-
-    // Health text
-    healthLabel = new Label("Health: ", skin, "large");
-
-    healthTable.add(heartImage).size(heartSideLength).pad(5);
-    healthTable.add(healthLabel);
-    for (int i = 0; i < numHearts; i++) {
-      heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
-      healthTable.add(heartImage).size(heartSideLength).pad(5);
+        entity.getEvents().addListener("updateHealth", this::updatePlayerHealthUI);
+        entity.getEvents().addListener("updateStamina", this::updatePlayerStaminaUI);
     }
-  }
 
-  @Override
-  public void draw(SpriteBatch batch)  {
-    // draw is handled by the stage
-  }
+    private void addActors() {
+        createHealthTable();
+        stage.addActor(healthTable);
 
-  /**
-   * Updates the player's health on the ui.
-   * @param health player health
-   */
-  public void updatePlayerHealthUI(int health) {
-    healthTable.clear();
-    updateHealthTable(health);
-  }
+        createStaminaTable();
+        stage.addActor(staminaTable);
+    }
 
-  /**
-   * Updates the player's stamina on the ui.
-   * @param stamina the player's current stamina as an integer
-   */
-  public void updatePlayerStaminaUI(float stamina) {
-    staminaBar.setValue(stamina);
-  }
+    private void createStaminaTable() {
+        staminaTable = new Table();
+        staminaTable.top().left();
+        staminaTable.setFillParent(true);
+        staminaTable.padTop(45f).padLeft(5f);
+        staminaTable.setName("stamina");
+        staminaTable.setUserObject(entity);
 
-  @Override
-  public void dispose() {
-    super.dispose();
-    if (healthTable != null) healthTable.remove();
-    if (staminaTable != null) staminaTable.remove();
-  }
+        float staminaSideLength = 30f;
+        staminaImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/stamina.png", Texture.class));
+
+        staminaLabel = new Label("Stamina: ", skin, "large");
+
+        StaminaComponent staminaComp = entity.getComponent(StaminaComponent.class);
+        staminaBar = new ProgressBar(0f, (float) staminaComp.getMaxStamina(), 1f, false, skin);
+        staminaBar.setValue((float) staminaComp.getCurrentStamina());
+
+        staminaTable.add(staminaImage).size(staminaSideLength).pad(5);
+        staminaTable.add(staminaLabel);
+        staminaTable.add(staminaBar);
+    }
+
+    private void createHealthTable() {
+        healthTable = new Table();
+        healthTable.top().left();
+        healthTable.setFillParent(true);
+        healthTable.padTop(5f).padLeft(5f);
+        healthTable.setName("health");
+        healthTable.setUserObject(entity);
+        updateHealthTable(entity.getComponent(CombatStatsComponent.class).getHealth());
+    }
+
+    private void updateHealthTable(int playerHealth) {
+        float heartSideLength = 30f;
+        heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
+
+        int numHearts = playerHealth / MAX_HEARTS;
+
+        healthLabel = new Label("Health: ", skin, "large");
+
+        healthTable.add(heartImage).size(heartSideLength).pad(5);
+        healthTable.add(healthLabel);
+        for (int i = 0; i < numHearts; i++) {
+            heartImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/health.png", Texture.class));
+            healthTable.add(heartImage).size(heartSideLength).pad(5);
+        }
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        // draw is handled by the stage
+    }
+
+    public void updatePlayerHealthUI(int health) {
+        healthTable.clear();
+        updateHealthTable(health);
+    }
+
+    public void updatePlayerStaminaUI(float stamina) {
+        staminaBar.setValue(stamina);
+    }
+
+    /** Toggle visibility of the stats HUD */
+    public void setVisible(boolean visible) {
+        this.visible = visible;
+        if (healthTable != null) healthTable.setVisible(visible);
+        if (staminaTable != null) staminaTable.setVisible(visible);
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (healthTable != null) healthTable.remove();
+        if (staminaTable != null) staminaTable.remove();
+    }
 }

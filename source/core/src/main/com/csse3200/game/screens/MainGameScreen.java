@@ -20,6 +20,7 @@ import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.player.LeaderboardEntryDisplay;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -126,10 +127,41 @@ public class MainGameScreen extends ScreenAdapter {
     gameArea.create();
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
-    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      switchArea(getNextArea(area), player);
-    });
-    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
+      gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
+          Areas next = getNextArea(gameAreaEnum);
+
+          // Gather stats
+          int health = player.getComponent(CombatStatsComponent.class).getHealth();
+          float stamina = player.getComponent(com.csse3200.game.components.StaminaComponent.class).getCurrentStamina();
+          long completionTime = gameTime.getTimeSince(lvlStartTime);
+
+          // If player hasn’t registered a name yet, show entry screen
+          if (StatsTracker.getLevelsCompleted() == 0) { // first time → prompt
+              LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
+              Entity uiEntity = new Entity().addComponent(entryDisplay);
+              ServiceLocator.getEntityService().register(uiEntity);
+
+              uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
+                  String name = entryDisplay.getEnteredName();
+                  if (name != null && !name.isEmpty()) {
+                      // Save to leaderboard
+                      leaderboardComponent.updateLeaderboard(name, completionTime);
+                      // Mark stats
+                      StatsTracker.completeLevel();
+                  } else {
+                      // Skipped → still increment level stats, but don’t save name
+                      StatsTracker.completeLevel();
+                  }
+                  switchArea(next, player); // continue to cutscene/next level
+              });
+          } else {
+              // Already completed at least one level → skip entry screen
+              StatsTracker.completeLevel();
+              switchArea(next, player);
+          }
+      });
+
+      gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
       switchArea(getNextArea(area), play);
     });
 
@@ -251,6 +283,9 @@ public class MainGameScreen extends ScreenAdapter {
       gameArea.getEvents().addListener("reset", this::onGameAreaReset);
       gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
     }
+      // Re-register input service so player controls work in the new area
+      createUI();
+
   }
 
     /**

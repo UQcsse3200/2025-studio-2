@@ -57,13 +57,14 @@ public class LeaderboardComponent {
 
     public void updateLeaderboard(String name, long score) {
         HashMap<String, Long> leaderboard = readData();
+        if (leaderboard == null) {
+            leaderboard = new HashMap<>();
+        }
         Long time = leaderboard.get(name);
-
         if (time == null || time > score) {
             leaderboard.put(name, score);
         }
-//            leaderboard.put(name, score);
-
         writeData(leaderboard);
     }
+
 }
