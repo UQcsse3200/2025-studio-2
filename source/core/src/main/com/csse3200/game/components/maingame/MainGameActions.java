@@ -28,7 +28,6 @@ public class MainGameActions extends Component {
    */
   private void onExit() {
     logger.info("Exiting main game screen");
-    StatsTracker.endSession();
     game.setScreen(GdxGame.ScreenType.MAIN_MENU);
   }
 }

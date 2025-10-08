@@ -5,8 +5,8 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 
 /**
- * This class listens to events relevant to the Stats page and does something
- * when one of the events is triggered.
+ * This class listens to events relevant to the leaderboard page and does
+ * something when one of the events is triggered.
  */
 public class LeaderboardActions extends Component {
     private GdxGame game;
@@ -18,20 +18,13 @@ public class LeaderboardActions extends Component {
     @Override
     public void create() {
         entity.getEvents().addListener("exit", this::onExit);
-        entity.getEvents().addListener("reset", this::resetStats);
+
     }
 
     /**
-     * Exits the stats screen.
+     * Exits the leaderboard screen.
      */
     private void onExit() {
         game.setScreen(GdxGame.ScreenType.MAIN_MENU);
-    }
-
-    /**
-     * Resets the stats.
-     */
-    private void resetStats() {
-        StatsTracker.resetStatsFile();
     }
 }

@@ -17,14 +17,16 @@ public class StatsTracker {
     private static final String FILE_PATH = "configs/stats.json";
 
     public StatsTracker() {
-        resetSession();
+        loadStats();
     }
 
     /**
      * Starts timer for session playtime
      */
     public static void startSession() {
+        loadStats();
         sessionStartTime = System.currentTimeMillis();
+        System.out.println("Session start");
     }
 
     /**
@@ -32,6 +34,8 @@ public class StatsTracker {
      */
     public static void endSession() {
         playtime += System.currentTimeMillis() - sessionStartTime;
+        System.out.println("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
+        System.out.println("Total playtime before save: " + playtime);
         saveStats();
     }
 
@@ -83,9 +87,6 @@ public class StatsTracker {
      */
     public static long getPlaytimeMinutes() {
         long total = playtime;
-        if (sessionStartTime > 0) {
-            total += (System.currentTimeMillis() - sessionStartTime);
-        }
         return total / 60000; // ms to minutes
     }
 
@@ -144,11 +145,7 @@ public class StatsTracker {
             deathCount = data.deathCount;
             achievementsUnlocked = data.achievementsUnlocked;
         } else {
-            playtime = 0;
-            upgradesCollected = 0;
-            levelsCompleted = 0;
-            deathCount = 0;
-            achievementsUnlocked = 0;
+            resetSession();
         }
     }
 
