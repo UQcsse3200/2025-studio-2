@@ -132,8 +132,12 @@ public class MainGameScreen extends ScreenAdapter {
     gameArea.create();
 
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      logger.info("Door entered in sprint1 with key {}", player);
-      switchArea("cutscene1", player);
+      if (gameArea instanceof TutorialGameArea) {
+        game.setScreen(new TutorialMenuScreen(game));
+      } else {
+        logger.info("Door entered in sprint1 with key {}", player);
+        switchArea("cutscene1", player);
+      }
     });
 
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
