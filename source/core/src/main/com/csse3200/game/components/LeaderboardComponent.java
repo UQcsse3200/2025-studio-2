@@ -11,7 +11,7 @@ public class LeaderboardComponent {
     private final GsonJsonUtils converter;
 
     public LeaderboardComponent() {
-        this.filePath = "configs/leaderboard.json";
+        this.filePath = "leaderboard.json";
         this.converter = new GsonJsonUtils();
     }
 
