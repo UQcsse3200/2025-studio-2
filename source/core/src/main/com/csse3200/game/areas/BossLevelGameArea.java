@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.BossLaserAttack;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -19,6 +20,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
@@ -571,15 +573,30 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnBoss() {
-        GridPoint2 spawnPos = new GridPoint2(1, 40);
-        Entity boss = EnemyFactory.createBossEnemy(
-                player,
-                terrain.tileToWorldPosition(spawnPos)
-        );
-        boss.addComponent(new com.csse3200.game.components.boss.BossSpawnMiniTest());
+        // Spawn position in grid coordinates
+        GridPoint2 spawnPos = new GridPoint2(35, 9);
+
+        // Convert to world coordinates
+        Vector2 worldPos = terrain.tileToWorldPosition(spawnPos);
+
+        // Create the boss entity
+        Entity boss = EnemyFactory.createBossEnemy(player, worldPos);
+
+        // Add BossLaserAttack to track the player and render the laser
+        BossLaserAttack laserAttack = new BossLaserAttack(player);
+        boss.addComponent(laserAttack);
+
+        // Add event to automatically start shooting after spawn
+        boss.getEvents().addListener("spawned", () -> {
+            laserAttack.getPositions().clear();
+        });
+
+        // Add rendering component to display the laser
+        boss.addComponent(new LaserRenderComponent());
+
+        // Spawn the boss in the world
         spawnEntityAt(boss, spawnPos, true, true);
     }
-
     private void spawnDeathZone() {
         // Death zone at the start of level
         GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
