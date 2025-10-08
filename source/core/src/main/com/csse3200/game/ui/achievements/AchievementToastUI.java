@@ -6,9 +6,9 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.csse3200.game.achievements.AchievementId;
-import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
+import com.csse3200.game.achievements.AchievementService;
 
 public class AchievementToastUI extends UIComponent implements AchievementService.Listener {
     private Table container;
@@ -26,6 +26,7 @@ public class AchievementToastUI extends UIComponent implements AchievementServic
         label.getColor().a = 0f;
         container.add(label).center();
         stage.addActor(container);
+        AchievementService.get().addListener(new AchievementToastUI());
 
         AchievementService.get().addListener(this);
     }

@@ -1,7 +1,6 @@
 package com.csse3200.game.components.achievements;
-
-import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.achievements.AchievementService;
+
 import com.csse3200.game.components.Component;
 import com.csse3200.game.services.ServiceLocator;
 

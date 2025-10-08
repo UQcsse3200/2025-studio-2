@@ -26,6 +26,7 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementProgression;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -135,6 +136,8 @@ public class LevelOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
+
     }
     protected void loadEntities() {
         cancelPlateDebouncers();
@@ -675,6 +678,9 @@ public class LevelOneGameArea extends GameArea {
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
+        door.getEvents().addListener("doorOpened", () -> {
+            AchievementProgression.onLevelComplete("level1");
+        });
     }
 
     private void playMusic() {
