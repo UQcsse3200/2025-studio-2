@@ -165,14 +165,14 @@ public class TutorialTwoGameArea extends GameArea {
         spawnBoxes();
         spawnTutorialBats();
 //        spawnCollectables();
-//        spawnTutorials();
+        spawnTutorials();
          spawnUpgrade("glider", 9, 39);
          spawnUpgrade("jetpack", 76, 4);
     }
 
     private void spawnTutorials() {
-        spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
-        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
+        spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
+        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(11, 15), true, true);
     }
 
     private void spawnTerminals() {
