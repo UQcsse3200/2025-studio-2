@@ -2,6 +2,7 @@ package com.csse3200.game.physics;
 
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.components.*;
+import com.csse3200.game.components.computerterminal.ComputerTerminalComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.ButtonComponent;
@@ -63,6 +64,9 @@ public class ObjectContactListener implements ContactListener {
 
         setPlayerInRangeOfDeathZone(a, b);
         setPlayerInRangeOfDeathZone(b, a);
+
+        setPlayerInRangeOfComputerTerminal(a, b, true);
+        setPlayerInRangeOfComputerTerminal(b, a, true);
     }
 
     /**
@@ -161,6 +165,9 @@ public class ObjectContactListener implements ContactListener {
 
         setPlayerInRangeOfBox(a, b, false);
         setPlayerInRangeOfBox(b, a, false);
+
+        setPlayerInRangeOfComputerTerminal(a, b, false);
+        setPlayerInRangeOfComputerTerminal(b, a, false);
     }
 
     @Override
@@ -218,6 +225,18 @@ public class ObjectContactListener implements ContactListener {
         if (player != null && terminalComponent != null) {
             ColliderComponent collider = colliding.getComponent(ColliderComponent.class);
             terminalComponent.setPlayerInRange(collider);
+        }
+    }
+
+    private void setPlayerInRangeOfComputerTerminal(Entity terminal, Entity other, boolean inRange) {
+        ComputerTerminalComponent comp = terminal.getComponent(ComputerTerminalComponent.class);
+        PlayerActions player = other.getComponent(PlayerActions.class);
+
+        if (comp != null && player != null) {
+            ColliderComponent collider = inRange
+                    ? other.getComponent(ColliderComponent.class)
+                    : null;
+            comp.setPlayerInRange(collider);
         }
     }
 }

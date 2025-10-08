@@ -25,7 +25,6 @@ import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +103,8 @@ public class LevelOneGameArea extends GameArea {
             "images/health-potion.atlas",
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas"
+            "images/doors.atlas",
+            "images/animated-monitors.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -142,6 +142,7 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnTerminals();
+        spawnComputerTerminal();
     }
 
     private void spawnTerminals() {
@@ -653,6 +654,13 @@ public class LevelOneGameArea extends GameArea {
 //            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
 //        }
     }
+
+    private void spawnComputerTerminal() {
+        Entity terminal = ComputerTerminalFactory.createTerminal();
+        spawnEntityAt(terminal, new GridPoint2(35, 5), true, true);
+    }
+
+
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
