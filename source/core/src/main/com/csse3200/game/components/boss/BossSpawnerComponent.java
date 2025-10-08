@@ -23,7 +23,7 @@ public class BossSpawnerComponent extends Component {
 	private float spawnCooldown = 0f;
 	private final float spawnInterval;
 	private int currentTriggerIndex = 0;
-	private float debugTimer = 0f;
+	// private float debugTimer = 0f;
 
 	// Track spawned drones for cleanup
 	private final List<Entity> spawnedDrones = new ArrayList<>();
@@ -56,11 +56,9 @@ public class BossSpawnerComponent extends Component {
 	 * Find the player entity in the entity service
 	 */
 	private void findPlayer() {
-		// Look for player entity by checking for PlayerActions component
 		for (Entity entity : ServiceLocator.getEntityService().get_entities()) {
 			if (entity.getComponent(com.csse3200.game.components.player.PlayerActions.class) != null) {
 				player = entity;
-				logger.info("Player found: {}", player);
 				return;
 			}
 		}
@@ -92,7 +90,6 @@ public class BossSpawnerComponent extends Component {
 
 			// Trigger when player X position reaches or exceeds trigger X
 			if (!triggered.get(i) && playerPos.x >= trigger.x) {
-				logger.info("TRIGGER ACTIVATED! Player X: {} >= Trigger X: {}", playerPos.x, trigger.x);
 				triggered.set(i, true);
 				currentTriggerIndex = i;
 				startSpawningPhase();
@@ -108,7 +105,6 @@ public class BossSpawnerComponent extends Component {
 		spawnCooldown = 0f; // Start spawning immediately
 		entity.getEvents().trigger("spawningPhaseStart", currentTriggerIndex);
 		entity.getEvents().trigger("generateDroneStart"); // Trigger boss animation
-		logger.info("Spawning phase {} started!", currentTriggerIndex);
 	}
 
 	/**
@@ -278,5 +274,13 @@ public class BossSpawnerComponent extends Component {
 	 */
 	public boolean isMaxDronesReached() {
 		return totalDronesSpawned >= MAX_DRONES;
+	}
+
+	/**
+	 * Get the player entity for testing purposes
+	 * @return player entity
+	 */
+	public Entity getPlayer() {
+		return player;
 	}
 }
