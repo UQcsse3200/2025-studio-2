@@ -255,7 +255,7 @@ public class TutorialMenuDisplay extends UIComponent {
       leftDescLabel.setFontScale(1.0f);
       leftColumn.add(leftDescLabel).center().padLeft(22).padTop(5).row();
       
-      spriteTable.add(leftColumn).padLeft(10).padRight(10).padBottom(10);
+      spriteTable.add(leftColumn).padLeft(35).padRight(35).padBottom(10);
     }
     
     // Create animated sprite for walking right
@@ -283,7 +283,7 @@ public class TutorialMenuDisplay extends UIComponent {
       rightDescLabel.setFontScale(1.0f);
       rightColumn.add(rightDescLabel).center().padLeft(22).padTop(5).row();
       
-      spriteTable.add(rightColumn).padLeft(10).padRight(10).padBottom(10);
+      spriteTable.add(rightColumn).padLeft(35).padRight(35).padBottom(10);
     }
     
     // Create animated sprite for crouching
@@ -311,7 +311,7 @@ public class TutorialMenuDisplay extends UIComponent {
       crouchDescLabel.setFontScale(1.0f);
       crouchColumn.add(crouchDescLabel).center().padLeft(22).padTop(5).row();
       
-      spriteTable.add(crouchColumn).padLeft(10).padRight(10).padBottom(10);
+      spriteTable.add(crouchColumn).padLeft(35).padRight(35).padBottom(10);
     }
     
     // Create animated sprite for jumping
@@ -339,7 +339,7 @@ public class TutorialMenuDisplay extends UIComponent {
       jumpDescLabel.setFontScale(1.0f);
       jumpColumn.add(jumpDescLabel).center().padLeft(22).padTop(5).row();
       
-      spriteTable.add(jumpColumn).padLeft(10).padRight(10).padBottom(10);
+      spriteTable.add(jumpColumn).padLeft(35).padRight(35).padBottom(10);
     }
     
     contentTable.add(spriteTable).left().colspan(2).row();
