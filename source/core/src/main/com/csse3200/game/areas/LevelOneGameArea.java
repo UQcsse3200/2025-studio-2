@@ -41,6 +41,7 @@ public class LevelOneGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
+    private Vector2[] collected = new Vector2[3];
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -670,7 +671,7 @@ public class LevelOneGameArea extends GameArea {
                 .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
                 .addComponent(physics)
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
-                .addComponent(new ItemCollectableComponent());
+                .addComponent(new ItemCollectableComponent(this));
                 //.addComponent(new CollectableComponentV2("hardware"));
         collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
