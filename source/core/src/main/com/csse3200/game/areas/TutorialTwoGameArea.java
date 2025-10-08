@@ -204,7 +204,7 @@ public class TutorialTwoGameArea extends GameArea {
     // Lower Ladder dimensions
     private final int lowerLadderX = 13;
     private final int lowerLadderY = 19;
-    private final int lowerLadderHeight = 19;
+    private final int lowerLadderHeight = 18;
     private final int lowerLadderOffset = 13;
     private boolean isLowerLadderExtended = false;
     private boolean isLowerLadderSpawning = false;
@@ -363,20 +363,20 @@ public class TutorialTwoGameArea extends GameArea {
         groundFloor1.setScale(16, 12);
         spawnEntityAt(groundFloor1, groundFloor1Pos, false, false);
 
-        GridPoint2 groundFloor2Pos = new GridPoint2(15, -20);
-        Entity groundFloor2 = FloorFactory.createGroundFloor();
-        groundFloor2.setScale(25f, 12f);
-        spawnEntityAt(groundFloor2, groundFloor2Pos, false, false);
+//        GridPoint2 groundFloor2Pos = new GridPoint2(15, -20);
+//        Entity groundFloor2 = FloorFactory.createGroundFloor();
+//        groundFloor2.setScale(25f, 12f);
+//        spawnEntityAt(groundFloor2, groundFloor2Pos, false, false);
 
         GridPoint2 groundFloor3Pos = new GridPoint2(70, -20);
         Entity groundFloor3 = FloorFactory.createGroundFloor();
         groundFloor3.setScale(25, 12);
         spawnEntityAt(groundFloor3, groundFloor3Pos, false, false);
 
-        GridPoint2 gateFloorPos = new GridPoint2(33, 60);
+        GridPoint2 doorFloorPos = new GridPoint2(66, 51);
         Entity gateFloor = FloorFactory.createStaticFloor();
         gateFloor.setScale(5f, 0.8f);
-        spawnEntityAt(gateFloor, gateFloorPos, false, false);
+        spawnEntityAt(gateFloor, doorFloorPos, false, false);
 
         GridPoint2 puzzleGroundPos = new GridPoint2(15, 32);
         Entity puzzleGround = FloorFactory.createStaticFloor();
@@ -425,89 +425,89 @@ public class TutorialTwoGameArea extends GameArea {
         // step8.setScale(2f,0.5f);
         // spawnEntityAt(step8, step8Pos,false, false);
 
-        // MOVING PLATFORM WITH BUTTONS
-        GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
-        Vector2 offsetWorldButton = new Vector2(9f, 0f);
-        float speedButton = 2f;
+//        // MOVING PLATFORM WITH BUTTONS
+//        GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
+//        Vector2 offsetWorldButton = new Vector2(9f, 0f);
+//        float speedButton = 2f;
+//
+//        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speedButton);
+//        buttonPlatform.setScale(2f, 0.5f);
+//        spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
+//        logger.info("Moving platform spawned at {}", buttonPlatformPos);
+//
+//        //start button
+//        Entity buttonStart = ButtonFactory.createButton(false, "platform", "right");
+//        buttonStart.addComponent(new TooltipSystem.TooltipComponent(
+//            "Platform Button\nPress E to interact",
+//            TooltipSystem.TooltipStyle.DEFAULT
+//        ));
+//        GridPoint2 buttonStartPos = new GridPoint2(56, 23);
+//        spawnEntityAt(buttonStart, buttonStartPos, true, true);
+//        logger.info("Platform button spawned at {}", buttonStartPos);
+//
+//        buttonStart.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+//            if (isPressed) {
+//                logger.info("Button pressed — activating platform");
+//                buttonPlatform.getEvents().trigger("activatePlatform");
+//            } else {
+//                logger.info("Button unpressed — deactivating platform");
+//                buttonPlatform.getEvents().trigger("deactivatePlatform");
+//            }
+//        });
+//
+//        //end button (where platform stops)
+//        Entity buttonEnd = ButtonFactory.createButton(false, "platform", "left");
+//        buttonEnd.addComponent(new TooltipSystem.TooltipComponent(
+//            "Platform Button \nPress E to interact",
+//            TooltipSystem.TooltipStyle.DEFAULT
+//        ));
+//        GridPoint2 buttonEndPos = new GridPoint2(76, 23);
+//        spawnEntityAt(buttonEnd, buttonEndPos, true, true);
+//        logger.info("Platform button spawned at {}", buttonEndPos);
+//
+//        buttonEnd.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+//            if (isPressed) {
+//                logger.info("Button pressed — activating platform");
+//                buttonPlatform.getEvents().trigger("activatePlatform");
+//            } else {
+//                logger.info("Button unpressed — deactivating platform");
+//                buttonPlatform.getEvents().trigger("deactivatePlatform");
+//            }
+//        });
 
-        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speedButton);
-        buttonPlatform.setScale(2f, 0.5f);
-        spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
-        logger.info("Moving platform spawned at {}", buttonPlatformPos);
-
-        //start button
-        Entity buttonStart = ButtonFactory.createButton(false, "platform", "right");
-        buttonStart.addComponent(new TooltipSystem.TooltipComponent(
-            "Platform Button\nPress E to interact",
-            TooltipSystem.TooltipStyle.DEFAULT
-        ));
-        GridPoint2 buttonStartPos = new GridPoint2(56, 23);
-        spawnEntityAt(buttonStart, buttonStartPos, true, true);
-        logger.info("Platform button spawned at {}", buttonStartPos);
-
-        buttonStart.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed) {
-                logger.info("Button pressed — activating platform");
-                buttonPlatform.getEvents().trigger("activatePlatform");
-            } else {
-                logger.info("Button unpressed — deactivating platform");
-                buttonPlatform.getEvents().trigger("deactivatePlatform");
-            }
-        });
-
-        //end button (where platform stops)
-        Entity buttonEnd = ButtonFactory.createButton(false, "platform", "left");
-        buttonEnd.addComponent(new TooltipSystem.TooltipComponent(
-            "Platform Button \nPress E to interact",
-            TooltipSystem.TooltipStyle.DEFAULT
-        ));
-        GridPoint2 buttonEndPos = new GridPoint2(76, 23);
-        spawnEntityAt(buttonEnd, buttonEndPos, true, true);
-        logger.info("Platform button spawned at {}", buttonEndPos);
-
-        buttonEnd.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed) {
-                logger.info("Button pressed — activating platform");
-                buttonPlatform.getEvents().trigger("activatePlatform");
-            } else {
-                logger.info("Button unpressed — deactivating platform");
-                buttonPlatform.getEvents().trigger("deactivatePlatform");
-            }
-        });
-
-        // LEFT PATH
-        GridPoint2 moving1Pos = new GridPoint2(38,26);
-        Vector2 offsetWorld  = new Vector2(0f, 4f);
-        float speed = 2f;
-        Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
-        moving1.setScale(2f,0.5f);
-        spawnEntityAt(moving1, moving1Pos,false, false);
-
-        GridPoint2 removeThis1 = new GridPoint2(48,35);
-        Entity removeThis = PlatformFactory.createStaticPlatform();
-        removeThis.setScale(2f,0.5f);
-        spawnEntityAt(removeThis, removeThis1,false, false);
-
-        GridPoint2 step9Pos = new GridPoint2(57,35);
-        Entity step9 = PlatformFactory.createStaticPlatform();
-        step9.setScale(5f,0.5f);
-        spawnEntityAt(step9, step9Pos,false, false);
-
-
-        GridPoint2 step11Pos = new GridPoint2(58,53);
-        Entity step11 = PlatformFactory.createStaticPlatform();
-        step11.setScale(1.8f,0.5f);
-        spawnEntityAt(step11, step11Pos,false, false);
-
-        GridPoint2 step12Pos = new GridPoint2(52,48);
-        Entity step12 = PlatformFactory.createStaticPlatform();
-        step12.setScale(3.5f,0.5f);
-        spawnEntityAt(step12, step12Pos,false, false);
-
-        GridPoint2 step13Pos = new GridPoint2(70,48);
-        Entity step13 = PlatformFactory.createStaticPlatform();
-        step13.setScale(2f,0.5f);
-        spawnEntityAt(step13, step13Pos,false, false);
+//        // LEFT PATH
+//        GridPoint2 moving1Pos = new GridPoint2(38,26);
+//        Vector2 offsetWorld  = new Vector2(0f, 4f);
+//        float speed = 2f;
+//        Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
+//        moving1.setScale(2f,0.5f);
+//        spawnEntityAt(moving1, moving1Pos,false, false);
+//
+//        GridPoint2 removeThis1 = new GridPoint2(48,35);
+//        Entity removeThis = PlatformFactory.createStaticPlatform();
+//        removeThis.setScale(2f,0.5f);
+//        spawnEntityAt(removeThis, removeThis1,false, false);
+//
+//        GridPoint2 step9Pos = new GridPoint2(57,35);
+//        Entity step9 = PlatformFactory.createStaticPlatform();
+//        step9.setScale(5f,0.5f);
+//        spawnEntityAt(step9, step9Pos,false, false);
+//
+//
+//        GridPoint2 step11Pos = new GridPoint2(58,53);
+//        Entity step11 = PlatformFactory.createStaticPlatform();
+//        step11.setScale(1.8f,0.5f);
+//        spawnEntityAt(step11, step11Pos,false, false);
+//
+//        GridPoint2 step12Pos = new GridPoint2(52,48);
+//        Entity step12 = PlatformFactory.createStaticPlatform();
+//        step12.setScale(3.5f,0.5f);
+//        spawnEntityAt(step12, step12Pos,false, false);
+//
+//        GridPoint2 step13Pos = new GridPoint2(70,48);
+//        Entity step13 = PlatformFactory.createStaticPlatform();
+//        step13.setScale(2f,0.5f);
+//        spawnEntityAt(step13, step13Pos,false, false);
     }
 
     public void spawnDoor() {
@@ -515,7 +515,7 @@ public class TutorialTwoGameArea extends GameArea {
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(75,4), true, true);
+        spawnEntityAt(door, new GridPoint2(70,53), true, true);
     }
 
     private void playMusic() {
