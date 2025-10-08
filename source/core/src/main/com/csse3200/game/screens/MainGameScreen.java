@@ -228,7 +228,9 @@ public class MainGameScreen extends ScreenAdapter {
 
     if (newArea != null) {
       leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
-      StatsTracker.completeLevel();
+      if (newArea instanceof CutsceneArea) {
+        StatsTracker.completeLevel();
+      }
 
       gameArea = newArea;
       gameAreaEnum = area;
