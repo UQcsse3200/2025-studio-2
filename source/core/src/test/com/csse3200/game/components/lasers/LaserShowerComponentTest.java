@@ -26,14 +26,14 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-class LaserEmitterComponentTest {
-    private LaserEmitterComponent makeLaserAt(Vector2 pos, float dirDeg, PhysicsEngine engine) {
+class LaserShowerComponentTest {
+    private LaserShowerComponent makeLaserAt(Vector2 pos, float dirDeg, PhysicsEngine engine) {
         // swap in physics engine for deterministic raycasts
         ServiceLocator.registerPhysicsService(new PhysicsService(engine));
 
         Entity emitter = new Entity();
         emitter.setPosition(pos);
-        LaserEmitterComponent laser = new LaserEmitterComponent(dirDeg);
+        LaserShowerComponent laser = new LaserShowerComponent(dirDeg);
         emitter.addComponent(laser);
         emitter.create();
         return laser;
@@ -55,7 +55,7 @@ class LaserEmitterComponentTest {
     void create_shouldThrowIfPhysicsMissing() {
         // set null physics engine
         ServiceLocator.registerPhysicsService(new PhysicsService(null));
-        Entity emitter = new Entity().addComponent(new LaserEmitterComponent());
+        Entity emitter = new Entity().addComponent(new LaserShowerComponent());
         assertThrows(IllegalStateException.class, emitter::create);
     }
 
@@ -65,7 +65,7 @@ class LaserEmitterComponentTest {
         TestPhysicsEngine engine = TestPhysicsEngine.alwaysMiss();
 
         Vector2 startPos = new Vector2(10f, 4f);
-        LaserEmitterComponent laser = makeLaserAt(startPos, 0f, engine);
+        LaserShowerComponent laser = makeLaserAt(startPos, 0f, engine);
 
         // run calculations
         laser.fireLaser();
@@ -95,7 +95,7 @@ class LaserEmitterComponentTest {
                 TestPhysicsEngine.blockingHit(hitPoint)
         ));
 
-        LaserEmitterComponent laser = makeLaserAt(startPos, 0f, engine);
+        LaserShowerComponent laser = makeLaserAt(startPos, 0f, engine);
 
         laser.fireLaser();
         List<Vector2> points = laser.getPositions();
@@ -112,7 +112,7 @@ class LaserEmitterComponentTest {
         TestPhysicsEngine engine = TestPhysicsEngine.alwaysMiss();
 
         Vector2 startPos =  new Vector2(15f, 5f);
-        LaserEmitterComponent laser = makeLaserAt(startPos, 90f, engine);
+        LaserShowerComponent laser = makeLaserAt(startPos, 90f, engine);
 
         laser.fireLaser();
         List<Vector2> points = laser.getPositions();
@@ -141,7 +141,7 @@ class LaserEmitterComponentTest {
                 TestPhysicsEngine.miss()
         ));
 
-        LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
+        LaserShowerComponent laser = makeLaserAt(entityPos, 0f, engine);
         laser.fireLaser();
         List<Vector2> points = laser.getPositions();
 
@@ -174,7 +174,7 @@ class LaserEmitterComponentTest {
                 TestPhysicsEngine.miss()
         ));
 
-        LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
+        LaserShowerComponent laser = makeLaserAt(entityPos, 0f, engine);
         laser.fireLaser();
         List<Vector2> points = laser.getPositions();
         assertEquals(3, points.size());
@@ -222,7 +222,7 @@ class LaserEmitterComponentTest {
                 TestPhysicsEngine.miss()
         ));
 
-        LaserEmitterComponent laser = makeLaserAt(entityPos, 0f, engine);
+        LaserShowerComponent laser = makeLaserAt(entityPos, 0f, engine);
         laser.fireLaser();
 
         List<Vector2> points = laser.getPositions();

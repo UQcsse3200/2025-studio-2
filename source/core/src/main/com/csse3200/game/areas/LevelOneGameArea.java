@@ -12,22 +12,16 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.PressurePlateComponent;
-import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
-import com.csse3200.game.rendering.LaserRenderComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -43,6 +37,7 @@ public class LevelOneGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
+    boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -211,17 +206,15 @@ public class LevelOneGameArea extends GameArea {
         Entity four = BoxFactory.createMoveableBox();
         spawnEntityAt(four, new GridPoint2(20, 18), true, true);
     }
-    public void spawnLasers() {
+    public void spawnLaserShower() {
         final float Y = player.getPosition().y + 10f;
         final float X = player.getPosition().x;
 
-        int laserInFront = 4 /2;
-        int laserInBack = 4 -laserInFront;
 
-        for (int i = 0; i <= laserInBack; i++) {
+        for (int i = 0; i <= 2; i++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
             float x = X - ((i+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -232,10 +225,10 @@ public class LevelOneGameArea extends GameArea {
             },5f);
         }
 
-        for (int j = 0; j <= laserInFront; j++) {
+        for (int j = 0; j <=2; j++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
             float x = X + ((j+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -248,13 +241,22 @@ public class LevelOneGameArea extends GameArea {
         Entity detector = LaserDetectorFactory.createLaserDetector(0f);
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
-    public void update(float delta) {
+    public void laserShowerChecker(float delta) {
         if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             spacePressCount++;
         }
-        int SPACE_THRESHOLD = 30;
+        int SPACE_THRESHOLD = 10;
         if (spacePressCount == SPACE_THRESHOLD) {
-            spawnLasers();
+            if (has_laser==false) {
+                spawnLaserShower();
+                has_laser = true;
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        has_laser = false;
+                    }
+                },5f);
+            }
             spacePressCount = 0;
         }
     }
@@ -754,7 +756,7 @@ public class LevelOneGameArea extends GameArea {
             public void act(float delta) {
                 super.act(delta);
                 if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
-                    spawnLasers();
+                    spawnLaserShower();
                 }
             }
         });

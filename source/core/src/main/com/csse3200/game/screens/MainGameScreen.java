@@ -110,8 +110,8 @@ public class MainGameScreen extends ScreenAdapter {
 
 
     //gameArea = new SprintOneGameArea(terrainFactory);
-    gameArea = new LevelOneGameArea(terrainFactory);
-    //gameArea = new LevelTwoGameArea(terrainFactory);
+    //gameArea = new LevelOneGameArea(terrainFactory);
+    gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
 
@@ -208,9 +208,9 @@ public class MainGameScreen extends ScreenAdapter {
 
           if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
               if (gameArea instanceof LevelOneGameArea levelOneArea) {
-                  levelOneArea.update(delta);
+                  levelOneArea.laserShowerChecker(delta);
               }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
-                  levelTwoArea.update(delta);
+                  levelTwoArea.laserShowerChecker(delta);
               }
           }
       }

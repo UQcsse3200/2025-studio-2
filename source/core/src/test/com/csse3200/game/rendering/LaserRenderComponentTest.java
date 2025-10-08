@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +30,7 @@ class LaserRenderComponentTest {
     private final Color glowColor = new Color(1f, 0.32f, 0.32f, 1f);
 
     Entity laser;
-    LaserEmitterComponent emitter;
+    LaserShowerComponent emitter;
     LaserRenderComponent render;
     SpriteBatch batch;
     TextureRegion pixel;
@@ -38,7 +38,7 @@ class LaserRenderComponentTest {
     @BeforeEach
     void setUp() throws Exception {
         laser = new Entity();
-        emitter = mock(LaserEmitterComponent.class);
+        emitter = mock(LaserShowerComponent.class);
         render = new  LaserRenderComponent();
         batch = mock(SpriteBatch.class);
         pixel = mock(TextureRegion.class);

@@ -37,6 +37,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
+    boolean has_laser = false;
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -84,7 +85,23 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/labforeground.png",
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
-            "images/glide_powerup.png"
+            "images/glide_powerup.png",
+            "images/terminal_on.png",
+            "images/terminal_off.png",
+            "images/plate.png",
+            "images/plate-pressed.png",
+            "images/mirror-cube-off.png",
+            "images/mirror-cube-on.png",
+            "images/cube.png",
+            "images/heavy-cube.png",
+            "images/laser-detector-off.png",
+            "images/laser-detector-on.png",
+            "images/laser-end.png",
+            "images/upSignpost.png",
+            "images/downSignpost.png",
+            "images/rightSignpost.png",
+            "images/leftSignpost.png",
+            "images/signpost.png"
 
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
@@ -95,7 +112,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
             "images/doors.atlas",
-            "images/timer.atlas"
+            "images/timer.atlas",
+            "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
@@ -203,7 +221,7 @@ public class LevelTwoGameArea extends GameArea {
             public void act(float delta) {
                 super.act(delta);
                 if (Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.SPACE)) {
-                    spawnLasers();
+                    spawnLaserShower();
                 }
             }
         });
@@ -541,17 +559,15 @@ public class LevelTwoGameArea extends GameArea {
             spawnEntityAt(dashUpgrade, new GridPoint2(91,6), true,  true);
         });
     }
-    public void spawnLasers() {
+    public void spawnLaserShower() {
         final float Y = player.getPosition().y + 10f;
         final float X = player.getPosition().x;
 
-        int laserInFront = 4 /2;
-        int laserInBack = 4 -laserInFront;
 
-        for (int i = 0; i <= laserInBack; i++) {
+        for (int i = 0; i <= 2; i++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X - ((i+1)* (float) 5.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            float x = X - ((i+1)* (float) 7.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -562,10 +578,10 @@ public class LevelTwoGameArea extends GameArea {
             },5f);
         }
 
-        for (int j = 0; j <= laserInFront; j++) {
+        for (int j = 0; j <=2; j++) {
             Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X + ((j+1)* (float) 5.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            float x = X + ((j+1)* (float) 7.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -578,13 +594,22 @@ public class LevelTwoGameArea extends GameArea {
         Entity detector = LaserDetectorFactory.createLaserDetector(0f);
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
-    public void update(float delta) {
+    public void laserShowerChecker(float delta) {
         if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             spacePressCount++;
         }
-        int SPACE_THRESHOLD = 15;
+        int SPACE_THRESHOLD = 10;
         if (spacePressCount == SPACE_THRESHOLD) {
-            spawnLasers();
+            if (!has_laser) {
+                spawnLaserShower();
+                has_laser = true;
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        has_laser = false;
+                    }
+                },5f);
+            }
             spacePressCount = 0;
         }
     }

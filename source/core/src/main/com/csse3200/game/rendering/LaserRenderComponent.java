@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 
 import java.util.List;
 
@@ -23,12 +23,12 @@ public class LaserRenderComponent extends RenderComponent {
     private static final float GLOW_MULT  = 2.7f;  // outer glow thickness multiplier
     private static final float GLOW_ALPHA = 0.35f; // max glow alpha
 
-    private LaserEmitterComponent emitter;
+    private LaserShowerComponent emitter;
 
     @Override
     public void create() {
         super.create();
-        emitter = entity.getComponent(LaserEmitterComponent.class);
+        emitter = entity.getComponent(LaserShowerComponent.class);
 
         // make 1x1 pixel
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);

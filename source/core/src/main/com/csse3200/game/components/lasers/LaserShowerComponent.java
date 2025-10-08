@@ -36,7 +36,7 @@ import java.util.List;
  * The list of points in world space is then exposed globally by a getter method which can be accessed by the
  * dedicated laser renderer to render lines between the points.
  */
-public class LaserEmitterComponent extends Component {
+public class LaserShowerComponent extends Component {
     private static final int MAX_REBOUNDS = 8;
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
@@ -72,14 +72,14 @@ public class LaserEmitterComponent extends Component {
     /**
      * defalult constructor
      */
-    public LaserEmitterComponent() {
+    public LaserShowerComponent() {
 
     }
     /**
      * Creates a laser emitter pointing in the specified direction.
      * @param dir initial laser angle in degrees
      */
-    public LaserEmitterComponent(float dir) {
+    public LaserShowerComponent(float dir) {
         this.dir = dir;
     }
 
