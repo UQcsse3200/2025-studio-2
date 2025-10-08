@@ -9,11 +9,13 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
+import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.*;
 import com.csse3200.game.entities.Entity;
@@ -378,9 +380,11 @@ public class EnemyFactory {
                 .addComponent(new PhysicsComponent())
                 .addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                .addComponent(new CombatStatsComponent(9999, 0))
+                .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
-                .addComponent(new BossSpawnerComponent(target));
+                .addComponent(new BossSpawnerComponent(target))
+                .addComponent(new BossAnimationController())
+                .addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
 
 
         if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
@@ -391,9 +395,10 @@ public class EnemyFactory {
                 new AnimationRenderComponent(ServiceLocator.getResourceService()
                         .getAsset("images/boss.atlas", TextureAtlas.class));
         animator.addAnimation("bossChase", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("bossGenerateDrone", 1f, Animation.PlayMode.NORMAL);
-        animator.addAnimation("bossTouchKill", 2f, Animation.PlayMode.NORMAL);
-        animator.addAnimation("bossShootLaser", 2f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossGenerateDrone", 0.3f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bossTouchKill", 0.1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossShootLaser", 0.1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("touchKillEffect", 1f, Animation.PlayMode.NORMAL);
         boss.addComponent(animator);
 
         // Temporary scaling up to differentiate boss from other drones (change w/ new assets)

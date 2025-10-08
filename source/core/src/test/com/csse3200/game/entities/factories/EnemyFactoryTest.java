@@ -602,7 +602,7 @@ public class EnemyFactoryTest {
         CombatStatsComponent stats = boss.getComponent(CombatStatsComponent.class);
         assertNotNull(stats, "Boss should have a combat stats component");
         assertEquals(9999, stats.getHealth(), "Boss should have correct health");
-        assertEquals(0, stats.getBaseAttack(), "Boss should have correct base attack");
+        assertEquals(100, stats.getBaseAttack(), "Boss should have correct base attack");
     }
 
     @Test
