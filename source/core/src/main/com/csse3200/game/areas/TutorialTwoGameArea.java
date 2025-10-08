@@ -172,7 +172,7 @@ public class TutorialTwoGameArea extends GameArea {
 
     private void spawnTutorials() {
         spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
-        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(11, 15), true, true);
+        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
     }
 
     private void spawnTerminals() {
@@ -191,8 +191,10 @@ public class TutorialTwoGameArea extends GameArea {
 
     private void spawnBoxes() {
         Entity one = BoxFactory.createWeightedBox();
+        one.addComponent(new TooltipSystem.TooltipComponent(
+            "This might come in handy...",
+            TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(one, new GridPoint2(4, 4), true, true);
-
     }
 
     private void spawnDeathZone() {
