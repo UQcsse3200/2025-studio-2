@@ -3,89 +3,115 @@ package com.csse3200.game.components.tasks;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
+import com.csse3200.game.ai.tasks.TaskRunner;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.rendering.DebugRenderer;
+import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 
-/** Task that makes an entity chase a target until either the target is too far away or the line of sight
- * is lost. Designed specifically for flying bomber enemies that should maintain a hover height above the
- * target and stop chasing when the target enters a bomb-drop zone. */
+/**
+ * Task that makes a bomber chase and position itself optimally above a target
+ * when detected by its cone light.
+ */
 public class BombChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
     private final int priority;
-    private final float viewDistance;
     private final float maxChaseDistance;
-    private final float hoverHeight; // Height to maintain above target
+    private final float optimalHeight; // Optimal height to maintain above target for bombing
+    private final float heightTolerance; // Tolerance for height positioning
+
     private final PhysicsEngine physics;
     private final DebugRenderer debugRenderer;
     private final RaycastHit hit = new RaycastHit();
+    private final GameTime timeSource;
     private MovementTask movementTask;
-    private final float dropRange;
-    private final float minHeight;
+    private ConeDetectorComponent detectorComponent;
 
-// for light activation
-    private boolean active = false;
-    private boolean triggerMaxChase = false;
-    private final float triggerDistance = 2f;
+    // State tracking
+    private boolean targetAcquired = false;
+
+    private static final long CHASE_GRACE_MS = 1500L;
+    private long lastSpottedTime = 0L;
+    private boolean everSpottedTarget = false;
 
     /**
-     * Creates a chase task for a bomber-style enemy.
+     * Creates a chase task for a bomber that uses cone light detection.
      *
      * @param target            the entity to chase
      * @param priority          task priority when chasing
-     * @param viewDistance      maximum distance at which chasing can start (when inactive)
      * @param maxChaseDistance  maximum distance before chasing stops
-     * @param hoverHeight       preferred vertical offset to maintain above the target
-     * @param dropRange         horizontal range within which the target is considered in the bomb-drop zone
-     * @param minHeight         minimum vertical difference (drone above target) to qualify for the drop zone
+     * @param optimalHeight     optimal height to maintain above target for bombing
+     * @param heightTolerance   tolerance for height positioning
      */
-    public BombChaseTask(Entity target, int priority, float viewDistance, float maxChaseDistance, float hoverHeight,
-                         float dropRange, float minHeight) {
+    public BombChaseTask(Entity target, int priority, float maxChaseDistance,
+                         float optimalHeight, float heightTolerance) {
         this.target = target;
         this.priority = priority;
-        this.viewDistance = viewDistance;
         this.maxChaseDistance = maxChaseDistance;
-        this.hoverHeight = hoverHeight;
-        this.dropRange = dropRange;
-        this.minHeight = minHeight;
+        this.optimalHeight = optimalHeight;
+        this.heightTolerance = heightTolerance;
         physics = ServiceLocator.getPhysicsService().getPhysics();
         debugRenderer = ServiceLocator.getRenderService().getDebug();
+        timeSource = ServiceLocator.getTimeSource();
     }
 
-    /** Activate the chase task for light triggered activation */
-    public void activate() {
-        active = true;
-        triggerMaxChase = false; // reset enforcement
-        if (status != Status.ACTIVE) status = Status.INACTIVE;
-    }
-
-    public void deactivate() {
-        active = false;
-        owner.getEntity().getEvents().trigger("chaseEnd");
+    @Override
+    public void create(TaskRunner owner) {
+        super.create(owner);
+        // Get the bomber's detector component
+        detectorComponent = owner.getEntity().getComponent(ConeDetectorComponent.class);
     }
 
     /**
-     * Initialise and starts a movement task toward the chase target then triggers the chaseStart event.
+     * Activates the chase task. The priority will be raised, allowing the task to run.
+     */
+    public void activate() {
+        this.targetAcquired = true;
+    }
+
+    /**
+     * Deactivates the chase task. The priority will be set to -1, stopping the task.
+     */
+    public void deactivate() {
+        this.targetAcquired = false;
+    }
+
+    /**
+     * Initialise and starts movement toward the chase target.
      */
     @Override
     public void start() {
         super.start();
-        movementTask = new MovementTask(getChaseTarget());
-        movementTask.create(owner);
+
+        if (movementTask == null) {
+            movementTask = new MovementTask(getChaseTarget());
+            movementTask.create(owner);
+        }
         movementTask.start();
 
-        this.owner.getEntity().getEvents().trigger("chaseStart");
+        owner.getEntity().getEvents().trigger("chaseBomber");
     }
 
     /**
-     * Update the chase target each frame based on current position and hover rules.
+     * Update the chase, positioning bomber at optimal height above target.
      */
     @Override
     public void update() {
-        movementTask.setTarget(getChaseTarget());
+        if (movementTask == null) return;
+
+        // If lost cone detection during chase, move to search position
+        if (!targetAcquired && detectorComponent != null) {
+            // Move higher to try to reacquire target with cone light
+            movementTask.setTarget(getSearchPosition());
+        } else {
+            // Normal chase behavior - position above target at optimal height
+            movementTask.setTarget(getChaseTarget());
+        }
+
         movementTask.update();
         if (movementTask.getStatus() != Status.ACTIVE) {
             movementTask.start();
@@ -93,119 +119,123 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     }
 
     /**
-     * Calculate the desired chase position. For flying enemies, maintains a vertical offset above the target.
-     * If the chaser is already horizontally aligned, the x-position is held to hover directly above the target.
+     * Calculate the desired chase position at optimal bombing height.
+     * Positions the bomber above the target for effective bombing.
      */
     private Vector2 getChaseTarget() {
         Vector2 targetPos = target.getPosition().cpy();
+        Vector2 currentPos = owner.getEntity().getPosition();
 
-        // For flying enemies (drones), maintain a height above the target
-        if (hoverHeight > 0) {
-            targetPos.y += hoverHeight;
+        // Position bomber at optimal height above target
+        targetPos.y += optimalHeight;
 
-            // If already above target horizontally, just hover
-            float horizontalDistance = Math.abs(owner.getEntity().getPosition().x - target.getPosition().x);
-            if (horizontalDistance < 1f) {
-                // Maintain position above target
-                targetPos.x = owner.getEntity().getPosition().x;
-            }
+        // Smooth horizontal positioning - avoid jittery movement when close
+        float horizontalDistance = Math.abs(currentPos.x - target.getPosition().x);
+        if (horizontalDistance < 0.5f) {
+            // If already close horizontally, maintain position
+            targetPos.x = currentPos.x;
         }
 
         return targetPos;
     }
 
+    /**
+     * Get a search position when target is lost.
+     * Moves higher to get better cone coverage for reacquiring target.
+     */
+    private Vector2 getSearchPosition() {
+        Vector2 lastKnownPos = target.getPosition().cpy();
+        lastKnownPos.y += optimalHeight * 1.5f; // Higher for better search coverage
+        return lastKnownPos;
+    }
 
     /** Stop the task */
     @Override
     public void stop() {
-        super.stop();
         if (movementTask != null) {
             movementTask.stop();
         }
+        super.stop();
+        owner.getEntity().getEvents().trigger("chaseEnd");
     }
 
     /**
      * Get current priority of the task.
-     * If target is within bomb-drop zone, -1, to allow bombing task to start.
+     * Priority system:
+     * - Returns priority when cone light has detected target
+     * - Returns lower priority (5) when searching for lost target
+     * - Returns -1 if target too far or at correct position for bombing
      */
     @Override
     public int getPriority() {
-        // If player in bomb_drop zone, then set chasing action to -1
-        if (isPlayerInDropZone()) {
+        // No detector component, can't operate
+        if (detectorComponent == null) {
             return -1;
         }
 
-        // Don't chase until light is activated
-        if (!active) {
-            return -1;
-        }
-
-        // Active task
-        if (status == Status.ACTIVE) {
-            return getActivePriority();
-        }
-
-        // Inactive task (activated but not started yet)
-        return getInactivePriority();
-    }
-
-    /**
-     * Check whether the target is in bomb drop zone relative to the drone.
-     * The target is considered in-zone if the drop is a minHeight above the target.
-     */
-    private boolean isPlayerInDropZone() {
-        Vector2 dronePos = owner.getEntity().getCenterPosition();
-        Vector2 playerPos = target.getCenterPosition();
-
-        float horizontalDistance = Math.abs(dronePos.x - playerPos.x);
-        float verticalDistance = dronePos.y - playerPos.y;
-
-        return verticalDistance >= minHeight && horizontalDistance <= dropRange;
-    }
-
-    /** Return the distance from owner to target (with error margin). */
-    private float getDistanceToTarget() {
-        Vector2 target_position=target.getPosition();
-        Vector2 curr_position=owner.getEntity().getPosition();
-        float distance= target_position.dst(curr_position);
-        float threshold=0.5f;
-        if(distance < threshold){
-            return 0f;
-        }
-        return distance;
-
-    }
-
-    /** Get active priority of task */
-    private int getActivePriority() {
-        float dst = getDistanceToTarget();
-        if (dst > maxChaseDistance || !isTargetVisible()) {
-            owner.getEntity().getEvents().trigger("chaseEnd");
-            return -1; // Too far, stop chasing
-        }
-        return priority;
-    }
-
-    /** Get inactive priority of task */
-    private int getInactivePriority() {
-        float dst = getDistanceToTarget();
-        if (dst < viewDistance && isTargetVisible()) {
+        // If at optimal bombing position and target detected, yield to BombDropTask
+        if (detectorComponent.isDetected()) {
+            lastSpottedTime = timeSource.getTime();
+            everSpottedTarget = true;
+            // If already in the best position, let BombDropTask take over (return -1)
+            if (isAtOptimalPosition()) {
+                return -1;
+            }
+            // Otherwise, keep high priority chase
             return priority;
         }
+
+        // --- If the light cone cannot detect the target ---
+
+        // If you have never found a target, you won't chase it
+        if (!everSpottedTarget) {
+            return -1;
+        }
+
+        // If you have ever discovered a goal, check if the grace period is over
+        long timeSinceSpotted = timeSource.getTime() - lastSpottedTime;
+        if (timeSinceSpotted <= CHASE_GRACE_MS) {
+            // Still in grace period, continue to chase
+            if (isAtOptimalPosition()) {
+                return -1; // Even during grace period, you should try to drop bullets when you arrive at your location
+            }
+            return priority;
+        }
+
+        // The grace period ends, stop the pursuit, and reset the status for the next trigger
+        everSpottedTarget = false;
         return -1;
     }
 
-    /** Tests line of sight to the target */
-    private boolean isTargetVisible() {
-        Vector2 from = owner.getEntity().getCenterPosition();
-        Vector2 to = target.getCenterPosition();
+    /**
+     * Check if bomber is at optimal position for bombing.
+     * Returns true when horizontally aligned and at correct height.
+     */
+    private boolean isAtOptimalPosition() {
+        Vector2 bomberPos = owner.getEntity().getCenterPosition();
+        Vector2 targetPos = target.getCenterPosition();
 
-        // If there is an obstacle in the path to the player, not visible.
-        if (physics.raycast(from, to, PhysicsLayer.OBSTACLE, hit)) {
-            debugRenderer.drawLine(from, hit.point);
+        // Check horizontal alignment
+        float horizontalDistance = Math.abs(bomberPos.x - targetPos.x);
+        if (horizontalDistance > 1f) {
             return false;
         }
-        debugRenderer.drawLine(from, to);
-        return true;
+
+        // Check vertical positioning
+        float heightDiff = bomberPos.y - targetPos.y;
+        return Math.abs(heightDiff - optimalHeight) <= heightTolerance;
+    }
+
+    /** Return the distance from owner to target */
+    private float getDistanceToTarget() {
+        return owner.getEntity().getPosition().dst(target.getPosition());
+    }
+
+    /**
+     * Check if the chase task has acquired a target via cone light detection.
+     * @return true if target acquired, false otherwise
+     */
+    public boolean hasTarget() {
+        return targetAcquired;
     }
 }
