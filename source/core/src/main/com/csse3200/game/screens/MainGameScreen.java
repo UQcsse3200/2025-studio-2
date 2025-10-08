@@ -34,11 +34,13 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
+import com.csse3200.game.services.CodexService;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
 import com.csse3200.game.components.LeaderboardComponent;
+import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +96,11 @@ public class MainGameScreen extends ScreenAdapter {
 
     ServiceLocator.registerEntityService(new EntityService());
     ServiceLocator.registerRenderService(new RenderService());
+    TerminalService.register();
     ServiceLocator.registerVfxService(new VfxManager(Pixmap.Format.RGBA8888));
+
+    // Register service for managing codex entries
+    ServiceLocator.registerCodexService(new CodexService());
 
     renderer = RenderFactory.createRenderer();
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
@@ -222,7 +228,9 @@ public class MainGameScreen extends ScreenAdapter {
 
     if (newArea != null) {
       leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
-      StatsTracker.completeLevel();
+      if (newArea instanceof CutsceneArea) {
+        StatsTracker.completeLevel();
+      }
 
       gameArea = newArea;
       gameAreaEnum = area;
@@ -388,7 +396,7 @@ public class MainGameScreen extends ScreenAdapter {
       throw new IllegalStateException("GameArea has a null player");
     }
     pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
-    deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
+    deathScreenDisplay = new DeathScreenDisplay(this, this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
     leaderboardComponent = new LeaderboardComponent();
@@ -411,6 +419,10 @@ public class MainGameScreen extends ScreenAdapter {
    * Shows the death screen overlay
    */
   private void showDeathScreen() {
+    if (gameArea != null && gameArea.getPlayer() != null) {
+      gameArea.recordDeathLocation(gameArea.getPlayer().getPosition());
+    }
+
     deathScreenDisplay.setVisible(true);
   }
 

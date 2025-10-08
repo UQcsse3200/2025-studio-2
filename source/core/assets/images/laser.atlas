@@ -1,0 +1,47 @@
+laser.png
+	size: 128, 128
+	repeat: none
+laser-on
+	bounds: 2, 2, 22, 24
+laser-on
+	bounds: 26, 2, 22, 24
+laser-on
+	bounds: 50, 2, 22, 24
+laser-on
+	bounds: 74, 2, 22, 24
+laser-on
+	bounds: 98, 2, 22, 24
+laser-on
+	bounds: 2, 28, 22, 24
+laser-on
+	bounds: 26, 28, 22, 24
+laser-turning-on
+	bounds: 50, 28, 22, 24
+laser-turning-on
+	bounds: 74, 28, 22, 24
+laser-turning-on
+	bounds: 98, 28, 22, 24
+laser-turning-on
+	bounds: 2, 54, 22, 24
+laser-turning-on
+	bounds: 26, 54, 22, 24
+laser-turning-on
+	bounds: 50, 54, 22, 24
+laser-turning-on
+	bounds: 74, 54, 22, 24
+laser-turning-off
+	bounds: 74, 54, 22, 24
+laser-turning-off
+	bounds: 50, 54, 22, 24
+laser-turning-off
+	bounds: 26, 54, 22, 24
+laser-turning-off
+	bounds: 2, 54, 22, 24
+laser-turning-off
+	bounds: 98, 28, 22, 24
+laser-turning-off
+	bounds: 74, 28, 22, 24
+laser-turning-off
+	bounds: 50, 28, 22, 24
+laser-off
+    bounds: 98, 54, 22, 24

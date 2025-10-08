@@ -149,6 +149,7 @@ public class PlayerActions extends Component {
     if (combatStatsComponent.isDead()) {
       // Stop player movement when dead
       moving = false;
+      setEnabled(false); // Disable repeated death events and like a thousand function calls!!
       entity.getEvents().trigger("death");
       // Death screen component will handle the reset when user chooses to restart
     }

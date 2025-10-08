@@ -5,6 +5,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.csse3200.game.physics.PhysicsLayer;
 
 public class CrouchingColliderComponent extends ColliderComponent {
     private Fixture fixture;
@@ -23,6 +24,7 @@ public class CrouchingColliderComponent extends ColliderComponent {
         def.shape = shape;
         def.density = 1.5f;
         def.isSensor = true;
+        def.filter.categoryBits = PhysicsLayer.PLAYER;
 
         fixture = body.createFixture(def);
         fixture.setUserData("crouch");
