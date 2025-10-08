@@ -30,10 +30,12 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
+import com.csse3200.game.services.CodexService;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
+import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +81,11 @@ public class MainGameScreen extends ScreenAdapter {
 
     ServiceLocator.registerEntityService(new EntityService());
     ServiceLocator.registerRenderService(new RenderService());
+    TerminalService.register();
     ServiceLocator.registerVfxService(new VfxManager(Pixmap.Format.RGBA8888));
+
+    // Register service for managing codex entries
+    ServiceLocator.registerCodexService(new CodexService());
 
     renderer = RenderFactory.createRenderer();
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
@@ -119,6 +125,11 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private void switchArea(String key, Entity player) {
+    System.out.println("Attempting to switch area from " + gameArea + " to " + key);
+    if (key == null) {
+      game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+      return;
+    }
     final Runnable runnable = () -> this.switchAreaRunnable(key, player);
     if (gameArea instanceof CutsceneArea) {
       Gdx.app.postRunnable(runnable);
@@ -157,6 +168,11 @@ public class MainGameScreen extends ScreenAdapter {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
           }
+      case "bossLevel" -> {
+        System.out.println("TRIGGERED THE EVENT TO SWITCH AREA!!!!");
+        newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt"); // todo change path
+        newLevel = null; // This currently loads to level2 because it finishes cutscene 1, but that'll change.
+      }
       }
 
       if (newArea != null) {
@@ -325,7 +341,7 @@ public class MainGameScreen extends ScreenAdapter {
       throw new IllegalStateException("GameArea has a null player");
     }
     pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
-    deathScreenDisplay = new DeathScreenDisplay(this, gameArea.getPlayer(), this.game);
+    deathScreenDisplay = new DeathScreenDisplay(this, this.game);
     pauseInput = new PauseInputComponent(this);
     Stage stage = ServiceLocator.getRenderService().getStage();
 
@@ -344,6 +360,10 @@ public class MainGameScreen extends ScreenAdapter {
    * Shows the death screen overlay
    */
   private void showDeathScreen() {
+    if (gameArea != null && gameArea.getPlayer() != null) {
+      gameArea.recordDeathLocation(gameArea.getPlayer().getPosition());
+    }
+
     deathScreenDisplay.setVisible(true);
   }
 

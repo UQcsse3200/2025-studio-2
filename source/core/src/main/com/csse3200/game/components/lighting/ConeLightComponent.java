@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.ComponentPriority;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -46,6 +47,7 @@ public class ConeLightComponent extends Component {
         this.distance = distance;
         this.directionDeg = directionDeg;
         this.coneDegree = coneDegree;
+        this.prio = ComponentPriority.HIGH;
     }
 
     @Override
@@ -165,5 +167,16 @@ public class ConeLightComponent extends Component {
 
     public ConeLight getLight() {
         return coneLight;
+    }
+    public float getConeDegree() {
+        return coneDegree;
+    }
+
+    public float getDirectionDeg() {
+        return directionDeg;
+    }
+
+    public float getDistance() {
+        return distance;
     }
 }
