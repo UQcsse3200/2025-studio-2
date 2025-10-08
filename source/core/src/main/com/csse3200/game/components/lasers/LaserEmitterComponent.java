@@ -75,7 +75,7 @@ public class LaserEmitterComponent extends Component {
         this.dir = dir;
     }
 
-    public void setEnabled(boolean enabled) {
+    private void setEnable(boolean enabled) {
         this.enabled = enabled;
     }
 
@@ -92,6 +92,9 @@ public class LaserEmitterComponent extends Component {
         if (ServiceLocator.getLightingService() != null) {
             hitLight = createPointLight();
         }
+
+        entity.getEvents().addListener("enable", () -> setEnable(true));
+        entity.getEvents().addListener("disable", () -> setEnable(false));
     }
 
     @Override
@@ -110,6 +113,7 @@ public class LaserEmitterComponent extends Component {
         if (lastEnabled !=  enabled) {
             setLightVisibility(enabled);
             setAnimation(enabled);
+            setHitTexture(enabled);
             lastEnabled = enabled;
         }
         if (!enabled) return;
@@ -234,6 +238,12 @@ public class LaserEmitterComponent extends Component {
     private void setLightVisibility(boolean visible) {
         if (hitLight != null) {
             hitLight.getComponent(ConeLightComponent.class).setActive(visible);
+        }
+    }
+
+    private void setHitTexture(boolean visible) {
+        if  (hitLight != null) {
+            hitLight.getComponent(TextureRenderComponent.class).setEnabled(visible);
         }
     }
 
