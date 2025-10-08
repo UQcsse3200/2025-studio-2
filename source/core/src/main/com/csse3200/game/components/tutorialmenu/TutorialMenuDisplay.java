@@ -233,12 +233,12 @@ public class TutorialMenuDisplay extends UIComponent {
     // Create animated sprite for walking left
     Array<TextureAtlas.AtlasRegion> walkLeftFrames = playerAtlas.findRegions("LEFT");
     if (walkLeftFrames.size > 0) {
-      Animation<TextureRegion> walkAnimation = new Animation<>(0.1f, walkLeftFrames, Animation.PlayMode.LOOP);
-      AnimatedImage playerSprite = new AnimatedImage(walkAnimation);
+      Animation<TextureRegion> walkLeftAnimation = new Animation<>(0.1f, walkLeftFrames, Animation.PlayMode.LOOP);
+      AnimatedImage leftSprite = new AnimatedImage(walkLeftAnimation);
       
       // Create vertical layout: sprite on top, keybind below
-      Table spriteColumn = new Table();
-      spriteColumn.add(playerSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
+      Table leftColumn = new Table();
+      leftColumn.add(leftSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
       
       // Get the actual keybind from user settings
       int leftKeyCode = Keymap.getActionKeyCode("PlayerLeft");
@@ -248,14 +248,42 @@ public class TutorialMenuDisplay extends UIComponent {
       leftKeyLabel.setColor(Color.RED);  // Red color
       
       // Add padding to shift right and center under the actual sprite visual
-      spriteColumn.add(leftKeyLabel).center().padLeft(22).padTop(5).row();
+      leftColumn.add(leftKeyLabel).center().padLeft(22).padTop(5).row();
       
       // Add description label
-      Label descriptionLabel = new Label("Move Left", skin);
-      descriptionLabel.setFontScale(1.0f);
-      spriteColumn.add(descriptionLabel).center().padLeft(22).padTop(5).row();
+      Label leftDescLabel = new Label("Move Left", skin);
+      leftDescLabel.setFontScale(1.0f);
+      leftColumn.add(leftDescLabel).center().padLeft(22).padTop(5).row();
       
-      spriteTable.add(spriteColumn).padLeft(10).padRight(10).padBottom(10);
+      spriteTable.add(leftColumn).padLeft(10).padRight(10).padBottom(10);
+    }
+    
+    // Create animated sprite for walking right
+    Array<TextureAtlas.AtlasRegion> walkRightFrames = playerAtlas.findRegions("RIGHT");
+    if (walkRightFrames.size > 0) {
+      Animation<TextureRegion> walkRightAnimation = new Animation<>(0.1f, walkRightFrames, Animation.PlayMode.LOOP);
+      AnimatedImage rightSprite = new AnimatedImage(walkRightAnimation);
+      
+      // Create vertical layout: sprite on top, keybind below
+      Table rightColumn = new Table();
+      rightColumn.add(rightSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
+      
+      // Get the actual keybind from user settings
+      int rightKeyCode = Keymap.getActionKeyCode("PlayerRight");
+      String rightKeyName = Input.Keys.toString(rightKeyCode);
+      Label rightKeyLabel = new Label(rightKeyName, skin);
+      rightKeyLabel.setFontScale(1.5f);  // Bigger text
+      rightKeyLabel.setColor(Color.RED);  // Red color
+      
+      // Add padding to shift right and center under the actual sprite visual
+      rightColumn.add(rightKeyLabel).center().padLeft(22).padTop(5).row();
+      
+      // Add description label
+      Label rightDescLabel = new Label("Move Right", skin);
+      rightDescLabel.setFontScale(1.0f);
+      rightColumn.add(rightDescLabel).center().padLeft(22).padTop(5).row();
+      
+      spriteTable.add(rightColumn).padLeft(10).padRight(10).padBottom(10);
     }
     
     contentTable.add(spriteTable).left().colspan(2).row();
