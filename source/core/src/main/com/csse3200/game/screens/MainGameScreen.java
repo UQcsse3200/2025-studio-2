@@ -259,7 +259,6 @@ public class MainGameScreen extends ScreenAdapter {
         Areas newLevel = getNextArea(area);
 
         if (newArea != null) {
-            leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
             if (newArea instanceof CutsceneArea) {
                 StatsTracker.completeLevel();
             }
