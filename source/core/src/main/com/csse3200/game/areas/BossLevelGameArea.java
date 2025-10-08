@@ -136,7 +136,8 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
-//        spawnBoss();
+        spawnBoss();
+
     }
 
     /**
@@ -521,11 +522,12 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnBoss() {
-        GridPoint2 spawnPos = new GridPoint2(35, 9);
+        GridPoint2 spawnPos = new GridPoint2(1, 40);
         Entity boss = EnemyFactory.createBossEnemy(
                 player,
                 terrain.tileToWorldPosition(spawnPos)
         );
+        boss.addComponent(new com.csse3200.game.components.boss.BossSpawnMiniTest());
         spawnEntityAt(boss, spawnPos, true, true);
     }
 
