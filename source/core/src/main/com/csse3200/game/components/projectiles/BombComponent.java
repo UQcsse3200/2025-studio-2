@@ -222,6 +222,10 @@ public class BombComponent extends Component {
         }
     }
 
+    /**
+     * Checks whether bomb has exploded
+     * @return true if exploded, otherwise false
+     */
     public boolean hasExploded() {
         return hasExploded;
     }
