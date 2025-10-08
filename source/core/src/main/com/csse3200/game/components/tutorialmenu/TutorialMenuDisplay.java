@@ -168,6 +168,7 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // Back button at bottom
     TextButton backBtn = new TextButton("Back", skin);
+    backBtn.setColor(Color.RED);
     backBtn.addListener(new ChangeListener() {
       @Override
       public void changed(ChangeEvent event, Actor actor) {
@@ -360,6 +361,40 @@ public class TutorialMenuDisplay extends UIComponent {
     
     contentTable.add(spriteTable).left().colspan(2).row();
     
+    // Add informational text below the controls with color markup
+    String markedUpText = 
+        """
+        These are the basic movement controls. Practice combining them to navigate the world effectively!
+
+        
+        [RED]Crouch[] to fit through tight spaces.
+
+        Use [RED]jump[] to reach higher platforms. 
+        
+        You can [CYAN]double-jump[] by pressing [RED]jump[] again while in the air!""";
+    
+    Label infoText = new Label(markedUpText, skin);
+    infoText.setFontScale(1.2f);
+    infoText.setWrap(true);
+    
+    // Create a new style with markup enabled
+    Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+    markupStyle.fontColor = Color.WHITE;
+    infoText.setStyle(markupStyle);
+    
+    contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
+    
+    // Add practice level button
+    TextButton practiceBtn = new TextButton("Practice!", skin);
+    practiceBtn.addListener(new ChangeListener() {
+      @Override
+      public void changed(ChangeEvent event, Actor actor) {
+        logger.debug("Practice Level button clicked");
+        // TODO: Launch practice tutorial level 1 here.
+      }
+    });
+    
+    contentTable.add(practiceBtn).width(300).height(60).padTop(40).center().colspan(2).row();
   }
 
   /**
