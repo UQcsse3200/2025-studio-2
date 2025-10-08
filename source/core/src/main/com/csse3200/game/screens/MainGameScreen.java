@@ -67,6 +67,15 @@ public class MainGameScreen extends ScreenAdapter {
   private PauseInputComponent pauseInput;
 
   public MainGameScreen(GdxGame game) {
+    this(game, null);
+  }
+
+  /**
+   * Create the main game screen, optionally starting at a specific area.
+   * @param game The game instance
+   * @param startAreaId The area ID to start in (e.g., "tutorial2"), or null for default (LevelOneGameArea)
+   */
+  public MainGameScreen(GdxGame game, String startAreaId) {
     this.game = game;
 
     logger.debug("Initialising main game screen services");
@@ -104,11 +113,22 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
-
-    //gameArea = new SprintOneGameArea(terrainFactory);
-    gameArea = new LevelOneGameArea(terrainFactory);
-    //gameArea = new LevelTwoGameArea(terrainFactory);
-//    gameArea = new TutorialTwoGameArea(terrainFactory);
+    // Create the appropriate area based on startAreaId (needed for tutorial mode)
+    if (startAreaId != null && !startAreaId.isEmpty()) {
+      // Start at the specified area (e.g., for tutorials/practice)
+      switch (startAreaId) {
+        case "tutorial2" -> gameArea = new TutorialTwoGameArea(terrainFactory);
+        case "level2" -> gameArea = new LevelTwoGameArea(terrainFactory);
+        case "sprint1" -> gameArea = new SprintOneGameArea(terrainFactory);
+        default -> {
+          logger.warn("Unknown start area: {}, defaulting to LevelOneGameArea", startAreaId);
+          gameArea = new LevelOneGameArea(terrainFactory);
+        }
+      }
+    } else {
+      // Default starting area
+      gameArea = new LevelOneGameArea(terrainFactory);
+    }
 
     gameArea.create();
 
@@ -164,6 +184,10 @@ public class MainGameScreen extends ScreenAdapter {
               newArea = new SprintOneGameArea(terrainFactory);
               newLevel = "level2";
           }
+      case "tutorial2" -> {
+        newArea = new TutorialTwoGameArea(terrainFactory);
+        newLevel = ""; // No next level for tutorial practice
+      }
       }
 
       if (newArea != null) {
