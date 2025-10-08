@@ -24,6 +24,14 @@ public class TutorialMenuScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(TutorialMenuScreen.class);
   private final String[] tutorialMenuTextures = {
       "images/superintelligence_menu_background.png"
+      // Add your tutorial images here when you create them:
+      // "images/tutorial/movement.png",
+      // "images/tutorial/key_item.png",
+      // "images/tutorial/dash_mechanic.png",
+  };
+  
+  private final String[] tutorialMenuAtlases = {
+      "images/PLAYER.atlas"
   };
 
   private final GdxGame game;
@@ -70,6 +78,7 @@ public class TutorialMenuScreen extends ScreenAdapter {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(tutorialMenuTextures);
+    resourceService.loadTextureAtlases(tutorialMenuAtlases);
     ServiceLocator.getResourceService().loadAll();
   }
 
@@ -77,6 +86,7 @@ public class TutorialMenuScreen extends ScreenAdapter {
     logger.debug("Unloading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.unloadAssets(tutorialMenuTextures);
+    resourceService.unloadAssets(tutorialMenuAtlases);
   }
 
   /**
