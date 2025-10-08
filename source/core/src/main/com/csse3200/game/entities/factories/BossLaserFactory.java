@@ -21,26 +21,26 @@ import java.lang.annotation.Target;
  */
 public class BossLaserFactory {
 
-    private static final int ATTACK_DAMAGE = 0;
+    private static final int ATTACK_DAMAGE = 10;
 
     /**
-     * Creates a new laser emitter entity which is rotated by {@code dir} degrees.
-     * The laser is able to damage players and also reflect off of colliders with the
-     * {@code PhysicsLayer.LASER_REFLECTOR} layer.
+     * Creates a new laser emitter entity rotated by {@code dir} degrees.
+     * The laser can damage players and interact with reflectors.
      *
+     * @param target the entity the laser will target
      * @param dir direction for the initial laser beam to face in degrees
      * @return the newly created laser emitter entity
      */
     public static Entity createLaserEmitter(Entity target, float dir) {
-        // setup animations
-        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class);
+        // setup animation
+        TextureAtlas atlas = ServiceLocator.getResourceService()
+                .getAsset("images/boss.atlas", TextureAtlas.class);
         AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+
         if (atlas != null) {
-            animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
-            animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
-            animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
-            animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
+            animator.addAnimation("bossShootLaser", 0.1f, Animation.PlayMode.LOOP);
         }
+
         animator.setOrigin(0.5f, 0.5f);
         animator.setRotation(dir);
         animator.setLayer(3);
@@ -55,8 +55,7 @@ public class BossLaserFactory {
                 180f
         );
 
-
-        Entity e = new Entity()
+        Entity laser = new Entity()
                 .addComponent(new LaserEmitterComponent(dir))
                 .addComponent(new BossLaserAttack(target))
                 .addComponent(new LaserRenderComponent())
@@ -64,10 +63,9 @@ public class BossLaserFactory {
                 .addComponent(animator)
                 .addComponent(light);
 
+        // start in "shoot-laser" state
+        animator.startAnimation("bossShootLaser");
 
-        // start in "on" state
-        animator.startAnimation("laser-on");
-        return e;
+        return laser;
     }
 }
-

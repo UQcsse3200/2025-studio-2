@@ -26,7 +26,7 @@ public class BossLaserAttack extends Component {
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
 
-    private static final float ATTACK_DURATION = 1.5f; // seconds laser stays active
+    private static final float ATTACK_DURATION = 1.5f; // seaconds laser stays active
     private static final float COOLDOWN = 6f;         // seconds between bursts
 
     private final List<Vector2> positions = new ArrayList<>();
