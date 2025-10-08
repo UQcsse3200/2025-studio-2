@@ -24,6 +24,8 @@ import com.csse3200.game.entities.factories.RenderFactory;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.PauseInputComponent;
+import com.csse3200.game.areas.LevelOneGameArea;
+import com.csse3200.game.areas.LevelTwoGameArea;
 import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.lighting.SecurityCamRetrievalService;
@@ -108,6 +110,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     //gameArea = new SprintOneGameArea(terrainFactory);
     gameArea = new BossLevelGameArea(terrainFactory);
+    //gameArea = new LevelOneGameArea(terrainFactory);
     //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
@@ -212,7 +215,13 @@ public class MainGameScreen extends ScreenAdapter {
 
           physicsEngine.update();
           ServiceLocator.getEntityService().update();
-
+          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+              if (gameArea instanceof LevelOneGameArea levelOneArea) {
+                  levelOneArea.laserShowerChecker(delta);
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
+                  levelTwoArea.laserShowerChecker(delta);
+              }
+          }
 
       }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
