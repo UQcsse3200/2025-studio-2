@@ -8,6 +8,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -299,6 +300,8 @@ public class BoxFactory {
                         autonomousBox.addComponent(new TextureRenderComponent(texturePath));
                     }
 
+
+
                     autonomousBox
                             .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
@@ -307,12 +310,16 @@ public class BoxFactory {
                             .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
                             .addComponent(new AutonomousBoxComponent());
 
+
+
+
             AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);
             autonomousBox.setScale(scaleX, scaleY);
             autonomousBoxComponent.setBounds(minMoveX, maxMoveX, minMoveY, maxMoveY);
             autonomousBoxComponent.setSpeed(speed);
             autonomousBox.getComponent(PhysicsComponent.class).getBody().setTransform(spawnX, spawnY, 0);
             autonomousBox.addComponent(new TooltipSystem.TooltipComponent(tooltipText, tooltipStyle));
+            //
             return autonomousBox;
         }
     }

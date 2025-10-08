@@ -173,4 +173,15 @@ public class ConeLightComponent extends Component {
     public ConeLight getLight() {
         return coneLight;
     }
+    public float getConeDegree() {
+        return coneDegree;
+    }
+
+    public float getDirectionDeg() {
+        return directionDeg;
+    }
+
+    public float getDistance() {
+        return distance;
+    }
 }
