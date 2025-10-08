@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -81,6 +82,7 @@ public class ObstacleFactory {
     door.addComponent(new PhysicsComponent());
     door.addComponent(new ColliderComponent());
     door.addComponent(new HitboxComponent().setLayer(PhysicsLayer.OBSTACLE));
+    door.addComponent(new MinimapComponent("images/door_open.png"));
 
     // Make sure door starts in closed state
     door.getComponent(PhysicsComponent.class).getBody().setType(BodyDef.BodyType.StaticBody);

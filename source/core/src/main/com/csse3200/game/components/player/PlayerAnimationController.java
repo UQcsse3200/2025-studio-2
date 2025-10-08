@@ -1,11 +1,14 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.services.ServiceLocator;
 
 
 public class PlayerAnimationController extends Component {
@@ -158,6 +161,10 @@ public class PlayerAnimationController extends Component {
      * starts the player's hurt animation
      */
     public void animateHurt() {
+        Sound damageSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/damagesound.mp3", Sound.class);
+        damageSound.play(UserSettings.get().masterVolume);
+
         if (xDirection == 1) {
             setAnimation("HURT");
             // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
