@@ -21,6 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 class ExplosionFactoryTest {
 
     private ResourceService rs;
+    private static final String[] textureAtlases = {"images/drone.atlas","images/SelfDestructionDrone.atlas"
+    };
 
     @BeforeEach
     void setUp() {
@@ -32,15 +34,14 @@ class ExplosionFactoryTest {
         ServiceLocator.registerResourceService(rs);
 
         // Load assets required by ExplosionFactory
-        String[] textures = {"images/drone.atlas"};
-        rs.loadTextureAtlases(textures);
+        rs.loadTextureAtlases(textureAtlases);
         rs.loadAll();
     }
 
     @AfterEach
     void cleanUp() {
         // Unload assets and clear services
-        rs.unloadAssets(new String[]{"images/drone.atlas"});
+        rs.unloadAssets(textureAtlases);
         rs.dispose();
         ServiceLocator.clear();
     }
@@ -52,7 +53,8 @@ class ExplosionFactoryTest {
 
         Entity explosion = ExplosionFactory.createExplosion(position, radius);
         // Registering the entity calls the create() method on its components
-        ServiceLocator.getEntityService().register(explosion);
+        //ServiceLocator.getEntityService().register(explosion);
+        explosion.create();
 
         assertNotNull(explosion.getComponent(AnimationRenderComponent.class),
                 "Explosion should have an AnimationRenderComponent");

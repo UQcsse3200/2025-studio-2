@@ -760,6 +760,7 @@ public class TutorialTwoGameArea extends GameArea {
         spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
     }
 
+
     public void spawnUpgrade(String upgradeID, int posx, int posy) {
 //        if (upgradeID == "dash") {
 //            Entity upgrade = CollectableFactory.createDashUpgrade();
