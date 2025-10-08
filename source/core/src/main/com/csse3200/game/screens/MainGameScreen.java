@@ -419,6 +419,7 @@ public class MainGameScreen extends ScreenAdapter {
             .addComponent(new TerminalUiComponent(this).setCaptchaBank(bank));
 
     ServiceLocator.getEntityService().register(ui);
+    ServiceLocator.getComputerTerminalService().registerUiEntity(ui);
   }
 
   /**
