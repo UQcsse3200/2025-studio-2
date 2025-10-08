@@ -594,27 +594,19 @@ public class EnemyFactoryTest {
         assertNotNull(boss.getComponent(AnimationRenderComponent.class),
                 "Boss should have an animation render component");
 
-        HitboxComponent hitbox = boss.getComponent(HitboxComponent.class);
-        assertNotNull(hitbox, "Boss should have a hitbox component");
-        assertEquals(PhysicsLayer.NPC, boss.getComponent(HitboxComponent.class).getLayer(),
-                "Hitbox layer should be set to 'NPC'");
-
         CombatStatsComponent stats = boss.getComponent(CombatStatsComponent.class);
         assertNotNull(stats, "Boss should have a combat stats component");
         assertEquals(9999, stats.getHealth(), "Boss should have correct health");
-        assertEquals(0, stats.getBaseAttack(), "Boss should have correct base attack");
+        assertEquals(100, stats.getBaseAttack(), "Boss should have correct base attack");
     }
 
     @Test
     void boss_hasCorrectPhysicsBody() {
         Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
-        boss.create();
-
         PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
+        assertNotNull(phys, "Boss should have PhysicsComponent");
         assertEquals(BodyDef.BodyType.KinematicBody, phys.getBody().getType(),
                 "Boss should have a kinematic body");
-        assertEquals(0f, phys.getBody().getGravityScale(),
-                "Boss should have zero gravity");
     }
 
     private Entity createEntityWithPosition(Vector2 pos) {

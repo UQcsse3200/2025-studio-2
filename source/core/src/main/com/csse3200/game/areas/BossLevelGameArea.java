@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,10 +9,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -33,6 +36,7 @@ public class BossLevelGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,57);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
+    boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
@@ -83,6 +87,7 @@ public class BossLevelGameArea extends GameArea {
             "images/cavelevel/tile028.png",
             "images/cavelevel/tile029.png",
             "images/cavelevel/tile030.png",
+            "images/blackSquare.png",
             "images/cavelevel/background/1.png",
             "images/cavelevel/background/2.png",
             "images/cavelevel/background/3.png",
@@ -94,7 +99,8 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
-            "images/boss.png"
+            "images/boss.png",
+            "images/laser-end"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -116,7 +122,8 @@ public class BossLevelGameArea extends GameArea {
             "sounds/pickupsound.mp3",
             "sounds/thudsound.mp3",
             "sounds/walksound.mp3",
-            "sounds/whooshsound.mp3"
+            "sounds/whooshsound.mp3",
+            "sounds/laserShower.mp3"
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
@@ -146,17 +153,16 @@ public class BossLevelGameArea extends GameArea {
     }
     protected void loadEntities() {
         spawnParallaxBackground();
-        //spawnPlatforms();
+        spawnPlatforms();
         spawnWalls();
         spawnStaticObstacles();
         Entity[] toBeDestroyed = spawnCeilingObstacles();
         // Pass toBeDestroyed to this.destroyFloor() when triggering.
         spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
-        //spawnLaserPuzzle();
+        spawnLaserPuzzle();
         spawnEndgameButton();
         spawnBoss();
-
     }
 
     /**
@@ -237,6 +243,44 @@ public class BossLevelGameArea extends GameArea {
         endgamePlatform.setScale(6f, 0.8f);
         spawnEntityAt(endgamePlatform, endgamePos,false, false);
     }
+    public void spawnLaserShower() {
+        if (player == null) return; // safety check
+
+        final float Y = player.getPosition().y + 20f; // spawn above player
+        final float X = player.getPosition().x;
+
+        // Spawn 3 lasers to the left
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i + 1) * 7.5f); // offset left
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            // Remove laser after 5 seconds
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+
+        // Spawn 3 lasers to the right
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((i + 1) * 7.5f); // offset right
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+    }
+
 
     /**
      * Spawn the walls between the two halves of the level, as well as next to the death pit
@@ -572,23 +616,40 @@ public class BossLevelGameArea extends GameArea {
 
     private void spawnBoss() {
         GridPoint2 spawnPos = new GridPoint2(1, 40);
-        Entity boss = EnemyFactory.createBossEnemy(
-                player,
-                terrain.tileToWorldPosition(spawnPos)
-        );
-        boss.addComponent(new com.csse3200.game.components.boss.BossSpawnMiniTest());
+
+        Entity boss = EnemyFactory.createBossEnemy(player, terrain.tileToWorldPosition(spawnPos));
+
+        BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
+        if (spawnComp != null) {
+            spawnComp.resetTriggers();
+
+            // You can change these values to trigger when it spawns the drones
+            spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
+
+        }
         spawnEntityAt(boss, spawnPos, true, true);
+
+        boss.getEvents().addListener("reset", () -> {
+            BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
+            if (spawnComponent != null) {
+                spawnComponent.resetTriggers();
+                spawnComponent.cleanupDrones();
+            }
+        });
     }
 
     private void spawnDeathZone() {
         // Death zone at the start of level
-        GridPoint2 spawnPos =  new GridPoint2(12,(tileBounds.y - 34));
+        GridPoint2 spawnPos =  new GridPoint2(2, -10);
         Entity deathZone = DeathZoneFactory.createDeathZone();
-        deathZone.setScale(10,0.5f);
-        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(0.8f),
+        deathZone.setScale(9,16.5f);
+        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(1f),
                 PhysicsComponent.AlignX.CENTER,
                 PhysicsComponent.AlignY.BOTTOM);
-        spawnEntityAt(deathZone, spawnPos, true,  false);
+        deathZone.addComponent(new TextureRenderComponent("images/blackSquare.png"));
+        spawnEntityAt(deathZone, spawnPos, false,  false);
 
         // Death zone beneath lasers
         Entity deathZone2 = DeathZoneFactory.createDeathZone();
