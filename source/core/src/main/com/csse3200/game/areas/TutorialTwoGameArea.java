@@ -759,20 +759,6 @@ public class TutorialTwoGameArea extends GameArea {
     }
 
 
-    public void spawnCollectable(Vector2 pos) {
-        PhysicsComponent physics  = new PhysicsComponent();
-        physics.setBodyType(BodyDef.BodyType.StaticBody);
-        Entity collectable = new Entity()
-            .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
-            .addComponent(physics)
-            .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
-            .addComponent(new ItemCollectableComponent());
-        //.addComponent(new CollectableComponentV2("hardware"));
-        collectable.setPosition(pos);
-        collectable.setScale(0.6f, 0.6f);
-        ServiceLocator.getEntityService().register(collectable);
-    }
-
     public void spawnUpgrade(String upgradeID, int posx, int posy) {
 //        if (upgradeID == "dash") {
 //            Entity upgrade = CollectableFactory.createDashUpgrade();
@@ -789,15 +775,6 @@ public class TutorialTwoGameArea extends GameArea {
             Entity upgrade = CollectableFactory.createJetpackUpgrade();
             spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
         }
-    }
-
-    public void spawnCollectables() {
-        Vector2 playerPos = player.getPosition();
-        CollectableCounter.reset();
-
-        spawnCollectable(new Vector2(33.5f, -1.5f));
-        spawnCollectable(new Vector2(0f, 23f));
-        spawnCollectable(new Vector2(39.5f, 30f));
     }
 
     protected void loadAssets() {
