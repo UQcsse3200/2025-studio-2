@@ -167,7 +167,7 @@ public class TutorialTwoGameArea extends GameArea {
 //        spawnCollectables();
 //        spawnTutorials();
          spawnUpgrade("glider", 9, 39);
-         spawnUpgrade("jetpack", 5, 6);
+         spawnUpgrade("jetpack", 76, 4);
     }
 
     private void spawnTutorials() {
