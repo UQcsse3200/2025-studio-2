@@ -3,7 +3,7 @@ package com.csse3200.game.entities.factories;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingEngine;
@@ -55,7 +55,7 @@ class LaserFactoryTest {
         assertNotNull(e.getComponent(AnimationRenderComponent.class));
         assertNotNull(e.getComponent(ConeLightComponent.class));
         assertNotNull(e.getComponent(CombatStatsComponent.class));
-        assertNotNull(e.getComponent(LaserEmitterComponent.class));
+        assertNotNull(e.getComponent(LaserShowerComponent.class));
         assertNotNull(e.getComponent(LaserRenderComponent.class));
     }
 }

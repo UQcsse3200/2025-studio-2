@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
@@ -36,6 +38,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
+    boolean has_laser = false;
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -84,7 +87,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
             "images/glide_powerup.png",
-            "images/jetpack_powerup.png"
+            "images/jetpack_powerup.png",
+            "images/laser-end.png",
 
     };
     private static final String backgroundMusic = "sounds/Flow.mp3";
@@ -102,14 +106,17 @@ public class LevelTwoGameArea extends GameArea {
             "sounds/damagesound.mp3",
             "sounds/thudsound.mp3",
             "sounds/chimesound.mp3",
-            "sounds/explosion.mp3"};
+            "sounds/explosion.mp3",
+            "sounds/laserShower.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
             "images/doors.atlas",
             "images/timer.atlas",
-            "images/drone.atlas"
+            "images/drone.atlas",
+            "images/laser.atlas"
     };
+    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -215,6 +222,59 @@ public class LevelTwoGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+    public void spawnLaserShower() {
+        final float Y = player.getPosition().y + 10f;
+        final float X = player.getPosition().x;
+
+
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+
+        for (int j = 0; j <=2; j++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((j+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+    }
+    public void laserShowerChecker(float delta) {
+        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            spacePressCount++;
+        }
+        int SPACE_THRESHOLD = 20;
+        if (spacePressCount == SPACE_THRESHOLD) {
+            if (has_laser==false) {
+                spawnLaserShower();
+                has_laser = true;
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        has_laser = false;
+                    }
+                },5f);
+            }
+            spacePressCount = 0;
+        }
+    }
+
 
     private void displayUI() {
         Entity ui = new Entity();

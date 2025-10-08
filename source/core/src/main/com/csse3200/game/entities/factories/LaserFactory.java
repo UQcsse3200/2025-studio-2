@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
@@ -51,6 +52,7 @@ public class LaserFactory {
 
         // construct entity
         Entity e = new Entity()
+                .addComponent(new LaserShowerComponent(dir))
                 .addComponent(new LaserEmitterComponent(dir))
                 .addComponent(new LaserRenderComponent())
                 .addComponent(new CombatStatsComponent(1, ATTACK_DAMAGE))

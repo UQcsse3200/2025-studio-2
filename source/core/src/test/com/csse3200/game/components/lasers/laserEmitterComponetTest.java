@@ -194,22 +194,22 @@ class LaserEmitterComponentTest {
     @Test
     void twoReflections_chainAcrossLShape() {
         /*
-        * path:
-        *   1) start at (2,7)
-        *   2) hit first reflector 15 units to the right of start. reflector is reflecting
-        *      laser straight up, normal of (-sqrt(2)/2, sqrt(2)/2)
-        *   3) hit second reflector after 10 units directly above first reflector. reflects
-        *      laser to the left, normal of (-sqrt(2)/2, -sqrt(2)/2)
-        *   4) laser travels for a further 25 units hitting nothing
-        *
-        * path kinda looks like this i guess:
-        *
-        *    ----------\
-        *             |
-        *             |
-        *      -------/
-        *
-        * */
+         * path:
+         *   1) start at (2,7)
+         *   2) hit first reflector 15 units to the right of start. reflector is reflecting
+         *      laser straight up, normal of (-sqrt(2)/2, sqrt(2)/2)
+         *   3) hit second reflector after 10 units directly above first reflector. reflects
+         *      laser to the left, normal of (-sqrt(2)/2, -sqrt(2)/2)
+         *   4) laser travels for a further 25 units hitting nothing
+         *
+         * path kinda looks like this i guess:
+         *
+         *    ----------\
+         *             |
+         *             |
+         *      -------/
+         *
+         * */
         Vector2 entityPos = new Vector2(2f, 7f);
         Vector2 start = entityPos.cpy().add(0.5f, 0.5f);
         Vector2 hit1 = start.cpy().add(15f, 0f);
@@ -242,7 +242,7 @@ class LaserEmitterComponentTest {
         Vector2 end = hit2.cpy().add(-25f, 0f);
         assertEquals(end.x, points.get(3).x, 1e-3); // higher offset tolerance set because idk my math is bad...
         assertEquals(end.y, points.get(3).y, 1e-3); // actually it's because of after each hit the laser is
-                                                         // nudged slightly to avoid rehits
+        // nudged slightly to avoid rehits
     }
 
 

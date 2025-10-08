@@ -1,8 +1,11 @@
 package com.csse3200.game.components.lasers;
 
+
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -13,7 +16,6 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -34,10 +36,12 @@ import java.util.List;
  * The list of points in world space is then exposed globally by a getter method which can be accessed by the
  * dedicated laser renderer to render lines between the points.
  */
-public class LaserEmitterComponent extends Component {
+public class LaserShowerComponent extends Component {
     private static final int MAX_REBOUNDS = 8;
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
+    private static final String LASER_SOUND = "sounds/laserShower.mp3";
+
 
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
     private static final short blockedOccluder = (short) (
@@ -56,27 +60,27 @@ public class LaserEmitterComponent extends Component {
     private float dir = 90f;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
+    private static final float FIRE_COOLDOWN = 0f; // seconds between shots
+    private float timeSinceLastShot = 0f;
+    private boolean laserActive = false;
+
 
     private List<Entity> lastReflectorsHit = new ArrayList<>();
     private Entity hitLight = null;
     private Entity lastDetectorHit = null;
 
-    private AnimationRenderComponent animator;
-    private ConeLightComponent emitterLight;
-
-    private boolean enabled = true;
-    private boolean lastEnabled = true;
-
-    public LaserEmitterComponent() {
+    /**
+     * defalult constructor
+     */
+    public LaserShowerComponent() {
 
     }
-
-    public LaserEmitterComponent(float dir) {
+    /**
+     * Creates a laser emitter pointing in the specified direction.
+     * @param dir initial laser angle in degrees
+     */
+    public LaserShowerComponent(float dir) {
         this.dir = dir;
-    }
-
-    private void setEnable(boolean enabled) {
-        this.enabled = enabled;
     }
 
     @Override
@@ -86,21 +90,44 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
-        animator = entity.getComponent(AnimationRenderComponent.class);
-        emitterLight = entity.getComponent(ConeLightComponent.class);
 
         if (ServiceLocator.getLightingService() != null) {
             hitLight = createPointLight();
         }
+        entity.getEvents().addListener("shootLaser", () -> laserActive = true);
+        entity.getEvents().addListener("laserOff", this::stopLaser);
+    }
+    /**
+     * Stops the laser (clears positions and turns it off).
+     */
+    private void stopLaser() {
+        laserActive = false;
+        positions.clear();
 
-        entity.getEvents().addListener("enable", () -> setEnable(true));
-        entity.getEvents().addListener("disable", () -> setEnable(false));
+        // Turn off any reflector highlights
+        for (Entity e : lastReflectorsHit) {
+            e.getEvents().trigger("laserOff", false);
+        }
+        lastReflectorsHit.clear();
     }
 
     @Override
     public void update() {
+        if (timeSinceLastShot > 0) {
+            timeSinceLastShot -= ServiceLocator.getTimeSource().getDeltaTime();
+        }
+
+        // Only fire if laser is active AND cooldown expired
+        if (laserActive && timeSinceLastShot <= 0f) {
+            fireLaser();
+            timeSinceLastShot = FIRE_COOLDOWN; // reset cooldown
+        }
+    }
+
+
+    public void fireLaser() {
         /*
-        * within this update a few calculations are done to construct out
+        * within this a few calculations are done to construct out
         * list of collisions our laser makes.
         *
         * firstly we start by getting the initial position of the laser which
@@ -110,16 +137,13 @@ public class LaserEmitterComponent extends Component {
         * reflection is calculated using the impact angle and the normal vector of the surface
         * hit. the process is repeated until we run out of rebounds or length.
         * */
-        if (lastEnabled !=  enabled) {
-            setLightVisibility(enabled);
-            setAnimation(enabled);
-            setHitTexture(enabled);
-            lastEnabled = enabled;
+        Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
+        if (laserSound != null) {
+            long soundId = laserSound .play(1.0f);
+            fadeOutSound(laserSound , soundId);
         }
-        if (!enabled) return;
 
         positions.clear();
-
         // add initial point
         Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
         positions.add(start.cpy());
@@ -173,9 +197,13 @@ public class LaserEmitterComponent extends Component {
             } else {
                 if (isDetector) {
                     triggerDetector(hit);
-                    setLightVisibility(false);
+                    if (hitLight != null) {
+                        hitLight.getComponent(ConeLightComponent.class).setActive(false);
+                    }
                 } else {
-                    setLightVisibility(true);
+                    if (hitLight != null) {
+                        hitLight.getComponent(ConeLightComponent.class).setActive(true);
+                    }
                 }
 
                 updateHitLight(hit);
@@ -211,7 +239,31 @@ public class LaserEmitterComponent extends Component {
         }
         lastReflectorsHit = reflectorsHit;
     }
+    /**
+     * Gradually fades out the sound over 1 second.
+     * @param sound Sound to fade
+     * @param soundId ID of the playing sound
+     */
+    private void fadeOutSound(Sound sound, long soundId) {
+        final int steps = 10;
+        final float interval = (float) 1.0 / steps;
 
+        for (int i = 0; i < steps; i++) {
+            final float volume = 1.0f - (i / (float) steps);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    sound.setVolume(soundId, volume);
+                    if (volume <= 0f) sound.stop(soundId);
+                }
+            }, i * interval);
+        }
+    }
+
+    /**
+     * Creates a point light entity to visualize laser hits.
+     * @return point light entity
+     */
     private static Entity createPointLight() {
         Entity light = new Entity();
         ConeLightComponent coneLight = new ConeLightComponent(
@@ -234,28 +286,10 @@ public class LaserEmitterComponent extends Component {
 
         return light;
     }
-
-    private void setLightVisibility(boolean visible) {
-        if (hitLight != null) {
-            hitLight.getComponent(ConeLightComponent.class).setActive(visible);
-        }
-    }
-
-    private void setHitTexture(boolean visible) {
-        if  (hitLight != null) {
-            hitLight.getComponent(TextureRenderComponent.class).setEnabled(visible);
-        }
-    }
-
-    private void setAnimation(boolean visible) {
-        if (animator != null) {
-            animator.startAnimation(visible ? "laser-on"  : "laser-off");
-        }
-        if (emitterLight != null) {
-            emitterLight.setActive(visible);
-        }
-    }
-
+    /**
+     * Updates the laser hit light position.
+     * @param hit the raycast hit
+     */
     private void updateHitLight(RaycastHit hit) {
         if (hitLight == null) return;
 
@@ -345,7 +379,10 @@ public class LaserEmitterComponent extends Component {
         }
         return 0f;
     }
-
+    /**
+     * Triggers a laser detector entity.
+     * @param hit raycast hit
+     */
     private void triggerDetector(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
         if (target == null) return;

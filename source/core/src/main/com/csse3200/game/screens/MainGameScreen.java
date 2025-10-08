@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -54,8 +55,9 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
+  private float laserTimer = 0f;
 
-  private final GdxGame game;
+    private final GdxGame game;
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
@@ -104,7 +106,11 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
-    gameArea = new LevelOneGameArea(terrainFactory);
+
+    //gameArea = new SprintOneGameArea(terrainFactory);
+    gameArea = new BossLevelGameArea(terrainFactory);
+    //gameArea = new LevelOneGameArea(terrainFactory);
+    //gameArea = new LevelTwoGameArea(terrainFactory);
 
     gameArea.create();
 
@@ -206,14 +212,31 @@ public class MainGameScreen extends ScreenAdapter {
 
   @Override
   public void render(float delta) {
-    if (!paused) {
-      // Update camera position to follow player
-      updateCameraFollow();
+      if (!paused) {
+          // Update camera position to follow player
+          updateCameraFollow();
 
-      physicsEngine.update();
-      ServiceLocator.getEntityService().update();
-    }
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+          physicsEngine.update();
+          ServiceLocator.getEntityService().update();
+          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+              if (gameArea instanceof LevelOneGameArea levelOneArea) {
+                  levelOneArea.laserShowerChecker(delta);
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
+                  levelTwoArea.laserShowerChecker(delta);
+              }
+          }
+          laserTimer += delta;
+
+          // Check if 50 seconds have passed
+          if (laserTimer >= 50f) {
+              if (gameArea instanceof BossLevelGameArea bossLevel) {
+                  bossLevel.spawnLaserShower(); // spawn lasers
+              }
+              laserTimer = 0f; // reset timer
+          }
+
+      }
+      renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   private Entity getPlayer() {
