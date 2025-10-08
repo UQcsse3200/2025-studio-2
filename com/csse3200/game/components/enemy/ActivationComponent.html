@@ -95,8 +95,8 @@ loadScripts(document, 'script');</script>
 <div class="type-signature"><span class="modifiers">public class </span><span class="element-name type-name-label">ActivationComponent</span>
 <span class="extends-implements">extends <a href="../Component.html" title="class in com.csse3200.game.components">Component</a></span></div>
 <div class="block">This component links an enemy to a security camera by ID.
- When the camera detects/loses the target, it triggers "enemyActivated"/"enemyDeactivated" on the owner entity.
- If the camera isn't spawned yet, the component retries linking in update().</div>
+ - Attaches listeners once the camera exists
+ - Re-links automatically if the camera instance changes (e.g. after reset)</div>
 </section>
 <section class="summary">
 <ul class="summary-list">

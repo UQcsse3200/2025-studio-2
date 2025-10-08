@@ -137,8 +137,11 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <div class="table-header col-last">Description</div>
 <div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(float)" class="member-name-link">CooldownTask</a><wbr>(float&nbsp;waitTime)</code></div>
 <div class="col-last even-row-color">
-<div class="block">Creates a cooldown task with the given wait duration.</div>
+<div class="block">Creates a cooldown task with the given wait duration and teleport type.(teleportStart by default)</div>
 </div>
+<div class="col-constructor-name odd-row-color"><code><a href="#%3Cinit%3E(float,java.lang.String)" class="member-name-link">CooldownTask</a><wbr>(float&nbsp;waitTime,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;teleportEvent)</code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -168,6 +171,16 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns the priority of this task.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isTeleporting()" class="member-name-link">isTeleporting</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Check if teleporting.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#isWaiting()" class="member-name-link">isWaiting</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Check if waiting.</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#start()" class="member-name-link">start</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
@@ -176,7 +189,7 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#stop()" class="member-name-link">stop</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">When the cooldown task is stopped, gravity is restored and a
+<div class="block">When the cooldown task is stopped, a
  'cooldownEnd' event is triggered.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
@@ -211,12 +224,19 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <section class="detail" id="&lt;init&gt;(float)">
 <h3>CooldownTask</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CooldownTask</span><wbr><span class="parameters">(float&nbsp;waitTime)</span></div>
-<div class="block">Creates a cooldown task with the given wait duration.</div>
+<div class="block">Creates a cooldown task with the given wait duration and teleport type.(teleportStart by default)</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>waitTime</code> - duration (in seconds) to wait before teleporting
                  the entity back to its original position</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="&lt;init&gt;(float,java.lang.String)">
+<h3>CooldownTask</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">CooldownTask</span><wbr><span class="parameters">(float&nbsp;waitTime,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;teleportEvent)</span></div>
 </section>
 </li>
 </ul>
@@ -247,8 +267,8 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <section class="detail" id="start()">
 <h3>start</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">start</span>()</div>
-<div class="block">Starts the cooldown. Starts a wait subtask, disables gravity, and triggers a
- <code>"cooldownStart"</code> event for animations TO BE ADDED.</div>
+<div class="block">Starts the cooldown. Creates a wait and teleport wait subtask,
+ starts wait and triggers a <code>"cooldownStart"</code> event.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../../ai/tasks/Task.html#start()">start</a></code>&nbsp;in interface&nbsp;<code><a href="../../ai/tasks/Task.html" title="interface in com.csse3200.game.ai.tasks">Task</a></code></dd>
@@ -262,8 +282,9 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <h3>update</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">update</span>()</div>
 <div class="block">Advance wait task. Once the cooldown wait has elapsed,
- the entity is teleported back to its patrol start or spawn
- position the cooldown task is stopped.
+ the entity starts the teleport wait while animation is played
+ (triggered by 'teleportStart') then teleports back to its patrol start
+ or spawn position.
  Calls deactivate() to stop task being runnable.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
@@ -291,13 +312,35 @@ implements <a href="../../ai/tasks/PriorityTask.html" title="interface in com.cs
 <section class="detail" id="stop()">
 <h3>stop</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">stop</span>()</div>
-<div class="block">When the cooldown task is stopped, gravity is restored and a
+<div class="block">When the cooldown task is stopped, a
  'cooldownEnd' event is triggered.</div>
 <dl class="notes">
 <dt>Specified by:</dt>
 <dd><code><a href="../../ai/tasks/Task.html#stop()">stop</a></code>&nbsp;in interface&nbsp;<code><a href="../../ai/tasks/Task.html" title="interface in com.csse3200.game.ai.tasks">Task</a></code></dd>
 <dt>Overrides:</dt>
 <dd><code><a href="../../ai/tasks/DefaultTask.html#stop()">stop</a></code>&nbsp;in class&nbsp;<code><a href="../../ai/tasks/DefaultTask.html" title="class in com.csse3200.game.ai.tasks">DefaultTask</a></code></dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isTeleporting()">
+<h3>isTeleporting</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isTeleporting</span>()</div>
+<div class="block">Check if teleporting.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if currentTask is teleportWait</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="isWaiting()">
+<h3>isWaiting</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">isWaiting</span>()</div>
+<div class="block">Check if waiting.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>true if currentTask is waitTask</dd>
 </dl>
 </section>
 </li>

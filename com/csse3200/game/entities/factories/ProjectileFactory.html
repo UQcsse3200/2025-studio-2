@@ -109,7 +109,7 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createBomb(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,float,int)" class="member-name-link">createBomb</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;source,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPosition,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnCenter,
  com.badlogic.gdx.math.Vector2&nbsp;targetPosition,
  float&nbsp;explosionDelay,
  float&nbsp;explosionRadius,
@@ -146,7 +146,7 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="createBomb(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,float,int)">
 <h3>createBomb</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createBomb</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;source,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPosition,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnCenter,
  com.badlogic.gdx.math.Vector2&nbsp;targetPosition,
  float&nbsp;explosionDelay,
  float&nbsp;explosionRadius,
@@ -155,7 +155,7 @@ loadScripts(document, 'script');</script>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>source</code> - The entity that created the bomb (drone)</dd>
-<dd><code>spawnPosition</code> - Position where bomb spawns (drone's position)</dd>
+<dd><code>spawnCenter</code> - Position where bomb spawns (drone's position)</dd>
 <dd><code>targetPosition</code> - Position where bomb should land (player's position)</dd>
 <dd><code>explosionDelay</code> - Time in seconds before explosion after landing</dd>
 <dd><code>explosionRadius</code> - Radius of explosion damage area</dd>

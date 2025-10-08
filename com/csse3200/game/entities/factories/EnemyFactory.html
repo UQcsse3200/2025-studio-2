@@ -110,17 +110,31 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createBomberDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createAutoBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2%5B%5D,java.lang.String)" class="member-name-link">createAutoBomberDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2[]&nbsp;patrolRoute,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;bomberId)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Create a bomber-style drone enemy that chases the target and drops bombs when target is
- directly below (within a certain range).</div>
+<div class="block">Create an automatic bomber drone that continuously drops bombs while patrolling.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,java.lang.String)" class="member-name-link">createBomberDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;bomberId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Create a bomber-style drone with integrated cone light detection.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a drone enemy that starts idle.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createPatrollingBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2%5B%5D,java.lang.String)" class="member-name-link">createPatrollingBomberDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2[]&nbsp;patrolRoute,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;bomberId)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Create a patrolling bomber drone with integrated light detection.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createPatrollingDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2%5B%5D)" class="member-name-link">createPatrollingDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
@@ -128,6 +142,10 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Same as basic drone enemy but patrols a given route, alternatively chasing a target when activated.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createSelfDestructionDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createSelfDestructionDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -177,19 +195,66 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)">
+<section class="detail" id="createBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,java.lang.String)">
 <h3>createBomberDrone</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createBomberDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</span></div>
-<div class="block">Create a bomber-style drone enemy that chases the target and drops bombs when target is
- directly below (within a certain range).</div>
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;bomberId)</span></div>
+<div class="block">Create a bomber-style drone with integrated cone light detection.
+ The bomber uses a downward-facing cone light to detect and bomb targets below.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>target</code> - that drone pursues when bombing/chasing</dd>
 <dd><code>spawnPos</code> - the starting world position of the enemy</dd>
+<dd><code>bomberId</code> - unique ID for this bomber (used for light registration)</dd>
 <dt>Returns:</dt>
-<dd>a bomber drone entity</dd>
+<dd>a bomber drone entity with light detection</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createPatrollingBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2[],java.lang.String)">
+<h3>createPatrollingBomberDrone</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createPatrollingBomberDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2[]&nbsp;patrolRoute,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;bomberId)</span></div>
+<div class="block">Create a patrolling bomber drone with integrated light detection.
+ The bomber patrols a route and uses its cone light to detect targets below.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - that drone pursues when bombing/chasing</dd>
+<dd><code>patrolRoute</code> - array of waypoints defining the patrol route</dd>
+<dd><code>bomberId</code> - unique ID for this bomber</dd>
+<dt>Returns:</dt>
+<dd>a patrolling bomber drone entity</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createAutoBomberDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2[],java.lang.String)">
+<h3>createAutoBomberDrone</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createAutoBomberDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2[]&nbsp;patrolRoute,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;bomberId)</span></div>
+<div class="block">Create an automatic bomber drone that continuously drops bombs while patrolling.
+ The bomber stays in drop animation and drops bombs every second while moving.
+ The bomb drop task briefly takes priority every second to drop a bomb, then
+ immediately yields back to patrol.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - reference entity (usually player) for bomb direction</dd>
+<dd><code>patrolRoute</code> - array of waypoints defining the patrol route</dd>
+<dd><code>bomberId</code> - unique ID for this bomber</dd>
+<dt>Returns:</dt>
+<dd>an automatic bombing patrol drone entity</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createSelfDestructionDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)">
+<h3>createSelfDestructionDrone</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createSelfDestructionDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</span></div>
 </section>
 </li>
 </ul>
