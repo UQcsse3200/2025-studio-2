@@ -110,6 +110,18 @@ public class GdxGame extends Game {
 
         // Load into the correct area, pass the player the old inventory.
         MainGameScreen game = new MainGameScreen(this, saveConfig.area);
+        // If we don't already have a saved area, start from level one
+        if (saveConfig == null) yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+        else {
+          // Check that this is a valid area, if not, start from level 1
+          try {
+            MainGameScreen.Areas.valueOf(saveConfig.area.toString());
+          } catch (IllegalArgumentException e) {
+            yield new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+          }
+
+          // Load into the correct area, pass the player the old inventory.
+          MainGameScreen game = new MainGameScreen(this, saveConfig.area);
 
         InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
         inventoryComponent.setInventory(saveConfig.inventory);
