@@ -131,7 +131,7 @@ public class BossLevelGameArea extends GameArea {
         spawnStaticObstacles();
         Entity[] toBeDestroyed = spawnCeilingObstacles();
         // Entities to be destroyed using entity.dispose() when bombers finish.
-        spawnButtonPuzzleRoom();
+//        spawnButtonPuzzleRoom();
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
@@ -139,10 +139,65 @@ public class BossLevelGameArea extends GameArea {
     }
 
     /**
-     * Create the laser puzzle room
+     * Create the laser puzzle (actual lasers, objects, etc)
+     * (AIM: REACH THE END WITH THE BOX)
      */
     private void spawnLaserPuzzle() {
+        // Box at start
+        Entity reflectorBox = BoxFactory.createReflectorBox();
+        spawnEntityAt(reflectorBox, new GridPoint2(63, 15), false, false);
 
+        // Laser slicing diagonally down-right over platform1
+        Entity laser0 = LaserFactory.createLaserEmitter(335f);
+        spawnEntityAt(laser0, new GridPoint2(63, 25), false, false);
+
+        // Laser from the end platform horizontally across screen
+        Entity laser1 = LaserFactory.createLaserEmitter(180f);
+        spawnEntityAt(laser1, new GridPoint2(tileBounds.x - 10, 23), false, false);
+
+        // Laser going down over the second platform, intersecting the others
+
+        // Button-blocking laser at end
+        Entity endLaser = LaserFactory.createLaserEmitter(270f);
+        spawnEntityAt(endLaser, new GridPoint2(tileBounds.x - 5, tileBounds.y - 5), false, false);
+    }
+
+    /**
+     * It's finally laser room time! Platforms so it doesn't need cheat code lol
+     */
+    private void spawnLaserRoomPlatforms() {
+        // Platform immediately upon entering; holds reflector box that will be used.
+        GridPoint2 boxPos = new GridPoint2(63, 12);
+        Entity firstPlatform = PlatformFactory.createStaticPlatform();
+        firstPlatform.setScale(2f, 0.5f);
+        spawnEntityAt(firstPlatform, boxPos,false, false);
+
+        // From here on, the platforms are numbered by the order in which they should be traversed
+        GridPoint2 pos1 = new GridPoint2(74, 17); // I swear I'm not 1-indexing; boxPos is platform0
+        Entity platform1 = PlatformFactory.createVolatilePlatform(51.5f, 5f);
+        platform1.setScale(1f, 0.5f);
+        spawnEntityAt(platform1, pos1,false, false);
+
+        GridPoint2 pos2 = new GridPoint2(80, 20);
+        Entity platform2 = PlatformFactory.createStaticPlatform();
+        platform2.setScale(1f, 0.5f);
+        spawnEntityAt(platform2, pos2,false, false);
+
+        GridPoint2 pos3 = new GridPoint2(77, 25);
+        Entity platform3 = PlatformFactory.createStaticPlatform();
+        platform3.setScale(1f, 0.5f);
+        spawnEntityAt(platform3, pos3,false, true);
+
+        GridPoint2 pos4 = new GridPoint2(80, 20);
+        Entity platform4 = PlatformFactory.createStaticPlatform();
+        platform4.setScale(1f, 0.5f);
+        spawnEntityAt(platform4, pos4,false, true);
+
+        // Platform to stand on to hit endgame button
+        GridPoint2 endgamePos = new GridPoint2(tileBounds.x - 10, 23);
+        Entity endgamePlatform = PlatformFactory.createStaticPlatform();
+        endgamePlatform.setScale(6f, 0.8f);
+        spawnEntityAt(endgamePlatform, endgamePos,false, false);
     }
 
     /**
@@ -178,6 +233,7 @@ public class BossLevelGameArea extends GameArea {
         spawnFirstDrop();
         spawnUpwardPath();
         spawnButtonPlatforms();
+        spawnLaserRoomPlatforms();
     }
 
     /**
@@ -285,7 +341,7 @@ public class BossLevelGameArea extends GameArea {
         twinButtonPlatform.setScale(2.5f, 0.5f);
         spawnEntityAt(twinButtonPlatform, fourthPos,false, false);
 
-        // Platform beneath the end button
+        // Platform beneath the wall button
         GridPoint2 fifthPos = new GridPoint2(58, 12);
         Entity wallPlatform = PlatformFactory.createStaticPlatform();
         wallPlatform.setScale(1f, 0.5f);
@@ -629,7 +685,7 @@ public class BossLevelGameArea extends GameArea {
      * TODO replace with Shane's captcha.
      */
     private void spawnEndgameButton() {
-        GridPoint2 buttonPos = new GridPoint2(tileBounds.x - 10, 5);
+        GridPoint2 buttonPos = new GridPoint2(tileBounds.x, tileBounds.y / 2);
         Entity winGameButton = ButtonFactory.createButton(false, "platform", "left");
         winGameButton.setScale(2f, 5f);
         spawnEntityAt(winGameButton, buttonPos, true, true);

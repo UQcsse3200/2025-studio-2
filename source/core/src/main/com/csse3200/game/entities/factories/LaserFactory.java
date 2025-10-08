@@ -17,7 +17,7 @@ import com.csse3200.game.services.ServiceLocator;
  */
 public class LaserFactory {
 
-    private static final int ATTACK_DAMAGE = 20;
+    private static final int ATTACK_DAMAGE = 0;
 
     /**
      * Creates a new laser emitter entity which is rotated by {@code dir} degrees.
