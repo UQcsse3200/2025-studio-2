@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -112,7 +113,7 @@ public class LevelOneGameArea extends GameArea {
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
-            "sounds/chimesound.mp3"};
+            "sounds/chimesound.mp3", "sounds/explosion.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/drone.atlas",
@@ -155,6 +156,9 @@ public class LevelOneGameArea extends GameArea {
         // spawnUpgrade("glider", 7, 6);  // won't be used in level one
         // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
         spawnSecurityCams();
+        //spawnBomberDrone();
+        //spawnSelfDestructDrone();
+        spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
         //spawnPlatformBat();
@@ -882,6 +886,46 @@ public class LevelOneGameArea extends GameArea {
         Entity securityLight2 = SecurityCameraFactory.createSecurityCamera(player, LightingDefaults.ANGULAR_VEL, 270f, "2");
         spawnEntityAt(securityLight2, new GridPoint2(74, 13), true, true);
     }
+
+    private void spawnBomberDrone() {
+        // Patrolling bomber with cone light detector
+        GridPoint2 spawnTile = new GridPoint2(55, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+        };
+
+        // Create bomber with unique ID "bomber1"
+        Entity bomberDrone = EnemyFactory.createPatrollingBomberDrone(player, patrolRoute, "bomber1");
+        spawnEntityAt(bomberDrone, spawnTile, true, true);
+    }
+
+    private void spawnSelfDestructDrone() {
+        GridPoint2 spawnTile = new GridPoint2(40, 15);
+        Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
+                player,
+                terrain.tileToWorldPosition(spawnTile)
+        ).addComponent(new ActivationComponent("1"));
+
+        spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
+
+    private void spawnAutoBomberDrone() {
+        GridPoint2 spawnTile = new GridPoint2(55, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(spawnTile),
+                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+        };
+
+        Entity autoBomber = EnemyFactory.createAutoBomberDrone(
+                player,           // target reference
+                patrolRoute,      // patrol waypoints
+                "auto_bomber_1"   // unique ID
+        );
+
+        spawnEntityAt(autoBomber, spawnTile, true, true);
+    }
+
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalPlatformBat = platformBatBuilder

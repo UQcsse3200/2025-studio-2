@@ -112,7 +112,7 @@ public class ResourceService implements Disposable {
    * @param type      asset type
    * @param <T>       type
    */
-  private <T> void loadAsset(String assetName, Class<T> type) {
+  public <T> void loadAsset(String assetName, Class<T> type) {
     logger.debug("Loading {}: {}", type.getSimpleName(), assetName);
     try {
       assetManager.load(assetName, type);

@@ -47,3 +47,8 @@ task dist(type: Jar) {
 dist.dependsOn classes
 
 eclipse.project.name = appName + "-desktop"
+
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx-tools:1.12.0"       // TextureUnpacker
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:1.12.0" //  Lwjgl3Files for unpacking
+}
