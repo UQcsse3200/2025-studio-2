@@ -91,7 +91,9 @@ public class CollectableComponentV2 extends Component {
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
             inventory.addItem(itemId);
-            inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
+            if (itemId.equals("key:door")) {
+                inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
+            }
             return true;
         }
         return false;
