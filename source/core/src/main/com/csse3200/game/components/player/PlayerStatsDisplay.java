@@ -85,7 +85,7 @@ public class PlayerStatsDisplay extends UIComponent {
     createStaminaTable();
     stage.addActor(staminaTable);
     // Create collectable table
-    collectableLabel = new Label("Lost Hardware collected: " + count + " / 3", skin, "large");
+    collectableLabel = new Label("Lost Hardware collected: " + count + " / 9", skin, "large");
     stage.addActor(collectableLabel);
   }
 
@@ -183,7 +183,7 @@ public class PlayerStatsDisplay extends UIComponent {
    * @param count the number of items collected
    */
   public void updateCollectableUI(int count) {
-      collectableLabel.setText("Lost hardware collected: " + count + " / 3");
+      collectableLabel.setText("Lost hardware collected: " + count + " / 9");
   }
 
   @Override

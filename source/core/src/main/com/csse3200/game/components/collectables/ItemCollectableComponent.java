@@ -10,11 +10,13 @@ import com.csse3200.game.utils.CollectablesSave;
 
 public class ItemCollectableComponent extends CollectableComponent {
     private int count;
+    private int level;
     private GameArea gameArea;
     private Vector2[] collected = new Vector2[9];
 
     public ItemCollectableComponent(GameArea gameArea) {
         this.gameArea = gameArea;
+        //this.level = level;
         initialiseCollected();
     }
 
