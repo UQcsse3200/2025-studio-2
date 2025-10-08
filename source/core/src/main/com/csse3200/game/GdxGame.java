@@ -110,12 +110,13 @@ public class GdxGame extends Game {
 
         // Load into the correct area, pass the player the old inventory.
         MainGameScreen game = new MainGameScreen(this, saveConfig.area);
+        ServiceLocator.registerMainGameScreen(game);
 
         InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
-          inventoryComponent.setInventory(saveConfig.inventory);
-          inventoryComponent.setUpgrades(saveConfig.upgrades);
+        inventoryComponent.setInventory(saveConfig.inventory);
+        inventoryComponent.setUpgrades(saveConfig.upgrades);
 
-          yield game;
+        yield game;
       }
     };
   }
