@@ -207,6 +207,7 @@ public class LevelTwoGameArea extends GameArea {
         ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
 
         spawnEntity(ui);
     }
