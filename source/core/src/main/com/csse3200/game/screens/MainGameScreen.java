@@ -204,6 +204,13 @@ public class MainGameScreen extends ScreenAdapter {
       }
   }
 
+
+    /**
+     * Parses a string into a valid Areas enum value.
+     *
+     * @param s the string to parse
+     * @return the corresponding Areas enum if valid, otherwise null
+     */
     private Areas parseTargetArea(String s) {
         try {
             return Areas.valueOf(s.trim());
@@ -249,6 +256,14 @@ public class MainGameScreen extends ScreenAdapter {
     };
   }
 
+  /**
+   * Switches to a new game area asynchronously with transition handling.
+   * If the current area is a cutscene, switches immediately via postRunnable,
+   * otherwise triggers a transition event from the player.
+   *
+   * @param area   the target area to switch to
+   * @param player the player entity that should be carried into the new area
+   */
   private void switchArea(Areas area, Entity player) {
     final Runnable runnable = () -> this.switchAreaRunnable(area, player);
     if (gameArea instanceof CutsceneArea) {
@@ -259,6 +274,14 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
 
+    /**
+     * Performs the actual area swap to the given target.
+     * Disposes the old area, creates the new one (with player if provided),
+     * and re-registers all global listeners for events.
+     *
+     * @param area   the target area enum
+     * @param player the player entity to transfer to the new area, may be null
+     */
     private void switchAreaRunnable(Areas area, Entity player) {
         if (area == null) return;
 
