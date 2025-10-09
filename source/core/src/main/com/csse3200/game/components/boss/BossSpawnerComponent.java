@@ -21,6 +21,7 @@ public class BossSpawnerComponent extends Component {
 	private final List<Boolean> triggered;
 	private Entity player;
 	private float spawnCooldown = 0f;
+	private float windup = 0f;
 	private final float spawnInterval;
 	private int currentTriggerIndex = 0;
 	// private float debugTimer = 0f;
@@ -102,9 +103,9 @@ public class BossSpawnerComponent extends Component {
 	 * Start a new spawning phase
 	 */
 	private void startSpawningPhase() {
-		spawnCooldown = 0f; // Start spawning immediately
+		spawnCooldown = 0.5f; // wait for a second and then Start
 		entity.getEvents().trigger("spawningPhaseStart", currentTriggerIndex);
-		entity.getEvents().trigger("generateDroneStart"); // Trigger boss animation
+		//entity.getEvents().trigger("generateDroneStart"); // Trigger boss animation
 	}
 
 	/**
@@ -112,8 +113,10 @@ public class BossSpawnerComponent extends Component {
 	 */
 	private void updateSpawning() {
 		if (totalDronesSpawned >= MAX_DRONES) {
+			entity.getEvents().trigger("chaseStart");
 			return;
 		}
+		float dt = ServiceLocator.getTimeSource().getDeltaTime();
 
 		if (spawnCooldown > 0) {
 			spawnCooldown -= ServiceLocator.getTimeSource().getDeltaTime();
@@ -122,8 +125,18 @@ public class BossSpawnerComponent extends Component {
 
 		// Check if we should spawn a drone
 		if (currentTriggerIndex < spawnTriggers.size() && triggered.get(currentTriggerIndex)) {
-			spawnDrone();
-			spawnCooldown = spawnInterval;
+			//generate animations before real spawn
+			if (windup <= 0f) {
+				windup = 2.8f; // Pre-swing duration：0.5~0.8
+				entity.getEvents().trigger("generateDroneStart");
+				return;
+			}
+
+			windup -= dt;
+			if (windup <= 0f) {
+				spawnDrone();                // real spawn
+				spawnCooldown = spawnInterval;
+			}
 		}
 	}
 
@@ -142,12 +155,14 @@ public class BossSpawnerComponent extends Component {
 
 		// Create self-destruct drone targeting the player
 		Entity drone = EnemyFactory.createBossSelfDestructDrone(player, spawnPos);
-		drone.getEvents().trigger("enemyActivated");
+
 
 		drone.setPosition(spawnPos);
 
 		// Register the drone
 		ServiceLocator.getEntityService().register(drone);
+		//register first and then activated
+		drone.getEvents().trigger("enemyActivated");
 
 		// Track the drone for cleanup
 		spawnedDrones.add(drone);

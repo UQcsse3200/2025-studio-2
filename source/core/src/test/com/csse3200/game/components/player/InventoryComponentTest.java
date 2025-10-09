@@ -14,14 +14,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import java.util.Map;
 import com.csse3200.game.components.player.InventoryComponent.Bag;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -297,10 +295,10 @@ class InventoryComponentTest {
     }
 
     // --------------------
-    // Read-only map views
+    // Getters
     // --------------------
     @Nested
-    class ReadOnlyViews {
+    class Getters {
         @Test
         void mapsAreUnmodifiable() {
             inv.addItems(Bag.INVENTORY, "pink-key", 1);
@@ -310,6 +308,46 @@ class InventoryComponentTest {
                     () -> inv.getUpgrades().put("hack", 999));
             assertThrows(UnsupportedOperationException.class,
                     () -> inv.getObjectives().put("hack", 999));
+        }
+
+        @Test
+        void gettersAreCopies() {
+            // Original inv should not contain changes made to copies
+            Map<String, Integer> inventoryCopy = inv.getInventoryCopy();
+            inventoryCopy.put("test", 3);
+            assertFalse(inv.getInventoryCopy().containsKey("test"));
+
+            Map<String, Integer> upgradesCopy = inv.getUpgradesCopy();
+            upgradesCopy.put("test2", 8);
+            assertFalse(inv.getUpgradesCopy().containsKey("test"));
+        }
+    }
+
+    @Nested
+    class Setters {
+        @Test
+        void settersWork() {
+            Map<String, Integer> inventoryTest = new HashMap<String, Integer>();
+            inventoryTest.put("test", 5);
+            inventoryTest.put("test2", 9);
+            inv.setInventory(inventoryTest);
+
+            Map<String, Integer> upgradesTest = new HashMap<String, Integer>();
+            upgradesTest.put("test3", 2);
+            upgradesTest.put("test4", 10);
+            inv.setUpgrades(upgradesTest);
+
+            // Keys and values should match
+            assertEquals(inv.getInventory().keySet(), inventoryTest.keySet());
+
+            assertEquals(inv.getUpgrades().keySet(), upgradesTest.keySet());
+
+            // Any changes after the set should not be registered
+            inventoryTest.put("test5", 4);
+            assertFalse(inv.getInventory().containsKey("test5"));
+
+            upgradesTest.put("test6", 1);
+            assertFalse(inv.getUpgrades().containsKey("test6"));
         }
     }
 

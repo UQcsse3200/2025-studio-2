@@ -40,12 +40,18 @@ public class BossAnimationControllerTest {
 
     @Test
     void generateDroneStart_playsFloat() {
-        Entity e = makeEntityWithDAC();
-        AnimationRenderComponent anim = mock(AnimationRenderComponent.class);
-        e.addComponent(anim);
-        e.create();
-        e.getEvents().trigger("boss:startSpawning");
-        verify(anim, times(1)).startAnimation("bossGenerateDrone");
+        // Arrange
+        AnimationRenderComponent animator = mock(AnimationRenderComponent.class);
+        Entity boss = new Entity();
+        boss.addComponent(animator);
+        boss.addComponent(new BossAnimationController());
+        boss.create(); // register
+
+        // Act
+        boss.getEvents().trigger("generateDroneStart");
+
+        // Assert
+        verify(animator).startAnimation("bossGenerateDrone");
     }
 
     @Test

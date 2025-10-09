@@ -254,8 +254,7 @@ public class EnemyFactory {
         if (patrolRoute != null && patrolRoute.length > 0) {
             drone
                     .addComponent(new SpawnPositionComponent(patrolRoute[0]))
-                    .addComponent(new PatrolRouteComponent(patrolRoute))
-                    .addComponent(new BombTrackerComponent());
+                    .addComponent(new PatrolRouteComponent(patrolRoute));
         }
 
         AnimationRenderComponent animator =
@@ -457,7 +456,7 @@ public class EnemyFactory {
                 new AnimationRenderComponent(ServiceLocator.getResourceService()
                         .getAsset("images/boss.atlas", TextureAtlas.class));
         animator.addAnimation("bossChase", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("bossGenerateDrone", 0.3f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bossGenerateDrone", 0.15f, Animation.PlayMode.LOOP);
         animator.addAnimation("bossTouchKill", 0.1f, Animation.PlayMode.NORMAL);
         animator.addAnimation("bossShootLaser", 0.1f, Animation.PlayMode.NORMAL);
         animator.addAnimation("touchKillEffect", 1f, Animation.PlayMode.NORMAL);
@@ -480,11 +479,12 @@ public class EnemyFactory {
         BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(defaultTriggers, 4f);
         boss.addComponent(droneSpawner);
 
+        /* already triggers in component, Avoid repeated triggers
         // Wire up drone spawning events to animations
         boss.getEvents().addListener("spawningPhaseStart", (Integer phase) -> {
             boss.getEvents().trigger("generateDroneStart");
         });
-
+        */
         return boss;
     }
 
