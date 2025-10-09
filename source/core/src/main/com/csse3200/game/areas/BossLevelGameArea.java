@@ -500,7 +500,7 @@ public class BossLevelGameArea extends GameArea {
     private void spawnFirstDrop() {
         // Volatile platform player initially spawns on
         GridPoint2 initialPos = new GridPoint2(3,tileBounds.y - 10);
-        Entity initialPlatform = PlatformFactory.createVolatilePlatform(0.6f, 1f);
+        Entity initialPlatform = PlatformFactory.createStaticPlatform();
         initialPlatform.setScale(2,0.5f);
         spawnEntityAt(initialPlatform, initialPos,false, false);
 
