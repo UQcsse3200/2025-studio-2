@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -70,6 +71,8 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
+  private float laserTimer = 0f;
+  private float jumpCount=0;
   private static long lvlStartTime;
 
   private final GdxGame game;
@@ -101,6 +104,7 @@ public class MainGameScreen extends ScreenAdapter {
     CUTSCENE_ONE,
     CUTSCENE_TWO,
     TUTORIAL,
+    BOSS_LEVEL
   }
 
   public MainGameScreen(GdxGame game) {
@@ -228,6 +232,7 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
+      case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -242,7 +247,8 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_ONE -> Areas.CUTSCENE_ONE;
       case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
       case LEVEL_TWO -> Areas.CUTSCENE_TWO;
-      case CUTSCENE_TWO -> Areas.SPRINT_ONE;
+      case CUTSCENE_TWO -> Areas.BOSS_LEVEL;
+      case BOSS_LEVEL -> Areas.SPRINT_ONE;
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -340,10 +346,30 @@ public class MainGameScreen extends ScreenAdapter {
       // Update camera position to follow player
       updateCameraFollow();
 
-      physicsEngine.update();
-      ServiceLocator.getEntityService().update();
-    }
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+          physicsEngine.update();
+          ServiceLocator.getEntityService().update();
+          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+              jumpCount++;
+              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
+                  levelOneArea.laserShowerChecker(delta);
+                  jumpCount = 0;
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
+                  levelTwoArea.laserShowerChecker(delta);
+                  jumpCount = 0;
+              }
+          }
+          laserTimer += delta;
+
+          // Check if 50 seconds have passed
+          if (laserTimer >= 50f) {
+              if (gameArea instanceof BossLevelGameArea bossLevel) {
+                  bossLevel.spawnLaserShower(); // spawn lasers
+              }
+              laserTimer = 0f; // reset timer
+          }
+
+      }
+      renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   /**
@@ -476,8 +502,6 @@ public class MainGameScreen extends ScreenAdapter {
 
     Stage stage = ServiceLocator.getRenderService().getStage();
     leaderboardComponent = new LeaderboardComponent();
-
-    lvlStartTime = gameTime.getTime();
 
     // Build your puzzle bank (spritesheet-driven)
     SimpleCaptchaBank bank = buildCaptchaBank();

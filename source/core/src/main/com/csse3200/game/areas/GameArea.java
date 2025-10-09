@@ -1,5 +1,7 @@
 package com.csse3200.game.areas;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -35,6 +37,7 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
   protected TerrainComponent terrain;
+  protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
   protected ArrayList<Vector2> deathLocations = new ArrayList<>();
   private Texture deathMarkerTexture = null;

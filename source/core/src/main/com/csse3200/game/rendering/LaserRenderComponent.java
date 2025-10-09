@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
+
 
 import java.util.List;
 
@@ -23,12 +25,14 @@ public class LaserRenderComponent extends RenderComponent {
     private static final float GLOW_MULT  = 2.7f;  // outer glow thickness multiplier
     private static final float GLOW_ALPHA = 0.35f; // max glow alpha
 
-    private LaserEmitterComponent emitter;
+    private LaserShowerComponent showerEmitter;
+    private LaserEmitterComponent mainEmitter;
 
     @Override
     public void create() {
         super.create();
-        emitter = entity.getComponent(LaserEmitterComponent.class);
+        showerEmitter = entity.getComponent(LaserShowerComponent.class);
+        mainEmitter = entity.getComponent(LaserEmitterComponent.class);
 
         // make 1x1 pixel
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
@@ -42,9 +46,14 @@ public class LaserRenderComponent extends RenderComponent {
 
     @Override
     protected void draw(SpriteBatch batch) {
-        if (emitter == null) return;
-        List<Vector2> pts = emitter.getPositions();
-        if (pts.size() < 2) return;
+        List<Vector2> pts = null;
+        if (mainEmitter != null) {
+            pts = mainEmitter.getPositions();
+        } else if (showerEmitter != null) {
+            pts = showerEmitter.getPositions();
+        }
+
+        if (pts == null || pts.size() < 2) return;
 
         for (int i = 0; i < pts.size() - 1; i++) {
             Vector2 a =  pts.get(i);
