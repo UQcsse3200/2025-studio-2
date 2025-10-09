@@ -55,7 +55,41 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="com/csse3200/game/files/FileLoader.Location.html#ABSOLUTE" class="member-name-link">ABSOLUTE</a> - Enum constant in enum class com.csse3200.game.files.<a href="com/csse3200/game/files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html" class="type-name-link" title="enum class in com.csse3200.game.achievements">AchievementId</a> - Enum Class in <a href="com/csse3200/game/achievements/package-summary.html">com.csse3200.game.achievements</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementProgression.html" class="type-name-link" title="class in com.csse3200.game.achievements">AchievementProgression</a> - Class in <a href="com/csse3200/game/achievements/package-summary.html">com.csse3200.game.achievements</a></dt>
+<dd>
+<div class="block">Thin helper that routes progress events into AchievementService.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html" class="type-name-link" title="class in com.csse3200.game.achievements">AchievementService</a> - Class in <a href="com/csse3200/game/achievements/package-summary.html">com.csse3200.game.achievements</a></dt>
+<dd>
+<div class="block">Minimal achievements service for:
+  - ADRENALINE_RUSH: sprint for 30 seconds (per-level accumulation)
+  - STAMINA_MASTER: finish a level without ever hitting 0 stamina
+  - LEVEL_1_COMPLETE
+  - LEVEL_2_COMPLETE
+
+ Persists unlocks and sprint time using LibGDX Preferences.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.Listener.html" class="type-name-link" title="interface in com.csse3200.game.achievements">AchievementService.Listener</a> - Interface in <a href="com/csse3200/game/achievements/package-summary.html">com.csse3200.game.achievements</a></dt>
+<dd>
+<div class="block">Consumers (e.g., toast UI) can subscribe to be notified on unlocks.</div>
+</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" class="type-name-link" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a> - Class in <a href="com/csse3200/game/ui/achievements/package-summary.html">com.csse3200.game.ui.achievements</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html#%3Cinit%3E()" class="member-name-link">AchievementsMenuUI()</a> - Constructor for class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html" class="type-name-link" title="class in com.csse3200.game.components.achievements">AchievementsTrackerComponent</a> - Class in <a href="com/csse3200/game/components/achievements/package-summary.html">com.csse3200.game.components.achievements</a></dt>
+<dd>
+<div class="block">Periodically feeds gameplay signals to the AchievementService.</div>
+</dd>
+<dt><a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html#%3Cinit%3E()" class="member-name-link">AchievementsTrackerComponent()</a> - Constructor for class com.csse3200.game.components.achievements.<a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html" title="class in com.csse3200.game.components.achievements">AchievementsTrackerComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/statisticspage/StatsData.html#achievementsUnlocked" class="member-name-link">achievementsUnlocked</a> - Variable in class com.csse3200.game.components.statisticspage.<a href="com/csse3200/game/components/statisticspage/StatsData.html" title="class in com.csse3200.game.components.statisticspage">StatsData</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementToastUI.html" class="type-name-link" title="class in com.csse3200.game.ui.achievements">AchievementToastUI</a> - Class in <a href="com/csse3200/game/ui/achievements/package-summary.html">com.csse3200.game.ui.achievements</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementToastUI.html#%3Cinit%3E()" class="member-name-link">AchievementToastUI()</a> - Constructor for class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementToastUI.html" title="class in com.csse3200.game.ui.achievements">AchievementToastUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/tasks/BombChaseTask.html#activate()" class="member-name-link">activate()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/BombChaseTask.html" title="class in com.csse3200.game.components.tasks">BombChaseTask</a></dt>
 <dd>
@@ -151,6 +185,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Adds a parallax layer with custom offset and scaling.</div>
 </dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#addListener(com.csse3200.game.achievements.AchievementService.Listener)" class="member-name-link">addListener(AchievementService.Listener)</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/events/EventHandler.html#addListener(java.lang.String,com.csse3200.game.events.listeners.EventListener0)" class="member-name-link">addListener(String, EventListener0)</a> - Method in class com.csse3200.game.events.<a href="com/csse3200/game/events/EventHandler.html" title="class in com.csse3200.game.events">EventHandler</a></dt>
 <dd>
 <div class="block">Add a listener to an event with zero arguments</div>
@@ -183,6 +219,10 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Add a new spawn trigger dynamically</div>
 </dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#addSprintTime(float)" class="member-name-link">addSprintTime(float)</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>
+<div class="block">Call every frame while sprinting to accumulate time for Adrenaline Rush.</div>
+</dd>
 <dt><a href="com/csse3200/game/ai/tasks/AITaskComponent.html#addTask(com.csse3200.game.ai.tasks.PriorityTask)" class="member-name-link">addTask(PriorityTask)</a> - Method in class com.csse3200.game.ai.tasks.<a href="com/csse3200/game/ai/tasks/AITaskComponent.html" title="class in com.csse3200.game.ai.tasks">AITaskComponent</a></dt>
 <dd>
 <div class="block">Add a priority task to the list of tasks.</div>
@@ -199,6 +239,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Increment upgrade counter</div>
 </dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html#ADRENALINE_RUSH" class="member-name-link">ADRENALINE_RUSH</a> - Enum constant in enum class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementId.html" title="enum class in com.csse3200.game.achievements">AchievementId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ai/tasks/AITaskComponent.html" class="type-name-link" title="class in com.csse3200.game.ai.tasks">AITaskComponent</a> - Class in <a href="com/csse3200/game/ai/tasks/package-summary.html">com.csse3200.game.ai.tasks</a></dt>
 <dd>
 <div class="block">Task-based AI component.</div>
@@ -731,6 +773,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/package-summary.html">com.csse3200.game</a> - package com.csse3200.game</dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/package-summary.html">com.csse3200.game.achievements</a> - package com.csse3200.game.achievements</dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ai/movement/package-summary.html">com.csse3200.game.ai.movement</a> - package com.csse3200.game.ai.movement</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ai/tasks/package-summary.html">com.csse3200.game.ai.tasks</a> - package com.csse3200.game.ai.tasks</dt>
@@ -740,6 +784,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/areas/terrain/package-summary.html">com.csse3200.game.areas.terrain</a> - package com.csse3200.game.areas.terrain</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/package-summary.html">com.csse3200.game.components</a> - package com.csse3200.game.components</dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/achievements/package-summary.html">com.csse3200.game.components.achievements</a> - package com.csse3200.game.components.achievements</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/boss/package-summary.html">com.csse3200.game.components.boss</a> - package com.csse3200.game.components.boss</dt>
 <dd>&nbsp;</dd>
@@ -824,6 +870,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/services/package-summary.html">com.csse3200.game.services</a> - package com.csse3200.game.services</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/package-summary.html">com.csse3200.game.ui</a> - package com.csse3200.game.ui</dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/package-summary.html">com.csse3200.game.ui.achievements</a> - package com.csse3200.game.ui.achievements</dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/cutscene/package-summary.html">com.csse3200.game.ui.cutscene</a> - package com.csse3200.game.ui.cutscene</dt>
 <dd>&nbsp;</dd>
@@ -945,6 +993,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Create the game area, including terrain, static entities (trees), dynamic entities (player)</div>
 </dd>
+<dt><a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.achievements.<a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html" title="class in com.csse3200.game.components.achievements">AchievementsTrackerComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/AutoBombDropComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/AutoBombDropComponent.html" title="class in com.csse3200.game.components">AutoBombDropComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/AutonomousBoxComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/AutonomousBoxComponent.html" title="class in com.csse3200.game.components">AutonomousBoxComponent</a></dt>
@@ -1135,6 +1185,10 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/rendering/LaserRenderComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/LaserRenderComponent.html" title="class in com.csse3200.game.rendering">LaserRenderComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/RenderComponent.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/RenderComponent.html" title="class in com.csse3200.game.rendering">RenderComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementToastUI.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementToastUI.html" title="class in com.csse3200.game.ui.achievements">AchievementToastUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/cutscene/CutsceneDisplay.html#create()" class="member-name-link">create()</a> - Method in class com.csse3200.game.ui.cutscene.<a href="com/csse3200/game/ui/cutscene/CutsceneDisplay.html" title="class in com.csse3200.game.ui.cutscene">CutsceneDisplay</a></dt>
 <dd>
@@ -1341,7 +1395,9 @@ loadScripts(document, 'script');</script>
 <div class="block">Create a player entity.</div>
 </dd>
 <dt><a href="com/csse3200/game/entities/factories/PlayerFactory.html#createPlayer(java.util.List)" class="member-name-link">createPlayer(List&lt;Component&gt;)</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/PlayerFactory.html" title="class in com.csse3200.game.entities.factories">PlayerFactory</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Create a player entity.</div>
+</dd>
 <dt><a href="com/csse3200/game/entities/factories/PressurePlateFactory.html#createPressurePlate()" class="member-name-link">createPressurePlate()</a> - Static method in class com.csse3200.game.entities.factories.<a href="com/csse3200/game/entities/factories/PressurePlateFactory.html" title="class in com.csse3200.game.entities.factories">PressurePlateFactory</a></dt>
 <dd>
 <div class="block">Creates a general pressure plate that can be pressed by the player</div>
@@ -1603,6 +1659,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/lighting/LightingDefaults.html#DETECTED_COLOR" class="member-name-link">DETECTED_COLOR</a> - Static variable in class com.csse3200.game.lighting.<a href="com/csse3200/game/lighting/LightingDefaults.html" title="class in com.csse3200.game.lighting">LightingDefaults</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#devReset()" class="member-name-link">devReset()</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/raycast/SingleHitCallback.html#didHit" class="member-name-link">didHit</a> - Variable in class com.csse3200.game.physics.raycast.<a href="com/csse3200/game/physics/raycast/SingleHitCallback.html" title="class in com.csse3200.game.physics.raycast">SingleHitCallback</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html#disableNavigation()" class="member-name-link">disableNavigation()</a> - Method in class com.csse3200.game.components.inventory.<a href="com/csse3200/game/components/inventory/InventoryNavigationComponent.html" title="class in com.csse3200.game.components.inventory">InventoryNavigationComponent</a></dt>
@@ -1763,6 +1821,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/services/ResourceService.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.services.<a href="com/csse3200/game/services/ResourceService.html" title="class in com.csse3200.game.services">ResourceService</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementToastUI.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementToastUI.html" title="class in com.csse3200.game.ui.achievements">AchievementToastUI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/cutscene/CutsceneArea.html#dispose()" class="member-name-link">dispose()</a> - Method in class com.csse3200.game.ui.cutscene.<a href="com/csse3200/game/ui/cutscene/CutsceneArea.html" title="class in com.csse3200.game.ui.cutscene">CutsceneArea</a></dt>
 <dd>
 <div class="block">Correctly unregisters the player, any assets loaded, and entities created for the cutscene</div>
@@ -1869,6 +1931,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledGroundFloorComponent.html" title="class in com.csse3200.game.rendering">TiledGroundFloorComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/TiledPlatformComponent.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/TiledPlatformComponent.html" title="class in com.csse3200.game.rendering">TiledPlatformComponent</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/cutscene/CutsceneDisplay.html#draw(com.badlogic.gdx.graphics.g2d.SpriteBatch)" class="member-name-link">draw(SpriteBatch)</a> - Method in class com.csse3200.game.ui.cutscene.<a href="com/csse3200/game/ui/cutscene/CutsceneDisplay.html" title="class in com.csse3200.game.ui.cutscene">CutsceneDisplay</a></dt>
 <dd>
@@ -2156,6 +2220,8 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/GdxGame.html#%3Cinit%3E()" class="member-name-link">GdxGame()</a> - Constructor for class com.csse3200.game.<a href="com/csse3200/game/GdxGame.html" title="class in com.csse3200.game">GdxGame</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/GdxGame.ScreenType.html" class="type-name-link" title="enum class in com.csse3200.game">GdxGame.ScreenType</a> - Enum Class in <a href="com/csse3200/game/package-summary.html">com.csse3200.game</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#get()" class="member-name-link">get()</a> - Static method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/files/UserSettings.html#get()" class="member-name-link">get()</a> - Static method in class com.csse3200.game.files.<a href="com/csse3200/game/files/UserSettings.html" title="class in com.csse3200.game.files">UserSettings</a></dt>
 <dd>
@@ -2705,11 +2771,15 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Gets the movement speed of the autonomous box</div>
 </dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#getSprintSeconds()" class="member-name-link">getSprintSeconds()</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/pausemenu/PauseMenuDisplay.html#getStage()" class="member-name-link">getStage()</a> - Method in class com.csse3200.game.components.pausemenu.<a href="com/csse3200/game/components/pausemenu/PauseMenuDisplay.html" title="class in com.csse3200.game.components.pausemenu">PauseMenuDisplay</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/Renderer.html#getStage()" class="member-name-link">getStage()</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/Renderer.html" title="class in com.csse3200.game.rendering">Renderer</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/rendering/RenderService.html#getStage()" class="member-name-link">getStage()</a> - Method in class com.csse3200.game.rendering.<a href="com/csse3200/game/rendering/RenderService.html" title="class in com.csse3200.game.rendering">RenderService</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#getStaminaEverExhausted()" class="member-name-link">getStaminaEverExhausted()</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ai/tasks/DefaultTask.html#getStatus()" class="member-name-link">getStatus()</a> - Method in class com.csse3200.game.ai.tasks.<a href="com/csse3200/game/ai/tasks/DefaultTask.html" title="class in com.csse3200.game.ai.tasks">DefaultTask</a></dt>
 <dd>&nbsp;</dd>
@@ -3229,6 +3299,8 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/WallComponent.html#isSlippery()" class="member-name-link">isSlippery()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/WallComponent.html" title="class in com.csse3200.game.components">WallComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/components/StaminaComponent.html#isSprinting()" class="member-name-link">isSprinting()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/StaminaComponent.html" title="class in com.csse3200.game.components">StaminaComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/tasks/BombDropTask.html#isTargetDetected()" class="member-name-link">isTargetDetected()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/BombDropTask.html" title="class in com.csse3200.game.components.tasks">BombDropTask</a></dt>
 <dd>
 <div class="block">Check if target is currently detected.</div>
@@ -3250,6 +3322,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Get the state of the flag determining unlocked status.</div>
 </dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#isUnlocked(com.csse3200.game.achievements.AchievementId)" class="member-name-link">isUnlocked(AchievementId)</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/tasks/BombPatrolTask.html#isWaiting()" class="member-name-link">isWaiting()</a> - Method in class com.csse3200.game.components.tasks.<a href="com/csse3200/game/components/tasks/BombPatrolTask.html" title="class in com.csse3200.game.components.tasks">BombPatrolTask</a></dt>
 <dd>
 <div class="block">Check if waiting.</div>
@@ -3505,6 +3579,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/utils/math/Vector2Utils.html#LEFT" class="member-name-link">LEFT</a> - Static variable in class com.csse3200.game.utils.math.<a href="com/csse3200/game/utils/math/Vector2Utils.html" title="class in com.csse3200.game.utils.math">Vector2Utils</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html#LEVEL_1_COMPLETE" class="member-name-link">LEVEL_1_COMPLETE</a> - Enum constant in enum class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementId.html" title="enum class in com.csse3200.game.achievements">AchievementId</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html#LEVEL_2_COMPLETE" class="member-name-link">LEVEL_2_COMPLETE</a> - Enum constant in enum class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementId.html" title="enum class in com.csse3200.game.achievements">AchievementId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/screens/MainGameScreen.Areas.html#LEVEL_ONE" class="member-name-link">LEVEL_ONE</a> - Enum constant in enum class com.csse3200.game.screens.<a href="com/csse3200/game/screens/MainGameScreen.Areas.html" title="enum class in com.csse3200.game.screens">MainGameScreen.Areas</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/screens/MainGameScreen.Areas.html#LEVEL_TWO" class="member-name-link">LEVEL_TWO</a> - Enum constant in enum class com.csse3200.game.screens.<a href="com/csse3200/game/screens/MainGameScreen.Areas.html" title="enum class in com.csse3200.game.screens">MainGameScreen.Areas</a></dt>
@@ -3714,6 +3792,10 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/Inventory.Tab.html#MAP" class="member-name-link">MAP</a> - Enum constant in enum class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/Inventory.Tab.html" title="enum class in com.csse3200.game.ui.inventoryscreen">Inventory.Tab</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#markStaminaExhausted()" class="member-name-link">markStaminaExhausted()</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>
+<div class="block">Mark that stamina hit zero sometime this level.</div>
+</dd>
 <dt><a href="com/csse3200/game/files/UserSettings.Settings.html#masterVolume" class="member-name-link">masterVolume</a> - Variable in class com.csse3200.game.files.<a href="com/csse3200/game/files/UserSettings.Settings.html" title="class in com.csse3200.game.files">UserSettings.Settings</a></dt>
 <dd>
 <div class="block">Members for controlling volume of sound effects.</div>
@@ -3893,6 +3975,34 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/utils/math/Vector2Utils.html#ONE" class="member-name-link">ONE</a> - Static variable in class com.csse3200.game.utils.math.<a href="com/csse3200/game/utils/math/Vector2Utils.html" title="class in com.csse3200.game.utils.math">Vector2Utils</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/screens/MainGameScreen.html#onGameAreaReset(com.csse3200.game.entities.Entity)" class="member-name-link">onGameAreaReset(Entity)</a> - Method in class com.csse3200.game.screens.<a href="com/csse3200/game/screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementProgression.html#onLevelComplete(java.lang.String)" class="member-name-link">onLevelComplete(String)</a> - Static method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementProgression.html" title="class in com.csse3200.game.achievements">AchievementProgression</a></dt>
+<dd>
+<div class="block">Call when a level completes successfully.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#onLevelCompleted(int)" class="member-name-link">onLevelCompleted(int)</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>
+<div class="block">Call when the level is completed.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementProgression.html#onLevelStart()" class="member-name-link">onLevelStart()</a> - Static method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementProgression.html" title="class in com.csse3200.game.achievements">AchievementProgression</a></dt>
+<dd>
+<div class="block">Call when a level starts (resets per-level flags).</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#onLevelStarted()" class="member-name-link">onLevelStarted()</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>
+<div class="block">Call when the level begins (resets per-level flags, keeps lifetime sprintSeconds).</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementProgression.html#onSprintTick(float)" class="member-name-link">onSprintTick(float)</a> - Static method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementProgression.html" title="class in com.csse3200.game.achievements">AchievementProgression</a></dt>
+<dd>
+<div class="block">Call once per frame while sprinting.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementProgression.html#onStaminaExhausted()" class="member-name-link">onStaminaExhausted()</a> - Static method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementProgression.html" title="class in com.csse3200.game.achievements">AchievementProgression</a></dt>
+<dd>
+<div class="block">Call when stamina hits zero at any time during a level.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.Listener.html#onUnlocked(com.csse3200.game.achievements.AchievementId,java.lang.String,java.lang.String)" class="member-name-link">onUnlocked(AchievementId, String, String)</a> - Method in interface com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.Listener.html" title="interface in com.csse3200.game.achievements">AchievementService.Listener</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementToastUI.html#onUnlocked(com.csse3200.game.achievements.AchievementId,java.lang.String,java.lang.String)" class="member-name-link">onUnlocked(AchievementId, String, String)</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementToastUI.html" title="class in com.csse3200.game.ui.achievements">AchievementToastUI</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/services/ComputerTerminalService.html#open(com.csse3200.game.entities.Entity)" class="member-name-link">open(Entity)</a> - Method in class com.csse3200.game.services.<a href="com/csse3200/game/services/ComputerTerminalService.html" title="class in com.csse3200.game.services">ComputerTerminalService</a></dt>
 <dd>&nbsp;</dd>
@@ -4364,6 +4474,8 @@ loadScripts(document, 'script');</script>
 <div class="deprecation-comment">Prefer bagged version: removeItem(Bag.INVENTORY, itemId).</div>
 </div>
 </dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#removeListener(com.csse3200.game.achievements.AchievementService.Listener)" class="member-name-link">removeListener(AchievementService.Listener)</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/minimap/MinimapDisplay.html#removeMarker(com.badlogic.gdx.scenes.scene2d.ui.Image)" class="member-name-link">removeMarker(Image)</a> - Method in class com.csse3200.game.components.minimap.<a href="com/csse3200/game/components/minimap/MinimapDisplay.html" title="class in com.csse3200.game.components.minimap">MinimapDisplay</a></dt>
 <dd>
 <div class="block">Removes the given marker form the group</div>
@@ -5307,6 +5419,8 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="com/csse3200/game/ui/UIComponent.html#stage" class="member-name-link">stage</a> - Variable in class com.csse3200.game.ui.<a href="com/csse3200/game/ui/UIComponent.html" title="class in com.csse3200.game.ui">UIComponent</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html#STAMINA_MASTER" class="member-name-link">STAMINA_MASTER</a> - Enum constant in enum class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementId.html" title="enum class in com.csse3200.game.achievements">AchievementId</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/StaminaComponent.html" class="type-name-link" title="class in com.csse3200.game.components">StaminaComponent</a> - Class in <a href="com/csse3200/game/components/package-summary.html">com.csse3200.game.components</a></dt>
 <dd>
 <div class="block">StaminaComponent - resource manager for player stamina.</div>
@@ -5620,6 +5734,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Tints the marker on the minimap with a new color.</div>
 </dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html#toggle()" class="member-name-link">toggle()</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/terminal/TerminalService.html#toggle()" class="member-name-link">toggle()</a> - Static method in class com.csse3200.game.ui.terminal.<a href="com/csse3200/game/ui/terminal/TerminalService.html" title="class in com.csse3200.game.ui.terminal">TerminalService</a></dt>
 <dd>
 <div class="block">Toggle the terminal display on or off</div>
@@ -5899,6 +6015,8 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Run one frame of the task.</div>
 </dd>
+<dt><a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.achievements.<a href="com/csse3200/game/components/achievements/AchievementsTrackerComponent.html" title="class in com.csse3200.game.components.achievements">AchievementsTrackerComponent</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/AutoBombDropComponent.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/AutoBombDropComponent.html" title="class in com.csse3200.game.components">AutoBombDropComponent</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/AutonomousBoxComponent.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/AutonomousBoxComponent.html" title="class in com.csse3200.game.components">AutonomousBoxComponent</a></dt>
@@ -6036,7 +6154,11 @@ loadScripts(document, 'script');</script>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/physics/PhysicsEngine.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.physics.<a href="com/csse3200/game/physics/PhysicsEngine.html" title="class in com.csse3200.game.physics">PhysicsEngine</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.ui.achievements.<a href="com/csse3200/game/ui/achievements/AchievementsMenuUI.html" title="class in com.csse3200.game.ui.achievements">AchievementsMenuUI</a></dt>
+<dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/ui/cutscene/CutsceneDisplay.html#update()" class="member-name-link">update()</a> - Method in class com.csse3200.game.ui.cutscene.<a href="com/csse3200/game/ui/cutscene/CutsceneDisplay.html" title="class in com.csse3200.game.ui.cutscene">CutsceneDisplay</a></dt>
+<dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementService.html#update(float)" class="member-name-link">update(float)</a> - Method in class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementService.html" title="class in com.csse3200.game.achievements">AchievementService</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="com/csse3200/game/components/StaminaComponent.html#update(float)" class="member-name-link">update(float)</a> - Method in class com.csse3200.game.components.<a href="com/csse3200/game/components/StaminaComponent.html" title="class in com.csse3200.game.components">StaminaComponent</a></dt>
 <dd>&nbsp;</dd>
@@ -6130,6 +6252,10 @@ loadScripts(document, 'script');</script>
 <dl class="index">
 <dt><a href="com/csse3200/game/entities/configs/EffectConfig.html#value" class="member-name-link">value</a> - Variable in class com.csse3200.game.entities.configs.<a href="com/csse3200/game/entities/configs/EffectConfig.html" title="class in com.csse3200.game.entities.configs">EffectConfig</a></dt>
 <dd>&nbsp;</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementId.html" title="enum class in com.csse3200.game.achievements">AchievementId</a></dt>
+<dd>
+<div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
 <dt><a href="com/csse3200/game/ai/tasks/Task.Status.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.csse3200.game.ai.tasks.<a href="com/csse3200/game/ai/tasks/Task.Status.html" title="enum class in com.csse3200.game.ai.tasks">Task.Status</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
@@ -6189,6 +6315,11 @@ loadScripts(document, 'script');</script>
 <dt><a href="com/csse3200/game/ui/inventoryscreen/Inventory.Tab.html#valueOf(java.lang.String)" class="member-name-link">valueOf(String)</a> - Static method in enum class com.csse3200.game.ui.inventoryscreen.<a href="com/csse3200/game/ui/inventoryscreen/Inventory.Tab.html" title="enum class in com.csse3200.game.ui.inventoryscreen">Inventory.Tab</a></dt>
 <dd>
 <div class="block">Returns the enum constant of this class with the specified name.</div>
+</dd>
+<dt><a href="com/csse3200/game/achievements/AchievementId.html#values()" class="member-name-link">values()</a> - Static method in enum class com.csse3200.game.achievements.<a href="com/csse3200/game/achievements/AchievementId.html" title="enum class in com.csse3200.game.achievements">AchievementId</a></dt>
+<dd>
+<div class="block">Returns an array containing the constants of this enum class, in
+the order they are declared.</div>
 </dd>
 <dt><a href="com/csse3200/game/ai/tasks/Task.Status.html#values()" class="member-name-link">values()</a> - Static method in enum class com.csse3200.game.ai.tasks.<a href="com/csse3200/game/ai/tasks/Task.Status.html" title="enum class in com.csse3200.game.ai.tasks">Task.Status</a></dt>
 <dd>
