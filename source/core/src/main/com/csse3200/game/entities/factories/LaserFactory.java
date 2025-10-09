@@ -50,7 +50,7 @@ public class LaserFactory {
                 180f
         );
 
-        // construct entity
+        //A construct entity
         Entity e = new Entity()
                 .addComponent(new LaserShowerComponent(dir))
                 .addComponent(new LaserEmitterComponent(dir))

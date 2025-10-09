@@ -65,6 +65,8 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
+  private float laserTimer = 0f;
+  private float jumpCount=0;
   private static long lvlStartTime;
 
   private final GdxGame game;
@@ -136,8 +138,6 @@ public class MainGameScreen extends ScreenAdapter {
     ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());
 
     loadAssets();
-
-    gameTime = new GameTime();
 
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
@@ -302,10 +302,30 @@ public class MainGameScreen extends ScreenAdapter {
       // Update camera position to follow player
       updateCameraFollow();
 
-      physicsEngine.update();
-      ServiceLocator.getEntityService().update();
-    }
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+          physicsEngine.update();
+          ServiceLocator.getEntityService().update();
+          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+              jumpCount++;
+              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
+                  levelOneArea.laserShowerChecker(delta);
+                  jumpCount = 0;
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
+                  levelTwoArea.laserShowerChecker(delta);
+                  jumpCount = 0;
+              }
+          }
+          laserTimer += delta;
+
+          // Check if 50 seconds have passed
+          if (laserTimer >= 50f) {
+              if (gameArea instanceof BossLevelGameArea bossLevel) {
+                  bossLevel.spawnLaserShower(); // spawn lasers
+              }
+              laserTimer = 0f; // reset timer
+          }
+
+      }
+      renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   /**
@@ -437,9 +457,6 @@ public class MainGameScreen extends ScreenAdapter {
     pauseInput = new PauseInputComponent(this);
 
     Stage stage = ServiceLocator.getRenderService().getStage();
-    leaderboardComponent = new LeaderboardComponent();
-
-    lvlStartTime = gameTime.getTime();
 
     // Build your puzzle bank (spritesheet-driven)
     SimpleCaptchaBank bank = buildCaptchaBank();
