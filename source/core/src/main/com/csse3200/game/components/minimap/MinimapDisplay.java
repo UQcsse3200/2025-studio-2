@@ -185,6 +185,9 @@ public class MinimapDisplay extends UIComponent {
    * @param visible: Set the visibility of minimap display to this value.
    */
   public void setVisible(boolean visible) {
-    rootTable.setVisible(visible);
+      if (rootTable != null) {
+          rootTable.setVisible(visible);
+      }
   }
+
 }
