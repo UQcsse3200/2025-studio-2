@@ -112,7 +112,7 @@ public class TutorialGameArea extends GameArea {
         "images/tutorials/jump.png",
         "images/tutorials/double_jump.png",
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
+    private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {
         "sounds/Impact4.ogg",
