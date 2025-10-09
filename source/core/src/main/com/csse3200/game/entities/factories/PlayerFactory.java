@@ -90,6 +90,7 @@ public class PlayerFactory {
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
 
 
+
     player
             .addComponent(animator)
             .addComponent(new PlayerAnimationController());

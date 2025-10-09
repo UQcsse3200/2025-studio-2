@@ -97,7 +97,6 @@ public class LeaderboardEntryDisplay extends UIComponent {
 
         entity.getEvents().trigger("leaderboardEntryComplete");
     }
-
     private String formatTime(long ms) {
         long seconds = ms / 1000;
         long minutes = seconds / 60;

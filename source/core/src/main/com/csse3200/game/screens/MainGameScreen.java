@@ -84,7 +84,6 @@ public class MainGameScreen extends ScreenAdapter {
     private MinimapDisplay minimapDisplay;
     private PlayerStatsDisplay playerStatsDisplay;
     private GameAreaDisplay levelTagDisplay;
-
     public enum Areas {
         LEVEL_ONE, LEVEL_TWO, SPRINT_ONE, TEMPLATE, FOREST, CAVE, CUTSCENE_ONE, CUTSCENE_TWO
     }
@@ -134,48 +133,7 @@ public class MainGameScreen extends ScreenAdapter {
         gameArea.create();
 
         // As some levels progress to the next level via doors and some via cutscenes ending, add both
-        gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-            Areas next = getNextArea(gameAreaEnum);
-
-            // Gather stats for leaderboard entry
-            int health = player.getComponent(CombatStatsComponent.class).getHealth();
-            float stamina = player.getComponent(com.csse3200.game.components.StaminaComponent.class).getCurrentStamina();
-            long completionTime = gameTime.getTimeSince(lvlStartTime);
-
-            // Hide HUD
-            if (minimapDisplay != null) minimapDisplay.setVisible(false);
-            if (playerStatsDisplay != null) playerStatsDisplay.setVisible(false);
-            if (levelTagDisplay != null) levelTagDisplay.setVisible(false);
-
-            // Pause gameplay input (Esc still works via PauseInputComponent)
-            paused = true;
-
-            // Show leaderboard entry screen
-            LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
-            Entity uiEntity = new Entity().addComponent(entryDisplay);
-            ServiceLocator.getEntityService().register(uiEntity);
-
-            // Handle completion of entry screen
-            uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
-                String name = entryDisplay.getEnteredName();
-                if (name != null && !name.isEmpty()) {
-                    leaderboardComponent.updateLeaderboard(name, completionTime);
-                }
-
-                // Restore HUD
-                if (minimapDisplay != null) minimapDisplay.setVisible(true);
-                if (playerStatsDisplay != null) playerStatsDisplay.setVisible(true);
-                if (levelTagDisplay != null) levelTagDisplay.setVisible(true);
-
-                // Restore gameplay input
-                paused = false;
-
-                // Continue to cutscene/next level
-                switchArea(next, player);
-            });
-        });
-
-
+        gameArea.getEvents().addListener("doorEntered", (Entity ignored) -> handleDoorEntered());
 
         gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
             switchArea(getNextArea(area), play);
@@ -191,6 +149,46 @@ public class MainGameScreen extends ScreenAdapter {
 
     public Areas getAreaEnum() {
         return gameAreaEnum;
+    }
+    private void hideHUD() {
+        if (minimapDisplay != null) minimapDisplay.setVisible(false);
+        if (playerStatsDisplay != null) playerStatsDisplay.setVisible(false);
+        if (levelTagDisplay != null) levelTagDisplay.setVisible(false);
+    }
+
+    private void showHUD() {
+        if (minimapDisplay != null) minimapDisplay.setVisible(true);
+        if (playerStatsDisplay != null) playerStatsDisplay.setVisible(true);
+        if (levelTagDisplay != null) levelTagDisplay.setVisible(true);
+    }
+    private void handleDoorEntered() {
+        Areas next = getNextArea(gameAreaEnum);
+        Entity playerEntity = gameArea.getPlayer();
+
+        CombatStatsComponent combat = playerEntity.getComponent(CombatStatsComponent.class);
+        int health = (combat != null) ? combat.getHealth() : 0;
+
+        StaminaComponent staminaComp = playerEntity.getComponent(StaminaComponent.class);
+        float stamina = (staminaComp != null) ? staminaComp.getCurrentStamina() : 0f;
+
+        long completionTime = gameTime.getTimeSince(lvlStartTime);
+
+        hideHUD();
+        paused = true;
+
+        LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
+        Entity uiEntity = new Entity().addComponent(entryDisplay);
+        ServiceLocator.getEntityService().register(uiEntity);
+
+        uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
+            String name = entryDisplay.getEnteredName();
+            if (name != null && !name.isEmpty()) {
+                leaderboardComponent.updateLeaderboard(name, completionTime);
+            }
+            showHUD();
+            paused = false;
+            switchArea(next, playerEntity);
+        });
     }
 
     /**
@@ -209,7 +207,7 @@ public class MainGameScreen extends ScreenAdapter {
                 newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
             }
             case LEVEL_TWO -> {
-                lvlStartTime =  gameTime.getTime();
+                lvlStartTime = gameTime.getTime();
                 newArea = new LevelTwoGameArea(terrainFactory);
             }
             case CUTSCENE_TWO -> {
@@ -275,6 +273,7 @@ public class MainGameScreen extends ScreenAdapter {
         Areas newLevel = getNextArea(area);
 
         if (newArea != null) {
+            System.out.println("TIME" + lvlStartTime);
             //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
             if (newArea instanceof CutsceneArea) {
                 StatsTracker.completeLevel();
@@ -283,9 +282,8 @@ public class MainGameScreen extends ScreenAdapter {
             gameArea = newArea;
             gameAreaEnum = area;
 
-            gameArea.getEvents().addListener("doorEntered", (Entity play) -> {
-                switchArea(newLevel, play);
-            });
+            gameArea.getEvents().addListener("doorEntered", (Entity ignored) -> handleDoorEntered());
+
             gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(newLevel, play));
 
             InventoryComponent inv = player.getComponent(InventoryComponent.class);
@@ -299,9 +297,6 @@ public class MainGameScreen extends ScreenAdapter {
             gameArea.getEvents().addListener("reset", this::onGameAreaReset);
             gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
         }
-        // Re-register input service so player controls work in the new area
-        createUI();
-
     }
 
     /**
@@ -452,7 +447,6 @@ public class MainGameScreen extends ScreenAdapter {
         Stage stage = ServiceLocator.getRenderService().getStage();
         leaderboardComponent = new LeaderboardComponent();
 
-        System.out.println("Starting Level Time!");
         lvlStartTime = gameTime.getTime();
 
         Entity ui = new Entity();
@@ -462,10 +456,6 @@ public class MainGameScreen extends ScreenAdapter {
                 .addComponent(pauseMenuDisplay)
                 .addComponent(deathScreenDisplay)
                 .addComponent(pauseInput);
-        // Add HUD components
-        minimapDisplay = new MinimapDisplay(200f, new MinimapDisplay.MinimapOptions());
-        playerStatsDisplay = new PlayerStatsDisplay();
-        levelTagDisplay = new GameAreaDisplay(gameAreaEnum.toString());
 
         ServiceLocator.getEntityService().register(ui);
     }
