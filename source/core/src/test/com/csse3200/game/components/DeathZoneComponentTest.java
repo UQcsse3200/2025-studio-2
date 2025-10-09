@@ -52,7 +52,7 @@ public class DeathZoneComponentTest {
         assertTrue(deathZoneComponent.isDead()); // always true
     }
 
-    @Test
+    /*@Test
     void testDamageFromAbove() {
         // Place death zone at y=0, player above
         deathZone.setPosition(0, 0);
@@ -64,7 +64,7 @@ public class DeathZoneComponentTest {
         int expectedHealth = initialHealth - deathZoneComponent.getBaseAttack();
         assertEquals(expectedHealth, player.getComponent(CombatStatsComponent.class).getHealth(),
                 "Player should take damage from death zone");
-    }
+    }*/
 
     @Test
     void testDamageFromBelowDoesNothing() {

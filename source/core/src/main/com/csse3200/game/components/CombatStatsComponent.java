@@ -7,24 +7,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Component used to store information related to combat such as health, attack, etc. Any entities
- * which engage it combat should have an instance of this class registered. This class can be
- * extended for more specific combat needs.
+ * Component used to store information related to combat such as health, attack, etc.
+ * Any entities which engage in combat should have an instance of this class registered.
+ * This class can be extended for more specific combat needs.
  */
 public class CombatStatsComponent extends Component {
-  private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
-  private int health;
-  private int baseAttack;
-  private Entity lastAttacker = null;
 
-  // "Grace period" between hits
-  private static final long INVULN_FRAMES = 30;
-  private long lastHitFrame = -100;
 
-  public CombatStatsComponent(int health, int baseAttack) {
-    setHealth(health);
-    setBaseAttack(baseAttack);
-  }
+    private static final Logger logger = LoggerFactory.getLogger(CombatStatsComponent.class);
+    private int health;
+    private int baseAttack;
+    private Entity lastAttacker = null;
+
+
+    // "Grace period" between hits
+    private static final long INVULN_FRAMES = 30;
+    private long lastHitFrame = -100;
+
+
+
+    public CombatStatsComponent(int health, int baseAttack) {
+        setHealth(health);
+        setBaseAttack(baseAttack);
+    }
 
   // Copy constructor
   public CombatStatsComponent(CombatStatsComponent other) {
@@ -57,22 +62,22 @@ public class CombatStatsComponent extends Component {
    *
    * @param health health
    */
-  public void setHealth(int health) {
-    int oldHealth = this.health;
-    if (health >= 0) {
-      this.health = health;
-    } else {
-      this.health = 0;
+    public void setHealth(int health) {
+        int oldHealth = this.health;
+        this.health = Math.max(0, health);
+
+        if (entity != null) {
+            // 通知 UI 更新生命值
+            entity.getEvents().trigger("updateHealth", this.health);
+
+            // 如果是第一次掉到 0，触发死亡事件
+            if (oldHealth > 0 && this.health == 0) {
+                entity.getEvents().trigger("playerDied");
+                StatsTracker.addDeath();
+            }
+        }
     }
-    if (entity != null) {
-      entity.getEvents().trigger("updateHealth", this.health);
-      // Trigger death event when health reaches 0 for the first time
-      if (oldHealth > 0 && this.health == 0) {
-        entity.getEvents().trigger("playerDied");
-        StatsTracker.addDeath();
-      }
-    }
-  }
+
 
   /**
    * Adds to the player's health. The amount added can be negative.
@@ -83,14 +88,7 @@ public class CombatStatsComponent extends Component {
     setHealth(this.health + health);
   }
 
-  /**
-   * Returns the entity's base attack damage.
-   *
-   * @return base attack damage
-   */
-  public int getBaseAttack() {
-    return baseAttack;
-  }
+
 
   /**
    * Gets the last attacker which caused the entity to take damage.
@@ -111,30 +109,41 @@ public class CombatStatsComponent extends Component {
   public void setLastAttacker(Entity lastAttacker) {
     this.lastAttacker = lastAttacker;
   }
-
-  /**
-   * Sets the entity's attack damage. Attack damage has a minimum bound of 0.
-   *
-   * @param attack Attack damage
-   */
-  public void setBaseAttack(int attack) {
-    if (attack >= 0) {
-      this.baseAttack = attack;
-    } else {
-      logger.error("Can not set base attack to a negative attack value");
+    /**
+     * Returns the entity's base attack damage.
+     *
+     * @return base attack damage
+     */
+    public int getBaseAttack() {
+        return baseAttack;
     }
-  }
-
-  public void hit(CombatStatsComponent attacker) {
-    long currentFrame = Gdx.graphics.getFrameId();
-    if (currentFrame - lastHitFrame > INVULN_FRAMES) {
-      setLastAttacker(attacker.entity);
-      lastHitFrame = currentFrame;
-      int newHealth = getHealth() - attacker.getBaseAttack();
-      setHealth(newHealth);
-
-      // Animate hurt
-      entity.getEvents().trigger("hurt");
+    /**
+     * Sets the entity's attack damage. Attack damage has a minimum bound of 0.
+     *
+     * @param attack Attack damage
+     */
+    public void setBaseAttack(int attack) {
+        if (attack >= 0) {
+            this.baseAttack = attack;
+        } else {
+            logger.error("Can not set base attack to a negative attack value");
+        }
     }
-  }
+
+    /**
+     * Called when this entity is hit by an attacker.
+     * @param attacker the attacker's CombatStatsComponent
+     */
+    public void hit (CombatStatsComponent attacker){
+        long currentFrame = Gdx.graphics.getFrameId();
+        if (currentFrame - lastHitFrame > INVULN_FRAMES) {
+            setLastAttacker(attacker.entity);
+            lastHitFrame = currentFrame;
+            int newHealth = getHealth() - attacker.getBaseAttack();
+            setHealth(newHealth);
+
+            // Animate hurt
+            entity.getEvents().trigger("hurt");
+        }
+    }
 }

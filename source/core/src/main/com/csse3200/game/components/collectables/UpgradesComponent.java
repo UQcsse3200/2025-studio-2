@@ -18,6 +18,7 @@ public class UpgradesComponent extends CollectableComponent {
         if (inventory != null) {
             if (!inventory.hasItem(InventoryComponent.Bag.UPGRADES, upgradeId)) {
                 inventory.addItem(InventoryComponent.Bag.UPGRADES, upgradeId);
+                inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, upgradeId);
                 StatsTracker.addUpgrade();
             }
             return true;

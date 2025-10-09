@@ -10,15 +10,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This component links an enemy to a security camera by ID.
- * When the camera detects/loses the target, it triggers "enemyActivated"/"enemyDeactivated" on the owner entity.
- * If the camera isn't spawned yet, the component retries linking in update().
+ * - Attaches listeners once the camera exists
+ * - Re-links automatically if the camera instance changes (e.g. after reset)
  */
 public class ActivationComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(ActivationComponent.class);
 
     private final String cameraId;
     private Entity cam;
-    private boolean linked = false;
 
     /**
      * Create an ActivationComponent for a specific camera
@@ -35,7 +34,7 @@ public class ActivationComponent extends Component {
     @Override
     public void create() {
         super.create();
-        linkCamera();
+        ensureLinked();
     }
 
     /**
@@ -43,9 +42,7 @@ public class ActivationComponent extends Component {
      */
     @Override
     public void update() {
-        if (!linked) {
-            linkCamera();
-        }
+        ensureLinked();
     }
 
     /**
@@ -54,30 +51,34 @@ public class ActivationComponent extends Component {
     @Override
     public void dispose() {
         cam = null;
-        linked = false;
         super.dispose();
     }
 
     /**
-     * Locate the camera and attach listeners exactly once.
+     * Ensure owner entity is linked to the current camera instance.
+     * Attach listeners exactly once.
      */
-    private void linkCamera() {
-        if (linked) return;
-
-        this.cam = ServiceLocator.getSecurityCamRetrievalService().getSecurityCam(cameraId);
-        if (this.cam == null) {
-            logger.debug ("ActivationComponent: camera '{}' not found yet; will retry.", cameraId);
+    private void ensureLinked() {
+        Entity current = ServiceLocator.getSecurityCamRetrievalService().getSecurityCam(cameraId);
+        if (current == null) {
+            // Camera not spawned yet - retries next update.
             return;
         }
 
-        cam.getEvents().addListener("targetDetected", (Entity detected) -> {
+        if (current == cam) {
+            // Already linked to this instance
+            return;
+        }
+
+        // Attach listeners
+        current.getEvents().addListener("targetDetected", (Entity detected) -> {
             entity.getEvents().trigger("enemyActivated");
         });
-        cam.getEvents().addListener("targetLost", (Entity detected) -> {
+        current.getEvents().addListener("targetLost", (Entity detected) -> {
             entity.getEvents().trigger("enemyDeactivated");
         });
 
-        linked = true;
+        cam = current;
         logger.debug("Linked entity {} to security camera {}", entity, cameraId);
     }
 
@@ -86,6 +87,6 @@ public class ActivationComponent extends Component {
      * @return true if linked, otherwise false.
      */
     public boolean isLinked() {
-        return linked;
+        return cam  != null;
     }
 }
