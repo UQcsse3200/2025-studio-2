@@ -21,6 +21,7 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -60,12 +61,12 @@ public class MainGameScreen extends ScreenAdapter {
   private static final String[] TERMINAL_TEXTURES = {
           "images/terminal_bg.png",
           "images/terminal_bg_blue.png",
-          // add all your spritesheet puzzles here:
           "images/puzzles/waldo_4x4.png",
           "images/puzzles/whichTutor_1x2.png"
   };
-  private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+
   // Camera follow parameters
+  private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
   private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
@@ -90,9 +91,9 @@ public class MainGameScreen extends ScreenAdapter {
   private PauseInputComponent pauseInput;
   private LeaderboardComponent leaderboardComponent;
   private GameTime gameTime;
-    private MinimapDisplay minimapDisplay;
-    private PlayerStatsDisplay playerStatsDisplay;
-    private GameAreaDisplay levelTagDisplay;
+  private MinimapDisplay minimapDisplay;
+  private PlayerStatsDisplay playerStatsDisplay;
+  private GameAreaDisplay levelTagDisplay;
 
   public enum Areas {
     LEVEL_ONE,
@@ -124,15 +125,11 @@ public class MainGameScreen extends ScreenAdapter {
 
     ServiceLocator.registerInputService(new InputService());
     ServiceLocator.registerResourceService(new ResourceService());
-
     ServiceLocator.registerEntityService(new EntityService());
     ServiceLocator.registerRenderService(new RenderService());
     TerminalService.register();
     ServiceLocator.registerVfxService(new VfxManager(Pixmap.Format.RGBA8888));
-
-    // Register service for managing codex entries
     ServiceLocator.registerCodexService(new CodexService());
-
     ServiceLocator.registerComputerTerminalService(new ComputerTerminalService());
 
     renderer = RenderFactory.createRenderer();
@@ -158,27 +155,11 @@ public class MainGameScreen extends ScreenAdapter {
     gameArea = getGameArea(area);
     gameArea.create();
 
-    // As some levels progress to the next level via doors and some via cutscenes ending, add both
-    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      if (gameArea instanceof TutorialGameArea) {
-        // Go back to tutorial menu instead of next level
-        logger.info("Tutorial completed, returning to tutorial menu");
-        game.setScreen(new TutorialMenuScreen(game));
-      } else {
-        // Normal level progression
-        logger.info("Door entered, proceeding to next level");
-        switchArea(getNextArea(area), player);
-      }
-    });
-    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
-      switchArea(getNextArea(area), play);
-    });
-
+    gameArea.getEvents().addListener("doorEntered", (Entity player, Entity door) -> handleDoorEntered(player, door));
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
     gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
 
-    // Have to createUI after the game area .create() since createUI requires the player to exist,
-    // which is only done upon game area creation
     createUI();
   }
 
@@ -189,36 +170,48 @@ public class MainGameScreen extends ScreenAdapter {
    * Centralized door-entered flow: gather stats, show leaderboard entry, hide HUD,
    * then resume HUD and switch to next area.
    */
-  private void handleDoorEntered() {
-      Areas next = getNextArea(gameAreaEnum);
-      Entity playerEntity = gameArea.getPlayer();
+  private void handleDoorEntered(Entity player, Entity door) {
+      if (player == null || door == null) {
+          logger.warn("doorEntered: missing player or door; aborting transition.");
+          return;
+      }
 
-      // Defensive guards: never trust event parameter, only gameArea.getPlayer()
-      CombatStatsComponent combat = playerEntity.getComponent(CombatStatsComponent.class);
-      int health = (combat != null) ? combat.getHealth() : 0;
+      DoorComponent dc = door.getComponent(DoorComponent.class);
+      if (dc == null) {
+          logger.warn("doorEntered: DoorComponent missing on door {}; skipping.", door);
+          return;
+      }
 
-      StaminaComponent staminaComp = playerEntity.getComponent(StaminaComponent.class);
-      float stamina = (staminaComp != null) ? staminaComp.getCurrentStamina() : 0f;
-
-      long completionTime = gameTime.getTimeSince(lvlStartTime);
-
-      hideHUD();
-      paused = true;
-
-      LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
-      Entity uiEntity = new Entity().addComponent(entryDisplay);
-      ServiceLocator.getEntityService().register(uiEntity);
-
-      uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
-          String name = entryDisplay.getEnteredName();
-          if (name != null && !name.isEmpty() && leaderboardComponent != null) {
-              leaderboardComponent.updateLeaderboard(name, completionTime);
+      String target = dc.getTargetArea();
+      if (target != null && !target.isEmpty()) {
+          Areas targetEnum = parseTargetArea(target);
+          if (targetEnum != null) {
+              logger.info("Door entered, switching to explicit target area: {}", targetEnum);
+              switchArea(targetEnum, player);
+              return;
+          } else {
+              logger.warn("doorEntered: unknown targetArea '{}'; falling back.", target);
           }
-          showHUD();
-          paused = false;
-          switchArea(next, playerEntity);
-      });
+      }
+
+      if (gameArea instanceof TutorialGameArea) {
+          logger.info("Tutorial completed, returning to tutorial menu");
+          game.setScreen(new TutorialMenuScreen(game));
+      } else {
+          Areas next = getNextArea(gameAreaEnum);
+          logger.info("Door entered without explicit/valid target, proceeding to next area: {}", next);
+          switchArea(next, player);
+      }
   }
+
+    private Areas parseTargetArea(String s) {
+        try {
+            return Areas.valueOf(s.trim());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
   /**
    * Get the GameArea mapped to the Areas area.
    * @param area - Areas area.
@@ -265,48 +258,54 @@ public class MainGameScreen extends ScreenAdapter {
     }
   }
 
-  private void switchAreaRunnable(Areas area, Entity player) {
-    if (area == null) return;
 
-    GameArea oldArea = gameArea;
-    oldArea.dispose();
-    oldArea = null; // Garbage collector?
+    private void switchAreaRunnable(Areas area, Entity player) {
+        if (area == null) return;
 
-    System.out.println("Area switched to " + area);
-    //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+        // Dispose old area
+        GameArea oldArea = gameArea;
+        if (oldArea != null) {
+            oldArea.dispose();
+        }
 
-    GameArea newArea = getGameArea(area);
-    Areas newLevel = getNextArea(area);
+        // Build the new area
+        GameArea newArea = getGameArea(area);
+        if (newArea == null) return;
 
-    if (newArea != null) {
-      System.out.println("TIME" + lvlStartTime);
-      //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
-      if (newArea instanceof CutsceneArea) {
-        StatsTracker.completeLevel();
-      }
+        if (newArea instanceof CutsceneArea) {
+            StatsTracker.completeLevel();
+        }
 
-      gameArea = newArea;
-      gameAreaEnum = area;
+        // Swap in the new area
+        gameArea = newArea;
+        gameAreaEnum = area;
 
-      gameArea.getEvents().addListener("doorEntered", (Entity play) -> {
-        switchArea(newLevel, play);
-      });
-      gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(newLevel, play));
+        if (player == null) {
+            gameArea.create();
+        } else {
+            InventoryComponent inv = player.getComponent(InventoryComponent.class);
+            if (inv != null) {
+                inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+            }
+            gameArea.createWithPlayer(player);
+        }
 
-      InventoryComponent inv = player.getComponent(InventoryComponent.class);
-      if (inv != null) {
-          inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
-      }
+        gameArea.getEvents().addListener("doorEntered",
+                this::handleDoorEntered);
+        gameArea.getEvents().addListener("cutsceneFinished",
+                (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
+        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
 
-//        System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-      gameArea.createWithPlayer(player);
-
-      gameArea.getEvents().addListener("reset", this::onGameAreaReset);
-      gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+        Entity currentPlayer = gameArea.getPlayer();
+        if (currentPlayer != null) {
+            currentPlayer.getEvents().addListener("playerDied", this::showDeathScreen);
+        } else {
+            logger.warn("switchAreaRunnable: gameArea.getPlayer() is null after create");
+        }
     }
-  }
 
-  /**
+
+    /**
    * Builds the small set of CAPTCHA specs used by the terminal
    *
    * Indexing is 0-based, row-major:

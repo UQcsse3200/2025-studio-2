@@ -30,6 +30,7 @@ import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.CollectableCounter;
@@ -212,7 +213,7 @@ public class LevelTwoGameArea extends GameArea {
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("key:door", this);
+        Entity door = ObstacleFactory.createDoor("key:door",  this, String.valueOf(MainGameScreen.Areas.CUTSCENE_TWO), false);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         // door.getComponent(DoorComponent.class).openDoor();
