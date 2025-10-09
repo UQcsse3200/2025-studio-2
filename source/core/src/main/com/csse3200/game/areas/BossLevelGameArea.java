@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -46,16 +45,10 @@ public class BossLevelGameArea extends GameArea {
             "images/red_button.png",
             "images/red_button_pushed.png",
             "images/box_orange.png",
-            "images/minimap_player_marker.png",
-            "images/minimap_forest_area.png",
             "images/box_blue.png",
             "images/box_white.png",
             "images/blue_button.png",
             "images/spikes_sprite.png",
-            "images/TechWallBase.png",
-            "images/TechWallVariant1.png",
-            "images/TechWallVariant2.png",
-            "images/TechWallVariant3.png",
             "images/platform.png",
             "images/empty.png",
             "images/gate.png",
@@ -67,7 +60,6 @@ public class BossLevelGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
-            "images/boss.png",
             "images/bomb.png",
             "images/cube.png",
             "images/laser-end.png",
@@ -78,15 +70,6 @@ public class BossLevelGameArea extends GameArea {
             "images/dash_powerup.png",
             "images/ladder.png",
             "images/ladder-base.png",
-            "images/cavelevel/tile000.png",
-            "images/cavelevel/tile001.png",
-            "images/cavelevel/tile002.png",
-            "images/cavelevel/tile014.png",
-            "images/cavelevel/tile015.png",
-            "images/cavelevel/tile016.png",
-            "images/cavelevel/tile028.png",
-            "images/cavelevel/tile029.png",
-            "images/cavelevel/tile030.png",
             "images/blackSquare.png",
             "images/cavelevel/background/1.png",
             "images/cavelevel/background/2.png",
@@ -99,42 +82,32 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
-            "images/boss.png",
-            "images/laser-end"
+            "images/laser-end",
+            "images/minimap_forest_area.png",
+            "images/minimap_player_marker.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/buttonsound.mp3",
-            "sounds/chimesound.mp3",
-            "sounds/CircuitGoodness.mp3",
             "sounds/damagesound.mp3",
             "sounds/deathsound.mp3",
-            "sounds/doorsound.mp3",
             "sounds/explosion.mp3",
-            "sounds/Flow.mp3",
-            "sounds/gamemusic.mp3",
             "sounds/hurt.mp3",
-            "sounds/interactsound.mp3",
+//            "sounds/interactsound.mp3",
             "sounds/jetpacksound.mp3",
-            "sounds/KindaLikeTycho.mp3",
-            "sounds/laddersound.mp3",
-            "sounds/pickupsound.mp3",
             "sounds/thudsound.mp3",
             "sounds/walksound.mp3",
-            "sounds/whooshsound.mp3",
-            "sounds/laserShower.mp3"
+            "sounds/laserShower.mp3",
+            "sounds/pickupsound.mp3"
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
-            "images/drone.atlas",
-            "images/boss.atlas",
+            "images/drone.atlas", // <---
+            "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",
-            "images/health-potion.atlas",
-            "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas",
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
@@ -162,7 +135,7 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
-        spawnBoss();
+        spawnBoss(); // Comment out this line if removing the long-loading assets
     }
 
     /**
@@ -769,13 +742,12 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private TerrainComponent createDefaultTerrain() {
-        // Use empty texture for invisible terrain grid
         final ResourceService resourceService = ServiceLocator.getResourceService();
-        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-
-        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
+        TextureRegion baseTile =
+                new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
+        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, baseTile, baseTile, baseTile, mapSize);
+        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
 
     private void spawnEvilMovingPlatform() {
