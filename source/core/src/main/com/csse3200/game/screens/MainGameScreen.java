@@ -8,13 +8,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
-import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.areas.LevelOneGameArea;
-import com.csse3200.game.areas.LevelTwoGameArea;
-import com.csse3200.game.areas.SprintOneGameArea;
+import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.StaminaComponent;
+import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
+import com.csse3200.game.components.computerterminal.SpritesheetSpec;
+import com.csse3200.game.components.computerterminal.TerminalUiComponent;
 import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
@@ -39,15 +39,14 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
-import com.csse3200.game.services.CodexService;
-import com.csse3200.game.services.GameTime;
-import com.csse3200.game.services.ResourceService;
-import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.services.*;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
 import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Set;
 
 /**
  * The game screen containing the main game.
@@ -57,6 +56,13 @@ import org.slf4j.LoggerFactory;
 public class MainGameScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
   private static final String[] mainGameTextures = {"images/playerstats/health.png", "images/playerstats/stamina.png"};
+  private static final String[] TERMINAL_TEXTURES = {
+          "images/terminal_bg.png",
+          "images/terminal_bg_blue.png",
+          // add all your spritesheet puzzles here:
+          "images/puzzles/waldo_4x4.png",
+          "images/puzzles/whichTutor_1x2.png"
+  };
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
   // Camera follow parameters
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
@@ -86,7 +92,19 @@ public class MainGameScreen extends ScreenAdapter {
     private GameAreaDisplay levelTagDisplay;
 
   public enum Areas {
-          LEVEL_ONE, LEVEL_TWO, SPRINT_ONE, TEMPLATE, FOREST, CAVE, CUTSCENE_ONE, CUTSCENE_TWO
+    LEVEL_ONE,
+    LEVEL_TWO,
+    SPRINT_ONE,
+    TEMPLATE,
+    FOREST,
+    CAVE,
+    CUTSCENE_ONE,
+    CUTSCENE_TWO,
+    TUTORIAL,
+  }
+
+  public MainGameScreen(GdxGame game) {
+    this(game, null);
   }
 
   public MainGameScreen(GdxGame game, Areas area) {
@@ -109,6 +127,8 @@ public class MainGameScreen extends ScreenAdapter {
 
     // Register service for managing codex entries
     ServiceLocator.registerCodexService(new CodexService());
+
+    ServiceLocator.registerComputerTerminalService(new ComputerTerminalService());
 
     renderer = RenderFactory.createRenderer();
     renderer.getCamera().getEntity().setPosition(CAMERA_POSITION);
@@ -134,7 +154,17 @@ public class MainGameScreen extends ScreenAdapter {
     gameArea.create();
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
-      gameArea.getEvents().addListener("doorEntered", (Entity ignored) -> handleDoorEntered());
+    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
+      if (gameArea instanceof TutorialGameArea) {
+        // Go back to tutorial menu instead of next level
+        logger.info("Tutorial completed, returning to tutorial menu");
+        game.setScreen(new TutorialMenuScreen(game));
+      } else {
+        // Normal level progression
+        logger.info("Door entered, proceeding to next level");
+        switchArea(getNextArea(area), player);
+      }
+    });
     gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
       switchArea(getNextArea(area), play);
     });
@@ -190,28 +220,16 @@ public class MainGameScreen extends ScreenAdapter {
    * @return GameArea mapped.
    */
   public GameArea getGameArea(Areas area) {
-    GameArea newArea = null;
-
-    switch (area) {
-      case LEVEL_ONE -> {
-        newArea = new LevelOneGameArea(terrainFactory);
-      }
-      case CUTSCENE_ONE -> {
-        newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
-      }
-      case LEVEL_TWO -> {
-        lvlStartTime = gameTime.getTime();
-        newArea = new LevelTwoGameArea(terrainFactory);
-      }
-      case CUTSCENE_TWO -> {
-        newArea = new CutsceneArea("cutscene-scripts/cutscene2.txt");
-      }
-      case SPRINT_ONE -> {
-        newArea = new SprintOneGameArea(terrainFactory);
-      }
-    }
-
-    return newArea;
+    lvlStartTime = gameTime.getTime();
+    return switch (area) {
+      case TUTORIAL ->  new TutorialGameArea(terrainFactory);
+      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
+      case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
+      case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
+      case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
+      case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
+      default -> throw new IllegalStateException("Unexpected value: " + area);
+    };
   }
 
   /**
@@ -220,27 +238,13 @@ public class MainGameScreen extends ScreenAdapter {
    * @return next Areas game area.
    */
   private Areas getNextArea(Areas area) {
-    Areas nextArea = null;
-
-    switch (area) {
-      case LEVEL_ONE -> {
-        nextArea = Areas.CUTSCENE_ONE;
-      }
-      case CUTSCENE_ONE -> {
-        nextArea = Areas.LEVEL_TWO;
-      }
-      case LEVEL_TWO -> {
-        nextArea = Areas.CUTSCENE_TWO;
-      }
-      case CUTSCENE_TWO -> {
-        nextArea = Areas.SPRINT_ONE;
-      }
-      case SPRINT_ONE -> {
-        nextArea = Areas.LEVEL_TWO;
-      }
-    }
-
-    return nextArea;
+    return switch (area) {
+      case LEVEL_ONE -> Areas.CUTSCENE_ONE;
+      case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
+      case LEVEL_TWO -> Areas.CUTSCENE_TWO;
+      case CUTSCENE_TWO -> Areas.SPRINT_ONE;
+      default -> throw new IllegalStateException("Unexpected value: " + area);
+    };
   }
 
   private void switchArea(Areas area, Entity player) {
@@ -291,6 +295,34 @@ public class MainGameScreen extends ScreenAdapter {
       gameArea.getEvents().addListener("reset", this::onGameAreaReset);
       gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
     }
+  }
+
+  /**
+   * Builds the small set of CAPTCHA specs used by the terminal
+   *
+   * Indexing is 0-based, row-major:
+   * top-left = 0, then 1, 2, ... across the row, next row continues
+   */
+  private SimpleCaptchaBank buildCaptchaBank() {
+    SimpleCaptchaBank bank = new SimpleCaptchaBank();
+
+    // 4x4 Waldo puzzle.
+    bank.add(new SpritesheetSpec(
+            "images/puzzles/waldo_4x4.png",
+            4, 4,
+            Set.of(3),
+            "Wheres Waldo? Select all tiles that contain him."
+    ));
+
+    // 1x2 “which tutor” puzzle.
+    // 0 = left tile, 1 = right tile
+    bank.add(new SpritesheetSpec(
+            "images/puzzles/whichTutor_1x2.png",
+            1, 2,
+            Set.of(0),
+            "Which tutor is way better in every regard (not ragebait)"
+    ));
+    return bank;
   }
 
     /**
@@ -404,6 +436,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(mainGameTextures);
+    resourceService.loadTextures(TERMINAL_TEXTURES);
     ServiceLocator.getResourceService().loadAll();
   }
 
@@ -411,6 +444,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Unloading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.unloadAssets(mainGameTextures);
+    resourceService.unloadAssets(TERMINAL_TEXTURES);
   }
 
   public boolean isPaused() {
@@ -435,23 +469,30 @@ public class MainGameScreen extends ScreenAdapter {
     if (gameArea.getPlayer() == null) {
       throw new IllegalStateException("GameArea has a null player");
     }
+
     pauseMenuDisplay = new PauseMenuDisplay(this, this.game);
     deathScreenDisplay = new DeathScreenDisplay(this, this.game);
     pauseInput = new PauseInputComponent(this);
+
     Stage stage = ServiceLocator.getRenderService().getStage();
     leaderboardComponent = new LeaderboardComponent();
 
     lvlStartTime = gameTime.getTime();
 
+    // Build your puzzle bank (spritesheet-driven)
+    SimpleCaptchaBank bank = buildCaptchaBank();
+
     Entity ui = new Entity();
     ui.addComponent(new InputDecorator(stage, 10))
-        .addComponent(new PerformanceDisplay())
-        .addComponent(new MainGameActions(this.game))
-        .addComponent(pauseMenuDisplay)
-        .addComponent(deathScreenDisplay)
-        .addComponent(pauseInput);
+            .addComponent(new PerformanceDisplay())
+            .addComponent(new MainGameActions(this.game))
+            .addComponent(pauseMenuDisplay)
+            .addComponent(deathScreenDisplay)
+            .addComponent(pauseInput)
+            .addComponent(new TerminalUiComponent(this).setCaptchaBank(bank));
 
     ServiceLocator.getEntityService().register(ui);
+    ServiceLocator.getComputerTerminalService().registerUiEntity(ui);
   }
   private void hideHUD() {
         if (minimapDisplay != null) minimapDisplay.setVisible(false);

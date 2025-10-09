@@ -32,6 +32,7 @@ public class ServiceLocator {
   private static SecurityCamRetrievalService securityCamRetrievalService;
   private static VfxManager vfxService;
   private static CodexService codexService;
+  private static ComputerTerminalService computerTerminalService;
 
   private static MainGameScreen mainGameScreen;
 
@@ -76,6 +77,8 @@ public class ServiceLocator {
   }
 
   public static CodexService getCodexService() { return codexService; }
+
+  public static ComputerTerminalService getComputerTerminalService() { return computerTerminalService; }
 
   public static MainGameScreen getMainGameScreen() {
     return mainGameScreen;
@@ -141,6 +144,11 @@ public class ServiceLocator {
     codexService = source;
   }
 
+  public static void registerComputerTerminalService(ComputerTerminalService service) {
+    logger.debug("Registering computer terminal service {}", service);
+    computerTerminalService = service;
+  }
+
   public static void clear() {
     entityService = null;
     renderService = null;
@@ -153,6 +161,7 @@ public class ServiceLocator {
     securityCamRetrievalService = null;
     vfxService = null;
     codexService = null;
+    computerTerminalService = null;
   }
 
   private ServiceLocator() {

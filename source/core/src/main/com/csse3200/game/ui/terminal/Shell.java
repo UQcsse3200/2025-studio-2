@@ -1,10 +1,7 @@
 package com.csse3200.game.ui.terminal;
 
 import java.io.PrintStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,7 +10,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Scanner;
 import java.util.Collection;
-import java.lang.reflect.Array;
 
 /**
  * Shell: A simple, single-file, dependency-free scripting language interpreter
@@ -920,7 +916,7 @@ final class MaybeMethodStatement implements EvaluableFunction {
       method.setAccessible(true);
       return method.invoke(targetInstance, args);
     } catch (Exception e) {
-      throw new ShellException("Error invoking method '" + methodName + "': " + e);
+      throw new ShellException("Error invoking method '" + methodName + "': " + e + e.getCause() + "\nArgs: " +  Arrays.toString(args));
     }
   }
 
