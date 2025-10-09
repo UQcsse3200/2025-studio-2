@@ -146,7 +146,15 @@ public class MainGameScreen extends ScreenAdapter {
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
     gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      switchArea(getNextArea(area), player);
+      if (gameArea instanceof TutorialGameArea) {
+        // Go back to tutorial menu instead of next level
+        logger.info("Tutorial completed, returning to tutorial menu");
+        game.setScreen(new TutorialMenuScreen(game));
+      } else {
+        // Normal level progression
+        logger.info("Door entered, proceeding to next level");
+        switchArea(getNextArea(area), player);
+      }
     });
     gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
       switchArea(getNextArea(area), play);

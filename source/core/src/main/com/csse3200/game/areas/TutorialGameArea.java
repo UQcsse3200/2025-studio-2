@@ -72,6 +72,7 @@ public class TutorialGameArea extends GameArea {
         "images/glide_powerup.png",
         "images/wall.png",
         "images/dash_powerup.png",
+        "images/jetpack_powerup.png",
         "images/ladder.png",
         "images/ladder-base.png",
         "images/cavelevel/tile000.png",
@@ -90,6 +91,7 @@ public class TutorialGameArea extends GameArea {
         "images/cavelevel/background/5.png",
         "images/cavelevel/background/6.png",
         "images/cavelevel/background/7.png",
+        "images/flying_bat_map.png",
         "images/terminal_on.png",
         "images/terminal_off.png",
         "images/plate.png",
@@ -110,10 +112,25 @@ public class TutorialGameArea extends GameArea {
         "images/tutorials/jump.png",
         "images/tutorials/double_jump.png",
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
+    private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
-    private static final String[] gameSounds = {"sounds/Impact4.ogg",
-        "sounds/chimesound.mp3"};
+    private static final String[] gameSounds = {
+        "sounds/Impact4.ogg",
+        "sounds/chimesound.mp3",
+        "sounds/doorsound.mp3",
+        "sounds/walksound.mp3",
+        "sounds/whooshsound.mp3",
+        "sounds/jetpacksound.mp3",
+        "sounds/deathsound.mp3",
+        "sounds/damagesound.mp3",
+        "sounds/pickupsound.mp3",
+        "sounds/interactsound.mp3",
+        "sounds/buttonsound.mp3",
+        "sounds/laddersound.mp3",
+        "sounds/thudsound.mp3",
+        "sounds/chimesound.mp3",
+        "sounds/explosion.mp3",
+    };
     private static final String[] gameTextureAtlases = {
         "images/PLAYER.atlas",
         "images/drone.atlas",
