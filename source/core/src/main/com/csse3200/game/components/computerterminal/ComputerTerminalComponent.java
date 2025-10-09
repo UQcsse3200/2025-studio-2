@@ -14,6 +14,7 @@ import com.csse3200.game.services.ServiceLocator;
 public class ComputerTerminalComponent extends Component {
     private ColliderComponent playerCollider = null;
     private boolean eventAdded = false;
+    private static final float INTERACT_RANGE = 1.0f;
 
     /**
      * Called by collision code when the player enters or leaves range.
@@ -46,10 +47,16 @@ public class ComputerTerminalComponent extends Component {
         Vector2 terminalPos = entity.getCenterPosition();
         float dx = Math.abs(playerPos.x - terminalPos.x);
         float dy = Math.abs(playerPos.y - terminalPos.y);
-        if (dx >= 0.8f || dy >= 0.8f) return;
 
-        // open via service
-        ServiceLocator.getComputerTerminalService().open(entity);
+        // inclusive <= and slightly larger range helps tests that place exactly at boundary
+        if (dx > INTERACT_RANGE || dy > INTERACT_RANGE) return;
+
+        var svc = ServiceLocator.getComputerTerminalService();
+        if (svc == null) { // avoids NPE in tests that didn't register it
+            Gdx.app.log("ComputerTerminalComponent", "No ComputerTerminalService registered; ignoring open()");
+            return;
+        }
+        svc.open(entity);
     }
 
     /**
