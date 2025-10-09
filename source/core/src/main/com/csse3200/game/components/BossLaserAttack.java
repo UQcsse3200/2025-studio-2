@@ -1,9 +1,12 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.BossLaserFactory;
+import com.csse3200.game.entities.factories.LaserFactory;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -22,8 +25,7 @@ import java.util.List;
  * - damaging the player
  */
 public class BossLaserAttack extends Component {
-    private static final float MAX_DISTANCE = 50f;
-    private static final float ATTACK_DURATION = 1.5f; // seaconds laser stays active
+    private static final float ATTACK_DURATION = 3f; // seaconds laser stays active
     private static final float COOLDOWN = 6f;         // seconds between bursts
 
     private float attackTimer = 0f;
@@ -70,21 +72,45 @@ public class BossLaserAttack extends Component {
         }
 
         if (!attacking || (target == null) )return;
-        performLaserRaycast();
+        //performLaserRaycast();
     }
     private void spawnBossLaser() {
-        Entity laser = BossLaserFactory.createBossLaser(target);
-        laser.setPosition(entity.getPosition());
-        //gameArea.spawnEntity(laser);
+        Vector2 bossPosition = entity.getCenterPosition().cpy();
+        Vector2 playerPosition = target.getCenterPosition().cpy();
+        // Calculate the angle from boss to player
+        Vector2 direction = playerPosition.sub(bossPosition);
+        float angleRadians = direction.angleRad();
+        float angleDegrees = direction.angleDeg();
+        entity.getEvents().trigger("shootLaserStart");
+
+        Timer.schedule(new Timer.Task() {
+            @Override
+            public void run() {
+                Entity laser = BossLaserFactory.createBossLaser(target,angleDegrees-10f);
+                laser.setScale(7f,500f);
+                laser.setPosition(bossPosition.x+0.8f, bossPosition.y+0.5f);
+                ServiceLocator.getEntityService().register(laser);
+
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        laser.dispose();
+                    }
+                }, 1f);
+            }
+        }, 0.8f);
     }
 
-    private void performLaserRaycast() {
-        Vector2 start = entity.getCenterPosition().cpy();
-        Vector2 direction = target.getCenterPosition().cpy().sub(start).nor();
-        Vector2 end = start.cpy().mulAdd(direction, MAX_DISTANCE);
+    /*private void performLaserRaycast() {
+        Vector2 bossPosition = entity.getCenterPosition().cpy();
+        Vector2 playerPosition = target.getCenterPosition().cpy();
+        // Calculate the angle from boss to player
+        Vector2 direction = playerPosition.sub(bossPosition);
+        float angleRadians = direction.angleRad();
+        float angleDegrees = direction.angleDeg();
 
         RaycastHit hit = new RaycastHit();
-        boolean hitSomething = physicsEngine.raycast(start, end, hitMask, hit);
+        boolean hitSomething = physicsEngine.raycast(bossPosition, playerPosition, hitMask, hit);
 
         if (hitSomething) {
             short cat = hit.fixture != null ? hit.fixture.getFilterData().categoryBits : blockedOccluder;
@@ -92,7 +118,7 @@ public class BossLaserAttack extends Component {
 
             if (isPlayer) damagePlayer(hit);
         }
-    }
+    }*/
 
     private void damagePlayer(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;

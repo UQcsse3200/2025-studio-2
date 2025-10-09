@@ -39,7 +39,7 @@ public class BossLaserSpawnerComponent extends Component {
 
     private void spawnLaser() {
         // Create a new laser entity targeting the player
-        Entity laser = BossLaserFactory.createBossLaser(player);
+        Entity laser = BossLaserFactory.createBossLaser(player,0f);
 
         // Position the laser at the boss's current position
         laser.setPosition(entity.getPosition());

@@ -1,6 +1,7 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,12 +67,10 @@ public class CombatStatsComponent extends Component {
         this.health = Math.max(0, health);
 
         if (entity != null) {
-            // 通知 UI 更新生命值
             entity.getEvents().trigger("updateHealth", this.health);
-
-            // 如果是第一次掉到 0，触发死亡事件
             if (oldHealth > 0 && this.health == 0) {
                 entity.getEvents().trigger("playerDied");
+                StatsTracker.addDeath();
             }
         }
     }
@@ -132,16 +131,16 @@ public class CombatStatsComponent extends Component {
      * Called when this entity is hit by an attacker.
      * @param attacker the attacker's CombatStatsComponent
      */
-        public void hit (CombatStatsComponent attacker){
-            long currentFrame = Gdx.graphics.getFrameId();
-            if (currentFrame - lastHitFrame > INVULN_FRAMES) {
-                setLastAttacker(attacker.entity);
-                lastHitFrame = currentFrame;
-                int newHealth = getHealth() - attacker.getBaseAttack();
-                setHealth(newHealth);
+    public void hit (CombatStatsComponent attacker){
+        long currentFrame = Gdx.graphics.getFrameId();
+        if (currentFrame - lastHitFrame > INVULN_FRAMES) {
+            setLastAttacker(attacker.entity);
+            lastHitFrame = currentFrame;
+            int newHealth = getHealth() - attacker.getBaseAttack();
+            setHealth(newHealth);
 
-                // Animate hurt
-                entity.getEvents().trigger("hurt");
-            }
+            // Animate hurt
+            entity.getEvents().trigger("hurt");
         }
+    }
 }
