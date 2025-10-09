@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -17,6 +18,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.configs.LevelConfig;
 import com.csse3200.game.entities.spawn.SpawnRegistry;
 import com.csse3200.game.entities.spawn.Spawners;
+import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -106,6 +108,7 @@ public class LevelThreeGameArea extends GameArea {
     protected void loadEntities() {
         if (cfg == null) throw new IllegalStateException("Level config not loaded");
         if (cfg.entities == null) throw new IllegalArgumentException("'entities' missing in level config");
+        spawnParallaxBackground();
 
         for (var e : cfg.entities) {
             var entity = SpawnRegistry.build(e.type, e);
@@ -160,6 +163,49 @@ public class LevelThreeGameArea extends GameArea {
         ui.addComponent(new GameAreaDisplay(name));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
+    }
+
+    private void spawnParallaxBackground() {
+        Entity background = new Entity();
+
+        Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
+
+        // Get map dimensions from terrain
+        GridPoint2 mapBounds = terrain.getMapBounds(0);
+        float tileSize = terrain.getTileSize();
+        float mapWorldWidth = mapBounds.x * tileSize;
+        float mapWorldHeight = mapBounds.y * tileSize;
+
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+
+        ResourceService rs = ServiceLocator.getResourceService();
+
+        final float scale = 0.08f;
+        final float offsetX = 0;
+        final float offsetY = -11;
+
+        // layer 1 (furthest away)
+        Texture layer1 = rs.getAsset("images/surfacelevel/surface-1.png", Texture.class);
+        parallaxBg.addScaledLayer(layer1, 0f, offsetX, offsetY, scale);
+
+        // layer 2
+        Texture layer2 =  rs.getAsset("images/surfacelevel/surface-2.png", Texture.class);
+        parallaxBg.addScaledLayer(layer2, 0.2f, offsetX, offsetY, scale);
+
+        // layer3
+        Texture layer3 =  rs.getAsset("images/surfacelevel/surface-3.png", Texture.class);
+        parallaxBg.addScaledLayer(layer3, 0.4f, offsetX, offsetY, scale);
+
+        // layer4
+        Texture layer4 =  rs.getAsset("images/surfacelevel/surface-4.png", Texture.class);
+        parallaxBg.addScaledLayer(layer4, 0.6f, offsetX, offsetY, scale);
+
+        // layer5
+        Texture layer5 =  rs.getAsset("images/surfacelevel/surface-5.png", Texture.class);
+        parallaxBg.addScaledLayer(layer5, 0.8f, offsetX, offsetY, scale);
+
+        background.addComponent(parallaxBg);
+        spawnEntity(background);
     }
 
     /**

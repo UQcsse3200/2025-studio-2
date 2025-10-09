@@ -80,7 +80,12 @@
     "images/rightSignpost.png",
     "images/leftSignpost.png",
     "images/upSignpost.png",
-    "images/downSignpost.png"
+    "images/downSignpost.png",
+    "images/surfacelevel/surface-1.png",
+    "images/surfacelevel/surface-2.png",
+    "images/surfacelevel/surface-3.png",
+    "images/surfacelevel/surface-4.png",
+    "images/surfacelevel/surface-5.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",
