@@ -104,5 +104,8 @@
     "sounds/thudsound.mp3",
     "sounds/chimesound.mp3",
     "sounds/explosion.mp3"
+  ],
+  "music": [
+    "sounds/KindaLikeTycho.mp3"
   ]
 }

@@ -17,6 +17,7 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.configs.LevelConfig;
 import com.csse3200.game.entities.spawn.SpawnRegistry;
 import com.csse3200.game.entities.spawn.Spawners;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
@@ -77,6 +78,7 @@ public class LevelThreeGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset(cfg.miniMap, Texture.class));
         //        spawnParallaxBackground();
+        playMusic();
     }
 
     /**
@@ -89,6 +91,7 @@ public class LevelThreeGameArea extends GameArea {
         rs.loadTextures(assets.textures.toArray(new String[0]));
         rs.loadTextureAtlases(assets.atlases.toArray(new String[0]));
         rs.loadSounds(assets.sounds.toArray(new String[0]));
+        rs.loadMusic(assets.music.toArray(new String[0]));
 
         while (!rs.loadForMillis(10)) {
             logger.info("Loading level assets... {}%", rs.getProgress());
@@ -216,6 +219,7 @@ public class LevelThreeGameArea extends GameArea {
         resourceService.unloadAssets(assets.atlases.toArray(new String[0]));
         resourceService.unloadAssets(assets.sounds.toArray(new String[0]));
         resourceService.unloadAssets(assets.textures.toArray(new String[0]));
+        resourceService.unloadAssets(assets.music.toArray(new String[0]));
     }
     @Override
     public void dispose() {
@@ -224,6 +228,19 @@ public class LevelThreeGameArea extends GameArea {
         this.unloadAssets();
         isResetting = false;
     }
+
+    private void playMusic() {
+        String track = !assets.music.isEmpty() ? assets.music.getFirst() : cfg.music;
+        Music music = ServiceLocator.getResourceService().getAsset(track, Music.class);
+        if (music == null) {
+            logger.error("Music not loaded: {}", track);
+            return;
+        }
+        music.setLooping(true);
+        music.setVolume(UserSettings.getMusicVolumeNormalized());
+        music.play();
+    }
+
 
 //    /**
 //     * Spawns a parallax background defined by an external config,

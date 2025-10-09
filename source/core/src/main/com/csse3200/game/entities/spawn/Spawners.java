@@ -3,6 +3,7 @@ package com.csse3200.game.entities.spawn;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
@@ -12,6 +13,7 @@ import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,8 @@ import java.util.Objects;
 import java.util.UUID;
 
 public final class Spawners {
+    private static final Logger log = LoggerFactory.getLogger(Spawners.class);
+
     private Spawners(){}
 
     public static void registerAll(Entity player, GameArea area) {
@@ -185,9 +189,13 @@ public final class Spawners {
 
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
-                target.getEvents().trigger("disable");
-                button.getEvents().addListener("buttonPressed", () -> {
-                    target.getEvents().trigger("laserOff", false);
+
+                button.getEvents().addListener("buttonToggled", () -> {
+                    if (button.getComponent(ButtonComponent.class).isPushed()) {
+                        target.getEvents().trigger("disable");
+                    } else {
+                        target.getEvents().trigger("enable");
+                    }
                 });
             }
 
@@ -232,6 +240,13 @@ public final class Spawners {
             return  upgrade;
         });
 
+        // --- Enemies ---
+        SpawnRegistry.register("enemy",
+                a -> EnemyFactory.createPatrollingDrone(
+                        player,
+                        new Vector2[] { new Vector2(a.x, a.y), new Vector2(a.dx, a.dy), new Vector2(a.dy, a.x) }
+                )
+        );
     }
 
     // --- Helpers ---

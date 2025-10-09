@@ -4,6 +4,7 @@
   "playerSpawn": [2, 10],
   "walls": { "thickness": 0.1 },
   "miniMap": "images/minimap_forest_area.png",
+  "music": "sounds/KindaLikeTycho.mp3",
 
   "entities": [
     { "type":  "death_zone", "x":  0, "y": -7},
@@ -42,7 +43,6 @@
     { "type": "collectable", "subtype": "key", "target": "door", "x": 1, "y": 15, "extra": "keyPressurePlate" },
 
     { "type":  "upgrade", "subtype": "jetpack", "x": 45, "y": 8, "id": "jetpack", "isVisible":  false},
-    { "type":  "upgrade", "subtype": "jetpack", "x": 5, "y": 8 },
 
     { "type": "laser", "rotation":  -90, "x": 32, "y": 14, "sx": 0.5, "sy": 0.5 },
     { "type": "laser", "rotation":  -136, "x": 47, "y": 14, "sx": 0.5, "sy": 0.5 },
@@ -50,8 +50,9 @@
 
     { "type": "laser_detector", "x": 48.5, "y": 11, "rotation": 90, "target": "jetpack", "centerX": false, "centerY": false },
 
-    { "type": "button", "direction": "left", "target": "laser", "x": 23, "y": 48, "tooltip": "Press button to turn on/off the super secure laser"},
+    { "type": "button", "direction": "left", "target": "laser", "x": 23, "y": 52, "tooltip": "Press button to turn on/off the super secure laser"},
 
+    { "type":  "enemy", "x": 6, "y": 11, "dy": 22, "dx": 19 },
     { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false}
   ]
 }

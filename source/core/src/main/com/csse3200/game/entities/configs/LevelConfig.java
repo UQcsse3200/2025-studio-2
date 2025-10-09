@@ -15,6 +15,7 @@ public class LevelConfig {
     public int[] mapSize;
     public int[] playerSpawn;
     public String miniMap;
+    public String music;
     public Walls walls = new Walls();
     public List<E> entities = java.util.List.of();
 

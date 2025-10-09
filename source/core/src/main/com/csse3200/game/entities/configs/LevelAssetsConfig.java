@@ -21,4 +21,9 @@ public class LevelAssetsConfig {
      * File paths for sound assets (e.g., WAV or MP3 files) used in this level.
      */
     public List<String> sounds;
+
+    /**
+     * File paths for music assets
+     */
+    public List<String> music;
 }
