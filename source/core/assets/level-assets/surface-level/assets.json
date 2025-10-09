@@ -73,11 +73,20 @@
     "images/surfacelevel/overlays/smog2.png",
     "images/surfacelevel/overlays/light.png",
     "images/surfacelevel/overlays/sun.png",
+    "images/surfacelevel/background/1.png",
+    "images/surfacelevel/background/2.png",
+    "images/surfacelevel/background/3.png",
+    "images/surfacelevel/background/4.png",
     "images/rightSignpost.png",
     "images/leftSignpost.png",
     "images/upSignpost.png",
     "images/downSignpost.png",
-    "images/jetpack_powerup.png"
+    "images/jetpack_powerup.png",
+    "images/surfacelevel/surface-1.png",
+    "images/surfacelevel/surface-2.png",
+    "images/surfacelevel/surface-3.png",
+    "images/surfacelevel/surface-4.png",
+    "images/surfacelevel/surface-5.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",
