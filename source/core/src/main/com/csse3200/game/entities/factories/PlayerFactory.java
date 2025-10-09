@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Gdx;
+import com.csse3200.game.achievements.AchievementService;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -88,11 +89,11 @@ public class PlayerFactory {
                     .addComponent(new DamageIndicatorUI())
                     .addComponent(new AchievementsTrackerComponent())
                     .addComponent(new AchievementToastUI())
-
                     .addComponent(new CameraComponent())
                     .addComponent(new PlayerScreenTransitionComponent())
                     .addComponent(new PlayerDeathEffectComponent())
                     .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
+                    com.csse3200.game.achievements.AchievementService.get().devReset();
 
 
     player
@@ -102,6 +103,9 @@ public class PlayerFactory {
     // --- Stamina: add component, wire sprint, and TEMP logging ---
     StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
     player.addComponent(stamina);
+    AchievementToastUI toastUI = new AchievementToastUI();
+    player.addComponent(toastUI);
+    AchievementService.get().addListener(toastUI);
 
 // Wire sprint toggle (expects your input component to emit sprintStart/sprintStop)
     player.getEvents().addListener("sprintStart", () -> {

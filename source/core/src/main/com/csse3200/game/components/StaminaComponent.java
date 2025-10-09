@@ -194,5 +194,11 @@ public class StaminaComponent extends Component {
             } catch (NoSuchFieldException | IllegalAccessException ignore) {}
         }
         return null;
+
+    }public boolean isSprinting() {
+        return sprinting;
+
     }
+
+
 }

@@ -66,12 +66,13 @@ public class AchievementService {
     public void addSprintTime(float dt) {
         if (dt <= 0f) return;
         sprintSeconds += dt;
-
+        Gdx.app.log("Achv", "Sprint total = " + sprintSeconds);
         // ADRENALINE_RUSH: 30s total
-        if (!isUnlocked(AchievementId.ADRENALINE_RUSH) && sprintSeconds >= 30f) {
+        if (!isUnlocked(AchievementId.ADRENALINE_RUSH) && sprintSeconds >= 3f) {
+            Gdx.app.log("Achv", "Adrenaline Rush threshold hit at " + sprintSeconds + "s");
             unlock(AchievementId.ADRENALINE_RUSH,
                     "Adrenaline Rush",
-                    "Sprint for 30 seconds total.");
+                    "Sprint for 3 seconds total.");
         }
         autosave();
     }
@@ -102,6 +103,13 @@ public class AchievementService {
 
         autosave();
     }
+    public void devReset() {
+        unlocked.clear();
+        sprintSeconds = 0f;
+        save();
+        Gdx.app.log("Achv", "DEV RESET: cleared achievements + sprint time");
+    }
+
 
     /** Call periodically if the service is active and you want background autosave. */
     private float autosaveTimer = 0f;
