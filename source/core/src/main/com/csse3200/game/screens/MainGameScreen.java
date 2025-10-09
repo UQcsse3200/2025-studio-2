@@ -10,15 +10,21 @@ import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
 import com.csse3200.game.components.computerterminal.SpritesheetSpec;
 import com.csse3200.game.components.computerterminal.TerminalUiComponent;
 import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
+import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.player.LeaderboardEntryDisplay;
+import com.csse3200.game.components.player.PlayerStatsDisplay;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -81,6 +87,9 @@ public class MainGameScreen extends ScreenAdapter {
   private PauseInputComponent pauseInput;
   private LeaderboardComponent leaderboardComponent;
   private GameTime gameTime;
+    private MinimapDisplay minimapDisplay;
+    private PlayerStatsDisplay playerStatsDisplay;
+    private GameAreaDisplay levelTagDisplay;
 
   public enum Areas {
     LEVEL_ONE,
@@ -171,7 +180,40 @@ public class MainGameScreen extends ScreenAdapter {
   public Areas getAreaEnum() {
     return gameAreaEnum;
   }
+  /**
+   * Centralized door-entered flow: gather stats, show leaderboard entry, hide HUD,
+   * then resume HUD and switch to next area.
+   */
+  private void handleDoorEntered() {
+      Areas next = getNextArea(gameAreaEnum);
+      Entity playerEntity = gameArea.getPlayer();
 
+      // Defensive guards: never trust event parameter, only gameArea.getPlayer()
+      CombatStatsComponent combat = playerEntity.getComponent(CombatStatsComponent.class);
+      int health = (combat != null) ? combat.getHealth() : 0;
+
+      StaminaComponent staminaComp = playerEntity.getComponent(StaminaComponent.class);
+      float stamina = (staminaComp != null) ? staminaComp.getCurrentStamina() : 0f;
+
+      long completionTime = gameTime.getTimeSince(lvlStartTime);
+
+      hideHUD();
+      paused = true;
+
+      LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
+      Entity uiEntity = new Entity().addComponent(entryDisplay);
+      ServiceLocator.getEntityService().register(uiEntity);
+
+      uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
+          String name = entryDisplay.getEnteredName();
+          if (name != null && !name.isEmpty() && leaderboardComponent != null) {
+              leaderboardComponent.updateLeaderboard(name, completionTime);
+          }
+          showHUD();
+          paused = false;
+          switchArea(next, playerEntity);
+      });
+  }
   /**
    * Get the GameArea mapped to the Areas area.
    * @param area - Areas area.
@@ -229,7 +271,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     if (newArea != null) {
       System.out.println("TIME" + lvlStartTime);
-      leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
+      //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
       if (newArea instanceof CutsceneArea) {
         StatsTracker.completeLevel();
       }
@@ -452,6 +494,17 @@ public class MainGameScreen extends ScreenAdapter {
     ServiceLocator.getEntityService().register(ui);
     ServiceLocator.getComputerTerminalService().registerUiEntity(ui);
   }
+  private void hideHUD() {
+        if (minimapDisplay != null) minimapDisplay.setVisible(false);
+        if (playerStatsDisplay != null) playerStatsDisplay.setVisible(false);
+        if (levelTagDisplay != null) levelTagDisplay.setVisible(false);
+    }
+
+    private void showHUD() {
+        if (minimapDisplay != null) minimapDisplay.setVisible(true);
+        if (playerStatsDisplay != null) playerStatsDisplay.setVisible(true);
+        if (levelTagDisplay != null) levelTagDisplay.setVisible(true);
+    }
 
   /**
    * Shows the death screen overlay

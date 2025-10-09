@@ -204,4 +204,8 @@ public class PlayerStatsDisplay extends UIComponent {
     if (staminaTable != null) staminaTable.remove();
     if (collectableLabel != null) collectableLabel.remove();
   }
+  public void setVisible(boolean visible) {
+      if (healthTable != null) healthTable.setVisible(visible);
+      if (staminaTable != null) staminaTable.setVisible(visible);
+  }
 }
