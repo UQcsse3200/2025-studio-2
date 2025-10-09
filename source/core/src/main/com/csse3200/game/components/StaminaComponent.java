@@ -6,8 +6,6 @@ import com.csse3200.game.services.ServiceLocator;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import com.csse3200.game.achievements.AchievementProgression;
-
 
 /**
  * StaminaComponent - resource manager for player stamina.
@@ -87,7 +85,6 @@ public class StaminaComponent extends Component {
         if (!exhausted && currentStamina <= 0f) {
             exhausted = true;
             triggerEvent("exhausted");
-            AchievementProgression.onStaminaExhausted();
         } else if (exhausted && currentStamina > 0f) {
             exhausted = false;
             triggerEvent("recovered");
@@ -194,11 +191,5 @@ public class StaminaComponent extends Component {
             } catch (NoSuchFieldException | IllegalAccessException ignore) {}
         }
         return null;
-
-    }public boolean isSprinting() {
-        return sprinting;
-
     }
-
-
 }

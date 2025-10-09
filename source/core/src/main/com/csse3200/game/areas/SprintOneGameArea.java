@@ -33,7 +33,6 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.achievements.AchievementProgression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,7 +150,6 @@ public class SprintOneGameArea extends GameArea {
         createMinimap(
             ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class)
         );
-        AchievementProgression.onLevelStart();
 
         playMusic();
 
