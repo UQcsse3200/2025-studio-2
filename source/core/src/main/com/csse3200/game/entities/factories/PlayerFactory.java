@@ -16,6 +16,7 @@ import com.csse3200.game.physics.components.*;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
+import com.csse3200.game.achievements.AchievementService;
 
 import java.util.List;
 
@@ -70,18 +71,16 @@ public final class PlayerFactory {
                 .addComponent(input)
                 .addComponent(new PlayerStatsDisplay())
                 .addComponent(new DamageIndicatorUI())
-                .addComponent(new AchievementsTrackerComponent())
-                .addComponent(new AchievementToastUI())
                 .addComponent(new CameraComponent())
                 .addComponent(new PlayerScreenTransitionComponent())
                 .addComponent(new PlayerDeathEffectComponent())
                 .addComponent(new MinimapComponent("images/minimap_player_marker.png"))
                 .addComponent(animator)
                 .addComponent(new PlayerAnimationController());
-
         // Stamina + sprint wiring
         StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
         player.addComponent(stamina);
+
 
         player.getEvents().addListener("sprintStart", () -> {
             if (!stamina.isExhausted() && stamina.getCurrentStamina() > 0) {
@@ -105,8 +104,11 @@ public final class PlayerFactory {
 
         // Start idle animation
         player.getComponent(AnimationRenderComponent.class).startAnimation("IDLE");
-
-        // Replace with any extra components passed in
+        // Attach popup listener for achievements
+        AchievementToastUI toast = new AchievementToastUI();
+        player.addComponent(toast);
+        AchievementService.get().addListener(toast);
+        player.addComponent(new com.csse3200.game.components.achievements.AchievementsTrackerComponent());        // Replace with any extra components passed in
         for (Component c : componentList) {
             player.replaceComponent(c);
         }

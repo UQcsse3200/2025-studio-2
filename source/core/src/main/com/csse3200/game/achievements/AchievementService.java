@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.ObjectMap;
  * Persists unlocks and sprint time using LibGDX Preferences.
  */
 public class AchievementService {
+    private static final boolean DISABLE_PERSISTENCE = true;
+
     private static final String PREF_NAME = "achievements";
     private static final String KEY_UNLOCKED = "unlocked";       // csv list
     private static final String KEY_SPRINT_SEC = "sprint.totalSeconds";
@@ -65,16 +67,24 @@ public class AchievementService {
     /** Call every frame while sprinting to accumulate time for Adrenaline Rush. */
     public void addSprintTime(float dt) {
         if (dt <= 0f) return;
+
         sprintSeconds += dt;
-        Gdx.app.log("Achv", "Sprint total = " + sprintSeconds);
-        // ADRENALINE_RUSH: 30s total
-        if (!isUnlocked(AchievementId.ADRENALINE_RUSH) && sprintSeconds >= 3f) {
-            Gdx.app.log("Achv", "Adrenaline Rush threshold hit at " + sprintSeconds + "s");
-            unlock(AchievementId.ADRENALINE_RUSH,
+
+        // DEBUG: keep this while testing
+        Gdx.app.log("Achv", String.format("Sprint total = %.3f", sprintSeconds));
+
+        // Use a small threshold for dev; bump to 30f for production.
+        final float THRESHOLD = 3f; // <-- set to 30f when you’re done testing
+
+        if (!isUnlocked(AchievementId.ADRENALINE_RUSH) && sprintSeconds >= THRESHOLD) {
+            unlock(
+                    AchievementId.ADRENALINE_RUSH,
                     "Adrenaline Rush",
-                    "Sprint for 3 seconds total.");
+                    "Sprint for 3 seconds total."
+            );
+            Gdx.app.log("Achv", String.format("Adrenaline Rush threshold hit at %.3f", sprintSeconds));
+            autosave(); // persist immediately
         }
-        autosave();
     }
 
     /** Mark that stamina hit zero sometime this level. */
@@ -136,39 +146,22 @@ public class AchievementService {
     }
 
     private void load() {
-        unlocked.clear();
-
-        // Load unlocked CSV -> enum values
-        String csv = prefs.getString(KEY_UNLOCKED, "");
-        if (!csv.isEmpty()) {
-            for (String s : csv.split(",")) {
-                try {
-                    AchievementId id = AchievementId.valueOf(s.trim());
-                    unlocked.put(id, true);
-                } catch (IllegalArgumentException ignored) {
-                    // Unknown/old enum name — skip
-                }
-            }
+        if (DISABLE_PERSISTENCE) {
+            unlocked.clear();
+            sprintSeconds = 0f;
+            staminaEverExhausted = false;
+            return;
         }
-
-        sprintSeconds = prefs.getFloat(KEY_SPRINT_SEC, 0f);
+        // (If you keep persistence later, your old prefs-reading code can live here)
     }
 
     private void save() {
-        // unlocked -> CSV
-        StringBuilder sb = new StringBuilder();
-        for (AchievementId id : AchievementId.values()) {
-            if (isUnlocked(id)) {
-                if (sb.length() > 0) sb.append(',');
-                sb.append(id.name());
-            }
-        }
-        prefs.putString(KEY_UNLOCKED, sb.toString());
-        prefs.putFloat(KEY_SPRINT_SEC, sprintSeconds);
-        prefs.flush();
+        if (DISABLE_PERSISTENCE) return;
+        // (If you keep persistence later, your old prefs-writing code can live here)
     }
 
     private void autosave() {
-        save();
+        if (!DISABLE_PERSISTENCE) save();
     }
+
 }
