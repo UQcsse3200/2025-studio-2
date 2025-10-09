@@ -19,6 +19,10 @@ public class BossAnimationController extends Component {
         super.create();
         animator = this.entity.getComponent(AnimationRenderComponent.class);
         entity.getEvents().addListener("generateDroneStart", this::animateGenerateDrone);
+        // ★ Compatible: If external/test triggers the version with parameters, map it to the same logic
+        //entity.getEvents().addListener("generateDroneStart", (Integer ignored) -> animateGenerateDrone());
+        //entity.getEvents().addListener("generateDroneStart", (Entity ignored)  -> animateGenerateDrone());
+
         entity.getEvents().addListener("droneSpawned", (Entity d) -> onDroneSpawned());
         entity.getEvents().addListener("chaseStart", this::animateChase);
         entity.getEvents().addListener("touchKillStart", this::animateTouchKill);
