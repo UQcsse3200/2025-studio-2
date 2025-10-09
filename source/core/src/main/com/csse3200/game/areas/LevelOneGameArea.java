@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
@@ -16,6 +17,7 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.KeyComponent;
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
@@ -27,9 +29,14 @@ import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,11 +123,15 @@ public class LevelOneGameArea extends GameArea {
             "images/downSignpost.png",
             "images/rightSignpost.png",
             "images/leftSignpost.png",
-            "images/signpost.png"
+            "images/signpost.png",
+            "images/lost_hardware.png",
+            "images/tutorials/jump.png",
+            "images/tutorials/double_jump.png",
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
-    private static final String[] gameSounds = {"sounds/Impact4.ogg",
+    private static final String[] gameSounds = {
+            "sounds/Impact4.ogg",
             "sounds/chimesound.mp3",
             "sounds/doorsound.mp3",
             "sounds/walksound.mp3",
@@ -134,7 +145,8 @@ public class LevelOneGameArea extends GameArea {
             "sounds/laddersound.mp3",
             "sounds/thudsound.mp3",
             "sounds/chimesound.mp3",
-            "sounds/explosion.mp3"};
+            "sounds/explosion.mp3",
+    };
 
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
@@ -144,6 +156,7 @@ public class LevelOneGameArea extends GameArea {
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
             "images/doors.atlas",
+            "images/animated-monitors.atlas",
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
@@ -193,6 +206,14 @@ public class LevelOneGameArea extends GameArea {
         spawnTerminals();
         spawnBoxes();
         spawnLasers();
+        spawnCollectables();
+        spawnTutorials();
+        spawnComputerTerminal();
+    }
+
+    private void spawnTutorials() {
+      spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
+      spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
     }
 
     private void spawnTerminals() {
@@ -206,7 +227,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
         spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
         spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
-
     }
 
     private void spawnBoxes() {
@@ -1067,6 +1087,37 @@ public class LevelOneGameArea extends GameArea {
 //            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
 //        }
     }
+
+    private void spawnComputerTerminal() {
+        Entity terminal = ComputerTerminalFactory.createTerminal();
+        spawnEntityAt(terminal, new GridPoint2(35, 5), true, true);
+    }
+
+
+
+    public void spawnCollectable(Vector2 pos) {
+        PhysicsComponent physics  = new PhysicsComponent();
+        physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Entity collectable = new Entity()
+                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(physics)
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
+                .addComponent(new ItemCollectableComponent(this));
+                //.addComponent(new CollectableComponentV2("hardware"));
+        collectable.setPosition(pos);
+        collectable.setScale(0.6f, 0.6f);
+        ServiceLocator.getEntityService().register(collectable);
+    }
+
+    public void spawnCollectables() {
+        Vector2 playerPos = player.getPosition();
+        CollectableCounter.reset();
+
+        spawnCollectable(new Vector2(33.5f, -1.5f));
+        spawnCollectable(new Vector2(0f, 23f));
+        spawnCollectable(new Vector2(39.5f, 30f));
+    }
+
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
