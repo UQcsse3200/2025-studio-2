@@ -1,99 +1,46 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
 import com.csse3200.game.utils.GsonJsonUtils;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 
 public class LeaderboardComponent {
-    private final String filePath;
-    private final GsonJsonUtils converter;
-
-    public LeaderboardComponent() {
-        this.filePath = "configs/leaderboard.json";
-        this.converter = new GsonJsonUtils();
-    }
+    private final String filePath = "configs/leaderboard.json";
+    private final GsonJsonUtils converter = new GsonJsonUtils();
 
     public HashMap<String, Long> readData() {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
-
-            // Read hashmap
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found: " + this.filePath);
-            return null;
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-            return null;
-        }
-
-        return this.converter.jsonToHashMap(sb.toString());
+        return readData(this.filePath);
     }
 
     public HashMap<String, Long> readData(String filePath) {
-        StringBuilder sb = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-
-            // Read hashmap
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line);
-            }
-
-        } catch (FileNotFoundException e) {
-            System.err.println("File not found: " + this.filePath);
-            return null;
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
-            return null;
+        String file;
+        try {
+            file = Gdx.files.external(filePath).readString();
+        } catch (Exception e) {
+            file = Gdx.files.internal(filePath).readString();
         }
-
-        return this.converter.jsonToHashMap(sb.toString());
-    }
-
-    public void writeData(HashMap<String, Long> map, String filePath) {
-        String json = converter.hashMapToJson(map);
-        String[] lines = json.substring(1, json.length() - 1).split(",");
-
-        try (FileWriter fw = new FileWriter(filePath)) {
-            fw.write("{\n");
-            for (int i = 0; i < lines.length; i++) {
-                fw.write("  " + lines[i].trim());
-                if (i != lines.length - 1) {
-                    fw.write(",");
-                }
-                fw.write("\n");
-            }
-            fw.write("}\n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return this.converter.jsonToHashMap(file);
     }
 
     public void writeData(HashMap<String, Long> map) {
-        String json = converter.hashMapToJson(map);
-        String[] lines = json.substring(1, json.length() - 1).split(",");
-
-        try (FileWriter fw = new FileWriter(filePath)) {
-            fw.write("{\n");
-            for (int i = 0; i < lines.length; i++) {
-                fw.write("  " + lines[i].trim());
-                if (i != lines.length - 1) {
-                    fw.write(",");
-                }
-                fw.write("\n");
-            }
-            fw.write("}\n");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        writeData(map, this.filePath);
     }
+
+    public void writeData(HashMap<String, Long> map, String filePath) {
+      Gdx.files.external(filePath).writeString(
+          "{\n" + String.join(map
+              .entrySet()
+              .stream()
+              .map(entry -> String.format("\t\"%s\": %s}", entry.getKey(), entry.getValue()))
+              .collect(Collectors.joining()), ",\n") + "\n}",
+          false
+      );
+    }
+
 
     public void updateLeaderboard(String name, long score, boolean force) {
         HashMap<String, Long> leaderboard = readData();
