@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -22,6 +23,8 @@ import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.*;
+
+import java.io.Reader;
 
 public class PauseMenuDisplay extends UIComponent {
     private final MainGameScreen screen;
@@ -48,8 +51,16 @@ public class PauseMenuDisplay extends UIComponent {
         this.inventoryTab = new InventoryTab(screen);
         this.upgradesTab = new UpgradesTab(screen);
         this.objectivesTab = new ObjectivesTab(screen);
-        this.codexTab = new CodexTab();
+        this.codexTab = new CodexTab(this);
         this.game = game;
+    }
+
+
+    /**
+     * @return the current stage in use
+     */
+    public Stage getStage() {
+        return stage;
     }
 
     @Override
