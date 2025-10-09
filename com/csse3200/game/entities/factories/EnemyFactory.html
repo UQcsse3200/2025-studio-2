@@ -124,6 +124,19 @@ loadScripts(document, 'script');</script>
 <div class="block">Create a bomber-style drone with integrated cone light detection.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createBossEnemy(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createBossEnemy</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">!! WIP !!
+ Creates a minimal Boss entity for the boss level.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createBossSelfDestructDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createBossSelfDestructDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a self-destruct drone for boss spawning (no teleport/cooldown behavior)</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)" class="member-name-link">createDrone</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
@@ -255,6 +268,42 @@ loadScripts(document, 'script');</script>
 <h3>createSelfDestructionDrone</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createSelfDestructionDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
  com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="createBossSelfDestructDrone(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)">
+<h3>createBossSelfDestructDrone</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createBossSelfDestructDrone</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</span></div>
+<div class="block">Creates a self-destruct drone for boss spawning (no teleport/cooldown behavior)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - Player entity to chase and self-destruct on</dd>
+<dd><code>spawnPos</code> - Spawn position</dd>
+<dt>Returns:</dt>
+<dd>Self-destruct chase drone</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createBossEnemy(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2)">
+<h3>createBossEnemy</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createBossEnemy</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;target,
+ com.badlogic.gdx.math.Vector2&nbsp;spawnPos)</span></div>
+<div class="block">!! WIP !!
+ Creates a minimal Boss entity for the boss level.
+ Current (placeholder) behaviour:
+ - Reuses the drone atlas (scaled up)
+ - Kinematic body with zero gravity, movement will be handled by camera
+ - High health, no contact/kill logic wired yet
+ - Empty AI task component for future boss behaviours (other drone spawns, lasers, etc.)</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>target</code> - Player entity (unused for now)</dd>
+<dd><code>spawnPos</code> - Initial spawn position</dd>
+<dt>Returns:</dt>
+<dd>Boss entity</dd>
+</dl>
 </section>
 </li>
 </ul>

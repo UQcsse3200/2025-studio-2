@@ -4,6 +4,7 @@ com.csse3200.game.ai.tasks
 com.csse3200.game.areas
 com.csse3200.game.areas.terrain
 com.csse3200.game.components
+com.csse3200.game.components.boss
 com.csse3200.game.components.collectables
 com.csse3200.game.components.collectables.effects
 com.csse3200.game.components.computerterminal

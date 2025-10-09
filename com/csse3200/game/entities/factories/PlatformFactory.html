@@ -127,14 +127,20 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates volatile platform that is linked to a pressure plate.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createStaticPlatform()" class="member-name-link">createStaticPlatform</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createReflectivePlatform()" class="member-name-link">createReflectivePlatform</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a static platform entity.</div>
+<div class="block">Creates a static platform that also reflects lasers,
+ using Tristyn's code from BoxFactory.createReflectorBox.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createVolatilePlatform(float,float)" class="member-name-link">createVolatilePlatform</a><wbr>(float&nbsp;lifetime,
- float&nbsp;respawnDelay)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createStaticPlatform()" class="member-name-link">createStaticPlatform</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a static platform entity.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createVolatilePlatform(float,float)" class="member-name-link">createVolatilePlatform</a><wbr>(float&nbsp;lifetime,
+ float&nbsp;respawnDelay)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates volatile platform, where if the player stands on it for more than lifetime, the platform disappears.</div>
 </div>
 </div>
@@ -191,6 +197,18 @@ loadScripts(document, 'script');</script>
 <dd><code>offsetWorld</code> - </dd>
 <dd><code>speed</code> - </dd>
 <dt>Returns:</dt>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createReflectivePlatform()">
+<h3>createReflectivePlatform</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createReflectivePlatform</span>()</div>
+<div class="block">Creates a static platform that also reflects lasers,
+ using Tristyn's code from BoxFactory.createReflectorBox.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>the platform created</dd>
 </dl>
 </section>
 </li>

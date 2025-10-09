@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="../ui/cutscene/CutsceneArea.html" title="class in com.csse3200.game.ui.cutscene">CutsceneArea</a></code>, <code><a href="LevelOneGameArea.html" title="class in com.csse3200.game.areas">LevelOneGameArea</a></code>, <code><a href="LevelTwoGameArea.html" title="class in com.csse3200.game.areas">LevelTwoGameArea</a></code>, <code><a href="SprintOneGameArea.html" title="class in com.csse3200.game.areas">SprintOneGameArea</a></code>, <code><a href="TemplateGameArea.html" title="class in com.csse3200.game.areas">TemplateGameArea</a></code>, <code><a href="TutorialGameArea.html" title="class in com.csse3200.game.areas">TutorialGameArea</a></code></dd>
+<dd><code><a href="BossLevelGameArea.html" title="class in com.csse3200.game.areas">BossLevelGameArea</a></code>, <code><a href="../ui/cutscene/CutsceneArea.html" title="class in com.csse3200.game.ui.cutscene">CutsceneArea</a></code>, <code><a href="LevelOneGameArea.html" title="class in com.csse3200.game.areas">LevelOneGameArea</a></code>, <code><a href="LevelTwoGameArea.html" title="class in com.csse3200.game.areas">LevelTwoGameArea</a></code>, <code><a href="SprintOneGameArea.html" title="class in com.csse3200.game.areas">SprintOneGameArea</a></code>, <code><a href="TemplateGameArea.html" title="class in com.csse3200.game.areas">TemplateGameArea</a></code>, <code><a href="TutorialGameArea.html" title="class in com.csse3200.game.areas">TutorialGameArea</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">GameArea</span>
@@ -138,6 +138,9 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-first even-row-color"><code>protected <a href="terrain/TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></code></div>
 <div class="col-second even-row-color"><code><a href="#terrain" class="member-name-link">terrain</a></code></div>
 <div class="col-last even-row-color">&nbsp;</div>
+<div class="col-first odd-row-color"><code>protected com.badlogic.gdx.math.GridPoint2</code></div>
+<div class="col-second odd-row-color"><code><a href="#tileBounds" class="member-name-link">tileBounds</a></code></div>
+<div class="col-last odd-row-color">&nbsp;</div>
 </div>
 </section>
 </li>
@@ -301,6 +304,12 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <section class="detail" id="terrain">
 <h3>terrain</h3>
 <div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type"><a href="terrain/TerrainComponent.html" title="class in com.csse3200.game.areas.terrain">TerrainComponent</a></span>&nbsp;<span class="element-name">terrain</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="tileBounds">
+<h3>tileBounds</h3>
+<div class="member-signature"><span class="modifiers">protected</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.GridPoint2</span>&nbsp;<span class="element-name">tileBounds</span></div>
 </section>
 </li>
 <li>
