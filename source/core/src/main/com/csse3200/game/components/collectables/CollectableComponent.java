@@ -1,6 +1,9 @@
 package com.csse3200.game.components.collectables;
 
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.HitboxComponent;
@@ -40,6 +43,10 @@ public abstract class CollectableComponent extends Component {
             if (renderComponent != null) {
                 RenderService renderService = ServiceLocator.getRenderService();
                 renderService.unregister(renderComponent);
+                if (entity.getComponent(MinimapComponent.class)!= null) {
+                    Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
+                    entity.getComponent(MinimapComponent.class).setMarker(marker);
+                }
             }
             entity.setEnabled(false);
         }
