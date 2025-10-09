@@ -72,6 +72,7 @@ public class ConeLightComponent extends Component {
 
     @Override
     public void update() {
+        if (coneLight == null) return;
         if (coneLight.isActive() != isActive) {
             coneLight.setActive(isActive);
         }

@@ -192,21 +192,12 @@ public class LevelOneGameArea extends GameArea {
         spawnObjectives();
         spawnTerminals();
         spawnBoxes();
-        spawnLasers();
+        //spawnLasers();
     }
 
     private void spawnTerminals() {
-        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
-        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
-        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test3"));
-        Entity terminal4 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test4"));
-        Entity terminal5 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test5"));
-        spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
-        spawnEntityAt(terminal2, new GridPoint2(6, 4), true, true);
+        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
         spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
-        spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
-        spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
-
     }
 
     private void spawnBoxes() {
@@ -214,12 +205,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(one, new GridPoint2(15, 15), true, true);
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
-
-        Entity three = BoxFactory.createReflectorBox();
-        spawnEntityAt(three, new GridPoint2(32, 15), true, true);
-
-        Entity four = BoxFactory.createMoveableBox();
-        spawnEntityAt(four, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
