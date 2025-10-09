@@ -139,6 +139,8 @@ public class MainGameScreen extends ScreenAdapter {
 
     loadAssets();
 
+    gameTime = new GameTime();
+
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
