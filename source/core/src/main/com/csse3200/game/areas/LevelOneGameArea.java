@@ -266,11 +266,6 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta) {
-        if (player != null && Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            spacePressCount++;
-        }
-        int SPACE_THRESHOLD = 30;
-        if (spacePressCount == SPACE_THRESHOLD) {
             if (has_laser==false) {
                 spawnLaserShower();
                 has_laser = true;
@@ -281,8 +276,6 @@ public class LevelOneGameArea extends GameArea {
                     }
                 },5f);
             }
-            spacePressCount = 0;
-        }
     }
 
 

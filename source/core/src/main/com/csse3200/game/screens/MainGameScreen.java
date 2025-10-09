@@ -56,6 +56,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
   private float laserTimer = 0f;
+  private float jumpCount=0;
 
     private final GdxGame game;
   private final Renderer renderer;
@@ -215,10 +216,13 @@ public class MainGameScreen extends ScreenAdapter {
           physicsEngine.update();
           ServiceLocator.getEntityService().update();
           if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              if (gameArea instanceof LevelOneGameArea levelOneArea) {
+              jumpCount++;
+              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
                   levelOneArea.laserShowerChecker(delta);
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea) {
+                  jumpCount = 0;
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
                   levelTwoArea.laserShowerChecker(delta);
+                  jumpCount = 0;
               }
           }
           laserTimer += delta;
