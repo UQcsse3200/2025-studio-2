@@ -12,6 +12,7 @@
     { "type": "floor", "subtype": "ground", "x": 20, "y": -20, "sx": 15, "sy": 12, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 24, "y": 15, "sx": 13, "sy": 100, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 48, "y": 4, "sx": 1, "sy": 5.5, "centerX": false, "centerY": false },
+    { "type": "floor", "subtype": "static_floor", "x": 23, "y": 7, "sx": 0.75, "sy": 4, "centerX": false, "centerY": false },
 
     { "type": "platform", "subtype": "volatile", "x": 0,  "y": 13, "sx": 2, "sy": 0.5, "speed": 0.5, "centerX": false, "centerY": false },
     { "type": "platform", "subtype": "volatile", "x": 10, "y": 18, "sx": 2, "sy": 0.5, "speed": 0.5 },
@@ -31,7 +32,7 @@
 
     { "type": "camera", "id": "camera", "x": 23, "y": 25, "rotation": 270, "speed": 25 },
 
-    { "type": "door", "subtype": "static", "id": "key:door", "x": 22, "y": 5, "sx": 1, "sy": 2 },
+    { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5, "sx": 1, "sy": 2 },
     { "type": "door", "subtype": "static", "id": "key:door", "x": 0, "y": 69, "sx": 1, "sy": 2 },
 
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 1, "y": 30 },
