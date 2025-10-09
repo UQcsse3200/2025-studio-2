@@ -6,6 +6,7 @@ com.csse3200.game.areas.terrain
 com.csse3200.game.components
 com.csse3200.game.components.collectables
 com.csse3200.game.components.collectables.effects
+com.csse3200.game.components.computerterminal
 com.csse3200.game.components.deathscreen
 com.csse3200.game.components.enemy
 com.csse3200.game.components.gamearea
@@ -26,7 +27,7 @@ com.csse3200.game.components.settingsmenu
 com.csse3200.game.components.statisticspage
 com.csse3200.game.components.tasks
 com.csse3200.game.components.tooltip
-com.csse3200.game.concurrency
+com.csse3200.game.components.tutorialmenu
 com.csse3200.game.entities
 com.csse3200.game.entities.configs
 com.csse3200.game.entities.factories
