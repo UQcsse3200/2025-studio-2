@@ -190,7 +190,7 @@ public final class Spawners {
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
 
-                button.getEvents().addListener("buttonToggled", () -> {
+                button.getEvents().addListener("buttonToggled", (Boolean __) -> {
                     if (button.getComponent(ButtonComponent.class).isPushed()) {
                         target.getEvents().trigger("disable");
                     } else {

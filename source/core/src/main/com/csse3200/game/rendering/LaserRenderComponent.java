@@ -42,6 +42,7 @@ public class LaserRenderComponent extends RenderComponent {
 
     @Override
     protected void draw(SpriteBatch batch) {
+        if (!emitter.getEnable()) return;
         if (emitter == null) return;
         List<Vector2> pts = emitter.getPositions();
         if (pts.size() < 2) return;

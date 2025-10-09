@@ -79,6 +79,10 @@ public class LaserEmitterComponent extends Component {
         this.enabled = enabled;
     }
 
+    public boolean getEnable() {
+        return this.enabled;
+    }
+
     @Override
     public void create() {
         physicsEngine = ServiceLocator.getPhysicsService().getPhysics();
