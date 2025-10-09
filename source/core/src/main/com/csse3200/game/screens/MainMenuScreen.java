@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.mainmenu.MainMenuActions;
@@ -8,6 +9,7 @@ import com.csse3200.game.components.mainmenu.MainMenuDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.rendering.RenderService;
@@ -29,6 +31,9 @@ public class MainMenuScreen extends ScreenAdapter {
       "images/superintelligence_title.png",
       "images/superintelligence_menu_background.png"};
 
+  private static final String backgroundMusic = "sounds/gamemusic.mp3";
+  private static final String[] musics = {backgroundMusic};
+
   public MainMenuScreen(GdxGame game) {
     this.game = game;
 
@@ -43,6 +48,14 @@ public class MainMenuScreen extends ScreenAdapter {
 
     loadAssets();
     createUI();
+    playMusic();
+  }
+
+  private void playMusic() {
+    Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+    music.setLooping(true);
+    music.setVolume(UserSettings.getMusicVolumeNormalized());
+    music.play();
   }
 
   @Override
@@ -86,6 +99,7 @@ public class MainMenuScreen extends ScreenAdapter {
     resourceService.loadSounds(new String[] {
             "sounds/buttonsound.mp3"
     });
+    resourceService.loadMusic(musics);
     ServiceLocator.getResourceService().loadAll();
   }
 
@@ -93,6 +107,7 @@ public class MainMenuScreen extends ScreenAdapter {
     logger.debug("Unloading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.unloadAssets(mainMenuTextures);
+    resourceService.unloadAssets(musics);
   }
 
   /**
