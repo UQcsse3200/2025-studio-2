@@ -153,7 +153,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     switch (area) {
       case LEVEL_ONE -> {
-        newArea = new BossLevelGameArea(terrainFactory);
+        newArea = new LevelOneGameArea(terrainFactory);
       }
       case CUTSCENE_ONE -> {
         newArea = new CutsceneArea("cutscene-scripts/cutscene1.txt");
@@ -167,6 +167,9 @@ public class MainGameScreen extends ScreenAdapter {
       }
       case SPRINT_ONE -> {
         newArea = new SprintOneGameArea(terrainFactory);
+      }
+      case BOSS_LEVEL -> {
+        newArea = new BossLevelGameArea(terrainFactory);
       }
     }
 
