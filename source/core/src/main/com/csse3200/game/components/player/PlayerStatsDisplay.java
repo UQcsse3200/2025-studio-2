@@ -179,6 +179,12 @@ public class PlayerStatsDisplay extends UIComponent {
     if (healthTable != null) healthTable.remove();
     if (staminaTable != null) staminaTable.remove();
   }
+
+    @Override
+    protected void draw(SpriteBatch batch) {
+
+    }
+
     public void setVisible(boolean visible) {
         if (healthTable != null) healthTable.setVisible(visible);
         if (staminaTable != null) staminaTable.setVisible(visible);
