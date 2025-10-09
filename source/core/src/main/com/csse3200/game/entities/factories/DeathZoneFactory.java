@@ -6,6 +6,7 @@ import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
  * Factory to create DeathZone entities (objects that kill the player (and possibly enemies)).
@@ -23,17 +24,17 @@ public class DeathZoneFactory {
      */
     public static Entity createDeathZone() {
         Entity deathZone = new Entity();
-        //String texture = "images/gate.png";                          <--
-        //deathZone.addComponent(new TextureRenderComponent(texture)); <-- Uncomment to make them temporarily visible
+//        String texture = "images/gate.png";                          //<--
+//        deathZone.addComponent(new TextureRenderComponent(texture)); //<-- Uncomment to make them temporarily visible
 
         // Add physics and collider components
         deathZone.addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.StaticBody));
-        ColliderComponent collider = new ColliderComponent();
+        ColliderComponent collider = new ColliderComponent().setSensor(true);
         deathZone.addComponent(collider);
 
         // Fix collider to appropriate size
-        //deathZone.setScale(3.1f,1); <-- Uncomment for smaller death zones
+        //deathZone.setScale(3.1f,1); //<-- Uncomment for smaller death zones
         deathZone.setScale(90,0.5f);
         collider.setAsBoxAligned(deathZone.getScale().scl(0.8f),
                 PhysicsComponent.AlignX.CENTER,

@@ -1,14 +1,17 @@
 package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.services.CodexEntry;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -20,6 +23,11 @@ public class CodexTab implements InventoryTabInterface {
      * Reference to background texture that needs to be disposed
      */
     private Texture bgTexture;
+    private final PauseMenuDisplay display;
+
+    public CodexTab(PauseMenuDisplay display) {
+        this.display = display;
+    }
 
     /**
      * Build actor for displaying the UI for the codex
@@ -67,8 +75,25 @@ public class CodexTab implements InventoryTabInterface {
             logicalTable.row();
         }
 
+        // Need to create a scrollbar style as it is invisible by default
+        ScrollPaneStyle scrollPaneStyle = new ScrollPaneStyle();
+
+        // Scrollbar's background
+        Pixmap scrollbarBgPixmap = new Pixmap(2, 1, Pixmap.Format.RGB888);
+        scrollbarBgPixmap.setColor(Color.DARK_GRAY);
+        scrollbarBgPixmap.fill();
+        scrollPaneStyle.vScroll = new TextureRegionDrawable(new Texture(scrollbarBgPixmap));
+
+        // Scrollbar's bar
+        Pixmap scrollbarKnobPixmap = new Pixmap(2, 1, Pixmap.Format.RGB888);
+        scrollbarKnobPixmap.setColor(Color.LIGHT_GRAY);
+        scrollbarKnobPixmap.fill();
+        scrollPaneStyle.vScrollKnob = new TextureRegionDrawable(new Texture(scrollbarKnobPixmap));
+
         // Create scroll pane
-        ScrollPane scrollPane = new ScrollPane(logicalTable.top().left().pad(15f));
+        ScrollPane scrollPane = new ScrollPane(logicalTable.top().left().pad(15f), scrollPaneStyle);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollbarsVisible(true);
 
         // Add scroll pane and title to table holder
         float canvasH = Gdx.graphics.getHeight() * (3f / 7f);
@@ -79,6 +104,7 @@ public class CodexTab implements InventoryTabInterface {
 
         // Add the tableHolder directly to the rootTable
         rootTable.add(tableHolder);
+        display.getStage().setScrollFocus(scrollPane);
 
         // Return root table
         return rootTable;

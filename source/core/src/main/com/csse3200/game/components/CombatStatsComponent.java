@@ -67,10 +67,7 @@ public class CombatStatsComponent extends Component {
         this.health = Math.max(0, health);
 
         if (entity != null) {
-            // 通知 UI 更新生命值
             entity.getEvents().trigger("updateHealth", this.health);
-
-            // 如果是第一次掉到 0，触发死亡事件
             if (oldHealth > 0 && this.health == 0) {
                 entity.getEvents().trigger("playerDied");
                 StatsTracker.addDeath();

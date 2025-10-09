@@ -102,6 +102,7 @@ public class GdxGame extends Game {
         ServiceLocator.registerMainGameScreen(screen);
         yield screen;
       }
+      case TUTORIAL -> new TutorialMenuScreen(this);
       case SETTINGS -> new SettingsScreen(this);
       case STATISTICS -> new StatisticsScreen(this);
       case LEADERBOARD -> new LeaderboardScreen(this);
@@ -157,7 +158,7 @@ public class GdxGame extends Game {
   }
 
   public enum ScreenType {
-    MAIN_MENU, MAIN_GAME, SETTINGS, STATISTICS, LOAD_LEVEL, LEADERBOARD
+    MAIN_MENU, MAIN_GAME, SETTINGS, TUTORIAL, STATISTICS, LOAD_LEVEL, LEADERBOARD
   }
 
   /**
