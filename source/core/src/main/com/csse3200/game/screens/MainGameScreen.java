@@ -166,7 +166,7 @@ public class MainGameScreen extends ScreenAdapter {
       } else {
         // Normal level progression
         logger.info("Door entered, proceeding to next level");
-        switchArea(getNextArea(area), player);
+        handleLeaderboardEntry(player, getNextArea(area));
       }
     });
     gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
@@ -188,37 +188,43 @@ public class MainGameScreen extends ScreenAdapter {
    * Centralized door-entered flow: gather stats, show leaderboard entry, hide HUD,
    * then resume HUD and switch to next area.
    */
-  private void handleDoorEntered() {
-      Areas next = getNextArea(gameAreaEnum);
-      Entity playerEntity = gameArea.getPlayer();
-
-      // Defensive guards: never trust event parameter, only gameArea.getPlayer()
-      CombatStatsComponent combat = playerEntity.getComponent(CombatStatsComponent.class);
+  private void handleLeaderboardEntry(Entity player, Areas nextArea) {
+      // Gather stats
+      CombatStatsComponent combat = player.getComponent(CombatStatsComponent.class);
       int health = (combat != null) ? combat.getHealth() : 0;
 
-      StaminaComponent staminaComp = playerEntity.getComponent(StaminaComponent.class);
+      StaminaComponent staminaComp = player.getComponent(StaminaComponent.class);
       float stamina = (staminaComp != null) ? staminaComp.getCurrentStamina() : 0f;
 
       long completionTime = gameTime.getTimeSince(lvlStartTime);
 
+      // Hide HUD and pause
       hideHUD();
       paused = true;
 
-      LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
+      // Create leaderboard entry overlay
+      LeaderboardEntryDisplay entryDisplay =
+              new LeaderboardEntryDisplay(completionTime, health, stamina);
       Entity uiEntity = new Entity().addComponent(entryDisplay);
       ServiceLocator.getEntityService().register(uiEntity);
 
+      // When player finishes entering their name
       uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
           String name = entryDisplay.getEnteredName();
-          if (name != null && !name.isEmpty() && leaderboardComponent != null) {
+          if (name != null && !name.isEmpty()) {
               leaderboardComponent.updateLeaderboard(name, completionTime);
           }
+
+          // Restore HUD and unpause
           showHUD();
           paused = false;
-          switchArea(next, playerEntity);
+
+          // Now proceed to next area
+          switchArea(nextArea, player);
       });
   }
-  /**
+
+    /**
    * Get the GameArea mapped to the Areas area.
    * @param area - Areas area.
    * @return GameArea mapped.
