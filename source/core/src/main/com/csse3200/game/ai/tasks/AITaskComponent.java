@@ -56,7 +56,9 @@ public class AITaskComponent extends Component implements TaskRunner {
   public void dispose() {
     if (currentTask != null) {
       currentTask.stop();
+
     }
+
   }
 
   private PriorityTask getHighestPriorityTask() {

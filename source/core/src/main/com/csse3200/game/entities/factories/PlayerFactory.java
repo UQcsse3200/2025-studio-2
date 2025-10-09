@@ -14,11 +14,9 @@ import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.*;
 import com.badlogic.gdx.physics.box2d.*;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.player.DamageIndicatorUI;
 import com.csse3200.game.components.achievements.AchievementsTrackerComponent;
@@ -28,15 +26,12 @@ import java.util.List;
 
 /**
  * Factory to create a player entity.
- *
- * <p>Predefined player properties are loaded from a config stored as a json file and should have
- * the properties stored in 'PlayerConfig'.
  */
 public class PlayerFactory {
-  private static final PlayerConfig stats = loadPlayerConfig();
+    private static final PlayerConfig stats = loadPlayerConfig();
 
-  private static final Vector2 HITBOX_OFFSET = new Vector2(0.425f, 0.0f);
-  private static final Vector2 HITBOX_SCALE = new Vector2(0.8f, 1.0f);
+    private static final Vector2 HITBOX_OFFSET = new Vector2(0.425f, 0.0f);
+    private static final Vector2 HITBOX_SCALE = new Vector2(0.8f, 1.0f);
 
   private static PlayerConfig loadPlayerConfig() {
     PlayerConfig config = FileLoader.readClass(PlayerConfig.class, "configs/player.json");
@@ -132,12 +127,101 @@ public class PlayerFactory {
 
     for (Component component : componentList) {
       player.replaceComponent(component);
+    private static PlayerConfig loadPlayerConfig() {
+        PlayerConfig config = FileLoader.readClass(PlayerConfig.class, "configs/player.json");
+        if (config == null) {
+            throw new IllegalStateException("Failed to load player config from configs/player.json");
+        }
+        return config;
     }
 
-    return player;
-  }
+    public static Entity createPlayer(List<Component> componentList) {
+        InputComponent inputComponent =
+                ServiceLocator.getInputService().getInputFactory().createForPlayer();
 
-  private PlayerFactory() {
-    throw new IllegalStateException("Instantiating static util class");
-  }
+        AnimationRenderComponent animator =
+                new AnimationRenderComponent(
+                        ServiceLocator.getResourceService().getAsset("images/PLAYER.atlas", TextureAtlas.class));
+        animator.addAnimation("CROUCH", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("CROUCHMOVE", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("CROUCHLEFT", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("CROUCHMOVELEFT", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("JUMP", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("JUMPLEFT", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("LEFT", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("RIGHT", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("IDLE", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("IDLELEFT", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("DASH", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
+
+        Entity player =
+                new Entity()
+                        .addComponent(new PhysicsComponent())
+                        .addComponent(new StandingColliderComponent())
+                        .addComponent(new CrouchingColliderComponent())
+                        .addComponent(new FootColliderComponent())
+                        .addComponent(new ColliderComponent())
+                        .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
+                        .addComponent(new PlayerActions())
+                        .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
+                        .addComponent(new InventoryComponent())
+                        .addComponent(inputComponent)
+                        .addComponent(new PlayerStatsDisplay())
+                        .addComponent(new DamageIndicatorUI())
+                        .addComponent(new CameraComponent())
+                        .addComponent(new PlayerScreenTransitionComponent())
+                        .addComponent(new PlayerDeathEffectComponent())
+                        .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
+
+        player
+                .addComponent(animator)
+                .addComponent(new PlayerAnimationController());
+
+        // --- Stamina ---
+        StaminaComponent stamina = new StaminaComponent(
+                stats.maxStamina,
+                stats.staminaRegenPerSecond,
+                stats.sprintDrainPerSecond,
+                (int) stats.staminaRegenDelaySeconds
+        );
+        player.addComponent(stamina);
+
+        // Sprint toggle
+        player.getEvents().addListener("sprintStart", () -> {
+            if (!stamina.isExhausted() && stamina.getCurrentStamina() > 0) {
+                stamina.setSprinting(true);
+            }
+        });
+        player.getEvents().addListener("sprintStop", () -> stamina.setSprinting(false));
+
+        player.getComponent(ColliderComponent.class).setAsBox(HITBOX_SCALE,
+                player.getCenterPosition().add(HITBOX_OFFSET));
+        player.getComponent(ColliderComponent.class).setSensor(true);
+
+        player.getComponent(HitboxComponent.class).setAsBox(HITBOX_SCALE,
+                player.getCenterPosition().add(HITBOX_OFFSET));
+
+        player.getComponent(StandingColliderComponent.class).setDensity(1.5f);
+        player.getComponent(CrouchingColliderComponent.class).setDensity(1.5f);
+
+        float scaleFactor = 2f;
+        player.setScale(scaleFactor, (3f/4f) * scaleFactor);
+
+        AnimationRenderComponent arc =
+                player.getComponent(AnimationRenderComponent.class);
+        arc.startAnimation("IDLE");
+
+        for (Component component : componentList) {
+            player.replaceComponent(component);
+        }
+
+        return player;
+    }
+
+    private PlayerFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 }

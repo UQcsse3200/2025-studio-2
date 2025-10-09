@@ -111,7 +111,7 @@ public class MinimapDisplay extends UIComponent {
     minimapImage = new Image(service.getMinimapTexture());
 
     Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-    pixmap.setColor(new Color(0, 0, 0, 0.55f)); // Black with 60% opacity
+    pixmap.setColor(new Color(0, 0, 0, 0.60f)); // Black with 60% opacity
     pixmap.fill();
     Texture backgroundTexture = new Texture(pixmap);
     pixmap.dispose();
