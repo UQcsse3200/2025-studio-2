@@ -459,6 +459,7 @@ public class MainGameScreen extends ScreenAdapter {
     pauseInput = new PauseInputComponent(this);
 
     Stage stage = ServiceLocator.getRenderService().getStage();
+    leaderboardComponent = new LeaderboardComponent();
 
     // Build your puzzle bank (spritesheet-driven)
     SimpleCaptchaBank bank = buildCaptchaBank();
