@@ -5,6 +5,10 @@ sourceSets.test.java.srcDirs = [ "src/test/" ]
 
 eclipse.project.name = appName + "-core"
 
+dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
 test {
     useJUnitPlatform()
     workingDir = new File("../core/assets")
