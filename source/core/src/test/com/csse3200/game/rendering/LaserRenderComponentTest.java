@@ -46,6 +46,8 @@ class LaserRenderComponentTest {
         laser.addComponent(emitter);
         laser.addComponent(render);
 
+        when(emitter.getEnable()).thenReturn(true);
+
         // forcefully register emitter with renderer to avoid create()
         Field fEmitter = LaserRenderComponent.class.getDeclaredField("emitter");
         fEmitter.setAccessible(true);
