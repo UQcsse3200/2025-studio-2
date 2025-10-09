@@ -14,13 +14,17 @@ import com.csse3200.game.areas.LevelTwoGameArea;
 import com.csse3200.game.areas.SprintOneGameArea;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.deathscreen.DeathScreenDisplay;
+import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.player.LeaderboardEntryDisplay;
+import com.csse3200.game.components.player.PlayerStatsDisplay;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -77,6 +81,9 @@ public class MainGameScreen extends ScreenAdapter {
     private PauseInputComponent pauseInput;
     private LeaderboardComponent leaderboardComponent;
     private GameTime gameTime;
+    private MinimapDisplay minimapDisplay;
+    private PlayerStatsDisplay playerStatsDisplay;
+    private GameAreaDisplay levelTagDisplay;
 
     public enum Areas {
         LEVEL_ONE, LEVEL_TWO, SPRINT_ONE, TEMPLATE, FOREST, CAVE, CUTSCENE_ONE, CUTSCENE_TWO
@@ -130,36 +137,45 @@ public class MainGameScreen extends ScreenAdapter {
         gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
             Areas next = getNextArea(gameAreaEnum);
 
-            // Gather stats
+            // Gather stats for leaderboard entry
             int health = player.getComponent(CombatStatsComponent.class).getHealth();
             float stamina = player.getComponent(com.csse3200.game.components.StaminaComponent.class).getCurrentStamina();
             long completionTime = gameTime.getTimeSince(lvlStartTime);
 
-            // If player hasn’t registered a name yet, show entry screen
-            if (StatsTracker.getLevelsCompleted() == 0) { // first time → prompt
-                LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
-                Entity uiEntity = new Entity().addComponent(entryDisplay);
-                ServiceLocator.getEntityService().register(uiEntity);
+            // Hide HUD
+            if (minimapDisplay != null) minimapDisplay.setVisible(false);
+            if (playerStatsDisplay != null) playerStatsDisplay.setVisible(false);
+            if (levelTagDisplay != null) levelTagDisplay.setVisible(false);
 
-                uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
-                    String name = entryDisplay.getEnteredName();
-                    if (name != null && !name.isEmpty()) {
-                        // Save to leaderboard
-                        leaderboardComponent.updateLeaderboard(name, completionTime);
-                        // Mark stats
-                        StatsTracker.completeLevel();
-                    } else {
-                        // Skipped → still increment level stats, but don’t save name
-                        StatsTracker.completeLevel();
-                    }
-                    switchArea(next, player); // continue to cutscene/next level
-                });
-            } else {
-                // Already completed at least one level → skip entry screen
-                StatsTracker.completeLevel();
+            // Pause gameplay input (Esc still works via PauseInputComponent)
+            paused = true;
+
+            // Show leaderboard entry screen
+            LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
+            Entity uiEntity = new Entity().addComponent(entryDisplay);
+            ServiceLocator.getEntityService().register(uiEntity);
+
+            // Handle completion of entry screen
+            uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
+                String name = entryDisplay.getEnteredName();
+                if (name != null && !name.isEmpty()) {
+                    leaderboardComponent.updateLeaderboard(name, completionTime);
+                }
+
+                // Restore HUD
+                if (minimapDisplay != null) minimapDisplay.setVisible(true);
+                if (playerStatsDisplay != null) playerStatsDisplay.setVisible(true);
+                if (levelTagDisplay != null) levelTagDisplay.setVisible(true);
+
+                // Restore gameplay input
+                paused = false;
+
+                // Continue to cutscene/next level
                 switchArea(next, player);
-            }
+            });
         });
+
+
 
         gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
             switchArea(getNextArea(area), play);
@@ -259,7 +275,7 @@ public class MainGameScreen extends ScreenAdapter {
         Areas newLevel = getNextArea(area);
 
         if (newArea != null) {
-            leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
+            //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
             if (newArea instanceof CutsceneArea) {
                 StatsTracker.completeLevel();
             }
@@ -446,6 +462,10 @@ public class MainGameScreen extends ScreenAdapter {
                 .addComponent(pauseMenuDisplay)
                 .addComponent(deathScreenDisplay)
                 .addComponent(pauseInput);
+        // Add HUD components
+        minimapDisplay = new MinimapDisplay(200f, new MinimapDisplay.MinimapOptions());
+        playerStatsDisplay = new PlayerStatsDisplay();
+        levelTagDisplay = new GameAreaDisplay(gameAreaEnum.toString());
 
         ServiceLocator.getEntityService().register(ui);
     }

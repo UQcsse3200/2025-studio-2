@@ -5,7 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.components.LeaderboardComponent;
+import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
+import com.csse3200.game.screens.MainGameScreen;
 
 public class LeaderboardEntryDisplay extends UIComponent {
     private Table table;
@@ -87,11 +90,11 @@ public class LeaderboardEntryDisplay extends UIComponent {
     }
 
     private void closeAndContinue() {
-        // Prevent multiple actions
         confirmButton.setDisabled(true);
         skipButton.setDisabled(true);
 
         dispose();
+
         entity.getEvents().trigger("leaderboardEntryComplete");
     }
 

@@ -39,7 +39,14 @@ public class GameAreaDisplay extends UIComponent {
     title.setPosition(screenWidth - offsetX - title.getWidth(), screenHeight - offsetY);
   }
 
-  @Override
+
+  public void setVisible(boolean visible) {
+        if (title != null) {
+            title.setVisible(visible);
+        }
+    }
+
+    @Override
   public void dispose() {
     super.dispose();
     title.remove();
