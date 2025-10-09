@@ -24,6 +24,9 @@ import static java.lang.Math.abs;
  */
 public class KeyboardPlayerInputComponent extends InputComponent {
     private final Vector2 walkDirection = Vector2.Zero.cpy();
+
+    private boolean isGliding;
+
     private int[] CHEAT_INPUT_HISTORY = new int[4];
     private int cheatPosition = 0;
     private Boolean cheatsOn = false;
@@ -73,16 +76,24 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
             walkDirection.add(Vector2Utils.LEFT);
             triggerWalkEvent();
+            if (isGliding) {
+                triggerGlideEvent(true);
+            }
         } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
             //takes player off ladder if they are on one.
             this.onLadder = false;
 
             walkDirection.add(Vector2Utils.RIGHT);
             triggerWalkEvent();
+            if (isGliding) {
+                triggerGlideEvent(true);
+            }
         } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
             entity.getEvents().trigger("interact");
         } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
-            triggerAdrenalineEvent();
+            if (cheatsOn) {
+                triggerAdrenalineEvent();
+            }
         } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
             //takes player off ladder if they are on one.
             this.onLadder = false;
@@ -269,6 +280,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "glider")) {
             entity.getEvents().trigger("glide", status);
         }
+        isGliding = status;
     }
 
     private void triggerJetpackEvent() {
@@ -304,6 +316,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
 
     public Boolean getIsCheatsOn() {
         return cheatsOn;
+    }
+
+    public void setIsCheatsOn(boolean on) {
+        cheatsOn = on;
     }
 
     private void enableCheats() {

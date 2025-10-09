@@ -247,8 +247,7 @@ public class EnemyFactory {
         if (patrolRoute != null && patrolRoute.length > 0) {
             drone
                     .addComponent(new SpawnPositionComponent(patrolRoute[0]))
-                    .addComponent(new PatrolRouteComponent(patrolRoute))
-                    .addComponent(new BombTrackerComponent());
+                    .addComponent(new PatrolRouteComponent(patrolRoute));
         }
 
         AnimationRenderComponent animator =

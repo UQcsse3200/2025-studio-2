@@ -76,27 +76,61 @@ public class InventoryComponent extends Component {
         return Collections.unmodifiableMap(objectives);
     }
 
+    // Copy getters
+
+    /**
+     * @return copy of the INVENTORY bag
+     */
+    public Map<String, Integer> getInventoryCopy() {
+        return new HashMap<>(inventory);
+    }
+
+    /**
+     * @return copy of the UPGRADES bag
+     */
+    public Map<String, Integer> getUpgradesCopy() {
+        return new HashMap<>(upgrades);
+    }
+
+    // Setters (Should be used with great caution, currently only here for saving/loading)
+
+    /**
+     * Add all items from a passed inventory.
+     * @param inventory - passed inventory.
+     */
+    public void setInventory(Map<String, Integer> inventory) {
+        this.inventory.putAll(inventory);
+    }
+
+    /**
+     * Add all passed upgrades.
+     * @param upgrades - passed upgrades.
+     */
+    public void setUpgrades(Map<String, Integer> upgrades) {
+        this.upgrades.putAll(upgrades);
+    }
+
     // Generic bag operations (recommended API)
 
-  /**
-   * Adds one instance of the given item to the inventory.
-   * <p>
-   * If the item's config has {@code autoConsume == true}, its effects are applied
-   * immediately and the item is not stored. Otherwise the item is added to the
-   * inventory stack; if it is not yet present, a new stack is created with count 1.
-   * </p>
-   *
-   * @param bag which bag to modify
-   * @param itemId non-null item identifier (e.g., "key:door")
-   * @throws NullPointerException if bag or itemId is null
-   */
-  public void addItem(Bag bag, String itemId) {
-      Sound pickupSound = ServiceLocator.getResourceService().getAsset(
+    /**
+     * Adds one instance of the given item to the inventory.
+     * <p>
+     * If the item's config has {@code autoConsume == true}, its effects are applied
+     * immediately and the item is not stored. Otherwise the item is added to the
+     * inventory stack; if it is not yet present, a new stack is created with count 1.
+     * </p>
+     *
+     * @param bag which bag to modify
+     * @param itemId non-null item identifier (e.g., "key:door")
+     * @throws NullPointerException if bag or itemId is null
+     */
+    public void addItem(Bag bag, String itemId) {
+        Sound pickupSound = ServiceLocator.getResourceService().getAsset(
               "sounds/pickupsound.mp3", Sound.class);
-      pickupSound.play(UserSettings.get().masterVolume);
+        pickupSound.play(UserSettings.get().masterVolume);
 
-      addItems(bag, itemId, 1);
-  }
+        addItems(bag, itemId, 1);
+    }
 
     /**
      * Adds {@code amount} instances of itemId to the specified bag.
@@ -360,6 +394,44 @@ public class InventoryComponent extends Component {
         handler.apply(getEntity(), effect);
       }
     }
+  }
+
+    /**
+     * Turns the contents of the bags of the inventory into a readable string - used
+     * for shell commands.
+     * @return String - The constructed string of bag contents
+     */
+  public String printItems() {
+      StringBuilder sb = new StringBuilder();
+      sb.append("=== Player Inventory + Upgrades + Objectives ===\n");
+
+      appendContents(sb, "Inventory", inventory);
+      appendContents(sb, "Upgrades", upgrades);
+      appendContents(sb, "Objectives", objectives);
+
+      sb.append("================================================\n");
+      return sb.toString();
+  }
+
+
+    /**
+     * Appends the contents of an inventory bag into a StringBuilder for
+     * the function printItems().
+     * @param sb - the string builder to append to
+     * @param title - title of the bag
+     * @param bag - bag of collectables to be appended to sb
+     */
+  private void appendContents(StringBuilder sb, String title, Map<String, Integer> bag) {
+      sb.append(title).append(":\n");
+      if (bag.isEmpty()) {
+          sb.append("  (empty)\n");
+      } else {
+          for (Map.Entry<String, Integer> entry : bag.entrySet()) {
+              sb.append("  - ").append(entry.getKey())
+                      .append(" x").append(entry.getValue())
+                      .append("\n");
+          }
+      }
   }
 
 }

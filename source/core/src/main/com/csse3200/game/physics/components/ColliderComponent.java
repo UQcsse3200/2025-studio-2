@@ -128,6 +128,10 @@ public class ColliderComponent extends Component {
     return this;
   }
 
+  public boolean getIsSensor() {
+    return fixtureDef.isSensor;
+  }
+
   /**
    * Set density
    *

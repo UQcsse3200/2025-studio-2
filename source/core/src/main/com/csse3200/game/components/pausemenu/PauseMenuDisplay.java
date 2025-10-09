@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.files.UserSettings;
@@ -99,9 +100,17 @@ public class PauseMenuDisplay extends UIComponent {
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
         addBottomButton("Settings", Tab.SETTINGS);
-        addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
-        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Exit to Desktop", () -> {
+            StatsTracker.endSession();
+            Gdx.app.exit();
+        });
+        addBottomButton("Exit to Main Menu", () -> {
+            StatsTracker.endSession();
+            game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+        });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Save level", () ->
+                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -196,9 +205,17 @@ public class PauseMenuDisplay extends UIComponent {
         if (currentTab != Tab.CODEX) {
             addBottomButton("Codex", Tab.CODEX);
         }
-        addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
-        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Exit to Desktop", () -> {
+            StatsTracker.endSession();
+            Gdx.app.exit();
+        });
+        addBottomButton("Exit to Main Menu", () -> {
+            StatsTracker.endSession();
+            game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+        });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Save level", () ->
+                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath));
     }
 
     public void setVisible(boolean visible) {
