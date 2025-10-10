@@ -1141,27 +1141,27 @@ public class LevelOneGameArea extends GameArea {
 
 
 
-    public void spawnCollectable(Vector2 pos) {
+    public void spawnCollectable(GridPoint2 pos) {
         PhysicsComponent physics  = new PhysicsComponent();
         physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);
         Entity collectable = new Entity()
-                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(new TextureRenderComponent(texture))
                 .addComponent(physics)
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
                 .addComponent(new ItemCollectableComponent(this));
-                //.addComponent(new CollectableComponentV2("hardware"));
-        collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
-        ServiceLocator.getEntityService().register(collectable);
+        spawnEntityAt(collectable, new GridPoint2(pos), true, true);
+        //ServiceLocator.getEntityService().register(collectable);
     }
 
     public void spawnCollectables() {
         Vector2 playerPos = player.getPosition();
-        CollectableCounter.reset();
+        //CollectableCounter.reset();
 
-        spawnCollectable(new Vector2(33.5f, -1.5f));
-        spawnCollectable(new Vector2(0f, 23f));
-        spawnCollectable(new Vector2(39.5f, 30f));
+        spawnCollectable(new GridPoint2(67, -3));
+        spawnCollectable(new GridPoint2(0, 46));
+        spawnCollectable(new GridPoint2(79, 60));
     }
 
     protected void loadAssets() {
