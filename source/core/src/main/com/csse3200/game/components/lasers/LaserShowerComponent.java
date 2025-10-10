@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -70,7 +69,7 @@ public class LaserShowerComponent extends Component {
     private Entity lastDetectorHit = null;
 
     /**
-     * defalult constructor
+     * default constructor
      */
     public LaserShowerComponent() {
 
@@ -266,7 +265,7 @@ public class LaserShowerComponent extends Component {
     }
     /**
      * Updates the laser hit light position.
-     * @param hit the raycast hit
+     * @param hit the ray cast hit
      */
     private void updateHitLight(RaycastHit hit) {
         if (hitLight == null) return;
@@ -281,7 +280,7 @@ public class LaserShowerComponent extends Component {
     /**
      * A null safe wrapper for getting the category bits from a hit collider.
      *
-     * @param hit the hit collider from a raycast
+     * @param hit the hit collider from a ray cast
      * @return the category bits of the collider
      */
     private static short categoryBitsFromHit(RaycastHit hit) {
@@ -313,7 +312,7 @@ public class LaserShowerComponent extends Component {
      * <p>
      * This code is essentially just taken from the {@code TouchAttackComponent}
      *
-     * @param hit the raycast hit result
+     * @param hit the ray cast hit result
      */
     private void damagePlayer(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
@@ -359,7 +358,7 @@ public class LaserShowerComponent extends Component {
     }
     /**
      * Triggers a laser detector entity.
-     * @param hit raycast hit
+     * @param hit ray cast hit
      */
     private void triggerDetector(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
