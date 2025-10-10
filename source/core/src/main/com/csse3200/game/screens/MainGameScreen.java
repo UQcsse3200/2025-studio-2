@@ -158,26 +158,14 @@ public class MainGameScreen extends ScreenAdapter {
 
     gameAreaEnum = area;
 //    gameArea = getGameArea(Areas.LEVEL_THREE);
-
     gameArea = getGameArea(area);
     gameArea.create();
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
-    gameArea.getEvents().addListener("doorEntered", (Entity player, Entity __) -> {
-      if (gameArea instanceof TutorialGameArea) {
-        // Go back to tutorial menu instead of next level
-        logger.info("Tutorial completed, returning to tutorial menu");
-        game.setScreen(new TutorialMenuScreen(game));
-      } else {
-        // Normal level progression
-        logger.info("Door entered, proceeding to next level");
-        switchArea(getNextArea(area), player);
-      }
-    });
+    gameArea.getEvents().addListener("doorEntered", this::handleLeaderboardEntry);
     gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
-      switchArea(getNextArea(area), play);
+      switchArea(getNextArea(gameAreaEnum), play);
     });
-
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
     gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
 
@@ -203,18 +191,6 @@ public class MainGameScreen extends ScreenAdapter {
       if (dc == null) {
           logger.warn("doorEntered: DoorComponent missing on door {}; skipping.", door);
           return;
-      }
-
-      String target = dc.getTargetArea();
-      if (target != null && !target.isEmpty()) {
-          Areas targetEnum = parseTargetArea(target);
-          if (targetEnum != null) {
-              logger.info("Door entered, switching to explicit target area: {}", targetEnum);
-              switchArea(targetEnum, player);
-              return;
-          } else {
-              logger.warn("doorEntered: unknown targetArea '{}'; falling back.", target);
-          }
       }
 
       // Gather stats
@@ -248,9 +224,17 @@ public class MainGameScreen extends ScreenAdapter {
           paused = false;
 
           // Now proceed to next area
-          Areas next = getNextArea(gameAreaEnum);
-          logger.info("Door entered without explicit/valid target, proceeding to next area: {}", next);
-          switchArea(next, player);
+          String target = dc.getTargetArea();
+          if (target != null && !target.isEmpty()) {
+              Areas targetEnum = parseTargetArea(target);
+              if (targetEnum != null) {
+                  logger.info("Door entered, switching to explicit target area: {}", targetEnum);
+                  switchArea(targetEnum, player);
+                  return;
+              } else {
+                  logger.warn("doorEntered: unknown targetArea '{}'; falling back.", target);
+              }
+          }
       });
   }
 
