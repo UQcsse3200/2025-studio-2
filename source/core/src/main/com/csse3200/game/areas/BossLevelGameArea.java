@@ -15,6 +15,7 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -36,6 +37,7 @@ public class BossLevelGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     boolean has_laser = false;
+    private boolean keySpawned = false;
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
@@ -129,9 +131,9 @@ public class BossLevelGameArea extends GameArea {
         spawnPlatforms();
         spawnWalls();
         spawnStaticObstacles();
-        Entity[] toBeDestroyed = spawnCeilingObstacles();
+//        Entity[] toBeDestroyed = spawnCeilingObstacles();
         // Pass toBeDestroyed to this.destroyFloor() when triggering.
-        spawnButtonPuzzleRoom(toBeDestroyed);
+//        spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
@@ -144,8 +146,8 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnLaserPuzzle() {
         // Box at start
-        Entity reflectorBox = BoxFactory.createReflectorBox();
-        spawnEntityAt(reflectorBox, new GridPoint2(63, 15), false, false);
+        Entity box = BoxFactory.createMoveableBox();
+        spawnEntityAt(box, new GridPoint2(63, 15), false, false);
 
         // Laser attached to the upper wall
         Entity laser0 = LaserFactory.createLaserEmitter(335f);
@@ -265,6 +267,9 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(lowerWall, new GridPoint2(60, -3),
                 false, false);
 
+        // Door between levels
+        // todo pretend there's a door here
+
         // Upper wall between level halves
         Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
         upperWall.setScale(2f,15f);
@@ -306,6 +311,7 @@ public class BossLevelGameArea extends GameArea {
         secondPlatform.setScale(1.5f, 0.5f);
         spawnEntityAt(secondPlatform, secondPos,false, false);
 
+        // NOTE: COULD ACTUALLY TOTALLY MAKE THIS ONE EVIL!! + Add red glow for clarity??
         GridPoint2 thirdPos = new GridPoint2(57, tileBounds.y - 23);
         Entity thirdPlatform = PlatformFactory.createStaticPlatform();
         thirdPlatform.setScale(1.5f, 0.5f);
@@ -316,7 +322,7 @@ public class BossLevelGameArea extends GameArea {
         fourthPlatform.setScale(1.5f, 0.5f);
         spawnEntityAt(fourthPlatform, fourthPos,false, false);
 
-        spawnEvilMovingPlatform();
+        spawnKeyButtonAndPlatform();
     }
 
     /**
@@ -521,14 +527,14 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
                 false, false);
 
-        // Spawn trap on wall
-        Vector2 highPlatformSafePos = new Vector2(28, 17);
-        Entity spikes3 = TrapFactory.createSpikes(highPlatformSafePos, 0f);
-        spawnEntityAt(spikes3,
-                new GridPoint2(60,17), false,  true);
-        Entity spikes4 = TrapFactory.createSpikes(highPlatformSafePos, 0f);
-        spawnEntityAt(spikes4,
-                new GridPoint2(62,17), false,  true);
+        // Spawn trap on wall - removed to make easier
+//        Vector2 highPlatformSafePos = new Vector2(28, 17);
+//        Entity spikes3 = TrapFactory.createSpikes(highPlatformSafePos, 0f);
+//        spawnEntityAt(spikes3,
+//                new GridPoint2(60,17), false,  true);
+//        Entity spikes4 = TrapFactory.createSpikes(highPlatformSafePos, 0f);
+//        spawnEntityAt(spikes4,
+//                new GridPoint2(62,17), false,  true);
     }
 
     private void spawnBats() {
@@ -750,31 +756,28 @@ public class BossLevelGameArea extends GameArea {
         return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
 
-    private void spawnEvilMovingPlatform() {
-        GridPoint2 buttonPlatformPos = new GridPoint2(57, tileBounds.y - 9);
-        GridPoint2 buttonStartPos = new GridPoint2(59, 50);
-        Vector2 offsetWorldButton = new Vector2(-10f, 0f);
-        float speed = 5f;
+    private void spawnKeyButtonAndPlatform() {
+        Entity platform = PlatformFactory.createStaticPlatform();
+        platform.setScale(1.5f, 0.5f);
+        spawnEntityAt(platform, new GridPoint2(57, tileBounds.y - 9), false, false);
 
-        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speed);
-        buttonPlatform.setScale(1.5f, 0.5f);
-        spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
-        logger.info("Moving platform spawned at {}", buttonPlatformPos);
+        // Button
+        Entity button = ButtonFactory.createButton(false, "door", "left");
+        spawnEntityAt(button, new GridPoint2(59, tileBounds.y - 7), true, true);
 
-        //start button
-        Entity button = ButtonFactory.createButton(false, "platform", "left");
-        spawnEntityAt(button, buttonStartPos, true, true);
-        logger.info("Platform button spawned at {}", buttonStartPos);
-
-        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed) {
-                logger.info("Button pressed — activating platform");
-                buttonPlatform.getEvents().trigger("activatePlatform");
-            } else {
-                logger.info("Button unpressed — deactivating platform");
-                buttonPlatform.getEvents().trigger("deactivatePlatform");
+        button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            if (isPushed && !keySpawned) {
+                spawnKey();
+                keySpawned = true;
             }
         });
+    }
+
+    private void spawnKey() {
+        // Code from key spawn in Level One
+        Entity key = CollectableFactory.createCollectable("key:door");
+        key.addComponent(new MinimapComponent("images/key.png"));
+        spawnEntityAt(key, new GridPoint2(50, tileBounds.y - 15), true, true);
     }
 
     /**
