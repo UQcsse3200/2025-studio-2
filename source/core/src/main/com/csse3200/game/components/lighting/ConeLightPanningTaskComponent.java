@@ -23,7 +23,7 @@ public class ConeLightPanningTaskComponent extends Component {
     private float angularVelocity;
     private boolean clockwise = false;
     private Entity target;
-    private float startDeg360;
+    private final float startDeg360;
     private float spanDeg;
 
 

@@ -81,7 +81,7 @@ public class LeaderboardDisplay extends UIComponent {
 
         for (Map.Entry<String, Long> entry : leaderboardData.entrySet()) {
             Label name = new Label(entry.getKey() + ":", skin);
-            Label time = new Label(String.valueOf((double) entry.getValue() / 1000) + " (s)", skin);
+            Label time = new Label((double) entry.getValue() / 1000 + " (s)", skin);
 
             table.add(name).pad(10f).padLeft(50f).right();
             table.add(time).pad(10f).left().row();

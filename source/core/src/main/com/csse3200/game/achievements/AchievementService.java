@@ -150,13 +150,13 @@ public class AchievementService {
             unlocked.clear();
             sprintSeconds = 0f;
             staminaEverExhausted = false;
-            return;
         }
         // (If you keep persistence later, your old prefs-reading code can live here)
     }
 
     private void save() {
-        if (DISABLE_PERSISTENCE) return;
+        if (DISABLE_PERSISTENCE) {
+        }
         // (If you keep persistence later, your old prefs-writing code can live here)
     }
 

@@ -1,6 +1,7 @@
 package com.csse3200.game.components.deathscreen;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DeathScreenDisplayTest {
@@ -100,7 +101,7 @@ public class DeathScreenDisplayTest {
     // Test helper class that exposes methods for testing
     private static class TestableDeathScreenDisplay {
         private String[] testPrompts = {"Default prompt"};
-        private java.util.Random random = new java.util.Random(42); // Fixed seed for testing
+        private final java.util.Random random = new java.util.Random(42); // Fixed seed for testing
         private boolean visible = false;
         
         public String testStripMarkupTags(String text) {

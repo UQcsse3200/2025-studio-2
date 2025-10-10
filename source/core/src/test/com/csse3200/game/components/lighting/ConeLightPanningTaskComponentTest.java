@@ -26,8 +26,8 @@ import org.mockito.MockedConstruction;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class ConeLightPanningTaskComponentTest {
@@ -61,7 +61,7 @@ class ConeLightPanningTaskComponentTest {
 
             when(mock.getDirection()).then(inv -> dir.get());
             doAnswer(inv -> {
-                float d = (Float) inv.getArgument(0);
+                float d = inv.getArgument(0);
                 dir.set(d);
                 return null;
             }).when(mock).setDirection(anyFloat());

@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.PhysicsComponent;
-
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

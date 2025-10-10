@@ -3,8 +3,8 @@ package com.csse3200.game.components.projectiles;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.csse3200.game.components.Component;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.ExplosionFactory;
 import com.csse3200.game.physics.BodyUserData;
@@ -186,7 +186,7 @@ public class BombComponent extends Component {
                             CombatStatsComponent bombStats = entity.getComponent(CombatStatsComponent.class);
 
                             if (targetStats != null && bombStats != null) {
-                                int finalDamage = (int)(bombStats.getBaseAttack());
+                                int finalDamage = bombStats.getBaseAttack();
                                 targetStats.addHealth(-finalDamage);
                                 logger.debug("Bomb dealt {} damage to {}", finalDamage, target);
                             }

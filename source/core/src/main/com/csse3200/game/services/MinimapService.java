@@ -1,18 +1,16 @@
 package com.csse3200.game.services;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Service to hold the state of tracked entities for the minimap.

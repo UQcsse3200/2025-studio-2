@@ -3,28 +3,17 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
-import com.csse3200.game.components.*;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.statisticspage.StatsTracker;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
-import com.csse3200.game.physics.raycast.AllHitCallback;
-import com.csse3200.game.physics.raycast.RaycastHit;
-import com.csse3200.game.physics.raycast.SingleHitCallback;
-import com.csse3200.game.rendering.RenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.badlogic.gdx.physics.box2d.*;
-import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.utils.math.Vector2Utils;
-
-import java.awt.*;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -45,7 +34,7 @@ public class PlayerActions extends Component {
   private PhysicsComponent physicsComponent;
   private StaminaComponent stamina;
   private CameraComponent cameraComponent;
-  private Vector2 walkDirection = Vector2.Zero.cpy();
+  private final Vector2 walkDirection = Vector2.Zero.cpy();
 
   private boolean moving = false;
   private boolean adrenaline = false;
@@ -67,9 +56,9 @@ public class PlayerActions extends Component {
   private boolean isJetpackOn = false;
   private boolean isGliding = false;
 
-  private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
+  private final Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
           "sounds/jetpacksound.mp3", Sound.class);
-  private Sound walkSound = ServiceLocator.getResourceService().getAsset(
+  private final Sound walkSound = ServiceLocator.getResourceService().getAsset(
           "sounds/walksound.mp3", Sound.class);
 
   @Override
@@ -466,7 +455,7 @@ public class PlayerActions extends Component {
     return hasDashed;
   }
 
-  public int getJetpackFuel(){return jetpackFuel;};
+  public int getJetpackFuel(){return jetpackFuel;}
 
   public boolean getIsJetpackOn() {return isJetpackOn;}
 

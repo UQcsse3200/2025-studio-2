@@ -2,7 +2,6 @@ package com.csse3200.game.components.maingame;
 
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.statisticspage.StatsTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MainGameActions extends Component {
   private static final Logger logger = LoggerFactory.getLogger(MainGameActions.class);
-  private GdxGame game;
+  private final GdxGame game;
 
   public MainGameActions(GdxGame game) {
     this.game = game;

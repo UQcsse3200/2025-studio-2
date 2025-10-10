@@ -11,19 +11,19 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  * to fill the viewport.
  */
 public class ParallaxLayer {
-    private Texture texture;
-    private Camera camera;
-    private float factor;
-    private float mapWidth;
-    private float mapHeight;
-    private boolean tileHorizontally;
-    private boolean tileVertically;
-    private float tileWidth;
-    private float tileHeight;
-    private float offsetX;
-    private float offsetY;
-    private float scaleX; // Add scale parameters
-    private float scaleY;
+    private final Texture texture;
+    private final Camera camera;
+    private final float factor;
+    private final float mapWidth;
+    private final float mapHeight;
+    private final boolean tileHorizontally;
+    private final boolean tileVertically;
+    private final float tileWidth;
+    private final float tileHeight;
+    private final float offsetX;
+    private final float offsetY;
+    private final float scaleX; // Add scale parameters
+    private final float scaleY;
 
     /**
      * Creates a basic parallax layer with default settings.

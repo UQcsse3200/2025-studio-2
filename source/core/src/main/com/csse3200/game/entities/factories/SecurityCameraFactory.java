@@ -1,15 +1,14 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.ConeLightPanningTaskComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.lighting.LightingDefaults;
 
 /**
  * The security camera factory is used to spawn in new security camera entities. It consists of
@@ -26,10 +25,10 @@ public class SecurityCameraFactory {
      */
     private static RayHandler rayHandler() {
         LightingService lighting = ServiceLocator.getLightingService();
-        if (lighting == null || lighting.getEngine() == null) {
+        if (lighting == null || lighting.engine() == null) {
             throw new IllegalStateException("LightingService/Engine not initialised.");
         }
-        return lighting.getEngine().getRayHandler();
+        return lighting.engine().getRayHandler();
     }
 
     /**

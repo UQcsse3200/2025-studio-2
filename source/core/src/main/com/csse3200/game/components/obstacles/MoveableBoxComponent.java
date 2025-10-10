@@ -293,7 +293,7 @@ public class MoveableBoxComponent extends Component {
             if (boxCollider.getFixture() == null) return;
 
             Filter f = boxCollider.getFixture().getFilterData();
-            f.categoryBits = (short) physicsLayer;
+            f.categoryBits = physicsLayer;
             f.maskBits = (short) (PhysicsLayer.OBSTACLE
                                 | PhysicsLayer.PLAYER
                                 | PhysicsLayer.NPC

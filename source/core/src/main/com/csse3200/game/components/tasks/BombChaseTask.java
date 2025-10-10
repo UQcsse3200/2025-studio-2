@@ -7,7 +7,6 @@ import com.csse3200.game.ai.tasks.TaskRunner;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.rendering.DebugRenderer;
 import com.csse3200.game.services.GameTime;

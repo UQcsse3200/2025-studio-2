@@ -1,18 +1,13 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.BossLaserFactory;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.services.ServiceLocator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * BossLaserAttack component handles:
@@ -29,7 +24,7 @@ public class BossLaserAttack extends Component {
     private float attackTimer = 0f;
     private boolean attacking = true;
 
-    private Entity target;// player to track
+    private final Entity target;// player to track
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 

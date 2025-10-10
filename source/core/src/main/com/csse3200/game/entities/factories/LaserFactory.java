@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingDefaults;
@@ -42,7 +42,7 @@ public class LaserFactory {
 
         // give soft glow on emitter
         ConeLightComponent light = new ConeLightComponent(
-                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                ServiceLocator.getLightingService().engine().getRayHandler(),
                 LightingDefaults.RAYS,
                 Color.RED,
                 1f,

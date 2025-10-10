@@ -175,6 +175,6 @@ class ShellTest {
   }
 
   public static class TestClass {
-    private String privateField = "initial";
+    private final String privateField = "initial";
   }
 }

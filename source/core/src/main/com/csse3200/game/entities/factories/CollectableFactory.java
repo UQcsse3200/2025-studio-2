@@ -9,7 +9,6 @@ import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ObjectivesComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -85,7 +84,7 @@ public class CollectableFactory {
             color.set(1f, 1f, 230f/255f, 0.6f);
         }
         ConeLightComponent cone = new ConeLightComponent(
-                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                ServiceLocator.getLightingService().engine().getRayHandler(),
                 128,
                 color,
                 1.5f,

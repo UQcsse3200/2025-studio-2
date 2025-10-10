@@ -16,7 +16,7 @@ public class TerminalService {
   private static final Shell shell = Initializer.getInitializedShell();
 
   /* This field will be used by the shell and therefore must not be final */
-  private static Float customTimeScale = 1.0f;
+  private static final Float customTimeScale = 1.0f;
 
   private TerminalService() {
     throw new IllegalStateException("Instantiating static util class");

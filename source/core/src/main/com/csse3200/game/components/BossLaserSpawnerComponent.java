@@ -1,10 +1,7 @@
 package com.csse3200.game.components;
 
-import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.BossLaserFactory;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.areas.GameArea;
 
 /**
  * Component that allows a boss to spawn lasers periodically.
@@ -12,7 +9,7 @@ import com.csse3200.game.areas.GameArea;
 public class BossLaserSpawnerComponent extends Component {
     private final Entity player;       // Player to target
     private boolean spawningEnabled = false;
-    private float cooldownSec = 6f;    // default seconds between laser shots
+    private final float cooldownSec = 6f;    // default seconds between laser shots
     private float timer = 0f;
 
     public BossLaserSpawnerComponent(Entity player) {

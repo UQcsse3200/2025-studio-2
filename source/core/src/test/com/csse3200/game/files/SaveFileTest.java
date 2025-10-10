@@ -1,7 +1,5 @@
 package com.csse3200.game.files;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
@@ -19,7 +17,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -66,13 +63,13 @@ public class SaveFileTest {
         inv.addItems(InventoryComponent.Bag.INVENTORY, "test1", 3);
         inv.addItems(InventoryComponent.Bag.UPGRADES, "test2", 4);
 
-        game.saveLevel(area, player, "test/files/testsave.json");
+        GdxGame.saveLevel(area, player, "test/files/testsave.json");
 
         SaveConfig result = FileLoader.readClass(SaveConfig.class, "test/files/testsave.json");
 
         assertNotNull(result);
 
-        assertTrue(result.area == area);
+      assertSame(result.area, area);
 
         assertTrue(result.inventory.containsKey("test1"));
         assertEquals(result.inventory.get("test1"), inv.getInventory().get("test1"));
@@ -83,33 +80,33 @@ public class SaveFileTest {
 
     @Test
     void loadValidFromFile() {
-        SaveConfig result = game.loadSave("test/files/validloadtest.json");
+        SaveConfig result = GdxGame.loadSave("test/files/validloadtest.json");
 
         assertNotNull(result);
 
-        assertTrue(result.area == MainGameScreen.Areas.LEVEL_TWO);
+      assertSame(result.area, MainGameScreen.Areas.LEVEL_TWO);
 
-        assertTrue(result.inventory.size() == 1);
-        assertTrue(result.inventory.get("test") == 5);
+      assertEquals(1, result.inventory.size());
+      assertEquals(5, (int) result.inventory.get("test"));
 
-        assertTrue(result.upgrades.size() == 2);
-        assertTrue(result.upgrades.get("test2") == 6);
-        assertTrue(result.upgrades.get("test3") == 7);
+      assertEquals(2, result.upgrades.size());
+      assertEquals(6, (int) result.upgrades.get("test2"));
+      assertEquals(7, (int) result.upgrades.get("test3"));
     }
 
     @Test
     void loadInvalidArea() {
-        SaveConfig result = game.loadSave("test/files/invalidarealoadtest.json");
+        SaveConfig result = GdxGame.loadSave("test/files/invalidarealoadtest.json");
 
         assertNotNull(result);
 
         // Invalid names get set to LEVEL_ONE
-        assertTrue(result.area == MainGameScreen.Areas.LEVEL_ONE);
+      assertSame(result.area, MainGameScreen.Areas.LEVEL_ONE);
     }
 
     @Test
     void loadInvalidInventory() {
-        SaveConfig result = game.loadSave("test/files/noinventoryloadtest.json");
+        SaveConfig result = GdxGame.loadSave("test/files/noinventoryloadtest.json");
 
         assertNotNull(result);
 
@@ -123,22 +120,22 @@ public class SaveFileTest {
 
     @Test
     void loadEmptyFile() {
-        SaveConfig result = game.loadSave("test/files/emptyfile.json");
+        SaveConfig result = GdxGame.loadSave("test/files/emptyfile.json");
 
         assertNotNull(result);
 
-        assertTrue(result.area == MainGameScreen.Areas.LEVEL_ONE);
+      assertSame(result.area, MainGameScreen.Areas.LEVEL_ONE);
         assertNotNull(result.inventory);
         assertNotNull(result.upgrades);
     }
 
     @Test
     void loadNonExistentFile() {
-        SaveConfig result = game.loadSave("test/files/hdsaljslhgkjhsagi.json");
+        SaveConfig result = GdxGame.loadSave("test/files/hdsaljslhgkjhsagi.json");
 
         assertNotNull(result);
 
-        assertTrue(result.area == MainGameScreen.Areas.LEVEL_ONE);
+      assertSame(result.area, MainGameScreen.Areas.LEVEL_ONE);
         assertNotNull(result.inventory);
         assertNotNull(result.upgrades);
     }

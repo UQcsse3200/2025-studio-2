@@ -7,18 +7,9 @@ import com.csse3200.game.components.CameraComponent;
  * Provides a global access point to the lighting engine. This is necessary for the lighting based
  * entities to register themselves with the engine.
  */
-public class LightingService {
-    private final LightingEngine engine;
+public record LightingService(LightingEngine engine) {
 
-    public LightingService(LightingEngine engine) {
-        this.engine = engine;
-    }
-
-    public LightingService(CameraComponent camera, World world) {
-        this.engine = new LightingEngine(camera, world);
-    }
-
-    public LightingEngine getEngine() {
-        return this.engine;
-    }
+  public LightingService(CameraComponent camera, World world) {
+    this(new LightingEngine(camera, world));
+  }
 }

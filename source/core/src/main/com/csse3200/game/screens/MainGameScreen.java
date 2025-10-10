@@ -12,6 +12,7 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
 import com.csse3200.game.components.computerterminal.SpritesheetSpec;
@@ -42,7 +43,6 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.*;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
-import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +89,7 @@ public class MainGameScreen extends ScreenAdapter {
 
   private PauseInputComponent pauseInput;
   private LeaderboardComponent leaderboardComponent;
-  private GameTime gameTime;
+  private final GameTime gameTime;
     private MinimapDisplay minimapDisplay;
     private PlayerStatsDisplay playerStatsDisplay;
     private GameAreaDisplay levelTagDisplay;
@@ -141,7 +141,7 @@ public class MainGameScreen extends ScreenAdapter {
     // Registering the new lighting service with the service manager
     LightingService lightingService = new LightingService(renderer.getCamera(), physicsEngine.getWorld());
     ServiceLocator.registerLightingService(lightingService);
-    lightingEngine = lightingService.getEngine();
+    lightingEngine = lightingService.engine();
 
     // Registering a new security camera service
     ServiceLocator.registerSecurityCamRetrievalService(new SecurityCamRetrievalService());

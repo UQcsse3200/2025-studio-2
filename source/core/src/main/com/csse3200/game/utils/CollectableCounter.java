@@ -3,8 +3,8 @@ package com.csse3200.game.utils;
 public class CollectableCounter {
     private static int collected_level = 0;
     private static int collected_total = 0;
-    private static int level_total = 3;
-    private static int total = 9;
+    private static final int level_total = 3;
+    private static final int total = 9;
 
     private CollectableCounter() {}
 

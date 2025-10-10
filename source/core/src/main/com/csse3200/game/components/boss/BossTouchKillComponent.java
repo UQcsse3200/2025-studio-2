@@ -22,7 +22,7 @@ import com.csse3200.game.services.ServiceLocator;
  * if target entity has a PhysicsComponent.
  */
 public class BossTouchKillComponent extends Component {
-  private short targetLayer;
+  private final short targetLayer;
   private CombatStatsComponent combatStats;
   private HitboxComponent hitboxComponent;
 

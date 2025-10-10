@@ -15,7 +15,8 @@ import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
@@ -26,7 +27,7 @@ class ConeLightComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             // Deterministic dt = 0.5s
             GameTime time = mock(GameTime.class);
@@ -53,7 +54,7 @@ class ConeLightComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             GameTime time = mock(GameTime.class);
             when(time.getDeltaTime()).thenReturn(1f);
@@ -89,7 +90,7 @@ class ConeLightComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             Entity e = new Entity();
             ConeLightComponent comp = new ConeLightComponent(
@@ -111,7 +112,7 @@ class ConeLightComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             Entity e = new Entity();
             ConeLightComponent comp = new ConeLightComponent(

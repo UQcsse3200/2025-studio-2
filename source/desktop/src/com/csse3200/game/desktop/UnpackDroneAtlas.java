@@ -4,7 +4,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Files;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.TextureAtlasData;
 import com.badlogic.gdx.tools.texturepacker.TextureUnpacker;
-import com.badlogic.gdx.Files;
 
 import java.io.File;
 import java.nio.file.Path;

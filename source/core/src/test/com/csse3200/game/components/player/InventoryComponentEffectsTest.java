@@ -7,14 +7,17 @@ import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.entities.configs.EffectConfig;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.services.CollectableService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(GameExtension.class)

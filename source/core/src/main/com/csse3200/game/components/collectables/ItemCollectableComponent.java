@@ -1,17 +1,14 @@
 package com.csse3200.game.components.collectables;
 
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.areas.LevelOneGameArea;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.CollectablesSave;
 
 public class ItemCollectableComponent extends CollectableComponent {
     private int count;
     private int level;
-    private GameArea gameArea;
+    private final GameArea gameArea;
     private Vector2[] collected = new Vector2[9];
 
     public ItemCollectableComponent(GameArea gameArea) {

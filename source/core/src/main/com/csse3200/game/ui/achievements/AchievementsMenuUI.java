@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
-
 import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.services.ServiceLocator;

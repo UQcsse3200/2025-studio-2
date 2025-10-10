@@ -1,14 +1,14 @@
 package com.csse3200.game.physics;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.Shape;
-import com.csse3200.game.utils.math.Vector2Utils;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.utils.math.Vector2Utils;
 import net.dermetfan.utils.Pair;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class PhysicsTestUtils {
   public static Vector2 getBounds(PolygonShape shape) {
@@ -21,7 +21,7 @@ public class PhysicsTestUtils {
 
   public static Vector2 getRectanglePosition(ColliderComponent collider) {
     Shape shape = collider.getFixture().getShape();
-    assertTrue(shape instanceof PolygonShape);
+    assertInstanceOf(PolygonShape.class, shape);
     return getRectanglePosition((PolygonShape)shape);
   }
 
@@ -42,7 +42,7 @@ public class PhysicsTestUtils {
    */
   public static void checkPolygonCollider(ColliderComponent collider, Vector2 scale) {
     Shape shape = collider.getFixture().getShape();
-    assertTrue(shape instanceof PolygonShape);
+    assertInstanceOf(PolygonShape.class, shape);
 
     Vector2 bounds = PhysicsTestUtils.getBounds((PolygonShape) shape);
     assertEquals(scale, bounds);

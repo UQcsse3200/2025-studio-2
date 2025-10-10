@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
@@ -54,7 +53,7 @@ public class DeathScreenDisplay extends UIComponent {
     private InputComponent inputBlocker;
     private TypingLabel typewriterLabel;
     private Table buttonsTable;
-    private HashMap<String, ArrayList<String>> deathPrompts = new HashMap<>();
+    private final HashMap<String, ArrayList<String>> deathPrompts = new HashMap<>();
     private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
     private final MainGameScreen screen;

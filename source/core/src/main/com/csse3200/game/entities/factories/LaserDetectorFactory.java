@@ -60,7 +60,7 @@ public class LaserDetectorFactory {
         // ==============================
 
         ConeLightComponent light = new ConeLightComponent(
-                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                ServiceLocator.getLightingService().engine().getRayHandler(),
                 LightingDefaults.RAYS,
                 Color.RED,
                 1f,

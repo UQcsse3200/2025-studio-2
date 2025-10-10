@@ -1,6 +1,7 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.audio.Sound;
+import com.csse3200.game.components.player.InventoryComponent.Bag;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.services.CollectableService;
@@ -14,14 +15,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
-
-import com.csse3200.game.components.player.InventoryComponent.Bag;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

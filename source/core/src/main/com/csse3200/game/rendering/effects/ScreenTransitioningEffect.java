@@ -4,8 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.crashinvaders.vfx.VfxRenderContext;
 import com.crashinvaders.vfx.effects.ChainVfxEffect;
 import com.crashinvaders.vfx.effects.ShaderVfxEffect;
-import com.crashinvaders.vfx.framebuffer.VfxPingPongWrapper;
 import com.crashinvaders.vfx.framebuffer.VfxFrameBuffer;
+import com.crashinvaders.vfx.framebuffer.VfxPingPongWrapper;
 import com.crashinvaders.vfx.gl.VfxGLUtils;
 
 public class ScreenTransitioningEffect extends ShaderVfxEffect implements ChainVfxEffect {

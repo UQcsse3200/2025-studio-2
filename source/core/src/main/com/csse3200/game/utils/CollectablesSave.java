@@ -10,7 +10,7 @@ public class CollectablesSave {
     private static final String COLLECTABLE_POS_PREFIX = "collectablePos";
     //private Vector2[] collected = new Vector2[9];
 
-    private static Preferences prefs = Gdx.app.getPreferences(PREFS_NAME);
+    private static final Preferences prefs = Gdx.app.getPreferences(PREFS_NAME);
 
     public static int getCollectedCount() {
         return prefs.getInteger(COLLECTABLE_COUNT, 0);

@@ -1,24 +1,22 @@
 package com.csse3200.game.components;
 
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.achievements.AchievementProgression;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import com.csse3200.game.achievements.AchievementProgression;
 
 
 /**
  * StaminaComponent - resource manager for player stamina.
  */
 public class StaminaComponent extends Component {
-    private float maxStamina;
+    private final float maxStamina;
     private float currentStamina;
-    private float staminaRegenPerSecond;
-    private float sprintDrainPerSecond;
-    private int attackStaminaCost;
-    private float regenDelaySeconds;
+    private final float staminaRegenPerSecond;
+    private final float sprintDrainPerSecond;
+    private final int attackStaminaCost;
+    private final float regenDelaySeconds;
     private float regenDelayTimer = 0f;
 
     private boolean sprinting = false;

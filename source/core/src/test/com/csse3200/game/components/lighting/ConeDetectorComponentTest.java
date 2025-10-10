@@ -55,7 +55,7 @@ class ConeDetectorComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             // light at (0,0) centre at (0.5, 0.5). Target centre at (1.5, 0.5) -> angle 0 deg, distance 1.
             Entity lightEntity = new Entity();
@@ -100,7 +100,7 @@ class ConeDetectorComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             Entity lightEntity = new Entity();
             lightEntity.setPosition(new Vector2(0f, 0f));
@@ -142,7 +142,7 @@ class ConeDetectorComponentTest {
         try (var rhCons = mockConstruction(RayHandler.class);
              var coneCons = mockConstruction(ConeLight.class)) {
             ServiceLocator.registerLightingService(createLightingService());
-            RayHandler rh = ServiceLocator.getLightingService().getEngine().getRayHandler();
+            RayHandler rh = ServiceLocator.getLightingService().engine().getRayHandler();
 
             Entity lightEntity = new Entity();
             Entity target = new Entity();

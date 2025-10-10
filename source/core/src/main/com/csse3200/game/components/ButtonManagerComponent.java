@@ -5,6 +5,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.TimerSignFactory;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
  * Tracks button states, handles puzzle timing, triggers even on success and resets all buttons on failure
  */
 public class ButtonManagerComponent extends Component {
-    private List<ButtonComponent> buttons = new ArrayList<>();
+    private final List<ButtonComponent> buttons = new ArrayList<>();
     private float puzzleTimer = 0f;
     private boolean puzzleActive = false;
     private static final float PUZZLE_TIME_LIMIT = 15f;

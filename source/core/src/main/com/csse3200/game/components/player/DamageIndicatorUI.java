@@ -117,7 +117,7 @@ public class DamageIndicatorUI extends UIComponent {
             container.add(arrow).expand().center();
             stage.addActor(container);
         } else {
-            container = (Table) root.findActor("DamageIndicatorUI");
+            container = root.findActor("DamageIndicatorUI");
         }
 
         // Listen for direction vectors from damage events

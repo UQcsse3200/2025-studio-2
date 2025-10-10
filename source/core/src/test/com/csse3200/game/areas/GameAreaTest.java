@@ -1,11 +1,6 @@
 package com.csse3200.game.areas;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.mockito.Mockito.*;
-
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
@@ -21,6 +16,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.Field;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * Things like textures loading properly are incredibly difficult to test within JUnit test.
@@ -126,15 +126,13 @@ class GameAreaTest {
       List<Component> components = gameArea.getComponents();
       for (Component component : components) {
           // CombatStats
-          if (component instanceof CombatStatsComponent) {
-              CombatStatsComponent statsComponent = (CombatStatsComponent) component;
-              assertEquals(startHealth, statsComponent.getHealth());
+          if (component instanceof CombatStatsComponent statsComponent) {
+            assertEquals(startHealth, statsComponent.getHealth());
           }
 
           // Inventory
-          if (component instanceof InventoryComponent) {
-              InventoryComponent inventoryComponent = (InventoryComponent) component;
-              assertEquals(0, inventoryComponent.getGrandTotalCount());
+          if (component instanceof InventoryComponent inventoryComponent) {
+            assertEquals(0, inventoryComponent.getGrandTotalCount());
           }
       }
   }
@@ -160,6 +158,6 @@ class GameAreaTest {
     textureField.setAccessible(true);
     assertNotEquals(null, textureField.get(gameArea));
     gameArea.dispose();
-    assertEquals(null, textureField.get(gameArea));
+    assertNull(textureField.get(gameArea));
   }
 }

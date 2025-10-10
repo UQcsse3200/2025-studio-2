@@ -60,7 +60,7 @@ public class CodexTerminalFactory {
         // Enable lighting effect
         Color coneColor = new Color(0f, 1f, 0f, 0.6f);
         ConeLightComponent cone = new ConeLightComponent(
-                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                ServiceLocator.getLightingService().engine().getRayHandler(),
                 128,
                 coneColor,
                 1.5f,

@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.csse3200.game.entities.Entity;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /** Unit tests for StaminaComponent (no LibGDX needed). */
@@ -114,11 +115,11 @@ class StaminaComponentTest {
     void fromConfigReflectionPicksUpValues() {
         @SuppressWarnings("unused")
         class DummyCfg {
-            public float maxStamina = 120f;
-            public float staminaRegenPerSecond = 12f;
-            public float sprintDrainPerSecond = 30f;
-            public int   attackStaminaCost = 15;
-            public float regenDelaySeconds = 0.75f;
+            public final float maxStamina = 120f;
+            public final float staminaRegenPerSecond = 12f;
+            public final float sprintDrainPerSecond = 30f;
+            public final int   attackStaminaCost = 15;
+            public final float regenDelaySeconds = 0.75f;
         }
         StaminaComponent s = StaminaComponent.fromConfig(new DummyCfg());
         assertEquals(120, s.getMaxStamina());

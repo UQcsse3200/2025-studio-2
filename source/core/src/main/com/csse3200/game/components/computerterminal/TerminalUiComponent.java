@@ -93,7 +93,7 @@ public class TerminalUiComponent extends UIComponent {
 
     /** Currently active puzzle spec and player selections. */
     private CaptchaSpecLike currentSpecLike;
-    private Set<Integer> selected = new HashSet<>();
+    private final Set<Integer> selected = new HashSet<>();
 
     public TerminalUiComponent(MainGameScreen screen) {
         this.screen = screen;

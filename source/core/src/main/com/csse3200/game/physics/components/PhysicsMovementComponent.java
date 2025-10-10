@@ -4,7 +4,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.ai.movement.MovementController;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.utils.math.Vector2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class PhysicsMovementComponent extends Component implements MovementController {
   private static final Logger logger = LoggerFactory.getLogger(PhysicsMovementComponent.class);
   //private static final Vector2 maxSpeed = Vector2Utils.ONE;
-  private Vector2 maxSpeed = new Vector2(1f, 1f); // Default speed, can be overridden
+  private final Vector2 maxSpeed = new Vector2(1f, 1f); // Default speed, can be overridden
 
 
   private PhysicsComponent physicsComponent;

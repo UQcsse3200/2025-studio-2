@@ -1,13 +1,12 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.services.GameTime;
-import com.csse3200.game.components.Component;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.Component;
+import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 
 
@@ -28,9 +27,9 @@ public class PlayerAnimationController extends Component {
 
     private int xDirection = 1;
     private long hurtTime = -1000;
-    private float hurtDelay = 0.5f;
-    private float dashDelay = 0.3f;
-    private float jumpDelay = 0.8f;
+    private final float hurtDelay = 0.5f;
+    private final float dashDelay = 0.3f;
+    private final float jumpDelay = 0.8f;
 
     @Override
     public void create() {
