@@ -13,8 +13,8 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  */
 public class TutorialComponent extends TextureRenderComponent {
   private final String keyText;
-  private static final Skin skin = new Skin(Gdx.files.internal("commodore64/skin/uiskin.json"));
-  private static final BitmapFont font = skin.getFont("commodore-64");
+  private Skin skin;
+  private BitmapFont font;
   /**
    * @param imagePath Path to the texture for the action's image.
    * @param keyText The text to display for the key name
@@ -27,6 +27,8 @@ public class TutorialComponent extends TextureRenderComponent {
   @Override
   public void create() {
     super.create();
+    skin = new Skin(Gdx.files.internal("commodore64/skin/uiskin.json"));
+    font = skin.getFont("commodore-64");
     font.setUseIntegerPositions(false);
   }
 
