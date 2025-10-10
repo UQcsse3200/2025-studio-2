@@ -172,7 +172,7 @@ class LaserRenderComponentTest {
             for (int s = GLOW_STEPS; s >= 1; s--) {
                 float t = THICKNESS * (1f + (GLOW_MULT - 1f) * (s / (float) GLOW_STEPS));
                 float aGlow = GLOW_ALPHA * (s / (float) GLOW_STEPS);
-                inOrder.verify(batch).setColor(emitterGlowColor.r, emitterGlowColor.g, emitterGlowColor.b, aGlow);
+                inOrder.verify(batch).setColor(showerGlowColor.r, showerGlowColor.g, showerGlowColor.b, aGlow);
 
                 float originY = t / 2f;
                 inOrder.verify(batch).draw(pixel, a.x, a.y - originY, 0f, originY,
