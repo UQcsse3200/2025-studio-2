@@ -17,8 +17,8 @@ import java.util.List;
 public class LaserRenderComponent extends RenderComponent {
     private Texture pixelTex;
     private TextureRegion pixel;
-    private final Color color = new Color(1f, 0f, 0f, 1f);
-    private final Color glowColor = new Color(1f, 0.32f, 0.32f, 1f);
+    private Color color;
+    private Color glowColor;
 
     private static final float THICKNESS  = 0.05f; // core beam thickness
     private static final int   GLOW_STEPS = 4;     // glow smoothness
@@ -34,6 +34,19 @@ public class LaserRenderComponent extends RenderComponent {
         showerEmitter = entity.getComponent(LaserShowerComponent.class);
         mainEmitter = entity.getComponent(LaserEmitterComponent.class);
 
+        if (showerEmitter != null) {
+            // Blue laser shower
+            color = new Color(0.2f, 0.6f, 1f, 1f);       // Core beam
+            glowColor = new Color(0.3f, 0.7f, 1f, 1f);   // Glow
+        } else if (mainEmitter != null) {
+            // Red laser emitter
+            color = new Color(1f, 0f, 0f, 1f);
+            glowColor = new Color(1f, 0.32f, 0.32f, 1f);
+        } else {
+            // Default fallback (white)
+            color = new Color(1f, 1f, 1f, 1f);
+            glowColor = new Color(1f, 1f, 1f, 0.5f);
+        }
         // make 1x1 pixel
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pm.setColor(1, 1, 1, 1);
