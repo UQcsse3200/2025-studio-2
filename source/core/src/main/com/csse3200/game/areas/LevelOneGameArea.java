@@ -123,6 +123,7 @@ public class LevelOneGameArea extends GameArea {
             "images/laser-detector-off.png",
             "images/laser-detector-on.png",
             "images/laser-end.png",
+            "images/LaserShower-end.png",
             "images/upSignpost.png",
             "images/downSignpost.png",
             "images/rightSignpost.png",

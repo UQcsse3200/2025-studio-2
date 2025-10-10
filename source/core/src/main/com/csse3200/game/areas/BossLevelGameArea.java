@@ -65,6 +65,7 @@ public class BossLevelGameArea extends GameArea {
             "images/bomb.png",
             "images/cube.png",
             "images/laser-end.png",
+            "images/LaserShower-end.png",
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/glide_powerup.png",
@@ -84,7 +85,6 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
-            "images/laser-end",
             "images/minimap_forest_area.png",
             "images/minimap_player_marker.png"
     };

@@ -99,6 +99,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/glide_powerup.png",
             "images/jetpack_powerup.png",
             "images/laser-end.png",
+            "images/LaserShower-end.png",
             "images/jetpack_powerup.png",
             "images/lost_hardware.png",
             "images/tutorials/dash.png",

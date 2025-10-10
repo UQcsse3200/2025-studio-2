@@ -367,7 +367,7 @@ public class MainGameScreen extends ScreenAdapter {
           laserTimer += delta;
 
           // Check if 50 seconds have passed
-          if (laserTimer >= 50f) {
+          if (laserTimer >= 5f) {
               if (gameArea instanceof BossLevelGameArea bossLevel) {
                   bossLevel.spawnLaserShower(); // spawn lasers
               }

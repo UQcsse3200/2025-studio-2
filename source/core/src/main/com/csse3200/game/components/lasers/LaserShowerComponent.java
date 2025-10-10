@@ -269,7 +269,7 @@ public class LaserShowerComponent extends Component {
         ConeLightComponent coneLight = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
                 LightingDefaults.RAYS,
-                Color.RED,
+                Color.BLUE,
                 0.75f,
                 0f,
                 180f
