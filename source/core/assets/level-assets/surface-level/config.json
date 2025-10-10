@@ -34,7 +34,7 @@
     { "type": "camera", "id": "camera", "x": 23, "y": 25, "rotation": 270, "speed": 25 },
 
     { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5, "sx": 1, "sy": 2 },
-    { "type": "door", "subtype": "transition", "target":  "boss_level", "id": "key:door:", "x": 0, "y": 69, "sx": 1, "sy": 2 },
+    { "type": "door", "subtype": "transition", "target":  "boss_level", "id": "key:door", "x": 0, "y": 69, "sx": 1, "sy": 2 },
 
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 1, "y": 30 },
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 14, "y": 52 },
