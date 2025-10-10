@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
@@ -39,9 +40,11 @@ class LaserFactoryTest {
         GameTime time = mock(GameTime.class);
         ServiceLocator.registerTimeSource(time);
 
+        // Register RenderService
         RenderService renderService = new RenderService();
         ServiceLocator.registerRenderService(renderService);
 
+        // Mock LightingService
         RayHandler rayHandler = mock(RayHandler.class);
         LightingEngine lightingEngine = mock(LightingEngine.class);
         when(lightingEngine.getRayHandler()).thenReturn(rayHandler);
@@ -52,6 +55,16 @@ class LaserFactoryTest {
     void createLaserEmitter_hasAllComponents() {
         Entity e = LaserFactory.createLaserEmitter(0f);
         assertNotNull(e);
+        assertNotNull(e.getComponent(AnimationRenderComponent.class));
+        assertNotNull(e.getComponent(ConeLightComponent.class));
+        assertNotNull(e.getComponent(CombatStatsComponent.class));
+        assertNotNull(e.getComponent(LaserShowerComponent.class));
+        assertNotNull(e.getComponent(LaserRenderComponent.class));
+    }
+    @Test
+    void createLaserShower_hasAllComponents() {
+        Entity e = LaserFactory.createLaserShower(90f);
+
         assertNotNull(e.getComponent(AnimationRenderComponent.class));
         assertNotNull(e.getComponent(ConeLightComponent.class));
         assertNotNull(e.getComponent(CombatStatsComponent.class));
