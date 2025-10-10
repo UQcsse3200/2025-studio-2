@@ -311,6 +311,7 @@ public class BossLevelGameArea extends GameArea {
         secondPlatform.setScale(1.5f, 0.5f);
         spawnEntityAt(secondPlatform, secondPos,false, false);
 
+        // NOTE: COULD ACTUALLY TOTALLY MAKE THIS ONE EVIL!! + Add red glow for clarity??
         GridPoint2 thirdPos = new GridPoint2(57, tileBounds.y - 23);
         Entity thirdPlatform = PlatformFactory.createStaticPlatform();
         thirdPlatform.setScale(1.5f, 0.5f);
