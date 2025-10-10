@@ -13,9 +13,8 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  */
 public class TutorialComponent extends TextureRenderComponent {
   private final String keyText;
-  private BitmapFont font;
-  Skin skin;
-
+  private static final Skin skin = new Skin(Gdx.files.internal("commodore64/skin/uiskin.json"));
+  private static final BitmapFont font = skin.getFont("commodore-64");
   /**
    * @param imagePath Path to the texture for the action's image.
    * @param keyText The text to display for the key name
@@ -28,10 +27,7 @@ public class TutorialComponent extends TextureRenderComponent {
   @Override
   public void create() {
     super.create();
-    skin = new Skin(Gdx.files.internal("commodore64/skin/uiskin.json"));
-    font = skin.getFont("commodore-64");
     font.setUseIntegerPositions(false);
-    super.create();
   }
 
   @Override
@@ -42,16 +38,12 @@ public class TutorialComponent extends TextureRenderComponent {
     Vector2 pos = entity.getPosition();
 
     font.getData().setScale(scale.x / 40);
-
-    float textX = pos.x - scale.x / 2;
-    float textY = pos.y - 0.2f;
-
-    font.draw(batch, keyText, textX, textY, scale.x * 2, Align.center, false);
+    font.draw(batch, keyText, pos.x - scale.x / 2, pos.y - 0.2f,
+            scale.x * 2, Align.center, false);
   }
 
   @Override
   public void dispose() {
     super.dispose();
-    skin.dispose();
   }
 }
