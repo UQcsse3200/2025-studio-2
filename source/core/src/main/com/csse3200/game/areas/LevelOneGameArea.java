@@ -42,6 +42,8 @@ import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementProgression;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -175,6 +177,8 @@ public class LevelOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
+
     }
     protected void loadEntities() {
         cancelPlateDebouncers();
@@ -765,6 +769,9 @@ public class LevelOneGameArea extends GameArea {
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
+        door.getEvents().addListener("doorOpened", () -> {
+            AchievementProgression.onLevelComplete("level1");
+        });
     }
 
     private void playMusic() {
@@ -789,6 +796,9 @@ public class LevelOneGameArea extends GameArea {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
+        ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
+
         spawnEntity(ui);
     }
 
