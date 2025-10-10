@@ -249,14 +249,14 @@ public class LevelTwoGameArea extends GameArea {
         return newPlayer;
     }
     public void spawnLaserShower() {
-        final float Y = player.getPosition().y + 10f;
+        final float Y = player.getPosition().y + 15f;
         final float X = player.getPosition().x;
 
 
         for (int i = 0; i <= 2; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
-            float x = X - ((i+1)* (float) 5.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
+            float xBehind = X - ((i+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round((xBehind+50f)), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -269,8 +269,8 @@ public class LevelTwoGameArea extends GameArea {
 
         for (int j = 0; j <=2; j++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
-            float x = X + ((j+1)* (float) 5.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
+            float xAhead = X + ((j+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(xAhead-10f), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {

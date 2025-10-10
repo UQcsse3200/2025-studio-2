@@ -221,14 +221,14 @@ public class BossLevelGameArea extends GameArea {
     public void spawnLaserShower() {
         if (player == null) return; // safety check
 
-        final float Y = player.getPosition().y + 20f; // spawn above player
+        final float Y = player.getPosition().y + 30f; // spawn above player
         final float X = player.getPosition().x;
 
         // Spawn 3 lasers to the left
-        for (int i = 0; i <= 2; i++) {
+        for (int i = 0; i <= 5; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
-            float x = X - ((i + 1) * 7.5f); // offset left
-            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            float xBehind = X - ((i + 1) * 7.5f); // offset left
+            spawnEntityAt(laser, new GridPoint2(Math.round(xBehind), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             // Remove laser after 5 seconds
@@ -241,10 +241,10 @@ public class BossLevelGameArea extends GameArea {
         }
 
         // Spawn 3 lasers to the right
-        for (int i = 0; i <= 2; i++) {
+        for (int i = 0; i <= 5; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
-            float x = X + ((i + 1) * 7.5f); // offset right
-            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            float xAhead = X + ((i + 1) * 7.5f); // offset right
+            spawnEntityAt(laser, new GridPoint2(Math.round(xAhead), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
