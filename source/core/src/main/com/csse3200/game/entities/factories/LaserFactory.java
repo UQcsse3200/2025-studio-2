@@ -66,7 +66,6 @@ public class LaserFactory {
     public static Entity createLaserEmitter(float dir) {
         return createLaser(dir, Color.RED, new LaserEmitterComponent(dir));
     }
-
     /** Creates a blue laser shower. */
     public static Entity createLaserShower(float dir) {
         return createLaser(dir, Color.BLUE, new LaserShowerComponent(dir));

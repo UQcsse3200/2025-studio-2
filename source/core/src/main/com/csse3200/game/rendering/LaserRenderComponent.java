@@ -36,8 +36,8 @@ public class LaserRenderComponent extends RenderComponent {
 
         if (showerEmitter != null) {
             // Blue laser shower
-            color = new Color(0.2f, 0.6f, 1f, 1f);       // Core beam
-            glowColor = new Color(0.3f, 0.7f, 1f, 1f);   // Glow
+            color = new Color(0.05f, 0.35f, 0.6f, 1.0f);      // Core beam (A darker, deeper Cyan)
+            glowColor = new Color(0.15f, 0.5f, 0.8f, 1.0f);   // Glow
         } else if (mainEmitter != null) {
             // Red laser emitter
             color = new Color(1f, 0f, 0f, 1f);
