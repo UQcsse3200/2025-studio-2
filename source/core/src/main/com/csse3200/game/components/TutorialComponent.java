@@ -47,5 +47,6 @@ public class TutorialComponent extends TextureRenderComponent {
   @Override
   public void dispose() {
     super.dispose();
+    skin.dispose();
   }
 }

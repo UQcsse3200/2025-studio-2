@@ -90,7 +90,6 @@ class TutorialComponentTest {
     verify(font, never()).draw(any(SpriteBatch.class), anyString(), anyFloat(), anyFloat(), anyFloat(), anyInt(), anyBoolean());
   }
 
-  /*
   @Test
   void disposeShouldDisposeSkinResource() {
     Skin mockSkin = mock(Skin.class);
@@ -100,8 +99,6 @@ class TutorialComponentTest {
     component.dispose();
     verify(mockSkin).dispose();
   }
-
-   */
 
   private void setPrivateField(Object object, String fieldName, Object value) {
     try {
