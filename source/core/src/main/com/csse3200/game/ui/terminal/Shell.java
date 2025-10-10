@@ -392,7 +392,7 @@ public class Shell {
   public Object whileLoop(EvaluableFunction condition, EvaluableFunction function) {
     while (isTruthy(condition.evaluate(env, new ArrayList<>()))) {
       final Object result = function.evaluate(env, new ArrayList<>());
-      if (result instanceof ReturnValue) return ((ReturnValue) result).value();
+      if (result instanceof ReturnValue) return ((ReturnValue) result).value;
     }
     return null;
   }
@@ -593,7 +593,12 @@ final class ShellException extends RuntimeException {
  * A wrapper class to signify a return value from a function. This is used to
  * unwind the call stack during a return statement.
  */
-record ReturnValue(Object value) {
+class ReturnValue {
+  public Object value;
+
+  public ReturnValue(Object value) {
+    this.value = value;
+  }
 
   @Override
   public String toString() {
@@ -1000,7 +1005,7 @@ record FunctionStatement(Evaluable[] instructions, String[] parameter_names,
       final Object result = instruction.evaluate(env);
       if (result instanceof ReturnValue) {
         env.popFrame();
-        return ((ReturnValue) result).value();
+        return ((ReturnValue) result).value;
       }
     }
 
