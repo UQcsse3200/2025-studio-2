@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
+import com.csse3200.game.entities.Entity;
 
 
 import java.util.List;
@@ -118,6 +119,12 @@ public class LaserRenderComponent extends RenderComponent {
         // reset batch color
         batch.setColor(1f, 1f, 1f, 1f);
     }
+    public Color getColor() { return color; }
+    public Color getGlowColor() { return glowColor; }
+    public void setEntity(Entity entity) {
+        this.entity = entity;
+    }
+
 
     @Override
     public void dispose() {
