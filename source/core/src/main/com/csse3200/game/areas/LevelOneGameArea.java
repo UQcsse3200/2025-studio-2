@@ -200,7 +200,7 @@ public class LevelOneGameArea extends GameArea {
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
-        //spawnPlatformBat();
+        spawnPlatformBat();
         spawnLevelOneBatRoom();
         // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
