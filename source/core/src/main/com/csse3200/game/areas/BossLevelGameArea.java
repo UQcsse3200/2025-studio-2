@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
-import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -33,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossLevelGameArea extends GameArea {
-    private static final GridPoint2 mapSize = new GridPoint2(100,57);
+    private static final GridPoint2 mapSize = new GridPoint2(100,34);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     boolean has_laser = false;
@@ -94,6 +93,7 @@ public class BossLevelGameArea extends GameArea {
             "sounds/buttonsound.mp3",
             "sounds/damagesound.mp3",
             "sounds/deathsound.mp3",
+            "sounds/doorsound.mp3",
             "sounds/explosion.mp3",
             "sounds/hurt.mp3",
 //            "sounds/interactsound.mp3",
@@ -105,6 +105,7 @@ public class BossLevelGameArea extends GameArea {
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
+            "images/doors.atlas",
             "images/drone.atlas", // <---
             "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
@@ -131,9 +132,6 @@ public class BossLevelGameArea extends GameArea {
         spawnPlatforms();
         spawnWalls();
         spawnStaticObstacles();
-//        Entity[] toBeDestroyed = spawnCeilingObstacles();
-        // Pass toBeDestroyed to this.destroyFloor() when triggering.
-//        spawnButtonPuzzleRoom(toBeDestroyed);
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
@@ -147,7 +145,7 @@ public class BossLevelGameArea extends GameArea {
     private void spawnLaserPuzzle() {
         // Box at start
         Entity box = BoxFactory.createMoveableBox();
-        spawnEntityAt(box, new GridPoint2(63, 15), false, false);
+        spawnEntityAt(box, new GridPoint2(64, 15), false, false);
 
         // Laser attached to the upper wall
         Entity laser0 = LaserFactory.createLaserEmitter(335f);
@@ -263,23 +261,19 @@ public class BossLevelGameArea extends GameArea {
     private void spawnWalls() {
         // Lower wall between level halves
         Entity lowerWall = WallFactory.createWall(15,0,1,5f,"");
-        lowerWall.setScale(2f,10f);
-        spawnEntityAt(lowerWall, new GridPoint2(60, -3),
+        lowerWall.setScale(2f,12f);
+        spawnEntityAt(lowerWall, new GridPoint2(60, -4),
                 false, false);
 
         // Door between levels
-        // todo pretend there's a door here
+        Entity door = ObstacleFactory.createDoor("key:door", this);
+        door.setScale(1f, 1.5f);
+        spawnEntityAt(door, new GridPoint2(62, 20), true, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity upperWall = WallFactory.createWall(20, 30,  1,5f,"");
         upperWall.setScale(2f,15f);
-        spawnEntityAt(upperWall, new GridPoint2(60, tileBounds.y - 34),
-                false, false);
-
-        // Wall blocking death pit
-        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
-        deathPitWall.setScale(1.3f,13f);
-        spawnEntityAt(deathPitWall, new GridPoint2(20, -3),
+        spawnEntityAt(upperWall, new GridPoint2(60, 23),
                 false, false);
     }
 
@@ -292,7 +286,6 @@ public class BossLevelGameArea extends GameArea {
     private void spawnPlatforms() {
         spawnFirstDrop();
         spawnUpwardPath();
-        spawnButtonPlatforms();
         spawnLaserRoomPlatforms();
     }
 
@@ -323,153 +316,6 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(fourthPlatform, fourthPos,false, false);
 
         spawnKeyButtonAndPlatform();
-    }
-
-    /**
-     * Spawns everything for the timed-button puzzle in the first section.
-     * Includes: Moving platform to exit room, the buttons themselves,
-     * and the lasers that will be turned off upon puzzle completion.
-     * Does NOT include the platforms within the area, which are part of spawnPlatforms()
-     *
-     * @param toDestroy: The floor object and objects on it, to be destroyed when the bomber drones
-     *                 blow up the floor. For demonstration purposes only.
-     */
-    private void spawnButtonPuzzleRoom(Entity[] toDestroy) {
-        spawnExitMovingPlatform();
-        Entity laser1 = LaserFactory.createLaserEmitter(0f);
-        spawnEntityAt(laser1, new GridPoint2(28, tileBounds.y - 36), false, false);
-        Entity laser2 = LaserFactory.createLaserEmitter(0f);
-        spawnEntityAt(laser2, new GridPoint2(28, tileBounds.y - 38), false, false);
-
-        // The button puzzle itself to generate a reflective box next to the moving platform
-        Entity puzzleEntity = new Entity();
-        ButtonManagerComponent manager = new ButtonManagerComponent();
-        puzzleEntity.addComponent(manager);
-        // Prevent leak
-        this.spawnEntityAt(puzzleEntity, new GridPoint2(0, 0), true, true);
-
-        // Spawn buttons
-        // First button (easy enough to reach hopefully)
-        Entity button1 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
-        spawnEntityAt(button1, new GridPoint2(32,1), true,  true);
-
-        // Centre button
-        Entity button2 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
-        spawnEntityAt(button2, new GridPoint2(38,8), true,  true);
-
-        // Ceiling button - NOT FOR USE IN-GAME UNLESS HIGH DIFFICULTY WANTED
-//        Entity button3 = ButtonFactory.createPuzzleButton(false, "nothing", "down", manager);
-//        spawnEntityAt(button3, new GridPoint2(43,16), true,  true);
-
-        // Buttons next to each other
-        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
-        spawnEntityAt(button4, new GridPoint2(55,8), true,  true);
-        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
-        spawnEntityAt(button5, new GridPoint2(51,8), true,  true);
-
-        // Button in the wall
-        Entity button6 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
-        spawnEntityAt(button6, new GridPoint2(59,13), true,  true);
-
-        puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
-            laser1.dispose();
-            laser2.dispose();
-            destroyFloor(toDestroy); // TODO this is ONLY for demonstration purposes. Should be boss-triggered
-        });
-    }
-
-    /**
-     * Spawn the platforms for the button puzzle room
-     */
-    private void spawnButtonPlatforms() {
-        // Stable platform in the centre of the room
-        GridPoint2 firstPos = new GridPoint2(43, 2);
-        Entity centrePlatform = PlatformFactory.createStaticPlatform();
-        centrePlatform.setScale(2f, 0.5f);
-        spawnEntityAt(centrePlatform, firstPos,false, false);
-
-        // Platform beneath the second button
-        GridPoint2 secondPos = new GridPoint2(38, 7);
-        Entity secondPlatform = PlatformFactory.createVolatilePlatform(0.5f, 1f);
-        secondPlatform.setScale(1.5f, 0.5f);
-        spawnEntityAt(secondPlatform, secondPos,false, false);
-
-        // Platform beneath the ceiling button - commented out because I think the ceiling button makes it too hard
-//        GridPoint2 thirdPos = new GridPoint2(43, 13);
-//        Entity ceilingPlatform = PlatformFactory.createVolatilePlatform(0.5f, 1f);
-//        ceilingPlatform.setScale(2f, 0.5f);
-//        spawnEntityAt(ceilingPlatform, thirdPos,true, false);
-
-        // Platform beneath the twin buttons
-        GridPoint2 fourthPos = new GridPoint2(51, 7);
-        Entity twinButtonPlatform = PlatformFactory.createStaticPlatform();
-        twinButtonPlatform.setScale(2.5f, 0.5f);
-        spawnEntityAt(twinButtonPlatform, fourthPos,false, false);
-
-        // Platform beneath the wall button
-        GridPoint2 fifthPos = new GridPoint2(58, 12);
-        Entity wallPlatform = PlatformFactory.createStaticPlatform();
-        wallPlatform.setScale(1f, 0.5f);
-        spawnEntityAt(wallPlatform, fifthPos,false, false);
-    }
-
-    /**
-     * Spawn moving platform that'll carry player up to the top of puzzle room
-     */
-    private void spawnExitMovingPlatform() {
-        // Set up variables
-        GridPoint2 buttonPlatformPos = new GridPoint2(23, -3);
-        GridPoint2 buttonPos = new GridPoint2(22, -1);
-        Vector2 movementAmount = new Vector2(0f, 16f);
-        float speed = 20f;
-
-        // Spawn the platform
-        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(movementAmount, speed);
-        buttonPlatform.setScale(1.5f, 0.5f);
-        spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
-
-        // Spawn the button
-        Entity button = ButtonFactory.createButton(false, "platform", "right");
-        spawnEntityAt(button, buttonPos, true, true);
-
-        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed) {
-                buttonPlatform.getEvents().trigger("activatePlatform");
-            } else {
-                buttonPlatform.getEvents().trigger("deactivatePlatform");
-            }
-        });
-    }
-
-    /**
-     * Create the obstacles over the ceiling of the button puzzle room/floor of red herring room,
-     * including the trap, wall, and ceiling itself. Does NOT include the lasers,
-     * as these are part of the timed button puzzle.
-     */
-    private Entity[] spawnCeilingObstacles() {
-        Entity[] floorObjects = new Entity[3];
-
-        // Spawn floor
-        GridPoint2 ceilingPos = new GridPoint2(26, tileBounds.y - 40);
-        Entity gateFloor = FloorFactory.createStaticFloor();
-        floorObjects[0] = gateFloor;
-        gateFloor.setScale(19f, 1);
-        spawnEntityAt(gateFloor, ceilingPos, false, false);
-
-        Vector2 safePlatformPos = new Vector2(14, 14.5f);
-        Entity spikesGround = TrapFactory.createSpikes(safePlatformPos, 0f);
-        floorObjects[1] = spikesGround;
-        spawnEntityAt(spikesGround,
-                new GridPoint2(26, tileBounds.y - 34), false, true);
-
-        // Create mini wall at edge (for lasers)
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
-        wall.setScale(1f,2f);
-        floorObjects[2] = wall;
-        spawnEntityAt(wall, new GridPoint2(26, tileBounds.y - 38),
-                false, false);
-
-        return floorObjects;
     }
 
     /**
@@ -620,23 +466,12 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void spawnDeathZone() {
-        // Death zone at the start of level
-        GridPoint2 spawnPos =  new GridPoint2(2, -10);
-        Entity deathZone = DeathZoneFactory.createDeathZone();
-        deathZone.setScale(9,16.5f);
-        deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(1f),
-                PhysicsComponent.AlignX.CENTER,
-                PhysicsComponent.AlignY.BOTTOM);
-        deathZone.addComponent(new TextureRenderComponent("images/blackSquare.png"));
-        spawnEntityAt(deathZone, spawnPos, false,  false);
-
-        // Death zone beneath lasers
         Entity deathZone2 = DeathZoneFactory.createDeathZone();
         deathZone2.setScale(100,0.5f);
         deathZone2.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone2.getScale().scl(0.8f),
-                PhysicsComponent.AlignX.CENTER,
+                PhysicsComponent.AlignX.LEFT,
                 PhysicsComponent.AlignY.BOTTOM);
-        spawnEntityAt(deathZone2, new GridPoint2(42, -3), false,  false);
+        spawnEntityAt(deathZone2, new GridPoint2(0, -2), false,  false);
 
     }
 
