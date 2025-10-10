@@ -15,6 +15,7 @@ import java.util.Collection;
  * Shell: A simple, single-file, dependency-free scripting language interpreter
  * written in vanilla Java.
  */
+@SuppressWarnings("ALL") // Because the unused and exposed classes here are used in reflection.
 public class Shell {
   /** A reference to the Range class for internal use. */
   final public static Class<?> RangeClass = Range.class;
@@ -28,7 +29,7 @@ public class Shell {
    * work with different input/output sources, such as a standard console or a
    * network socket.
    */
-  static public interface Console {
+  public interface Console {
     /**
      * Prints any generic object to the output.
      *
@@ -398,7 +399,7 @@ public class Shell {
   public Object whileLoop(EvaluableFunction condition, EvaluableFunction function) {
     while (isTruthy(condition.evaluate(env, new ArrayList<>()))) {
       final Object result = function.evaluate(env, new ArrayList<>());
-      if (result instanceof ReturnValue) return ((ReturnValue) result).value;
+      if (result instanceof ReturnValue) return ((ReturnValue) result).value();
     }
     return null;
   }
@@ -467,7 +468,7 @@ public class Shell {
  * when printing environments that reference themselves.
  */
 class ShellMap {
-  private HashMap<String, Object> map = new HashMap<>();
+  private final HashMap<String, Object> map = new HashMap<>();
 
   /**
    * A static accessor for the underlying map.
@@ -501,9 +502,9 @@ class ShellMap {
   public String toString() {
     if (inToStringCall) return "...";
     inToStringCall = true;
-    final String retval = getMap(this).toString();
+    final String returnValue = getMap(this).toString();
     inToStringCall = false;
-    return retval;
+    return returnValue;
   }
 }
 
@@ -550,8 +551,8 @@ class Environment {
    */
   public Object get(String name) {
     if (!frames.isEmpty()) { // Only need to check the last frame
-      final Object retval = frames.getLast().get(name);
-      if (retval != null) return retval;
+      final Object returnValue = frames.getLast().get(name);
+      if (returnValue != null) return returnValue;
     }
     return global.get(name);
   }
@@ -576,12 +577,13 @@ class Environment {
    * @return A string representation of the environment.
    */
   @Override
+  @SuppressWarnings("ALL") // LSP does not recognise recursion smh!
   public String toString() {
     if (inToStringCall) return "...";
     inToStringCall = true;
-    final String retval = "Environment{.global = " + global + ".frames = " + frames + "}";
+    final String returnValue = "Environment{.global = " + global + ".frames = " + frames + "}";
     inToStringCall = false;
-    return retval;
+    return returnValue;
   }
 }
 
@@ -598,12 +600,7 @@ final class ShellException extends RuntimeException {
  * A wrapper class to signify a return value from a function. This is used to
  * unwind the call stack during a return statement.
  */
-final class ReturnValue {
-  public final Object value;
-
-  public ReturnValue(Object value) {
-    this.value = value;
-  }
+record ReturnValue(Object value) {
 
   @Override
   public String toString() {
@@ -975,24 +972,15 @@ final class MaybeMethodStatement implements EvaluableFunction {
 
 /**
  * Represents a user-defined function in the shell script.
- // e.g. `(x, y) { return(.java.lang.Math.pow(x, y)); }`
+ * // e.g. `(x, y) { return(.java.lang.Math.pow(x, y)); }`
  */
-final class FunctionStatement implements EvaluableFunction {
-  final Evaluable[] instructions;
-
-  final String[] parameter_names;
-  final int variadicIndex;
-
-  FunctionStatement(Evaluable[] instructions, String[] parameter_names, int variadicIndex) {
-    this.instructions = instructions;
-    this.parameter_names = parameter_names;
-    this.variadicIndex = variadicIndex;
-  }
+record FunctionStatement(Evaluable[] instructions, String[] parameter_names,
+                         int variadicIndex) implements EvaluableFunction {
 
   /**
    * Executes the function call statement
    *
-   * @param env The parent environment.
+   * @param env        The parent environment.
    * @param parameters The arguments passed to the function.
    * @return The function's return value, or null if no return statement is executed.
    * @throws ShellException if the wrong number of arguments is provided.
@@ -1019,7 +1007,7 @@ final class FunctionStatement implements EvaluableFunction {
       final Object result = instruction.evaluate(env);
       if (result instanceof ReturnValue) {
         env.popFrame();
-        return ((ReturnValue) result).value;
+        return ((ReturnValue) result).value();
       }
     }
 
@@ -1058,7 +1046,7 @@ record ClassResultStatement(Class<?> c) implements EvaluableFunction {
           // This will throw IllegalArgumentException if the types are incorrect,
           return constructor.newInstance(args);
         } catch (IllegalArgumentException e) {
-          continue; // Argument types don't match, so we continue
+          // Argument types don't match, so we continue
         } catch (Exception e) {
           throw new ShellException("Error instantiating class '" + c.getSimpleName() + "': " + e.getMessage());
         }
@@ -1116,9 +1104,9 @@ final class ClassResolutionStatement implements Evaluable {
 
   @Override
   public String toString() {
-    final String retval = "ClassResolution(" + resolvedClass.getSimpleName() + ")";
-    if (subPath.isEmpty()) return retval;
-    return retval + "." + String.join(".", subPath);
+    final String returnValue = "ClassResolution(" + resolvedClass.getSimpleName() + ")";
+    if (subPath.isEmpty()) return returnValue;
+    return returnValue + "." + String.join(".", subPath);
   }
 }
 

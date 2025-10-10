@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
  * If you want to add you own snippets to be initialized, declare a `private static final String`
  * and assign it the code you want to run on shell startup.
  */
+@SuppressWarnings("unused")
 public class Initializer {
   static public Shell getInitializedShell() {
     Shell shell = new Shell(new Shell.Console() {
