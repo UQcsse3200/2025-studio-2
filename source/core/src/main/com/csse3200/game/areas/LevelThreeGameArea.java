@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
@@ -25,6 +26,8 @@ import com.csse3200.game.rendering.RenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
+import com.csse3200.game.ui.achievements.AchievementsMenuUI;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import com.csse3200.game.files.FileLoader;
 import org.slf4j.Logger;
@@ -83,6 +86,7 @@ public class LevelThreeGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset(cfg.miniMap, Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
     }
 
     /**
@@ -167,6 +171,8 @@ public class LevelThreeGameArea extends GameArea {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay(name));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
+        ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new AchievementsMenuUI());
         spawnEntity(ui);
     }
 
