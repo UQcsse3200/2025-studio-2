@@ -23,6 +23,8 @@ public class MovingPlatformComponent extends Component {
     private final Set<Entity> passengers = new HashSet<>();
     private Vector2 lastPos;
 
+    private boolean enabled = true;
+
     public MovingPlatformComponent(Vector2 offset, float speed) {
         this.offset = offset.cpy();
         this.speed = speed;
@@ -45,6 +47,9 @@ public class MovingPlatformComponent extends Component {
         }
 
         lastPos = pos.cpy();
+
+        entity.getEvents().addListener("start", () -> enabled = true);
+        entity.getEvents().addListener("stop", () -> enabled = false);
     }
 
 
@@ -53,6 +58,11 @@ public class MovingPlatformComponent extends Component {
         Body body = physics.getBody();
         Vector2 currentPos = body.getPosition();
         Vector2 target = forward ? end : start;
+
+        if (!enabled) {
+            body.setLinearVelocity(Vector2.Zero);
+            return;
+        }
 
         // Check if we're close enough to snap
         if (currentPos.dst2(target) <= epsilon * epsilon) {

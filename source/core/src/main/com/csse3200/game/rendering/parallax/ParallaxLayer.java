@@ -200,7 +200,6 @@ public class ParallaxLayer {
         // Use custom scale instead of auto-calculated scale
         float textureWidth = texture.getWidth();
         float textureHeight = texture.getHeight();
-
         float scaledWidth = textureWidth * scaleX;
         float scaledHeight = textureHeight * scaleY;
 
