@@ -277,7 +277,7 @@ public class LaserShowerComponent extends Component {
         coneLight.setFollowEntity(false);
         light.addComponent(coneLight);
 
-        TextureRenderComponent texture = new TextureRenderComponent("images/laser-end.png");
+        TextureRenderComponent texture = new TextureRenderComponent("images/LaserShower-end.png");
         texture.setLayer(3);
         light.addComponent(texture);
         light.setScale(0.2f, 0.2f);
