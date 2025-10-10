@@ -254,7 +254,7 @@ public class LevelTwoGameArea extends GameArea {
 
 
         for (int i = 0; i <= 2; i++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f);
             float x = X - ((i+1)* (float) 5.5);
             spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
@@ -268,7 +268,7 @@ public class LevelTwoGameArea extends GameArea {
         }
 
         for (int j = 0; j <=2; j++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f);
             float x = X + ((j+1)* (float) 5.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");

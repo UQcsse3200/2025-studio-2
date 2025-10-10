@@ -226,7 +226,7 @@ public class BossLevelGameArea extends GameArea {
 
         // Spawn 3 lasers to the left
         for (int i = 0; i <= 2; i++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f);
             float x = X - ((i + 1) * 7.5f); // offset left
             spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
@@ -242,7 +242,7 @@ public class BossLevelGameArea extends GameArea {
 
         // Spawn 3 lasers to the right
         for (int i = 0; i <= 2; i++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f);
             float x = X + ((i + 1) * 7.5f); // offset right
             spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
