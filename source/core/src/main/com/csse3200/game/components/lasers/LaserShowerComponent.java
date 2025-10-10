@@ -127,20 +127,19 @@ public class LaserShowerComponent extends Component {
 
     public void fireLaser() {
         /*
-        * within this a few calculations are done to construct out
-        * list of collisions our laser makes.
-        *
-        * firstly we start by getting the initial position of the laser which
-        * is offset by a set value. then from there we raycast until hitting any collider
-        * within out mask. after it's determined what type of collider layer is hit, if it's
-        * an obstacle than the laser stops. if the collider is a reflector then the angle of
-        * reflection is calculated using the impact angle and the normal vector of the surface
-        * hit. the process is repeated until we run out of rebounds or length.
-        * */
+         * within this a few calculations are done to construct out
+         * list of collisions our laser makes.
+         *
+         * firstly we start by getting the initial position of the laser which
+         * is offset by a set value. then from there we raycast until hitting any collider
+         * within out mask. after it's determined what type of collider layer is hit, if it's
+         * an obstacle than the laser stops. if the collider is a reflector then the angle of
+         * reflection is calculated using the impact angle and the normal vector of the surface
+         * hit. the process is repeated until we run out of rebounds or length.
+         * */
         Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
         if (laserSound != null) {
-            long soundId = laserSound .play(1.0f);
-            fadeOutSound(laserSound , soundId);
+            laserSound.play(1.0f);
         }
 
         positions.clear();
@@ -239,27 +238,6 @@ public class LaserShowerComponent extends Component {
         }
         lastReflectorsHit = reflectorsHit;
     }
-    /**
-     * Gradually fades out the sound over 1 second.
-     * @param sound Sound to fade
-     * @param soundId ID of the playing sound
-     */
-    private void fadeOutSound(Sound sound, long soundId) {
-        final int steps = 10;
-        final float interval = (float) 1.0 / steps;
-
-        for (int i = 0; i < steps; i++) {
-            final float volume = 1.0f - (i / (float) steps);
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    sound.setVolume(soundId, volume);
-                    if (volume <= 0f) sound.stop(soundId);
-                }
-            }, i * interval);
-        }
-    }
-
     /**
      * Creates a point light entity to visualize laser hits.
      * @return point light entity
