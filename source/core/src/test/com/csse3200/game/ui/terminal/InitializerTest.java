@@ -104,25 +104,24 @@ class InitializerTest {
 
     collectableFactory = mockStatic(CollectableFactory.class);
     collectableFactory.when(CollectableFactory::createJetpackUpgrade)
-                    .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
     collectableFactory.when(CollectableFactory::createDashUpgrade)
-            .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
     collectableFactory.when(CollectableFactory::createGlideUpgrade)
-            .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
     collectableFactory.when(() -> CollectableFactory.createCollectable("key:door"))
-            .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
 
     mockGameArea = mock(GameArea.class);
     mainGameScreen = mock(MainGameScreen.class);
     ServiceLocator.registerMainGameScreen(mainGameScreen);
-    GameArea shellAreaMock = mock(GameArea.class);
     when(mainGameScreen.getAreaEnum()).thenReturn(mock(MainGameScreen.Areas.class));
     when(mainGameScreen.getGameArea(any(MainGameScreen.Areas.class))).thenReturn(mockGameArea);
-
 
     when(player.getComponent(CombatStatsComponent.class)).thenReturn(cb);
     when(player.getComponent(InventoryComponent.class)).thenReturn(inv);
     shell.setGlobal("player", player);
+    shell.eval("getPlayer = () { return(player); };");
   }
 
   @Test
