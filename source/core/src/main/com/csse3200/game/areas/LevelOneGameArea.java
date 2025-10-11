@@ -258,7 +258,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
     public void spawnLaserShower() {
-        final float Y = player.getPosition().y + 10f;
+        final float Y = player.getPosition().y + 30f;
         final float X = player.getPosition().x;
 
 
