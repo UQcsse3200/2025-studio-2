@@ -372,7 +372,7 @@ public class MainGameScreen extends ScreenAdapter {
                     return;
                 }
                 laserTimer += delta;
-                if (laserTimer >= 50f) {
+                if (laserTimer >= 40f) {
                     bossLevel.spawnLaserShower(); // spawn lasers
                     laserTimer = 0f; // reset timer
                 }
