@@ -3,6 +3,7 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -14,6 +15,7 @@ import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -296,8 +298,7 @@ public class BossLevelGameArea extends GameArea {
     }
 
     /**
-     * Spawns the platforms (left half of screen, upper path)
-     * leading towards the shut gate and evil button.
+     * Spawns the platforms (left half of screen, upper path) leading towards the door
      */
     private void spawnUpwardPath() {
         GridPoint2 firstPos = new GridPoint2(40, tileBounds.y - 27);
@@ -310,11 +311,7 @@ public class BossLevelGameArea extends GameArea {
         secondPlatform.setScale(1.5f, 0.5f);
         spawnEntityAt(secondPlatform, secondPos,false, false);
 
-        // NOTE: COULD ACTUALLY TOTALLY MAKE THIS ONE EVIL!! + Add red glow for clarity??
-        GridPoint2 thirdPos = new GridPoint2(57, tileBounds.y - 23);
-        Entity thirdPlatform = PlatformFactory.createStaticPlatform();
-        thirdPlatform.setScale(1.5f, 0.5f);
-        spawnEntityAt(thirdPlatform, thirdPos,false, false);
+        spawnEvilPlatform();
 
         GridPoint2 fourthPos = new GridPoint2(50, tileBounds.y - 16);
         Entity fourthPlatform = PlatformFactory.createStaticPlatform();
@@ -322,6 +319,41 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(fourthPlatform, fourthPos,false, false);
 
         spawnKeyButtonAndPlatform();
+    }
+
+    /**
+     * The evil platform is a moving platform that glows red.
+     * Pressing its accompanying button absolutely launches the player towards the boss.
+     */
+    private void spawnEvilPlatform() {
+        // The glow component because it's cool
+        ConeLightComponent evilGlow = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                128,
+                new Color().set(1f, 0f, 0f, 0.6f),
+                2.5f,
+                0f,
+                180f);
+
+        // The platform
+        GridPoint2 pos = new GridPoint2(57, tileBounds.y - 23);
+        Entity platform = PlatformFactory.createButtonTriggeredPlatform(new Vector2(-20f, 0f), 20f);
+        platform.setScale(1.5f, 0.5f);
+        spawnEntityAt(platform, pos,false, false);
+
+        // The button
+        Entity button = ButtonFactory.createButton(false, "platform", "left");
+        button.addComponent(evilGlow);
+        spawnEntityAt(button, new GridPoint2(59, tileBounds.y - 22), true, true);
+
+        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+            if (isPressed) {
+                platform.getEvents().trigger("activatePlatform");
+            } else {
+                platform.getEvents().trigger("deactivatePlatform");
+            }
+        });
+
     }
 
     /**
@@ -411,7 +443,7 @@ public class BossLevelGameArea extends GameArea {
         // Bat flying around in next jump area
         BoxFactory.AutonomousBoxBuilder chaoticBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity chaoticBat = chaoticBatBuilder
-                .moveX(22f, 24f).moveY(18f, 25f)
+                .moveX(22f, 24f).moveY(5f, 12f)
                 .texture("images/flying_bat.atlas")
                 .speed(5f).build();
         spawnEntityAt(chaoticBat, new GridPoint2(
@@ -426,7 +458,7 @@ public class BossLevelGameArea extends GameArea {
 //         First bat blocking jumps between initial platforms
         BoxFactory.AutonomousBoxBuilder firstBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity verticalBat = firstBatBuilder
-                .moveX(5.5f, 5.5f).moveY(13f, 25f)
+                .moveX(5.5f, 5.5f).moveY(3f, 15f)
                 .texture("images/flying_bat.atlas")
                 .speed(15f) // very hyperactive bat but it's ok we don't need realism
                 .build();
