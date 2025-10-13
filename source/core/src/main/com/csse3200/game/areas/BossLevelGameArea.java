@@ -32,10 +32,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossLevelGameArea extends GameArea {
+    private GridPoint2 playerSpawn;
+
     private static final GridPoint2 mapSize = new GridPoint2(100,57);
     private static final float WALL_THICKNESS = 0.1f;
-    private static GridPoint2 playerSpawn;
-  private static final String[] gameTextures = {
+    private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
             "images/button_pushed.png",
@@ -265,13 +266,13 @@ public class BossLevelGameArea extends GameArea {
                 false, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f);
+        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40.0f,1,5.0f);
         upperWall.setScale(2f,15f);
         spawnEntityAt(upperWall, new GridPoint2(60, tileBounds.y - 34),
                 false, false);
 
         // Wall blocking death pit
-        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f);
+        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40.0f,1,5.0f);
         deathPitWall.setScale(1.3f,13f);
         spawnEntityAt(deathPitWall, new GridPoint2(20, -3),
                 false, false);

@@ -2,6 +2,7 @@ package com.csse3200.game.components.statisticspage;
 
 import com.csse3200.game.files.FileLoader;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -19,8 +20,8 @@ public class StatsTracker {
 
     private static final String FILE_PATH = "configs/stats.json";
 
-    public StatsTracker() {
-        loadStats();
+    private StatsTracker() {
+        throw new IllegalStateException("Instantiating static util class");
     }
 
     /**
@@ -37,8 +38,10 @@ public class StatsTracker {
      */
     public static void endSession() {
         playtime += System.currentTimeMillis() - sessionStartTime;
-        logger.info("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
-        logger.info("Total playtime before save: " + playtime);
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
+            logger.info("Total playtime before save: " + playtime);
+        }
         saveStats();
     }
 
