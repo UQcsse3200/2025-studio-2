@@ -6,7 +6,6 @@ import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
  * Factory to create DeathZone entities (objects that kill the player (and possibly enemies)).

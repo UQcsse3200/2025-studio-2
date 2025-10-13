@@ -1,9 +1,9 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.Input;
-import com.csse3200.game.input.Keymap;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.components.TutorialComponent;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.input.Keymap;
 
 /**
  * A factory to create tutorial entities.

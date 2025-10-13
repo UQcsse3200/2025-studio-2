@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.csse3200.game.entities.Entity;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 /** Unit tests for StaminaComponent (no LibGDX needed). */

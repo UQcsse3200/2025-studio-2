@@ -4,11 +4,9 @@ import box2dLight.ConeLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.ComponentPriority;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**

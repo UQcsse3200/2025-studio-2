@@ -1,10 +1,7 @@
 package com.csse3200.game.components;
 
-import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.factories.BossLaserFactory;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.areas.GameArea;
 
 /**
  * Component that allows a boss to spawn lasers periodically.

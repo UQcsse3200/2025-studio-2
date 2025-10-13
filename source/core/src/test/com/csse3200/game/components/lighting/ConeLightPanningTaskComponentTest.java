@@ -26,8 +26,8 @@ import org.mockito.MockedConstruction;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class ConeLightPanningTaskComponentTest {

@@ -9,7 +9,6 @@ import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ObjectivesComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;

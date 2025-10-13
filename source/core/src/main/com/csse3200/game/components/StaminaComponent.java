@@ -1,12 +1,10 @@
 package com.csse3200.game.components;
 
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.achievements.AchievementProgression;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import com.csse3200.game.achievements.AchievementProgression;
 
 
 /**

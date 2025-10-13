@@ -17,7 +17,6 @@ import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;

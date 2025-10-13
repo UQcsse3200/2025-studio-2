@@ -6,9 +6,9 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.PhysicsComponent;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
 
 public class MovingPlatformComponent extends Component {

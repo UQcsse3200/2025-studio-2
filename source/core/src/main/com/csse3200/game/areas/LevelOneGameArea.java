@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -12,22 +11,18 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.CollectableComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -37,14 +32,12 @@ import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.ui.achievements.AchievementToastUI;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
