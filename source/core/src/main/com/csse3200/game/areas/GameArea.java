@@ -178,7 +178,7 @@ public abstract class GameArea implements Disposable {
    */
   public void reset() {
     isResetting = true;
-    final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    final int oldEntityCount = ServiceLocator.getEntityService().getEntities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
@@ -195,7 +195,7 @@ public abstract class GameArea implements Disposable {
 
     loadEntities();
 
-    final int newEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    final int newEntityCount = ServiceLocator.getEntityService().getEntities().size;
     if (oldEntityCount != newEntityCount) {
       logger.error(
           "only {} entities should exist but {} entities exist now, {} Entities Leaked!!!",

@@ -17,6 +17,7 @@ public class PressurePlateComponent extends Component {
      */
     @Override
     public void create() {
+        // Nothing to be created
     }
 
     /**

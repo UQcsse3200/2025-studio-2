@@ -35,8 +35,8 @@ public class Renderer implements Disposable {
    */
   public Renderer(CameraComponent camera) {
     SpriteBatch spriteBatch = new SpriteBatch();
-    DebugRenderer debugRenderer = new DebugRenderer();
-    debugRenderer.setActive(false);
+    DebugRenderer debugRendererInstance = new DebugRenderer();
+    debugRendererInstance.setActive(false);
 
     init(
         camera,
@@ -44,13 +44,7 @@ public class Renderer implements Disposable {
         spriteBatch,
         new Stage(new ScreenViewport(), spriteBatch),
         ServiceLocator.getRenderService(),
-        debugRenderer);
-
-    /* TODO: Remove prior to production
-    Temporary zoom adjustment for whole-level screenshots.  Meant for development/debugging only.
-    */
-//     OrthographicCamera screenshotCamera = (OrthographicCamera) this.camera.getCamera();
-//     screenshotCamera.zoom = 5f;
+        debugRendererInstance);
   }
 
   /**

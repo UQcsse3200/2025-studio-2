@@ -56,7 +56,7 @@ public class BossSpawnerComponent extends Component {
 	 * Find the player entity in the entity service
 	 */
 	private void findPlayer() {
-		for (Entity entity : ServiceLocator.getEntityService().get_entities()) {
+		for (Entity entity : ServiceLocator.getEntityService().getEntities()) {
 			if (entity.getComponent(com.csse3200.game.components.player.PlayerActions.class) != null) {
 				player = entity;
 				return;
@@ -178,7 +178,7 @@ public class BossSpawnerComponent extends Component {
 	private int getActiveDroneCount() {
 		int activeCount = 0;
 		for (Entity drone : spawnedDrones) {
-			if (drone != null && ServiceLocator.getEntityService().get_entities().contains(drone, true)) {
+			if (drone != null && ServiceLocator.getEntityService().getEntities().contains(drone, true)) {
 				activeCount++;
 			}
 		}
@@ -190,7 +190,7 @@ public class BossSpawnerComponent extends Component {
 	 */
 	private void cleanupDeadDrones() {
 		spawnedDrones.removeIf(drone ->
-				drone == null || !ServiceLocator.getEntityService().get_entities().contains(drone, true)
+				drone == null || !ServiceLocator.getEntityService().getEntities().contains(drone, true)
 		);
 	}
 
@@ -225,7 +225,7 @@ public class BossSpawnerComponent extends Component {
 	public void cleanupDrones() {
 		logger.info("Cleaning up {} spawned drones", spawnedDrones.size());
 		for (Entity drone : spawnedDrones) {
-			if (drone != null && ServiceLocator.getEntityService().get_entities().contains(drone, true)) {
+			if (drone != null && ServiceLocator.getEntityService().getEntities().contains(drone, true)) {
 				drone.dispose();
 			}
 		}

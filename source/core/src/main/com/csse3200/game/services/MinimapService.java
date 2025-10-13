@@ -81,10 +81,10 @@ public class MinimapService implements Disposable {
    * @param marker The image to use for the entity's marker.
    */
   public void trackEntity(Entity entity, Image marker) {
-    if (!trackedEntities.containsKey(entity)) {
-      trackedEntities.put(entity, marker);
+    trackedEntities.computeIfAbsent(entity, e -> {
       minimapDisplay.addMarker(marker);
-    }
+      return marker;
+    });
   }
 
   /**

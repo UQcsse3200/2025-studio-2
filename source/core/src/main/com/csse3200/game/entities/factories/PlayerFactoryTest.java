@@ -19,18 +19,11 @@ import com.csse3200.game.services.ServiceLocator;
  */
 
 public class PlayerFactoryTest {
-
-    private static final PlayerConfig stats =
-            FileLoader.readClass(PlayerConfig.class, "configs/player.json");
-
     /**
      * Create a player entity.
      * @return entity
      */
     public static Entity createPlayer() {
-        InputComponent inputComponent =
-                ServiceLocator.getInputService().getInputFactory().createForPlayer();
-
         return new Entity()
                 .addComponent(new PhysicsComponent())
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.PLAYER))

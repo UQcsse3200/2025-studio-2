@@ -295,7 +295,9 @@ public class PauseMenuDisplay extends UIComponent {
     }
 
     @Override
-    protected void draw(SpriteBatch batch) {}
+    protected void draw(SpriteBatch batch) {
+        // Handled by the component
+    }
 
     @Override
     public void dispose() {

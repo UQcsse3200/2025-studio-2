@@ -46,7 +46,7 @@ public class BossSpawnerComponentTest {
         // Mock entity service to return our entities
         com.badlogic.gdx.utils.Array<Entity> entities = new com.badlogic.gdx.utils.Array<>();
         entities.add(playerEntity);
-        when(entityService.get_entities()).thenReturn(entities);
+        when(entityService.getEntities()).thenReturn(entities);
     }
 
     @AfterEach
@@ -124,7 +124,7 @@ public class BossSpawnerComponentTest {
         spawnerComponent.setEntity(bossEntity);
 
         // Empty entity service
-        when(entityService.get_entities()).thenReturn(new com.badlogic.gdx.utils.Array<>());
+        when(entityService.getEntities()).thenReturn(new com.badlogic.gdx.utils.Array<>());
         spawnerComponent.create();
 
         assertDoesNotThrow(spawnerComponent::update);

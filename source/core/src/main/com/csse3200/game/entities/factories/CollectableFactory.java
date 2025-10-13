@@ -26,6 +26,9 @@ import java.util.Map;
  * Factory for creating collectable entities (e.g., keys, coins, potions).
  */
 public class CollectableFactory {
+    private CollectableFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static Map<String, CollectablesConfig> cfgs;
 
