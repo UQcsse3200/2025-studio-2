@@ -242,7 +242,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (walkDirection.epsilonEquals(Vector2.Zero)) {
             entity.getEvents().trigger("walkStop");
         } else {
-            if (!onLadder && Math.abs(walkDirection.y) > 0f) {
+            if (!cheatsOn && !onLadder && Math.abs(walkDirection.y) > 0f) {
                 walkDirection.y = 0f;
             }
             entity.getEvents().trigger("walk", walkDirection);
