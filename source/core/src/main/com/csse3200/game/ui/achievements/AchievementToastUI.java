@@ -23,6 +23,8 @@ public class AchievementToastUI extends Component implements AchievementService.
     private Stage stage;
     private Skin skin;
 
+    private static final String TOAST_BG = "toast-bg";
+
     @Override
     public void create() {
         // Register to receive achievement events
@@ -37,7 +39,9 @@ public class AchievementToastUI extends Component implements AchievementService.
         if (stage == null) {
             try {
                 stage = ServiceLocator.getRenderService().getStage();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+              // Ignore
+            }
         }
         if (skin == null) {
             // Adjust to your real skin path if you have one. It’s fine if this fails – we fall back.
@@ -62,7 +66,7 @@ public class AchievementToastUI extends Component implements AchievementService.
         Texture tex = new Texture(pm);
         pm.dispose();
         Drawable bg = new TextureRegionDrawable(new TextureRegion(tex));
-        s.add("toast-bg", bg, Drawable.class);
+        s.add(TOAST_BG, bg, Drawable.class);
 
         return s;
     }
@@ -83,8 +87,8 @@ public class AchievementToastUI extends Component implements AchievementService.
     private void showToast(String title, String desc) {
         // Build toast content
         Table toast = new Table(skin);
-        if (skin.has("toast-bg", Drawable.class)) {
-            toast.setBackground(skin.getDrawable("toast-bg"));
+        if (skin.has(TOAST_BG, Drawable.class)) {
+            toast.setBackground(skin.getDrawable(TOAST_BG));
         }
 
         Label titleLbl = new Label(title, skin);

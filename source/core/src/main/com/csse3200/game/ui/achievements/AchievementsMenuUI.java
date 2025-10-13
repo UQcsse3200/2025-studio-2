@@ -18,6 +18,8 @@ public class AchievementsMenuUI extends UIComponent {
     private Table list;
     private ScrollPane scroller;
 
+    private static final String ACHV_MENU = "AchvMenu";
+
     @Override
     public void create() {
         super.create();
@@ -29,29 +31,29 @@ public class AchievementsMenuUI extends UIComponent {
         root.setResizable(false);
 
         list = new Table(skin);
-        list.defaults().left().pad(6f);
+        list.defaults().left().pad(6.0f);
 
         scroller = new ScrollPane(list, skin);
         scroller.setFadeScrollBars(false);
 
         Table content = new Table(skin);
-        content.add(new Label("Achievements", skin, "title")).left().padBottom(10f).row();
-        content.add(scroller).width(520f).height(360f);
+        content.add(new Label("Achievements", skin, "title")).left().padBottom(10.0f).row();
+        content.add(scroller).width(520.0f).height(360.0f);
 
-        root.add(content).pad(16f);
+        root.add(content).pad(16.0f);
         root.pack();
 
         // center
         float w = stage.getViewport().getWorldWidth();
         float h = stage.getViewport().getWorldHeight();
-        root.setPosition((w - root.getWidth()) / 2f, (h - root.getHeight()) / 2f);
+        root.setPosition((w - root.getWidth()) / 2.0f, (h - root.getHeight()) / 2.0f);
 
         stage.addActor(root);
         root.setVisible(false);
 
         // 🔁 Auto-refresh whenever an achievement unlocks
         AchievementService.get().addListener((id, title, desc) -> {
-            Gdx.app.log("AchvMenu", "Unlocked event for " + id + " – refreshing menu");
+            Gdx.app.log(ACHV_MENU, "Unlocked event for " + id + " – refreshing menu");
             if (root.isVisible()) {
                 refresh();
             }
@@ -73,10 +75,10 @@ public class AchievementsMenuUI extends UIComponent {
     private void refresh() {
         list.clear();
         // Optional: debug what the service thinks
-        Gdx.app.log("AchvMenu", "Refreshing. Current unlocked:");
+        Gdx.app.log(ACHV_MENU, "Refreshing. Current unlocked:");
         for (AchievementId id : AchievementId.values()) {
             boolean unlocked = AchievementService.get().isUnlocked(id);
-            Gdx.app.log("AchvMenu", " - " + id + " : " + unlocked);
+            Gdx.app.log(ACHV_MENU, " - " + id + " : " + unlocked);
 
             String line = (unlocked ? "✔ " : "□ ") + pretty(id);
             list.add(new Label(line, skin)).left().row();
@@ -86,13 +88,13 @@ public class AchievementsMenuUI extends UIComponent {
     }
 
     private String pretty(AchievementId id) {
-        switch (id) {
-            case LEVEL_1_COMPLETE:  return "Level One Hero – Finish Level 1";
-            case LEVEL_2_COMPLETE:  return "Level Two Conqueror – Finish Level 2";
-            case ADRENALINE_RUSH:  return "Adrenaline Rush – Sprint for 30s total";
-            case STAMINA_MASTER:   return "Stamina Master – Finish a level without exhausting stamina";
-            default:               return id.name();
-        }
+        return switch (id) {
+            case LEVEL_1_COMPLETE -> "Level One Hero – Finish Level 1";
+            case LEVEL_2_COMPLETE -> "Level Two Conqueror – Finish Level 2";
+            case ADRENALINE_RUSH -> "Adrenaline Rush – Sprint for 30s total";
+            case STAMINA_MASTER -> "Stamina Master – Finish a level without exhausting stamina";
+            default -> id.name();
+        };
     }
 
     @Override
@@ -106,6 +108,11 @@ public class AchievementsMenuUI extends UIComponent {
         }
     }
 
-    @Override public void draw(SpriteBatch batch) {}
-    @Override public void dispose() { if (root != null) root.remove(); super.dispose(); }
+    @Override public void draw(SpriteBatch batch) {
+        // Handled by the renderer
+    }
+    @Override public void dispose() {
+        if (null != root) root.remove();
+        super.dispose();
+    }
 }
