@@ -2,10 +2,13 @@ package com.csse3200.game.components.statisticspage;
 
 import com.csse3200.game.files.FileLoader;
 
+import java.util.logging.Logger;
+
 /**
  * Stats logic handling class
  */
 public class StatsTracker {
+    private static final Logger logger = Logger.getLogger(StatsTracker.class.getName());
     private static long playtime; // in ms
     private static int upgradesCollected;
     private static int levelsCompleted;
@@ -26,7 +29,7 @@ public class StatsTracker {
     public static void startSession() {
         loadStats();
         sessionStartTime = System.currentTimeMillis();
-        System.out.println("Session start");
+        logger.info("Session start");
     }
 
     /**
@@ -34,8 +37,8 @@ public class StatsTracker {
      */
     public static void endSession() {
         playtime += System.currentTimeMillis() - sessionStartTime;
-        System.out.println("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
-        System.out.println("Total playtime before save: " + playtime);
+        logger.info("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
+        logger.info("Total playtime before save: " + playtime);
         saveStats();
     }
 

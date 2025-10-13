@@ -34,11 +34,12 @@ public class BossLaserSpawnerComponent extends Component {
         spawnLaser();
     }
 
+    // TODO: implement
     private void spawnLaser() {
-        //Entity laser = BossLaserFactory.createBossLaser(player);
+        // `Entity laser = BossLaserFactory.createBossLaser(player);`
         // position laser at boss
 
-// Register with the EntityService, which will automatically add it to the active GameArea
-        //erviceLocator.getEntityService().register(laser);
+        // Register with the EntityService, which will automatically add it to the active GameArea
+        // `serviceLocator.getEntityService().register(laser);`
     }
 }

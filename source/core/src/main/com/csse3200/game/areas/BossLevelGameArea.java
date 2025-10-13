@@ -34,9 +34,8 @@ import java.util.List;
 public class BossLevelGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,57);
     private static final float WALL_THICKNESS = 0.1f;
-    private static GridPoint2 PLAYER_SPAWN;
-    boolean has_laser = false;
-    private static final String[] gameTextures = {
+    private static GridPoint2 playerSpawn;
+  private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
             "images/button_pushed.png",
@@ -120,7 +119,7 @@ public class BossLevelGameArea extends GameArea {
     protected void loadPrerequisites() {
         displayUI();
         spawnTerrain();
-        PLAYER_SPAWN  = new GridPoint2(5, tileBounds.y - 5);
+        playerSpawn = new GridPoint2(5, tileBounds.y - 5);
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
     }
@@ -260,19 +259,19 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnWalls() {
         // Lower wall between level halves
-        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"");
+        Entity lowerWall = WallFactory.createWall(15,0,1,5f);
         lowerWall.setScale(2f,10f);
         spawnEntityAt(lowerWall, new GridPoint2(60, -3),
                 false, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f);
         upperWall.setScale(2f,15f);
         spawnEntityAt(upperWall, new GridPoint2(60, tileBounds.y - 34),
                 false, false);
 
         // Wall blocking death pit
-        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f);
         deathPitWall.setScale(1.3f,13f);
         spawnEntityAt(deathPitWall, new GridPoint2(20, -3),
                 false, false);
@@ -457,7 +456,7 @@ public class BossLevelGameArea extends GameArea {
                 new GridPoint2(26, tileBounds.y - 34), false, true);
 
         // Create mini wall at edge (for lasers)
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f);
         wall.setScale(1f,2f);
         floorObjects[2] = wall;
         spawnEntityAt(wall, new GridPoint2(26, tileBounds.y - 38),
@@ -508,7 +507,7 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnTraps() {
         // Spawn trap on first platform
-        Vector2 firstSafePos = new Vector2((float) PLAYER_SPAWN.x / 2, (float) (PLAYER_SPAWN.y) / 2);
+        Vector2 firstSafePos = new Vector2((float) playerSpawn.x / 2, (float) (playerSpawn.y) / 2);
         Entity spikes1 = TrapFactory.createSpikes(firstSafePos, 90f);
         spawnEntityAt(spikes1,
                 new GridPoint2(15,tileBounds.y - 17), true,  true);
@@ -516,7 +515,7 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(spikes2,
                 new GridPoint2(15,tileBounds.y - 15), true,  true);
 
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f);
         wall.setScale(1f,8f);
         spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
                 false, false);
@@ -643,14 +642,14 @@ public class BossLevelGameArea extends GameArea {
 
     protected Entity spawnPlayer() {
         Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
-        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        spawnEntityAt(newPlayer, playerSpawn, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
 
     protected Entity spawnPlayer(List<Component> componentList) {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
-        spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
+        spawnEntityAt(newPlayer, playerSpawn, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }

@@ -16,6 +16,10 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  * - Use distinct textures from platforms
  */
 public class WallFactory {
+    private WallFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
+
     /**
      * Create a vertical wall at world position (x, y) with given size (width, height).
      * Texture is scaled to fit the specified size.
@@ -24,10 +28,9 @@ public class WallFactory {
      * @param y World Y (bottom-left)
      * @param width Wall width in world units
      * @param height Wall height in world units
-     * @param texturePath Asset path, e.g. "images/walls/stone_wall.png"
      * @return Configured wall entity
      */
-    public static Entity createWall(float x, float y, float width, float height, String texturePath) {
+    public static Entity createWall(float x, float y, float width, float height) {
         Entity wall =
                 new Entity()
                         .addComponent(new TextureRenderComponent("images/wall.png"))
@@ -40,7 +43,7 @@ public class WallFactory {
         return wall;
     }
 
-    public static Entity createTiledWall(float x, float y, int tilesX, int tilesY, float tileWorldSize, String texturePath) {
+    public static Entity createTiledWall(float x, float y, int tilesX, int tilesY, float tileWorldSize) {
         float width = tilesX * tileWorldSize;
         float height = tilesY * tileWorldSize;
 

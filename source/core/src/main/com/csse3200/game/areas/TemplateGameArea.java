@@ -44,7 +44,6 @@ public class TemplateGameArea extends GameArea {
             "images/minimap_forest_area.png",
             "images/box_blue.png",
             "images/box_white.png",
-            "images/blue_button.png",
             "images/spikes_sprite.png",
             "images/TechWallBase.png",
             "images/TechWallVariant1.png",
@@ -59,14 +58,13 @@ public class TemplateGameArea extends GameArea {
             "images/button.png",
             "images/button_pushed.png",
             "images/blue_button_pushed.png",
-            "images/blue_button.png",
             "images/drone.png",
             "images/bomb.png",
             "images/camera-body.png",
             "images/camera-lens.png"
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
-    private static final String[] musics = {backgroundMusic};
+    private static final String BACKGROUND_MUSIC = "sounds/BGM_03_mp3.mp3";
+    private static final String[] musics = {BACKGROUND_MUSIC};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/chimesound.mp3"};
     private static final String[] gameTextureAtlases = {
@@ -86,10 +84,10 @@ public class TemplateGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
-
+        // Add entities to be loaded here
     }
     private void playMusic() {
-        Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+        Music music = ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class);
         music.setLooping(true);
         music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
@@ -137,20 +135,18 @@ public class TemplateGameArea extends GameArea {
                 false,
                 false);
         // Bottom
-        //spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_WIDTH), GridPoint2Utils.ZERO, false, false);
         spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
                 new GridPoint2(0, 4), false, false);
     }
     private TerrainComponent createDefaultTerrain() {
-        TextureRegion variant1, variant2, variant3, baseTile;
-        final ResourceService resourceService = ServiceLocator.getResourceService();
-        baseTile =
+        ResourceService resourceService = ServiceLocator.getResourceService();
+        TextureRegion baseTile =
                 new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
-        variant1 =
+        TextureRegion  variant1 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        variant2 =
+        TextureRegion variant2 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        variant3 =
+        TextureRegion  variant3 =
                 new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
         GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
         TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
@@ -182,7 +178,7 @@ public class TemplateGameArea extends GameArea {
     @Override
     public void dispose() {
         super.dispose();
-        ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
+        ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class).stop();
         this.unloadAssets();
     }
 }

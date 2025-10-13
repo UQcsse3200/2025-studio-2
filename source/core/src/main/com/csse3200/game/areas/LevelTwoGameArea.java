@@ -177,38 +177,38 @@ public class LevelTwoGameArea extends GameArea {
 
     private void spawnWalls(){
         GridPoint2 bottomWallPos = new GridPoint2(80,6);
-        Entity bottomWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity bottomWall = WallFactory.createWall(25,0,1,20f);
         bottomWall.setScale(2f,7f);
         spawnEntityAt(bottomWall, bottomWallPos, false, false);
 
         GridPoint2 middleWallPos = new GridPoint2(54,24);
-        Entity middleWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity middleWall = WallFactory.createWall(25,0,1,20f);
         middleWall.setScale(2f,6f);
         spawnEntityAt(middleWall, middleWallPos, false, false);
 
 //        TOP LEVEL
         GridPoint2 wall1Pos = new GridPoint2(33,44);
-        Entity wall1 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall1 = WallFactory.createWall(25,0,1,20f);
         wall1.setScale(2f,8f);
         spawnEntityAt(wall1, wall1Pos, false, false);
 
         GridPoint2 wall2Pos = new GridPoint2(46,44);
-        Entity wall2 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall2 = WallFactory.createWall(25,0,1,20f);
         wall2.setScale(2f,6.5f);
         spawnEntityAt(wall2, wall2Pos, false, false);
 
         GridPoint2 wall3Pos = new GridPoint2(59,44);
-        Entity wall3 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall3 = WallFactory.createWall(25,0,1,20f);
         wall3.setScale(2f,5f);
         spawnEntityAt(wall3, wall3Pos, false, false);
 
         GridPoint2 wall4Pos = new GridPoint2(72,44);
-        Entity wall4 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall4 = WallFactory.createWall(25,0,1,20f);
         wall4.setScale(2f,3.5f);
         spawnEntityAt(wall4, wall4Pos, false, false);
 
         GridPoint2 wall5Pos = new GridPoint2(85,44);
-        Entity wall5 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall5 = WallFactory.createWall(25,0,1,20f);
         wall5.setScale(2f,2f);
         spawnEntityAt(wall5, wall5Pos, false, false);
     }

@@ -20,11 +20,10 @@ public class BossSpawnerComponent extends Component {
 	private final List<Vector2> spawnTriggers;
 	private final List<Boolean> triggered;
 	private Entity player;
-	private float spawnCooldown = 0f;
-	private float windup = 0f;
+	private float spawnCooldown;
+	private float windup;
 	private final float spawnInterval;
-	private int currentTriggerIndex = 0;
-	// private float debugTimer = 0f;
+	private int currentTriggerIndex;
 
 	// Track spawned drones for cleanup
 	private final List<Entity> spawnedDrones = new ArrayList<>();

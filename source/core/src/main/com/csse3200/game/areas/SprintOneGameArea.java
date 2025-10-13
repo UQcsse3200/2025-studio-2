@@ -317,8 +317,7 @@ public class SprintOneGameArea extends GameArea {
         GridPoint2 wall1Pos = new GridPoint2(8, 22);
         Entity wall1 = WallFactory.createWall(
                 0f, 0f,
-                1f * ts, 5f * ts,
-                "images/walls.png"
+                1f * ts, 5f * ts
         );
         spawnEntityAt(wall1, wall1Pos, false, false);
 
@@ -326,8 +325,7 @@ public class SprintOneGameArea extends GameArea {
         GridPoint2 wall2Pos = new GridPoint2(8, 6);
         Entity wall2 = WallFactory.createWall(
                 0f, 0f,
-                1f * ts, 3f * ts,
-                "images/tile.png"
+                1f * ts, 3f * ts
         );
         spawnEntityAt(wall2, wall2Pos, false, false);
 
@@ -335,8 +333,7 @@ public class SprintOneGameArea extends GameArea {
         GridPoint2 wall3Pos = new GridPoint2(18, 4);
         Entity wall3 = WallFactory.createWall(
                 0f, 0f,
-                1f * ts, 6f * ts,
-                "images/walls.png"
+                1f * ts, 6f * ts
         );
         spawnEntityAt(wall3, wall3Pos, false, false);
     }

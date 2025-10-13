@@ -304,12 +304,12 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnWalls(){
         GridPoint2 leftWallPos = new GridPoint2(25,4);
-        Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity leftWall = WallFactory.createWall(25,0,1,20f);
         leftWall.setScale(1,4.5f);
         spawnEntityAt(leftWall, leftWallPos, false, false);
 
         GridPoint2 rightWallPos = new GridPoint2(75,4);
-        Entity rightWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity rightWall = WallFactory.createWall(25,0,1,20f);
         rightWall.setScale(2.5f,7.5f);
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }

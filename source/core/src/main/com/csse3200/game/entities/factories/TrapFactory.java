@@ -14,7 +14,9 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  * <p>Each trap entity type should have a creation method that returns a corresponding entity.
  */
 public class TrapFactory {
-
+    private TrapFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     /**
      * Creates a basic Spike trap with configurable rotation and length of 1 unit.

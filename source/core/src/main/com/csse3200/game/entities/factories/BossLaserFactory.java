@@ -12,6 +12,9 @@ import com.csse3200.game.services.ServiceLocator;
  * A class full of static methods which construct different laser entity types
  */
 public class BossLaserFactory {
+    private BossLaserFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static final int ATTACK_DAMAGE = 10;
 

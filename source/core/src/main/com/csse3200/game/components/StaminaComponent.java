@@ -76,7 +76,7 @@ public class StaminaComponent extends Component {
 
     private void changeStamina(float delta) {
         float prev = currentStamina;
-        currentStamina = Math.max(0f, Math.min(maxStamina, currentStamina + delta));
+        currentStamina = Math.clamp(currentStamina + delta, 0.0f, maxStamina);
 
         if ((int) prev != (int) currentStamina) {
             triggerStaminaUpdate();
@@ -126,7 +126,7 @@ public class StaminaComponent extends Component {
     public boolean isExhausted() { return exhausted; }
 
     public void setCurrentStamina(int value) {
-        this.currentStamina = Math.max(0f, Math.min(maxStamina, value));
+        this.currentStamina = Math.clamp(value, 0.0f, maxStamina);
         triggerStaminaUpdate();
     }
 
@@ -166,13 +166,17 @@ public class StaminaComponent extends Component {
                 Method m = c.getMethod(name);
                 Object v = m.invoke(cfg);
                 if (v instanceof Number) return ((Number) v).floatValue();
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) {}
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) {
+                // Ignored
+            }
 
             try {
                 Field f = c.getField(name);
                 Object v = f.get(cfg);
                 if (v instanceof Number) return ((Number) v).floatValue();
-            } catch (NoSuchFieldException | IllegalAccessException ignore) {}
+            } catch (NoSuchFieldException | IllegalAccessException ignore) {
+                // Ignored
+            }
         }
         return null;
     }
@@ -183,13 +187,17 @@ public class StaminaComponent extends Component {
                 Method m = c.getMethod(name);
                 Object v = m.invoke(cfg);
                 if (v instanceof Number) return ((Number) v).intValue();
-            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) {}
+            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException ignore) {
+                // Ignored
+            }
 
             try {
                 Field f = c.getField(name);
                 Object v = f.get(cfg);
                 if (v instanceof Number) return ((Number) v).intValue();
-            } catch (NoSuchFieldException | IllegalAccessException ignore) {}
+            } catch (NoSuchFieldException | IllegalAccessException ignore) {
+                // Ignored
+            }
         }
         return null;
 

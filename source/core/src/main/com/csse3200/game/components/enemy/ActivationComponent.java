@@ -70,12 +70,12 @@ public class ActivationComponent extends Component {
         }
 
         // Attach listeners
-        current.getEvents().addListener("targetDetected", (Entity detected) -> {
-            entity.getEvents().trigger("enemyActivated");
-        });
-        current.getEvents().addListener("targetLost", (Entity detected) -> {
-            entity.getEvents().trigger("enemyDeactivated");
-        });
+        current.getEvents().addListener("targetDetected", (Entity detected) ->
+            entity.getEvents().trigger("enemyActivated")
+        );
+        current.getEvents().addListener("targetLost", (Entity detected) ->
+            entity.getEvents().trigger("enemyDeactivated")
+        );
 
         cam = current;
         logger.debug("Linked entity {} to security camera {}", entity, cameraId);

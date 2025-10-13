@@ -19,13 +19,9 @@ import com.csse3200.game.services.ServiceLocator;
 public class BombChaseTask extends DefaultTask implements PriorityTask {
     private final Entity target;
     private final int priority;
-    private final float maxChaseDistance;
     private final float optimalHeight; // Optimal height to maintain above target for bombing
     private final float heightTolerance; // Tolerance for height positioning
 
-    private final PhysicsEngine physics;
-    private final DebugRenderer debugRenderer;
-    private final RaycastHit hit = new RaycastHit();
     private final GameTime timeSource;
     private MovementTask movementTask;
     private ConeDetectorComponent detectorComponent;
@@ -50,11 +46,8 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
                          float optimalHeight, float heightTolerance) {
         this.target = target;
         this.priority = priority;
-        this.maxChaseDistance = maxChaseDistance;
         this.optimalHeight = optimalHeight;
         this.heightTolerance = heightTolerance;
-        physics = ServiceLocator.getPhysicsService().getPhysics();
-        debugRenderer = ServiceLocator.getRenderService().getDebug();
         timeSource = ServiceLocator.getTimeSource();
     }
 
@@ -69,14 +62,14 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
      * Activates the chase task. The priority will be raised, allowing the task to run.
      */
     public void activate() {
-        this.targetAcquired = true;
+        targetAcquired = true;
     }
 
     /**
      * Deactivates the chase task. The priority will be set to -1, stopping the task.
      */
     public void deactivate() {
-        this.targetAcquired = false;
+        targetAcquired = false;
     }
 
     /**
@@ -86,7 +79,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     public void start() {
         super.start();
 
-        if (movementTask == null) {
+        if (null == movementTask) {
             movementTask = new MovementTask(getChaseTarget());
             movementTask.create(owner);
         }
@@ -100,10 +93,10 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
      */
     @Override
     public void update() {
-        if (movementTask == null) return;
+        if (null == movementTask) return;
 
         // If lost cone detection during chase, move to search position
-        if (!targetAcquired && detectorComponent != null) {
+        if (!targetAcquired && null != detectorComponent) {
             // Move higher to try to reacquire target with cone light
             movementTask.setTarget(getSearchPosition());
         } else {
@@ -112,7 +105,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
         }
 
         movementTask.update();
-        if (movementTask.getStatus() != Status.ACTIVE) {
+        if (Status.ACTIVE != movementTask.getStatus()) {
             movementTask.start();
         }
     }
@@ -130,7 +123,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
 
         // Smooth horizontal positioning - avoid jittery movement when close
         float horizontalDistance = Math.abs(currentPos.x - target.getPosition().x);
-        if (horizontalDistance < 0.5f) {
+        if (0.5f > horizontalDistance) {
             // If already close horizontally, maintain position
             targetPos.x = currentPos.x;
         }
@@ -151,7 +144,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     /** Stop the task */
     @Override
     public void stop() {
-        if (movementTask != null) {
+        if (null != movementTask) {
             movementTask.stop();
         }
         super.stop();
@@ -168,7 +161,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
     @Override
     public int getPriority() {
         // No detector component, can't operate
-        if (detectorComponent == null) {
+        if (null == detectorComponent) {
             return -1;
         }
 
@@ -193,7 +186,7 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
 
         // If you have ever discovered a goal, check if the grace period is over
         long timeSinceSpotted = timeSource.getTime() - lastSpottedTime;
-        if (timeSinceSpotted <= CHASE_GRACE_MS) {
+        if (CHASE_GRACE_MS >= timeSinceSpotted) {
             // Still in grace period, continue to chase
             if (isAtOptimalPosition()) {
                 return -1; // Even during grace period, you should try to drop bullets when you arrive at your location
@@ -216,18 +209,13 @@ public class BombChaseTask extends DefaultTask implements PriorityTask {
 
         // Check horizontal alignment
         float horizontalDistance = Math.abs(bomberPos.x - targetPos.x);
-        if (horizontalDistance > 1f) {
+        if (1.0f < horizontalDistance) {
             return false;
         }
 
         // Check vertical positioning
         float heightDiff = bomberPos.y - targetPos.y;
         return Math.abs(heightDiff - optimalHeight) <= heightTolerance;
-    }
-
-    /** Return the distance from owner to target */
-    private float getDistanceToTarget() {
-        return owner.getEntity().getPosition().dst(target.getPosition());
     }
 
     /**
