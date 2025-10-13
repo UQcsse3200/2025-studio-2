@@ -9,12 +9,11 @@ import com.crashinvaders.vfx.framebuffer.VfxPingPongWrapper;
 import com.crashinvaders.vfx.gl.VfxGLUtils;
 
 public class ScreenTransitioningEffect extends ShaderVfxEffect implements ChainVfxEffect {
-  private static final String TEXTURE0 = "u_texture0";
-  private static final String PROGRESS = "u_progress";
-  private static final String SMOOTHNESS = "u_smoothness";
-  private static final String CENTER_X = "u_centerX";
-  private static final String CENTER_Y = "u_centerY";
-
+  private static final String U_TEXTURE_0 = "u_texture0";
+  private static final String U_PROGRESS = "u_progress";
+  private static final String U_SMOOTHNESS = "u_smoothness";
+  private static final String U_CENTER_X = "u_centerX";
+  private static final String U_CENTER_Y = "u_centerY";
 
   private float progress = 0.0f;
   private float smoothness = 0.25f;
@@ -32,11 +31,11 @@ public class ScreenTransitioningEffect extends ShaderVfxEffect implements ChainV
   @Override
   public void rebind() {
     program.bind();
-    program.setUniformi(TEXTURE0, TEXTURE_HANDLE0);
-    program.setUniformf(PROGRESS, progress);
-    program.setUniformf(SMOOTHNESS, smoothness);
-    program.setUniformf(CENTER_X, centerX);
-    program.setUniformf(CENTER_Y, centerY);
+    program.setUniformi(U_TEXTURE_0, TEXTURE_HANDLE0);
+    program.setUniformf(U_PROGRESS, progress);
+    program.setUniformf(U_SMOOTHNESS, smoothness);
+    program.setUniformf(U_CENTER_X, centerX);
+    program.setUniformf(U_CENTER_Y, centerY);
   }
 
   @Override
@@ -57,7 +56,7 @@ public class ScreenTransitioningEffect extends ShaderVfxEffect implements ChainV
    */
   public void setProgress(float progress) {
     this.progress = progress;
-    setUniform(PROGRESS, progress);
+    setUniform(U_PROGRESS, progress);
   }
 
   /**
@@ -66,16 +65,16 @@ public class ScreenTransitioningEffect extends ShaderVfxEffect implements ChainV
    */
   public void setSmoothness(float smoothness) {
     this.smoothness = smoothness;
-    setUniform(SMOOTHNESS, smoothness);
+    setUniform(U_SMOOTHNESS, smoothness);
   }
 
   /** Specify the center, in normalized screen coordinates. */
   public void setCenter(float x, float y) {
-    this.centerX = x;
-    this.centerY = y;
+    centerX = x;
+    centerY = y;
     program.bind();
-    program.setUniformf(CENTER_X, centerX);
-    program.setUniformf(CENTER_Y, centerY);
+    program.setUniformf(U_CENTER_X, centerX);
+    program.setUniformf(U_CENTER_Y, centerY);
   }
 
   /**

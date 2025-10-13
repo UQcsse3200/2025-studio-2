@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -63,7 +64,7 @@ public class CodexServiceTest {
         service.getEntry("test_id_1").setUnlocked();
 
         // Entries are locked by default. Ensure getEntries() only contains the one unlocked entry
-        ArrayList<CodexEntry> result = service.getEntries(true);
+        List<CodexEntry> result = service.getEntries(true);
 
         assertEquals(1, result.size());
         assertEquals(result.getFirst(), service.getEntry("test_id_1"));
@@ -81,7 +82,7 @@ public class CodexServiceTest {
         service.getEntry("test_id_1").setUnlocked();
 
         // Ensure getEntries() returns all entries
-        ArrayList<CodexEntry> result = service.getEntries(false);
+        List<CodexEntry> result = service.getEntries(false);
 
         assertEquals(2, result.size());
         assertTrue(result.contains(service.getEntry("test_id_1")));

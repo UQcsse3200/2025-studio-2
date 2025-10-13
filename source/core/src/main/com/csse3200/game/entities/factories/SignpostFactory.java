@@ -16,6 +16,10 @@ public class SignpostFactory {
     static final String RIGHT = "images/rightSignpost.png";
     static final String STANDARD = "images/signpost.png";
 
+    private SignpostFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
+
     /**
      * Creates a signpost entity with the arrow in the specified direction
      *  - The texture is set to layer 0 so that it is always behind all other entities
