@@ -23,6 +23,7 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class BossLevelGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     boolean has_laser = false;
-    private boolean keySpawned = false;
+    private boolean keySpawned;
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
@@ -106,8 +107,8 @@ public class BossLevelGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/doors.atlas",
-            "images/drone.atlas", // <---
-            "images/boss.atlas", // Comment out these lines to fix the loading time
+//            "images/drone.atlas", // <---
+//            "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
@@ -128,6 +129,7 @@ public class BossLevelGameArea extends GameArea {
         playMusic();
     }
     protected void loadEntities() {
+        keySpawned = false;
         spawnParallaxBackground();
         spawnPlatforms();
         spawnWalls();
@@ -135,7 +137,7 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
-        spawnBoss(); // Comment out this line if removing the long-loading assets
+//        spawnBoss(); // Comment out this line if removing the long-loading assets
     }
 
     /**
@@ -157,11 +159,15 @@ public class BossLevelGameArea extends GameArea {
 
         // Laser attached to the lower wall
         Entity laser2 = LaserFactory.createLaserEmitter(65f);
-        spawnEntityAt(laser2, new GridPoint2(63, 2), false, false);
+        spawnEntityAt(laser2, new GridPoint2(63, 3), false, false);
 
         // Button-blocking laser at end
         Entity endLaser = LaserFactory.createLaserEmitter(270f);
-        spawnEntityAt(endLaser, new GridPoint2(tileBounds.x - 5, tileBounds.y - 5), false, false);
+        spawnEntityAt(endLaser, new GridPoint2(tileBounds.x - 5, tileBounds.y + 5), false, false);
+
+        // Laser to stop you from getting yeeted off the right
+        Entity safeLaser = LaserFactory.createLaserEmitter(270f);
+        spawnEntityAt(safeLaser, new GridPoint2(tileBounds.x - 4, 21), false, false);
     }
 
     /**
@@ -177,21 +183,21 @@ public class BossLevelGameArea extends GameArea {
      * It's finally laser room time! Platforms so it doesn't need cheat code lol
      */
     private void spawnLaserRoomPlatforms() {
-        // Platform immediately upon entering; holds reflector box that will be used.
+        // Platform immediately upon entering
         GridPoint2 boxPos = new GridPoint2(63, 12);
         Entity firstPlatform = PlatformFactory.createStaticPlatform();
         firstPlatform.setScale(2f, 0.5f);
         spawnEntityAt(firstPlatform, boxPos,false, false);
 
         // Normal jumping platforms are numbered by the order in which they should be traversed
-        GridPoint2 pos1 = new GridPoint2(74, 17); // I swear I'm not 1-indexing; boxPos is platform0
+        GridPoint2 pos1 = new GridPoint2(74, 16);
         Entity platform1 = PlatformFactory.createStaticPlatform();
         platform1.setScale(1f, 0.5f);
         spawnEntityAt(platform1, pos1,false, false);
 
         GridPoint2 pos2 = new GridPoint2(80, 20);
         Entity platform2 = PlatformFactory.createStaticPlatform();
-        platform2.setScale(1f, 0.5f);
+        platform2.setScale(1.5f, 0.5f);
         spawnEntityAt(platform2, pos2,false, false);
 
         GridPoint2 pos3 = new GridPoint2(77, 25);
@@ -266,7 +272,7 @@ public class BossLevelGameArea extends GameArea {
                 false, false);
 
         // Door between levels
-        Entity door = ObstacleFactory.createDoor("key:door", this);
+        Entity door = ObstacleFactory.createDoor("key:door", this, null, true);
         door.setScale(1f, 1.5f);
         spawnEntityAt(door, new GridPoint2(62, 20), true, false);
 
@@ -523,7 +529,7 @@ public class BossLevelGameArea extends GameArea {
         // Top
         spawnEntityAt(
                 ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y - 4),
+                new GridPoint2(0, tileBounds.y + 10),
                 false,
                 false);
 //        // Bottom
@@ -598,7 +604,7 @@ public class BossLevelGameArea extends GameArea {
 
         // Button
         Entity button = ButtonFactory.createButton(false, "door", "left");
-        spawnEntityAt(button, new GridPoint2(59, tileBounds.y - 7), true, true);
+        spawnEntityAt(button, new GridPoint2(59, tileBounds.y - 8), true, true);
 
         button.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed && !keySpawned) {
@@ -620,14 +626,23 @@ public class BossLevelGameArea extends GameArea {
      * TODO replace with Shane's captcha.
      */
     private void spawnEndgameButton() {
-        GridPoint2 buttonPos = new GridPoint2(tileBounds.x, tileBounds.y / 2);
+        GridPoint2 buttonPos = new GridPoint2(tileBounds.x, 24);
         Entity winGameButton = ButtonFactory.createButton(false, "platform", "left");
         winGameButton.setScale(2f, 5f);
-        spawnEntityAt(winGameButton, buttonPos, true, true);
+        spawnEntityAt(winGameButton, buttonPos, true, false);
 
-        winGameButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            this.trigger("doorEntered"); // it's not a door but it changes level so
+        winGameButton.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+            endLevel();
         });
+    }
+
+    /**
+     * End the boss level and go to the post-game cutscene.
+     * TODO: Replace the placeholder SPRINT_ONE area with the actual end-game cutscene.
+     */
+    public void endLevel() {
+        Entity fakeDoor = ObstacleFactory.createDoor("key", this, String.valueOf(MainGameScreen.Areas.SPRINT_ONE), false);
+        getEvents().trigger("doorEntered", player, fakeDoor);
     }
 
     private void spawnObjectives() {
