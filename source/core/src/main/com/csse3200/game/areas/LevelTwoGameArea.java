@@ -85,7 +85,9 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/background2.png",
             "images/glide_powerup.png",
             "images/jetpack_powerup.png",
-            "images/platform-map.png"
+            "images/platform-map.png",
+            "images/drone-map.png",
+            "images/red_button-map.png"
 
     };
     private static final String backgroundMusic = "sounds/Flow.mp3";
@@ -552,7 +554,7 @@ public class LevelTwoGameArea extends GameArea {
         button2.addComponent(new TooltipSystem.TooltipComponent("Door Button\nPress E to interact", TooltipSystem.TooltipStyle.DEFAULT));
         spawnEntityAt(button2, new GridPoint2(0 ,58), true,  true);
 
-        button2.addComponent(new MinimapComponent("images/red_button.png"));
+        button2.addComponent(new MinimapComponent("images/red_button-map.png"));
 
         button2.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
             if (isPushed && !keySpawned) {

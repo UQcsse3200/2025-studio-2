@@ -30,21 +30,19 @@ public class MinimapComponent extends Component {
 
   private static Image loadImageWithDefaultSize(String markerAsset) {
     Image marker = new Image(ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class));
-    if (markerAsset.equals("images/door_open.png")) {
-      marker.setSize(20f, 30f);
-    } else if (markerAsset.equals("images/platform-map.png")) {
-      marker.setSize(30f, 10f);
-    }
-    else if(markerAsset.equals("images/flying_bat_map.png")) {
-      marker.setSize(20f, 20f);
-    } else if (markerAsset.equals("images/drone-map.png")) {
-      marker.setSize(20f, 10f);
-    } else if (markerAsset.equals("images/ladder-map.png")) {
-      marker.setSize(13f, 13f);
-    }
-    else {
-      marker.setSize(10f, 10f); // Default marker size
-    }
+      switch (markerAsset) {
+          case "images/door_open.png" -> marker.setSize(20f, 30f);
+          case "images/platform-map.png" -> marker.setSize(30f, 10f);
+          case "images/flying_bat_map.png" -> marker.setSize(20f, 20f);
+          case "images/drone-map.png" -> marker.setSize(20f, 10f);
+          case "images/ladder-map.png" -> marker.setSize(13f, 13f);
+          case "images/floor-map-1.png" -> marker.setSize(400f, 315f);
+          case "images/floor-map-2.png" -> marker.setSize(680f, 315f);
+          case "images/floor-map-3.png" -> marker.setSize(420f, 315f);
+          case "images/gate-floor-map.png" -> marker.setSize(100f, 20f);
+          case "images/puzzle-floor-map.png" -> marker.setSize(400f, 50f);
+          default -> marker.setSize(15f, 20f); // Default marker size
+      }
 
     return marker;
   }
