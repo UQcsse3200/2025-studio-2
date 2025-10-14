@@ -116,7 +116,10 @@ public class LevelOneGameArea extends GameArea {
             "images/downSignpost.png",
             "images/rightSignpost.png",
             "images/leftSignpost.png",
-            "images/signpost.png"
+            "images/signpost.png",
+            "images/platform-map.png",
+            "images/ladder-map.png",
+            "images/drone-map.png"
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
