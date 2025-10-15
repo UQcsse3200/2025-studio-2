@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.PressurePlateComponent;
+import com.csse3200.game.components.ladders.LadderSectionControllerComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.components.BoxPressurePlateComponent;
@@ -65,6 +66,13 @@ public class PressurePlateFactory {
         collider.setSensor(false);
 
         plate.addComponent(new BoxPressurePlateComponent());
+        return plate;
+    }
+
+    public static Entity createLadderPlate(String id, int offset, float stepInterval) {
+        Entity plate = createBoxOnlyPlate();
+        plate.addComponent(new LadderSectionControllerComponent(id, offset, stepInterval));
+
         return plate;
     }
 

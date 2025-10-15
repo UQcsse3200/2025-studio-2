@@ -308,71 +308,31 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
 
-
-    private final int upperLadderOffset = 11;
-    private final int lowerLadderOffset = 13;
-
     private void spawnLadders() {
         // spawn upper
-        int upperLadderHeight = 16;
-        for (int i = 0; i < upperLadderHeight; i++) {
-            // Upper Ladder dimensions
-            int upperLadderX = 59;
-            int upperLadderY = 36;
-            GridPoint2 ladderPos = new GridPoint2(upperLadderX, upperLadderY + i);
-            Entity rung = LadderFactory.createStaticLadder();
-            LadderRungComponent rungComp = new LadderRungComponent("upper", i);
-            rung.addComponent(rungComp);
-
-            spawnEntityAt(rung, ladderPos, false, false);
-            // hide rung after its been created
-            if (i < upperLadderOffset) {
-                rungComp.hide();
-            }
-        }
+        Entity upperAnchor = LadderFactory.createLadderBase("upper", 16, 11);
+        spawnEntityAt(upperAnchor, new GridPoint2(59, 36), false, false);
 
         // spawn lower
-        int lowerLadderHeight = 18;
-        for (int i = 0; i < lowerLadderHeight; i++) {
-            // Lower Ladder dimensions
-            int lowerLadderX = 52;
-            int lowerLadderY = 4;
-            GridPoint2 ladderPos = new GridPoint2(lowerLadderX, lowerLadderY + i);
-            Entity rung = LadderFactory.createStaticLadder();
-            LadderRungComponent rungComp = new LadderRungComponent("lower", i);
-            rung.addComponent(rungComp);
-
-            spawnEntityAt(rung, ladderPos, false, false);
-            // hide rung after its been created
-            if (i < lowerLadderOffset) {
-                rungComp.hide();
-            }
-        }
+        Entity lowerAnchor = LadderFactory.createLadderBase("lower", 18, 13);
+        spawnEntityAt(lowerAnchor, new GridPoint2(52, 4), false, false);
     }
     private void spawnUpperLadderPressurePlate() {
-        int x = 65;
-        int y = 36;
-        GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
-        Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
-        upperLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
-                "Push to release ladder",
-                TooltipSystem.TooltipStyle.DEFAULT ));
-        upperLadderPressurePlate.addComponent(new LadderSectionControllerComponent(
-                "upper", upperLadderOffset, 0.05f));
-        spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
+        Entity upperLadderPressurePlate = PressurePlateFactory.createLadderPlate(
+                "upper", 11, 0.05f);
+
+        spawnEntityAt(upperLadderPressurePlate, new GridPoint2(65, 36), true, true);
     }
 
     private void spawnLowerLadderPressurePlate() {
-        int x = 73;
-        int y = 4;
-        GridPoint2 lowerLadderPressurePlatePosition = new GridPoint2(x, y);
-        Entity lowerLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
+        Entity lowerLadderPressurePlate = PressurePlateFactory.createLadderPlate(
+                "lower", 13, 0.05f);
+
         lowerLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
-        lowerLadderPressurePlate.addComponent(new LadderSectionControllerComponent(
-                "lower", lowerLadderOffset, 0.05f));
-        spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
+
+        spawnEntityAt(lowerLadderPressurePlate, new GridPoint2(73, 4), true, true);
     }
 
     private void spawnFloorsAndPlatforms(){
