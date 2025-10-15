@@ -37,12 +37,15 @@ import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementProgression;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -176,6 +179,8 @@ public class LevelOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
+
     }
     protected void loadEntities() {
         keySpawned = false;
@@ -200,7 +205,7 @@ public class LevelOneGameArea extends GameArea {
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
-        //spawnPlatformBat();
+        spawnPlatformBat();
         spawnLevelOneBatRoom();
         // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
@@ -530,11 +535,14 @@ public class LevelOneGameArea extends GameArea {
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("key:door", this);
+        Entity door = ObstacleFactory.createDoor("key:door",  this, String.valueOf(MainGameScreen.Areas.CUTSCENE_ONE), false);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
+        door.getEvents().addListener("doorOpened", () -> {
+            AchievementProgression.onLevelComplete("level1");
+        });
     }
 
     private void playMusic() {
@@ -559,6 +567,9 @@ public class LevelOneGameArea extends GameArea {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
+        ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
+
         spawnEntity(ui);
     }
 
@@ -901,27 +912,27 @@ public class LevelOneGameArea extends GameArea {
 
 
 
-    public void spawnCollectable(Vector2 pos) {
+    public void spawnCollectable(GridPoint2 pos) {
         PhysicsComponent physics  = new PhysicsComponent();
         physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);
         Entity collectable = new Entity()
-                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(new TextureRenderComponent(texture))
                 .addComponent(physics)
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
                 .addComponent(new ItemCollectableComponent(this));
-                //.addComponent(new CollectableComponentV2("hardware"));
-        collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
-        ServiceLocator.getEntityService().register(collectable);
+        spawnEntityAt(collectable, new GridPoint2(pos), true, true);
+        //ServiceLocator.getEntityService().register(collectable);
     }
 
     public void spawnCollectables() {
         Vector2 playerPos = player.getPosition();
-        CollectableCounter.reset();
+        //CollectableCounter.reset();
 
-        spawnCollectable(new Vector2(33.5f, -1.5f));
-        spawnCollectable(new Vector2(0f, 23f));
-        spawnCollectable(new Vector2(39.5f, 30f));
+        spawnCollectable(new GridPoint2(67, -3));
+        spawnCollectable(new GridPoint2(0, 46));
+        spawnCollectable(new GridPoint2(79, 60));
     }
 
     protected void loadAssets() {

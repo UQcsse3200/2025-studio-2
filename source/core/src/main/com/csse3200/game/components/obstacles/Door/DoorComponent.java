@@ -79,6 +79,9 @@ public class DoorComponent extends Component {
      * Switch to {@code door_open}; emit {@code doorEntered} for non-static doors with a target.
      */
     private void onAnimationFinished() {
+        ColliderComponent col = entity.getComponent(ColliderComponent.class);
+        if (col != null) col.setSensor(true);
+
         if (animationComponent != null) {
             animationComponent.startAnimation("door_open");
         }
@@ -105,8 +108,7 @@ public class DoorComponent extends Component {
         }
 
         if (!isOpening) {
-            ColliderComponent col = entity.getComponent(ColliderComponent.class);
-            if (col != null) col.setSensor(true);
+
             isOpening = true;
             animationFinished = false;
             if (animationComponent != null) {
@@ -143,9 +145,6 @@ public class DoorComponent extends Component {
      * Open the door (non-blocking + play opening animation).
      */
     public void openDoor() {
-        ColliderComponent col = entity.getComponent(ColliderComponent.class);
-        if (col != null) col.setSensor(true);
-
         locked = false;
         isOpening = true;
         animationFinished = false;

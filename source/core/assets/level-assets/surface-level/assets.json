@@ -82,11 +82,10 @@
     "images/upSignpost.png",
     "images/downSignpost.png",
     "images/jetpack_powerup.png",
-    "images/surfacelevel/surface-1.png",
-    "images/surfacelevel/surface-2.png",
-    "images/surfacelevel/surface-3.png",
-    "images/surfacelevel/surface-4.png",
-    "images/surfacelevel/surface-5.png"
+    "images/surfacelevel/1.png",
+    "images/surfacelevel/2.png",
+    "images/surfacelevel/3.png",
+    "images/surfacelevel/4.png",
   ],
   "atlases": [
       "images/PLAYER.atlas",

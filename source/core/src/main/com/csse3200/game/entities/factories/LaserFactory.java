@@ -54,7 +54,7 @@ public class LaserFactory {
 
         // construct entity
         Entity e = new Entity()
-                .addComponent(new LaserShowerComponent(dir))
+                //.addComponent(new LaserShowerComponent(dir))
                 .addComponent(new LaserEmitterComponent(dir))
                 .addComponent(new LaserRenderComponent())
                 .addComponent(new CombatStatsComponent(1, ATTACK_DAMAGE))
