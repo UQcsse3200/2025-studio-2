@@ -1,0 +1,12 @@
+{
+  area: INVALID_LEVEL
+  inventory: {
+    class: java.util.HashMap
+    "test": 5
+  }
+  upgrades: {
+    class: java.util.HashMap
+    test2: 6
+    test3: 7
+  }
+}

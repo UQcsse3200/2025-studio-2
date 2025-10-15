@@ -6,6 +6,7 @@ import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.screens.MainGameScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.crashinvaders.vfx.VfxManager;
@@ -31,6 +32,9 @@ public class ServiceLocator {
   private static SecurityCamRetrievalService securityCamRetrievalService;
   private static VfxManager vfxService;
   private static CodexService codexService;
+  private static ComputerTerminalService computerTerminalService;
+
+  private static MainGameScreen mainGameScreen;
 
   public static LightingService getLightingService() {
     return lightingService;
@@ -73,6 +77,17 @@ public class ServiceLocator {
   }
 
   public static CodexService getCodexService() { return codexService; }
+
+  public static ComputerTerminalService getComputerTerminalService() { return computerTerminalService; }
+
+  public static MainGameScreen getMainGameScreen() {
+    return mainGameScreen;
+  }
+
+  public static void registerMainGameScreen(MainGameScreen screen) {
+      logger.debug("Registering main game screen {}", screen);
+      mainGameScreen = screen;
+  }
 
   public static void registerLightingService(LightingService service) {
     logger.debug("Registering lighting service {}", service);
@@ -129,6 +144,11 @@ public class ServiceLocator {
     codexService = source;
   }
 
+  public static void registerComputerTerminalService(ComputerTerminalService service) {
+    logger.debug("Registering computer terminal service {}", service);
+    computerTerminalService = service;
+  }
+
   public static void clear() {
     entityService = null;
     renderService = null;
@@ -141,6 +161,7 @@ public class ServiceLocator {
     securityCamRetrievalService = null;
     vfxService = null;
     codexService = null;
+    computerTerminalService = null;
   }
 
   private ServiceLocator() {

@@ -1,0 +1,96 @@
+animated-monitors-sheet.png
+size: 432,384
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+terminal
+  rotate: false
+  xy: 0,0
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 0
+terminal
+  rotate: false
+  xy: 144,0
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 1
+terminal
+  rotate: false
+  xy: 288,0
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 2
+terminal
+  rotate: false
+  xy: 0,96
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 3
+terminal
+  rotate: false
+  xy: 144,96
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 4
+terminal
+  rotate: false
+  xy: 288,96
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 5
+terminal
+  rotate: false
+  xy: 0,192
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 6
+terminal
+  rotate: false
+  xy: 144,192
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 7
+terminal
+  rotate: false
+  xy: 288,192
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 8
+terminal
+  rotate: false
+  xy: 0,288
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 9
+terminal
+  rotate: false
+  xy: 144,288
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 10
+terminal
+  rotate: false
+  xy: 288,288
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: 11
+default
+  rotate: false
+  xy: 0,0
+  size: 144,96
+  orig: 144,96
+  offset: 0,0
+  index: -1

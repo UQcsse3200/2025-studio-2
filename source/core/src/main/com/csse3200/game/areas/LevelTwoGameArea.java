@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,10 +9,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
@@ -21,12 +25,20 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementProgression;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +48,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
+    boolean has_laser = false;
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -87,12 +100,16 @@ public class LevelTwoGameArea extends GameArea {
             "images/jetpack_powerup.png",
             "images/platform-map.png",
             "images/drone-map.png",
-            "images/red_button-map.png"
-
+            "images/red_button-map.png",
+            "images/laser-end.png",
+            "images/jetpack_powerup.png",
+            "images/lost_hardware.png",
+            "images/tutorials/dash.png"
     };
     private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};
-    private static final String[] gameSounds = {"sounds/Impact4.ogg",
+    private static final String[] gameSounds = {
+            "sounds/Impact4.ogg",
             "sounds/chimesound.mp3",
             "sounds/doorsound.mp3",
             "sounds/walksound.mp3",
@@ -105,14 +122,17 @@ public class LevelTwoGameArea extends GameArea {
             "sounds/damagesound.mp3",
             "sounds/thudsound.mp3",
             "sounds/chimesound.mp3",
-            "sounds/explosion.mp3"};
+            "sounds/explosion.mp3",
+            "sounds/laserShower.mp3"};
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/volatile_platform.atlas",
             "images/doors.atlas",
             "images/timer.atlas",
-            "images/drone.atlas"
+            "images/drone.atlas",
+            "images/laser.atlas"
     };
+    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -126,6 +146,8 @@ public class LevelTwoGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
+
     }
 
     protected void loadEntities() {
@@ -143,7 +165,14 @@ public class LevelTwoGameArea extends GameArea {
         //spawnBomberDrone();
         spawnSelfDestructDrone();
         spawnAutoBomberDrone();
-        //spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
+        spawnCollectables();
+        // spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
+        spawnTutorials();
+      }
+
+    private void spawnTutorials() {
+        // TODO: Comment this if the player should not have a dash upgrade by this point
+        spawnEntityAt(TutorialFactory.createDashTutorial(), new GridPoint2(14, 8), true, true);
     }
 
     private void spawnDeathZone() {
@@ -196,6 +225,9 @@ public class LevelTwoGameArea extends GameArea {
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         // door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(98,45), true, true);
+        door.getEvents().addListener("doorOpened", () -> {
+            AchievementProgression.onLevelComplete("level2");
+        });
     }
 
     private void playMusic() {
@@ -218,11 +250,60 @@ public class LevelTwoGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
+    public void spawnLaserShower() {
+        final float Y = player.getPosition().y + 10f;
+        final float X = player.getPosition().x;
+
+
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+
+        for (int j = 0; j <=2; j++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((j+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+    }
+    public void laserShowerChecker(float delta) {
+            if (has_laser==false) {
+                spawnLaserShower();
+                has_laser = true;
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        has_laser = false;
+                    }
+                },5f);
+            }
+    }
+
 
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level Two Game Area"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
+        ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
+
         spawnEntity(ui);
     }
 
@@ -621,6 +702,28 @@ public class LevelTwoGameArea extends GameArea {
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
+    }
+
+    public void spawnCollectable(Vector2 pos) {
+        PhysicsComponent physics  = new PhysicsComponent();
+        physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Entity collectable = new Entity()
+                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(physics)
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
+                .addComponent(new ItemCollectableComponent(this));
+        collectable.setPosition(pos);
+        collectable.setScale(0.6f, 0.6f);
+        ServiceLocator.getEntityService().register(collectable);
+    }
+
+    public void spawnCollectables() {
+        Vector2 playerPos = player.getPosition();
+        CollectableCounter.reset();
+
+        spawnCollectable(new Vector2(30.5f, 32.75f));
+        spawnCollectable(new Vector2(47.5f, 18f));
+        spawnCollectable(new Vector2(8.5f, 0.4f));
     }
 
     private void spawnObjectives() {
