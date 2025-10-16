@@ -430,7 +430,7 @@ public class SettingsTab implements InventoryTabInterface {
                 float musicVol = musicVolumeSlider.getValue();
                 float effective = master * musicVol;
 
-                music.setVolume(effective);
+                music.setVolume(musicVol);
 
                 // 📝 Log it
                 logger.info("[Audio] Updated current music volume -> master={} music={} effective={}",
