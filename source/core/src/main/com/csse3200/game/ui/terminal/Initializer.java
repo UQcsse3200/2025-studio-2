@@ -317,8 +317,9 @@ public class Initializer {
               stats = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
               ifElse(exists("stats"), () {
                 stats = getParentVar("stats");
-                stats.setHealth(9999);
-                print("God mode enabled\n");
+                i = stats.getIsInvulnerable();
+                stats.setIsInvulnerable(not(i));
+                print("God mode toggled!\n");
               }, () {
                 print("Unable to enable god mode");
               });
