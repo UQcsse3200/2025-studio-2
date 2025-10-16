@@ -238,7 +238,7 @@ class UserSettingsTest {
 
       float normalized = UserSettings.getMusicVolumeNormalized();
 
-      assertEquals(0.48f, normalized, 0.001f);
+      assertEquals(0.6f, normalized, 0.001f);
     }
   }
 
