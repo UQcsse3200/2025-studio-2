@@ -195,8 +195,10 @@ public class PlayerActions extends Component {
       impulseY = deltaVy * body.getMass();
 
     } else if (isJetpackOn) {
+        float targetVy = 7f;
+        float deltaVy = targetVy - velocity.y;
+        impulseY = deltaVy * body.getMass();
 
-      impulseY = 1.1f * body.getMass();
     } else {
       //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
         if (!isGliding) {
