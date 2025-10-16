@@ -218,17 +218,14 @@ public class BossLevelGameArea extends GameArea {
         endgamePlatform.setScale(6f, 0.8f);
         spawnEntityAt(endgamePlatform, endgamePos,false, false);
     }
-    public void spawnLaserShower() {
+    public void spawnLaserShower(float X , float Y) {
         if (player == null) return; // safety check
-
-        final float Y = player.getPosition().y + 30f; // spawn above player
-        final float X = player.getPosition().x;
 
         // Spawn 3 lasers to the left
         for (int i = 0; i <= 5; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xBehind = X - ((i + 1) * 7.5f); // offset left
-            spawnEntityAt(laser, new GridPoint2(Math.round(xBehind), Math.round(Y)), true, true);
+            spawnEntityAt(laser, new GridPoint2(Math.round(xBehind+10f), Math.round(Y+10f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             // Remove laser after 5 seconds
@@ -244,7 +241,7 @@ public class BossLevelGameArea extends GameArea {
         for (int i = 0; i <= 5; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xAhead = X + ((i + 1) * 7.5f); // offset right
-            spawnEntityAt(laser, new GridPoint2(Math.round(xAhead), Math.round(Y)), true, true);
+            spawnEntityAt(laser, new GridPoint2(Math.round(xAhead+10f), Math.round(Y+10f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {

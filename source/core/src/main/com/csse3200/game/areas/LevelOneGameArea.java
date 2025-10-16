@@ -257,15 +257,11 @@ public class LevelOneGameArea extends GameArea {
         Entity detector = LaserDetectorFactory.createLaserDetector(0f);
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
-    public void spawnLaserShower() {
-        final float Y = player.getPosition().y + 30f;
-        final float X = player.getPosition().x;
-
-
-        for (int i = 0; i <= 2; i++) {
+    public void spawnLaserShower(float X , float Y) {
+        for (int i = 0; i <= 5; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xBehind = X - ((i+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round((xBehind+50f)), Math.round(Y)), true, true);
+            spawnEntityAt(laser,new GridPoint2(Math.round((xBehind+10f)), Math.round(Y+10f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -276,10 +272,10 @@ public class LevelOneGameArea extends GameArea {
             },5f);
         }
 
-        for (int j = 0; j <=2; j++) {
+        for (int j = 0; j <=5; j++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xAhead= X + ((j+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(xAhead-10f), Math.round(Y)), true, true);
+            spawnEntityAt(laser,new GridPoint2(Math.round(xAhead-10f), Math.round(Y+10f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
@@ -290,9 +286,9 @@ public class LevelOneGameArea extends GameArea {
             },5f);
         }
     }
-    public void laserShowerChecker(float delta) {
+    public void laserShowerChecker(float delta,float X , float Y) {
             if (has_laser==false) {
-                spawnLaserShower();
+                spawnLaserShower(X,Y);
                 has_laser = true;
                 Timer.schedule(new Timer.Task() {
                     @Override

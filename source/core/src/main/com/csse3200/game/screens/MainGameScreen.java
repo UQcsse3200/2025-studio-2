@@ -38,6 +38,7 @@ import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.*;
@@ -349,36 +350,40 @@ public class MainGameScreen extends ScreenAdapter {
   @Override
   public void render(float delta) {
     if (!paused) {
-      // Update camera position to follow player
-      updateCameraFollow();
+        // Update camera position to follow player
+        updateCameraFollow();
 
-          physicsEngine.update();
-          ServiceLocator.getEntityService().update();
-          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              jumpCount++;
-              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
-                  levelOneArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
-                  levelTwoArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }
-          }
-        if (gameArea instanceof BossLevelGameArea bossLevel) {
-            Entity player = gameArea.getPlayer();
-            if (player != null) {
-                float playerX = player.getPosition().x;
-                if (playerX >= 62f) { // skip laser when player is beyond x = 61
-                    return;
+        physicsEngine.update();
+        ServiceLocator.getEntityService().update();
+        Entity player = gameArea.getPlayer();
+        if (player != null) {
+            Vector2 playerPos = player.getComponent(PhysicsComponent.class) != null
+                    ? player.getComponent(PhysicsComponent.class).getBody().getPosition()
+                    : player.getPosition();
+
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                jumpCount++;
+                if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 5) {
+                    levelOneArea.laserShowerChecker(delta, playerPos.x, playerPos.y);
+                    jumpCount = 0;
+                } else if (gameArea instanceof LevelTwoGameArea levelTwoArea && jumpCount == 20) {
+                    levelTwoArea.laserShowerChecker(delta, playerPos.x, playerPos.y);
+                    jumpCount = 0;
                 }
-                laserTimer += delta;
-                if (laserTimer >= 40f) {
-                    bossLevel.spawnLaserShower(); // spawn lasers
-                    laserTimer = 0f; // reset timer
+            }
+            if (gameArea instanceof BossLevelGameArea bossLevel) {
+                if (playerPos.x < 62f) { // skip laser when player is beyond x = 61
+                    laserTimer += delta;
+                    if (laserTimer >= 40f) {
+                        bossLevel.spawnLaserShower(playerPos.x, playerPos.y); // spawn lasers
+                        laserTimer = 0f; // reset timer
+                    }
+                }else{
+                    laserTimer=0f;
                 }
             }
         }
-      }
+    }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 

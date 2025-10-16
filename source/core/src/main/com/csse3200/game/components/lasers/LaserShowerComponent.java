@@ -43,10 +43,8 @@ public class LaserShowerComponent extends Component {
 
 
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
-    private static final short blockedOccluder = (short) (
-            PhysicsLayer.OBSTACLE
-            // | PhysicsLayer.DEFAULT
-            );
+    // | PhysicsLayer.DEFAULT
+    private static final short blockedOccluder = PhysicsLayer.OBSTACLE;
     private static final short detectorOccluder = PhysicsLayer.LASER_DETECTOR;
     private static final short playerOccluder = PhysicsLayer.PLAYER;
     private static final short hitMask = (short) (
