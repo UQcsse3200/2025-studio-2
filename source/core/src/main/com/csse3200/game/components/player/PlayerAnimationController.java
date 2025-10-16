@@ -137,8 +137,10 @@ public class PlayerAnimationController extends Component {
     public void setAnimation(String animationName) {
         // Don't cancel hurt animation
         if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
-            animator.startAnimation(animationName);
-            currentAnimation = animationName;
+            if (!animationName.equals(currentAnimation)) {
+                animator.startAnimation(animationName);
+                currentAnimation = animationName;
+            }
         }
     }
 
