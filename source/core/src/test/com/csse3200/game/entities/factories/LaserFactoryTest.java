@@ -1,7 +1,6 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;

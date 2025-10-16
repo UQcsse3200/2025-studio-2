@@ -36,7 +36,6 @@ public class BossLevelGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,34);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
-    boolean has_laser = false;
     private boolean keySpawned;
     private static final String[] gameTextures = {
             "images/button.png",

@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,7 +32,6 @@ import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -279,7 +277,7 @@ public class LevelTwoGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta,float X , float Y) {
-            if (has_laser==false) {
+            if (!has_laser) {
                 spawnLaserShower(X, Y);
                 has_laser = true;
                 Timer.schedule(new Timer.Task() {
