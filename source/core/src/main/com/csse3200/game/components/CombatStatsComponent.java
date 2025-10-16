@@ -24,6 +24,8 @@ public class CombatStatsComponent extends Component {
     private static final long INVULN_FRAMES = 30;
     private long lastHitFrame = -100;
 
+    private boolean isInvulnerable = false;
+
 
 
     public CombatStatsComponent(int health, int baseAttack) {
@@ -136,11 +138,22 @@ public class CombatStatsComponent extends Component {
         if (currentFrame - lastHitFrame > INVULN_FRAMES) {
             setLastAttacker(attacker.entity);
             lastHitFrame = currentFrame;
-            int newHealth = getHealth() - attacker.getBaseAttack();
-            setHealth(newHealth);
+            if (!isInvulnerable) {
+                int newHealth = getHealth() - attacker.getBaseAttack();
+                setHealth(newHealth);
 
-            // Animate hurt
-            entity.getEvents().trigger("hurt");
+
+                // Animate hurt
+                entity.getEvents().trigger("hurt");
+            }
         }
+    }
+
+    public void setIsInvulnerable(boolean status) {
+        isInvulnerable = status;
+    }
+
+    public boolean getIsInvulnerable() {
+        return isInvulnerable;
     }
 }
