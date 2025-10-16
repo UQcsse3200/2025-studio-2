@@ -261,7 +261,7 @@ public class LevelOneGameArea extends GameArea {
         for (int j = 0; j <=5; j++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xAhead= X + ((j+1)* (float) 7.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(xAhead-10f), Math.round(Y+10f)), true, true);
+            spawnEntityAt(laser,new GridPoint2(Math.round(xAhead + 10f), Math.round(Y+10f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             Timer.schedule(new Timer.Task() {
