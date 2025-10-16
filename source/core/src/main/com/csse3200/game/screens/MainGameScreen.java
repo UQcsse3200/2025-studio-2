@@ -272,8 +272,6 @@ public class MainGameScreen extends ScreenAdapter {
     if (area == null) return;
 
     GameArea oldArea = gameArea;
-    oldArea.dispose();
-    oldArea = null; // Garbage collector?
 
     System.out.println("Area switched to " + area);
     //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
@@ -284,7 +282,7 @@ public class MainGameScreen extends ScreenAdapter {
     if (newArea != null) {
       System.out.println("TIME" + lvlStartTime);
       //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
-      if (newArea instanceof CutsceneArea) {
+      if (!(oldArea instanceof CutsceneArea)) {
         StatsTracker.completeLevel();
       }
 
@@ -307,6 +305,9 @@ public class MainGameScreen extends ScreenAdapter {
       gameArea.getEvents().addListener("reset", this::onGameAreaReset);
       gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
     }
+
+    oldArea.dispose();
+    oldArea = null; // Garbage collector?
   }
 
   /**
