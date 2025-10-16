@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -15,14 +14,10 @@ import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.CollectableComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -35,14 +30,15 @@ import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementProgression;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -161,7 +157,6 @@ public class LevelOneGameArea extends GameArea {
             "images/animated-monitors.atlas",
             "images/laser.atlas"
     };
-    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -174,6 +169,8 @@ public class LevelOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
+
     }
     protected void loadEntities() {
         cancelPlateDebouncers();
@@ -195,11 +192,11 @@ public class LevelOneGameArea extends GameArea {
         // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
         spawnSecurityCams();
         //spawnBomberDrone();
-        //spawnSelfDestructDrone();
+        spawnSelfDestructDrone();
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
-        //spawnPlatformBat();
+        spawnPlatformBat();
         spawnLevelOneBatRoom();
         // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
@@ -220,17 +217,8 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnTerminals() {
-        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
-        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
-        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test3"));
-        Entity terminal4 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test4"));
-        Entity terminal5 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test5"));
-        spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
-        spawnEntityAt(terminal2, new GridPoint2(6, 4), true, true);
+        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
         spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
-        spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
-        spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
-
     }
 
     private void spawnBoxes() {
@@ -238,12 +226,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(one, new GridPoint2(15, 15), true, true);
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
-
-        Entity three = BoxFactory.createReflectorBox();
-        spawnEntityAt(three, new GridPoint2(32, 15), true, true);
-
-        Entity four = BoxFactory.createMoveableBox();
-        spawnEntityAt(four, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
@@ -286,7 +268,7 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta) {
-            if (has_laser==false) {
+            if (!has_laser) {
                 spawnLaserShower();
                 has_laser = true;
                 Timer.schedule(new Timer.Task() {
@@ -774,11 +756,14 @@ public class LevelOneGameArea extends GameArea {
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("key:door", this);
+        Entity door = ObstacleFactory.createDoor("key:door",  this, String.valueOf(MainGameScreen.Areas.CUTSCENE_ONE), false);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
+        door.getEvents().addListener("doorOpened", () -> {
+            AchievementProgression.onLevelComplete("level1");
+        });
     }
 
     private void playMusic() {
@@ -803,6 +788,9 @@ public class LevelOneGameArea extends GameArea {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
+        ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
+
         spawnEntity(ui);
     }
 
@@ -1145,27 +1133,27 @@ public class LevelOneGameArea extends GameArea {
 
 
 
-    public void spawnCollectable(Vector2 pos) {
+    public void spawnCollectable(GridPoint2 pos) {
         PhysicsComponent physics  = new PhysicsComponent();
         physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);
         Entity collectable = new Entity()
-                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(new TextureRenderComponent(texture))
                 .addComponent(physics)
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
                 .addComponent(new ItemCollectableComponent(this));
-                //.addComponent(new CollectableComponentV2("hardware"));
-        collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
-        ServiceLocator.getEntityService().register(collectable);
+        spawnEntityAt(collectable, new GridPoint2(pos), true, true);
+        //ServiceLocator.getEntityService().register(collectable);
     }
 
     public void spawnCollectables() {
         Vector2 playerPos = player.getPosition();
-        CollectableCounter.reset();
+        //CollectableCounter.reset();
 
-        spawnCollectable(new Vector2(33.5f, -1.5f));
-        spawnCollectable(new Vector2(0f, 23f));
-        spawnCollectable(new Vector2(39.5f, 30f));
+        spawnCollectable(new GridPoint2(67, -3));
+        spawnCollectable(new GridPoint2(0, 46));
+        spawnCollectable(new GridPoint2(79, 60));
     }
 
     protected void loadAssets() {
