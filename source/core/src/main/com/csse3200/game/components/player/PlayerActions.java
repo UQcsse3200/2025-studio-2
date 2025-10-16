@@ -272,6 +272,8 @@ public class PlayerActions extends Component {
 
       body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
 
+      StatsTracker.addJump();
+
       isJumping = true;
   }
 
