@@ -104,7 +104,8 @@ public class MainGameScreen extends ScreenAdapter {
     CUTSCENE_ONE,
     CUTSCENE_TWO,
     TUTORIAL,
-    BOSS_LEVEL
+    BOSS_LEVEL,
+    END_GAME
   }
 
   public MainGameScreen(GdxGame game) {
@@ -239,6 +240,11 @@ public class MainGameScreen extends ScreenAdapter {
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
       case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
+      case END_GAME -> {
+        // Go back to main menu
+        game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+        yield null;
+      }
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -254,7 +260,8 @@ public class MainGameScreen extends ScreenAdapter {
       case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
       case LEVEL_TWO -> Areas.CUTSCENE_TWO;
       case CUTSCENE_TWO -> Areas.BOSS_LEVEL;
-      case BOSS_LEVEL -> Areas.SPRINT_ONE;
+      // Last level should not return a new area
+      case BOSS_LEVEL -> Areas.END_GAME;
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
