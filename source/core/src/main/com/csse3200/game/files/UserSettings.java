@@ -70,7 +70,7 @@ public class UserSettings {
           String bgm = "sounds/BGM_03_mp3.mp3";
           Music music = ServiceLocator.getResourceService().getAsset(bgm, Music.class);
           if (music != null && music.isPlaying()) {
-              music.setVolume(settings.masterVolume * settings.musicVolume);
+              music.setVolume(settings.musicVolume);
           }
       } catch (Exception e) {
           // ignore if not loaded
@@ -168,7 +168,7 @@ public class UserSettings {
    */
   public static float getMusicVolumeNormalized() {
     Settings settings = get();
-    return settings.musicVolume * settings.masterVolume;
+    return settings.musicVolume;
   }
 
   /**
