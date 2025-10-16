@@ -225,6 +225,7 @@ public class LevelOneGameArea extends GameArea {
         spawnCollectables();
         spawnTutorials();
         spawnComputerTerminal();
+        spawnPrompts();
     }
 
     private void spawnTutorials() {
@@ -1096,6 +1097,11 @@ public class LevelOneGameArea extends GameArea {
 //        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
 //        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
 //        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
+    }
+    private void spawnPrompts() {
+        spawnEntityAt(CollectableFactory.createPrompt("Hit \"o\" to have a look at your objectives!",
+                        5, 2.0f,2.0f),
+                new GridPoint2(20, 15), true, true);
     }
 
     private void spawnLevelOneBatRoom() {
