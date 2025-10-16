@@ -2,9 +2,7 @@ package com.csse3200.game.entities.factories;
 
 import box2dLight.ConeLight;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.csse3200.game.ai.tasks.AITaskComponent;
@@ -12,7 +10,6 @@ import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
@@ -34,8 +31,6 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.lighting.LightingService;
 import box2dLight.RayHandler;
 import org.junit.jupiter.api.AfterEach;
@@ -552,35 +547,10 @@ public class EnemyFactoryTest {
         assertNotSame(a,b,"Drones Should be distinct");
         assertNotSame(a.getComponent(AITaskComponent.class),b.getComponent(AITaskComponent.class),"Drones Should have Distinct AITaskComponent");
     }
-    /*
-    @Test
-    void SelfDestructDrone_hasChaseTask(){
-        Entity target = new Entity();
-        target.addComponent(new SpawnPositionComponent(new Vector2(5,5)));
-        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(target,  new Vector2(0, 0));
-        AITaskComponent aiTask = SelfDestructDrone.getComponent(AITaskComponent.class);
-
-        assertDoesNotThrow(aiTask::update,"AI component should be updated without throwing ");
-    }
-    */
     @Test
     void SelfDestructDrone_handleNullParentEntityGracefully(){
         assertDoesNotThrow(() -> EnemyFactory.createSelfDestructionDrone(null,new Vector2(0, 0)),"Creating a selfDestructDrone with null parent entity should not throw");
     }
-    /*
-    @Test
-    void SelfDestructDrone_triggerExplosionOnDeath(){
-        Entity SelfDestructDrone = EnemyFactory.createSelfDestructionDrone(new Entity(),new Vector2(0, 0));
-
-        final boolean[] exploded = {false};
-        SelfDestructDrone.getEvents().addListener("explode",()->exploded[0]=true);
-
-        //SelfDestructDrone.getComponent(CombatStatsComponent.class).setHealth(0);
-        SelfDestructDrone.getComponent(SelfDestructComponent.class).update();
-        assertTrue(exploded[0],"SelfDestructDrone should trigger explosion event on death");
-    }
-
-     */
 
     @Test
     void boss_hasCoreComponents() {

@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -15,14 +14,10 @@ import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.CollectableComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -38,14 +33,12 @@ import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -164,7 +157,6 @@ public class LevelOneGameArea extends GameArea {
             "images/animated-monitors.atlas",
             "images/laser.atlas"
     };
-    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -200,7 +192,7 @@ public class LevelOneGameArea extends GameArea {
         // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
         spawnSecurityCams();
         //spawnBomberDrone();
-        //spawnSelfDestructDrone();
+        spawnSelfDestructDrone();
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
@@ -213,7 +205,7 @@ public class LevelOneGameArea extends GameArea {
         spawnObjectives();
         spawnTerminals();
         spawnBoxes();
-        //spawnLasers();
+        spawnLasers();
         spawnCollectables();
         spawnTutorials();
         spawnComputerTerminal();
@@ -276,7 +268,7 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta) {
-            if (has_laser==false) {
+            if (!has_laser) {
                 spawnLaserShower();
                 has_laser = true;
                 Timer.schedule(new Timer.Task() {

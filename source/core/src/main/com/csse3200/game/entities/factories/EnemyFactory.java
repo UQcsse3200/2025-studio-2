@@ -328,9 +328,7 @@ public class EnemyFactory {
                     .addTask(cooldownTask);
 
             // Switch to float anim after teleport
-            drone.getEvents().addListener("teleportFinish", () -> {
-                drone.getEvents().trigger("wanderStart");
-            });
+            drone.getEvents().addListener("teleportFinish", () -> drone.getEvents().trigger("wanderStart"));
         }
 
         animator.scaleEntity();
