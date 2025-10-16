@@ -113,6 +113,10 @@ class LaserRenderComponentTest {
             // from the mockedTextureRegion construction block, but we immediately overwrite it back.
             render.create();
 
+            if (emitter instanceof LaserEmitterComponent) {
+                when(((LaserEmitterComponent) emitter).getEnable()).thenReturn(true);
+            }
+
             // Inject the mock 'pixel' AFTER create() has run (to be used for verification)
             Field fPixel = LaserRenderComponent.class.getDeclaredField("pixel");
             fPixel.setAccessible(true);

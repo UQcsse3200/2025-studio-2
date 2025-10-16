@@ -31,13 +31,15 @@ public class LaserFactory {
      */
     public static Entity createLaser(float dir,Color color, Component laserBehavior) {
         // setup animations
-        AnimationRenderComponent animator = new AnimationRenderComponent(
-                ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class));
-        animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
-        animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
-        animator.setOrigin(0.5f, 0.5f);
+        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class);
+        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+        if (atlas != null) {
+            animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
+            animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
+            animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
+            animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
+        }
+        //animator.setOrigin(0.5f, 0.5f);
         animator.setRotation(dir);
         animator.setLayer(3);
 
@@ -51,7 +53,7 @@ public class LaserFactory {
                 180f
         );
 
-        //A construct entity
+        // construct entity
         Entity e = new Entity()
                 .addComponent(laserBehavior)
                 .addComponent(new LaserRenderComponent())
