@@ -27,7 +27,6 @@ public class BossAnimationController extends Component {
         entity.getEvents().addListener("chaseStart", this::animateChase);
         entity.getEvents().addListener("touchKillStart", this::animateTouchKill);
         entity.getEvents().addListener("shootLaserStart", this::animateShootLaser);
-
     }
     @Override
     public void update() {

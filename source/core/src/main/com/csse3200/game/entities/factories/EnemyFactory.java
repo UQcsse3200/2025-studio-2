@@ -9,6 +9,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
 import com.csse3200.game.components.boss.BossAnchorComponent;
+import com.csse3200.game.components.boss.BossLaserAttackComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
@@ -48,6 +49,7 @@ public class EnemyFactory {
     // Light colors for bomber
     private static final Color BOMBER_IDLE_COLOR = new Color(0.5f, 0.5f, 1f, 0.8f);  // Blue-ish
     private static final Color BOMBER_ALERT_COLOR = new Color(1f, 0.3f, 0.3f, 1f);   // Red
+    private static final Vector2 HITBOX_OFFSET = new Vector2(0.0f, 10f);
 
     /**
      * Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
@@ -442,9 +444,9 @@ public class EnemyFactory {
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
-                //.addComponent(new BossSpawnerComponent(target))
                 .addComponent(new BossAnimationController())
                 .addComponent(new BossAnchorComponent(1.0f, 0f))
+                .addComponent(new BossLaserAttackComponent(target))
                 .addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
 
 
@@ -458,14 +460,41 @@ public class EnemyFactory {
         animator.addAnimation("bossChase", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("bossGenerateDrone", 0.15f, Animation.PlayMode.LOOP);
         animator.addAnimation("bossTouchKill", 0.1f, Animation.PlayMode.NORMAL);
-        animator.addAnimation("bossShootLaser", 0.1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bossShootLaser", 0.085f, Animation.PlayMode.NORMAL);
         animator.addAnimation("touchKillEffect", 1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("shootEffect", 1f, Animation.PlayMode.NORMAL);
         boss.addComponent(animator);
 
-        // Temporary scaling up to differentiate boss from other drones (change w/ new assets)
-        animator.scaleEntity();
-        Vector2 size = boss.getScale();
-        boss.setScale(size.x * 2.5f, size.y * 2.5f);
+        // Visual size: Magnified to 6x (for rendering)
+        float visualScale = 7f;
+        boss.setScale(visualScale, visualScale);
+
+        animator.startAnimation("bossChase");
+
+        // Key modification: manually set collider size (based on size of actual boss content)
+        // Assume that the actual content of the Boss takes up 40%~50% of the original 640×640 canvas (approximately 277×477 pixels)
+        float actualBossWidthInPixels = 277f;
+        float actualBossHeightInPixels = 477f;
+        float canvasSize = 640f;
+
+        // Collider size = (actual content size / canvas size) × visual scaling
+        float colliderWidth = (actualBossWidthInPixels / canvasSize);
+        float colliderHeight = (actualBossHeightInPixels / canvasSize);
+
+        Vector2 centerPos = boss.getCenterPosition();
+        centerPos.x = centerPos.x ;
+        centerPos.y = centerPos.y + 0.1f;
+
+        // Set precise collider dimensions
+        boss.getComponent(ColliderComponent.class).setAsBox(
+                new Vector2(colliderWidth*visualScale, colliderHeight*visualScale),
+                centerPos
+        );
+
+        boss.getComponent(HitboxComponent.class).setAsBox(
+                new Vector2(colliderWidth*visualScale, colliderHeight*visualScale),
+                centerPos
+        );
 
         animator.startAnimation("bossChase");
 
@@ -479,12 +508,6 @@ public class EnemyFactory {
         BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(defaultTriggers, 4f);
         boss.addComponent(droneSpawner);
 
-        /* already triggers in component, Avoid repeated triggers
-        // Wire up drone spawning events to animations
-        boss.getEvents().addListener("spawningPhaseStart", (Integer phase) -> {
-            boss.getEvents().trigger("generateDroneStart");
-        });
-        */
         return boss;
     }
 

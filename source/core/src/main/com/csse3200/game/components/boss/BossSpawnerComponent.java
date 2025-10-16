@@ -24,7 +24,6 @@ public class BossSpawnerComponent extends Component {
 	private float windup = 0f;
 	private final float spawnInterval;
 	private int currentTriggerIndex = 0;
-	// private float debugTimer = 0f;
 
 	// Track spawned drones for cleanup
 	private final List<Entity> spawnedDrones = new ArrayList<>();
@@ -32,6 +31,9 @@ public class BossSpawnerComponent extends Component {
 	// Maximum drones - fixed at 3
 	private static final int MAX_DRONES = 3;
 	private int totalDronesSpawned = 0;
+
+	// Track if we've transitioned to chase after max drones
+	private boolean hasCompletedSpawning = false;
 
 	/**
 	 * Create boss drone spawn component with configurable triggers
@@ -72,7 +74,6 @@ public class BossSpawnerComponent extends Component {
 			return;
 		}
 
-
 		checkSpawnTriggers();
 		updateSpawning();
 
@@ -105,7 +106,6 @@ public class BossSpawnerComponent extends Component {
 	private void startSpawningPhase() {
 		spawnCooldown = 0.5f; // wait for a second and then Start
 		entity.getEvents().trigger("spawningPhaseStart", currentTriggerIndex);
-		//entity.getEvents().trigger("generateDroneStart"); // Trigger boss animation
 	}
 
 	/**
@@ -113,9 +113,14 @@ public class BossSpawnerComponent extends Component {
 	 */
 	private void updateSpawning() {
 		if (totalDronesSpawned >= MAX_DRONES) {
-			entity.getEvents().trigger("chaseStart");
-			return;
+			if (!hasCompletedSpawning) {
+				entity.getEvents().trigger("chaseStart");
+				hasCompletedSpawning = true;
+				logger.info("Boss completed spawning phase - returning to chase");
+			}
+			return;  // Don't process spawning logic anymore
 		}
+
 		float dt = ServiceLocator.getTimeSource().getDeltaTime();
 
 		if (spawnCooldown > 0) {
@@ -125,9 +130,9 @@ public class BossSpawnerComponent extends Component {
 
 		// Check if we should spawn a drone
 		if (currentTriggerIndex < spawnTriggers.size() && triggered.get(currentTriggerIndex)) {
-			//generate animations before real spawn
+			// Generate animations before real spawn
 			if (windup <= 0f) {
-				windup = 2.8f; // Pre-swing duration：0.5~0.8
+				windup = 2.8f; // Pre-swing duration
 				entity.getEvents().trigger("generateDroneStart");
 				return;
 			}
@@ -149,19 +154,17 @@ public class BossSpawnerComponent extends Component {
 			return;
 		}
 
-
 		Vector2 bossPos = entity.getPosition();
 		Vector2 spawnPos = getSpawnPositionAroundBoss(bossPos);
 
 		// Create self-destruct drone targeting the player
 		Entity drone = EnemyFactory.createBossSelfDestructDrone(player, spawnPos);
 
-
 		drone.setPosition(spawnPos);
 
 		// Register the drone
 		ServiceLocator.getEntityService().register(drone);
-		//register first and then activated
+		// Register first and then activated
 		drone.getEvents().trigger("enemyActivated");
 
 		// Track the drone for cleanup
@@ -217,6 +220,7 @@ public class BossSpawnerComponent extends Component {
 		spawnCooldown = 0f;
 		totalDronesSpawned = 0; // Reset drone counter on level reset
 		spawnedDrones.clear(); // Clear the tracking list
+		hasCompletedSpawning = false;  // Reset completion flag
 		logger.info("Triggers and drone counter reset");
 	}
 
@@ -232,6 +236,7 @@ public class BossSpawnerComponent extends Component {
 		}
 		spawnedDrones.clear();
 		totalDronesSpawned = 0; // Reset counter
+		hasCompletedSpawning = false;  // Reset completion flag
 	}
 
 	@Override
