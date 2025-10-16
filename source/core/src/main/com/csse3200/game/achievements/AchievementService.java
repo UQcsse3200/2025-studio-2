@@ -136,7 +136,6 @@ public class AchievementService {
 
     private void maybeUnlock(AchievementId id, String title, String desc) {
         if (!isUnlocked(id)) unlock(id, title, desc);
-        StatsTracker.unlockAchievement();
     }
 
     private void unlock(AchievementId id, String title, String description) {
@@ -145,6 +144,7 @@ public class AchievementService {
         for (Listener l : listeners) {
             l.onUnlocked(id, title, description);
         }
+        StatsTracker.unlockAchievement();
     }
 
     private void load() {
