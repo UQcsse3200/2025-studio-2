@@ -1,10 +1,16 @@
 package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
+import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -14,6 +20,7 @@ import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import net.bytebuddy.build.Plugin;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,12 +42,17 @@ public class PlatformFactoryTest {
     void setupGameServices() {
 
         ServiceLocator.registerPhysicsService(new PhysicsService());
+
         ResourceService mockResourceService = mock(ResourceService.class);
         Texture mockTexture = mock(Texture.class);
         when(mockTexture.getHeight()).thenReturn(100);
         when(mockTexture.getWidth()).thenReturn(100);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(mockTexture);
         ServiceLocator.registerResourceService(mockResourceService);
+
+        LightingService mockLightingService = mock(LightingService.class);
+        when(mockLightingService.getEngine()).thenReturn(mock(LightingEngine.class));
+        ServiceLocator.registerLightingService(mockLightingService);
 
         // Resource Service for loading atlases
         rs = new ResourceService();
@@ -108,6 +120,37 @@ public class PlatformFactoryTest {
     void createVolatilePlatform_disappears() {
         Entity volatilePlatform = PlatformFactory.createVolatilePlatform(5,5);
 
+    }
+
+    @Test
+    void createReflectivePlatform_hasAllComponents() {
+        Entity reflectivePlatform = PlatformFactory.createReflectivePlatform();
+        assertNotNull(reflectivePlatform.getComponent(TiledPlatformComponent.class),
+                "Reflective platform should have a TiledPlatformComponent");
+        assertNotNull(reflectivePlatform.getComponent(PhysicsComponent.class),
+                "Reflective platform should have a PhysicsComponent");
+        assertNotNull(reflectivePlatform.getComponent(ColliderComponent.class),
+                "Reflective platform should have a ColliderComponent");
+        assertNotNull(reflectivePlatform.getComponent(ConeLightComponent.class),
+                "Reflective platform should have a ConeLightComponent");
+    }
+
+    @Test
+    void createReflectivePlatform_isStatic() {
+        Entity reflectivePlatform = PlatformFactory.createReflectivePlatform();
+
+        PhysicsComponent physics = reflectivePlatform.getComponent(PhysicsComponent.class);
+        assertEquals(BodyDef.BodyType.StaticBody, physics.getBody().getType(),
+                "Reflective Platform PhysicsComponent should have a static body type");
+    }
+
+    @Test
+    void createReflectivePlatform_isOnLaserReflectorLayer() {
+        Entity reflectivePlatform = PlatformFactory.createReflectivePlatform();
+
+        ColliderComponent collider = reflectivePlatform.getComponent(ColliderComponent.class);
+        assertEquals(PhysicsLayer.LASER_REFLECTOR, collider.getLayer(),
+                "Reflective Platform ColliderComponent should be on LASER_REFLECTOR layer");
     }
 
     @Test
