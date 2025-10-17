@@ -1,712 +1,713 @@
+
 boss.png
-size: 16384, 4096
+size: 2048, 1024
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 default
   rotate: false
-  xy: 1, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 288, 717
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 0
 bossChase
   rotate: false
-  xy: 1, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 288, 717
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 0
 bossChase
   rotate: false
-  xy: 1, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 288, 717
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 1
 bossChase
   rotate: false
-  xy: 1, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 288, 717
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 2
 bossChase
   rotate: false
-  xy: 1, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 521
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 3
 bossChase
   rotate: false
-  xy: 1, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 521
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 4
 bossChase
   rotate: false
-  xy: 1, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 521
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 5
 bossChase
   rotate: false
-  xy: 643, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 418, 717
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 6
 bossChase
   rotate: false
-  xy: 1, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 391
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 7
 bossChase
   rotate: false
-  xy: 1, 2025
-  size: 640, 640
-  orig: 640, 640
-  offset: 0, 0
-  index: 9
-bossChase
-  rotate: false
-  xy: 1, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 391
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 8
+bossChase
+  rotate: false
+  xy: 1, 391
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: 9
 bossGenerateDrone
   rotate: false
-  xy: 643, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 521
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 0
 bossGenerateDrone
   rotate: false
-  xy: 1285, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 261
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 1
 bossGenerateDrone
   rotate: false
-  xy: 1285, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 261
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 17
 bossGenerateDrone
   rotate: false
-  xy: 1, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 391
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 2
 bossGenerateDrone
   rotate: false
-  xy: 1, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 391
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 16
 bossGenerateDrone
   rotate: false
-  xy: 643, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 131
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 3
 bossGenerateDrone
   rotate: false
-  xy: 1285, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 261
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 4
 bossGenerateDrone
   rotate: false
-  xy: 1927, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 1
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 5
 bossGenerateDrone
   rotate: false
-  xy: 1927, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1, 1
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 14
 bossGenerateDrone
   rotate: false
-  xy: 1, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 131
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 6
 bossGenerateDrone
   rotate: false
-  xy: 1, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 131
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 13
 bossGenerateDrone
   rotate: false
-  xy: 643, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 131, 1
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 7
 bossGenerateDrone
   rotate: false
-  xy: 1285, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 575, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 8
 bossGenerateDrone
   rotate: false
-  xy: 1927, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 705, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 9
 bossGenerateDrone
   rotate: false
-  xy: 2569, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 835, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 10
 bossGenerateDrone
   rotate: false
-  xy: 1, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 965, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 11
 bossGenerateDrone
   rotate: false
-  xy: 643, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 1095, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 12
 bossGenerateDrone
   rotate: false
-  xy: 1285, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 1225, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 15
 bossShootLaser
   rotate: false
-  xy: 1927, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1355, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 0
 bossShootLaser
   rotate: false
-  xy: 1927, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1355, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 30
 bossShootLaser
   rotate: false
-  xy: 2569, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1485, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 1
 bossShootLaser
   rotate: false
-  xy: 2569, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1485, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 29
 bossShootLaser
   rotate: false
-  xy: 3211, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1615, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 2
 bossShootLaser
   rotate: false
-  xy: 3211, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1615, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 28
 bossShootLaser
   rotate: false
-  xy: 643, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1745, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 3
 bossShootLaser
   rotate: false
-  xy: 1285, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 1875, 815
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 4
 bossShootLaser
   rotate: false
-  xy: 1927, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 548, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 5
 bossShootLaser
   rotate: false
-  xy: 2569, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 678, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 6
 bossShootLaser
   rotate: false
-  xy: 3211, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 808, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 7
 bossShootLaser
   rotate: false
-  xy: 3853, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 938, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 8
 bossShootLaser
   rotate: false
-  xy: 1285, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1068, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 9
 bossShootLaser
   rotate: false
-  xy: 1927, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 1198, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 10
 bossShootLaser
   rotate: false
-  xy: 2569, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 1328, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 11
 bossShootLaser
   rotate: false
-  xy: 3211, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1458, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 12
 bossShootLaser
   rotate: false
-  xy: 3853, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1588, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 13
 bossShootLaser
   rotate: false
-  xy: 4495, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1718, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 14
 bossShootLaser
   rotate: false
-  xy: 1927, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1848, 685
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 15
 bossShootLaser
   rotate: false
-  xy: 2569, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 288, 587
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 16
 bossShootLaser
   rotate: false
-  xy: 3211, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 418, 587
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 17
 bossShootLaser
   rotate: false
-  xy: 3853, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 261, 457
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 18
 bossShootLaser
   rotate: false
-  xy: 4495, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 261, 327
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 19
 bossShootLaser
   rotate: false
-  xy: 5137, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 391, 457
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 20
 bossShootLaser
   rotate: false
-  xy: 2569, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 261, 197
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 21
 bossShootLaser
   rotate: false
-  xy: 3211, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 391, 327
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 22
 bossShootLaser
   rotate: false
-  xy: 3853, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 261, 67
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 23
 bossShootLaser
   rotate: false
-  xy: 4495, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 391, 197
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 24
 bossShootLaser
   rotate: false
-  xy: 5137, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 391, 67
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 25
 bossShootLaser
   rotate: false
-  xy: 5779, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 548, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 26
 bossShootLaser
   rotate: false
-  xy: 3211, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 678, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 27
 bossTouchKill
   rotate: false
-  xy: 3853, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 808, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 0
 bossTouchKill
   rotate: false
-  xy: 4495, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 938, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 1
 bossTouchKill
   rotate: false
-  xy: 5137, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1068, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 2
 bossTouchKill
   rotate: false
-  xy: 5779, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1198, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 3
 bossTouchKill
   rotate: false
-  xy: 6421, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1328, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 4
 bossTouchKill
   rotate: false
-  xy: 3853, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1458, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 5
 bossTouchKill
   rotate: false
-  xy: 4495, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 1588, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 6
 bossTouchKill
   rotate: false
-  xy: 5137, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 1718, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 7
 bossTouchKill
   rotate: false
-  xy: 5779, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1848, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 8
 bossTouchKill
   rotate: false
-  xy: 5779, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1848, 555
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 9
 bossTouchKill
   rotate: false
-  xy: 6421, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 521, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 10
 bossTouchKill
   rotate: false
-  xy: 7063, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 521, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 11
 bossTouchKill
   rotate: false
-  xy: 4495, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 651, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 12
 bossTouchKill
   rotate: false
-  xy: 5137, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 521, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 13
 shootEffect
   rotate: false
-  xy: 1, 1
+  xy: 1, 847
   size: 285, 96
   orig: 285, 96
   offset: 0, 0
   index: 0
 shootEffect
   rotate: false
-  xy: 7705, 1285
+  xy: 1, 749
   size: 285, 96
   orig: 285, 96
   offset: 0, 0
   index: 1
 shootEffect
   rotate: false
-  xy: 8347, 1927
+  xy: 288, 847
   size: 285, 96
   orig: 285, 96
   offset: 0, 0
   index: 2
 shootEffect
   rotate: false
-  xy: 8989, 2569
+  xy: 1, 651
   size: 285, 96
   orig: 285, 96
   offset: 0, 0
   index: 3
 touchKillEffect
   rotate: false
-  xy: 5779, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 651, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 0
 touchKillEffect
   rotate: false
-  xy: 6421, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 781, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 1
 touchKillEffect
   rotate: false
-  xy: 7063, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 651, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 2
 touchKillEffect
   rotate: false
-  xy: 7705, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 781, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 3
 touchKillEffect
   rotate: false
-  xy: 5137, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 911, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 4
 touchKillEffect
   rotate: false
-  xy: 5779, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 781, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 5
 touchKillEffect
   rotate: false
-  xy: 6421, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 911, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 6
 touchKillEffect
   rotate: false
-  xy: 7063, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1041, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 7
 touchKillEffect
   rotate: false
-  xy: 7705, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 911, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 8
 touchKillEffect
   rotate: false
-  xy: 8347, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1041, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 9
 touchKillEffect
   rotate: false
-  xy: 5779, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1171, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 10
 touchKillEffect
   rotate: false
-  xy: 6421, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 1041, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 11
 touchKillEffect
   rotate: false
-  xy: 7063, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 1171, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 12
 touchKillEffect
   rotate: false
-  xy: 7705, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1301, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 13
 touchKillEffect
   rotate: false
-  xy: 8347, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1171, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 14
 touchKillEffect
   rotate: false
-  xy: 8989, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1301, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 15
 touchKillEffect
   rotate: false
-  xy: 6421, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1431, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 16
 touchKillEffect
   rotate: false
-  xy: 7063, 741
-  size: 640, 640
-  orig: 640, 640
+  xy: 1301, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 17
 touchKillEffect
   rotate: false
-  xy: 7705, 1383
-  size: 640, 640
-  orig: 640, 640
+  xy: 1431, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 18
 touchKillEffect
   rotate: false
-  xy: 8347, 2025
-  size: 640, 640
-  orig: 640, 640
+  xy: 1561, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 19
 touchKillEffect
   rotate: false
-  xy: 8989, 2667
-  size: 640, 640
-  orig: 640, 640
+  xy: 1431, 165
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 20
 touchKillEffect
   rotate: false
-  xy: 9631, 3309
-  size: 640, 640
-  orig: 640, 640
+  xy: 1561, 295
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 21
 touchKillEffect
   rotate: false
-  xy: 7063, 99
-  size: 640, 640
-  orig: 640, 640
+  xy: 1691, 425
+  size: 128, 128
+  orig: 128, 128
   offset: 0, 0
   index: 22

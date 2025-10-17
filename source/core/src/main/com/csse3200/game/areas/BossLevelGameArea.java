@@ -67,7 +67,6 @@ public class BossLevelGameArea extends GameArea {
             "images/button_pushed.png",
             "images/blue_button_pushed.png",
             "images/blue_button.png",
-            "images/drone.png",
             "images/boss.png",
             "images/bomb.png",
             "images/cube.png",
@@ -121,8 +120,7 @@ public class BossLevelGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/doors.atlas",
-//            "images/drone.atlas", // <---
-//            "images/boss.atlas", // Comment out these lines to fix the loading time
+            "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",
             "images/health-potion.atlas",
@@ -154,7 +152,7 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
-//        spawnBoss(); // Comment out this line if removing the long-loading assets
+        spawnBoss(); // Comment out this line if removing the long-loading assets
     }
 
     /**
