@@ -24,6 +24,11 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Unit tests for LaserRenderComponent.
+ * Verifies color initialization, core beam drawing, and glow pass behavior for both
+ * LaserEmitter and LaserShower components.
+ */
 @ExtendWith(GameExtension.class)
 class LaserRenderComponentTest {
     private static final float THICKNESS  = 0.05f; // core beam thickness
@@ -135,6 +140,9 @@ class LaserRenderComponentTest {
         }
     }
 
+    /**
+     * Tests specific to LaserShowerComponent rendering
+     */
     @Nested
     class LaserShowerTests extends BaseLaserTest<LaserShowerComponent> {
 
@@ -198,6 +206,9 @@ class LaserRenderComponentTest {
         }
     }
 
+    /**
+     * Tests specific to LaserEmitterComponent rendering
+     */
     @Nested
     class LaserEmitterTests extends BaseLaserTest<LaserEmitterComponent> {
 

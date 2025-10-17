@@ -63,12 +63,14 @@ class LaserFactoryTest {
     }
     @Test
     void createLaserShower_hasAllComponents() {
+        // Create a laser shower entity
         Entity e = LaserFactory.createLaserShower(90f);
 
-        assertNotNull(e.getComponent(AnimationRenderComponent.class));
-        assertNotNull(e.getComponent(ConeLightComponent.class));
-        assertNotNull(e.getComponent(CombatStatsComponent.class));
-        assertNotNull(e.getComponent(LaserShowerComponent.class));
-        assertNotNull(e.getComponent(LaserRenderComponent.class));
+        // Verify entity has all required components
+        assertNotNull(e.getComponent(AnimationRenderComponent.class)); // Animation visuals
+        assertNotNull(e.getComponent(ConeLightComponent.class));  // Lighting cone
+        assertNotNull(e.getComponent(CombatStatsComponent.class));  // Health/damage stats
+        assertNotNull(e.getComponent(LaserShowerComponent.class)); // Laser shower behavior
+        assertNotNull(e.getComponent(LaserRenderComponent.class)); // Laser visuals
     }
 }

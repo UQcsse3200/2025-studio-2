@@ -248,12 +248,14 @@ public class LevelTwoGameArea extends GameArea {
         return newPlayer;
     }
     public void spawnLaserShower(float X , float Y) {
+        // Spawn lasers behind the player
         for (int i = 0; i <= 5; i++) {
-            Entity laser = LaserFactory.createLaserShower(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f); // Create a laser facing downward
             float xBehind = X - ((i+1)* (float) 5.5);
             spawnEntityAt(laser,new GridPoint2(Math.round((xBehind+10f)), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule laser disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
@@ -262,12 +264,14 @@ public class LevelTwoGameArea extends GameArea {
             },5f);
         }
 
+        // Spawn lasers ahead of the player
         for (int j = 0; j <=5; j++) {
-            Entity laser = LaserFactory.createLaserShower(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f); // Create a laser facing downward
             float xAhead = X + ((j+1)* (float) 5.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(xAhead+10f), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule laser disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
@@ -277,9 +281,10 @@ public class LevelTwoGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta,float X , float Y) {
-            if (!has_laser) {
+            if (!has_laser) { // Only spawn if no active laser
                 spawnLaserShower(X, Y);
-                has_laser = true;
+                has_laser = true; // Mark laser as active
+                // Reset the has_laser flag after 5 seconds to allow next spawn
                 Timer.schedule(new Timer.Task() {
                     @Override
                     public void run() {

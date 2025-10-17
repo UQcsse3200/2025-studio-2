@@ -407,6 +407,7 @@ public class MainGameScreen extends ScreenAdapter {
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 jumpCount++;
+                // Trigger laser shower based on jump count for each level
                 if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 5) {
                     levelOneArea.laserShowerChecker(delta, playerPos.x, playerPos.y);
                     jumpCount = 0;
@@ -415,6 +416,7 @@ public class MainGameScreen extends ScreenAdapter {
                     jumpCount = 0;
                 }
             }
+            // Boss-level laser logic
             if (gameArea instanceof BossLevelGameArea bossLevel) {
                 Vector2 currentPlayerPos = player.getPosition().cpy();
                 if (currentPlayerPos.x < 62f) { // skip laser when player is beyond x = 61

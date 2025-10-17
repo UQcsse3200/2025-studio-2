@@ -216,9 +216,9 @@ public class BossLevelGameArea extends GameArea {
     public void spawnLaserShower(float X , float Y) {
         if (player == null) return; // safety check
 
-        // Spawn 3 lasers to the left
+        // Spawn lasers behind of the player
         for (int i = 0; i <= 5; i++) {
-            Entity laser = LaserFactory.createLaserShower(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f); // Create another downward laser
             float xBehind = X - ((i + 1) * 7.5f); // offset left
             spawnEntityAt(laser, new GridPoint2(Math.round(xBehind+10f), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
@@ -232,13 +232,14 @@ public class BossLevelGameArea extends GameArea {
             }, 5f);
         }
 
-        // Spawn 3 lasers to the right
+        // Spawn lasers ahead of the player
         for (int i = 0; i <= 5; i++) {
-            Entity laser = LaserFactory.createLaserShower(-90f);
+            Entity laser = LaserFactory.createLaserShower(-90f); // Create another downward laser
             float xAhead = X + ((i + 1) * 7.5f); // offset right
             spawnEntityAt(laser, new GridPoint2(Math.round(xAhead+10f), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {

@@ -236,12 +236,14 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
     public void spawnLaserShower(float X , float Y) {
+        // Spawn lasers behind the player
         for (int i = 0; i <= 5; i++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xBehind = X - ((i+1)* (float) 7.5);
             spawnEntityAt(laser,new GridPoint2(Math.round((xBehind+10f)), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
@@ -250,12 +252,14 @@ public class LevelOneGameArea extends GameArea {
             },5f);
         }
 
+        // Spawn lasers ahead of the player
         for (int j = 0; j <=5; j++) {
             Entity laser = LaserFactory.createLaserShower(-90f);
             float xAhead= X + ((j+1)* (float) 7.5);
             spawnEntityAt(laser,new GridPoint2(Math.round(xAhead + 10f), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
@@ -265,9 +269,12 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta,float X , float Y) {
-            if (!has_laser) {
+            if (!has_laser) {// Only spawn if no active laser
                 spawnLaserShower(X,Y);
+                // Mark laser as active
                 has_laser = true;
+
+                /* Reset the has_laser flag after 5 seconds to allow next spawn */
                 Timer.schedule(new Timer.Task() {
                     @Override
                     public void run() {

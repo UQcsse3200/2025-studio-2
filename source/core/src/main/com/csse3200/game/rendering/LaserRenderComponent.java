@@ -15,6 +15,10 @@ import com.csse3200.game.entities.Entity;
 
 import java.util.List;
 
+/**
+ * Renders laser beams for both LaserEmitter and LaserShower entities.
+ * Supports glow effects and core beam rendering.
+ */
 public class LaserRenderComponent extends RenderComponent {
     private Texture pixelTex;
     private TextureRegion pixel;
@@ -32,9 +36,11 @@ public class LaserRenderComponent extends RenderComponent {
     @Override
     public void create() {
         super.create();
+        // Get laser components from the entity
         showerEmitter = entity.getComponent(LaserShowerComponent.class);
         mainEmitter = entity.getComponent(LaserEmitterComponent.class);
 
+        // Assign colors based on laser type
         if (showerEmitter != null) {
             // Blue laser shower
             color = new Color(0.05f, 0.35f, 0.6f, 1.0f);      // Core beam (A darker, deeper Cyan)
@@ -62,6 +68,8 @@ public class LaserRenderComponent extends RenderComponent {
     protected void draw(SpriteBatch batch) {
         if (mainEmitter != null && !mainEmitter.getEnable()) return;
         List<Vector2> pts = null;
+
+        // Get laser path points from the appropriate component
         if (mainEmitter != null) {
             pts = mainEmitter.getPositions();
         } else if (showerEmitter != null) {
@@ -70,14 +78,15 @@ public class LaserRenderComponent extends RenderComponent {
 
         if (pts == null || pts.size() < 2) return;
 
+        // Draw each segment of the laser
         for (int i = 0; i < pts.size() - 1; i++) {
             Vector2 a =  pts.get(i);
             Vector2 b =  pts.get(i + 1);
 
             float dx = b.x - a.x;
             float dy = b.y - a.y;
-            float len = (float) Math.hypot(dx, dy);
-            if (len < 1e-4f) continue;
+            float len = (float) Math.hypot(dx, dy);// Length of segment
+            if (len < 1e-4f) continue; // Skip very short segments
 
             float angleDeg = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
 
@@ -120,6 +129,7 @@ public class LaserRenderComponent extends RenderComponent {
         // reset batch color
         batch.setColor(1f, 1f, 1f, 1f);
     }
+    // Accessors for color and glow
     public Color getColor() { return color; }
     public Color getGlowColor() { return glowColor; }
     public void setEntity(Entity entity) {
