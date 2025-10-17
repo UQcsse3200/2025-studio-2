@@ -1,5 +1,7 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -8,9 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 class TestLeaderboardComponent {
   private LeaderboardComponent leaderboardComponent;
+  private String data;
 
   @SuppressWarnings("unchecked")
   private Map<String, Long> getBaseTimes() throws IllegalAccessException, NoSuchFieldException {
@@ -21,8 +26,18 @@ class TestLeaderboardComponent {
 
   @BeforeEach
   void beforeEach() throws IllegalAccessException, NoSuchFieldException {
-    String filePath = "test/files/leaderboard.json";
-    leaderboardComponent = new LeaderboardComponent(filePath);
+    data = "{}";
+    FileHandle fileHandle = mock(FileHandle.class);
+    when(fileHandle.readString()).thenAnswer(invocation -> data);
+    doAnswer(invocation -> {
+      data = invocation.getArgument(0);
+      return null;
+    }).when(fileHandle).writeString(anyString(), anyBoolean());
+
+    Gdx.files = mock(com.badlogic.gdx.Files.class);
+    when(Gdx.files.external(anyString())).thenReturn(fileHandle);
+
+    leaderboardComponent = new LeaderboardComponent();
     Map<String, Long> baseTimes = getBaseTimes();
 
     baseTimes.put("1", 100000L);
@@ -81,6 +96,7 @@ class TestLeaderboardComponent {
     assertEquals(5, leaderboardComponent.readData().size());
 
     Map<String, Long> baseTimes = getBaseTimes();
+    baseTimes.clear();
     baseTimes.put("1", 100000L);
     leaderboardComponent.writeData();
 
