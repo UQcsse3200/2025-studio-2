@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 public class BossLaserAttackComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(BossLaserAttackComponent.class);
 
-    private static final float ATTACK_COOLDOWN = 4f;  // seconds between laser shots
+    private static final float ATTACK_COOLDOWN = 7f;  // seconds between laser shots
     private static final float ANIMATION_DELAY = 0.6f; // delay to sync projectile with animation
     private static final int LASER_DAMAGE = 20;
     private static final float LASER_SPEED = 15f;
