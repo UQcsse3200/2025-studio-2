@@ -12,6 +12,7 @@ import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.LevelConfig;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.events.listeners.EventListener1;
 import com.csse3200.game.services.ServiceLocator;
@@ -247,6 +248,62 @@ public final class Spawners {
                         new Vector2[] { new Vector2(a.x, a.y), new Vector2(a.dx, a.dy), new Vector2(a.dy, a.x) }
                 )
         );
+
+        SpawnRegistry.register("ladder_plate", a -> {
+            String ladderId = String.valueOf(a.id);
+            if (ladderId == null || ladderId.isBlank()) {
+                throw new IllegalArgumentException("ladder_plate needs an  id matching its ladder");
+            }
+
+            int offset = 0;
+
+            if (a.extra != null) {
+                try {
+                    offset = Integer.parseInt(a.extra);
+                } catch (NumberFormatException ignored) {}
+            }
+
+            Entity plate = PressurePlateFactory.createLadderPlate(ladderId, offset, 0.05f);
+            addTooltip(plate, a.tooltip);
+            return plate;
+        });
+
+        SpawnRegistry.register("ladder", a -> {
+            /*
+            * Fields
+            *   a.id        -> ladder section id
+            *   a.x, a.y    -> base tile pos
+            *   a.extra     -> "height:16,offset:11"
+            * */
+
+            String ladderId = String.valueOf(a.id);
+            if (ladderId == null || ladderId.isBlank()) {
+                throw new IllegalArgumentException("ladder needs an id to group rungs/plates");
+            }
+
+            // parse 'extra'
+            int height = 1;
+            int offset = 0;
+            if (a.extra != null) {
+                for (String part : a.extra.split(",")) {
+                    String[] kv = part.trim().split(":");
+                    if (kv.length == 2) {
+                        String k =  kv[0].trim().toLowerCase();
+                        String v = kv[1].trim();
+                        try {
+                            if (k.equals("height")) height = Integer.parseInt(v);
+                            if (k.equals("offset")) offset = Integer.parseInt(v);
+                        } catch (NumberFormatException ignored) {}
+                    }
+                }
+            }
+            if (height <= 0) throw new IllegalArgumentException("height must be > 0");
+
+            // anchor entity (returned to game area to position)
+            Entity anchor = LadderFactory.createLadderBase(ladderId, height, offset);
+
+            return anchor;
+        });
     }
 
     // --- Helpers ---
