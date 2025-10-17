@@ -97,9 +97,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/level2background.png",
             "images/lablevel/background/background2.png",
             "images/glide_powerup.png",
-            "images/jetpack_powerup.png",
             "images/laser-end.png",
-            "images/jetpack_powerup.png",
             "images/lost_hardware.png",
             "images/tutorials/dash.png",
             "images/cube.png",
@@ -118,7 +116,6 @@ public class LevelTwoGameArea extends GameArea {
             "sounds/doorsound.mp3",
             "sounds/walksound.mp3",
             "sounds/whooshsound.mp3",
-            "sounds/jetpacksound.mp3",
             "sounds/deathsound.mp3",
             "sounds/pickupsound.mp3",
             "sounds/interactsound.mp3",
@@ -172,9 +169,9 @@ public class LevelTwoGameArea extends GameArea {
         spawnTerminals();
         //spawnBomberDrone();
         spawnSelfDestructDrone();
-        spawnAutoBomberDrone(15, 15, 30, 15);
-        spawnAutoBomberDrone(52, 60, 60,58);
-        spawnAutoBomberDrone(65, 60, 75,58);
+        spawnAutoBomberDrone(15, 15, 30, 15, "auto_bomber_1");
+        spawnAutoBomberDrone(52, 60, 60,58, "auto_bomber_2");
+        spawnAutoBomberDrone(65, 60, 75,58, "auto_bomber_3");
 
         spawnCollectables();
         spawnMovingTraps();
@@ -581,7 +578,7 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(bomberDrone, spawnTile, true, true);
     }
 
-    private void spawnAutoBomberDrone(int x, int y, int patrolX, int patrolY) {
+    private void spawnAutoBomberDrone(int x, int y, int patrolX, int patrolY, String id) {
         GridPoint2 spawnTile = new GridPoint2(x, y);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
@@ -591,7 +588,7 @@ public class LevelTwoGameArea extends GameArea {
         Entity autoBomber = EnemyFactory.createAutoBomberDrone(
                 player,           // target reference
                 patrolRoute,      // patrol waypoints
-                "auto_bomber_1"   // unique ID
+                id   // unique ID
         );
         spawnEntityAt(autoBomber, spawnTile, true, true);
     }
@@ -777,7 +774,6 @@ public class LevelTwoGameArea extends GameArea {
         // Large, invisible sensors — easy to grab, no textures.
         // IDs chosen to match the ObjectiveTab banner map.
         Gdx.app.log("LevelOne", "Spawning objectives…");
-        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("keycard", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
         spawnEntityAt(CollectableFactory.createObjective("door", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
     }
