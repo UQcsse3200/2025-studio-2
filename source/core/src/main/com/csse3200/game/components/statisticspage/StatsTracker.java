@@ -164,7 +164,7 @@ public class StatsTracker {
         data.jumpCount = jumpCount;
         data.codexReads = codexReads;
 
-        FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.LOCAL);
+        FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.EXTERNAL);
     }
 
     /**
@@ -172,7 +172,7 @@ public class StatsTracker {
      */
     public static void loadStats() {
         StatsData data = FileLoader.readClass(StatsData.class, FILE_PATH,
-                FileLoader.Location.LOCAL);
+                FileLoader.Location.EXTERNAL);
         if (data != null) {
             playtime = data.playtime;
             upgradesCollected = data.upgradesCollected;
