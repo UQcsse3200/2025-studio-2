@@ -180,8 +180,8 @@ public class TutorialGameArea extends GameArea {
     }
 
     private void spawnTutorials() {
-        spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
-        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
     }
 
     private void spawnTerminals() {

@@ -166,7 +166,7 @@ public class LevelTwoGameArea extends GameArea {
 
     private void spawnTutorials() {
         // TODO: Comment this if the player should not have a dash upgrade by this point
-        spawnEntityAt(TutorialFactory.createDashTutorial(), new GridPoint2(14, 8), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createDashTutorial(), new GridPoint2(14, 8), true, true);
     }
 
     private void spawnDeathZone() {
