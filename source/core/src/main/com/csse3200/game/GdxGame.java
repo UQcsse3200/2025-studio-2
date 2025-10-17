@@ -152,7 +152,6 @@ public class GdxGame extends Game {
       save.upgrades = new HashMap<>();
     }
 
-    save.area = MainGameScreen.Areas.BOSS_LEVEL;
     return save;
   }
 
