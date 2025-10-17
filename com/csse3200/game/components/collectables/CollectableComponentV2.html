@@ -144,6 +144,11 @@ loadScripts(document, 'script');</script>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Registers a listener for <code>"onCollisionStart"</code> events to trigger collection logic.</div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#toggleVisibility(boolean)" class="member-name-link">toggleVisibility</a><wbr>(boolean&nbsp;visible)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Toggles the visibility state of this entity and updates its components accordingly.</div>
+</div>
 </div>
 </div>
 </div>
@@ -204,6 +209,32 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd><code>true</code> if the key was successfully collected and stored,
          <code>false</code> if the player entity is null or has no inventory</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="toggleVisibility(boolean)">
+<h3>toggleVisibility</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">toggleVisibility</span><wbr><span class="parameters">(boolean&nbsp;visible)</span></div>
+<div class="block">Toggles the visibility state of this entity and updates its components accordingly.
+ <p>
+ When hidden:
+ <ul>
+   <li>Animations are disabled.</li>
+   <li>The texture is unregistered from the render service.</li>
+   <li>Lights (cone) are deactivated.</li>
+   <li>Collider layer is set to <code>PhysicsLayer.NONE</code>.</li>
+ </ul>
+ When visible:
+ <ul>
+   <li>Animations are enabled.</li>
+   <li>The texture is registered with the render service.</li>
+   <li>Lights (cone) are activated.</li>
+   <li>Collider layer is set to <code>PhysicsLayer.COLLECTABLE</code>.</li>
+ </ul></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>visible</code> - the visibility of the entity</dd>
 </dl>
 </section>
 </li>
