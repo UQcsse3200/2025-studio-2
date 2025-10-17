@@ -15,6 +15,8 @@ import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 
 import static com.badlogic.gdx.Gdx.app;
@@ -25,7 +27,7 @@ import static com.badlogic.gdx.Gdx.app;
  * machine (See the State Pattern).
  */
 public class GdxGame extends Game {
-  public static final String savePath = "configs/save.json";
+  public static final String savePath = "configs" + File.separator + "save.json";
 
   private static final Logger logger = LoggerFactory.getLogger(GdxGame.class);
 
@@ -56,7 +58,7 @@ public class GdxGame extends Game {
     UserSettings.applySettings(settings);
   }
 
-  public static void saveLevel(MainGameScreen.Areas area, Entity player, String path) {
+  public static void saveLevel(MainGameScreen.Areas area, Entity player, String path, FileLoader.Location location) {
     logger.debug("Saving game level");
 
     SaveConfig saveConfig = new SaveConfig();
@@ -66,7 +68,7 @@ public class GdxGame extends Game {
     saveConfig.inventory = inventoryComponent.getInventoryCopy();
     saveConfig.upgrades = inventoryComponent.getUpgradesCopy();
 
-    FileLoader.writeClass(saveConfig, path, FileLoader.Location.LOCAL);
+    FileLoader.writeClass(saveConfig, path, location);
   }
 
   /**
@@ -107,7 +109,7 @@ public class GdxGame extends Game {
       case STATISTICS -> new StatisticsScreen(this);
       case LEADERBOARD -> new LeaderboardScreen(this);
       case LOAD_LEVEL -> {
-        SaveConfig saveConfig = loadSave(savePath);
+        SaveConfig saveConfig = loadSave(savePath, FileLoader.Location.EXTERNAL);
 
         // Load into the correct area, pass the player the old inventory.
         MainGameScreen game = new MainGameScreen(this, saveConfig.area);
@@ -128,8 +130,8 @@ public class GdxGame extends Game {
      * @param path - save file path
      * @return valid SaveConfig
      */
-    public static SaveConfig loadSave(String path) {
-    SaveConfig save = FileLoader.readClass(SaveConfig.class, path, FileLoader.Location.LOCAL);
+    public static SaveConfig loadSave(String path, FileLoader.Location location) {
+    SaveConfig save = FileLoader.readClass(SaveConfig.class, path, location);
     // If the save is null, create a basic one, with default values coming from null checks.
     if (save == null) {
       save = new SaveConfig();

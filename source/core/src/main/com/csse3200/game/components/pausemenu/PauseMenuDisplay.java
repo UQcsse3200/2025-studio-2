@@ -17,6 +17,7 @@ import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
@@ -121,7 +122,7 @@ public class PauseMenuDisplay extends UIComponent {
         });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
         addBottomButton("Save level", () ->
-                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath));
+                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath, FileLoader.Location.EXTERNAL));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -226,7 +227,7 @@ public class PauseMenuDisplay extends UIComponent {
         });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
         addBottomButton("Save level", () ->
-                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath));
+                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath, FileLoader.Location.EXTERNAL));
     }
 
     public void setVisible(boolean visible) {

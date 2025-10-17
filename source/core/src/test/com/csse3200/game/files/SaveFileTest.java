@@ -66,7 +66,7 @@ public class SaveFileTest {
         inv.addItems(InventoryComponent.Bag.INVENTORY, "test1", 3);
         inv.addItems(InventoryComponent.Bag.UPGRADES, "test2", 4);
 
-        game.saveLevel(area, player, "test/files/testsave.json");
+        game.saveLevel(area, player, "test/files/testsave.json", FileLoader.Location.LOCAL);
 
         SaveConfig result = FileLoader.readClass(SaveConfig.class, "test/files/testsave.json");
 
@@ -83,7 +83,7 @@ public class SaveFileTest {
 
     @Test
     void loadValidFromFile() {
-        SaveConfig result = game.loadSave("test/files/validloadtest.json");
+        SaveConfig result = game.loadSave("test/files/validloadtest.json", FileLoader.Location.LOCAL);
 
         assertNotNull(result);
 
@@ -99,7 +99,7 @@ public class SaveFileTest {
 
     @Test
     void loadInvalidArea() {
-        SaveConfig result = game.loadSave("test/files/invalidarealoadtest.json");
+        SaveConfig result = game.loadSave("test/files/invalidarealoadtest.json", FileLoader.Location.LOCAL);
 
         assertNotNull(result);
 
@@ -109,7 +109,7 @@ public class SaveFileTest {
 
     @Test
     void loadInvalidInventory() {
-        SaveConfig result = game.loadSave("test/files/noinventoryloadtest.json");
+        SaveConfig result = game.loadSave("test/files/noinventoryloadtest.json", FileLoader.Location.LOCAL);
 
         assertNotNull(result);
 
@@ -123,7 +123,7 @@ public class SaveFileTest {
 
     @Test
     void loadEmptyFile() {
-        SaveConfig result = game.loadSave("test/files/emptyfile.json");
+        SaveConfig result = game.loadSave("test/files/emptyfile.json", FileLoader.Location.LOCAL);
 
         assertNotNull(result);
 
@@ -134,7 +134,7 @@ public class SaveFileTest {
 
     @Test
     void loadNonExistentFile() {
-        SaveConfig result = game.loadSave("test/files/hdsaljslhgkjhsagi.json");
+        SaveConfig result = game.loadSave("test/files/hdsaljslhgkjhsagi.json", FileLoader.Location.LOCAL);
 
         assertNotNull(result);
 
