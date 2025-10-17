@@ -812,6 +812,7 @@ public class LevelOneGameArea extends GameArea {
         Entity leftSign = SignpostFactory.createSignpost("left");
         spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
+
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
         terrain = createDefaultTerrain();
