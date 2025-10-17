@@ -134,7 +134,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/doors.atlas",
             "images/timer.atlas",
             "images/drone.atlas",
-            "images/laser.atlas"
+            "images/laser.atlas",
+            "images/health-potion.atlas",
     };
     private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
@@ -171,11 +172,22 @@ public class LevelTwoGameArea extends GameArea {
         spawnTerminals();
         //spawnBomberDrone();
         spawnSelfDestructDrone();
-        spawnAutoBomberDrone();
+        spawnAutoBomberDrone(15, 15, 30, 15);
+        spawnAutoBomberDrone(52, 60, 60,58);
+        spawnAutoBomberDrone(65, 60, 75,58);
+
         spawnCollectables();
         spawnMovingTraps();
         spawnTutorials();
+        spawnPotion("health", 95, 24);
+        spawnPotion("health", 16, 26);
+        spawnPotion("health", 80, 52);
       }
+
+    public void spawnPotion(String type, int x, int y) {
+        Entity potion = CollectableFactory.createCollectable("potion:" + type);
+        spawnEntityAt(potion, new GridPoint2(x,y), true, true);
+    }
 
     private void spawnTutorials() {
         // TODO: Comment this if the player should not have a dash upgrade by this point
@@ -188,8 +200,9 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
     private void spawnSignposts(){
-        Entity rightSign = SignpostFactory.createSignpost("down");
-        spawnEntityAt(rightSign, new GridPoint2(76,4), true, false);
+        Entity downSign = SignpostFactory.createSignpost("down");
+        downSign.addComponent(new TooltipSystem.TooltipComponent("If only there was a way you could become shorter...", TooltipSystem.TooltipStyle.DEFAULT));
+        spawnEntityAt(downSign, new GridPoint2(76,4), true, false);
     }
 
     private void spawnWalls(){
@@ -568,11 +581,11 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntityAt(bomberDrone, spawnTile, true, true);
     }
 
-    private void spawnAutoBomberDrone() {
-        GridPoint2 spawnTile = new GridPoint2(15, 15);
+    private void spawnAutoBomberDrone(int x, int y, int patrolX, int patrolY) {
+        GridPoint2 spawnTile = new GridPoint2(x, y);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(30, 15))
+                terrain.tileToWorldPosition(new GridPoint2(patrolX, patrolY))
         };
         // Create the auto bomber
         Entity autoBomber = EnemyFactory.createAutoBomberDrone(
@@ -703,7 +716,7 @@ public class LevelTwoGameArea extends GameArea {
         //spawn box (WAS JETPACK - CHANGED)
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
             Entity box = BoxFactory.createWeightedBox();
-            spawnEntityAt(box, new GridPoint2(91, 6), true, true);
+            spawnEntityAt(box, new GridPoint2(90, 6), true, true);
         });
     }
 
