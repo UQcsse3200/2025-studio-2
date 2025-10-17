@@ -337,17 +337,17 @@ public class Initializer {
               setGlobal(".body", body);
                
               tryCatch(() {
-              jetpack = getGlobal(jetpack);
-              es = getGlobal(es);
-              body = getGlobal(body);
-              
-              es.register(jetpack);
-              jetpack.setPosition(body.getWorldCenter());
-              }, () {
-                print("There is already a jetpack  in the level!\n");
-              })
-              
-              print("Jetpack spawned!\n");
+                  jetpack = getGlobal(".jetpack");
+                  es = getGlobal(".es");
+                  body = getGlobal(".body");
+                  
+                  es.register(jetpack);
+                  jetpack.setPosition(body.getWorldCenter());
+                  print("Jetpack spawned!\n");
+              }, (e) {
+                  print("There is already a jetpack  in the level!\n");
+              });
+             
           });
           
           setGlobal("spawnGlider", () {
