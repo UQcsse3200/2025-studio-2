@@ -51,6 +51,7 @@ public class StatsTracker {
         deathCount = 0;
         achievementsUnlocked = 0;
         jumpCount = 0;
+        codexReads = 0;
     }
 
     /**
