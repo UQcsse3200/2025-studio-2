@@ -138,7 +138,7 @@ public class ParallaxBackgroundComponent extends RenderComponent {
      * @param batch The sprite batch to use for rendering
      */
     @Override
-    protected void draw(SpriteBatch batch) {
+    public void draw(SpriteBatch batch) {
         for (ParallaxLayer layer : layers) {
             layer.render(batch);
         }

@@ -3,27 +3,29 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.obstacles.DoorComponent;
-import com.csse3200.game.entities.Entity;
+import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.entities.factories.CollectableFactory;
 import com.csse3200.game.entities.factories.PlayerFactoryTest;
 import com.csse3200.game.extensions.GameExtension;
-import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.input.InputFactory;
-import com.csse3200.game.input.InputService;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.CollectableService;
-import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.physics.PhysicsService;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.input.InputComponent;
+import com.csse3200.game.input.InputService;
+import com.csse3200.game.input.InputFactory;
+import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.areas.GameArea;
+
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,8 +35,7 @@ import org.mockito.Mockito;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
@@ -110,7 +111,7 @@ class DoorComponentTest {
     private Entity makeDoor(String keyId, String levelId) {
         // Create minimal door for testing - no animations needed
         Entity door = new Entity();
-        door.addComponent(new DoorComponent(keyId, game));
+        door.addComponent(new DoorComponent(keyId, game, false, ""));
 
         // Add physics components that the door component expects
         door.addComponent(new PhysicsComponent());

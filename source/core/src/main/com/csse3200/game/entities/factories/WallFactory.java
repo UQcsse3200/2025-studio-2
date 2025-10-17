@@ -24,16 +24,17 @@ public class WallFactory {
      * Create a vertical wall at world position (x, y) with given size (width, height).
      * Texture is scaled to fit the specified size.
      *
-     * @param x World X (bottom-left)
-     * @param y World Y (bottom-left)
-     * @param width Wall width in world units
+     * @param x      World X (bottom-left)
+     * @param y      World Y (bottom-left)
+     * @param width  Wall width in world units
      * @param height Wall height in world units
+     * @param texture Wall texture
      * @return Configured wall entity
      */
-    public static Entity createWall(float x, float y, float width, float height) {
+    public static Entity createWall(float x, float y, float width, float height, String texture) {
         Entity wall =
                 new Entity()
-                        .addComponent(new TextureRenderComponent("images/wall.png"))
+                        .addComponent(new TextureRenderComponent(texture))
                         .addComponent(new PhysicsComponent())
                         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
         wall.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);

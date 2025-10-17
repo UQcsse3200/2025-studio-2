@@ -86,10 +86,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
             }
         } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
             entity.getEvents().trigger("interact");
-        } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
-            if (cheatsOn) {
-                triggerAdrenalineEvent();
-            }
         } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
             //takes player off ladder if they are on one.
             this.onLadder = false;
@@ -225,8 +221,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
             // Need to mark the following keys as released
         } else if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
         } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
-        } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
-        } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
+        } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")){
         } else if (keycode == Keymap.getActionKeyCode("PlayerCrouch")) {
         } else if (keycode == Keymap.getActionKeyCode("Enter")) {
         } else if (keycode == Keymap.getActionKeyCode("Reset")) {
@@ -243,7 +238,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (walkDirection.epsilonEquals(Vector2.Zero)) {
             entity.getEvents().trigger("walkStop");
         } else {
-            if (!onLadder && Math.abs(walkDirection.y) > 0f) {
+            if (!cheatsOn && !onLadder && Math.abs(walkDirection.y) > 0f) {
                 walkDirection.y = 0f;
             }
             entity.getEvents().trigger("walk", walkDirection);
@@ -256,10 +251,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private void triggerJumpEvent() {
         entity.getEvents().trigger("jump"); //put jump here
 
-    }
-
-    private void triggerAdrenalineEvent() {
-        entity.getEvents().trigger("toggleAdrenaline");
     }
 
     private void triggerDashEvent() {

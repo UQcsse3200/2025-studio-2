@@ -1,4 +1,4 @@
-package com.csse3200.game.entities.factories;
+ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -289,25 +289,30 @@ public class BoxFactory {
          */
         public Entity build() {
             Entity autonomousBox = new Entity();
-                    if (texturePath.endsWith(".atlas")) {
-                        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
-                        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
-                        animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
-                        animator.startAnimation("flying_bat");
-                        autonomousBox.addComponent(animator);
-                    } else {
-                        autonomousBox.addComponent(new TextureRenderComponent(texturePath));
-                    }
+            if (texturePath.endsWith(".atlas")) {
+                TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
+                AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+                animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
+                animator.startAnimation("flying_bat");
+                autonomousBox.addComponent(animator);
+                if (texturePath.contains("flying_bat")) {
+                    boolean isBat = texturePath.endsWith(".atlas") && texturePath.contains("flying_bat");
+                    float mul = isBat ? 1.3f : 1f;
+                    autonomousBox.setScale(scaleX * mul, scaleY * mul);
+                }
+            } else {
+                autonomousBox.addComponent(new TextureRenderComponent(texturePath));
+            }
 
 
 
-                    autonomousBox
-                            .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                            .addComponent(new HitboxComponent())
-                            .addComponent(new CombatStatsComponent(1, damage))
-                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                            .addComponent(new AutonomousBoxComponent());
+            autonomousBox
+                    .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+                    .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                    .addComponent(new HitboxComponent())
+                    .addComponent(new CombatStatsComponent(1, damage))
+                    .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+                    .addComponent(new AutonomousBoxComponent());
 
 
 
