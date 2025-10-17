@@ -399,11 +399,11 @@ public class MainGameScreen extends ScreenAdapter {
 
         physicsEngine.update();
         ServiceLocator.getEntityService().update();
+
         Entity player = gameArea.getPlayer();
         if (player != null) {
-            Vector2 playerPos = player.getComponent(PhysicsComponent.class) != null
-                    ? player.getComponent(PhysicsComponent.class).getBody().getPosition()
-                    : player.getPosition();
+            // Continuously track player's current position (similar to PlayerActions)
+            Vector2 playerPos = player.getPosition().cpy(); // copy ensures immutability
 
             if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
                 jumpCount++;
@@ -416,10 +416,11 @@ public class MainGameScreen extends ScreenAdapter {
                 }
             }
             if (gameArea instanceof BossLevelGameArea bossLevel) {
-                if (playerPos.x < 62f) { // skip laser when player is beyond x = 61
+                Vector2 currentPlayerPos = player.getPosition().cpy();
+                if (currentPlayerPos.x < 62f) { // skip laser when player is beyond x = 61
                     laserTimer += delta;
                     if (laserTimer >= 40f) {
-                        bossLevel.spawnLaserShower(playerPos.x, playerPos.y); // spawn lasers
+                        bossLevel.spawnLaserShower(currentPlayerPos.x, currentPlayerPos.y); // spawn lasers
                         laserTimer = 0f; // reset timer
                     }
                 }else{
