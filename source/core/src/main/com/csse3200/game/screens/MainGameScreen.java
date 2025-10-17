@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -70,6 +71,8 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
   private static final float CAMERA_LERP_Y = 0.0573f; // Camera smoothing factor, lower = smoother
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
+  private float laserTimer = 0f;
+  private float jumpCount=0;
   private static long lvlStartTime;
 
   private final GdxGame game;
@@ -101,6 +104,7 @@ public class MainGameScreen extends ScreenAdapter {
     CUTSCENE_ONE,
     CUTSCENE_TWO,
     TUTORIAL,
+    BOSS_LEVEL
   }
 
   public MainGameScreen(GdxGame game) {
@@ -162,7 +166,7 @@ public class MainGameScreen extends ScreenAdapter {
       } else {
         // Normal level progression
         logger.info("Door entered, proceeding to next level");
-        switchArea(getNextArea(area), player);
+        handleLeaderboardEntry(player, getNextArea(area));
       }
     });
     gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
@@ -184,37 +188,43 @@ public class MainGameScreen extends ScreenAdapter {
    * Centralized door-entered flow: gather stats, show leaderboard entry, hide HUD,
    * then resume HUD and switch to next area.
    */
-  private void handleDoorEntered() {
-      Areas next = getNextArea(gameAreaEnum);
-      Entity playerEntity = gameArea.getPlayer();
-
-      // Defensive guards: never trust event parameter, only gameArea.getPlayer()
-      CombatStatsComponent combat = playerEntity.getComponent(CombatStatsComponent.class);
+  private void handleLeaderboardEntry(Entity player, Areas nextArea) {
+      // Gather stats
+      CombatStatsComponent combat = player.getComponent(CombatStatsComponent.class);
       int health = (combat != null) ? combat.getHealth() : 0;
 
-      StaminaComponent staminaComp = playerEntity.getComponent(StaminaComponent.class);
+      StaminaComponent staminaComp = player.getComponent(StaminaComponent.class);
       float stamina = (staminaComp != null) ? staminaComp.getCurrentStamina() : 0f;
 
       long completionTime = gameTime.getTimeSince(lvlStartTime);
 
+      // Hide HUD and pause
       hideHUD();
       paused = true;
 
-      LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime, health, stamina);
+      // Create leaderboard entry overlay
+      LeaderboardEntryDisplay entryDisplay =
+              new LeaderboardEntryDisplay(completionTime, health, stamina);
       Entity uiEntity = new Entity().addComponent(entryDisplay);
       ServiceLocator.getEntityService().register(uiEntity);
 
+      // When player finishes entering their name
       uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
           String name = entryDisplay.getEnteredName();
-          if (name != null && !name.isEmpty() && leaderboardComponent != null) {
+          if (name != null && !name.isEmpty()) {
               leaderboardComponent.updateLeaderboard(name, completionTime);
           }
+
+          // Restore HUD and unpause
           showHUD();
           paused = false;
-          switchArea(next, playerEntity);
+
+          // Now proceed to next area
+          switchArea(nextArea, player);
       });
   }
-  /**
+
+    /**
    * Get the GameArea mapped to the Areas area.
    * @param area - Areas area.
    * @return GameArea mapped.
@@ -228,6 +238,7 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
+      case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -242,7 +253,8 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_ONE -> Areas.CUTSCENE_ONE;
       case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
       case LEVEL_TWO -> Areas.CUTSCENE_TWO;
-      case CUTSCENE_TWO -> Areas.SPRINT_ONE;
+      case CUTSCENE_TWO -> Areas.BOSS_LEVEL;
+      case BOSS_LEVEL -> Areas.SPRINT_ONE;
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -340,10 +352,30 @@ public class MainGameScreen extends ScreenAdapter {
       // Update camera position to follow player
       updateCameraFollow();
 
-      physicsEngine.update();
-      ServiceLocator.getEntityService().update();
-    }
-    renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+          physicsEngine.update();
+          ServiceLocator.getEntityService().update();
+          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+              jumpCount++;
+              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
+                  levelOneArea.laserShowerChecker(delta);
+                  jumpCount = 0;
+              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
+                  levelTwoArea.laserShowerChecker(delta);
+                  jumpCount = 0;
+              }
+          }
+          laserTimer += delta;
+
+          // Check if 50 seconds have passed
+          if (laserTimer >= 50f) {
+              if (gameArea instanceof BossLevelGameArea bossLevel) {
+                  bossLevel.spawnLaserShower(); // spawn lasers
+              }
+              laserTimer = 0f; // reset timer
+          }
+
+      }
+      renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
   /**
@@ -476,8 +508,6 @@ public class MainGameScreen extends ScreenAdapter {
 
     Stage stage = ServiceLocator.getRenderService().getStage();
     leaderboardComponent = new LeaderboardComponent();
-
-    lvlStartTime = gameTime.getTime();
 
     // Build your puzzle bank (spritesheet-driven)
     SimpleCaptchaBank bank = buildCaptchaBank();

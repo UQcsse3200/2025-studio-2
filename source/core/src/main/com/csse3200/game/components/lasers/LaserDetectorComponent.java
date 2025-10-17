@@ -13,7 +13,7 @@ import com.csse3200.game.services.ServiceLocator;
 /**
  * This component is used on a laser detector entity and is responsible for initialising the
  * cone light position. It also updates the state of the detector when the entity gets
- * the event trigger from the {@code LaserEmitterComponent}.
+ * the event trigger from the {@code LaserShowerComponent}.
  */
 public class LaserDetectorComponent extends Component {
 

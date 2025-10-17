@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
@@ -29,14 +30,12 @@ public class LaserFactory {
      */
     public static Entity createLaserEmitter(float dir) {
         // setup animations
-        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class);
-        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
-        if (atlas != null) {
-            animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
-            animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
-            animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
-            animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
-        }
+        AnimationRenderComponent animator = new AnimationRenderComponent(
+                ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class));
+        animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser-off", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
         animator.setOrigin(0.5f, 0.5f);
         animator.setRotation(dir);
         animator.setLayer(3);
@@ -51,8 +50,9 @@ public class LaserFactory {
                 180f
         );
 
-        // construct entity
+        //A construct entity
         Entity e = new Entity()
+                .addComponent(new LaserShowerComponent(dir))
                 .addComponent(new LaserEmitterComponent(dir))
                 .addComponent(new LaserRenderComponent())
                 .addComponent(new CombatStatsComponent(1, ATTACK_DAMAGE))

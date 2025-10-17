@@ -1,6 +1,7 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -40,6 +41,8 @@ import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementProgression;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,6 +53,7 @@ public class LevelOneGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
+    boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -146,7 +150,7 @@ public class LevelOneGameArea extends GameArea {
             "sounds/thudsound.mp3",
             "sounds/chimesound.mp3",
             "sounds/explosion.mp3",
-    };
+            "sounds/laserShower.mp3"};
 
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
@@ -159,6 +163,7 @@ public class LevelOneGameArea extends GameArea {
             "images/animated-monitors.atlas",
             "images/laser.atlas"
     };
+    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -171,6 +176,8 @@ public class LevelOneGameArea extends GameArea {
         spawnTerrain();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+        AchievementProgression.onLevelStart();
+
     }
     protected void loadEntities() {
         cancelPlateDebouncers();
@@ -227,6 +234,7 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
         spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
         spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
+
     }
 
     private void spawnBoxes() {
@@ -248,6 +256,52 @@ public class LevelOneGameArea extends GameArea {
         Entity detector = LaserDetectorFactory.createLaserDetector(0f);
         spawnEntityAt(detector, new GridPoint2(28, 4), true, true);
     }
+    public void spawnLaserShower() {
+        final float Y = player.getPosition().y + 10f;
+        final float X = player.getPosition().x;
+
+
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i+1)* (float) 7.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+
+        for (int j = 0; j <=2; j++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((j+1)* (float) 7.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            },5f);
+        }
+    }
+    public void laserShowerChecker(float delta) {
+            if (has_laser==false) {
+                spawnLaserShower();
+                has_laser = true;
+                Timer.schedule(new Timer.Task() {
+                    @Override
+                    public void run() {
+                        has_laser = false;
+                    }
+                },5f);
+            }
+    }
+
 
     private void spawnDeathZone() {
         GridPoint2 spawnPos =  new GridPoint2(12,-10);
@@ -729,6 +783,9 @@ public class LevelOneGameArea extends GameArea {
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
+        door.getEvents().addListener("doorOpened", () -> {
+            AchievementProgression.onLevelComplete("level1");
+        });
     }
 
     private void playMusic() {
@@ -753,6 +810,9 @@ public class LevelOneGameArea extends GameArea {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("Level One: The Depths"));
         ui.addComponent(new TooltipSystem.TooltipDisplay());
+        ui.addComponent(new AchievementToastUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
+
         spawnEntity(ui);
     }
 
