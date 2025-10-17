@@ -331,9 +331,21 @@ public class Initializer {
               player = getPlayer();
               physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
               body = physics.getBody();
+              
+              setGlobal(".jetpack", jetpack);
+              setGlobal(".es", es);
+              setGlobal(".body", body);
                
+              tryCatch(() {
+              jetpack = getGlobal(jetpack);
+              es = getGlobal(es);
+              body = getGlobal(body);
+              
               es.register(jetpack);
               jetpack.setPosition(body.getWorldCenter());
+              }, () {
+                print("There is already a jetpack  in the level!\n");
+              })
               
               print("Jetpack spawned!\n");
           });
