@@ -605,6 +605,8 @@ public class MainGameScreen extends ScreenAdapter {
    * Reset game area and re-add player's death listener
    */
   public void reset() {
+    jumpCount = 0;
+    laserTimer = 0f;
     gameArea.reset();
   }
 
