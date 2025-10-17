@@ -89,25 +89,38 @@ public final class Spawners {
 
         // --- Pressure Plate ---
         SpawnRegistry.register("pressure_plate", a -> {
-            Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-            linkEntities(plate, a.linked);
-            addIdentifier(plate, String.valueOf(a.id));
-            addTooltip(plate, a.tooltip);
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+            Entity plate;
 
-            if (a.target != null && a.extra != null) {
-                if (a.extra.equals("platform")) {
-                    Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
-                    target.getEvents().trigger("stop");
+            if (subtype == EntitySubtype.LADDER) {
+                String ladderId = String.valueOf(a.id);
+                if (ladderId == null || ladderId.isBlank()) {
+                    throw new IllegalArgumentException("ladder_plate needs an  id matching its ladder");
+                }
 
-                    plate.getEvents().addListener("platePressed", () -> {
-                        target.getEvents().trigger("start");
-                    });
+                plate = PressurePlateFactory.createLadderPlate(ladderId, a.offset, 0.05f);
+            } else {
+                plate = PressurePlateFactory.createBoxOnlyPlate();
+                linkEntities(plate, a.linked);
+                addIdentifier(plate, String.valueOf(a.id));
 
-                    plate.getEvents().addListener("plateReleased", () -> {
+                if (a.target != null && a.extra != null) {
+                    if (a.extra.equals("platform")) {
+                        Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
                         target.getEvents().trigger("stop");
-                    });
+
+                        plate.getEvents().addListener("platePressed", () -> {
+                            target.getEvents().trigger("start");
+                        });
+
+                        plate.getEvents().addListener("plateReleased", () -> {
+                            target.getEvents().trigger("stop");
+                        });
+                    }
                 }
             }
+            addTooltip(plate, a.tooltip);
+
             return plate;
         });
 
@@ -249,58 +262,14 @@ public final class Spawners {
                 )
         );
 
-        SpawnRegistry.register("ladder_plate", a -> {
-            String ladderId = String.valueOf(a.id);
-            if (ladderId == null || ladderId.isBlank()) {
-                throw new IllegalArgumentException("ladder_plate needs an  id matching its ladder");
-            }
-
-            int offset = 0;
-
-            if (a.extra != null) {
-                try {
-                    offset = Integer.parseInt(a.extra);
-                } catch (NumberFormatException ignored) {}
-            }
-
-            Entity plate = PressurePlateFactory.createLadderPlate(ladderId, offset, 0.05f);
-            addTooltip(plate, a.tooltip);
-            return plate;
-        });
-
         SpawnRegistry.register("ladder", a -> {
-            /*
-            * Fields
-            *   a.id        -> ladder section id
-            *   a.x, a.y    -> base tile pos
-            *   a.extra     -> "height:16,offset:11"
-            * */
-
             String ladderId = String.valueOf(a.id);
             if (ladderId == null || ladderId.isBlank()) {
                 throw new IllegalArgumentException("ladder needs an id to group rungs/plates");
             }
 
-            // parse 'extra'
-            int height = 1;
-            int offset = 0;
-            if (a.extra != null) {
-                for (String part : a.extra.split(",")) {
-                    String[] kv = part.trim().split(":");
-                    if (kv.length == 2) {
-                        String k =  kv[0].trim().toLowerCase();
-                        String v = kv[1].trim();
-                        try {
-                            if (k.equals("height")) height = Integer.parseInt(v);
-                            if (k.equals("offset")) offset = Integer.parseInt(v);
-                        } catch (NumberFormatException ignored) {}
-                    }
-                }
-            }
-            if (height <= 0) throw new IllegalArgumentException("height must be > 0");
-
             // anchor entity (returned to game area to position)
-            Entity anchor = LadderFactory.createLadderBase(ladderId, height, offset);
+            Entity anchor = LadderFactory.createLadderBase(ladderId, a.height, a.offset);
 
             return anchor;
         });

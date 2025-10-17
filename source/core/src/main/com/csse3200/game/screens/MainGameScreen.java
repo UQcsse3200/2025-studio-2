@@ -157,8 +157,8 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
     gameAreaEnum = area;
-//    gameArea = getGameArea(Areas.LEVEL_THREE);
-    gameArea = getGameArea(area);
+    gameArea = getGameArea(Areas.LEVEL_THREE);
+//    gameArea = getGameArea(area);
     gameArea.create();
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both

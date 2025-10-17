@@ -26,7 +26,11 @@ public enum EntitySubtype {
 
     // Door
     STATIC(EntityType.DOOR),
-    TRANSITION(EntityType.DOOR);
+    TRANSITION(EntityType.DOOR),
+
+    // Pressure Plates
+    LADDER(EntityType.PRESSURE_PLATE),
+    NORMAL(EntityType.PRESSURE_PLATE),;
 
     /** Parent type for this subtype. */
     private final EntityType type;
