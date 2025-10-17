@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
-import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingDefaults;

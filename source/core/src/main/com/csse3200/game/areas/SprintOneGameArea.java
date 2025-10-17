@@ -1,38 +1,26 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory.TerrainType;
-import com.csse3200.game.components.DeathZoneComponent;
-import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.Component;
-import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
-import com.csse3200.game.physics.ObjectContactListener;
-import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.achievements.AchievementProgression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -330,7 +318,7 @@ public class SprintOneGameArea extends GameArea {
         Entity wall1 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 5f * ts,
-                "images/walls.png"
+                "images/wall.png"
         );
         spawnEntityAt(wall1, wall1Pos, false, false);
 
@@ -348,7 +336,7 @@ public class SprintOneGameArea extends GameArea {
         Entity wall3 = WallFactory.createWall(
                 0f, 0f,
                 1f * ts, 6f * ts,
-                "images/walls.png"
+                "images/wall.png"
         );
         spawnEntityAt(wall3, wall3Pos, false, false);
     }
