@@ -367,4 +367,8 @@ public class Entity {
   public String toString() {
     return "Entity{id=" + id + "}" + components;
   }
+
+  public boolean isEnabled() {
+    return  enabled;
+  }
 }

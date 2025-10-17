@@ -8,9 +8,9 @@ public class PackDroneAtlas {
 	public static void main(String[] args) {
 		Path root = Paths.get("").toAbsolutePath();
 
-		String inputDir  = root.resolve("core/assets/commodore64/raw/drone").toString(); //newest png pack
-		String outputDir = root.resolve("core/assets/images").toString();
-		String packName  = "drone";
+		String inputDir  = root.resolve("source/core/assets/commodore64/raw/boss_small").toString(); //newest png pack
+		String outputDir = root.resolve("source/core/assets/images").toString();
+		String packName  = "boss";
 
 		TexturePacker.Settings s = new TexturePacker.Settings();
 		// Automatically crop transparent edges
@@ -24,6 +24,8 @@ public class PackDroneAtlas {
 		s.paddingY         = 2;
 		s.maxWidth         = 2048;
 		s.maxHeight        = 2048;
+		s.stripWhitespaceX = false;
+		s.stripWhitespaceY = false;
 		s.flattenPaths     = true; // Ignore subdirectory names and write them all to atlas
 
 		// repack

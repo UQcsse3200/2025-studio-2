@@ -46,10 +46,16 @@ public class BossLevelGameArea extends GameArea {
             "images/red_button.png",
             "images/red_button_pushed.png",
             "images/box_orange.png",
+            "images/minimap_player_marker.png",
+            "images/minimap_forest_area.png",
             "images/box_blue.png",
             "images/box_white.png",
             "images/blue_button.png",
             "images/spikes_sprite.png",
+            "images/TechWallBase.png",
+            "images/TechWallVariant1.png",
+            "images/TechWallVariant2.png",
+            "images/TechWallVariant3.png",
             "images/platform.png",
             "images/empty.png",
             "images/gate.png",
@@ -61,6 +67,7 @@ public class BossLevelGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
+            "images/boss.png",
             "images/bomb.png",
             "images/cube.png",
             "images/laser-end.png",
@@ -91,13 +98,20 @@ public class BossLevelGameArea extends GameArea {
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/buttonsound.mp3",
+            "sounds/chimesound.mp3",
+            "sounds/CircuitGoodness.mp3",
             "sounds/damagesound.mp3",
             "sounds/deathsound.mp3",
             "sounds/doorsound.mp3",
             "sounds/explosion.mp3",
+            "sounds/Flow.mp3",
+            "sounds/gamemusic.mp3",
             "sounds/hurt.mp3",
 //            "sounds/interactsound.mp3",
             "sounds/jetpacksound.mp3",
+            "sounds/KindaLikeTycho.mp3",
+            "sounds/laddersound.mp3",
+            "sounds/pickupsound.mp3",
             "sounds/thudsound.mp3",
             "sounds/walksound.mp3",
             "sounds/laserShower.mp3",
@@ -106,11 +120,14 @@ public class BossLevelGameArea extends GameArea {
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
             "images/doors.atlas",
-//            "images/drone.atlas", // <---
-//            "images/boss.atlas", // Comment out these lines to fix the loading time
+            "images/drone.atlas",
+            "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",
+            "images/health-potion.atlas",
+            "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+            "images/doors.atlas",
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
@@ -136,7 +153,7 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
-//        spawnBoss(); // Comment out this line if removing the long-loading assets
+        spawnBoss(); // Comment out this line if removing the long-loading assets
     }
 
     /**

@@ -158,7 +158,6 @@ public class LevelOneGameArea extends GameArea {
             "images/animated-monitors.atlas",
             "images/laser.atlas"
     };
-    private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
 
@@ -194,7 +193,7 @@ public class LevelOneGameArea extends GameArea {
         // spawnUpgrade("jetpack", 5, 6); // won't be used in level one
         spawnSecurityCams();
         //spawnBomberDrone();
-        //spawnSelfDestructDrone();
+        spawnSelfDestructDrone();
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
