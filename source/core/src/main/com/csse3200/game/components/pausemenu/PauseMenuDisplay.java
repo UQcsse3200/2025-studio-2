@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
@@ -21,6 +22,7 @@ import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.*;
 
@@ -132,7 +134,10 @@ public class PauseMenuDisplay extends UIComponent {
 
     // Bottom button helper
     private void addBottomButton(String name, Runnable action) {
-        TextButton button = new TextButton(name, skin);
+        TextButton button = new TextButton(name, skin, "settingsMenu");
+        button.setTransform(true);
+        button.setOrigin(Align.center);
+        HoverEffectHelper.applyHoverEffects(java.util.Collections.singletonList(button));
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -142,9 +147,12 @@ public class PauseMenuDisplay extends UIComponent {
         });
         bottomButtons.add(button).padRight(25);
     }
-
+    //bottom button helper for Codex Button
     private void addBottomButton(String name, Tab tab) {
-        TextButton button = new TextButton(name, skin);
+        TextButton button = new TextButton(name, skin, "settingsMenu");
+        button.setTransform(true);
+        button.setOrigin(Align.center);
+        HoverEffectHelper.applyHoverEffects(java.util.Collections.singletonList(button));
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
