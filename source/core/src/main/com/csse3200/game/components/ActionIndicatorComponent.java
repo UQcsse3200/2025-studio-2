@@ -37,7 +37,7 @@ public class ActionIndicatorComponent extends TextureRenderComponent {
   @Override
   protected void draw(SpriteBatch batch) {
     super.draw(batch);
-    if (font == null) return;
+    if (null == font) return;
     Vector2 scale = entity.getScale();
     Vector2 pos = entity.getPosition();
 
