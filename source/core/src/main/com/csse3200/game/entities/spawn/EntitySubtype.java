@@ -28,6 +28,9 @@ public enum EntitySubtype {
     STATIC(EntityType.DOOR),
     TRANSITION(EntityType.DOOR),
 
+    // Enemies
+    AUTO_BOMBER(EntityType.ENEMY),
+
     // Pressure Plates
     LADDER(EntityType.PRESSURE_PLATE),
     NORMAL(EntityType.PRESSURE_PLATE),;

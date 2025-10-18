@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.Vector;
 
 public final class Spawners {
     private static final Logger log = LoggerFactory.getLogger(Spawners.class);
@@ -255,12 +256,34 @@ public final class Spawners {
         });
 
         // --- Enemies ---
-        SpawnRegistry.register("enemy",
-                a -> EnemyFactory.createPatrollingDrone(
-                        player,
-                        new Vector2[] { new Vector2(a.x, a.y), new Vector2(a.dx, a.dy), new Vector2(a.dy, a.x) }
-                )
-        );
+        SpawnRegistry.register("enemy", a -> {
+            // get patrol
+            Vector2[] patrolRoute;
+            if (a.dx != 0 || a.dy != 0) {
+                patrolRoute = new Vector2[] {new Vector2(a.x / 2f, a.y / 2f), new Vector2(a.dx / 2f, a.dy / 2f)};
+            } else {
+                String[] patrolPts = a.extra.split(";");
+
+                patrolRoute = new Vector2[patrolPts.length];
+
+                for (int i = 0; i < patrolRoute.length; i++) {
+                    String[] parts = patrolPts[i].split(",");
+                    float x = Float.parseFloat(parts[0]) / 2f;
+                    float y = Float.parseFloat(parts[1]) / 2f;
+                    patrolRoute[i] = new Vector2(x,y);
+                }
+            }
+
+            // get subtype
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+
+            Entity enemy = switch (subtype) {
+                case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
+                case null, default -> EnemyFactory.createPatrollingDrone(player, patrolRoute);
+            };
+
+            return enemy;
+        });
 
         SpawnRegistry.register("ladder", a -> {
             String ladderId = String.valueOf(a.id);

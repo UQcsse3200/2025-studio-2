@@ -17,6 +17,7 @@ public enum EntityType {
     UPGRADE,
     WALL,
     LASER_DETECTOR,
+    ENEMY,
     LADDER;
 
     @Override public String toString() { return name().toLowerCase(); }
