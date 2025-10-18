@@ -19,6 +19,7 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.smartcardio.TerminalFactory;
 import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
@@ -295,6 +296,42 @@ public final class Spawners {
             Entity anchor = LadderFactory.createLadderBase(ladderId, a.height, a.offset);
 
             return anchor;
+        });
+
+        // --- Codex Terminal ---
+        SpawnRegistry.register("terminal", a ->
+                CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry(a.id)));
+
+        // --- Tutorials ---
+
+        SpawnRegistry.register("tutorial", a -> {
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+
+            Entity tutorial = switch (subtype) {
+                case JUMP -> TutorialFactory.createJumpTutorial();
+                case DOUBLE_JUMP -> TutorialFactory.createDoubleJumpTutorial();
+                case DASH -> TutorialFactory.createDashTutorial();
+                case null, default -> TutorialFactory.createJumpTutorial();
+            };
+
+            return tutorial;
+        });
+
+        // --- Objectives ---
+        SpawnRegistry.register("objective", a ->
+                CollectableFactory.createObjective(a.id, a.sx, a.sy));
+
+        // --- Bats ---
+        SpawnRegistry.register("bat", a -> {
+            BoxFactory.AutonomousBoxBuilder builder = new BoxFactory.AutonomousBoxBuilder();
+            Entity bat = builder
+                    .moveX(a.x, a.dx).moveY(a.y, a.dy)
+                    .texture("images/flying_bat.atlas")
+                    .speed(a.speed)
+                    .build();
+
+            addTooltip(bat, a.tooltip);
+            return bat;
         });
     }
 

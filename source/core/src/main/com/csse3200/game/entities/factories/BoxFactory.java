@@ -174,8 +174,8 @@ public class BoxFactory {
          * @return the builder for chaining the horizontal movement bounds
          */
         public AutonomousBoxBuilder moveX(float minX, float maxX) {
-            this.minMoveX = minX;
-            this.maxMoveX = maxX;
+            this.minMoveX = minX / 2f;
+            this.maxMoveX = maxX / 2f;
             this.spawnX = (minX + maxX) / 2f;
             return this;
         }
@@ -189,8 +189,8 @@ public class BoxFactory {
          * @return the builder for chaining the vertical movement bounds
          */
         public AutonomousBoxBuilder moveY(float minY, float maxY) {
-            this.minMoveY = minY;
-            this.maxMoveY = maxY;
+            this.minMoveY = minY / 2f;
+            this.maxMoveY = maxY / 2f;
             this.spawnY = (minY + maxY) / 2f;
             return this;
         }

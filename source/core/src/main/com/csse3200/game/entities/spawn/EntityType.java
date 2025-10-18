@@ -18,6 +18,10 @@ public enum EntityType {
     WALL,
     LASER_DETECTOR,
     ENEMY,
+    TERMINAL,
+    TUTORIAL,
+    OBJECTIVE,
+    BAT,
     LADDER;
 
     @Override public String toString() { return name().toLowerCase(); }

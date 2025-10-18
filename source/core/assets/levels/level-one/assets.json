@@ -104,5 +104,8 @@
     "sounds/chimesound.mp3",
     "sounds/explosion.mp3",
     "sounds/laserShower.mp3"
-    ]
+    ],
+  "music": [
+    "sounds/KindaLikeTycho.mp3"
+  ]
 }

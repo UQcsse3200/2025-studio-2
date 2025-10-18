@@ -31,6 +31,11 @@ public enum EntitySubtype {
     // Enemies
     AUTO_BOMBER(EntityType.ENEMY),
 
+    // Tutorials
+    JUMP(EntityType.TUTORIAL),
+    DOUBLE_JUMP(EntityType.TUTORIAL),
+    DASH(EntityType.TUTORIAL),
+
     // Pressure Plates
     LADDER(EntityType.PRESSURE_PLATE),
     NORMAL(EntityType.PRESSURE_PLATE),;
