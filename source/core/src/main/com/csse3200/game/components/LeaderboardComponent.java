@@ -2,15 +2,15 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
-import com.csse3200.game.utils.GsonJsonUtils;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class LeaderboardComponent {
   private final String filePath;
-  private final GsonJsonUtils converter = new GsonJsonUtils();
-  private final HashMap<String, Long> leaderboard = new HashMap<>();
+  private final Map<String, Long> leaderboard;
 
   public LeaderboardComponent() {
     this("configs/leaderboard.json");
@@ -18,20 +18,23 @@ public class LeaderboardComponent {
 
   public LeaderboardComponent(String filePath) {
     this.filePath = filePath;
+    leaderboard = readData();
   }
 
   private FileHandle getFile() {
     return Gdx.files.external("CSSE3200Game/" + filePath);
   }
 
-  public Map<String, Long> readData() {
-    String file;
+  private Map<String, Long> readData() {
     try {
-      file = getFile().readString();
+      return  new Gson().fromJson(getFile().readString(), new TypeToken<HashMap<String, Long>>() {}.getType());
     } catch (Exception e) {
-      file = "{}";
+      return new HashMap<>();
     }
-    return converter.jsonToHashMap(file);
+  }
+
+  public Map<String, Long> getData() {
+    return leaderboard;
   }
 
   public void writeData() {
@@ -40,7 +43,7 @@ public class LeaderboardComponent {
             .entrySet()
             .stream()
             .map(entry -> "\t\"" + entry.getKey() + "\": " + entry.getValue())
-            .reduce((str, current) -> str + ",\n" + current).orElseGet(() -> "{}") + "\n}",
+            .reduce((str, current) -> str + ",\n" + current).orElse("{}") + "\n}",
         false
     );
   }

@@ -71,7 +71,7 @@ public class LeaderboardDisplay extends UIComponent {
         stage.addActor(topTable);
 
 
-        Map<String, Long> leaderboardData = leaderboardComponent.readData();
+        Map<String, Long> leaderboardData = leaderboardComponent.getData();
 
         for (Map.Entry<String, Long> entry : leaderboardData.entrySet()) {
             Label name = new Label(entry.getKey() + ":", skin);

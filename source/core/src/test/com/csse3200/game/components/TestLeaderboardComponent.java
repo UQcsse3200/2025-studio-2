@@ -52,19 +52,19 @@ class TestLeaderboardComponent {
   @Test
   void testTimeSaves() {
     leaderboardComponent.updateLeaderboard("1", 50000);
-    assertEquals(50000, leaderboardComponent.readData().get("1"));
+    assertEquals(50000, leaderboardComponent.getData().get("1"));
   }
 
   @Test
   void testTimeTooBig() {
     leaderboardComponent.updateLeaderboard("1", 150000);
-    assertEquals(100000L, leaderboardComponent.readData().get("1"));
+    assertEquals(100000L, leaderboardComponent.getData().get("1"));
   }
 
   @Test
   void testTimeSavesByForce() {
     leaderboardComponent.updateLeaderboard("1", 150000, true);
-    assertEquals(150000L, leaderboardComponent.readData().get("1"));
+    assertEquals(150000L, leaderboardComponent.getData().get("1"));
   }
 
   @Test
@@ -73,11 +73,11 @@ class TestLeaderboardComponent {
     baseTimes.put("6", 150000L);
     leaderboardComponent.writeData();
 
-    assertEquals(150000, leaderboardComponent.readData().get("6"));
+    assertEquals(150000, leaderboardComponent.getData().get("6"));
   }
 
   @Test
-  void testReadData() {
+  void testGetData() {
     HashMap<String, Long> baseTimes = new HashMap<>();
 
     baseTimes.put("1", 100000L);
@@ -87,19 +87,19 @@ class TestLeaderboardComponent {
     baseTimes.put("5", 100000L);
 
     for (Map.Entry<String, Long> entry : baseTimes.entrySet()) {
-      assertEquals(entry.getValue(), leaderboardComponent.readData().get(entry.getKey()));
+      assertEquals(entry.getValue(), leaderboardComponent.getData().get(entry.getKey()));
     }
   }
 
   @Test
   void testHashMapSize() throws Exception {
-    assertEquals(5, leaderboardComponent.readData().size());
+    assertEquals(5, leaderboardComponent.getData().size());
 
     Map<String, Long> baseTimes = getBaseTimes();
     baseTimes.clear();
     baseTimes.put("1", 100000L);
     leaderboardComponent.writeData();
 
-    assertEquals(1, leaderboardComponent.readData().size());
+    assertEquals(1, leaderboardComponent.getData().size());
   }
 }
