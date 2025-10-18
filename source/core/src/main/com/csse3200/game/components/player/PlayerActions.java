@@ -139,6 +139,7 @@ public class PlayerActions extends Component {
          entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     } else if (jetpackFuel < FUEL_CAPACITY) {
       jetpackFuel++;
+        entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     }
 
     if (!isJetpackOn && !isGliding) {

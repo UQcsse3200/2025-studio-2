@@ -1,5 +1,6 @@
 package com.csse3200.game.components.player;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -124,7 +125,7 @@ public class PlayerStatsDisplay extends UIComponent {
         staminaBar.setValue((float) staminaComp.getCurrentStamina());
 
         // Add actors to stamina table
-        staminaTable.add(staminaImage).size(staminaSideLength).pad(5);
+        //staminaTable.add(staminaImage).size(staminaSideLength).pad(5);
         staminaTable.add(staminaLabel);
         staminaTable.add(staminaBar);
     }
@@ -147,8 +148,8 @@ public class PlayerStatsDisplay extends UIComponent {
         fuelTable = new Table();
         fuelTable.top().left();
         fuelTable.setFillParent(true);
-        fuelTable.padTop(85f).padLeft(5f);
-        fuelTable.setName("fuel");
+        fuelTable.padTop(80f).padLeft(5f);
+        fuelTable.setName("Fuel");
         fuelTable.setUserObject(entity);
 
 
@@ -156,8 +157,7 @@ public class PlayerStatsDisplay extends UIComponent {
         fuelImage = staminaImage;
 
 
-        fuelLabel = new Label("Fuel: ", skin, "large");
-
+        fuelLabel = new Label("Fuel:    ", skin, "large");
 
         fuelBar = new ProgressBar(0f, 100f, 1f, false, skin);
         fuelBar.setValue(100f);
@@ -165,8 +165,6 @@ public class PlayerStatsDisplay extends UIComponent {
         fuelBar.setHeight(8f);
         fuelBar.setWidth(150f);
 
-
-        fuelTable.add(fuelImage);
         fuelTable.add(fuelLabel);
         fuelTable.add(fuelBar);
     }
