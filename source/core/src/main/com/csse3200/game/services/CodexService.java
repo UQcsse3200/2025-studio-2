@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,7 +56,7 @@ public class CodexService implements Disposable {
      * @param unlockedOnly Flag for filtering any codex entries which have not been unlocked.
      * @return All unlocked entries stored by service as an array list.
      */
-    public ArrayList<CodexEntry> getEntries(boolean unlockedOnly) {
+    public List<CodexEntry> getEntries(boolean unlockedOnly) {
         // Turn values in map into stream.
         Stream<CodexEntry> codexEntryStream = entries.values().stream();
 

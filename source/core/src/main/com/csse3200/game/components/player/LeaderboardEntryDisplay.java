@@ -2,13 +2,13 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.components.LeaderboardComponent;
-import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.UIComponent;
-import com.csse3200.game.screens.MainGameScreen;
 
 public class LeaderboardEntryDisplay extends UIComponent {
     private Table table;

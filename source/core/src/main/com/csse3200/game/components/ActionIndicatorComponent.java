@@ -11,7 +11,7 @@ import com.csse3200.game.rendering.TextureRenderComponent;
 /**
  * A UI component that displays a tutorial image and corresponding key as text.
  */
-public class TutorialComponent extends TextureRenderComponent {
+public class ActionIndicatorComponent extends TextureRenderComponent {
   private final String keyText;
   private Skin skin;
   private BitmapFont font;
@@ -19,7 +19,7 @@ public class TutorialComponent extends TextureRenderComponent {
    * @param imagePath Path to the texture for the action's image.
    * @param keyText The text to display for the key name
    */
-  public TutorialComponent(String imagePath, String keyText) {
+  public ActionIndicatorComponent(String imagePath, String keyText) {
     super(imagePath);
     this.keyText = keyText;
   }

@@ -24,7 +24,7 @@ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(GameExtension.class)
-public class CodexTerminalFactoryTest {
+class CodexTerminalFactoryTest {
     @BeforeEach
     void setUp() {
         ServiceLocator.registerPhysicsService(new PhysicsService());

@@ -32,7 +32,9 @@ public class DeathZoneComponent extends CombatStatsComponent {
      * @param health health
      */
     @Override
-    public void setHealth(int health) {    }
+    public void setHealth(int health) {
+        // death zones should not be able to be damaged or healed.
+    }
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,
@@ -40,14 +42,18 @@ public class DeathZoneComponent extends CombatStatsComponent {
      * @param health health
      */
     @Override
-    public void addHealth(int health) {    }
+    public void addHealth(int health) {
+        // death zones should not be able to be damaged or healed.
+    }
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,
      * as death zones should not be able to be damaged or healed.
      */
     @Override
-    public void hit(CombatStatsComponent attacker) {}
+    public void hit(CombatStatsComponent attacker) {
+        // death zones should not be able to be damaged or healed.
+    }
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,

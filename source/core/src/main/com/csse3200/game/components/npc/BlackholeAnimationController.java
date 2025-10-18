@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BlackholeAnimationController extends Component {
-    private static final Logger logger = LoggerFactory.getLogger(ExplosionAnimationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(BlackholeAnimationController.class);
 
     private AnimationRenderComponent animator;
     private boolean cleanedUp = false;

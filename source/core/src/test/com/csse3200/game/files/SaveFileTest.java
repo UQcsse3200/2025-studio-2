@@ -1,7 +1,5 @@
 package com.csse3200.game.files;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Gdx;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
@@ -19,7 +17,6 @@ import org.mockito.Mockito;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;

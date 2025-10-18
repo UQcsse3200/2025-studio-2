@@ -28,8 +28,8 @@ public class SettingsScreen extends ScreenAdapter {
   private final String[] settingsMenuTextures = {
       "images/superintelligence_menu_background.png"};
 
-  private static final String backgroundMusic = "sounds/CircuitGoodness.mp3";
-  private static final String[] musics = {backgroundMusic};
+  private static final String BACKGROUND_MUSIC = "sounds/CircuitGoodness.mp3";
+  private static final String[] musics = {BACKGROUND_MUSIC};
 
   private final GdxGame game;
   private final Renderer renderer;
@@ -56,7 +56,7 @@ public class SettingsScreen extends ScreenAdapter {
   }
 
   private void playMusic() {
-    Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+    Music music = ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class);
     music.setLooping(true);
     music.setVolume(UserSettings.getMusicVolumeNormalized());
     music.play();

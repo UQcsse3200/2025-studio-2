@@ -1,13 +1,13 @@
 package com.csse3200.game.ui.cutscene;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.areas.GameArea;
@@ -225,7 +225,6 @@ public class CutsceneDisplay extends UIComponent {
             if (curTextBox == textBoxList.size() - 1) {
                 // Last one → finish cutscene
                 area.trigger("cutsceneFinished");
-                //entity.dispose();
             } else {
                 // Otherwise → go to next text box
                 nextTextBox();

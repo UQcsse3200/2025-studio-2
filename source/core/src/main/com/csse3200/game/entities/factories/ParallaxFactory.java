@@ -1,13 +1,10 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.math.GridPoint2;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.ParallaxConfig;
 import com.csse3200.game.files.FileLoader;

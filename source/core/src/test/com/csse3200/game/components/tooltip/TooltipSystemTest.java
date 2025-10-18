@@ -1,6 +1,8 @@
 package com.csse3200.game.components.tooltip;
 
-import com.csse3200.game.components.tooltip.TooltipSystem.*;
+import com.csse3200.game.components.tooltip.TooltipSystem.TooltipComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem.TooltipManager;
+import com.csse3200.game.components.tooltip.TooltipSystem.TooltipStyle;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,7 +1,5 @@
 package com.csse3200.game.components;
 
-import com.csse3200.game.components.player.PlayerActions;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
@@ -19,6 +17,7 @@ public class PressurePlateComponent extends Component {
      */
     @Override
     public void create() {
+        // Nothing to be created
     }
 
     /**

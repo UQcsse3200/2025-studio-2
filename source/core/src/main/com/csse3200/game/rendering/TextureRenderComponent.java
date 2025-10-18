@@ -10,7 +10,6 @@ public class TextureRenderComponent extends RenderComponent {
   private Texture texture;
   private float rotation = 0f;
   private Vector2 origin;
-  private boolean enabled = true;
 
   /**
    * @param texturePath Internal path of static texture to render.
@@ -22,10 +21,6 @@ public class TextureRenderComponent extends RenderComponent {
 
   public void setTexture(String texture) {
     this.texture = ServiceLocator.getResourceService().getAsset(texture, Texture.class);
-  }
-
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
   }
 
   /**

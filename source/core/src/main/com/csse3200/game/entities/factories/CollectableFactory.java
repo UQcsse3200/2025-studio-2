@@ -9,7 +9,6 @@ import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ObjectivesComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -27,6 +26,9 @@ import java.util.Map;
  * Factory for creating collectable entities (e.g., keys, coins, potions).
  */
 public class CollectableFactory {
+    private CollectableFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static Map<String, CollectablesConfig> cfgs;
 

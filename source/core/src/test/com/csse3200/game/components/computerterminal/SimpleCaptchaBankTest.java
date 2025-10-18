@@ -1,6 +1,7 @@
 package com.csse3200.game.components.computerterminal;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.Random;
 import java.util.Set;
 

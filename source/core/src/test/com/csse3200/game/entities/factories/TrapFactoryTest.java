@@ -1,6 +1,5 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.entities.Entity;
@@ -19,7 +18,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TrapFactoryTest {
+class TrapFactoryTest {
     @BeforeEach
     void setupGameServices() {
         // Register PhysicsService to initialise a trap's physics body during tests

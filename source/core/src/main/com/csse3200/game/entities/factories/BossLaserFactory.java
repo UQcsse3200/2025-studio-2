@@ -2,7 +2,6 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.BossLaserAttack;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.entities.Entity;
@@ -13,6 +12,9 @@ import com.csse3200.game.services.ServiceLocator;
  * A class full of static methods which construct different laser entity types
  */
 public class BossLaserFactory {
+    private BossLaserFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static final int ATTACK_DAMAGE = 10;
 

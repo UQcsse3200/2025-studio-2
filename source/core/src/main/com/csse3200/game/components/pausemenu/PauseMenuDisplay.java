@@ -7,24 +7,25 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.GdxGame;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.*;
-
-import java.io.Reader;
 
 public class PauseMenuDisplay extends UIComponent {
     private final MainGameScreen screen;
@@ -121,7 +122,7 @@ public class PauseMenuDisplay extends UIComponent {
         });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
         addBottomButton("Save level", () ->
-                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath));
+                GdxGame.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.SAVE_PATH));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -226,7 +227,7 @@ public class PauseMenuDisplay extends UIComponent {
         });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
         addBottomButton("Save level", () ->
-                game.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.savePath));
+                GdxGame.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.SAVE_PATH));
     }
 
     public void setVisible(boolean visible) {
@@ -294,7 +295,9 @@ public class PauseMenuDisplay extends UIComponent {
     }
 
     @Override
-    protected void draw(SpriteBatch batch) {}
+    protected void draw(SpriteBatch batch) {
+        // Handled by the component
+    }
 
     @Override
     public void dispose() {

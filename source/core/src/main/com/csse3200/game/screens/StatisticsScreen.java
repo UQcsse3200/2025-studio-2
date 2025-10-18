@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
  * The game screen containing the stats page.
  */
 public class StatisticsScreen extends ScreenAdapter {
-    private static final Logger logger =
-            LoggerFactory.getLogger(StatisticsScreen.class);
-    private final String[] StatisticsScreenTextures =
-            {"images/superintelligence_menu_background.png"};
+    private static final Logger logger = LoggerFactory.getLogger(StatisticsScreen.class);
+    private static final String[] STATISTICS_SCREEN_TEXTURES = {
+                "images/superintelligence_menu_background.png",
+    };
 
     private final GdxGame game;
     private final Renderer renderer;
@@ -71,14 +71,14 @@ public class StatisticsScreen extends ScreenAdapter {
     private void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
-        resourceService.loadTextures(StatisticsScreenTextures);
+        resourceService.loadTextures(STATISTICS_SCREEN_TEXTURES);
         ServiceLocator.getResourceService().loadAll();
     }
 
     private void unloadAssets() {
         logger.debug("Unloading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
-        resourceService.unloadAssets(StatisticsScreenTextures);
+        resourceService.unloadAssets(STATISTICS_SCREEN_TEXTURES);
     }
 
     /**

@@ -2,7 +2,6 @@
 package com.csse3200.game.components.enemy;
 
 import com.csse3200.game.components.Component;
-
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
@@ -71,12 +70,12 @@ public class ActivationComponent extends Component {
         }
 
         // Attach listeners
-        current.getEvents().addListener("targetDetected", (Entity detected) -> {
-            entity.getEvents().trigger("enemyActivated");
-        });
-        current.getEvents().addListener("targetLost", (Entity detected) -> {
-            entity.getEvents().trigger("enemyDeactivated");
-        });
+        current.getEvents().addListener("targetDetected", (Entity detected) ->
+            entity.getEvents().trigger("enemyActivated")
+        );
+        current.getEvents().addListener("targetLost", (Entity detected) ->
+            entity.getEvents().trigger("enemyDeactivated")
+        );
 
         cam = current;
         logger.debug("Linked entity {} to security camera {}", entity, cameraId);

@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;

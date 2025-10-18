@@ -1,11 +1,13 @@
 package com.csse3200.game.physics;
 
 import com.badlogic.gdx.physics.box2d.*;
-import com.csse3200.game.components.*;
+import com.csse3200.game.components.BoxPressurePlateComponent;
+import com.csse3200.game.components.ButtonComponent;
+import com.csse3200.game.components.CodexTerminalComponent;
+import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.components.computerterminal.ComputerTerminalComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.obstacles.TrapComponent;
-import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;

@@ -1,33 +1,27 @@
 package com.csse3200.game.ui.terminal;
 
-import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.player.PlayerActions;
-import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.player.PlayerActions;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.CollectableFactory;
 import com.csse3200.game.extensions.GameExtension;
-import static org.mockito.Mockito.*;
-import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.physics.PhysicsEngine;
-import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.ui.terminal.TerminalService;
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.components.player.InventoryComponent;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import com.csse3200.game.entities.Entity;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 
 import java.lang.reflect.Field;
+
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class InitializerTest {
@@ -104,25 +98,24 @@ class InitializerTest {
 
     collectableFactory = mockStatic(CollectableFactory.class);
     collectableFactory.when(CollectableFactory::createJetpackUpgrade)
-                    .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
     collectableFactory.when(CollectableFactory::createDashUpgrade)
-            .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
     collectableFactory.when(CollectableFactory::createGlideUpgrade)
-            .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
     collectableFactory.when(() -> CollectableFactory.createCollectable("key:door"))
-            .thenReturn(fakeEntity);
+        .thenReturn(fakeEntity);
 
     mockGameArea = mock(GameArea.class);
     mainGameScreen = mock(MainGameScreen.class);
     ServiceLocator.registerMainGameScreen(mainGameScreen);
-    GameArea shellAreaMock = mock(GameArea.class);
     when(mainGameScreen.getAreaEnum()).thenReturn(mock(MainGameScreen.Areas.class));
     when(mainGameScreen.getGameArea(any(MainGameScreen.Areas.class))).thenReturn(mockGameArea);
-
 
     when(player.getComponent(CombatStatsComponent.class)).thenReturn(cb);
     when(player.getComponent(InventoryComponent.class)).thenReturn(inv);
     shell.setGlobal("player", player);
+    shell.eval("getPlayer = () { return(player); };");
   }
 
   @Test

@@ -24,8 +24,6 @@ public class StatisticsDisplay extends UIComponent {
 
     private static final float Z_INDEX = 2f;
     private Table table;
-    private Table topTable;
-
 
     /**
      * Constructor
@@ -58,7 +56,7 @@ public class StatisticsDisplay extends UIComponent {
         table.center();
 
         Label title = new Label("Statistics", skin, "title");
-        topTable = new Table();
+        Table topTable = new Table();
         topTable.setFillParent(true);
         topTable.top();
         topTable.add(title).expandX().center().padTop(20f);

@@ -14,11 +14,6 @@ import com.csse3200.game.entities.Entity;
  * - "bomb:disposed": Fired by the bomb during its own disposal, the tracker removes it from the active list.
  */
 public class BombTrackerComponent extends Component {
-    /**
-     * Creates a bomb tracker component that manages the lifecycle of bombs spawned by the owner entity.
-     */
-    public BombTrackerComponent() {}
-
     private final Array<Entity> activeBombs = new Array<>();
     private final Array<Entity> pendingDisposals = new Array<>();
 
@@ -39,9 +34,7 @@ public class BombTrackerComponent extends Component {
         });
 
         // Stop tracking after bomb is disposed and fires event
-        bomb.getEvents().addListener("bomb:disposed", () -> {
-            activeBombs.removeValue(bomb, true);
-        });
+        bomb.getEvents().addListener("bomb:disposed", () -> activeBombs.removeValue(bomb, true));
     }
 
     /**

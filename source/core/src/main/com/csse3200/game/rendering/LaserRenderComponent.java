@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
 
-
 import java.util.List;
 
 public class LaserRenderComponent extends RenderComponent {

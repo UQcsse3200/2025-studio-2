@@ -5,15 +5,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.leaderboardpage.LeaderboardActions;
 import com.csse3200.game.components.leaderboardpage.LeaderboardDisplay;
-import com.csse3200.game.components.statisticspage.StatisticsActions;
-import com.csse3200.game.components.statisticspage.StatisticsDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.LeaderboardInputComponent;
-import com.csse3200.game.input.StatisticsInputComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.ResourceService;
@@ -25,10 +22,10 @@ import org.slf4j.LoggerFactory;
  * The game screen containing the stats page.
  */
 public class LeaderboardScreen extends ScreenAdapter {
-    private static final Logger logger =
-            LoggerFactory.getLogger(StatisticsScreen.class);
-    private final String[] StatisticsScreenTextures =
-            {"images/superintelligence_menu_background.png"};
+    private static final Logger logger = LoggerFactory.getLogger(LeaderboardScreen.class);
+    private static final String[] STATISTICS_SCREEN_TEXTURES = {
+        "images/superintelligence_menu_background.png"
+    };
 
     private final GdxGame game;
     private final Renderer renderer;
@@ -74,14 +71,14 @@ public class LeaderboardScreen extends ScreenAdapter {
     private void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
-        resourceService.loadTextures(StatisticsScreenTextures);
+        resourceService.loadTextures(STATISTICS_SCREEN_TEXTURES);
         ServiceLocator.getResourceService().loadAll();
     }
 
     private void unloadAssets() {
         logger.debug("Unloading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
-        resourceService.unloadAssets(StatisticsScreenTextures);
+        resourceService.unloadAssets(STATISTICS_SCREEN_TEXTURES);
     }
 
     /**

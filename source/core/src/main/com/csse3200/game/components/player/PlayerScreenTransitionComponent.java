@@ -2,18 +2,13 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Timer;
+import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.effects.ScreenTransitioningEffect;
 import com.csse3200.game.services.ServiceLocator;
-import com.crashinvaders.vfx.VfxManager;
-import com.crashinvaders.vfx.effects.VignettingEffect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.Time;
 
 /**
  * Handles the screen transition visual effect for the player.

@@ -67,7 +67,6 @@ public class TiledGroundFloorComponent extends RenderComponent {
 
     private TextureRegion getTileForPosition(int x, int y, int maxX, int maxY) {
         boolean isTopRow = (y == maxY - 1);
-        boolean isBottomRow = (y == 0);
         boolean isLeftColumn = (x == 0);
         boolean isRightColumn = (x == maxX - 1);
 

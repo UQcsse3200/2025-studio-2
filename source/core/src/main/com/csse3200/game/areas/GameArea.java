@@ -1,7 +1,5 @@
 package com.csse3200.game.areas;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,19 +7,19 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
-import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.CollectableService;
-import com.csse3200.game.services.MinimapService;
+import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.CollectableService;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.events.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -180,7 +178,7 @@ public abstract class GameArea implements Disposable {
    */
   public void reset() {
     isResetting = true;
-    final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    final int oldEntityCount = ServiceLocator.getEntityService().getEntities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
@@ -197,7 +195,7 @@ public abstract class GameArea implements Disposable {
 
     loadEntities();
 
-    final int newEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    final int newEntityCount = ServiceLocator.getEntityService().getEntities().size;
     if (oldEntityCount != newEntityCount) {
       logger.error(
           "only {} entities should exist but {} entities exist now, {} Entities Leaked!!!",

@@ -4,7 +4,6 @@ package com.csse3200.game.components.enemy;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.listeners.EventListener0;
 import com.csse3200.game.extensions.GameExtension;
-
 import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;

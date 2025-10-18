@@ -26,8 +26,8 @@ import org.mockito.MockedConstruction;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class ConeLightPanningTaskComponentTest {
@@ -94,7 +94,7 @@ class ConeLightPanningTaskComponentTest {
             assertNotNull(lens.getComponent(ConeLightComponent.class));
 
             // lens is registered in EntityService
-            assertTrue(ServiceLocator.getEntityService().get_entities().contains(lens, true));
+            assertTrue(ServiceLocator.getEntityService().getEntities().contains(lens, true));
         }
     }
 
@@ -203,9 +203,9 @@ class ConeLightPanningTaskComponentTest {
             Entity cam = SecurityCameraFactory.createSecurityCamera(target, LightingDefaults.ANGULAR_VEL, "test");
             cam.create();
 
-            int before = ServiceLocator.getEntityService().get_entities().size;
+            int before = ServiceLocator.getEntityService().getEntities().size;
             cam.dispose();
-            int after  = ServiceLocator.getEntityService().get_entities().size;
+            int after  = ServiceLocator.getEntityService().getEntities().size;
 
             assertTrue(after <= before - 1);
         }
@@ -225,7 +225,7 @@ class ConeLightPanningTaskComponentTest {
             cam.dispose();
 
             // lens is no longer registered
-            assertFalse(ServiceLocator.getEntityService().get_entities().contains(lens, true));
+            assertFalse(ServiceLocator.getEntityService().getEntities().contains(lens, true));
 
             // doesnt throw when run again
             assertDoesNotThrow(cam::dispose);

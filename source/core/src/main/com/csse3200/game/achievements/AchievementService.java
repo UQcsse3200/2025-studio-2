@@ -11,15 +11,12 @@ import com.badlogic.gdx.utils.ObjectMap;
  *  - STAMINA_MASTER: finish a level without ever hitting 0 stamina
  *  - LEVEL_1_COMPLETE
  *  - LEVEL_2_COMPLETE
- *
+ * <p>
  * Persists unlocks and sprint time using LibGDX Preferences.
  */
 public class AchievementService {
     private static final boolean DISABLE_PERSISTENCE = true;
-
     private static final String PREF_NAME = "achievements";
-    private static final String KEY_UNLOCKED = "unlocked";       // csv list
-    private static final String KEY_SPRINT_SEC = "sprint.totalSeconds";
 
     private static AchievementService INSTANCE;
 

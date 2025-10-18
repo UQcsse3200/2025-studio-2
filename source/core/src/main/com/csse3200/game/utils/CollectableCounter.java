@@ -1,35 +1,35 @@
 package com.csse3200.game.utils;
 
 public class CollectableCounter {
-    private static int collected_level = 0;
-    private static int collected_total = 0;
-    private static int level_total = 3;
-    private static int total = 9;
+    private static int collectedLevel = 0;
+    private static int collectedTotal = 0;
+    private static final int LEVEL_TOTAL = 3;
+    private static final int TOTAL = 9;
 
     private CollectableCounter() {}
 
     public static void reset() {
-        collected_level = 0;
+        collectedLevel = 0;
     }
 
     public static void increment() {
-        collected_level++;
-        collected_total++;
+        collectedLevel++;
+        collectedTotal++;
     }
 
     public static int getLevelCollected() {
-        return collected_level;
+        return collectedLevel;
     }
 
     public static int getTotalCollected() {
-        return collected_total;
+        return collectedTotal;
     }
 
     public static int getLevelTotal() {
-        return level_total;
+        return LEVEL_TOTAL;
     }
 
     public static int getTotal() {
-        return total;
+        return TOTAL;
     }
 }

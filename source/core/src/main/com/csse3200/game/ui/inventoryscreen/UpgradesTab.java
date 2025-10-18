@@ -10,16 +10,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 

@@ -3,7 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.TutorialComponent;
+import com.csse3200.game.components.ActionIndicatorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.input.Keymap;
@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-class TutorialFactoryTest {
+class ActionIndicatorFactoryTest {
 
   private Texture jumpTexture;
   private Texture doubleJumpTexture;
@@ -43,10 +43,10 @@ class TutorialFactoryTest {
     try (MockedStatic<Keymap> keymap = mockStatic(Keymap.class)) {
       keymap.when(() -> Keymap.getActionKeyCode("PlayerJump")).thenReturn(Input.Keys.SPACE);
 
-      Entity tutorial = TutorialFactory.createJumpTutorial();
+      Entity tutorial = ActionIndicatorFactory.createJumpTutorial();
       assertNotNull(tutorial);
 
-      TutorialComponent component = tutorial.getComponent(TutorialComponent.class);
+      ActionIndicatorComponent component = tutorial.getComponent(ActionIndicatorComponent.class);
       assertNotNull(component);
 
       assertEquals(jumpTexture, getPrivateField(component, "texture"));
@@ -60,10 +60,10 @@ class TutorialFactoryTest {
     try (MockedStatic<Keymap> keymap = mockStatic(Keymap.class)) {
       keymap.when(() -> Keymap.getActionKeyCode("PlayerJump")).thenReturn(Input.Keys.SPACE);
 
-      Entity tutorial = TutorialFactory.createDoubleJumpTutorial();
+      Entity tutorial = ActionIndicatorFactory.createDoubleJumpTutorial();
       assertNotNull(tutorial);
 
-      TutorialComponent component = tutorial.getComponent(TutorialComponent.class);
+      ActionIndicatorComponent component = tutorial.getComponent(ActionIndicatorComponent.class);
       assertNotNull(component);
 
       assertEquals(doubleJumpTexture, getPrivateField(component, "texture"));
@@ -74,7 +74,7 @@ class TutorialFactoryTest {
   @Test
   void constructorShouldBePrivateAndThrow() {
     Exception exception = assertThrows(InvocationTargetException.class, () -> {
-      Constructor<TutorialFactory> constructor = TutorialFactory.class.getDeclaredConstructor();
+      Constructor<ActionIndicatorFactory> constructor = ActionIndicatorFactory.class.getDeclaredConstructor();
       constructor.setAccessible(true);
       constructor.newInstance();
     });
