@@ -33,6 +33,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Base game area for standardised JSON-driven levels. This class is responsible for:
+ *
+ ** <ol>
+ *   <li>Loading asset files ({@link LevelAssetsConfig}) and level config ({@link LevelConfig}),</li>
+ *   <li>Building terrain and world boundaries,</li>
+ *   <li>Spawning HUD/minimap/music,</li>
+ *   <li>Spawning entities via {@link SpawnRegistry} and creating the player,</li>
+ *   <li>Constructing parallax background from {@link ParallaxConfig}.</li>
+ * </ol>
+ *
+ * <p>Concrete levels provide file paths via {@link #configPath()}, {@link #assetsPath()} ()} and
+ * {@link #parallaxPath()}
+ */
 public abstract class BaseLevelGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(BaseLevelGameArea.class);
 
@@ -47,6 +61,11 @@ public abstract class BaseLevelGameArea extends GameArea {
     protected final GridPoint2 PLAYER_SPAWN = new GridPoint2();
     protected float WALL_THICKNESS;
 
+    /**
+     * Create a new base level area.
+     *
+     * @param tf terrain factory used to construct tile maps and collision
+     */
     protected BaseLevelGameArea(TerrainFactory tf) {
         this.terrainFactory = tf;
     }
@@ -55,6 +74,9 @@ public abstract class BaseLevelGameArea extends GameArea {
     protected abstract String assetsPath();
     protected abstract String parallaxPath();
 
+    /**
+     * Load all assets declared in {@link LevelAssetsConfig}.
+     */
     @Override protected void loadAssets() {
         assets = Objects.requireNonNull(FileLoader.readClass(LevelAssetsConfig.class, assetsPath()));
 
@@ -68,6 +90,11 @@ public abstract class BaseLevelGameArea extends GameArea {
         }
     }
 
+    /**
+     * Read level configs, construct terrain, spawn walls/HUD/minimap, and start music.
+     *
+     * @throws NullPointerException if any required JSON cannot be loaded
+     */
     @Override
     protected void loadPrerequisites() {
         cfg = Objects.requireNonNull(FileLoader.readClass(LevelConfig.class, configPath()));
@@ -90,7 +117,13 @@ public abstract class BaseLevelGameArea extends GameArea {
         AchievementProgression.onLevelStart();
     }
 
-
+    /**
+     * Spawn parallax (if configured) and all entities declared in {@link LevelConfig#entities},
+     * then add a ground floor.
+     *
+     * @throws IllegalStateException if {@link #cfg} has not been loaded
+     * @throws IllegalArgumentException if the config has no {@code entities} array
+     */
     @Override protected void loadEntities() {
         if (cfg == null) throw new IllegalStateException("Level config not loaded");
         if (cfg.entities == null) throw new IllegalArgumentException("'entities' missing in level config");
@@ -107,18 +140,34 @@ public abstract class BaseLevelGameArea extends GameArea {
         spawnEntityAt(floor, new GridPoint2(-10, -20), false, false);
     }
 
+    /**
+     * Create a new player with default components and register level spawners.
+     *
+     * @return the newly created player entity
+     */
     @Override protected Entity spawnPlayer() {
         Entity player = PlayerFactory.createPlayer(new ArrayList<>());
         setUpPlayer(player);
         return player;
     }
 
+    /**
+     * Create a new player using provided components and register level spawners.
+     *
+     * @param components list of components to attach to the new player (e.g., inventory)
+     * @return the newly created player entity
+     */
     @Override protected Entity spawnPlayer(List<Component> components) {
         Entity player = PlayerFactory.createPlayer(components);
         setUpPlayer(player);
         return player;
     }
 
+    /**
+     * Dispose of area resources and unload all assets declared in the asset manifest.
+     *
+     * <p>Calls {@link GameArea#dispose()} to dispose entities, then unloads textures/atlases/sounds/music</p>
+     */
     @Override public void dispose() {
         super.dispose();
         if (assets != null) {
@@ -131,6 +180,12 @@ public abstract class BaseLevelGameArea extends GameArea {
 
     /* --- Helpers --- */
 
+    /**
+     * Set player placement and wire:
+     * position at {@link #PLAYER_SPAWN}, subscribe to {@code "reset"}, and register spawners.
+     *
+     * @param player player entity to configure
+     */
     private void setUpPlayer(Entity player) {
         spawnEntityAt(player, PLAYER_SPAWN, true, true);
         player.getEvents().addListener("reset", this::reset);
@@ -138,6 +193,15 @@ public abstract class BaseLevelGameArea extends GameArea {
         this.player = player;
     }
 
+    /**
+     * Build the basic terrain.
+     *
+     * <p>Default implementation creates an invisible collision terrain using a placeholder tile
+     * sourced from {@code images/empty.png}.</p>
+     *
+     * @param mapSize desired map size in tiles (width, height)
+     * @return constructed terrain component ready to be spawned
+     */
     protected TerrainComponent buildTerrain(GridPoint2 mapSize) {
         TextureRegion empty = new TextureRegion(rs.getAsset("images/empty.png", Texture.class));
         GridPoint2 tilePx = new GridPoint2(empty.getRegionWidth(), empty.getRegionHeight());
@@ -145,6 +209,11 @@ public abstract class BaseLevelGameArea extends GameArea {
         return terrainFactory.createInvisibleFromTileMap(0.5f, map, tilePx);
     }
 
+    /**
+     * Spawn world-boundary walls (left, right, top) derived from current {@link #terrain} bounds.
+     *
+     * <p>Assumes {@link #terrain} has already been assigned and spawned lol.</p>
+     */
     private void spawnBoundaryWalls() {
         float tile = terrain.getTileSize();
         GridPoint2 bounds = terrain.getMapBounds(0);
@@ -155,6 +224,9 @@ public abstract class BaseLevelGameArea extends GameArea {
         spawnEntityAt(ObstacleFactory.createWall(world.x, WALL_THICKNESS), new GridPoint2(0, bounds.y - 4), false, false);
     }
 
+    /**
+     * Start background music for the level.
+     */
     private void playMusic() {
         String track = (assets != null && !assets.music.isEmpty()) ? assets.music.getFirst() : cfg.music;
 
@@ -167,6 +239,12 @@ public abstract class BaseLevelGameArea extends GameArea {
         music.play();
     }
 
+    /**
+     * Build a parallax background from {@link ParallaxConfig}, if provided.
+     *
+     * <p>Each layer is scaled to at least fill the current camera viewport, then
+     * multiplied by the per-layer {@code scale}. Missing or unloaded textures are skipped.</p>
+     */
     protected void buildParallax() {
         if (parallax == null || parallax.layers.isEmpty()) return;
 
