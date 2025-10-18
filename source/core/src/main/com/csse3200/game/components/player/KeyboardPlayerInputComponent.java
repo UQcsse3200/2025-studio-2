@@ -39,6 +39,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private Array<Entity> ladders = null;
 
     private Boolean onLadder = false;
+    private boolean acquiredTriggered = false;
 
     public KeyboardPlayerInputComponent() {
         super(5);
@@ -286,6 +287,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private void triggerJetpackEvent() {
 
         if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "jetpack")) {
+            if (!acquiredTriggered) {
+                entity.getEvents().trigger("acquiredJetpack");
+                acquiredTriggered = true;
+            }
             entity.getEvents().trigger("jetpackOn");
         }
 

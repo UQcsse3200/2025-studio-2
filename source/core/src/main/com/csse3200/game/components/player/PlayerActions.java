@@ -136,6 +136,7 @@ public class PlayerActions extends Component {
     if (isJetpackOn) {
       jetpackFuel--;
       body.setGravityScale(0f); //for impulse to act upwards
+         entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     } else if (jetpackFuel < FUEL_CAPACITY) {
       jetpackFuel++;
     }

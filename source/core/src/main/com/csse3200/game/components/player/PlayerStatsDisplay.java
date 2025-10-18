@@ -36,6 +36,10 @@ public class PlayerStatsDisplay extends UIComponent {
      */
     private static final int MAX_HEARTS = 10;
 
+    Table fuelTable;
+    private Image fuelImage;
+    private Label fuelLabel;
+    private ProgressBar fuelBar;
   /**
    * Table used for storing all UI actors related to stamina bar
    */
@@ -72,6 +76,8 @@ public class PlayerStatsDisplay extends UIComponent {
     entity.getEvents().addListener("updateHealth", this::updatePlayerHealthUI);
     entity.getEvents().addListener("updateStamina", this::updatePlayerStaminaUI);
     entity.getEvents().addListener("updateCollectables", this::updateCollectableUI);
+    entity.getEvents().addListener("updateJetpackFuel", this::updateJetpackFuel);
+    entity.getEvents().addListener("acquiredJetpack", this::onAcquireJetpack);
   }
 
   /**
@@ -88,6 +94,9 @@ public class PlayerStatsDisplay extends UIComponent {
     // Create collectable table
     collectableLabel = new Label("Lost Hardware collected: " + count + " / 9", skin, "large");
     stage.addActor(collectableLabel);
+    createFuelTable();
+    fuelTable.setVisible(false);
+    stage.addActor(fuelTable);
   }
 
     /**
@@ -132,6 +141,34 @@ public class PlayerStatsDisplay extends UIComponent {
         healthTable.setName("health");
         healthTable.setUserObject(entity);
         updateHealthTable(entity.getComponent(CombatStatsComponent.class).getHealth());
+    }
+
+    private void createFuelTable() {
+        fuelTable = new Table();
+        fuelTable.top().left();
+        fuelTable.setFillParent(true);
+        fuelTable.padTop(85f).padLeft(5f);
+        fuelTable.setName("fuel");
+        fuelTable.setUserObject(entity);
+
+
+        float fuelIconSize = 25f;
+        fuelImage = staminaImage;
+
+
+        fuelLabel = new Label("Fuel: ", skin, "large");
+
+
+        fuelBar = new ProgressBar(0f, 100f, 1f, false, skin);
+        fuelBar.setValue(100f);
+        fuelBar.setAnimateDuration(0.25f);
+        fuelBar.setHeight(8f);
+        fuelBar.setWidth(150f);
+
+
+        fuelTable.add(fuelImage);
+        fuelTable.add(fuelLabel);
+        fuelTable.add(fuelBar);
     }
 
     /**
@@ -184,7 +221,18 @@ public class PlayerStatsDisplay extends UIComponent {
         staminaBar.setValue(stamina);
     }
 
-  @Override
+    public void updateJetpackFuel(int fuel) {
+        if (fuelBar != null) {
+            fuelBar.setValue(fuel);
+        }
+    }
+
+    private void onAcquireJetpack() {
+        if (fuelTable != null) fuelTable.setVisible(true);
+    }
+
+
+    @Override
   public void draw(SpriteBatch batch) {
     // Drawing is handled by the stage
   }
