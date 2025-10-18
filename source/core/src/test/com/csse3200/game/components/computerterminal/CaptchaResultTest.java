@@ -7,7 +7,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CaptchaResultTest {
+class CaptchaResultTest {
     @Test
     void holdsData() {
         var r = new CaptchaResult(true, Set.of(1,2), Set.of(1,2));

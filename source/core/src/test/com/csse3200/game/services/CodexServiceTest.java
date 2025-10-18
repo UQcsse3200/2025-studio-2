@@ -14,7 +14,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(GameExtension.class)
-public class CodexServiceTest {
+class CodexServiceTest {
     private void setupMockFile(String content) {
         Gdx.files = mock(com.badlogic.gdx.Files.class);
         FileHandle fileHandle = mock(FileHandle.class);
@@ -55,8 +55,7 @@ public class CodexServiceTest {
     @DisplayName("getEntries() returns only unlocked entries when requesting unlocked entries")
     void getEntriesReturnsUnlocked() {
         // Service loads mock file
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest " +
-                "Content 2");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
         CodexService service = new CodexService();
 
         // Unlock exactly one entry
@@ -73,8 +72,7 @@ public class CodexServiceTest {
     @DisplayName("getEntries() returns all entries when not equesting just unlocked entries")
     void getEntriesReturnsAll() {
         // Service loads mock file
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest " +
-                "Content 2");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
         CodexService service = new CodexService();
 
         // Unlock exactly one entry
@@ -92,8 +90,7 @@ public class CodexServiceTest {
     @DisplayName("Disposing the service clears all entries")
     void disposeClearsEntries() {
         // Service loads mock file and is disposed
-        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest " +
-                "Content 2");
+        setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
         CodexService service = new CodexService();
         service.dispose();
 
@@ -116,8 +113,9 @@ public class CodexServiceTest {
     @DisplayName("Service ignores entries with a missing title/ID")
     void ignoresMissingDetails() {
         // Service loads mock file wth empty strings for an ID and title
-        setupMockFile("\nTest Title 1\nTest Content 1\ntest_id_2\n\nTest Content " +
-                "2\ntest_id_3\nTest Title 3\nTest Content 3");
+        setupMockFile(
+            "\nTest Title 1\nTest Content 1\ntest_id_2\n\nTest Content 2\ntest_id_3\nTest Title 3\nTest Content 3"
+        );
         CodexService service = new CodexService();
 
         // Ensure invalid entries did not load, and valid ones did

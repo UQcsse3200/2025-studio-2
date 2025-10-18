@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(GameExtension.class)
-public class BombTrackerComponentTest {
+class BombTrackerComponentTest {
     @BeforeEach
     void setup() {
         ServiceLocator.clear();
@@ -31,7 +31,7 @@ public class BombTrackerComponentTest {
     }
 
     @Test
-    public void trackOnDispose() {
+    void trackOnDispose() {
         BombTrackerComponent tracker = new BombTrackerComponent();
         new Entity().addComponent(tracker); // owner
         Entity bomb = makeBombEntity(2.0f, 2.5f, (short) 0);
@@ -45,7 +45,7 @@ public class BombTrackerComponentTest {
     }
 
     @Test
-    public void deferDispose() {
+    void deferDispose() {
         BombTrackerComponent tracker = new BombTrackerComponent();
         new Entity().addComponent(tracker);
         Entity bomb = makeBombEntity(2.0f, 2.5f, (short) 0);
@@ -63,7 +63,7 @@ public class BombTrackerComponentTest {
     }
 
     @Test
-    public void dupTrack_doesNotAddTwice() {
+    void dupTrack_doesNotAddTwice() {
         BombTrackerComponent tracker = new BombTrackerComponent();
         new Entity().addComponent(tracker);
         Entity bomb = makeBombEntity(2.0f, 2.5f, (short) 0);
@@ -74,7 +74,7 @@ public class BombTrackerComponentTest {
     }
 
     @Test
-    public void noDuplicateDispose() {
+    void noDuplicateDispose() {
         BombTrackerComponent tracker = new BombTrackerComponent();
         new Entity().addComponent(tracker);
         Entity bomb = makeBombEntity(2.0f, 2.5f, (short) 0);

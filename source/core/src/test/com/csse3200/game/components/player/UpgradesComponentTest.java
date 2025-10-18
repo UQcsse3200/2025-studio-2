@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-public class UpgradesComponentTest {
+class UpgradesComponentTest {
 
     private Entity player;
     private InventoryComponent inv;

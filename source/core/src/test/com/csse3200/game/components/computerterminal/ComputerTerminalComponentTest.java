@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class ComputerTerminalComponentTest {
+class ComputerTerminalComponentTest {
 
     /** Probe service to capture open() calls without NPEs. */
     private static class ProbeTerminalService extends ComputerTerminalService {

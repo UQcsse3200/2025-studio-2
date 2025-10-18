@@ -225,7 +225,6 @@ public class CutsceneDisplay extends UIComponent {
             if (curTextBox == textBoxList.size() - 1) {
                 // Last one → finish cutscene
                 area.trigger("cutsceneFinished");
-                //entity.dispose();
             } else {
                 // Otherwise → go to next text box
                 nextTextBox();

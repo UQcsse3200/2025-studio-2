@@ -18,7 +18,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class TrapFactoryTest {
+class TrapFactoryTest {
     @BeforeEach
     void setupGameServices() {
         // Register PhysicsService to initialise a trap's physics body during tests
