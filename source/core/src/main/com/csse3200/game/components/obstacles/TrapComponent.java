@@ -1,5 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.entities.Entity;
@@ -109,8 +110,8 @@ public class TrapComponent extends CombatStatsComponent {
 
         // Damage player
         if (legalDirection) {
+            Gdx.app.postRunnable(() -> player.setPosition(safeSpot));
             player.getComponent(CombatStatsComponent.class).hit(this);
-            player.requestMoveToSafeSpot(safeSpot);
         }
     }
 }
