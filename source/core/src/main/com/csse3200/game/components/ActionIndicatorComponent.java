@@ -1,11 +1,13 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
+import com.csse3200.game.input.Keymap;
 import com.csse3200.game.rendering.TextureRenderComponent;
 
 /**
@@ -17,7 +19,7 @@ public class ActionIndicatorComponent extends TextureRenderComponent {
   private BitmapFont font;
   /**
    * @param imagePath Path to the texture for the action's image.
-   * @param keyText The text to display for the key name
+   * @param keyText The text for the action being performed (used to get the keymap)
    */
   public ActionIndicatorComponent(String imagePath, String keyText) {
     super(imagePath);
@@ -40,8 +42,12 @@ public class ActionIndicatorComponent extends TextureRenderComponent {
     Vector2 pos = entity.getPosition();
 
     font.getData().setScale(scale.x / 40);
-    font.draw(batch, keyText, pos.x - scale.x / 2, pos.y - 0.2f,
-            scale.x * 2, Align.center, false);
+    font.draw(batch,
+        Input.Keys.toString(Keymap.getActionKeyCode(keyText)),
+        pos.x - scale.x / 2, pos.y - 0.2f,
+        scale.x * 2, Align.center,
+        false
+    );
   }
 
   @Override

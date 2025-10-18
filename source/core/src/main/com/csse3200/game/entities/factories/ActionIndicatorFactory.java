@@ -1,9 +1,7 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.Input;
 import com.csse3200.game.components.ActionIndicatorComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.input.Keymap;
 
 /**
  * A factory to create tutorial entities.
@@ -15,7 +13,7 @@ public class ActionIndicatorFactory {
   }
 
   private static Entity create(String path, String action) {
-    return new Entity().addComponent(new ActionIndicatorComponent(path, Input.Keys.toString(Keymap.getActionKeyCode(action))));
+    return new Entity().addComponent(new ActionIndicatorComponent(path, action));
   }
 
   /**
