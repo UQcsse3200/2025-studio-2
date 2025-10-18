@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
 
 public class TrapComponent extends CombatStatsComponent {
     private final Vector2 safeSpot;
@@ -110,7 +111,10 @@ public class TrapComponent extends CombatStatsComponent {
 
         // Damage player
         if (legalDirection) {
-            Gdx.app.postRunnable(() -> player.setPosition(safeSpot));
+            Gdx.app.postRunnable(() -> {
+              player.setPosition(safeSpot);
+              player.getComponent(PhysicsComponent.class).getBody().setLinearVelocity(new Vector2());
+            });
             player.getComponent(CombatStatsComponent.class).hit(this);
         }
     }
