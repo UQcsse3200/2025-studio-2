@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.player.LeaderboardEntryDisplay;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.GdxGame;
@@ -239,26 +240,26 @@ public class PauseMenuDisplay extends UIComponent {
 
     public void setVisible(boolean visible) {
         rootTable.setVisible(visible);
-
+        boolean shouldShowHud = !visible && !LeaderboardEntryDisplay.UIOverlayManager.isOverlayActive();
         Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
         if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
-            minimapDisplay.setVisible(!visible);
+            minimapDisplay.setVisible(shouldShowHud);
         }
         Actor healthActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("health");
         if (healthActor != null) {
-            healthActor.setVisible(!visible);
+            healthActor.setVisible(shouldShowHud);
         }
         Actor staminaActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("stamina");
         if (healthActor != null) {
-          staminaActor.setVisible(!visible);
+          staminaActor.setVisible(shouldShowHud);
         }
         Actor exitActor =  ServiceLocator.getRenderService().getStage().getRoot().findActor("exit");
         if (exitActor != null) {
-            exitActor.setVisible(!visible);
+            exitActor.setVisible(shouldShowHud);
         }
         Actor titleActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("title");
         if (titleActor != null) {
-            titleActor.setVisible(!visible);
+            titleActor.setVisible(shouldShowHud);
         }
 
         Entity player = screen.getGameArea().getPlayer();
