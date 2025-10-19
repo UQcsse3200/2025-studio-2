@@ -268,7 +268,6 @@ public class MainGameScreen extends ScreenAdapter {
           case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
           case LEVEL_TWO -> new LevelTwoGameArea(gridFactory);
           case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
-          case SPRINT_ONE -> new SprintOneGameArea(gridFactory);
           case LEVEL_THREE -> new LevelThreeGameArea(gridFactory);
           case BOSS_LEVEL ->  new BossLevelGameArea(gridFactory);
           default -> throw new IllegalStateException("Unexpected value: " + area);

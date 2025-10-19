@@ -217,24 +217,32 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnGrid() {
         grid = gridFactory.createGrid(mapSize, 0.5f);
+
         spawnEntity(new Entity().addComponent(grid));
 
-        // Create boundary walls using grid bounds
-        Vector2 worldBounds = grid.getWorldBounds();
+        // Grid walls
         float tileSize = grid.getTileSize();
+        GridPoint2 tileBounds = grid.getMapBounds();
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
 
-        // Left wall
+        // Left
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+        // Right
         spawnEntityAt(
             ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-            GridPoint2Utils.ZERO, false, false);
-        // Right wall
-        spawnEntityAt(
-            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-            new GridPoint2(mapSize.x, 0), false, false);
-        // Top wall
+            new GridPoint2(tileBounds.x, 0),
+            false,
+            false);
+        // Top
         spawnEntityAt(
             ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-            new GridPoint2(0, mapSize.y - 4), false, false);
+            new GridPoint2(0, tileBounds.y - 4),
+            false,
+            false);
+        // Bottom
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, 0), false, false);
     }
 
     private void spawnTutorials() {

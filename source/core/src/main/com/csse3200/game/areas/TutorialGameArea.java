@@ -9,8 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
@@ -141,17 +140,43 @@ public class TutorialGameArea extends GameArea {
         "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(TutorialGameArea.class);
-    private final TerrainFactory terrainFactory;
+    private final GridFactory gridFactory;
 
-    public TutorialGameArea(TerrainFactory terrainFactory) {
+    public TutorialGameArea(GridFactory gridFactory) {
         super();
-        this.terrainFactory = terrainFactory;
+        this.gridFactory = gridFactory;
     }
     protected void loadPrerequisites() {
         displayUI();
-        spawnTerrain();
+        spawnGrid();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
+    }
+
+    private void spawnGrid() {
+        grid = gridFactory.createGrid(mapSize, 0.5f);
+        spawnEntity(new Entity().addComponent(grid));
+
+        // Grid walls
+        float tileSize = grid.getTileSize();
+        GridPoint2 tileBounds = grid.getMapBounds();
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
+
+        // Left
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+        // Right
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            new GridPoint2(tileBounds.x, 0),
+            false,
+            false);
+        // Top
+        spawnEntityAt(
+            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, tileBounds.y - 4),
+            false,
+            false);
     }
 
     protected void loadEntities() {
@@ -617,35 +642,6 @@ public class TutorialGameArea extends GameArea {
         Entity leftSign = SignpostFactory.createSignpost("left");
         spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
-    private void spawnTerrain() {
-        // Need to decide how large each area is going to be
-        terrain = createDefaultTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
-
-        // Terrain walls
-        float tileSize = terrain.getTileSize();
-        GridPoint2 tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
-        // Right
-        spawnEntityAt(
-            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-            new GridPoint2(tileBounds.x, 0),
-            false,
-            false);
-        // Top
-        spawnEntityAt(
-            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-            new GridPoint2(0, tileBounds.y - 4),
-            false,
-            false);
-//        // Bottom
-//        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-//                new GridPoint2(0, 0), false, false);
-    }
 
     private void spawnParallaxBackground() {
         Entity backgroundEntity = new Entity();
@@ -653,13 +649,10 @@ public class TutorialGameArea extends GameArea {
         // Get the camera from the player entity
         Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
 
-        // Get map dimensions from terrain
-        GridPoint2 mapBounds = terrain.getMapBounds(0);
-        float tileSize = terrain.getTileSize();
-        float mapWorldWidth = mapBounds.x * tileSize;
-        float mapWorldHeight = mapBounds.y * tileSize;
+        // Get map dimensions from grid
+        Vector2 mapBounds = grid.getWorldBounds();
 
-        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapBounds.x, mapBounds.y);
 
 
         ResourceService resourceService = ServiceLocator.getResourceService();
@@ -708,15 +701,6 @@ public class TutorialGameArea extends GameArea {
         pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
     }
 
-    private TerrainComponent createDefaultTerrain() {
-        // Use empty texture for invisible terrain grid
-        final ResourceService resourceService = ServiceLocator.getResourceService();
-        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-
-        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);

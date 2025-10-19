@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.GridComponent;
-import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
@@ -28,14 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an area in the game, such as a level, indoor area, etc. An area has a terrain and
- * other entities to spawn on that terrain.
+ * Represents an area in the game, such as a level, indoor area, etc. An area has a grid and
+ * other entities to spawn on that grid.
  *
  * <p>Support for enabling/disabling game areas could be added by making this a Component instead.
  */
 public abstract class GameArea implements Disposable {
   private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
-  protected TerrainComponent terrain;
   protected GridComponent grid;
   protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
@@ -131,7 +129,7 @@ public abstract class GameArea implements Disposable {
     for (Vector2 location : deathLocations) spawnDeathMarker(location);
   }
 
-  /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
+  /** Create the game area, including grid, static entities (trees), dynamic entities (player) */
   public void create() {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
@@ -139,7 +137,7 @@ public abstract class GameArea implements Disposable {
     ItemEffectRegistry.registerDefaults();
     loadAssets();
 
-    // Terrain must be loaded first in order to spawn entities
+    // grid must be loaded first in order to spawn entities
     loadPrerequisites();
 
     // player must be spawned before enemies as they require a player to target
@@ -161,7 +159,7 @@ public abstract class GameArea implements Disposable {
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
 
-    // Terrain must be loaded first in order to spawn entities
+    // grid must be loaded first in order to spawn entities
     loadPrerequisites();
 
     // Save the old player's combat stats and inventory
@@ -211,7 +209,7 @@ public abstract class GameArea implements Disposable {
   }
 
   /**
-   * Loads prerequisites for each area. Music, sounds, terrain etc
+   * Loads prerequisites for each area. Music, sounds, grid etc
    */
   protected abstract void loadPrerequisites();
 
@@ -293,7 +291,7 @@ public abstract class GameArea implements Disposable {
   }
 
   /**
-   * Spawn entity on a given tile. Requires the terrain to be set first.
+   * Spawn entity on a given tile. Requires the grid to be set first.
    *
    * @param entity Entity (not yet registered)
    * @param tilePos tile position to spawn at

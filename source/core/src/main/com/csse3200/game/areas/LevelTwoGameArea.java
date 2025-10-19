@@ -11,8 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.PositionSyncComponent;
@@ -129,20 +128,49 @@ public class LevelTwoGameArea extends GameArea {
     };
     private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
-    private final TerrainFactory terrainFactory;
+    private final GridFactory gridFactory;
 
-    public LevelTwoGameArea(TerrainFactory terrainFactory) {
+    public LevelTwoGameArea(GridFactory gridFactory) {
         super();
-        this.terrainFactory = terrainFactory;
+        this.gridFactory = gridFactory;
     }
 
     protected void loadPrerequisites() {
         displayUI();
-        spawnTerrain();
+        spawnGrid();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
         AchievementProgression.onLevelStart();
 
+    }
+
+    private void spawnGrid() {
+        grid = gridFactory.createGrid(mapSize, 0.5f);
+        spawnEntity(new Entity().addComponent(grid));
+
+        // Grid walls
+        float tileSize = grid.getTileSize();
+        GridPoint2 tileBounds = grid.getMapBounds();
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
+
+        // Left
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+        // Right
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            new GridPoint2(tileBounds.x, 0),
+            false,
+            false);
+        // Top
+        spawnEntityAt(
+            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, tileBounds.y - 4),
+            false,
+            false);
+        // Bottom
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, 0), false, false);
     }
 
     protected void loadEntities() {
@@ -302,59 +330,16 @@ public class LevelTwoGameArea extends GameArea {
         spawnEntity(ui);
     }
 
-    private void spawnTerrain() {
-        // Need to decide how large each area is going to be
-        terrain = createLabTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
-
-        // Terrain walls
-        float tileSize = terrain.getTileSize();
-        GridPoint2 tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
-        // Right
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                new GridPoint2(tileBounds.x, 0),
-                false,
-                false);
-        // Top
-        spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y - 4),
-                false,
-                false);
-        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, 0), false, false);
-    }
-
-    private TerrainComponent createLabTerrain() {
-        final ResourceService resourceService = ServiceLocator.getResourceService();
-        // Use empty texture for invisible terrain grid
-        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-
-        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
-
     private void spawnParallaxBackground() {
         Entity backgroundEntity = new Entity();
 
         // Get the camera from the render service
         Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
 
-        // Get map dimensions from terrain
-        GridPoint2 mapBounds = terrain.getMapBounds(0);
-        float tileSize = terrain.getTileSize();
-        float mapWorldWidth = mapBounds.x * tileSize;
-        float mapWorldHeight = mapBounds.y * tileSize;
+        // Get map dimensions
+        Vector2 mapBounds = grid.getWorldBounds();
 
-        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapBounds.x, mapBounds.y);
 
         ResourceService resourceService = ServiceLocator.getResourceService();
 
@@ -529,8 +514,8 @@ public class LevelTwoGameArea extends GameArea {
         // Spawn with cone light detection - patrols and uses its downward cone light
         GridPoint2 spawnTile = new GridPoint2(3, 15);
         Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(11, 13))
+            grid.tileToWorldPosition(spawnTile),
+            grid.tileToWorldPosition(new GridPoint2(11, 13))
         };
 
         // Create bomber with unique ID "bomber1"
@@ -541,8 +526,8 @@ public class LevelTwoGameArea extends GameArea {
     private void spawnAutoBomberDrone() {
         GridPoint2 spawnTile = new GridPoint2(15, 15);
         Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(30, 15))
+            grid.tileToWorldPosition(spawnTile),
+            grid.tileToWorldPosition(new GridPoint2(30, 15))
         };
         // Create the auto bomber
         Entity autoBomber = EnemyFactory.createAutoBomberDrone(
@@ -557,7 +542,7 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 spawnTile = new GridPoint2(40, 15); // adjust position as needed
         Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
                 player,
-                terrain.tileToWorldPosition(spawnTile)
+                grid.tileToWorldPosition(spawnTile)
         ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);

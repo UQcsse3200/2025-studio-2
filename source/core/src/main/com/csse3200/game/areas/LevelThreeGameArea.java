@@ -8,8 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -38,7 +37,7 @@ import java.util.Objects;
 /**
  * Game area implementation for Level Three (Surface level).
  * <p>
- * Loads level configuration and asset manifests from JSON, initialises terrain and
+ * Loads level configuration and asset manifests from JSON, initialises game grid and
  * world boundaries, spawns entities via {@link SpawnRegistry}, and creates the player.
  * </p>
  */
@@ -50,7 +49,7 @@ public class LevelThreeGameArea extends GameArea {
     private float WALL_THICKNESS;
 
     private final ResourceService rs = ServiceLocator.getResourceService();
-    private final TerrainFactory terrainFactory;
+    private final GridFactory gridFactory;
 
     protected final String cfgFileName = "level-assets/surface-level/config.json";
     protected final String assetsFileName = "level-assets/surface-level/assets.json";
@@ -61,17 +60,17 @@ public class LevelThreeGameArea extends GameArea {
     /**
      * Creates a Level Three game area.
      *
-     * @param terrainFactory factory used to build tile maps and terrain components
+     * @param gridFactory factory used to build world grid
      */
-    public LevelThreeGameArea(TerrainFactory terrainFactory) {
+    public LevelThreeGameArea(GridFactory gridFactory) {
         super();
-        this.terrainFactory = terrainFactory;
+        this.gridFactory = gridFactory;
 
     }
 
     /**
      * Loads config files, derives level constants (map size, spawn, wall thickness),
-     * sets up UI/minimap, and spawns terrain.
+     * sets up UI/minimap, and spawns grid.
      */
     @Override
     protected void loadPrerequisites() {
@@ -83,10 +82,36 @@ public class LevelThreeGameArea extends GameArea {
         PLAYER_SPAWN.set(cfg.playerSpawn[0], cfg.playerSpawn[1]);
 
         displayUI(cfg.name);
-        spawnTerrain();
+        spawnGrid();
         createMinimap(ServiceLocator.getResourceService().getAsset(cfg.miniMap, Texture.class));
         playMusic();
         AchievementProgression.onLevelStart();
+    }
+
+    private void spawnGrid() {
+        grid = gridFactory.createGrid(MAP_SIZE, 0.5f);
+        spawnEntity(new Entity().addComponent(grid));
+
+        // Grid walls
+        float tileSize = grid.getTileSize();
+        GridPoint2 tileBounds = grid.getMapBounds();
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
+
+        // Left
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            GridPoint2Utils.ZERO, false, false
+        );
+        // Right
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            new GridPoint2(tileBounds.x, 0), false, false
+        );
+        // Top
+        spawnEntityAt(
+            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, tileBounds.y - 4), false, false
+        );
     }
 
     /**
@@ -180,23 +205,19 @@ public class LevelThreeGameArea extends GameArea {
         Entity background = new Entity();
 
         Camera gameCamera = ServiceLocator.getRenderService()
-                .getRenderer().getCamera().getCamera();
+            .getRenderer().getCamera().getCamera();
 
-        GridPoint2 mapBounds = terrain.getMapBounds(0);
-        float tileSize = terrain.getTileSize();
-        float mapWorldWidth = mapBounds.x * tileSize;
-        float mapWorldHeight = mapBounds.y * tileSize;
-
+        Vector2 worldBounds = grid.getWorldBounds();
         ParallaxBackgroundComponent parallaxBg =
-                new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+            new ParallaxBackgroundComponent(gameCamera, worldBounds.x, worldBounds.y);
 
         ResourceService rs = ServiceLocator.getResourceService();
 
         String[] paths = {
-                "images/surfacelevel/background/1.png", // sky
-                "images/surfacelevel/background/2.png", // distant skyline
-                "images/surfacelevel/background/3.png", // mid skyline
-                "images/surfacelevel/background/4.png"  // near skyline
+            "images/surfacelevel/background/1.png", // sky
+            "images/surfacelevel/background/2.png", // distant skyline
+            "images/surfacelevel/background/3.png", // mid skyline
+            "images/surfacelevel/background/4.png"  // near skyline
         };
 
         float[] factors   = {0.0f, 0.2f, 0.4f, 0.6f};
@@ -224,58 +245,8 @@ public class LevelThreeGameArea extends GameArea {
             parallaxBg.addScaledLayer(tex, factors[i], offsetX, offsetYs[i], scale);
         }
 
-        // Add parallax component
         background.addComponent(parallaxBg);
         spawnEntity(background);
-    }
-
-
-    /**
-     * Builds the underlying terrain and spawns world-boundary walls
-     * using the current tile map bounds.
-     */
-    private void spawnTerrain() {
-        terrain = createSurfaceTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
-
-        // Terrain walls from map bounds
-        float tileSize = terrain.getTileSize();
-        GridPoint2 tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                GridPoint2Utils.ZERO, false, false
-        );
-        // Right
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                new GridPoint2(tileBounds.x, 0), false, false
-        );
-        // Top
-        spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y - 4), false, false
-        );
-    }
-
-    /**
-     * Creates an invisible collision terrain from a generated tile map
-     * using a placeholder tile for layout.
-     *
-     * @return the constructed {@link TerrainComponent}
-     */
-    private TerrainComponent createSurfaceTerrain() {
-        TextureRegion emptyTile =
-                new TextureRegion(rs.getAsset("images/empty.png", Texture.class));
-        GridPoint2 tilePixelSize = new GridPoint2(
-                emptyTile.getRegionWidth(), emptyTile.getRegionHeight()
-        );
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(
-                tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, MAP_SIZE
-        );
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
 
     private void unloadAssets() {

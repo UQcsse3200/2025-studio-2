@@ -9,8 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
@@ -111,19 +110,50 @@ public class BossLevelGameArea extends GameArea {
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
-    private final TerrainFactory terrainFactory;
+    private final GridFactory gridFactory;
 
-    public BossLevelGameArea(TerrainFactory terrainFactory) {
+    public BossLevelGameArea(GridFactory gridFactory) {
         super();
-        this.terrainFactory = terrainFactory;
+        this.gridFactory = gridFactory;
     }
     protected void loadPrerequisites() {
         displayUI();
-        spawnTerrain();
+        spawnGrid();
         PLAYER_SPAWN  = new GridPoint2(5, tileBounds.y - 5);
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
     }
+
+    private void spawnGrid() {
+        grid = gridFactory.createGrid(mapSize, 0.5f);
+        spawnEntity(new Entity().addComponent(grid));
+
+        // Grid walls
+        float tileSize = grid.getTileSize();
+        tileBounds = grid.getMapBounds();
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
+
+        // Left
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), new GridPoint2(0, -4), false, false);
+        // Right
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            new GridPoint2(tileBounds.x, -4),
+            false,
+            false);
+        // Top
+        spawnEntityAt(
+            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, tileBounds.y - 4),
+            false,
+            false);
+        // Bottom
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS)
+                .addComponent(new TextureRenderComponent("images/gate.png")),
+            new GridPoint2(0, -3), false, false);
+    }
+
     protected void loadEntities() {
         spawnParallaxBackground();
         spawnPlatforms();
@@ -316,7 +346,6 @@ public class BossLevelGameArea extends GameArea {
         fourthPlatform.setScale(1.5f, 0.5f);
         spawnEntityAt(fourthPlatform, fourthPos,false, false);
 
-        spawnEvilMovingPlatform();
     }
 
     /**
@@ -590,7 +619,7 @@ public class BossLevelGameArea extends GameArea {
     private void spawnBoss() {
         GridPoint2 spawnPos = new GridPoint2(1, 40);
 
-        Entity boss = EnemyFactory.createBossEnemy(player, terrain.tileToWorldPosition(spawnPos));
+        Entity boss = EnemyFactory.createBossEnemy(player, grid.tileToWorldPosition(spawnPos));
 
         BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
         if (spawnComp != null) {
@@ -661,35 +690,6 @@ public class BossLevelGameArea extends GameArea {
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
-    private void spawnTerrain() {
-        terrain = createDefaultTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
-
-        // Terrain walls
-        float tileSize = terrain.getTileSize();
-        tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), new GridPoint2(0, -4), false, false);
-        // Right
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                new GridPoint2(tileBounds.x, -4),
-                false,
-                false);
-        // Top
-        spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y - 4),
-                false,
-                false);
-//        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS)
-                        .addComponent(new TextureRenderComponent("images/gate.png")),
-                new GridPoint2(0, -3), false, false);
-    }
 
     private void spawnParallaxBackground() {
         Entity backgroundEntity = new Entity();
@@ -697,13 +697,10 @@ public class BossLevelGameArea extends GameArea {
         // Get the camera from the player entity
         Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
 
-        // Get map dimensions from terrain
-        GridPoint2 mapBounds = terrain.getMapBounds(0);
-        float tileSize = terrain.getTileSize();
-        float mapWorldWidth = mapBounds.x * tileSize;
-        float mapWorldHeight = mapBounds.y * tileSize;
+        // Get map dimensions from grid
+        Vector2 worldBounds = grid.getWorldBounds();
 
-        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, worldBounds.x, worldBounds.y);
 
 
         ResourceService resourceService = ServiceLocator.getResourceService();
@@ -739,42 +736,6 @@ public class BossLevelGameArea extends GameArea {
 
         backgroundEntity.addComponent(parallaxBg);
         spawnEntity(backgroundEntity);
-    }
-
-    private TerrainComponent createDefaultTerrain() {
-        final ResourceService resourceService = ServiceLocator.getResourceService();
-        TextureRegion baseTile =
-                new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, baseTile, baseTile, baseTile, mapSize);
-        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
-
-    private void spawnEvilMovingPlatform() {
-        GridPoint2 buttonPlatformPos = new GridPoint2(57, tileBounds.y - 9);
-        GridPoint2 buttonStartPos = new GridPoint2(59, 50);
-        Vector2 offsetWorldButton = new Vector2(-10f, 0f);
-        float speed = 5f;
-
-        Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speed);
-        buttonPlatform.setScale(1.5f, 0.5f);
-        spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
-        logger.info("Moving platform spawned at {}", buttonPlatformPos);
-
-        //start button
-        Entity button = ButtonFactory.createButton(false, "platform", "left");
-        spawnEntityAt(button, buttonStartPos, true, true);
-        logger.info("Platform button spawned at {}", buttonStartPos);
-
-        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
-            if (isPressed) {
-                logger.info("Button pressed — activating platform");
-                buttonPlatform.getEvents().trigger("activatePlatform");
-            } else {
-                logger.info("Button unpressed — deactivating platform");
-                buttonPlatform.getEvents().trigger("deactivatePlatform");
-            }
-        });
     }
 
     /**

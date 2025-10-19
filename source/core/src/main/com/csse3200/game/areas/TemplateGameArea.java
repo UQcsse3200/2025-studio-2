@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
@@ -71,18 +72,48 @@ public class TemplateGameArea extends GameArea {
             "images/PLAYER.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(TemplateGameArea.class);
-    private final TerrainFactory terrainFactory;
+    private final GridFactory gridFactory;
 
-    public TemplateGameArea(TerrainFactory terrainFactory) {
+    public TemplateGameArea(GridFactory gridFactory) {
         super();
-        this.terrainFactory = terrainFactory;
+        this.gridFactory = gridFactory;
     }
     protected void loadPrerequisites() {
         displayUI();
-        spawnTerrain();
+        spawnGrid();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
     }
+
+    private void spawnGrid() {
+        grid = gridFactory.createGrid(mapSize, 0.5f);
+        spawnEntity(new Entity().addComponent(grid));
+
+        // Grid walls
+        float tileSize = grid.getTileSize();
+        GridPoint2 tileBounds = grid.getMapBounds();
+        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
+
+        // Left
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
+        // Right
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            new GridPoint2(tileBounds.x, 0),
+            false,
+            false);
+        // Top
+        spawnEntityAt(
+            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, tileBounds.y),
+            false,
+            false);
+        // Bottom
+        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, 4), false, false);
+    }
+
     protected void loadEntities() {
         // Add entities to be loaded here
     }
@@ -110,48 +141,7 @@ public class TemplateGameArea extends GameArea {
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
-    private void spawnTerrain() {
-        terrain = createDefaultTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
 
-        // Terrain walls
-        float tileSize = terrain.getTileSize();
-        GridPoint2 tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
-        // Right
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                new GridPoint2(tileBounds.x, 0),
-                false,
-                false);
-        // Top
-        spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y),
-                false,
-                false);
-        // Bottom
-        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, 4), false, false);
-    }
-    private TerrainComponent createDefaultTerrain() {
-        ResourceService resourceService = ServiceLocator.getResourceService();
-        TextureRegion baseTile =
-                new TextureRegion(resourceService.getAsset("images/TechWallBase.png", Texture.class));
-        TextureRegion  variant1 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant1.png", Texture.class));
-        TextureRegion variant2 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant2.png", Texture.class));
-        TextureRegion  variant3 =
-                new TextureRegion(resourceService.getAsset("images/TechWallVariant3.png", Texture.class));
-        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, variant1, variant2, variant3, mapSize);
-        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
