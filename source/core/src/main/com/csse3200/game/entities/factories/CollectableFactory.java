@@ -73,8 +73,11 @@ public class CollectableFactory {
             e.addComponent(new TextureRenderComponent(
                     (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png"));
             // change scale of non potion collectables
-            e.setScale(0.5f, 0.5f);
-            PhysicsUtils.setScaledCollider(e, 0.5f, 0.5f);
+            float sx = cfg.scale != null ? cfg.scale.get(0) : 0.5f;
+            float sy = cfg.scale != null ? cfg.scale.get(1) : 0.5f;
+
+            e.setScale(sx, sy);
+            PhysicsUtils.setScaledCollider(e, sx, sy);
         }
 
         // backlight because it looks cool (thanks tristyn)

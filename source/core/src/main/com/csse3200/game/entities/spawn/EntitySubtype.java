@@ -7,6 +7,7 @@ public enum EntitySubtype {
     STATIC_PLATFORM(EntityType.PLATFORM),
     MOVING(EntityType.PLATFORM),
     PLATE(EntityType.PLATFORM),
+    BUTTON(EntityType.PLATFORM),
 
     // Collectables
     KEY(EntityType.COLLECTABLE),

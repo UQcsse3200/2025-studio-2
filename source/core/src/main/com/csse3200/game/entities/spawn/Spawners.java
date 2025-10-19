@@ -161,6 +161,7 @@ public final class Spawners {
                 case MOVING -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
                 case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, 1f);
                 case PLATE -> PlatformFactory.createPressurePlatePlatform();
+                case BUTTON -> PlatformFactory.createButtonTriggeredPlatform(new Vector2(a.dx, a.dy), a.speed);
                 default -> PlatformFactory.createStaticPlatform();
             };
 
@@ -218,11 +219,13 @@ public final class Spawners {
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
 
-                button.getEvents().addListener("buttonToggled", (Boolean __) -> {
-                    if (button.getComponent(ButtonComponent.class).isPushed()) {
+                button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+                    if (isPressed) {
                         target.getEvents().trigger("disable");
+                        target.getEvents().trigger("activatePlatform");
                     } else {
                         target.getEvents().trigger("enable");
+                        target.getEvents().trigger("deactivatePlatform");
                     }
                 });
             }

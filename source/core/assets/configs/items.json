@@ -41,7 +41,8 @@
     "sprite": "images/dash_powerup.png",
     "description": "Unlocks the ability to dash",
     "autoConsume": false,
-    "tags": ["UPGRADE"]
+    "tags": ["UPGRADE"],
+    "scale": [0.8, 0.5]
   },
   {
     "id": "upgrade:glide",
