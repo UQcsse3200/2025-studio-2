@@ -9,12 +9,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.input.Keymap;
@@ -111,102 +115,103 @@ public class TutorialMenuDisplay extends UIComponent {
    * Creates the sidebar with category buttons and back button
    */
   private Table createSidebar() {
-    Table sidebar = new Table();
-    sidebar.top();
-    
-    // Title
-    Label titleLabel = new Label("Tutorial", skin);
-    titleLabel.setFontScale(2f);
-    titleLabel.setColor(Color.BLACK);
-    sidebar.add(titleLabel).padBottom(60).row();
-    
-    // Category buttons - save as instance variables
-    basicsBtn = new TextButton("The Basics", skin);
-    itemsBtn = new TextButton("Items", skin);
-    mechanicsBtn = new TextButton("Mechanics", skin);
-    
-    // Button listeners
-    basicsBtn.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        logger.debug("The Basics selected");
-        currentSection = "basics";
-        updateContent(currentSection);
-        updateButtonHighlight();
-      }
-    });
-    
-    itemsBtn.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        logger.debug("Items selected");
-        currentSection = "items";
-        updateContent(currentSection);
-        updateButtonHighlight();
-      }
-    });
-    
-    mechanicsBtn.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        logger.debug("Mechanics selected");
-        currentSection = "mechanics";
-        updateContent(currentSection);
-        updateButtonHighlight();
-      }
-    });
-    
-    // Add buttons to sidebar with much larger size and spacing
-    sidebar.add(basicsBtn).width(240).height(70).padBottom(30).row();
-    sidebar.add(itemsBtn).width(240).height(70).padBottom(30).row();
-    sidebar.add(mechanicsBtn).width(240).height(70).padBottom(30).row();
-    
-    // Set initial highlight
-    updateButtonHighlight();
-    
-    // Add some spacing before back button
-    sidebar.row().expandY();
-    
-    // Back button at bottom
-    TextButton backBtn = new TextButton("Back", skin);
-    backBtn.setColor(Color.RED);
-    backBtn.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        logger.debug("Back button clicked");
-        game.setScreen(GdxGame.ScreenType.MAIN_MENU);
-      }
-    });
-    
-    sidebar.add(backBtn).width(240).height(70).bottom().padTop(20);
-    
-    return sidebar;
-  }
-  
-  /**
-   * Updates button highlighting based on current section
-   */
-  private void updateButtonHighlight() {
-    // Reset all buttons to default style
-    basicsBtn.setColor(Color.WHITE);
-    itemsBtn.setColor(Color.WHITE);
-    mechanicsBtn.setColor(Color.WHITE);
-    
-    // Highlight the active button
-    switch (currentSection) {
-      case "basics":
-        basicsBtn.setColor(Color.GREEN);
-        break;
-      case "items":
-        itemsBtn.setColor(Color.GREEN);
-        break;
-      case "mechanics":
-        mechanicsBtn.setColor(Color.GREEN);
-        break;
-    }
+      Table sidebar = new Table();
+      sidebar.top();
+
+      // Title
+      Label titleLabel = new Label("Tutorial", skin);
+      titleLabel.setFontScale(2f);
+      titleLabel.setColor(Color.BLACK);
+      sidebar.add(titleLabel).padBottom(60).row();
+
+      // Category buttons
+      basicsBtn = createSidebarButton("The Basics", () -> {
+          currentSection = "basics";
+          updateContent(currentSection);
+          updateButtonHighlight();
+      });
+
+      itemsBtn = createSidebarButton("Items", () -> {
+          currentSection = "items";
+          updateContent(currentSection);
+          updateButtonHighlight();
+      });
+
+      mechanicsBtn = createSidebarButton("Mechanics", () -> {
+          currentSection = "mechanics";
+          updateContent(currentSection);
+          updateButtonHighlight();
+      });
+
+      sidebar.add(basicsBtn).width(240).height(70).padBottom(30).row();
+      sidebar.add(itemsBtn).width(240).height(70).padBottom(30).row();
+      sidebar.add(mechanicsBtn).width(240).height(70).padBottom(30).row();
+
+      // Set initial highlight
+      updateButtonHighlight();
+
+      // Back button (separate style, not using createSidebarButton)
+      TextButton backBtn = new TextButton("Back", skin, "redButton");
+      backBtn.setTransform(true);
+      backBtn.setOrigin(Align.center);
+
+      // Hover effect: subtle scale + darker red
+      backBtn.addListener(new ClickListener() {
+          @Override
+          public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+              backBtn.addAction(Actions.parallel(
+                      Actions.scaleTo(1.05f, 1.05f, 0.1f),
+                      Actions.color(new Color(0.7f, 0f, 0f, 1f), 0.1f) // dark red
+              ));
+          }
+
+          @Override
+          public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+              backBtn.addAction(Actions.parallel(
+                      Actions.scaleTo(1f, 1f, 0.1f),
+                      Actions.color(Color.RED, 0.1f)
+              ));
+          }
+
+          @Override
+          public void clicked(InputEvent event, float x, float y) {
+              logger.debug("Back button clicked");
+              game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+          }
+      });
+
+      backBtn.setColor(Color.RED);
+      sidebar.add(backBtn).width(240).height(70).bottom().padTop(20);
+
+      return sidebar;
   }
 
-  /**
+
+    /**
+   * Updates button highlighting based on current section
+   */
+    private void updateButtonHighlight() {
+        basicsBtn.setColor(Color.WHITE);
+        itemsBtn.setColor(Color.WHITE);
+        mechanicsBtn.setColor(Color.WHITE);
+
+        switch (currentSection) {
+            case "basics" -> basicsBtn.setColor(new Color(0f, 1f, 0f, 1f)); // green
+            case "items" -> itemsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case "mechanics" -> mechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+        }
+    }
+
+    private boolean isActiveButton(TextButton button) {
+        return (currentSection.equals("basics") && button == basicsBtn)
+                || (currentSection.equals("items") && button == itemsBtn)
+                || (currentSection.equals("mechanics") && button == mechanicsBtn);
+    }
+
+
+
+
+    /**
    * Updates the content area based on the selected section
    */
   private void updateContent(String section) {
@@ -227,179 +232,162 @@ public class TutorialMenuDisplay extends UIComponent {
     }
   }
 
-  /**
-   * Displays content for "The Basics" section
-   */
-  private void showBasicsContent() {
-    Label sectionTitle = new Label("The Basics", skin);
-    sectionTitle.setFontScale(1.5f);
-    sectionTitle.setColor(Color.GREEN);
-    contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
-    
-    // Get the player atlas
-    TextureAtlas playerAtlas = ServiceLocator.getResourceService()
-        .getAsset("images/PLAYER.atlas", TextureAtlas.class);
-    
-    // Movement controls section
-    Label movementTitle = new Label("Movement Controls:", skin);
-    movementTitle.setFontScale(1.2f);
-    contentTable.add(movementTitle).padBottom(15).left().colspan(2).row();
-    
-    // Create a table for the sprite + keybind display
-    Table spriteTable = new Table();
-    
-    // Create animated sprite for walking left
-    Array<TextureAtlas.AtlasRegion> walkLeftFrames = playerAtlas.findRegions("LEFT");
-    if (walkLeftFrames.size > 0) {
-      Animation<TextureRegion> walkLeftAnimation = new Animation<>(0.1f, walkLeftFrames, Animation.PlayMode.LOOP);
-      AnimatedImage leftSprite = new AnimatedImage(walkLeftAnimation);
-      
-      // Create vertical layout: sprite on top, keybind below
-      Table leftColumn = new Table();
-      leftColumn.add(leftSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
-      
-      // Get the actual keybind from user settings
-      int leftKeyCode = Keymap.getActionKeyCode("PlayerLeft");
-      String leftKeyName = Input.Keys.toString(leftKeyCode);
-      Label leftKeyLabel = new Label(leftKeyName, skin);
-      leftKeyLabel.setFontScale(1.5f);  // Bigger text
-      leftKeyLabel.setColor(Color.RED);  // Red color
-      
-      // Add padding to shift right and center under the actual sprite visual
-      leftColumn.add(leftKeyLabel).center().padLeft(22).padTop(5).row();
-      
-      // Add description label
-      Label leftDescLabel = new Label("Move Left", skin);
-      leftDescLabel.setFontScale(1.0f);
-      leftColumn.add(leftDescLabel).center().padLeft(22).padTop(5).row();
-      
-      spriteTable.add(leftColumn).padLeft(35).padRight(35).padBottom(10);
-    }
-    
-    // Create animated sprite for walking right
-    Array<TextureAtlas.AtlasRegion> walkRightFrames = playerAtlas.findRegions("RIGHT");
-    if (walkRightFrames.size > 0) {
-      Animation<TextureRegion> walkRightAnimation = new Animation<>(0.1f, walkRightFrames, Animation.PlayMode.LOOP);
-      AnimatedImage rightSprite = new AnimatedImage(walkRightAnimation);
-      
-      // Create vertical layout: sprite on top, keybind below
-      Table rightColumn = new Table();
-      rightColumn.add(rightSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
-      
-      // Get the actual keybind from user settings
-      int rightKeyCode = Keymap.getActionKeyCode("PlayerRight");
-      String rightKeyName = Input.Keys.toString(rightKeyCode);
-      Label rightKeyLabel = new Label(rightKeyName, skin);
-      rightKeyLabel.setFontScale(1.5f);  // Bigger text
-      rightKeyLabel.setColor(Color.RED);  // Red color
-      
-      // Add padding to shift right and center under the actual sprite visual
-      rightColumn.add(rightKeyLabel).center().padLeft(22).padTop(5).row();
-      
-      // Add description label
-      Label rightDescLabel = new Label("Move Right", skin);
-      rightDescLabel.setFontScale(1.0f);
-      rightColumn.add(rightDescLabel).center().padLeft(22).padTop(5).row();
-      
-      spriteTable.add(rightColumn).padLeft(35).padRight(35).padBottom(10);
-    }
-    
-    // Create animated sprite for crouching
-    Array<TextureAtlas.AtlasRegion> crouchFrames = playerAtlas.findRegions("CROUCH");
-    if (crouchFrames.size > 0) {
-      Animation<TextureRegion> crouchAnimation = new Animation<>(0.1f, crouchFrames, Animation.PlayMode.LOOP);
-      AnimatedImage crouchSprite = new AnimatedImage(crouchAnimation);
-      
-      // Create vertical layout: sprite on top, keybind below
-      Table crouchColumn = new Table();
-      crouchColumn.add(crouchSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
-      
-      // Get the actual keybind from user settings
-      int crouchKeyCode = Keymap.getActionKeyCode("PlayerCrouch");
-      String crouchKeyName = Input.Keys.toString(crouchKeyCode);
-      Label crouchKeyLabel = new Label(crouchKeyName, skin);
-      crouchKeyLabel.setFontScale(1.5f);  // Bigger text
-      crouchKeyLabel.setColor(Color.RED);  // Red color
-      
-      // Add padding to shift right and center under the actual sprite visual
-      crouchColumn.add(crouchKeyLabel).center().padLeft(22).padTop(5).row();
-      
-      // Add description label
-      Label crouchDescLabel = new Label("Crouch", skin);
-      crouchDescLabel.setFontScale(1.0f);
-      crouchColumn.add(crouchDescLabel).center().padLeft(22).padTop(5).row();
-      
-      spriteTable.add(crouchColumn).padLeft(35).padRight(35).padBottom(10);
-    }
-    
-    // Create animated sprite for jumping
-    Array<TextureAtlas.AtlasRegion> jumpFrames = playerAtlas.findRegions("JUMP");
-    if (jumpFrames.size > 0) {
-      Animation<TextureRegion> jumpAnimation = new Animation<>(0.1f, jumpFrames, Animation.PlayMode.LOOP);
-      AnimatedImage jumpSprite = new AnimatedImage(jumpAnimation);
-      
-      // Create vertical layout: sprite on top, keybind below
-      Table jumpColumn = new Table();
-      jumpColumn.add(jumpSprite).size(288, 216).padTop(-50).padBottom(15).center().row();
-      
-      // Get the actual keybind from user settings
-      int jumpKeyCode = Keymap.getActionKeyCode("PlayerJump");
-      String jumpKeyName = Input.Keys.toString(jumpKeyCode);
-      Label jumpKeyLabel = new Label(jumpKeyName, skin);
-      jumpKeyLabel.setFontScale(1.5f);  // Bigger text
-      jumpKeyLabel.setColor(Color.RED);  // Red color
-      
-      // Add padding to shift right and center under the actual sprite visual
-      jumpColumn.add(jumpKeyLabel).center().padLeft(22).padTop(5).row();
-      
-      // Add description label
-      Label jumpDescLabel = new Label("Jump", skin);
-      jumpDescLabel.setFontScale(1.0f);
-      jumpColumn.add(jumpDescLabel).center().padLeft(22).padTop(5).row();
-      
-      spriteTable.add(jumpColumn).padLeft(35).padRight(35).padBottom(10);
-    }
-    
-    contentTable.add(spriteTable).left().colspan(2).row();
-    
-    // Add informational text below the controls with color markup
-    String markedUpText = 
-        """
-        These are the basic movement controls. Practice combining them to navigate the world effectively!
+    /**
+     * Displays content for "The Basics" section
+     */
+    private void showBasicsContent() {
+        Label sectionTitle = new Label("The Basics", skin);
+        sectionTitle.setFontScale(1.5f);
+        sectionTitle.setColor(Color.GREEN);
+        contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
 
+        // Get the player atlas
+        TextureAtlas playerAtlas = ServiceLocator.getResourceService()
+                .getAsset("images/PLAYER.atlas", TextureAtlas.class);
+
+        Table spriteTable = new Table();
+
+        // Add each control column if frames exist
+        addControlColumn(spriteTable, playerAtlas.findRegions("LEFT"), "PlayerLeft", "Move Left");
+        addControlColumn(spriteTable, playerAtlas.findRegions("RIGHT"), "PlayerRight", "Move Right");
+        addControlColumn(spriteTable, playerAtlas.findRegions("CROUCH"), "PlayerCrouch", "Crouch");
+        addControlColumn(spriteTable, playerAtlas.findRegions("JUMP"), "PlayerJump", "Jump");
+
+        contentTable.add(spriteTable).left().colspan(2).row();
+
+        // Informational text with markup
+        String markedUpText =
+                """
+                These are the basic movement controls. Practice combining them to navigate the world effectively!
         
-        [RED]Crouch[] to fit through tight spaces.
-
-        Use [RED]jump[] to reach higher platforms. 
+                [RED]Crouch[] to fit through tight spaces.
         
-        You can [CYAN]double-jump[] by pressing [RED]jump[] again while in the air!""";
-    
-    Label infoText = new Label(markedUpText, skin);
-    infoText.setFontScale(1.2f);
-    infoText.setWrap(true);
-    
-    // Create a new style with markup enabled
-    Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
-    markupStyle.fontColor = Color.WHITE;
-    infoText.setStyle(markupStyle);
-    
-    contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
-    
-    // Add practice level button
-    TextButton practiceBtn = new TextButton("Practice!", skin);
-    practiceBtn.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        logger.debug("Practice Level button clicked");
-        // Launch the practice tutorial area directly
-        launchPracticeLevel(MainGameScreen.Areas.TUTORIAL);
-      }
-    });
-    
-    contentTable.add(practiceBtn).width(300).height(60).padTop(40).center().colspan(2).row();
-  }
+                Use [RED]jump[] to reach higher platforms. 
+        
+                You can [CYAN]double-jump[] by pressing [RED]jump[] again while in the air!
+                """;
 
-  /**
+        Label infoText = new Label(markedUpText, skin);
+        infoText.setFontScale(1.2f);
+        infoText.setWrap(true);
+        Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+        markupStyle.fontColor = Color.WHITE;
+        infoText.setStyle(markupStyle);
+
+        contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
+
+        // Practice button
+        // Practice button
+        TextButton practiceBtn = new TextButton("Practice!", skin);
+        practiceBtn.setTransform(true);
+        practiceBtn.setOrigin(Align.center);
+
+        // Click action
+        practiceBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                logger.debug("Practice Level button clicked");
+                launchPracticeLevel(MainGameScreen.Areas.TUTORIAL);
+            }
+        });
+
+        // Hover effects
+        practiceBtn.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                // Pulse animation + green tint
+                practiceBtn.addAction(Actions.forever(
+                        Actions.sequence(
+                                Actions.scaleTo(1.1f, 1.1f, 0.3f),
+                                Actions.scaleTo(1f, 1f, 0.3f)
+                        )
+                ));
+                practiceBtn.addAction(Actions.color(Color.GREEN, 0.2f));
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                // Stop pulsing, reset to normal
+                practiceBtn.clearActions();
+                practiceBtn.addAction(Actions.scaleTo(1f, 1f, 0.1f));
+                practiceBtn.addAction(Actions.color(Color.WHITE, 0.2f));
+            }
+        });
+
+        contentTable.add(practiceBtn).width(300).height(60).padTop(40).center().colspan(2).row();
+    }
+
+    /**
+     * Helper to add a control column (sprite + key + description) to the sprite table.
+     */
+    private void addControlColumn(Table spriteTable, Array<TextureAtlas.AtlasRegion> frames,
+                                  String actionKey, String description) {
+        if (frames.size == 0) return;
+
+        Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
+        AnimatedImage sprite = new AnimatedImage(animation);
+
+        Table column = new Table();
+        column.add(sprite).size(288, 216).padTop(-50).padBottom(15).center().row();
+
+        int keyCode = Keymap.getActionKeyCode(actionKey);
+        String keyName = Input.Keys.toString(keyCode);
+        Label keyLabel = new Label(keyName, skin);
+        keyLabel.setFontScale(1.5f);
+        keyLabel.setColor(Color.RED);
+        column.add(keyLabel).center().padTop(5).row();
+
+        Label descLabel = new Label(description, skin);
+        descLabel.setFontScale(1.0f);
+        column.add(descLabel).center().padTop(5).row();
+
+        spriteTable.add(column).padLeft(35).padRight(35).padBottom(10);
+    }
+
+    /**
+     * Creates a styled sidebar button with hover scaling and click handling.
+     */
+    private TextButton createSidebarButton(String text, Runnable onClick) {
+        TextButton button = new TextButton(text, skin, "tutorialButton");
+        button.setTransform(true);
+        button.setOrigin(Align.center);
+
+        // Default color
+        button.setColor(Color.WHITE);
+
+        button.addListener(new ClickListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+                // Hover: scale + green tint
+                button.addAction(Actions.parallel(
+                        Actions.scaleTo(1.05f, 1.05f, 0.1f),
+                        Actions.color(Color.GREEN, 0.1f)
+                ));
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+                // Reset if not the active section
+                if (!isActiveButton(button)) {
+                    button.addAction(Actions.parallel(
+                            Actions.scaleTo(1f, 1f, 0.1f),
+                            Actions.color(Color.WHITE, 0.1f)
+                    ));
+                }
+            }
+
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (onClick != null) onClick.run();
+            }
+        });
+
+        return button;
+    }
+
+
+
+    /**
    * Launches a practice tutorial level by starting the main game at a specific area.
    * @param area The area ID to start in
    */
