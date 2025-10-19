@@ -37,7 +37,7 @@ class TestLeaderboardComponent {
     Gdx.files = mock(com.badlogic.gdx.Files.class);
     when(Gdx.files.external(anyString())).thenReturn(fileHandle);
 
-    leaderboardComponent = new LeaderboardComponent();
+    leaderboardComponent = LeaderboardComponent.getInstance();
     Map<String, Long> baseTimes = getBaseTimes();
 
     baseTimes.put("1", 100000L);

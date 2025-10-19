@@ -9,20 +9,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class LeaderboardComponent {
-  private final String filePath;
   private final Map<String, Long> leaderboard;
+  private static final LeaderboardComponent instance = new LeaderboardComponent();
 
-  public LeaderboardComponent() {
-    this("configs/leaderboard.json");
-  }
-
-  public LeaderboardComponent(String filePath) {
-    this.filePath = filePath;
+  private LeaderboardComponent() {
     leaderboard = readData();
   }
 
+  public static LeaderboardComponent getInstance() {
+    return instance;
+  }
+
   private FileHandle getFile() {
-    return Gdx.files.external("CSSE3200Game/" + filePath);
+    return Gdx.files.external("CSSE3200Game/leaderboard.json");
   }
 
   private Map<String, Long> readData() {

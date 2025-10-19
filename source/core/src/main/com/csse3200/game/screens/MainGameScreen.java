@@ -90,7 +90,6 @@ public class MainGameScreen extends ScreenAdapter {
   private GameArea gameArea;
 
   private PauseInputComponent pauseInput;
-  private LeaderboardComponent leaderboardComponent;
   private GameTime gameTime;
   private MinimapDisplay minimapDisplay;
   private PlayerStatsDisplay playerStatsDisplay;
@@ -216,7 +215,7 @@ public class MainGameScreen extends ScreenAdapter {
       uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
           String name = entryDisplay.getEnteredName();
           if (name != null && !name.isEmpty()) {
-              leaderboardComponent.updateLeaderboard(name, completionTime);
+              LeaderboardComponent.getInstance().updateLeaderboard(name, completionTime);
           }
 
           // Restore HUD and unpause
@@ -550,7 +549,6 @@ public class MainGameScreen extends ScreenAdapter {
     pauseInput = new PauseInputComponent(this);
 
     Stage stage = ServiceLocator.getRenderService().getStage();
-    leaderboardComponent = new LeaderboardComponent();
 
     // Build your puzzle bank (spritesheet-driven)
     SimpleCaptchaBank bank = buildCaptchaBank();

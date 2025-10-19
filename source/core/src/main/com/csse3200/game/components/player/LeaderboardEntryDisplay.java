@@ -21,14 +21,12 @@ public class LeaderboardEntryDisplay extends UIComponent {
     private long completionTime;
     private int health;
     private float stamina;
-    private LeaderboardComponent leaderboard;
     private String enteredName; // null if skipped or empty
 
     public LeaderboardEntryDisplay(long completionTime, int health, float stamina) {
         this.completionTime = completionTime;
         this.health = health;
         this.stamina = stamina;
-        this.leaderboard = new LeaderboardComponent();
     }
 
     public String getEnteredName() {
@@ -60,7 +58,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
                 completed = true;
                 enteredName = nameField.getText().trim();
                 if (enteredName != null && !enteredName.isEmpty()) {
-                    leaderboard.updateLeaderboard(enteredName, completionTime);
+                    LeaderboardComponent.getInstance().updateLeaderboard(enteredName, completionTime);
                     System.out.println("Saved stats for " + enteredName +
                             " | Health: " + health + " | Stamina: " + stamina);
                 } else {

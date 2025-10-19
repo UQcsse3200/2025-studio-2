@@ -28,14 +28,11 @@ public class LeaderboardDisplay extends UIComponent {
     private static final float Z_INDEX = 2f;
     private Table table;
 
-    private final LeaderboardComponent leaderboardComponent;
-
     /**
      * Constructor
      */
     public LeaderboardDisplay(GdxGame game) {
         this.game = game;
-        leaderboardComponent = new LeaderboardComponent();
     }
 
     /**
@@ -71,7 +68,7 @@ public class LeaderboardDisplay extends UIComponent {
         stage.addActor(topTable);
 
 
-        Map<String, Long> leaderboardData = leaderboardComponent.getData();
+        Map<String, Long> leaderboardData = LeaderboardComponent.getInstance().getData();
 
         for (Map.Entry<String, Long> entry : leaderboardData.entrySet()) {
             Label name = new Label(entry.getKey() + ":", skin);
