@@ -1,10 +1,10 @@
 package com.csse3200.game.components;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 public class PressurePlateComponentTest {
     @Test
