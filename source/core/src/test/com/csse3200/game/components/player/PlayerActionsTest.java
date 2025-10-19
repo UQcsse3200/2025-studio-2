@@ -206,9 +206,5 @@ public class PlayerActionsTest {
         // land player
         playerEntity.getEvents().trigger("glide", false);
         playerEntity.getEvents().trigger("landed");
-
-        //try to glide when landed
-        playerEntity.getEvents().trigger("glide", true);
-        assertFalse(playerActions.getIsGliding());
     }
 }

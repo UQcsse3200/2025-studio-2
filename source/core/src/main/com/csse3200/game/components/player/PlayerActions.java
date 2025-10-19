@@ -363,12 +363,12 @@ public class PlayerActions extends Component {
     Body body = physicsComponent.getBody();
     boolean isOutOfJumps = (isJumping) && (isDoubleJump);
 
-    if (on && isOutOfJumps) {
-      if (body.getLinearVelocity().y < 0.5f) {
+    if (on) {
 
         body.setGravityScale(0.1f);
+        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0.5f)); // slow down the upwards movement
         isGliding = true;
-      }
+
     } else {
       body.setGravityScale(1f);
       isGliding = false;
