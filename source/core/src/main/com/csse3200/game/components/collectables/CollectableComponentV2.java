@@ -43,7 +43,11 @@ public class CollectableComponentV2 extends Component {
 
         String[] parts = itemId.split(":");
         this.type = parts[0].isBlank() ? "null" : parts[0];
-        this.subtype = parts[1].isBlank() ? "null" : parts[1];
+        if (parts.length > 1) {
+            this.subtype = parts[1].isBlank() ? "null" : parts[1];
+        } else {
+            this.subtype = null;
+        }
     }
 
     /**
@@ -111,6 +115,10 @@ public class CollectableComponentV2 extends Component {
                     inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, subtype);
                     StatsTracker.addUpgrade();
                 }
+            }
+
+            if (itemId.equals("misc:hardware")) {
+                entity.getComponent(ItemCollectableComponent.class).onCollect(player);
             }
 
             inventory.addItem(InventoryComponent.Bag.INVENTORY, itemId);

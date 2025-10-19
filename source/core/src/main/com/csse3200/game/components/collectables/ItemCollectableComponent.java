@@ -4,11 +4,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.areas.LevelOneGameArea;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.CollectablesSave;
 
-public class ItemCollectableComponent extends CollectableComponent {
+public class ItemCollectableComponent extends Component {
     private int count;
     private int level;
     private GameArea gameArea;
@@ -25,8 +26,7 @@ public class ItemCollectableComponent extends CollectableComponent {
         count = CollectablesSave.getCollectedCount();
     }
 
-    @Override
-    protected boolean onCollect(Entity collector) {
+    public boolean onCollect(Entity collector) {
         Vector2 currentPos = this.entity.getPosition();
         if (!hasBeenCollected(currentPos)) {
             addCollected(currentPos);

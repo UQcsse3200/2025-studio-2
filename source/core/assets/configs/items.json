@@ -58,5 +58,14 @@
     "description": "Unlocks the ability to use the jetpack",
     "autoConsume": false,
     "tags": ["UPGRADE"]
+  },
+  {
+    "id": "misc:hardware",
+    "name": "Lost Hardware",
+    "sprite": "images/lost_hardware.png",
+    "description": "Hidden lost hardware",
+    "autoConsume": false,
+    "tags": ["HARDWARE"],
+    "glowColor": [40, 30, 55]
   }
 ]

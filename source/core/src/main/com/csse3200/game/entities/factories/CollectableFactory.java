@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
-import com.csse3200.game.components.collectables.ObjectivesComponent;
-import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
@@ -59,6 +56,10 @@ public class CollectableFactory {
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new CollectableComponentV2(itemId));
+
+        if (itemId.equals("misc:hardware")) {
+            e.addComponent(new ItemCollectableComponent(null));
+        }
 
         // add sprites and animations
 
