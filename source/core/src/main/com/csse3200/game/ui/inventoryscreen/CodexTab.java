@@ -22,7 +22,9 @@ public class CodexTab implements InventoryTabInterface {
     /**
      * Reference to background texture that needs to be disposed
      */
-    private Texture bgTexture;
+    private Texture tableBgTexture;
+    private Texture entryBgTexture;
+    private Texture titleBgTexture;
     private final PauseMenuDisplay display;
 
     public CodexTab(PauseMenuDisplay display) {
@@ -42,30 +44,59 @@ public class CodexTab implements InventoryTabInterface {
         // Create table holder that will contain all UI elements
         Table tableHolder = new Table();
 
-        // Create background
-        Pixmap pixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
-        pixmap.setColor(0.1f, 0.1f, 0.1f, 1f); // Grey color
-        pixmap.fill();
-        bgTexture = new Texture(pixmap);
-        tableHolder.setBackground(new TextureRegionDrawable(bgTexture));
-        pixmap.dispose();
+        // Create background for table
+        Pixmap bgPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        bgPixmap.setColor(0.1f, 0.1f, 0.1f, 1f); // Very dark grey
+        bgPixmap.fill();
+        tableBgTexture = new Texture(bgPixmap);
+        tableHolder.setBackground(new TextureRegionDrawable(tableBgTexture));
+        bgPixmap.dispose();
+
+        // Create background for entry
+        Pixmap entryBgPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        entryBgPixmap.setColor(0.2f, 0.2f, 0.2f, 1f); // Dark grey
+        entryBgPixmap.fill();
+        entryBgTexture = new Texture(entryBgPixmap);
+        TextureRegionDrawable entryBgDrawable = new TextureRegionDrawable(entryBgTexture);
+        entryBgPixmap.dispose();
+
+        // Create background for title
+        Pixmap titleBgPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
+        titleBgPixmap.setColor(0.3f, 0.3f, 0.3f, 1f); // Medium grey
+        titleBgPixmap.fill();
+        titleBgTexture = new Texture(titleBgPixmap);
+        TextureRegionDrawable titleBgDrawable = new TextureRegionDrawable(titleBgTexture);
+        entryBgPixmap.dispose();
+
 
         // Create logical table (child of scroll pane)
         Table logicalTable = new Table();
 
         // Add each unlocked entry
         for (CodexEntry entry : ServiceLocator.getCodexService().getEntries(true)) {
-            // Add entry title
-            String title = entry.getTitle();
-            int titleLen = title.length();
-            Label entryTitle = new Label(entry.getTitle() + "\n" + "=".repeat(titleLen), skin);
-            logicalTable.add(entryTitle).fillX().expandX();
-            logicalTable.row();
+            // Create table for entry
+            Table entryTable = new Table();
+            entryTable.setBackground(entryBgDrawable);
 
-            // Add entry text
+            // Create table for entry title
+            Table titleTable = new Table();
+            titleTable.setBackground(titleBgDrawable);
+            Label entryTitle = new Label(entry.getTitle(), skin);
+            entryTitle.setWrap(true);
+            titleTable.add(entryTitle).pad(15f).growX();
+
+            // Add title to entry table
+            entryTable.add(titleTable).growX();
+            entryTable.row();
+
+            // Add entry text to entry table
             Label entryText = new Label(entry.getText(), skin);
             entryText.setWrap(true);
-            logicalTable.add(entryText).left().pad(20f).padBottom(35f).fillX().expandX();
+            entryTable.add(entryText).growX().pad(15f);
+            entryTable.row();
+
+            // Add entry table to the logical table with space below it
+            logicalTable.add(entryTable).growX().padBottom(15f);
             logicalTable.row();
         }
 
@@ -98,7 +129,7 @@ public class CodexTab implements InventoryTabInterface {
         // Add scroll pane and title to table holder
         float canvasH = Gdx.graphics.getHeight() * (3f / 7f);
         float canvasW = Gdx.graphics.getWidth() * (2f / 5f);
-        tableHolder.add(new Label("=== Codex ===", skin)).pad(20f);
+        tableHolder.add(new Label("Codex", skin)).pad(20f);
         tableHolder.row();
         tableHolder.add(scrollPane).width(canvasW).height(canvasH);
 
@@ -114,6 +145,8 @@ public class CodexTab implements InventoryTabInterface {
      * Dispose of background texture
      */
     public void dispose() {
-        bgTexture.dispose();
+        tableBgTexture.dispose();
+        entryBgTexture.dispose();
+        titleBgTexture.dispose();
     }
 }
