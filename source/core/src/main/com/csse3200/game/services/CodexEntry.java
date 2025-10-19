@@ -35,12 +35,12 @@ public class CodexEntry {
     /**
      * Set the unlocked flag to be true - use when player has unlocked entry;
      */
-    public void setUnlocked() {
+    public void setUnlocked(CodexService codexService) {
         unlocked = true;
 
         // Update service unlock count & set unlock index
-        unlockedIndex = ServiceLocator.getCodexService().getUnlockedCount();
-        ServiceLocator.getCodexService().incUnlockCount();
+        unlockedIndex = codexService.getUnlockedCount();
+        codexService.incUnlockCount();
 
         Gdx.app.log("CodexEntry", "Unlocked '" + title + "'");
     }

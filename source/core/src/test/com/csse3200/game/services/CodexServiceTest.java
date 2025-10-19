@@ -59,7 +59,7 @@ class CodexServiceTest {
         CodexService service = new CodexService();
 
         // Unlock exactly one entry
-        service.getEntry("test_id_1").setUnlocked();
+        service.getEntry("test_id_1").setUnlocked(service);
 
         // Entries are locked by default. Ensure getEntries() only contains the one unlocked entry
         List<CodexEntry> result = service.getEntries(true);
@@ -76,7 +76,7 @@ class CodexServiceTest {
         CodexService service = new CodexService();
 
         // Unlock exactly one entry
-        service.getEntry("test_id_1").setUnlocked();
+        service.getEntry("test_id_1").setUnlocked(service);
 
         // Ensure getEntries() returns all entries
         List<CodexEntry> result = service.getEntries(false);
