@@ -6,6 +6,7 @@ public enum EntitySubtype {
     VOLATILE(EntityType.PLATFORM),
     STATIC_PLATFORM(EntityType.PLATFORM),
     MOVING(EntityType.PLATFORM),
+    PLATE(EntityType.PLATFORM),
 
     // Collectables
     KEY(EntityType.COLLECTABLE),

@@ -10,6 +10,7 @@ import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.LevelConfig;
@@ -154,8 +155,14 @@ public final class Spawners {
             Entity platform = switch (subtype) {
                 case MOVING -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
                 case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, 1f);
+                case PLATE -> PlatformFactory.createPressurePlatePlatform();
                 default -> PlatformFactory.createStaticPlatform();
             };
+
+            if (subtype == EntitySubtype.PLATE && a.target != null) {
+                Entity  target = ServiceLocator.getEntityService().getEntityById(a.target);
+                platform.getComponent(VolatilePlatformComponent.class).linkToPlate(target);
+            }
 
             linkEntities(platform, a.linked);
             addIdentifier(platform, String.valueOf(a.id));
