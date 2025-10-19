@@ -133,6 +133,8 @@ public class LevelOneGameArea extends GameArea {
             "images/lost_hardware.png",
             "images/tutorials/jump.png",
             "images/tutorials/double_jump.png",
+            "images/door_open-map.png",
+            "images/platform-long-map.png"
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -680,7 +682,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step7Pos = new GridPoint2(45,18);
         Entity step7 = PlatformFactory.createStaticPlatform();
-        step7.addComponent(new MinimapComponent("images/platform-map.png"));
+        step7.addComponent(new MinimapComponent("images/platform-long-map.png"));
         step7.setScale(3.5f,0.5f);
         spawnEntityAt(step7, step7Pos,false, false);
 
@@ -758,7 +760,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step9Pos = new GridPoint2(57,35);
         Entity step9 = PlatformFactory.createStaticPlatform();
-        step9.addComponent(new MinimapComponent("images/platform-map.png"));
+        step9.addComponent(new MinimapComponent("images/platform-long-map.png"));
         step9.setScale(5f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
@@ -771,7 +773,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step12Pos = new GridPoint2(52,48);
         Entity step12 = PlatformFactory.createStaticPlatform();
-        step12.addComponent(new MinimapComponent("images/platform-map.png"));
+        step12.addComponent(new MinimapComponent("images/platform-long-map.png"));
         step12.setScale(3.5f,0.5f);
         spawnEntityAt(step12, step12Pos,false, false);
 
