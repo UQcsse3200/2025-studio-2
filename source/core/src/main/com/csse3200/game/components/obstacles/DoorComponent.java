@@ -1,4 +1,4 @@
-package com.csse3200.game.components.obstacles.Door;
+package com.csse3200.game.components.obstacles;
 
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.Component;
