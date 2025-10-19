@@ -2,7 +2,6 @@ package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -17,8 +16,6 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
-import com.csse3200.game.components.ladders.LadderRungComponent;
-import com.csse3200.game.components.ladders.LadderSectionControllerComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -188,37 +185,34 @@ public class LevelOneGameArea extends GameArea {
         spawnDeathZone();
         spawnWalls();
         spawnDoor();
-        //spawnBoxOnlyPlate();
         spawnUpgrade("dash", 23, 4);
         spawnSecurityCams();
-        //spawnBomberDrone();
-        //spawnSelfDestructDrone();
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
         spawnPlatformBat();
         spawnLevelOneBatRoom();
-        // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
         spawnTerminals();
         spawnBoxes();
-        //spawnLasers();
         spawnCollectables();
         spawnTutorials();
         spawnComputerTerminal();
     }
 
     private void spawnTutorials() {
-      spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
+      spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(13, 3), true, true);
       spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
     }
 
     private void spawnTerminals() {
-        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
-        spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
+        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
+        spawnEntityAt(terminal1, new GridPoint2(3, 4), true, true);
+        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
+        spawnEntityAt(terminal2, new GridPoint2(68, 49), true, true);
     }
 
     private void spawnBoxes() {
@@ -226,6 +220,8 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(one, new GridPoint2(15, 15), true, true);
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
+        Entity three = BoxFactory.createWeightedBox();
+        spawnEntityAt(three, new GridPoint2(75, 50), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
@@ -383,22 +379,10 @@ public class LevelOneGameArea extends GameArea {
         step4.setScale(1.8f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
 
-        //GridPoint2 step6Pos = new GridPoint2(42,12);
-        //Entity step6 = PlatformFactory.createStaticPlatform();
-        //step6.setScale(1.8f,0.5f);
-        //spawnEntityAt(step6, step6Pos,false, false);
-//      ^
-
         GridPoint2 step7Pos = new GridPoint2(45,18);
         Entity step7 = PlatformFactory.createStaticPlatform();
         step7.setScale(3.5f,0.5f);
         spawnEntityAt(step7, step7Pos,false, false);
-
-//        RIGHT PATH
-        //GridPoint2 step8Pos = new GridPoint2(58,18);
-        // Entity step8 = PlatformFactory.createStaticPlatform();
-        // step8.setScale(2f,0.5f);
-        // spawnEntityAt(step8, step8Pos,false, false);
 
         // MOVING PLATFORM WITH BUTTONS
         GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
@@ -479,10 +463,20 @@ public class LevelOneGameArea extends GameArea {
         step12.setScale(3.5f,0.5f);
         spawnEntityAt(step12, step12Pos,false, false);
 
-        GridPoint2 step13Pos = new GridPoint2(70,48);
+        GridPoint2 step13Pos = new GridPoint2(66,48);
         Entity step13 = PlatformFactory.createStaticPlatform();
-        step13.setScale(2f,0.5f);
+        step13.setScale(3f,0.5f);
         spawnEntityAt(step13, step13Pos,false, false);
+
+        GridPoint2 step14Pos = new GridPoint2(73,45);
+        Entity step14 = PlatformFactory.createStaticPlatform();
+        step14.setScale(4f,0.5f);
+        spawnEntityAt(step14, step14Pos,false, false);
+
+        GridPoint2 step15Pos = new GridPoint2(33,52);
+        Entity step15 = PlatformFactory.createStaticPlatform();
+        step15.setScale(4f,0.5f);
+        spawnEntityAt(step15, step15Pos,false, false);
     }
 
     public void spawnDoor() {
@@ -560,9 +554,6 @@ public class LevelOneGameArea extends GameArea {
                 new GridPoint2(0, tileBounds.y - 4),
                 false,
                 false);
-//        // Bottom
-//        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-//                new GridPoint2(0, 0), false, false);
     }
 
     private void spawnParallaxBackground() {
@@ -615,15 +606,20 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnBoxOnlyPlate() {
-        Entity pressurePlatePlatform = PlatformFactory.createPressurePlatePlatform();
-        pressurePlatePlatform.setScale(2f,0.5f);
-        spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
+        Entity pressurePlatePlatform1 = PlatformFactory.createPressurePlatePlatform();
+        pressurePlatePlatform1.setScale(2f,0.5f);
+        spawnEntityAt(pressurePlatePlatform1, new GridPoint2(70,56), true, true);
+
+        Entity pressurePlatePlatform2 = PlatformFactory.createPressurePlatePlatform();
+        pressurePlatePlatform2.setScale(2f,0.5f);
+        spawnEntityAt(pressurePlatePlatform2, new GridPoint2(78,56), true, true);
 
         Entity plate = PressurePlateFactory.createBoxOnlyPlate();
         plate.addComponent(new TooltipSystem.TooltipComponent("Platform Plate\nPress to reveal platform", TooltipSystem.TooltipStyle.DEFAULT));
-        spawnEntityAt(plate, new GridPoint2(24, 13), true, true);
+        spawnEntityAt(plate, new GridPoint2(79, 46), true, true);
 
-        pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
+        pressurePlatePlatform1.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
+        pressurePlatePlatform2.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
     }
 
     private TerrainComponent createDefaultTerrain() {
@@ -685,10 +681,6 @@ public class LevelOneGameArea extends GameArea {
         });
     }
 
-    //    public void spawnPlayerUpgrades() {
-//        Entity dashUpgrade = CollectableFactory.createDashUpgrade();
-//        spawnEntityAt(dashUpgrade, new GridPoint2(1,37), true,  true);
-//    }
     public void spawnKey() {
         Entity key = CollectableFactory.createCollectable("key:door");
         key.addComponent(new MinimapComponent("images/key.png"));
@@ -771,9 +763,6 @@ public class LevelOneGameArea extends GameArea {
 
         spawnEntityAt(CollectableFactory.createObjective("dash_completed", 0.2f, 0.2f),    new GridPoint2(23, 4), true, true);
 
-//        spawnEntityAt(CollectableFactory.createObjective("tutorial", 2.0f, 2.0f), new GridPoint2(1, 3), true, true);
-//        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
-//        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
     }
 
     private void spawnLevelOneBatRoom() {
@@ -845,24 +834,12 @@ public class LevelOneGameArea extends GameArea {
             upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Dash Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
             spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
         }
-//
-//        if (upgradeID == "glider") {
-//            Entity upgrade = CollectableFactory.createGlideUpgrade();
-//            upgrade.addComponent(new TooltipSystem.TooltipComponent("Collect Glider Upgrade", TooltipSystem.TooltipStyle.SUCCESS));
-//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-//        }
-//        if (upgradeID == "jetpack") {
-//            Entity upgrade = CollectableFactory.createJetpackUpgrade();
-//            spawnEntityAt(upgrade, new GridPoint2(posx, posy), true, true);
-//        }
     }
 
     private void spawnComputerTerminal() {
         Entity terminal = ComputerTerminalFactory.createTerminal();
-        spawnEntityAt(terminal, new GridPoint2(35, 5), true, true);
+        spawnEntityAt(terminal, new GridPoint2(35, 54), true, true);
     }
-
-
 
     public void spawnCollectable(GridPoint2 pos) {
         PhysicsComponent physics  = new PhysicsComponent();
