@@ -1,81 +1,105 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
-public class TestLeaderboardComponent {
-    private LeaderboardComponent leaderboardComponent;
-    private String filePath = "test/files/leaderboard.json";
+class TestLeaderboardComponent {
+  private LeaderboardComponent leaderboardComponent;
+  private String data;
 
-    @BeforeEach
-    void beforeEach() {
-        leaderboardComponent = new LeaderboardComponent();
-        HashMap<String, Long> baseTimes = new HashMap<>();
+  @SuppressWarnings("unchecked")
+  private Map<String, Long> getBaseTimes() throws IllegalAccessException, NoSuchFieldException {
+    Field field = leaderboardComponent.getClass().getDeclaredField("leaderboard");
+    field.setAccessible(true);
+    return (Map<String, Long>) field.get(leaderboardComponent);
+  }
 
-        baseTimes.put("1", (long) 100000);
-        baseTimes.put("2", (long) 100000);
-        baseTimes.put("3", (long) 100000);
-        baseTimes.put("4", (long) 100000);
-        baseTimes.put("5", (long) 100000);
+  @BeforeEach
+  void beforeEach() throws IllegalAccessException, NoSuchFieldException {
+    data = "{}";
+    FileHandle fileHandle = mock(FileHandle.class);
+    when(fileHandle.readString()).thenAnswer(invocation -> data);
+    doAnswer(invocation -> {
+      data = invocation.getArgument(0);
+      return null;
+    }).when(fileHandle).writeString(anyString(), anyBoolean());
 
-        leaderboardComponent.writeData(baseTimes, filePath);
+    Gdx.files = mock(com.badlogic.gdx.Files.class);
+    when(Gdx.files.external(anyString())).thenReturn(fileHandle);
+
+    leaderboardComponent = new LeaderboardComponent();
+    Map<String, Long> baseTimes = getBaseTimes();
+
+    baseTimes.put("1", 100000L);
+    baseTimes.put("2", 100000L);
+    baseTimes.put("3", 100000L);
+    baseTimes.put("4", 100000L);
+    baseTimes.put("5", 100000L);
+
+    leaderboardComponent.writeData();
+  }
+
+  @Test
+  void testTimeSaves() {
+    leaderboardComponent.updateLeaderboard("1", 50000);
+    assertEquals(50000, leaderboardComponent.getData().get("1"));
+  }
+
+  @Test
+  void testTimeTooBig() {
+    leaderboardComponent.updateLeaderboard("1", 150000);
+    assertEquals(100000L, leaderboardComponent.getData().get("1"));
+  }
+
+  @Test
+  void testTimeSavesByForce() {
+    leaderboardComponent.updateLeaderboard("1", 150000, true);
+    assertEquals(150000L, leaderboardComponent.getData().get("1"));
+  }
+
+  @Test
+  void testWriteData() throws Exception {
+    Map<String, Long> baseTimes = getBaseTimes();
+    baseTimes.put("6", 150000L);
+    leaderboardComponent.writeData();
+
+    assertEquals(150000, leaderboardComponent.getData().get("6"));
+  }
+
+  @Test
+  void testGetData() {
+    HashMap<String, Long> baseTimes = new HashMap<>();
+
+    baseTimes.put("1", 100000L);
+    baseTimes.put("2", 100000L);
+    baseTimes.put("3", 100000L);
+    baseTimes.put("4", 100000L);
+    baseTimes.put("5", 100000L);
+
+    for (Map.Entry<String, Long> entry : baseTimes.entrySet()) {
+      assertEquals(entry.getValue(), leaderboardComponent.getData().get(entry.getKey()));
     }
+  }
 
-    @Test
-    public void testTimeSaves() {
-        leaderboardComponent.updateLeaderboard("1", 50000, filePath);
-        assertEquals(50000, leaderboardComponent.readData(filePath).get("1"));
-    }
+  @Test
+  void testHashMapSize() throws Exception {
+    assertEquals(5, leaderboardComponent.getData().size());
 
-    @Test
-    public void testTimeTooBig() {
-        leaderboardComponent.updateLeaderboard("1", 150000, filePath);
-        assertEquals(100000L, leaderboardComponent.readData(filePath).get("1"));
-    }
+    Map<String, Long> baseTimes = getBaseTimes();
+    baseTimes.clear();
+    baseTimes.put("1", 100000L);
+    leaderboardComponent.writeData();
 
-    @Test
-    public void testTimeSavesByForce() {
-        leaderboardComponent.updateLeaderboard("1", 150000, true, filePath);
-        assertEquals(150000L, leaderboardComponent.readData(filePath).get("1"));
-    }
-
-    @Test
-    public void testWriteData() {
-        HashMap<String, Long> baseTimes = new HashMap<>();
-        baseTimes.put("6", (long) 150000);
-        leaderboardComponent.writeData(baseTimes, filePath);
-
-        assertEquals(150000, leaderboardComponent.readData(filePath).get("6"));
-    }
-
-    @Test
-    public void testReadData() {
-        HashMap<String, Long> baseTimes = new HashMap<>();
-
-        baseTimes.put("1", (long) 100000);
-        baseTimes.put("2", (long) 100000);
-        baseTimes.put("3", (long) 100000);
-        baseTimes.put("4", (long) 100000);
-        baseTimes.put("5", (long) 100000);
-
-        for (Map.Entry<String, Long> entry : baseTimes.entrySet()) {
-            assertEquals(entry.getValue(), leaderboardComponent.readData(filePath).get(entry.getKey()));
-        }
-    }
-
-    @Test
-    public void testHashMapSize() {
-        assertEquals(5, leaderboardComponent.readData(filePath).size());
-
-        HashMap<String, Long> baseTimes = new HashMap<>();
-        baseTimes.put("1", (long) 100000);
-        leaderboardComponent.writeData(baseTimes, filePath);
-
-        assertEquals(1, leaderboardComponent.readData(filePath).size());
-    }
+    assertEquals(1, leaderboardComponent.getData().size());
+  }
 }

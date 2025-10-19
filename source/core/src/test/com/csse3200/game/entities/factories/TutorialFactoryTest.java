@@ -50,7 +50,7 @@ class ActionIndicatorFactoryTest {
       assertNotNull(component);
 
       assertEquals(jumpTexture, getPrivateField(component, "texture"));
-      assertEquals("Space", getPrivateField(component, "keyText"));
+      assertEquals("PlayerJump", getPrivateField(component, "keyText"));
       assertEquals(new Vector2(0.5f, 0.5f), tutorial.getScale());
     }
   }
@@ -67,7 +67,7 @@ class ActionIndicatorFactoryTest {
       assertNotNull(component);
 
       assertEquals(doubleJumpTexture, getPrivateField(component, "texture"));
-      assertEquals("Space", getPrivateField(component, "keyText"));
+      assertEquals("PlayerJump", getPrivateField(component, "keyText"));
     }
   }
 

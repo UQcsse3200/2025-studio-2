@@ -23,7 +23,7 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.minimap.MinimapDisplay;
-import com.csse3200.game.components.obstacles.Door.DoorComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;

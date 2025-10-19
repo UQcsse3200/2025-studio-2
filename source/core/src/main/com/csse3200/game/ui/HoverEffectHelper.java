@@ -11,6 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import java.util.List;
 
 public class HoverEffectHelper {
+    private HoverEffectHelper() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     /**
      * Adds hover enlarge/shrink behaviour to a group of buttons.

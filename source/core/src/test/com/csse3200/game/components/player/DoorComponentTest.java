@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.obstacles.Door.DoorComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.CollectablesConfig;

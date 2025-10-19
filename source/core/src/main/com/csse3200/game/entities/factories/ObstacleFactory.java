@@ -6,7 +6,7 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.obstacles.Door.DoorComponent;
+import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;

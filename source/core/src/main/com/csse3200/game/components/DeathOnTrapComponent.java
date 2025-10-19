@@ -23,6 +23,7 @@ public class DeathOnTrapComponent extends Component {
     private boolean triggered = false;
     private static final float ANIMATION_DURATION = 0.5f;
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
+    private static final String BOMB_EFFECT = "bomb_effect";
 
     @Override
     public void create() {
@@ -30,8 +31,8 @@ public class DeathOnTrapComponent extends Component {
         entity.getEvents().addListener("reset", this::onReset);
 
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null && !animator.hasAnimation("bomb_effect")) {
-            animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
+        if (animator != null && !animator.hasAnimation(BOMB_EFFECT)) {
+            animator.addAnimation(BOMB_EFFECT, 0.05f, Animation.PlayMode.NORMAL);
         }
     }
     /**
@@ -75,8 +76,8 @@ public class DeathOnTrapComponent extends Component {
 
         // Play explosion animation
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null && animator.hasAnimation("bomb_effect")) {
-            animator.startAnimation("bomb_effect");
+        if (animator != null && animator.hasAnimation(BOMB_EFFECT)) {
+            animator.startAnimation(BOMB_EFFECT);
         }
 
         // Play sound
