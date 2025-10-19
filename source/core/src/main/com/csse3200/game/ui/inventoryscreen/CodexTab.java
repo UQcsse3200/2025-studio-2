@@ -19,13 +19,20 @@ import com.csse3200.game.services.ServiceLocator;
  * Inventory tab that displays all unlocked codex entries
  */
 public class CodexTab implements InventoryTabInterface {
+    private final PauseMenuDisplay display;
     /**
-     * Reference to background texture that needs to be disposed
+     * Reference to background textures that needs to be disposed
      */
     private Texture tableBgTexture;
     private Texture entryBgTexture;
     private Texture titleBgTexture;
-    private final PauseMenuDisplay display;
+
+    /**
+     * Reference to drawables used to give tables a background
+     */
+    private TextureRegionDrawable tableBgDrawable;
+    private TextureRegionDrawable entryBgDrawable;
+    private TextureRegionDrawable titleBgDrawable;
 
     public CodexTab(PauseMenuDisplay display) {
         this.display = display;
@@ -33,6 +40,7 @@ public class CodexTab implements InventoryTabInterface {
 
     /**
      * Build actor for displaying the UI for the codex
+     *
      * @param skin The skin to render all UI with.
      * @return The UI's root actor.
      */
@@ -44,12 +52,61 @@ public class CodexTab implements InventoryTabInterface {
         // Create table holder that will contain all UI elements
         Table tableHolder = new Table();
 
+        // Create background for tables
+        createBgDrawables();
+        tableHolder.setBackground(tableBgDrawable);
+
+        // Create logical table (child of scroll pane)
+        Table logicalTable = new Table();
+        // Add each unlocked entry
+        addEntriesToLogicalTable(logicalTable, skin);
+
+        // Need to create a scrollbar style as it is invisible by default
+        ScrollPaneStyle scrollPaneStyle = new ScrollPaneStyle();
+        // Then make scroll bar
+        createScrollbar(scrollPaneStyle);
+
+        // Create scroll pane
+        ScrollPane scrollPane = new ScrollPane(logicalTable.top().left().pad(15f), scrollPaneStyle);
+        scrollPane.setFadeScrollBars(false);
+        scrollPane.setScrollbarsVisible(true);
+
+        // Add scroll pane and title to table holder
+        float canvasH = Gdx.graphics.getHeight() * (3f / 7f);
+        float canvasW = Gdx.graphics.getWidth() * (2f / 5f);
+        tableHolder.add(new Label("Codex", skin)).pad(20f);
+        tableHolder.row();
+        tableHolder.add(scrollPane).width(canvasW).height(canvasH);
+
+        // Add the tableHolder directly to the rootTable
+        rootTable.add(tableHolder);
+        display.getStage().setScrollFocus(scrollPane);
+
+        // Return root table
+        return rootTable;
+    }
+
+    private void createScrollbar(ScrollPaneStyle scrollPaneStyle) {
+        // Scrollbar's background
+        Pixmap scrollbarBgPixmap = new Pixmap(2, 1, Pixmap.Format.RGB888);
+        scrollbarBgPixmap.setColor(Color.DARK_GRAY);
+        scrollbarBgPixmap.fill();
+        scrollPaneStyle.vScroll = new TextureRegionDrawable(new Texture(scrollbarBgPixmap));
+
+        // Scrollbar's bar
+        Pixmap scrollbarKnobPixmap = new Pixmap(2, 1, Pixmap.Format.RGB888);
+        scrollbarKnobPixmap.setColor(Color.LIGHT_GRAY);
+        scrollbarKnobPixmap.fill();
+        scrollPaneStyle.vScrollKnob = new TextureRegionDrawable(new Texture(scrollbarKnobPixmap));
+    }
+
+    private void createBgDrawables() {
         // Create background for table
         Pixmap bgPixmap = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         bgPixmap.setColor(0.1f, 0.1f, 0.1f, 1f); // Very dark grey
         bgPixmap.fill();
         tableBgTexture = new Texture(bgPixmap);
-        tableHolder.setBackground(new TextureRegionDrawable(tableBgTexture));
+        tableBgDrawable = new TextureRegionDrawable(tableBgTexture);
         bgPixmap.dispose();
 
         // Create background for entry
@@ -57,7 +114,7 @@ public class CodexTab implements InventoryTabInterface {
         entryBgPixmap.setColor(0.2f, 0.2f, 0.2f, 1f); // Dark grey
         entryBgPixmap.fill();
         entryBgTexture = new Texture(entryBgPixmap);
-        TextureRegionDrawable entryBgDrawable = new TextureRegionDrawable(entryBgTexture);
+        entryBgDrawable = new TextureRegionDrawable(entryBgTexture);
         entryBgPixmap.dispose();
 
         // Create background for title
@@ -65,14 +122,11 @@ public class CodexTab implements InventoryTabInterface {
         titleBgPixmap.setColor(0.3f, 0.3f, 0.3f, 1f); // Medium grey
         titleBgPixmap.fill();
         titleBgTexture = new Texture(titleBgPixmap);
-        TextureRegionDrawable titleBgDrawable = new TextureRegionDrawable(titleBgTexture);
+        titleBgDrawable = new TextureRegionDrawable(titleBgTexture);
         entryBgPixmap.dispose();
+    }
 
-
-        // Create logical table (child of scroll pane)
-        Table logicalTable = new Table();
-
-        // Add each unlocked entry
+    private void addEntriesToLogicalTable(Table logicalTable, Skin skin) {
         for (CodexEntry entry : ServiceLocator.getCodexService().getEntries(true)) {
             // Create table for entry
             Table entryTable = new Table();
@@ -105,40 +159,6 @@ public class CodexTab implements InventoryTabInterface {
             logicalTable.add(new Label("No entries found yet.", skin)).left().pad(20f).fillX().expandX();
             logicalTable.row();
         }
-
-        // Need to create a scrollbar style as it is invisible by default
-        ScrollPaneStyle scrollPaneStyle = new ScrollPaneStyle();
-
-        // Scrollbar's background
-        Pixmap scrollbarBgPixmap = new Pixmap(2, 1, Pixmap.Format.RGB888);
-        scrollbarBgPixmap.setColor(Color.DARK_GRAY);
-        scrollbarBgPixmap.fill();
-        scrollPaneStyle.vScroll = new TextureRegionDrawable(new Texture(scrollbarBgPixmap));
-
-        // Scrollbar's bar
-        Pixmap scrollbarKnobPixmap = new Pixmap(2, 1, Pixmap.Format.RGB888);
-        scrollbarKnobPixmap.setColor(Color.LIGHT_GRAY);
-        scrollbarKnobPixmap.fill();
-        scrollPaneStyle.vScrollKnob = new TextureRegionDrawable(new Texture(scrollbarKnobPixmap));
-
-        // Create scroll pane
-        ScrollPane scrollPane = new ScrollPane(logicalTable.top().left().pad(15f), scrollPaneStyle);
-        scrollPane.setFadeScrollBars(false);
-        scrollPane.setScrollbarsVisible(true);
-
-        // Add scroll pane and title to table holder
-        float canvasH = Gdx.graphics.getHeight() * (3f / 7f);
-        float canvasW = Gdx.graphics.getWidth() * (2f / 5f);
-        tableHolder.add(new Label("Codex", skin)).pad(20f);
-        tableHolder.row();
-        tableHolder.add(scrollPane).width(canvasW).height(canvasH);
-
-        // Add the tableHolder directly to the rootTable
-        rootTable.add(tableHolder);
-        display.getStage().setScrollFocus(scrollPane);
-
-        // Return root table
-        return rootTable;
     }
 
     /**
