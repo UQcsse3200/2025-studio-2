@@ -71,6 +71,11 @@ public final class Spawners {
                 toggler.getEvents().addListener("plateReleased", () -> {
                     collectable.getComponent(CollectableComponentV2.class).toggleVisibility(false);
                 });
+
+                // button visibility logic -> show/hide
+                toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(isPushed);
+                });
             }
 
             linkEntities(collectable, a.linked);
