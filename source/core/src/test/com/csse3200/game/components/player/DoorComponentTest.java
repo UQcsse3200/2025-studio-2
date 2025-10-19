@@ -4,18 +4,16 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.entities.factories.CollectableFactory;
-import com.csse3200.game.entities.factories.ObstacleFactory;
 import com.csse3200.game.entities.factories.PlayerFactoryTest;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.ServiceLocator;
@@ -113,7 +111,7 @@ class DoorComponentTest {
     private Entity makeDoor(String keyId, String levelId) {
         // Create minimal door for testing - no animations needed
         Entity door = new Entity();
-        door.addComponent(new DoorComponent(keyId, game));
+        door.addComponent(new DoorComponent(keyId, game, false, ""));
 
         // Add physics components that the door component expects
         door.addComponent(new PhysicsComponent());
