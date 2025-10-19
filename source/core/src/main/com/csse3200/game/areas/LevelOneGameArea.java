@@ -1079,7 +1079,7 @@ public class LevelOneGameArea extends GameArea {
     private void spawnPrompts() {
         spawnEntityAt(CollectableFactory.createPrompt("Hit \"o\" to have a look at your objectives!",
                         5, 2.0f,90.0f),
-                new GridPoint2(12, 15), true, true);
+                new GridPoint2(6, 15), true, true);
     }
 
     private void spawnLevelOneBatRoom() {
