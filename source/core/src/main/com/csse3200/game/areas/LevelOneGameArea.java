@@ -12,8 +12,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridComponent;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
@@ -47,126 +47,130 @@ public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
     private static boolean keySpawned;
     boolean has_laser = false;
+
+    // grid system
+    private GridComponent grid;
+    private final GridFactory gridFactory;
+
     private static final String[] gameTextures = {
-            "images/box_boy_leaf.png",
-            "images/button.png",
-            "images/key.png",
-            "images/button_pushed.png",
-            "images/blue_button.png",
-            "images/blue_button_pushed.png",
-            "images/red_button.png",
-            "images/red_button_pushed.png",
-            "images/box_orange.png",
-            "images/minimap_player_marker.png",
-            "images/minimap_forest_area.png",
-            "images/box_blue.png",
-            "images/box_white.png",
-            "images/blue_button.png",
-            "images/spikes_sprite.png",
-            "images/TechWallBase.png",
-            "images/TechWallVariant1.png",
-            "images/TechWallVariant2.png",
-            "images/TechWallVariant3.png",
-            "images/platform.png",
-            "images/empty.png",
-            "images/gate.png",
-            "images/door_open.png",
-            "images/door_closed.png",
-            "images/Gate_open.png",
-            "images/box_boy_leaf.png",
-            "images/button.png",
-            "images/button_pushed.png",
-            "images/blue_button_pushed.png",
-            "images/blue_button.png",
-            "images/drone.png",
-            "images/bomb.png",
-            "images/camera-body.png",
-            "images/camera-lens.png",
-            "images/glide_powerup.png",
-            "images/wall.png",
-            "images/dash_powerup.png",
-            "images/jetpack_powerup.png",
-            "images/ladder.png",
-            "images/ladder-base.png",
-            "images/cavelevel/tile000.png",
-            "images/cavelevel/tile001.png",
-            "images/cavelevel/tile002.png",
-            "images/cavelevel/tile014.png",
-            "images/cavelevel/tile015.png",
-            "images/cavelevel/tile016.png",
-            "images/cavelevel/tile028.png",
-            "images/cavelevel/tile029.png",
-            "images/cavelevel/tile030.png",
-            "images/cavelevel/background/1.png",
-            "images/cavelevel/background/2.png",
-            "images/cavelevel/background/3.png",
-            "images/cavelevel/background/4.png",
-            "images/cavelevel/background/5.png",
-            "images/cavelevel/background/6.png",
-            "images/cavelevel/background/7.png",
-            "images/flying_bat_map.png",
-            "images/terminal_on.png",
-            "images/terminal_off.png",
-            "images/plate.png",
-            "images/plate-pressed.png",
-            "images/mirror-cube-off.png",
-            "images/mirror-cube-on.png",
-            "images/cube.png",
-            "images/heavy-cube.png",
-            "images/laser-detector-off.png",
-            "images/laser-detector-on.png",
-            "images/laser-end.png",
-            "images/upSignpost.png",
-            "images/downSignpost.png",
-            "images/rightSignpost.png",
-            "images/leftSignpost.png",
-            "images/signpost.png",
-            "images/lost_hardware.png",
-            "images/tutorials/jump.png",
-            "images/tutorials/double_jump.png",
+        "images/box_boy_leaf.png",
+        "images/button.png",
+        "images/key.png",
+        "images/button_pushed.png",
+        "images/blue_button.png",
+        "images/blue_button_pushed.png",
+        "images/red_button.png",
+        "images/red_button_pushed.png",
+        "images/box_orange.png",
+        "images/minimap_player_marker.png",
+        "images/minimap_forest_area.png",
+        "images/box_blue.png",
+        "images/box_white.png",
+        "images/blue_button.png",
+        "images/spikes_sprite.png",
+        "images/TechWallBase.png",
+        "images/TechWallVariant1.png",
+        "images/TechWallVariant2.png",
+        "images/TechWallVariant3.png",
+        "images/platform.png",
+        "images/empty.png",
+        "images/gate.png",
+        "images/door_open.png",
+        "images/door_closed.png",
+        "images/Gate_open.png",
+        "images/box_boy_leaf.png",
+        "images/button.png",
+        "images/button_pushed.png",
+        "images/blue_button_pushed.png",
+        "images/blue_button.png",
+        "images/drone.png",
+        "images/bomb.png",
+        "images/camera-body.png",
+        "images/camera-lens.png",
+        "images/glide_powerup.png",
+        "images/wall.png",
+        "images/dash_powerup.png",
+        "images/jetpack_powerup.png",
+        "images/ladder.png",
+        "images/ladder-base.png",
+        "images/cavelevel/tile000.png",
+        "images/cavelevel/tile001.png",
+        "images/cavelevel/tile002.png",
+        "images/cavelevel/tile014.png",
+        "images/cavelevel/tile015.png",
+        "images/cavelevel/tile016.png",
+        "images/cavelevel/tile028.png",
+        "images/cavelevel/tile029.png",
+        "images/cavelevel/tile030.png",
+        "images/cavelevel/background/1.png",
+        "images/cavelevel/background/2.png",
+        "images/cavelevel/background/3.png",
+        "images/cavelevel/background/4.png",
+        "images/cavelevel/background/5.png",
+        "images/cavelevel/background/6.png",
+        "images/cavelevel/background/7.png",
+        "images/flying_bat_map.png",
+        "images/terminal_on.png",
+        "images/terminal_off.png",
+        "images/plate.png",
+        "images/plate-pressed.png",
+        "images/mirror-cube-off.png",
+        "images/mirror-cube-on.png",
+        "images/cube.png",
+        "images/heavy-cube.png",
+        "images/laser-detector-off.png",
+        "images/laser-detector-on.png",
+        "images/laser-end.png",
+        "images/upSignpost.png",
+        "images/downSignpost.png",
+        "images/rightSignpost.png",
+        "images/leftSignpost.png",
+        "images/signpost.png",
+        "images/lost_hardware.png",
+        "images/tutorials/jump.png",
+        "images/tutorials/double_jump.png",
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {
-            "sounds/Impact4.ogg",
-            "sounds/chimesound.mp3",
-            "sounds/doorsound.mp3",
-            "sounds/walksound.mp3",
-            "sounds/whooshsound.mp3",
-            "sounds/jetpacksound.mp3",
-            "sounds/deathsound.mp3",
-            "sounds/damagesound.mp3",
-            "sounds/pickupsound.mp3",
-            "sounds/interactsound.mp3",
-            "sounds/buttonsound.mp3",
-            "sounds/laddersound.mp3",
-            "sounds/thudsound.mp3",
-            "sounds/chimesound.mp3",
-            "sounds/explosion.mp3",
-            "sounds/laserShower.mp3"};
+        "sounds/Impact4.ogg",
+        "sounds/chimesound.mp3",
+        "sounds/doorsound.mp3",
+        "sounds/walksound.mp3",
+        "sounds/whooshsound.mp3",
+        "sounds/jetpacksound.mp3",
+        "sounds/deathsound.mp3",
+        "sounds/damagesound.mp3",
+        "sounds/pickupsound.mp3",
+        "sounds/interactsound.mp3",
+        "sounds/buttonsound.mp3",
+        "sounds/laddersound.mp3",
+        "sounds/thudsound.mp3",
+        "sounds/chimesound.mp3",
+        "sounds/explosion.mp3",
+        "sounds/laserShower.mp3"};
 
     private static final String[] gameTextureAtlases = {
-            "images/PLAYER.atlas",
-            "images/drone.atlas",
-            "images/volatile_platform.atlas",
-            "images/health-potion.atlas",
-            "images/speed-potion.atlas",
-            "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas",
-            "images/animated-monitors.atlas",
-            "images/laser.atlas"
+        "images/PLAYER.atlas",
+        "images/drone.atlas",
+        "images/volatile_platform.atlas",
+        "images/health-potion.atlas",
+        "images/speed-potion.atlas",
+        "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+        "images/doors.atlas",
+        "images/animated-monitors.atlas",
+        "images/laser.atlas"
     };
     private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
-    private final TerrainFactory terrainFactory;
 
-    public LevelOneGameArea(TerrainFactory terrainFactory) {
+    public LevelOneGameArea(GridFactory gridFactory) {
         super();
-        this.terrainFactory = terrainFactory;
+        this.gridFactory = gridFactory;
     }
     protected void loadPrerequisites() {
         displayUI();
-        spawnTerrain();
+        spawnGrid();
         createMinimap(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
         playMusic();
         AchievementProgression.onLevelStart();
@@ -211,9 +215,31 @@ public class LevelOneGameArea extends GameArea {
         spawnComputerTerminal();
     }
 
+    private void spawnGrid() {
+        grid = gridFactory.createGrid(mapSize, 0.5f);
+        spawnEntity(new Entity().addComponent(grid));
+
+        // Create boundary walls using grid bounds
+        Vector2 worldBounds = grid.getWorldBounds();
+        float tileSize = grid.getTileSize();
+
+        // Left wall
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            GridPoint2Utils.ZERO, false, false);
+        // Right wall
+        spawnEntityAt(
+            ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
+            new GridPoint2(mapSize.x, 0), false, false);
+        // Top wall
+        spawnEntityAt(
+            ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
+            new GridPoint2(0, mapSize.y - 4), false, false);
+    }
+
     private void spawnTutorials() {
-      spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
-      spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
     }
 
     private void spawnTerminals() {
@@ -268,16 +294,16 @@ public class LevelOneGameArea extends GameArea {
         }
     }
     public void laserShowerChecker(float delta) {
-            if (has_laser==false) {
-                spawnLaserShower();
-                has_laser = true;
-                Timer.schedule(new Timer.Task() {
-                    @Override
-                    public void run() {
-                        has_laser = false;
-                    }
-                },5f);
-            }
+        if (has_laser==false) {
+            spawnLaserShower();
+            has_laser = true;
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    has_laser = false;
+                }
+            },5f);
+        }
     }
 
 
@@ -354,8 +380,8 @@ public class LevelOneGameArea extends GameArea {
         GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
         Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
         upperLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
-                "Push to release ladder",
-                TooltipSystem.TooltipStyle.DEFAULT ));
+            "Push to release ladder",
+            TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
 
         // Ladder extends and retracts when activating pressure plate
@@ -420,8 +446,8 @@ public class LevelOneGameArea extends GameArea {
         GridPoint2 lowerLadderPressurePlatePosition = new GridPoint2(x, y);
         Entity lowerLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
         lowerLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
-                "Push to release ladder",
-                TooltipSystem.TooltipStyle.DEFAULT ));
+            "Push to release ladder",
+            TooltipSystem.TooltipStyle.DEFAULT ));
         spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
         // Ladder extends and retracts when activating pressure plate
@@ -486,7 +512,7 @@ public class LevelOneGameArea extends GameArea {
             isUpperLadderSpawning = true;
 
             Sound ladderSound = ServiceLocator.getResourceService().getAsset(
-                    "sounds/laddersound.mp3", Sound.class);
+                "sounds/laddersound.mp3", Sound.class);
             ladderSound.play(UserSettings.get().masterVolume);
 
             upperLadderTask = new Timer.Task() {
@@ -534,7 +560,7 @@ public class LevelOneGameArea extends GameArea {
             isLowerLadderSpawning = true;
 
             Sound ladderSound = ServiceLocator.getResourceService().getAsset(
-                    "sounds/laddersound.mp3", Sound.class);
+                "sounds/laddersound.mp3", Sound.class);
             ladderSound.play(UserSettings.get().masterVolume);
 
             lowerLadderTask = new Timer.Task() {
@@ -683,8 +709,8 @@ public class LevelOneGameArea extends GameArea {
         //start button
         Entity buttonStart = ButtonFactory.createButton(false, "platform", "right");
         buttonStart.addComponent(new TooltipSystem.TooltipComponent(
-                "Platform Button\nPress E to interact",
-                TooltipSystem.TooltipStyle.DEFAULT
+            "Platform Button\nPress E to interact",
+            TooltipSystem.TooltipStyle.DEFAULT
         ));
         GridPoint2 buttonStartPos = new GridPoint2(56, 23);
         spawnEntityAt(buttonStart, buttonStartPos, true, true);
@@ -703,8 +729,8 @@ public class LevelOneGameArea extends GameArea {
         //end button (where platform stops)
         Entity buttonEnd = ButtonFactory.createButton(false, "platform", "left");
         buttonEnd.addComponent(new TooltipSystem.TooltipComponent(
-                "Platform Button \nPress E to interact",
-                TooltipSystem.TooltipStyle.DEFAULT
+            "Platform Button \nPress E to interact",
+            TooltipSystem.TooltipStyle.DEFAULT
         ));
         GridPoint2 buttonEndPos = new GridPoint2(76, 23);
         spawnEntityAt(buttonEnd, buttonEndPos, true, true);
@@ -804,35 +830,6 @@ public class LevelOneGameArea extends GameArea {
         Entity leftSign = SignpostFactory.createSignpost("left");
         spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
-    private void spawnTerrain() {
-        // Need to decide how large each area is going to be
-        terrain = createDefaultTerrain();
-        spawnEntity(new Entity().addComponent(terrain));
-
-        // Terrain walls
-        float tileSize = terrain.getTileSize();
-        GridPoint2 tileBounds = terrain.getMapBounds(0);
-        Vector2 worldBounds = new Vector2(tileBounds.x * tileSize, tileBounds.y * tileSize);
-
-        // Left
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y), GridPoint2Utils.ZERO, false, false);
-        // Right
-        spawnEntityAt(
-                ObstacleFactory.createWall(WALL_THICKNESS, worldBounds.y),
-                new GridPoint2(tileBounds.x, 0),
-                false,
-                false);
-        // Top
-        spawnEntityAt(
-                ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-                new GridPoint2(0, tileBounds.y - 4),
-                false,
-                false);
-//        // Bottom
-//        spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-//                new GridPoint2(0, 0), false, false);
-    }
 
     private void spawnParallaxBackground() {
         Entity backgroundEntity = new Entity();
@@ -840,13 +837,10 @@ public class LevelOneGameArea extends GameArea {
         // Get the camera from the player entity
         Camera gameCamera = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
 
-        // Get map dimensions from terrain
-        GridPoint2 mapBounds = terrain.getMapBounds(0);
-        float tileSize = terrain.getTileSize();
-        float mapWorldWidth = mapBounds.x * tileSize;
-        float mapWorldHeight = mapBounds.y * tileSize;
+        // Use grid bounds for background sizing
+        Vector2 worldBounds = grid.getWorldBounds();
 
-        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, mapWorldWidth, mapWorldHeight);
+        ParallaxBackgroundComponent parallaxBg = new ParallaxBackgroundComponent(gameCamera, worldBounds.x, worldBounds.y);
 
 
         ResourceService resourceService = ServiceLocator.getResourceService();
@@ -895,15 +889,6 @@ public class LevelOneGameArea extends GameArea {
         pressurePlatePlatform.getComponent(VolatilePlatformComponent.class).linkToPlate(plate);
     }
 
-    private TerrainComponent createDefaultTerrain() {
-        // Use empty texture for invisible terrain grid
-        final ResourceService resourceService = ServiceLocator.getResourceService();
-        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-
-        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
-    }
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
@@ -982,8 +967,8 @@ public class LevelOneGameArea extends GameArea {
         // Patrolling bomber with cone light detector
         GridPoint2 spawnTile = new GridPoint2(55, 12);
         Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+            grid.tileToWorldPosition(spawnTile),
+            grid.tileToWorldPosition(new GridPoint2(65, 12))
         };
 
         // Create bomber with unique ID "bomber1"
@@ -994,8 +979,8 @@ public class LevelOneGameArea extends GameArea {
     private void spawnSelfDestructDrone() {
         GridPoint2 spawnTile = new GridPoint2(40, 15);
         Entity selfDestructDrone = EnemyFactory.createSelfDestructionDrone(
-                player,
-                terrain.tileToWorldPosition(spawnTile)
+            player,
+            grid.tileToWorldPosition(spawnTile)
         ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
@@ -1004,14 +989,14 @@ public class LevelOneGameArea extends GameArea {
     private void spawnAutoBomberDrone() {
         GridPoint2 spawnTile = new GridPoint2(55, 12);
         Vector2[] patrolRoute = {
-                terrain.tileToWorldPosition(spawnTile),
-                terrain.tileToWorldPosition(new GridPoint2(65, 12))
+            grid.tileToWorldPosition(spawnTile),
+            grid.tileToWorldPosition(new GridPoint2(65, 12))
         };
 
         Entity autoBomber = EnemyFactory.createAutoBomberDrone(
-                player,           // target reference
-                patrolRoute,      // patrol waypoints
-                "auto_bomber_1"   // unique ID
+            player,           // target reference
+            patrolRoute,      // patrol waypoints
+            "auto_bomber_1"   // unique ID
         );
 
         spawnEntityAt(autoBomber, spawnTile, true, true);
@@ -1020,14 +1005,14 @@ public class LevelOneGameArea extends GameArea {
     private void spawnPlatformBat() {
         BoxFactory.AutonomousBoxBuilder platformBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalPlatformBat = platformBatBuilder
-                .moveX(15f, 22f).moveY(4f, 4f)
-                .texture("images/flying_bat.atlas")
-                .tooltip("Beware! Bats bite and knock you back. Stay clear!",
-                        TooltipSystem.TooltipStyle.WARNING)
-                .build();
+            .moveX(15f, 22f).moveY(4f, 4f)
+            .texture("images/flying_bat.atlas")
+            .tooltip("Beware! Bats bite and knock you back. Stay clear!",
+                TooltipSystem.TooltipStyle.WARNING)
+            .build();
         spawnEntityAt(horizontalPlatformBat, new GridPoint2(
-                (int) platformBatBuilder.getSpawnX() * 2,
-                (int) platformBatBuilder.getSpawnY()), true, true);
+            (int) platformBatBuilder.getSpawnX() * 2,
+            (int) platformBatBuilder.getSpawnY()), true, true);
     }
 
     private void spawnObjectives() {
@@ -1051,60 +1036,60 @@ public class LevelOneGameArea extends GameArea {
 
         BoxFactory.AutonomousBoxBuilder batBuilder1 = new BoxFactory.AutonomousBoxBuilder();
         Entity lowHorizontalBat = batBuilder1
-                .moveX(3f + offsetX, 10f + offsetX).moveY(36f + offsetY, 36f + offsetY)
-                .texture("images/flying_bat.atlas")
-                .speed(4f).build();
+            .moveX(3f + offsetX, 10f + offsetX).moveY(36f + offsetY, 36f + offsetY)
+            .texture("images/flying_bat.atlas")
+            .speed(4f).build();
         spawnEntityAt(lowHorizontalBat, new GridPoint2(
-                        (int) batBuilder1.getSpawnX() + offsetX,
-                        (int) batBuilder1.getSpawnY() + offsetY),
-                true, true);
+                (int) batBuilder1.getSpawnX() + offsetX,
+                (int) batBuilder1.getSpawnY() + offsetY),
+            true, true);
 
         BoxFactory.AutonomousBoxBuilder batBuilder2 = new BoxFactory.AutonomousBoxBuilder();
         Entity highHorizontalBat1 = batBuilder2
-                .moveX(1f + offsetX, 10f + offsetX).moveY(46f + offsetY, 46f + offsetY)
-                .texture("images/flying_bat.atlas")
-                .build();
+            .moveX(1f + offsetX, 10f + offsetX).moveY(46f + offsetY, 46f + offsetY)
+            .texture("images/flying_bat.atlas")
+            .build();
         highHorizontalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(highHorizontalBat1, new GridPoint2(
-                        (int) batBuilder2.getSpawnX() + offsetX,
-                        (int) batBuilder2.getSpawnY() + offsetY),
-                true, true);
+                (int) batBuilder2.getSpawnX() + offsetX,
+                (int) batBuilder2.getSpawnY() + offsetY),
+            true, true);
 
         BoxFactory.AutonomousBoxBuilder batBuilder3 = new BoxFactory.AutonomousBoxBuilder();
         Entity highHorizontalBat2 = batBuilder3
-                .moveX(1f + offsetX, 10f + offsetX).moveY(53f + offsetY, 53f + offsetY)
-                .texture("images/flying_bat.atlas")
-                .speed(6f)
-                .build();
+            .moveX(1f + offsetX, 10f + offsetX).moveY(53f + offsetY, 53f + offsetY)
+            .texture("images/flying_bat.atlas")
+            .speed(6f)
+            .build();
         highHorizontalBat2.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(highHorizontalBat2, new GridPoint2(
-                        (int) batBuilder3.getSpawnX() + offsetX,
-                        (int) batBuilder3.getSpawnY() + offsetY),
-                true, true);
+                (int) batBuilder3.getSpawnX() + offsetX,
+                (int) batBuilder3.getSpawnY() + offsetY),
+            true, true);
 
         BoxFactory.AutonomousBoxBuilder batBuilder4 = new BoxFactory.AutonomousBoxBuilder();
         Entity diagonalBat1 = batBuilder4
-                .moveX(5f + offsetX, 10f + offsetX).moveY(19f + offsetY, 25f + offsetY)
-                .texture("images/flying_bat.atlas")
-                .speed(4f)
-                .build();
+            .moveX(5f + offsetX, 10f + offsetX).moveY(19f + offsetY, 25f + offsetY)
+            .texture("images/flying_bat.atlas")
+            .speed(4f)
+            .build();
         diagonalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(diagonalBat1, new GridPoint2(
-                        (int) batBuilder4.getSpawnX() + offsetX,
-                        (int) batBuilder4.getSpawnY() + offsetY),
-                true, true);
+                (int) batBuilder4.getSpawnX() + offsetX,
+                (int) batBuilder4.getSpawnY() + offsetY),
+            true, true);
 
         BoxFactory.AutonomousBoxBuilder batBuilder5 = new BoxFactory.AutonomousBoxBuilder();
         Entity verticalBat1 = batBuilder5
-                .moveX(3f + offsetX, 3f + offsetX).moveY(19f + offsetY, 25f + offsetY)
-                .texture("images/flying_bat.atlas")
-                .speed(4f)
-                .build();
+            .moveX(3f + offsetX, 3f + offsetX).moveY(19f + offsetY, 25f + offsetY)
+            .texture("images/flying_bat.atlas")
+            .speed(4f)
+            .build();
         verticalBat1.addComponent(new MinimapComponent("images/flying_bat_map.png"));
         spawnEntityAt(verticalBat1, new GridPoint2(
-                        (int) batBuilder5.getSpawnX() + offsetX,
-                        (int) batBuilder5.getSpawnY() + offsetY),
-                true, true);
+                (int) batBuilder5.getSpawnX() + offsetX,
+                (int) batBuilder5.getSpawnY() + offsetY),
+            true, true);
     }
 
 
@@ -1138,10 +1123,10 @@ public class LevelOneGameArea extends GameArea {
         physics.setBodyType(BodyDef.BodyType.StaticBody);
         Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);
         Entity collectable = new Entity()
-                .addComponent(new TextureRenderComponent(texture))
-                .addComponent(physics)
-                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
-                .addComponent(new ItemCollectableComponent(this));
+            .addComponent(new TextureRenderComponent(texture))
+            .addComponent(physics)
+            .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
+            .addComponent(new ItemCollectableComponent(this));
         collectable.setScale(0.6f, 0.6f);
         spawnEntityAt(collectable, new GridPoint2(pos), true, true);
         //ServiceLocator.getEntityService().register(collectable);

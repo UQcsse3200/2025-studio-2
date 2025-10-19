@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.LeaderboardComponent;
@@ -82,6 +83,7 @@ public class MainGameScreen extends ScreenAdapter {
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
   private final TerrainFactory terrainFactory;
+  private final GridFactory gridFactory;
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
   private DeathScreenDisplay deathScreenDisplay;
@@ -155,6 +157,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     logger.debug("Initialising main game screen entities");
     terrainFactory = new TerrainFactory(renderer.getCamera());
+    gridFactory = new GridFactory();
 
     gameAreaEnum = area;
 //    gameArea = getGameArea(Areas.LEVEL_THREE);
@@ -258,18 +261,18 @@ public class MainGameScreen extends ScreenAdapter {
    * @return GameArea mapped.
    */
   public GameArea getGameArea(Areas area) {
-    lvlStartTime = gameTime.getTime();
-    return switch (area) {
-      case TUTORIAL ->  new TutorialGameArea(terrainFactory);
-      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
-      case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
-      case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
-      case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
-      case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
-      case LEVEL_THREE -> new LevelThreeGameArea(terrainFactory);
-      case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
-      default -> throw new IllegalStateException("Unexpected value: " + area);
-    };
+      lvlStartTime = gameTime.getTime();
+      return switch (area) {
+          case TUTORIAL ->  new TutorialGameArea(gridFactory);
+          case LEVEL_ONE -> new LevelOneGameArea(gridFactory);
+          case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
+          case LEVEL_TWO -> new LevelTwoGameArea(gridFactory);
+          case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
+          case SPRINT_ONE -> new SprintOneGameArea(gridFactory);
+          case LEVEL_THREE -> new LevelThreeGameArea(gridFactory);
+          case BOSS_LEVEL ->  new BossLevelGameArea(gridFactory);
+          default -> throw new IllegalStateException("Unexpected value: " + area);
+      };
   }
 
   /**

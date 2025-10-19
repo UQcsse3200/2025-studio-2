@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
+import com.csse3200.game.areas.terrain.GridComponent;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
@@ -35,6 +36,7 @@ import java.util.List;
 public abstract class GameArea implements Disposable {
   private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
   protected TerrainComponent terrain;
+  protected GridComponent grid;
   protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
   protected ArrayList<Vector2> deathLocations = new ArrayList<>();
@@ -300,8 +302,8 @@ public abstract class GameArea implements Disposable {
    */
   protected void spawnEntityAt(
       Entity entity, GridPoint2 tilePos, boolean centerX, boolean centerY) {
-    Vector2 worldPos = terrain.tileToWorldPosition(tilePos);
-    float tileSize = terrain.getTileSize();
+    Vector2 worldPos = grid.tileToWorldPosition(tilePos);
+    float tileSize = grid.getTileSize();
 
     if (centerX) {
       worldPos.x += (tileSize / 2) - entity.getCenterPosition().x;
@@ -320,8 +322,8 @@ public abstract class GameArea implements Disposable {
    * @param minimapTexture the texture to use as minimap background
    */
   protected void createMinimap(Texture minimapTexture) {
-    float tileSize = terrain.getTileSize();
-    GridPoint2 bounds = terrain.getMapBounds(0);
+    float tileSize = grid.getTileSize();
+    GridPoint2 bounds = grid.getMapBounds();
     Vector2 worldSize = new Vector2(bounds.x * tileSize, bounds.y * tileSize);
 
     MinimapService minimapService = new MinimapService(minimapTexture, worldSize, new Vector2());
