@@ -1,6 +1,7 @@
 package com.csse3200.game.components.deathscreen;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class DeathScreenDisplayTest {
