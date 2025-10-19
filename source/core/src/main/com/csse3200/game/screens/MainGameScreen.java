@@ -11,7 +11,6 @@ import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.GridFactory;
-import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.StaminaComponent;
@@ -82,7 +81,6 @@ public class MainGameScreen extends ScreenAdapter {
   private final Renderer renderer;
   private final PhysicsEngine physicsEngine;
   private final LightingEngine lightingEngine;
-  private final TerrainFactory terrainFactory;
   private final GridFactory gridFactory;
   private boolean paused = false;
   private PauseMenuDisplay pauseMenuDisplay;
@@ -156,7 +154,6 @@ public class MainGameScreen extends ScreenAdapter {
     gameTime = new GameTime();
 
     logger.debug("Initialising main game screen entities");
-    terrainFactory = new TerrainFactory(renderer.getCamera());
     gridFactory = new GridFactory();
 
     gameAreaEnum = area;
