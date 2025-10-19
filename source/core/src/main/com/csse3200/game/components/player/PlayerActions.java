@@ -66,6 +66,7 @@ public class PlayerActions extends Component {
   private int jetpackFuel = FUEL_CAPACITY;
   private boolean isJetpackOn = false;
   private boolean isGliding = false;
+  private boolean hasActivatedJetpack;
 
   private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
           "sounds/jetpacksound.mp3", Sound.class);
@@ -138,8 +139,10 @@ public class PlayerActions extends Component {
       body.setGravityScale(0f); //for impulse to act upwards
          entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     } else if (jetpackFuel < FUEL_CAPACITY) {
-      jetpackFuel++;
-        entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
+        if (!hasActivatedJetpack) {
+            jetpackFuel++;
+            entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
+        }
     }
 
     if (!isJetpackOn && !isGliding) {
@@ -289,6 +292,7 @@ public class PlayerActions extends Component {
   void onLand() {
     isJumping = false;
     isDoubleJump = false;
+    hasActivatedJetpack = false;
 
 //    Sound interactSound = ServiceLocator.getResourceService().getAsset(
 //            "sounds/thudsound.mp3", Sound.class);
@@ -375,9 +379,12 @@ public class PlayerActions extends Component {
    * Used to activate the jetpack upgrade for the player - allows for upwards movement
    */
   private void jetpackOn() {
-    isJetpackOn = true;
-    isJumping = true;
-    jetpackSound.loop(UserSettings.get().masterVolume);
+
+          isJetpackOn = true;
+          isJumping = true;
+          hasActivatedJetpack = true;
+          jetpackSound.loop(UserSettings.get().masterVolume);
+
   }
 
   /**
