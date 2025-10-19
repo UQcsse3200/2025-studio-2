@@ -11,7 +11,6 @@ import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
-
 import java.util.Arrays;
 
 public class LeaderboardEntryDisplay extends UIComponent {

@@ -10,7 +10,6 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;

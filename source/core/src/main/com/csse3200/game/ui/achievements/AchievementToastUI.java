@@ -4,14 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.components.Component;
@@ -20,6 +22,8 @@ import com.csse3200.game.services.ServiceLocator;
 public class AchievementToastUI extends Component implements AchievementService.Listener {
     private Stage stage;
     private Skin skin;
+
+    private static final String TOAST_BG = "toast-bg";
 
     @Override
     public void create() {
@@ -35,7 +39,9 @@ public class AchievementToastUI extends Component implements AchievementService.
         if (stage == null) {
             try {
                 stage = ServiceLocator.getRenderService().getStage();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+              // Ignore
+            }
         }
         if (skin == null) {
             // Adjust to your real skin path if you have one. It’s fine if this fails – we fall back.
@@ -60,7 +66,7 @@ public class AchievementToastUI extends Component implements AchievementService.
         Texture tex = new Texture(pm);
         pm.dispose();
         Drawable bg = new TextureRegionDrawable(new TextureRegion(tex));
-        s.add("toast-bg", bg, Drawable.class);
+        s.add(TOAST_BG, bg, Drawable.class);
 
         return s;
     }
@@ -81,8 +87,8 @@ public class AchievementToastUI extends Component implements AchievementService.
     private void showToast(String title, String desc) {
         // Build toast content
         Table toast = new Table(skin);
-        if (skin.has("toast-bg", Drawable.class)) {
-            toast.setBackground(skin.getDrawable("toast-bg"));
+        if (skin.has(TOAST_BG, Drawable.class)) {
+            toast.setBackground(skin.getDrawable(TOAST_BG));
         }
 
         Label titleLbl = new Label(title, skin);

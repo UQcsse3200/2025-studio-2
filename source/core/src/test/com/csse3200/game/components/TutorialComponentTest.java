@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 @ExtendWith(MockitoExtension.class)
-class TutorialComponentTest {
+class ActionIndicatorComponentTest {
 
   @Mock
   private SpriteBatch batch;
@@ -47,7 +47,7 @@ class TutorialComponentTest {
     try (MockedConstruction<Skin> mockedSkin = mockConstruction(Skin.class, (mock, context) -> {
       when(mock.getFont(anyString())).thenReturn(font);
     })) {
-      TutorialComponent component = new TutorialComponent("test.png", "A");
+      ActionIndicatorComponent component = new ActionIndicatorComponent("test.png", "A");
       new Entity().addComponent(component).create();
 
       assertEquals(1, mockedSkin.constructed().size());
@@ -61,7 +61,7 @@ class TutorialComponentTest {
   @Test
   void drawShouldRenderImageAndText() {
     when(font.getData()).thenReturn(fontData);
-    TutorialComponent component = new TutorialComponent("test.png", "A");
+    ActionIndicatorComponent component = new ActionIndicatorComponent("test.png", "A");
     Entity entity = new Entity().addComponent(component);
     entity.setPosition(10f, 20f);
     entity.setScale(2f, 1f);
@@ -80,7 +80,7 @@ class TutorialComponentTest {
 
   @Test
   void drawShouldNotRenderTextIfFontIsNull() {
-    TutorialComponent component = new TutorialComponent("test.png", "A");
+    ActionIndicatorComponent component = new ActionIndicatorComponent("test.png", "A");
     new Entity().addComponent(component);
 
     component.draw(batch);
@@ -93,7 +93,7 @@ class TutorialComponentTest {
   @Test
   void disposeShouldDisposeSkinResource() {
     Skin mockSkin = mock(Skin.class);
-    TutorialComponent component = new TutorialComponent("test.png", "A");
+    ActionIndicatorComponent component = new ActionIndicatorComponent("test.png", "A");
     setPrivateField(component, "skin", mockSkin);
 
     component.dispose();

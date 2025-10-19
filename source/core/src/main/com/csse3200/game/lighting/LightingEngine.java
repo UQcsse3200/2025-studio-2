@@ -1,8 +1,6 @@
 package com.csse3200.game.lighting;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.components.CameraComponent;

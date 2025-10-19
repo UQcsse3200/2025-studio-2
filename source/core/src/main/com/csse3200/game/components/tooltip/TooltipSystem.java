@@ -61,6 +61,10 @@ public class TooltipSystem {
      * Uses static methods for simple global communication.
      */
     public static class TooltipManager {
+        private TooltipManager() {
+            throw new IllegalStateException("Instantiating static util class");
+        }
+
         private static TooltipDisplay activeDisplay;
         private static boolean suppressed;
         /**
