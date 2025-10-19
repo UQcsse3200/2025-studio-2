@@ -141,11 +141,24 @@ public class SettingsTab implements InventoryTabInterface {
         table.add(applyBtn).colspan(2).center().width(100).height(40).pad(10f);
 
         // Add listeners for real-time value updates
-        setupListeners();
+        setupListeners(settings);
 
         return table;
     }
-    private void setupListeners() {
+    private void setupListeners(UserSettings.Settings settings) {
+        // Brightness slider listener
+        brightnessSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                float value = brightnessSlider.getValue();
+                brightnessValue.setText(String.format("%.0f%%", value * 100));
+
+                //  Apply live change
+                updatebrightness(settings);
+                logger.info("[UI] Brightness slider moved -> {} ({}%)", value, (int)(value * 100));
+            }
+        });
+
         // Master volume slider listener
         masterVolumeSlider.addListener(new ChangeListener() {
             @Override
@@ -463,6 +476,11 @@ public class SettingsTab implements InventoryTabInterface {
         } catch (Exception e) {
             logger.error("[Audio] Failed to update music volume", e);
         }
+    }
+    private void updatebrightness(UserSettings.Settings settings) {
+        LightingEngine lightingEngine = ServiceLocator.getLightingService().getEngine();
+        lightingEngine.setAmbientLight(settings.brightnessValue);
+
     }
 
 
