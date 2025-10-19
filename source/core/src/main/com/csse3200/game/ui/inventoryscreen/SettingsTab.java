@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
+import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,12 @@ import java.util.Map;
 public class SettingsTab implements InventoryTabInterface {
     
     // UI Components
+    private Slider brightnessSlider;
     private Slider masterVolumeSlider;
     private Slider musicVolumeSlider;
     
     // Labels for real-time value updates
+    private Label brightnessValue;
     private Label masterVolumeValue;
     private Label musicVolumeValue;
 
@@ -74,6 +77,20 @@ public class SettingsTab implements InventoryTabInterface {
 
     private Table createSettingsTable(Skin skin, UserSettings.Settings settings) {
         Table table = new Table();
+
+        // Brightness Setting
+        Label brightnessLabel = new Label("Brightness:", skin);
+        brightnessSlider = new Slider(0f, 1f, 0.05f, false, skin);
+        brightnessSlider.setValue(settings.brightnessValue);
+        brightnessValue = new Label(String.format("%.0f%%", settings.brightnessValue * 100), skin);
+
+        Table brightnessTable = new Table();
+        brightnessTable.add(brightnessSlider).width(150).left();
+        brightnessTable.add(brightnessValue).left().padLeft(10f);
+
+        table.add(brightnessLabel).right().padRight(15f);
+        table.add(brightnessTable).left();
+        table.row().padTop(10f);
 
         // Master Volume Setting
         Label masterVolumeLabel = new Label("Master Volume:", skin);
@@ -390,6 +407,11 @@ public class SettingsTab implements InventoryTabInterface {
 
     private void applyChanges() {
         UserSettings.Settings settings = UserSettings.get();
+
+        // Set Brightness
+        settings.brightnessValue = brightnessSlider.getValue();
+        LightingEngine lightingEngine = ServiceLocator.getLightingService().getEngine();
+        lightingEngine.setAmbientLight(settings.brightnessValue);
         
         // Apply volume settings
         settings.masterVolume = masterVolumeSlider.getValue();
