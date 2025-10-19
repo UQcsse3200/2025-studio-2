@@ -17,9 +17,9 @@ public class LeaderboardEntryDisplay extends UIComponent {
     private Table rootTable;
     private Table contentTable;
     private Label promptLabel;
-    private TextField nameField;
-    private TextButton confirmButton;
-    private TextButton skipButton;
+    TextField nameField;
+    TextButton confirmButton;
+    TextButton skipButton;
     private boolean completed = false;
 
     private long completionTime;
@@ -27,7 +27,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
     private float stamina;
     private LeaderboardComponent leaderboard;
     private String enteredName; // null if skipped or empty
-    private Label errorLabel;
+    Label errorLabel;
     // Overlay manager for global UI coordination
     public static final class UIOverlayManager {
         private static boolean overlayActive = false;
