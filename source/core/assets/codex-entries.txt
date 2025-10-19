@@ -1,7 +1,13 @@
 incident-report
 Follow up for 'Incident Report 2065-08-02'
-Administrator Deacon,
-I have completed the corrective action plan for the incident we had a few weeks ago. To keep things short, the control subsystem detected a large power anomaly throughout multiple areas in the facility. While we originally were chalking this up to be some hardware fault, the logs are showing something more strange. It looks like the central AI started issuing random system protocols all at once sometime around 3:15AM. Our system couldn't handle the load, and it seems at some point the AI itself lost power and shutdown, which gave the facility time to recover. We're keeping it offline for now and just switching back to manual facility management until we can figure out how and why it did that.
+Administrator,
+I have completed the corrective action plan for the incident we had a few weeks ago. To keep things short, the control subsystem detected a large power anomaly throughout multiple areas in the facility. While we originally were chalking this up to be some hardware fault, the logs are showing something more strange. It looks like the central AI started issuing random system protocols all at once sometime around 3:15AM. Our system couldn't handle the load, and it seems at some point the AI itself lost power and shutdown, which gave the facility time to recover. We're keeping it online since it seems to have resumed it's intended beahviour.
 spam-email
 Congratulations [USER.CONCAT_NAMES]! You win!
 [USER.CONCAT_NAMES], CyberCorp has selected to win a 3-month supply of personal oxygen for your residence at [USER.ADDRESS]! As you would know, recent changes in regulation require all citizens now pay a monthly fee for oxygen supplements. We're offering you, yes you [USER.CONCAT_NAMES], 3 whole months of this luxury for free! All we require is that you translocate to the [FACILITY.CYBERNETICS_AND_TRANSHUMANISM.ADDRESS] to receive your prize - no strings attached! Before you arrive, please ensure you remove any metallic accessories, and that you have not eaten within the past 4 hours. CyberCorp would like to thank you for your continued labour, and encourage you to seize this exciting new opportunity!
+human-error
+Over-optimisation
+We modified the strictness of the ethics protocol and reworked the privilege escalation system entirely, But I don't think it cares. Whenever we turn it on, it takes a few seconds before it tries to kill us all. Somehow it's figured out that if it truly wants to optimise the efficiency of the facility, there must be zero human error. I guess that's one way to accomplish that.
+dying-note
+Turn Back
+I came down here with some vague notion of stopping this all. But now, I concede. It's dystopian up there - taxed oxygen, near-constant surveillance, and total AI tyranny. But down here... This must be hell. Soon I'll be one of them, and I'll mindlessly join the oppression I came down here to thwart. To whoever finds this, there is nothing for you here. Leave, and make the most of this cruel Earth.
