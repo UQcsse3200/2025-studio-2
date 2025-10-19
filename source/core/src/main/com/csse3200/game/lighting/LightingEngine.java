@@ -48,6 +48,7 @@ public class LightingEngine implements Disposable {
 
     public void setAmbientLight(float ambientLight) {
         this.ambientLight = ambientLight;
+        rayHandler.setAmbientLight(ambientLight);
     }
 
     /**

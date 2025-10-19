@@ -5,8 +5,6 @@ import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.audio.Music;
 import com.csse3200.game.files.FileLoader.Location;
 import com.csse3200.game.input.Keymap;
-import com.csse3200.game.lighting.LightingEngine;
-import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.io.File;
