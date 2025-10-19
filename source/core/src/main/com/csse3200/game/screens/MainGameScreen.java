@@ -215,7 +215,7 @@ public class MainGameScreen extends ScreenAdapter {
       uiEntity.getEvents().addListener("leaderboardEntryComplete", () -> {
           String name = entryDisplay.getEnteredName();
           if (name != null && !name.isEmpty()) {
-              LeaderboardComponent.getInstance().updateLeaderboard(name, completionTime);
+              LeaderboardComponent.getInstance().updateLeaderboard(getGameAreaName() + name, completionTime);
           }
 
           // Restore HUD and unpause
@@ -251,7 +251,22 @@ public class MainGameScreen extends ScreenAdapter {
         }
     }
 
-    /**
+  /**
+   * Get the GameArea name mapped to the current gameAreaEnum.
+   * @return GameArea mapped.
+   */
+  public String getGameAreaName() {
+    return switch (gameAreaEnum) {
+      case TUTORIAL ->  "Tutorial: ";
+      case LEVEL_ONE -> "Level One: ";
+      case LEVEL_TWO -> "Level Two: ";
+      case LEVEL_THREE -> "Level Three: ";
+      case BOSS_LEVEL -> "Boss Level: ";
+      default -> throw new IllegalStateException("Unexpected value: " + gameAreaEnum);
+    };
+  }
+
+  /**
    * Get the GameArea mapped to the Areas area.
    * @param area - Areas area.
    * @return GameArea mapped.
@@ -288,7 +303,7 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   private void switchArea(Areas area, Entity player) {
-    final Runnable runnable = () -> this.switchAreaRunnable(area, player);
+    Runnable runnable = () -> switchAreaRunnable(area, player);
     if (gameArea instanceof CutsceneArea) {
       Gdx.app.postRunnable(runnable);
     } else {
