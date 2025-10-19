@@ -102,7 +102,8 @@ public class LevelTwoGameArea extends GameArea {
             "images/laser-end.png",
             "images/jetpack_powerup.png",
             "images/lost_hardware.png",
-            "images/tutorials/dash.png"
+            "images/tutorials/dash.png",
+            "images/door_open-map.png"
     };
     private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};

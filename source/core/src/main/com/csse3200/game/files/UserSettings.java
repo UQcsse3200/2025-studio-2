@@ -207,7 +207,7 @@ public class UserSettings {
     /**
      * Member for Brightness control;
      */
-    public float brightnessValue = 1f;
+    public float brightnessValue = 0.3f;
 
     /**
      * Custom keybinds
