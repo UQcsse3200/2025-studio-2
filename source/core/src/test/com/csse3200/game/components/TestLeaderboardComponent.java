@@ -40,6 +40,7 @@ class TestLeaderboardComponent {
     leaderboardComponent = LeaderboardComponent.getInstance();
     Map<String, Long> baseTimes = getBaseTimes();
 
+    baseTimes.clear();
     baseTimes.put("1", 100000L);
     baseTimes.put("2", 100000L);
     baseTimes.put("3", 100000L);

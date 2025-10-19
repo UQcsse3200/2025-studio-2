@@ -66,6 +66,8 @@ public class MainGameScreen extends ScreenAdapter {
           "images/puzzles/whichTutor_1x2.png"
   };
 
+  private static final String PLAYER_DIED = "playerDied";
+
   // Camera follow parameters
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
@@ -75,7 +77,7 @@ public class MainGameScreen extends ScreenAdapter {
   private static final float MIN_CAMERA_FOLLOW_Y = 1f;
   private float laserTimer = 0f;
   private float jumpCount=0;
-  private static long lvlStartTime;
+  private long lvlStartTime;
 
   private final GdxGame game;
   private final Renderer renderer;
@@ -156,17 +158,16 @@ public class MainGameScreen extends ScreenAdapter {
     gridFactory = new GridFactory();
 
     gameAreaEnum = area;
-//    gameArea = getGameArea(Areas.LEVEL_THREE);
-    gameArea = getGameArea(area);
+    gameArea = getGameArea(area /* Areas.LEVEL_THREE */);
     gameArea.create();
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
     gameArea.getEvents().addListener("doorEntered", this::handleLeaderboardEntry);
-    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
-      switchArea(getNextArea(gameAreaEnum), play);
-    });
+    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> 
+        switchArea(getNextArea(gameAreaEnum), play)
+    );
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
-    gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+    gameArea.getPlayer().getEvents().addListener(PLAYER_DIED, this::showDeathScreen);
 
     // Have to createUI after the game area .create() since createUI requires the player to exist,
     // which is only done upon game area creation
@@ -359,7 +360,7 @@ public class MainGameScreen extends ScreenAdapter {
 
         Entity currentPlayer = gameArea.getPlayer();
         if (currentPlayer != null) {
-            currentPlayer.getEvents().addListener("playerDied", this::showDeathScreen);
+            currentPlayer.getEvents().addListener(PLAYER_DIED, this::showDeathScreen);
         } else {
             logger.warn("switchAreaRunnable: gameArea.getPlayer() is null after create");
         }
@@ -611,7 +612,7 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   public void onGameAreaReset(Entity player) {
-    player.getEvents().addListener("playerDied", this::showDeathScreen);
+    player.getEvents().addListener(PLAYER_DIED, this::showDeathScreen);
   }
 
   // Set last keycode for inventory when tab is clicked
