@@ -70,14 +70,8 @@ public class TrapComponent extends CombatStatsComponent {
         Vector2 playerPos = player.getPosition();
         Vector2 trapPos = trap.getPosition();
 
-        boolean legalDirection;
-        if (rotation % 2 == 0) { // Avoid side-on collisions
-            if (playerPos.x > trapPos.x) {
-                legalDirection = (playerPos.x < (trapPos.x + trapSize));
-            } else {
-                legalDirection = (playerPos.x > (trapPos.x - trapSize));
-            }
-        } else { // Fix the over-enthusiastic lower bound
+        boolean legalDirection = true;
+        if (rotation % 2 != 0) { // Fix the over-enthusiastic lower bound on side-facing traps
             if (playerPos.y > trapPos.y) {
                 legalDirection = (playerPos.y < (trapPos.y + playerHeight));
             } else {
@@ -86,18 +80,14 @@ public class TrapComponent extends CombatStatsComponent {
         }
 
         legalDirection &= switch (rotation) {
-            case 1 -> // Facing left
-                    (// Must approach from left
-                            player.getPosition().x < trap.getPosition().x);
-            case 2 -> // Facing down
-                    (// Must approach from beneath
-                            playerPos.y < trapPos.y);
-            case 3 -> // Facing right
-                    (// Must approach from right
-                            player.getPosition().x > (trap.getPosition().x-0.3f));
-            default -> // Facing up
-                    (// Must approach from above
-                            player.getPosition().y > trap.getPosition().y);
+            case 1 -> // Facing left; must approach from left
+                            player.getPosition().x < trap.getPosition().x;
+            case 2 -> // Facing down; must approach from beneath
+                            playerPos.y < trapPos.y;
+            case 3 -> // Facing right; must approach from right
+                            player.getPosition().x > (trap.getPosition().x-0.3f);
+            default -> // Facing up; must approach from above
+                            player.getPosition().y > trap.getPosition().y;
         };
 
         // Damage player

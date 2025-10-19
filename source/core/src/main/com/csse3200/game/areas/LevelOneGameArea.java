@@ -21,6 +21,8 @@ import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.ladders.LadderRungComponent;
+import com.csse3200.game.components.ladders.LadderSectionControllerComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
@@ -181,7 +183,6 @@ public class LevelOneGameArea extends GameArea {
 
     }
     protected void loadEntities() {
-        cancelPlateDebouncers();
         keySpawned = false;
         spawnLadders();
         spawnSignposts();
@@ -304,301 +305,31 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
 
-    private static final float PLATE_DEBOUNCE = 0.12f;
-    // Upper Ladder dimensions
-    private final int upperLadderX = 59;
-    private final int upperLadderY = 36;
-    private final int upperLadderHeight = 16;
-    private final int upperLadderOffset = 11;
-    private boolean isUpperLadderExtended = false;
-    private boolean isUpperLadderSpawning = false;
-    private final List<Entity> upperLadderBottomSegments = new ArrayList<>();
-    private Timer.Task upperLadderTask;
-    private boolean upperPlateDown = false;
-    private Timer.Task upperPressDebounceTask, upperReleaseDebounceTask;
-    // Lower Ladder dimensions
-    private final int lowerLadderX = 52;
-    private final int lowerLadderY = 4;
-    private final int lowerLadderHeight = 18;
-    private final int lowerLadderOffset = 13;
-    private boolean isLowerLadderExtended = false;
-    private boolean isLowerLadderSpawning = false;
-    private final List<Entity> lowerLadderBottomSegments = new ArrayList<>();
-    private Timer.Task lowerLadderTask;
-    private boolean lowerPlateDown = false;
-    private Timer.Task lowerPressDebounceTask, lowerReleaseDebounceTask;
-
-
     private void spawnLadders() {
-        // Upper ladder
-        upperLadderBottomSegments.clear();
-        isUpperLadderExtended = false;
-        isUpperLadderSpawning = false;
-        for(int i = upperLadderOffset; i < upperLadderHeight; i++) {
-            GridPoint2 ladderPos = new GridPoint2(upperLadderX, (upperLadderY + i));
-            Entity ladder = LadderFactory.createStaticLadder();
-            ladder.setScale(1f, 1f);
-            spawnEntityAt(ladder, ladderPos, false, false);
+        // spawn upper
+        Entity upperAnchor = LadderFactory.createLadderBase("upper", 16, 11);
+        spawnEntityAt(upperAnchor, new GridPoint2(59, 36), false, false);
 
-        }
-        // Lower ladder
-        lowerLadderBottomSegments.clear();
-        isLowerLadderExtended = false;
-        isLowerLadderSpawning = false;
-        for(int i = lowerLadderOffset; i < lowerLadderHeight; i++) {
-            GridPoint2 ladderPosition = new GridPoint2(lowerLadderX, (lowerLadderY + i));
-            Entity ladder = LadderFactory.createStaticLadder();
-            ladder.setScale(1f, 1f);
-            spawnEntityAt(ladder, ladderPosition, false, false);
-
-        }
+        // spawn lower
+        Entity lowerAnchor = LadderFactory.createLadderBase("lower", 18, 13);
+        spawnEntityAt(lowerAnchor, new GridPoint2(52, 4), false, false);
     }
     private void spawnUpperLadderPressurePlate() {
-        int x = 65;
-        int y = 36;
-        GridPoint2 upperLadderPressurePlatePosition = new GridPoint2(x, y);
-        Entity upperLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
-        upperLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
-                "Push to release ladder",
-                TooltipSystem.TooltipStyle.DEFAULT ));
-        spawnEntityAt(upperLadderPressurePlate, upperLadderPressurePlatePosition, true, true);
+        Entity upperLadderPressurePlate = PressurePlateFactory.createLadderPlate(
+                "upper", 11, 0.05f);
 
-        // Ladder extends and retracts when activating pressure plate
-        upperLadderPressurePlate.getEvents().addListener("platePressed", () -> {
-            // cancel any release confirmation that might be pending
-            if (upperReleaseDebounceTask != null) {
-                upperReleaseDebounceTask.cancel();
-                upperReleaseDebounceTask = null;
-            }
-            if (upperPlateDown) return;
-
-            // replace prior press debounce
-            if (upperPressDebounceTask != null) {
-                upperPressDebounceTask.cancel();
-            }
-            upperPressDebounceTask = new Timer.Task() {
-                @Override
-                public void run() {
-                    upperPlateDown = true;
-                    extendUpperLadder();
-                    upperPressDebounceTask = null;
-                }
-            };
-            Timer.schedule(upperPressDebounceTask, PLATE_DEBOUNCE);
-        });
-
-        upperLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
-            // cancel any press confirmation that might be pending
-            if (upperPressDebounceTask != null) {
-                upperPressDebounceTask.cancel();
-                upperPressDebounceTask = null;
-            }
-            if (!upperPlateDown) return;
-
-            if (upperReleaseDebounceTask != null) {
-                upperReleaseDebounceTask.cancel();
-            }
-            upperReleaseDebounceTask = new Timer.Task() {
-                @Override
-                public void run() {
-                    upperPlateDown = false;
-
-                    if (isUpperLadderSpawning && upperLadderTask != null) {
-                        upperLadderTask.cancel();
-                        upperLadderTask = null;
-                        isUpperLadderSpawning = false;
-                    }
-                    // retract only if not currently resetting level
-                    if (isUpperLadderExtended && !isUpperLadderSpawning && !isResetting) {
-                        retractUpperLadder();
-                    }
-                    upperReleaseDebounceTask = null;
-                }
-            };
-            Timer.schedule(upperReleaseDebounceTask, PLATE_DEBOUNCE);
-        });
+        spawnEntityAt(upperLadderPressurePlate, new GridPoint2(65, 36), true, true);
     }
 
     private void spawnLowerLadderPressurePlate() {
-        int x = 73;
-        int y = 4;
-        GridPoint2 lowerLadderPressurePlatePosition = new GridPoint2(x, y);
-        Entity lowerLadderPressurePlate = PressurePlateFactory.createBoxOnlyPlate();
+        Entity lowerLadderPressurePlate = PressurePlateFactory.createLadderPlate(
+                "lower", 13, 0.05f);
+
         lowerLadderPressurePlate.addComponent(new TooltipSystem.TooltipComponent(
                 "Push to release ladder",
                 TooltipSystem.TooltipStyle.DEFAULT ));
-        spawnEntityAt(lowerLadderPressurePlate, lowerLadderPressurePlatePosition, true, true);
 
-        // Ladder extends and retracts when activating pressure plate
-        lowerLadderPressurePlate.getEvents().addListener("platePressed", () -> {
-            // cancel any release confirmation that might be pending
-            if (lowerReleaseDebounceTask != null) {
-                lowerReleaseDebounceTask.cancel();
-                lowerReleaseDebounceTask = null;
-            }
-            if (lowerPlateDown) return;
-
-            // replace prior press debounce
-            if (lowerPressDebounceTask != null) {
-                lowerPressDebounceTask.cancel();
-            }
-            lowerPressDebounceTask = new Timer.Task() {
-                @Override
-                public void run() {
-                    lowerPlateDown = true;
-                    extendLowerLadder();
-                    lowerPressDebounceTask = null;
-                }
-            };
-            Timer.schedule(lowerPressDebounceTask, PLATE_DEBOUNCE);
-        });
-
-        lowerLadderPressurePlate.getEvents().addListener("plateReleased", () -> {
-            // cancel any press confirmation that might be pending
-            if (lowerPressDebounceTask != null) {
-                lowerPressDebounceTask.cancel();
-                lowerPressDebounceTask = null;
-            }
-            if (!lowerPlateDown) return;
-
-            if (lowerReleaseDebounceTask != null) {
-                lowerReleaseDebounceTask.cancel();
-            }
-            lowerReleaseDebounceTask = new Timer.Task() {
-                @Override
-                public void run() {
-                    lowerPlateDown = false;
-
-                    if (isLowerLadderSpawning && lowerLadderTask != null) {
-                        lowerLadderTask.cancel();
-                        lowerLadderTask = null;
-                        isLowerLadderSpawning = false;
-                    }
-                    // retract only if not currently resetting level
-                    if (isLowerLadderExtended && !isLowerLadderSpawning && !isResetting) {
-                        retractLowerLadder();
-                    }
-                    lowerReleaseDebounceTask = null;
-                }
-            };
-            Timer.schedule(lowerReleaseDebounceTask, PLATE_DEBOUNCE);
-        });
-    }
-
-    private void extendUpperLadder() {
-        if (!isUpperLadderExtended && upperLadderBottomSegments.isEmpty() && !isUpperLadderSpawning) {
-            isUpperLadderExtended = true;
-            isUpperLadderSpawning = true;
-
-            Sound ladderSound = ServiceLocator.getResourceService().getAsset(
-                    "sounds/laddersound.mp3", Sound.class);
-            ladderSound.play(UserSettings.get().masterVolume);
-
-            upperLadderTask = new Timer.Task() {
-                int rung = upperLadderOffset - 1;
-
-                @Override
-                public void run() {
-                    if (rung < 0) {
-                        this.cancel();
-                        upperLadderTask = null;
-                        isUpperLadderSpawning = false;
-                        return;
-                    }
-                    GridPoint2 upperLadderPosition = new GridPoint2(upperLadderX, upperLadderY + rung);
-                    Entity upperLadderRung = LadderFactory.createStaticLadder();
-                    upperLadderRung.setScale(1f, 1f);
-                    spawnEntityAt(upperLadderRung, upperLadderPosition, false, false);
-                    upperLadderBottomSegments.add(upperLadderRung);
-                    rung--;
-                }
-            };
-            // Initial delay, and delay between rungs (avoid partially spawned rungs)
-            Timer.schedule(upperLadderTask, 0.05f, 0.05f);
-        }
-    }
-
-    private void retractUpperLadder() {
-        isUpperLadderExtended = false;
-        if (isResetting) return;
-
-        Gdx.app.postRunnable(() -> {
-            for (Entity rung : upperLadderBottomSegments) {
-                rung.dispose();
-                areaEntities.remove(rung);
-            }
-            isUpperLadderSpawning = false;
-            isUpperLadderExtended = false;
-            upperLadderBottomSegments.clear();
-        });
-    }
-
-    private void extendLowerLadder() {
-        if (!isLowerLadderExtended && lowerLadderBottomSegments.isEmpty() && !isLowerLadderSpawning) {
-            isLowerLadderExtended = true;
-            isLowerLadderSpawning = true;
-
-            Sound ladderSound = ServiceLocator.getResourceService().getAsset(
-                    "sounds/laddersound.mp3", Sound.class);
-            ladderSound.play(UserSettings.get().masterVolume);
-
-            lowerLadderTask = new Timer.Task() {
-                int rung = lowerLadderOffset - 1;
-
-                @Override
-                public void run() {
-                    if (rung < 0) {
-                        this.cancel();
-                        lowerLadderTask = null;
-                        isLowerLadderSpawning = false;
-                        return;
-                    }
-                    GridPoint2 lowerLadderPosition = new GridPoint2(lowerLadderX, lowerLadderY + rung);
-                    Entity lowerLadderRung = LadderFactory.createStaticLadder();
-                    lowerLadderRung.setScale(1f, 1f);
-                    spawnEntityAt(lowerLadderRung, lowerLadderPosition, false, false);
-                    lowerLadderBottomSegments.add(lowerLadderRung);
-                    rung--;
-                }
-            };
-            // Initial delay, and delay between rungs (avoid partially spawned rungs)
-            Timer.schedule(lowerLadderTask, 0.05f, 0.05f);
-        }
-    }
-
-    private void retractLowerLadder() {
-        isLowerLadderExtended = false;
-        if (isResetting) return;
-
-        // Delays disposal of bottom ladder rungs until next frame to avoid physics engine lock
-        Gdx.app.postRunnable(() -> {
-            for (Entity rung : lowerLadderBottomSegments) {
-                rung.dispose();
-                areaEntities.remove(rung);
-            }
-            isLowerLadderSpawning = false;
-            isLowerLadderExtended = false;
-            lowerLadderBottomSegments.clear();
-        });
-    }
-
-    private void cancelPlateDebouncers() {
-        if (upperPressDebounceTask != null) {
-            upperPressDebounceTask.cancel();
-            upperPressDebounceTask = null;
-        }
-        if (lowerPressDebounceTask != null) {
-            lowerPressDebounceTask.cancel();
-            lowerPressDebounceTask = null;
-        }
-        if (upperReleaseDebounceTask != null) {
-            upperReleaseDebounceTask.cancel();
-            upperReleaseDebounceTask = null;
-        }
-        if (lowerReleaseDebounceTask != null) {
-            lowerReleaseDebounceTask.cancel();
-            lowerReleaseDebounceTask = null;
-        }
+        spawnEntityAt(lowerLadderPressurePlate, new GridPoint2(73, 4), true, true);
     }
 
     private void spawnFloorsAndPlatforms(){
@@ -819,6 +550,7 @@ public class LevelOneGameArea extends GameArea {
         Entity leftSign = SignpostFactory.createSignpost("left");
         spawnEntityAt(leftSign, new GridPoint2(29,36), true, false);
     }
+
     private void spawnTerrain() {
         // Need to decide how large each area is going to be
         terrain = createDefaultTerrain();
@@ -1201,9 +933,6 @@ public class LevelOneGameArea extends GameArea {
     @Override
     public void dispose() {
         isResetting = true;
-        retractLowerLadder();
-        retractUpperLadder();
-        cancelPlateDebouncers();
         super.dispose();
         ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
         this.unloadAssets();

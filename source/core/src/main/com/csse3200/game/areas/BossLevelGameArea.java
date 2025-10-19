@@ -437,7 +437,7 @@ public class BossLevelGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .speed(10f).build();
         spawnEntityAt(horizontalBat, new GridPoint2(
-                (int) horizontalBatBuilder.getSpawnX() * 2,
+                (int) horizontalBatBuilder.getSpawnX(),
                 (int) horizontalBatBuilder.getSpawnY()), true, true);
 
         // Bat flying around in next jump area
@@ -473,7 +473,7 @@ public class BossLevelGameArea extends GameArea {
                 .texture("images/flying_bat.atlas")
                 .build();
         spawnEntityAt(horizontalBat, new GridPoint2(
-                (int) safeBatBuilder.getSpawnX() * 2,
+                (int) safeBatBuilder.getSpawnX(),
                 (int) safeBatBuilder.getSpawnY()), true, true);
     }
 
