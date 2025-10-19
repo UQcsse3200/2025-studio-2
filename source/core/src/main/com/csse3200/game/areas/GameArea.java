@@ -288,6 +288,12 @@ public abstract class GameArea implements Disposable {
   protected void spawnEntity(Entity entity) {
     areaEntities.add(entity);
     ServiceLocator.getEntityService().register(entity);
+
+    // Set grid reference if this entity has a GridComponent
+    GridComponent gridComponent = entity.getComponent(GridComponent.class);
+    if (gridComponent != null) {
+      this.grid = gridComponent;
+    }
   }
 
   /**
