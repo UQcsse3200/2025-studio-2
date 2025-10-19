@@ -71,6 +71,9 @@ public class MinimapComponent extends Component {
 
   @Override
   public void dispose() {
-    ServiceLocator.getMinimapService().stopTracking(entity);
+      // Prevent crash if service has already been cleared
+      if (ServiceLocator.getMinimapService() != null) {
+          ServiceLocator.getMinimapService().stopTracking(entity);
+      }
   }
 }
