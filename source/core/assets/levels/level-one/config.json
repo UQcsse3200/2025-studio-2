@@ -47,6 +47,7 @@
     {"type": "wall","x": 25,"y": 4,"sx": 1,"sy": 4.5,"centerX": false,"centerY": false},
     {"type": "wall","x": 75,"y": 4,"sx": 2.5,"sy": 7.5,"centerX": false,"centerY": false},
     {"type": "door","subtype": "transition","id": "key:door","x": 35,"y": 62,"sx": 1,"sy": 2,"target": "CUTSCENE_ONE","tooltip": "Unlock the door with the key"},
+    {"type": "collectable","subtype": "upgrade","x": 23,"y": 4, "target": "dash", "tooltip": "Collect Dash Upgrade"},
     {"type": "camera","id": 1,"x": 48,"y": 17,"speed": 25,"rotation": 0},
     {"type": "camera","id": 2,"x": 74,"y": 13,"speed": 25,"rotation": 270},
     {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_1","x": 55,"y": 12,"extra": "55,12;65,12"},

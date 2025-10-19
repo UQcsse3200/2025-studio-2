@@ -11,6 +11,7 @@ public enum EntitySubtype {
     // Collectables
     KEY(EntityType.COLLECTABLE),
     POTION(EntityType.COLLECTABLE),
+    UPGRADE(EntityType.COLLECTABLE),
 
     // Boxes
     MOVEABLE(EntityType.BOX),

@@ -103,6 +103,7 @@ public class CollectableFactory {
      * @return a new key entity
      * @see KeyComponent
      */
+    @Deprecated
     public static Entity createKey(String target) {
         Entity key = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
