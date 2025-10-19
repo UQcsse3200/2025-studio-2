@@ -7,26 +7,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.ui.UIComponent;
 
 public class LeaderboardEntryDisplay extends UIComponent {
     private Table table;
-    private Label promptLabel;
     private TextField nameField;
     private TextButton confirmButton;
     private TextButton skipButton;
     private boolean completed = false;
 
     private long completionTime;
-    private int health;
-    private float stamina;
     private String enteredName; // null if skipped or empty
 
-    public LeaderboardEntryDisplay(long completionTime, int health, float stamina) {
+    public LeaderboardEntryDisplay(long completionTime) {
         this.completionTime = completionTime;
-        this.health = health;
-        this.stamina = stamina;
     }
 
     public String getEnteredName() {
@@ -44,7 +38,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         table.setFillParent(true);
         table.center();
 
-        promptLabel = new Label("You finished in " + formatTime(completionTime) +
+        Label promptLabel = new Label("You finished in " + formatTime(completionTime) +
                 "! Enter your name:", skin, "large");
 
         nameField = new TextField("", skin);
@@ -57,13 +51,6 @@ public class LeaderboardEntryDisplay extends UIComponent {
                 if (completed) return;
                 completed = true;
                 enteredName = nameField.getText().trim();
-                if (enteredName != null && !enteredName.isEmpty()) {
-                    LeaderboardComponent.getInstance().updateLeaderboard(enteredName, completionTime);
-                    System.out.println("Saved stats for " + enteredName +
-                            " | Health: " + health + " | Stamina: " + stamina);
-                } else {
-                    enteredName = null; // treat empty as skip
-                }
                 closeAndContinue();
             }
         });
@@ -90,9 +77,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
     private void closeAndContinue() {
         confirmButton.setDisabled(true);
         skipButton.setDisabled(true);
-
         dispose();
-
         entity.getEvents().trigger("leaderboardEntryComplete");
     }
     private String formatTime(long ms) {

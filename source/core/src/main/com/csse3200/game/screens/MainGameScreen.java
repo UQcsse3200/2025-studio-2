@@ -193,13 +193,6 @@ public class MainGameScreen extends ScreenAdapter {
           return;
       }
 
-      // Gather stats
-      CombatStatsComponent combat = player.getComponent(CombatStatsComponent.class);
-      int health = (combat != null) ? combat.getHealth() : 0;
-
-      StaminaComponent staminaComp = player.getComponent(StaminaComponent.class);
-      float stamina = (staminaComp != null) ? staminaComp.getCurrentStamina() : 0f;
-
       long completionTime = gameTime.getTimeSince(lvlStartTime);
 
       // Hide HUD and pause
@@ -207,8 +200,7 @@ public class MainGameScreen extends ScreenAdapter {
       paused = true;
 
       // Create leaderboard entry overlay
-      LeaderboardEntryDisplay entryDisplay =
-              new LeaderboardEntryDisplay(completionTime, health, stamina);
+      LeaderboardEntryDisplay entryDisplay = new LeaderboardEntryDisplay(completionTime);
       Entity uiEntity = new Entity().addComponent(entryDisplay);
       ServiceLocator.getEntityService().register(uiEntity);
 

@@ -47,12 +47,8 @@ public class LeaderboardComponent {
     );
   }
 
-  public void updateLeaderboard(String name, long time, boolean force) {
-    leaderboard.compute(name, (k, v) -> ((force || null == v) ? time : Math.min(v, time)));
+  public void updateLeaderboard(String name, long time) {
+    leaderboard.compute(name, (k, v) -> ((null == v) ? time : Math.min(v, time)));
     writeData();
-  }
-
-  public void updateLeaderboard(String name, long score) {
-    updateLeaderboard(name, score, false);
   }
 }

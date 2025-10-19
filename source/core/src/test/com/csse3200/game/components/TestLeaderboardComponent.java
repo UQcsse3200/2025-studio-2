@@ -63,12 +63,6 @@ class TestLeaderboardComponent {
   }
 
   @Test
-  void testTimeSavesByForce() {
-    leaderboardComponent.updateLeaderboard("1", 150000, true);
-    assertEquals(150000L, leaderboardComponent.getData().get("1"));
-  }
-
-  @Test
   void testWriteData() throws Exception {
     Map<String, Long> baseTimes = getBaseTimes();
     baseTimes.put("6", 150000L);
