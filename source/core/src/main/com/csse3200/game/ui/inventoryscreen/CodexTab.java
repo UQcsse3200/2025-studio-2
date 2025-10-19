@@ -5,11 +5,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane.ScrollPaneStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.services.CodexEntry;
@@ -74,7 +71,21 @@ public class CodexTab implements InventoryTabInterface {
         // Add scroll pane and title to table holder
         float canvasH = Gdx.graphics.getHeight() * (3f / 7f);
         float canvasW = Gdx.graphics.getWidth() * (2f / 5f);
-        tableHolder.add(new Label("Codex", skin)).pad(20f);
+        int unlocked = ServiceLocator.getCodexService().getUnlockedCount();
+        int total = ServiceLocator.getCodexService().getEntries(false).size();
+
+        // Create title/counter stack
+        Table titleHolder = new Table();
+
+        // Title
+        titleHolder.add(new Label("Codex Entries", skin, "title")).pad(30f);
+        // Space between title/counter
+        titleHolder.add().growX();
+        // Counter
+        titleHolder.add(new Label(unlocked + "/" + total, skin, "title")).pad(30f);
+
+        // Create title + contents
+        tableHolder.add(titleHolder).growX();
         tableHolder.row();
         tableHolder.add(scrollPane).width(canvasW).height(canvasH);
 
@@ -156,7 +167,7 @@ public class CodexTab implements InventoryTabInterface {
 
         // Add some text if user has not found any entries yet
         if (ServiceLocator.getCodexService().getEntries(true).isEmpty()) {
-            logicalTable.add(new Label("No entries found yet.", skin)).left().pad(20f).fillX().expandX();
+            logicalTable.add(new Label("No entries found yet.", skin)).left().pad(15f).fillX().expandX();
             logicalTable.row();
         }
     }
