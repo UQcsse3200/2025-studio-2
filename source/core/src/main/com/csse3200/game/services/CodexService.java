@@ -21,7 +21,7 @@ public class CodexService implements Disposable {
     /**
      * Map that maps an entry title to an entry content's (text, unlock status)
      */
-    private final Map<String, CodexEntry> entries = new LinkedHashMap<>();
+    private final Map<String, CodexEntry> entries = new HashMap<>();
     /**
      * A counter for the number of entries that have been unlocked
      */
@@ -60,7 +60,9 @@ public class CodexService implements Disposable {
     }
 
     /**
-     * Returns all unlocked entries currently stored by the service as an array list.
+     * Returns all unlocked entries currently stored by the service as an array list. This
+     * list is sorted by the collection order of entries (new entries collected appear at end
+     * of list).
      *
      * @param unlockedOnly Flag for filtering any codex entries which have not been unlocked.
      * @return All unlocked entries stored by service as an array list.
