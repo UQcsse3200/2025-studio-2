@@ -7,6 +7,7 @@ import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -276,7 +277,7 @@ public final class Spawners {
         SpawnRegistry.register("enemy", a -> {
             // get patrol
             Vector2[] patrolRoute;
-            if (a.dx != 0 || a.dy != 0) {
+            if (a.extra.isBlank()) {
                 patrolRoute = new Vector2[] {new Vector2(a.x / 2f, a.y / 2f), new Vector2(a.dx / 2f, a.dy / 2f)};
             } else {
                 String[] patrolPts = a.extra.split(";");
@@ -296,6 +297,7 @@ public final class Spawners {
 
             Entity enemy = switch (subtype) {
                 case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
+                case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(player, new Vector2(a.x, a.y)).addComponent(new ActivationComponent(a.id));
                 case null, default -> EnemyFactory.createPatrollingDrone(player, patrolRoute);
             };
 
