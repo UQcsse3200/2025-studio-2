@@ -39,7 +39,7 @@ public class PlayerAnimationTest {
                 .addComponent(animator)
                 .addComponent(actions);
 
-        controller = new PlayerAnimationController();
+        controller = new PlayerAnimationController(new PlayerActions());
         player.addComponent(controller);
 
         controller.create();

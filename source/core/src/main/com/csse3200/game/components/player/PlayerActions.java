@@ -35,7 +35,7 @@ public class PlayerActions extends Component {
   private static Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-  private static final float   SPRINT_MULT = 2.3f;
+  private static final float SPRINT_MULT = 2.3f;
 
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 20f;
