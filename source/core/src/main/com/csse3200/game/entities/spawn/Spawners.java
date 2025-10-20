@@ -2,6 +2,7 @@ package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
@@ -209,6 +210,16 @@ public final class Spawners {
             if (a.subtype == null) a.subtype = "standard";
             Entity button = ButtonFactory.createButton(false, a.subtype, a.direction);
 
+            if (a.extra != null) {
+                // link to button manager
+                Entity target = ServiceLocator.getEntityService().getEntityById(a.extra);
+                ButtonManagerComponent manager = target.getComponent(ButtonManagerComponent.class);
+                ButtonComponent buttonComp =  button.getComponent(ButtonComponent.class);
+
+                buttonComp.setPuzzleManager(manager);
+                manager.addButton(buttonComp);
+            }
+
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
 
@@ -228,6 +239,14 @@ public final class Spawners {
             addIdentifier(button, String.valueOf(a.id));
 
             return button;
+        });
+
+        // --- Button Manager ---
+        SpawnRegistry.register("button_manager", a -> {
+            Entity manager = new Entity().addComponent(new ButtonManagerComponent());
+
+            addIdentifier(manager, String.valueOf(a.id));
+            return manager;
         });
 
         // --- Laser Detector ---
