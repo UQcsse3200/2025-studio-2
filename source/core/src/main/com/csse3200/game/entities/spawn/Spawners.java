@@ -277,7 +277,7 @@ public final class Spawners {
         SpawnRegistry.register("enemy", a -> {
             // get patrol
             Vector2[] patrolRoute;
-            if (a.extra.isBlank()) {
+            if (a.extra == null || a.extra.isBlank()) {
                 patrolRoute = new Vector2[] {new Vector2(a.x / 2f, a.y / 2f), new Vector2(a.dx / 2f, a.dy / 2f)};
             } else {
                 String[] patrolPts = a.extra.split(";");

@@ -263,7 +263,7 @@ public class MainGameScreen extends ScreenAdapter {
       case TUTORIAL ->  new TutorialGameArea(terrainFactory);
       case LEVEL_ONE -> new LevelOneNewGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
-      case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
+      case LEVEL_TWO -> new LevelTwoNewGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
       case LEVEL_THREE -> new LevelThreeGameArea(terrainFactory);

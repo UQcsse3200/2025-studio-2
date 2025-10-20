@@ -16,10 +16,12 @@
 ,
   "entities": [
     {"type": "sign_post","id": "down","x": 76,"y": 4,"direction": "down","centerX": true,"centerY": false,"tooltip": "If only there was a way you could become shorter..."},
+
     {"type": "floor","subtype": "ground","x": 0,"y": 0,"sx": 5,"sy": 2,"centerX": false,"centerY": false},
     {"type": "floor","subtype": "ground","x": 25,"y": 0,"sx": 37.5,"sy": 2,"centerX": false,"centerY": false},
     {"type": "floor","subtype": "static_floor","x": 0,"y": 20,"sx": 42,"sy": 2,"centerX": false,"centerY": false},
     {"type": "floor","subtype": "static_floor","x": 16,"y": 40,"sx": 42,"sy": 2,"centerX": false,"centerY": false},
+
     {"type": "platform","subtype": "static_platform","x": 93,"y": 6,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 90,"y": 10,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 93,"y": 15,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
@@ -48,7 +50,9 @@
     {"type": "platform","subtype": "volatile","x": 25,"y": 48,"sx": 2,"sy": 0.5,"speed": 2,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "volatile","x": 21,"y": 53,"sx": 2,"sy": 0.5,"speed": 2,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "volatile","x": 25,"y": 58,"sx": 2,"sy": 0.5,"speed": 2,"centerX": false,"centerY": false},
+
     {"type": "death_zone","x": 5,"y": 0,"centerX": true,"centerY": true},
+
     {"type": "wall","x": 80,"y": 5,"sx": 2,"sy": 7.5,"centerX": false,"centerY": false},
     {"type": "wall","x": 54,"y": 24,"sx": 2,"sy": 6,"centerX": false,"centerY": false},
     {"type": "wall","x": 33,"y": 44,"sx": 2,"sy": 8,"centerX": false,"centerY": false},
@@ -56,7 +60,9 @@
     {"type": "wall","x": 59,"y": 44,"sx": 2,"sy": 5,"centerX": false,"centerY": false},
     {"type": "wall","x": 72,"y": 44,"sx": 2,"sy": 3.5,"centerX": false,"centerY": false},
     {"type": "wall","x": 85,"y": 44,"sx": 2,"sy": 2,"centerX": false,"centerY": false},
+
     {"type": "door","subtype": "transition","id": "key:door","x": 98,"y": 45,"sx": 1,"sy": 2,"target": "CUTSCENE_TWO","centerX": true,"centerY": true},
+
     {"type": "trap","x": 59,"y": 24,"rotation": 0,"safeX": 41,"safeY": 12,"centerX": true,"centerY": true},
     {"type": "trap","x": 60,"y": 24,"rotation": 0,"safeX": 41,"safeY": 12,"centerX": true,"centerY": true},
     {"type": "trap","x": 61,"y": 24,"rotation": 0,"safeX": 41,"safeY": 12,"centerX": true,"centerY": true},
@@ -99,36 +105,48 @@
     {"type": "trap","x": 43,"y": 24,"rotation": 0,"safeX": 23,"safeY": 17,"centerX": true,"centerY": true},
     {"type": "trap","x": 44,"y": 24,"rotation": 0,"safeX": 23,"safeY": 17,"centerX": true,"centerY": true},
     {"type": "trap","x": 45,"y": 24,"rotation": 0,"safeX": 23,"safeY": 17,"centerX": true,"centerY": true},
+
     {"type": "collectable","subtype": "potion","x": 95,"y": 24,"target": "health"},
     {"type": "collectable","subtype": "potion","x": 16,"y": 26,"target": "health"},
     {"type": "collectable","subtype": "potion","x": 80,"y": 52,"target": "health"},
+
     {"type": "tutorial","subtype": "dash","x": 14,"y": 8},
+
     {"type": "collectable","subtype": "misc","x": 61,"y": 65,"target": "hardware"},
     {"type": "collectable","subtype": "misc","x": 95,"y": 36,"target": "hardware"},
     {"type": "collectable","subtype": "misc","x": 17,"y": 1,"target": "hardware"},
-    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_1","x": 15,"y": 15,"extra": "15,15;30,15"},
-    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_2","x": 52,"y": 60,"extra": "52,60;60,58"},
-    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_3","x": 65,"y": 60,"extra": "65,60;75,58"},
-    {"type": "collectable","subtype": "key","id": "key","x": 93,"y": 50,"target": "door"},
-    {"type": "terminal","id": "test3","x": 7,"y": 63},
-    {"type": "terminal","id": "test4","x": 44,"y": 44},
-    {"type": "enemy","subtype": "self_destruct","id": 1,"x": 40,"y": 15},
+
     {"type": "camera","id": 1,"x": 34,"y": 19,"speed": 25,"rotation": 0},
     {"type": "camera","id": 2,"x": 83,"y": 39,"speed": 25,"rotation": 0},
     {"type": "camera","subtype": "static","id": 3,"x": 75,"y": 65,"direction": "-135","range": 25,"rotation": 0},
+
+    {"type": "collectable","subtype": "key","id": "key","x": 93,"y": 50,"target": "door"},
+
+    {"type": "terminal","id": "test3","x": 7,"y": 63},
+    {"type": "terminal","id": "test4","x": 44,"y": 44},
+
+    {"type": "enemy","subtype": "self_destruct","id": 1,"x": 40,"y": 15},
+    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_1","x": 15,"y": 15,"extra": "15,15;30,15"},
+    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_2","x": 52,"y": 60,"extra": "52,60;60,58"},
+    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_3","x": 65,"y": 60,"extra": "65,60;75,58"},
+
     {"type": "objective","id": "door","x": 1,"y": 3,"sx": 2,"sy": 2},
     {"type": "objective","id": "keycard","x": 1,"y": 3,"sx": 2,"sy": 2},
+
     {"type": "button","subtype": "door","x": 0,"y": 58,"direction": "right","target": "key","tooltip": "Key Button\nPress E to Interact"},
+
     {"type": "pressure_plate","subtype": "normal","id": "volatile_platform","x": 18,"y": 44,"tooltip": "Platform Plate\nPress to reveal platform"},
+
     {"type": "platform","subtype": "plate","x": 10,"y": 48,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
-    {"type": "platform","subtype": "moving","id": "platform_one","x": 45,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_two","x": 38,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_three","x": 31,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_four","x": 24,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_five","x": 45,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_six","x": 38,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_seven","x": 31,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "moving","id": "platform_eight","x": 24,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "moving","id": "platform_one","x": 45,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_two","x": 38,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_three","x": 31,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_four","x": 24,"y": 26,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": 3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_five","x": 45,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_six","x": 38,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_seven","x": 31,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": true,"centerY": true},
+    {"type": "platform","subtype": "moving","id": "platform_eight","x": 24,"y": 39,"sx": 1,"sy": 0.5,"speed": 4,"dx": 0,"dy": -3,"centerX": true,"centerY": true},
+
     {"type": "trap","x": 45,"y": 27,"rotation": 0,"linked": "platform_one","safeX": 23,"safeY": 17,"centerX": true,"centerY": true},
     {"type": "trap","x": 38,"y": 27,"rotation": 0,"linked": "platform_two","safeX": 23,"safeY": 17,"centerX": true,"centerY": true},
     {"type": "trap","x": 31,"y": 27,"rotation": 0,"linked": "platform_three","safeX": 23,"safeY": 17,"centerX": true,"centerY": true},
