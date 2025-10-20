@@ -42,7 +42,7 @@ public class LeaderboardComponent {
             .entrySet()
             .stream()
             .map(entry -> "\t\"" + entry.getKey() + "\": " + entry.getValue())
-            .reduce((str, current) -> str + ",\n" + current).orElse("{}") + "\n}",
+            .reduce((str, current) -> str + ",\n" + current).orElse("") + "\n}",
         false
     );
   }
