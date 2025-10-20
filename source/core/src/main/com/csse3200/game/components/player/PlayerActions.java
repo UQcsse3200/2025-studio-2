@@ -35,7 +35,7 @@ public class PlayerActions extends Component {
   private static Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-  private static final float   SPRINT_MULT = 2.3f;
+  private static final float SPRINT_MULT = 2.3f;
 
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 20f;
@@ -66,6 +66,7 @@ public class PlayerActions extends Component {
   private int jetpackFuel = FUEL_CAPACITY;
   private boolean isJetpackOn = false;
   private boolean isGliding = false;
+  private boolean hasActivatedJetpack;
 
   private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
           "sounds/jetpacksound.mp3", Sound.class);
@@ -136,8 +137,12 @@ public class PlayerActions extends Component {
     if (isJetpackOn) {
       jetpackFuel--;
       body.setGravityScale(0f); //for impulse to act upwards
+         entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     } else if (jetpackFuel < FUEL_CAPACITY) {
-      jetpackFuel++;
+        if (!hasActivatedJetpack) {
+            jetpackFuel++;
+            entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
+        }
     }
 
     if (!isJetpackOn && !isGliding) {
@@ -287,6 +292,7 @@ public class PlayerActions extends Component {
   public void onLand() {
     isJumping = false;
     isDoubleJump = false;
+    hasActivatedJetpack = false;
 
 //    Sound interactSound = ServiceLocator.getResourceService().getAsset(
 //            "sounds/thudsound.mp3", Sound.class);
@@ -373,9 +379,12 @@ public class PlayerActions extends Component {
    * Used to activate the jetpack upgrade for the player - allows for upwards movement
    */
   private void jetpackOn() {
-    isJetpackOn = true;
-    isJumping = true;
-    jetpackSound.loop(UserSettings.get().masterVolume);
+
+          isJetpackOn = true;
+          isJumping = true;
+          hasActivatedJetpack = true;
+          jetpackSound.loop(UserSettings.get().masterVolume);
+
   }
 
   /**
@@ -408,15 +417,18 @@ public class PlayerActions extends Component {
   /**
    * Makes the player crouch
    */
-  void crouch() {
+  public void crouch() {
     StandingColliderComponent standing = entity.getComponent(StandingColliderComponent.class);
     CrouchingColliderComponent crouch =
             entity.getComponent(CrouchingColliderComponent.class);
+      System.out.println(11);
     if (crouching) {
+        System.out.println(22);
       crouching = false;
       standing.getFixtureRef().setSensor(false);
       crouch.getFixtureRef().setSensor(true);
     } else {
+        System.out.println(33);
       crouching = true;
       standing.getFixtureRef().setSensor(true);
       crouch.getFixtureRef().setSensor(false);

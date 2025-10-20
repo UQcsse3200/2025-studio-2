@@ -15,6 +15,7 @@ public class PlayerAnimationController extends Component {
     AnimationRenderComponent animator;
     PlayerActions actions;
     private GameTime timer = new GameTime();
+    private PlayerActions playerActions;
 
     // ChatGPT Basic model helped with testing the timer 17/09/25
     public java.util.function.BiConsumer<Runnable, Float> scheduleTask = (runnable, delay) -> Timer.schedule(new Timer.Task() {
@@ -28,9 +29,14 @@ public class PlayerAnimationController extends Component {
 
     private int xDirection = 1;
     private long hurtTime = -1000;
-    private float hurtDelay = 0.5f;
+    private float hurtDelay = 0.3f;
     private float dashDelay = 0.3f;
     private float jumpDelay = 0.8f;
+
+    public PlayerAnimationController(PlayerActions playerActions) {
+        super();
+        this.playerActions = playerActions;
+    }
 
     @Override
     public void create() {
@@ -40,7 +46,6 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("jump", this::animateJump);
         entity.getEvents().addListener("walk", this::animateWalk);
         entity.getEvents().addListener("crouch", this::animateCrouching);
-        entity.getEvents().addListener("landed", this::animateStop);
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
         entity.getEvents().addListener("hurt", this::animateHurt);
@@ -81,12 +86,12 @@ public class PlayerAnimationController extends Component {
             setAnimation("JUMP");
 
             // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLE"), jumpDelay);
+            scheduleTask.accept(this::revertAnimation, jumpDelay);
         } else if (xDirection == -1) {
             setAnimation("JUMPLEFT");
 
             // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLELEFT"), jumpDelay);
+            scheduleTask.accept(this::revertAnimation, jumpDelay);
         }
 
     }
@@ -116,13 +121,16 @@ public class PlayerAnimationController extends Component {
      * starts the player's crouching animation
      */
     public void animateCrouching() {
+        System.out.println(1);
         if (actions.getIsCrouching()) {
+            System.out.println(2);
             if (xDirection == 1) {
                 setAnimation("CROUCH");
             } else if (xDirection == -1) {
                 setAnimation("CROUCHLEFT");
             }
         } else {
+            System.out.println(3);
             if (xDirection == 1) {
                 setAnimation("IDLE");
             } else if (xDirection == -1) {
@@ -134,9 +142,48 @@ public class PlayerAnimationController extends Component {
     /**
      * setAnimation: to avoid repeated startup of the same animations
      */
+    public void revertAnimation() {
+        String animationName;
+        boolean stationary = playerActions.getWalkDirection().equals(Vector2.Zero.cpy());
+
+        if (xDirection == 1) { // Facing Right
+            if (actions.getIsCrouching()) {
+                animationName = "CROUCH";
+                System.out.println(1);
+            } else if (stationary) {
+                animationName = "IDLE";
+                System.out.println(2);
+            } else {
+                animationName = "RIGHT";
+                System.out.println(3);
+            }
+        } else { // Facing Left
+            if (actions.getIsCrouching()) {
+                animationName = "CROUCHLEFT";
+                System.out.println(4);
+            } else if (stationary) {
+                animationName = "IDLELEFT";
+                System.out.println(5);
+            } else {
+                animationName = "LEFT";
+                System.out.println(6);
+            }
+        }
+
+        // Don't cancel hurt animation
+        if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
+            animator.startAnimation(animationName);
+            currentAnimation = animationName;
+        }
+    }
+
+    /**
+     * setAnimation: to avoid repeated startup of the same animations
+     */
     public void setAnimation(String animationName) {
         // Don't cancel hurt animation
         if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
+            System.out.println(animationName);
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
@@ -146,14 +193,16 @@ public class PlayerAnimationController extends Component {
      * starts the player's dash animation
      */
     public void animateDash() {
-        if (xDirection == 1) {
-            setAnimation("DASH");
-            // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);
-        } else {
-            setAnimation("DASHLEFT");
-            // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLELEFT"), hurtDelay);
+        if (!playerActions.getIsCrouching()) {
+            if (xDirection == 1) {
+                setAnimation("DASH");
+                // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
+                scheduleTask.accept(this::revertAnimation, dashDelay);
+            } else {
+                setAnimation("DASHLEFT");
+                // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
+                scheduleTask.accept(this::revertAnimation, hurtDelay);
+            }
         }
     }
 
@@ -168,13 +217,17 @@ public class PlayerAnimationController extends Component {
         if (xDirection == 1) {
             setAnimation("HURT");
             // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLE"), hurtDelay);
+            scheduleTask.accept(this::revertAnimation, hurtDelay);
         } else {
             setAnimation("HURTLEFT");
             // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLELEFT"), hurtDelay);
+            scheduleTask.accept(this::revertAnimation, hurtDelay);
         }
         hurtTime = timer.getTime();
 
+    }
+
+    public void setXDirection(int i) {
+        xDirection = i;
     }
 }

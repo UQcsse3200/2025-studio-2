@@ -17,6 +17,7 @@ import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.achievements.AchievementService;
+import net.dermetfan.gdx.physics.box2d.PositionController;
 
 import java.util.List;
 
@@ -58,6 +59,8 @@ public final class PlayerFactory {
         animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
 
+        PlayerActions playerActions = new PlayerActions();
+
         Entity player = new Entity()
                 .addComponent(new PhysicsComponent())
                 .addComponent(new StandingColliderComponent())
@@ -65,7 +68,7 @@ public final class PlayerFactory {
                 .addComponent(new FootColliderComponent())
                 .addComponent(new ColliderComponent()) // Interactions
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
-                .addComponent(new PlayerActions())
+                .addComponent(playerActions)
                 .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
                 .addComponent(new InventoryComponent())
                 .addComponent(input)
@@ -76,7 +79,7 @@ public final class PlayerFactory {
                 .addComponent(new PlayerDeathEffectComponent())
                 .addComponent(new MinimapComponent("images/minimap_player_marker.png"))
                 .addComponent(animator)
-                .addComponent(new PlayerAnimationController());
+                .addComponent(new PlayerAnimationController(playerActions));
         // Stamina + sprint wiring
         StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
         player.addComponent(stamina);
