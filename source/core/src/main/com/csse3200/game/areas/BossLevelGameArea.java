@@ -94,7 +94,6 @@ public class BossLevelGameArea extends GameArea {
             "sounds/deathsound.mp3",
             "sounds/explosion.mp3",
             "sounds/hurt.mp3",
-//            "sounds/interactsound.mp3",
             "sounds/jetpacksound.mp3",
             "sounds/thudsound.mp3",
             "sounds/walksound.mp3",
@@ -103,7 +102,7 @@ public class BossLevelGameArea extends GameArea {
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
-            "images/drone.atlas", // <---
+            "images/drone.atlas",
             "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",

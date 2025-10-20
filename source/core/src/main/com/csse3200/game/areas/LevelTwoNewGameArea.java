@@ -2,7 +2,7 @@ package com.csse3200.game.areas;
 
 import com.csse3200.game.areas.terrain.TerrainFactory;
 
-public class LevelTwoNewGameArea extends BaseLevelGameArea{
+public final class LevelTwoNewGameArea extends BaseLevelGameArea{
     public LevelTwoNewGameArea(TerrainFactory tf) { super(tf); }
 
     @Override protected String configPath() { return "levels/level-two/config.json"; }
