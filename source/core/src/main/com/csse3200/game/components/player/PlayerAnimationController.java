@@ -40,7 +40,6 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("jump", this::animateJump);
         entity.getEvents().addListener("walk", this::animateWalk);
         entity.getEvents().addListener("crouch", this::animateCrouching);
-        entity.getEvents().addListener("landed", this::animateStop);
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
         entity.getEvents().addListener("hurt", this::animateHurt);
