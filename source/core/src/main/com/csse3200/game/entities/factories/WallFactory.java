@@ -64,6 +64,6 @@ public class WallFactory {
             .addComponent(new PhysicsComponent())
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
     wall.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
-d    return wall;
+    return wall;
   }
 }
