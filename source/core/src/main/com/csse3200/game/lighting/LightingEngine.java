@@ -4,6 +4,9 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.files.UserSettings;
+
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 
 /**
  * Processes lighting components using the Box2DLight library. Sets up the ray handler that is responsible
@@ -13,7 +16,7 @@ public class LightingEngine implements Disposable {
     private final RayHandler rayHandler;
     private final CameraComponent camera;
 
-    private float ambientLight = LightingDefaults.AMBIENT_LIGHT;
+    private float ambientLight = UserSettings.get().brightnessValue;
 
     /**
      * Constructor method for the lighting engine. This is where some of the rayHandler's
@@ -48,6 +51,7 @@ public class LightingEngine implements Disposable {
 
     public void setAmbientLight(float ambientLight) {
         this.ambientLight = ambientLight;
+        rayHandler.setAmbientLight(ambientLight);
     }
 
     /**

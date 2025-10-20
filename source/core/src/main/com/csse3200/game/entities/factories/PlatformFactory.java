@@ -47,8 +47,7 @@ public class PlatformFactory {
     Entity platform = new Entity()
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
-        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-        .addComponent(new MinimapComponent("images/platform.png"));
+        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
@@ -68,8 +67,7 @@ public class PlatformFactory {
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
         .addComponent(collider)
-        .addComponent(new MovingPlatformComponent(offsetWorld, speed))
-        .addComponent(new MinimapComponent("images/platform.png"));
+        .addComponent(new MovingPlatformComponent(offsetWorld, speed));
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
     return platform;
@@ -87,8 +85,7 @@ public class PlatformFactory {
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-        .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed))
-        .addComponent(new MinimapComponent("images/platform.png"));
+        .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
     return platform;
@@ -145,8 +142,7 @@ public class PlatformFactory {
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
             .addComponent(new VolatilePlatformComponent(lifetime, respawnDelay))
             .addComponent(new VolatilePlatformAnimationController())
-            .addComponent(animator)
-            .addComponent(new MinimapComponent("images/platform.png"));
+            .addComponent(animator);
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
@@ -163,8 +159,7 @@ public class PlatformFactory {
             .addComponent(new TextureRenderComponent("images/empty.png"))
             .addComponent(new PhysicsComponent())
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-            .addComponent(new VolatilePlatformComponent(0f, 0f))
-            .addComponent(new MinimapComponent("images/platform.png"));
+            .addComponent(new VolatilePlatformComponent(0f, 0f));
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
   }
