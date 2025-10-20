@@ -261,7 +261,7 @@ public class MainGameScreen extends ScreenAdapter {
     lvlStartTime = gameTime.getTime();
     return switch (area) {
       case TUTORIAL ->  new TutorialGameArea(terrainFactory);
-      case LEVEL_ONE -> new LevelOneNewGameArea(terrainFactory);
+      case LEVEL_ONE -> new BossLevelNewGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
       case LEVEL_TWO -> new LevelTwoNewGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");

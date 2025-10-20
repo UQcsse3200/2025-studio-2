@@ -31,7 +31,7 @@
     {"type": "platform","subtype": "static_platform","x": 8,"y": 35,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 5,"y": 39,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 5,"y": 52,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
-    {"type": "platform","subtype": "static_platform","x": 0,"y": 55,"sx": 2,"sy": 1,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 0,"y": 56,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 34,"y": 47,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 41,"y": 52,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 47,"y": 50,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
