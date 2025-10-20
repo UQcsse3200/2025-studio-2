@@ -85,7 +85,9 @@
     "images/surfacelevel/1.png",
     "images/surfacelevel/2.png",
     "images/surfacelevel/3.png",
-    "images/surfacelevel/4.png"
+    "images/surfacelevel/4.png",
+    "images/terminal_on.png",
+    "images/terminal_off.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",

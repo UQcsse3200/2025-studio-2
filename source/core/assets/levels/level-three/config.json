@@ -54,6 +54,9 @@
     { "type": "button", "direction": "left", "target": "laser", "x": 23, "y": 52, "tooltip": "Press button to turn on/off the super secure laser"},
 
     { "type":  "enemy", "x": 6, "y": 11, "dy": 22, "dx": 19 },
-    { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false}
+    { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false},
+
+    {"type": "terminal","id": "test4","x": 46,"y": 4},
+    {"type": "terminal","id": "test5","x": 4,"y": 46}
   ]
 }
