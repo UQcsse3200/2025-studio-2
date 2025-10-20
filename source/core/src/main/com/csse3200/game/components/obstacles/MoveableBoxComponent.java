@@ -33,7 +33,7 @@ public class MoveableBoxComponent extends Component {
     private static final float CARRY_GAIN = 18f; // how aggressively it homes
     private static final float CARRY_MAX_SPEED = 10f; // homing speed cap
     private static final float MAX_ANG_SPEED = 10f;
-    private float BASE_GRAVITY_SCALE = 0.75f;
+    private float baseGravityScale = 0.75f;
     private static final float BASE_LINEAR_DAMPING = 1.5f;
 
     private Entity player;
@@ -73,7 +73,7 @@ public class MoveableBoxComponent extends Component {
     }
 
     public void setBaseGravityScale(float gravityScale) {
-        this.BASE_GRAVITY_SCALE = gravityScale;
+        this.baseGravityScale = gravityScale;
     }
 
     @Override
@@ -95,7 +95,7 @@ public class MoveableBoxComponent extends Component {
             throw new IllegalStateException("Texture component is null");
         }
 
-        boxPhysics.getBody().setGravityScale(BASE_GRAVITY_SCALE);
+        boxPhysics.getBody().setGravityScale(baseGravityScale);
         boxTexture.setOrigin(0f, 0f);
         initPos.set(entity.getPosition());
 
@@ -218,16 +218,14 @@ public class MoveableBoxComponent extends Component {
             }
 
             body.setAngularVelocity(0f);
-            //body.setLinearVelocity(0f, 0f);
 
             resetPos(body);
 
             // restore
-            body.setGravityScale(BASE_GRAVITY_SCALE);
+            body.setGravityScale(baseGravityScale);
             body.setFixedRotation(savedFixedRotation);
             body.setBullet(savedBullet);
             body.setLinearDamping(BASE_LINEAR_DAMPING);
-            //boxPhysics.getBody().setTransform(boxPhysics.getBody().getPosition(), 0);
         }
         toggleFilter();
     }
@@ -293,7 +291,7 @@ public class MoveableBoxComponent extends Component {
             if (boxCollider.getFixture() == null) return;
 
             Filter f = boxCollider.getFixture().getFilterData();
-            f.categoryBits = (short) physicsLayer;
+            f.categoryBits = physicsLayer;
             f.maskBits = (short) (PhysicsLayer.OBSTACLE
                                 | PhysicsLayer.PLAYER
                                 | PhysicsLayer.NPC
@@ -396,7 +394,6 @@ public class MoveableBoxComponent extends Component {
         float currentAng = body.getAngle();
         float deltaAng = MathUtils.atan2(MathUtils.sin(targetAngle - currentAng),
                                          MathUtils.cos(targetAngle - currentAng));
-        //float angVel = 10f * deltaAng - 2f * body.getAngularVelocity();
         float angVel = (Math.abs(deltaAng) < 1e-2f) ? 0f : deltaAng * 10f;
         angVel = MathUtils.clamp(angVel, -MAX_ANG_SPEED, MAX_ANG_SPEED);
 

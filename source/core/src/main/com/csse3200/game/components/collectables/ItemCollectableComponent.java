@@ -1,20 +1,19 @@
 package com.csse3200.game.components.collectables;
 
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.utils.CollectablesSave;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemCollectableComponent extends CollectableComponent {
+    private static final Logger logger = LoggerFactory.getLogger(ItemCollectableComponent.class);
+
     private int count;
-    private int level;
-    private GameArea gameArea;
     private Vector2[] collected = new Vector2[9];
 
-    public ItemCollectableComponent(GameArea gameArea) {
-        this.gameArea = gameArea;
-        //this.level = level;
-        initialiseCollected();
+    public ItemCollectableComponent() {
+      initialiseCollected();
     }
 
     private void initialiseCollected() {
@@ -30,19 +29,11 @@ public class ItemCollectableComponent extends CollectableComponent {
             CollectablesSave.incrementCollectedCount();
             count = CollectablesSave.getCollectedCount();
         }
-        System.out.println(this.entity.getPosition());
-        System.out.println("CollectablesSave.getCollectedCount() = " + count);
-        System.out.println("CollectablesSave.getCollectedCount() = " + count);
-        //spawnCollectable(new Vector2(33.5f, -1.5f));
-        //spawnCollectable(new Vector2(0f, 23f));
-        //spawnCollectable(new Vector2(39.5f, 30f));
-
-        //spawnCollectable(new Vector2(30.5f, 32.75f));
-        //spawnCollectable(new Vector2(47.5f, 18f));
-        //spawnCollectable(new Vector2(8.5f, 0.4f));
+        logger.debug("{}", this.entity.getPosition());
+        logger.info("CollectablesSave.getCollectedCount() = {}", count);
+        logger.info("CollectablesSave.getCollectedCount() = {}", count);
 
         collector.getEvents().trigger("updateCollectables", count);
-        //CollectablesSave.resetCollectedCount();
         return true;
     }
 

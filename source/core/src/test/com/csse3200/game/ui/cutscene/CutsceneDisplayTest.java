@@ -94,7 +94,7 @@ public class CutsceneDisplayTest {
         verify(stage, atLeastOnce()).addActor(captor.capture());
 
         // Ensure at least one of them is a Stack
-        boolean hasStack = captor.getAllValues().stream().anyMatch(a -> a instanceof Stack);
+        boolean hasStack = captor.getAllValues().stream().anyMatch(Stack.class::isInstance);
         assertTrue(hasStack, "Expected a Stack to be added to the stage");
     }
 
@@ -109,7 +109,7 @@ public class CutsceneDisplayTest {
 
         // Find the Stack in the captured actors
         Actor ui = captor.getAllValues().stream()
-                .filter(a -> a instanceof Stack)
+                .filter(Stack.class::isInstance)
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("No Stack found in stage actors"));
 
@@ -132,8 +132,8 @@ public class CutsceneDisplayTest {
         assertTrue(listenerFired);
 
         // Verify that both backgrounds were requested at least once
-        verify(resourceService, atLeastOnce()).getAsset(eq("images/test1.png"), eq(Texture.class));
-        verify(resourceService, atLeastOnce()).getAsset(eq("images/test2.png"), eq(Texture.class));
+        verify(resourceService, atLeastOnce()).getAsset("images/test1.png", Texture.class);
+        verify(resourceService, atLeastOnce()).getAsset("images/test2.png", Texture.class);
     }
 
     @Test
@@ -147,7 +147,7 @@ public class CutsceneDisplayTest {
 
         // Find the Stack in the captured actors
         Actor ui = captor.getAllValues().stream()
-                .filter(a -> a instanceof Stack)
+                .filter(Stack.class::isInstance)
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("No Stack found in stage actors"));
 

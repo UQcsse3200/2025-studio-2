@@ -35,6 +35,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private Array<Entity> ladders = null;
 
     private Boolean onLadder = false;
+    
+    private static final String PLAYER_UP = "PlayerUp";
+    private static final String PLAYER_DOWN = "PlayerDown";
 
     public KeyboardPlayerInputComponent() {
         super(5);
@@ -100,8 +103,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         // Sprint: TAB (and optionally a Keymap binding named "PlayerSprint")
         else if (keycode == Keys.TAB || keycode == Keymap.getActionKeyCode("PlayerSprint")) {
             entity.getEvents().trigger("sprintStart");
-        } else if (keycode == Keymap.getActionKeyCode("PlayerUp")) {
-            CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, Keymap.getActionKeyCode("PlayerUp"));
+        } else if (keycode == Keymap.getActionKeyCode(PLAYER_UP)) {
+            CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, Keymap.getActionKeyCode(PLAYER_UP));
             cheatPosition++;
 
             //Only moves the player up if they are in front of a ladder.
@@ -120,8 +123,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
                     triggerWalkEvent();
                 }
             }
-        } else if (keycode == Keymap.getActionKeyCode("PlayerDown")) {
-            CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, Keymap.getActionKeyCode("PlayerDown"));
+        } else if (keycode == Keymap.getActionKeyCode(PLAYER_DOWN)) {
+            CHEAT_INPUT_HISTORY = addToCheatHistory(CHEAT_INPUT_HISTORY, cheatPosition, Keymap.getActionKeyCode(PLAYER_DOWN));
             cheatPosition++;
 
             //Only moves the player down if they are in front of a ladder.
@@ -180,7 +183,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         } else if (keycode == Keymap.getActionKeyCode("PlayerRight")) {
             walkDirection.sub(Vector2Utils.RIGHT);
             triggerWalkEvent();
-        } else if (keycode == Keymap.getActionKeyCode("PlayerUp")) {
+        } else if (keycode == Keymap.getActionKeyCode(PLAYER_UP)) {
             if (inFrontOfLadder(findLadders())) {
                 //walkDirection.setZero();
                 walkDirection.sub(Vector2Utils.UP);
@@ -197,7 +200,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
                     triggerWalkEvent();
                 }
             }
-        } else if (keycode == Keymap.getActionKeyCode("PlayerDown")) {
+        } else if (keycode == Keymap.getActionKeyCode(PLAYER_DOWN)) {
             if (inFrontOfLadder(this.ladders)) {
                 //walkDirection.setZero();
                 walkDirection.sub(Vector2Utils.DOWN);
@@ -238,7 +241,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (walkDirection.epsilonEquals(Vector2.Zero)) {
             entity.getEvents().trigger("walkStop");
         } else {
-            if (!cheatsOn && !onLadder && Math.abs(walkDirection.y) > 0f) {
+            if (Boolean.TRUE.equals(!cheatsOn && !onLadder) && Math.abs(walkDirection.y) > 0f) {
                 walkDirection.y = 0f;
             }
             entity.getEvents().trigger("walk", walkDirection);
@@ -310,7 +313,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
 
     private void enableCheats() {
-        if (Arrays.equals(CHEAT_INPUT_HISTORY, new int[]{Keymap.getActionKeyCode("PlayerUp"), Keymap.getActionKeyCode("PlayerUp"), Keymap.getActionKeyCode("PlayerDown"), Keymap.getActionKeyCode("PlayerUp")})) {
+        if (Arrays.equals(CHEAT_INPUT_HISTORY, new int[]{Keymap.getActionKeyCode(PLAYER_UP), Keymap.getActionKeyCode(PLAYER_UP), Keymap.getActionKeyCode(PLAYER_DOWN), Keymap.getActionKeyCode(PLAYER_UP)})) {
             cheatsOn = !cheatsOn;
             entity.getEvents().trigger("gravityForPlayerOff");
         }

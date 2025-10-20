@@ -121,10 +121,7 @@ public class DoorComponent extends Component {
      * Player exits door collider.
      */
     private void onCollisionEnd(Entity other) {
-        if (other == null) return;
-
-        HitboxComponent cc = other.getComponent(HitboxComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
+        // Nothing to do.
     }
 
     /**

@@ -1134,7 +1134,7 @@ public class LevelOneGameArea extends GameArea {
             .addComponent(new TextureRenderComponent(texture))
             .addComponent(physics)
             .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
-            .addComponent(new ItemCollectableComponent(this));
+            .addComponent(new ItemCollectableComponent());
         collectable.setScale(0.6f, 0.6f);
         spawnEntityAt(collectable, new GridPoint2(pos), true, true);
         //ServiceLocator.getEntityService().register(collectable);

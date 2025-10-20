@@ -273,7 +273,7 @@ public class EnemyFactoryTest {
         assertEquals("bidle", arc.getCurrentAnimation());
         assertTrue(arc.hasAnimation("bidle"));
     }
-/*
+
     @Test
     void createBomberDrone_hasCorrectCombatStats() {
 
@@ -287,7 +287,6 @@ public class EnemyFactoryTest {
         assertEquals(80, combatStats.getHealth(), "Drone health mismatch");
         assertEquals(10, combatStats.getBaseAttack(), "Drone attack mismatch");
     }
-*/
 
     @Test
     void createBomberDrone_addsSpawnPosition() {
@@ -392,9 +391,9 @@ public class EnemyFactoryTest {
         Entity b = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
         assertNotSame(a, b, "Drones should be distinct");
 
-        AITaskComponent ai_a = a.getComponent(AITaskComponent.class);
-        AITaskComponent ai_b = b.getComponent(AITaskComponent.class);
-        assertNotSame(ai_a, ai_b,
+        AITaskComponent aiA = a.getComponent(AITaskComponent.class);
+        AITaskComponent aiB = b.getComponent(AITaskComponent.class);
+        assertNotSame(aiA, aiB,
                 "Drones should have distinct AITaskComponents");
     }
 
