@@ -3,14 +3,12 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.TiledWallComponent;
-import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -66,6 +64,6 @@ public class WallFactory {
             .addComponent(new PhysicsComponent())
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
     wall.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
-    return wall;
+d    return wall;
   }
 }
