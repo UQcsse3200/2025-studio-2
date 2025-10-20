@@ -208,6 +208,12 @@ public class UserSettings {
      * Member for Brightness control;
      */
     public float brightnessValue = 0.3f;
+    public float getBrightnessValue() {
+      return brightnessValue;
+    }
+    public void setBrightnessValue(float value) {
+      brightnessValue = value;
+    }
 
     /**
      * Custom keybinds

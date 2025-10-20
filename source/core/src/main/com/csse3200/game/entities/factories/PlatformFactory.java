@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.npc.VolatilePlatformAnimationController;
 import com.csse3200.game.components.platforms.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.platforms.MovingPlatformComponent;

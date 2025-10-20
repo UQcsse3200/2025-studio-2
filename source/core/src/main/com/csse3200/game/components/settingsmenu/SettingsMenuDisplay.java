@@ -143,10 +143,6 @@ public class SettingsMenuDisplay extends UIComponent {
       vsyncCheck = new CheckBox("", skin);
       vsyncCheck.setChecked(settings.vsync);
 
-//    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
-//    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
-//    uiScaleSlider.setValue(settings.uiScale);
-//    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
 
       Label displayModeLabel = new Label("Resolution:", skin);
       displayModeSelect = new SelectBox<>(skin);
@@ -170,14 +166,6 @@ public class SettingsMenuDisplay extends UIComponent {
       displaySection.row().padTop(10f);
       displaySection.add(vsyncLabel).right().padRight(15f);
       displaySection.add(vsyncCheck).left();
-
-//    displaySection.row().padTop(10f);
-//    Table uiScaleTable = new Table();
-//    uiScaleTable.add(uiScaleSlider).width(100).left();
-//    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
-
-//    displaySection.add(uiScaleLabel).right().padRight(15f);
-//    displaySection.add(uiScaleTable).left();
 
       displaySection.row().padTop(10f);
       displaySection.add(displayModeLabel).right().padRight(15f);
@@ -221,15 +209,6 @@ public class SettingsMenuDisplay extends UIComponent {
       audioSection.add(musicVolumeLabel).right().padRight(15f);
       audioSection.add(musicVolumeTable).left();
 
-      // Events on inputs
-//    uiScaleSlider.addListener(
-//        (Event event) -> {
-//          float value = uiScaleSlider.getValue();
-//          uiScaleValue.setText(String.format("%.2fx", value));
-//          return true;
-//        });
-
-      // Handle slider events
       masterVolumeSlider.addListener((Event event) -> {
           float value = masterVolumeSlider.getValue();
           int percent = (int)(masterVolumeSlider.getValue() * 100);

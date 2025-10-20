@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 public class LeaderboardEntryDisplay extends UIComponent {
     private Table rootTable;
-    private Table contentTable;
+
     private Label promptLabel;
     TextField nameField;
     TextButton confirmButton;
@@ -31,6 +31,10 @@ public class LeaderboardEntryDisplay extends UIComponent {
     // Overlay manager for global UI coordination
     public static final class UIOverlayManager {
         private static boolean overlayActive = false;
+        private UIOverlayManager() {
+            // Prevent instantiation
+            throw new IllegalStateException("Utility class");
+        }
         public static boolean isOverlayActive() { return overlayActive; }
         public static void setOverlayActive(boolean active) { overlayActive = active; }
     }
@@ -67,7 +71,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         rootTable.setBackground(background.getDrawable());
 
         // Content table centered
-        contentTable = new Table();
+        Table contentTable = new Table();
         contentTable.center();
 
         // Prompt

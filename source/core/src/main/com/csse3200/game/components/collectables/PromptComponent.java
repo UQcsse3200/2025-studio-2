@@ -4,11 +4,11 @@ import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 
-public class promptComponent extends CollectableComponent{
+public class PromptComponent extends CollectableComponent {
 
     public final String prompt;
     public final int duration;
-    public promptComponent(String prompt, int duration) {
+    public PromptComponent(String prompt, int duration) {
         this.prompt = prompt;
         this.duration = duration;
     }
