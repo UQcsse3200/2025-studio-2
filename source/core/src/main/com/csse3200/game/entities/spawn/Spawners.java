@@ -291,11 +291,11 @@ public final class Spawners {
         // --- Death Zone ---
         SpawnRegistry.register("death_zone", a -> {
             Entity deathZone = DeathZoneFactory.createDeathZone();
-            /*
-            if(a.sx != null && a.sy != null) {
+
+            if(a.sx != 1 && a.sy != 1) {
                 deathZone.setScale(a.sx,a.sy);
             }
-             */
+
             if(a.extra != null) {
                 deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(Float.parseFloat(a.extra)),
                         PhysicsComponent.AlignX.LEFT,
