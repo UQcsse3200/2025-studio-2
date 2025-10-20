@@ -127,6 +127,8 @@ public class LevelOneGameArea extends GameArea {
         "images/lost_hardware.png",
         "images/tutorials/jump.png",
         "images/tutorials/double_jump.png",
+        "images/walltiles/WallTop.png",
+        "images/walltiles/WallTile.png",
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -319,14 +321,14 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(deathZone, spawnPos, true,  true);
     }
 
-    private void spawnWalls(){
+    private void spawnWalls() {
         GridPoint2 leftWallPos = new GridPoint2(25,4);
         Entity leftWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         leftWall.setScale(1,4.5f);
         spawnEntityAt(leftWall, leftWallPos, false, false);
 
         GridPoint2 rightWallPos = new GridPoint2(75,4);
-        Entity rightWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
+        Entity rightWall = WallFactory.createTiledWall();
         rightWall.setScale(2.5f,7.5f);
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
