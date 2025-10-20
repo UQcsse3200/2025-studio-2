@@ -266,7 +266,6 @@ public abstract class BaseLevelGameArea extends GameArea {
             float fit = Math.max(vw / tex.getWidth(), vh / tex.getHeight());
             float scale = fit * (layer.scale <= 0f ? 1f : layer.scale);
 
-            System.out.println("H: " + tex.getHeight() + " W: " + tex.getWidth() + " Scale: " + scale);
             bg.addScaledLayer(tex, layer.factor, layer.offsetX, layer.offsetY, scale);
         }
 
