@@ -28,10 +28,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 public class CodexTabTest {
     /**
-     * Reference to mocked display class that renders the codex tab
-     */
-    private PauseMenuDisplay mockPauseMenuDisplay;
-    /**
      * Reference to mocked stage which actor built by codex tab is drawn to
      */
     private Stage mockStage;
@@ -48,7 +44,7 @@ public class CodexTabTest {
     @BeforeEach
     void setUp() {
         // Mock all mocked classes
-        mockPauseMenuDisplay = mock(PauseMenuDisplay.class);
+        PauseMenuDisplay mockPauseMenuDisplay = mock(PauseMenuDisplay.class);
         mockStage = mock(Stage.class);
         mockCodexService = mock(CodexService.class);
 
@@ -82,12 +78,9 @@ public class CodexTabTest {
         Label counterLabel = (Label) titleHolder.getChildren().get(1);
         assertEquals(unlocked.size() + "/" + all.size(), counterLabel.getText().toString());
 
-        // Check scroll pane holds correct number of entries
+        // Return logical table for test-specific logic
         ScrollPane scrollPane = (ScrollPane) tableHolder.getChildren().get(1);
-        Table logicalTable = (Table) scrollPane.getActor();
-        assertEquals(unlocked.size(), logicalTable.getChildren().size);
-
-        return logicalTable;
+        return (Table) scrollPane.getActor();
     }
 
     private void redirectCodexService(List<CodexEntry> unlocked, List<CodexEntry> all) {
@@ -122,6 +115,9 @@ public class CodexTabTest {
             // Mock table building process and verify shared widgets between tests
             Table logicalTable = mockBuildAndVerify(unlocked, all);
 
+            // Ensure logical table holds number of unlocked entries
+            assertEquals(unlocked.size(), logicalTable.getChildren().size);
+
             // Check labels representing entries match entry data
             for (int i = 0; i < unlocked.size(); i++) {
                 // Ensure title matches
@@ -140,6 +136,27 @@ public class CodexTabTest {
     @Test
     @DisplayName("Build the Codex Tab with zero unlocked codex entries")
     void buildNoUnlocked() {
+        try (MockedStatic<ServiceLocator> mockLocator = mockStatic(ServiceLocator.class)) {
+            // Get mocked codex service when accessing from service locator
+            mockLocator.when(ServiceLocator::getCodexService).thenReturn(mockCodexService);
 
+            // Mock UNLOCKED entries for codex
+            List<CodexEntry> unlocked = new ArrayList<>();
+
+            // Mock ALL entries for codex
+            List<CodexEntry> all = new ArrayList<>(unlocked);
+            all.add(new CodexEntry("Test 1", "this is test 1"));
+
+            // Redirect Codex Service to use mocked entries
+            redirectCodexService(unlocked, all);
+
+            // Mock table building process and verify shared widgets between tests
+            Table logicalTable = mockBuildAndVerify(unlocked, all);
+
+            // Logical table contains one label as child when no entries
+            assertEquals(1, logicalTable.getChildren().size);
+            Label noEntriesLabel = (Label) logicalTable.getChildren().get(0);
+            assertEquals("No entries found yet.", noEntriesLabel.getText().toString());
+        }
     }
 }
