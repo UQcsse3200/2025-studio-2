@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(GameExtension.class)
@@ -59,7 +60,7 @@ class BossTouchKillComponentTest {
         Fixture targetFixture = target.getComponent(HitboxComponent.class).getFixture();
 
         // This should not cause an exception, but the attack should be ignored
-        entity.getEvents().trigger("collisionStart", entityFixture, targetFixture);
+        assertDoesNotThrow(() -> entity.getEvents().trigger("collisionStart", entityFixture, targetFixture));
     }
 
     Entity createAttacker(short targetLayer) {

@@ -16,6 +16,9 @@ import com.csse3200.game.services.ServiceLocator;
  * A class full of static methods which construct different laser entity types
  */
 public class LaserFactory {
+    private LaserFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static final int ATTACK_DAMAGE = 20;
 
@@ -37,7 +40,6 @@ public class LaserFactory {
             animator.addAnimation("laser-turning-off", 0.1f, Animation.PlayMode.NORMAL);
             animator.addAnimation("laser-turning-on", 0.1f, Animation.PlayMode.NORMAL);
         }
-        //animator.setOrigin(0.5f, 0.5f);
         animator.setRotation(dir);
         animator.setLayer(3);
 

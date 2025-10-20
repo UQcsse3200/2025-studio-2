@@ -95,18 +95,8 @@ public abstract class GameArea implements Disposable {
    *
    * @return the list of death locations.
    */
-  public ArrayList<Vector2> getDeathLocations() {
+  public List<Vector2> getDeathLocations() {
     return deathLocations;
-  }
-
-  /**
-   * Sets the list of death locations.
-   * This must be called only once because it spawns entities that are not cleaned up if this is set again.
-   *
-   */
-  public void setDeathLocations(ArrayList<Vector2> deathLocations) {
-    assert(this.deathLocations.size() == 0);
-    this.deathLocations = deathLocations;
   }
 
   /**
@@ -243,7 +233,6 @@ public abstract class GameArea implements Disposable {
    */
   public List<Component> getComponents() {
     List<Component> resetComponents = new ArrayList<>();
-//    resetComponents.add(new CombatStatsComponent(combatStats));
     resetComponents.add(new InventoryComponent(inventory));
     return resetComponents;
   }
@@ -255,7 +244,6 @@ public abstract class GameArea implements Disposable {
    */
   public void saveComponents(CombatStatsComponent combatStats,
                                      InventoryComponent inventory) {
-//    this.combatStats = new CombatStatsComponent(combatStats);
     this.inventory = new InventoryComponent(inventory);
   }
 

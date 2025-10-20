@@ -15,21 +15,12 @@ import com.csse3200.game.services.ServiceLocator;
  * the event trigger from the {@code LaserShowerComponent}.
  */
 public class LaserDetectorComponent extends Component {
-
-    private PhysicsComponent physics;
-    private TextureRenderComponent texture;
     private ConeLightComponent light;
 
     private boolean detecting = false;
     private boolean init = false;
 
     private Entity child;
-
-    private static final String[] textures = {"images/laser-detector-off.png", "images/laser-detector-on.png"};
-
-    public LaserDetectorComponent() {
-
-    }
 
     public LaserDetectorComponent registerChild(Entity child) {
         this.child = child;
@@ -38,8 +29,8 @@ public class LaserDetectorComponent extends Component {
 
     @Override
     public void create() {
-        physics = entity.getComponent(PhysicsComponent.class);
-        texture = entity.getComponent(TextureRenderComponent.class);
+        PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
         light = entity.getComponent(ConeLightComponent.class);
 
         if (texture == null || light == null || physics == null) {

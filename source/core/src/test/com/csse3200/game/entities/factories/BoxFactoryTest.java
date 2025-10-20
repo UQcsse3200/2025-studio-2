@@ -115,7 +115,7 @@ public class BoxFactoryTest {
         MoveableBoxComponent boxComp = weightedBox.getComponent(MoveableBoxComponent.class);
 
         // ensure that gravity has changed on weighted box
-        Field f = MoveableBoxComponent.class.getDeclaredField("BASE_GRAVITY_SCALE");
+        Field f = MoveableBoxComponent.class.getDeclaredField("baseGravityScale");
         f.setAccessible(true);
         float gravity =  (Float) f.get(boxComp);
 

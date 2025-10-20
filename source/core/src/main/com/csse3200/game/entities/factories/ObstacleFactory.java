@@ -9,12 +9,10 @@ import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.PhysicsUtils;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -23,25 +21,6 @@ import com.csse3200.game.services.ServiceLocator;
  * <p>Each obstacle entity type should have a creation method that returns a corresponding entity.
  */
 public class ObstacleFactory {
-
-  /**
-   * Creates a tree entity.
-   * @return entity
-   */
-  public static Entity createTree() {
-    Entity tree =
-        new Entity()
-            .addComponent(new TextureRenderComponent("images/tree.png"))
-            .addComponent(new PhysicsComponent())
-            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
-
-    tree.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
-    tree.getComponent(TextureRenderComponent.class).scaleEntity();
-    tree.scaleHeight(2.5f);
-    PhysicsUtils.setScaledCollider(tree, 0.5f, 0.2f);
-    return tree;
-  }
-
   /**
    * Creates an invisible physics wall.
    * @param width Wall width in world units
@@ -88,11 +67,6 @@ public class ObstacleFactory {
 
     return door;
   }
-
-    @Deprecated
-    public static Entity createDoor(String keyId, GameArea area) {
-        return createDoor(keyId, area, "", false);
-    }
 
   private ObstacleFactory() {
     throw new IllegalStateException("Instantiating static util class");

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-public class CodexTabTest {
+class CodexTabTest {
     /**
      * Reference to mocked stage which actor built by codex tab is drawn to
      */
