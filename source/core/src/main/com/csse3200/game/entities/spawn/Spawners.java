@@ -230,15 +230,6 @@ public final class Spawners {
             return button;
         });
 
-        // --- Button Puzzle Manager ---
-        SpawnRegistry.register("button_manager", a -> {
-            Entity puzzleEntity = new Entity();
-            ButtonManagerComponent managerComponent = new ButtonManagerComponent();
-            puzzleEntity.addComponent(managerComponent);
-            addIdentifier(puzzleEntity, String.valueOf(a.id));
-            return puzzleEntity;
-        });
-
         // --- Laser Detector ---
         SpawnRegistry.register("laser_detector", a -> {
             Entity laserDetector = LaserDetectorFactory.createLaserDetector(a.rotation);
