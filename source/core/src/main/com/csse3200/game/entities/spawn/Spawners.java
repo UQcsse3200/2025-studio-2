@@ -158,7 +158,7 @@ public final class Spawners {
 
         // -- Wall ---
         SpawnRegistry.register("wall", a -> {
-            Entity wall =  WallFactory.createWall(a.x, a.y, a.sx, a.sy, "images/wall.png");
+            Entity wall =  WallFactory.createWall(a.x, a.y, a.dx, a.dy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
             return wall;
         });
