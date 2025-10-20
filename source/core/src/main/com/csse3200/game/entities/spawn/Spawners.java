@@ -338,7 +338,10 @@ public final class Spawners {
 
             Entity enemy = switch (subtype) {
                 case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
-                case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(player, new Vector2(a.x, a.y)).addComponent(new ActivationComponent(a.id));
+                case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(
+                        player,
+                        new Vector2((float) a.x / 2, (float) a.y / 2)
+                ).addComponent(new ActivationComponent(a.id));
                 case null, default -> EnemyFactory.createPatrollingDrone(player, patrolRoute);
             };
 
