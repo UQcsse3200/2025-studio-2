@@ -319,14 +319,17 @@ public class MoveableBoxComponent extends Component {
         }
 
         // do visibility
-        if (queueVisible != isVisible) {
-            isVisible = queueVisible;
-            if (isVisible) {
-                entity.setPosition(initPos);
-            } else  {
-                entity.setPosition(HIDDEN_POS);
-            }
+        if (!queueVisible) {
+            isVisible = false;
+            entity.setPosition(HIDDEN_POS);
+            boxPhysics.getBody().setAwake(false);
+        } else if (!isVisible) {
+            isVisible = true;
+            entity.setPosition(initPos);
+            boxPhysics.getBody().setAwake(true);
         }
+
+        if (!isVisible) return;
 
         // check out of bounds
         if (entity.getPosition().y <= -5f) {
