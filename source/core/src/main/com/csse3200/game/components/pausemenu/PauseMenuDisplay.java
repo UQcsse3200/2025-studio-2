@@ -8,14 +8,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.utils.Align;
-import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.minimap.MinimapDisplay;
@@ -242,7 +241,7 @@ public class PauseMenuDisplay extends UIComponent {
 
     public void setVisible(boolean visible) {
         rootTable.setVisible(visible);
-        boolean shouldShowHud = !visible && !LeaderboardEntryDisplay.UIOverlayManager.isOverlayActive();
+        boolean shouldShowHud = !visible && !LeaderboardEntryDisplay.isOverlayActive();
         Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
         if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
             minimapDisplay.setVisible(shouldShowHud);

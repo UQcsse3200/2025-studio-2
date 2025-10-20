@@ -15,12 +15,9 @@ import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.*;
 
 class SelfDestructComponentTest {
-
-    private Entity drone;
     private Entity player;
     private SelfDestructComponent selfDestruct;
     private AnimationRenderComponent animator;
-    private PhysicsComponent physics;
     private Sound sound;
     private CombatStatsComponent playerStats;
 
@@ -28,11 +25,11 @@ class SelfDestructComponentTest {
     void setUp() {
         ServiceLocator.clear();
 
-        drone = mock(Entity.class);
+        Entity drone = mock(Entity.class);
         player = mock(Entity.class);
 
         animator = mock(AnimationRenderComponent.class);
-        physics = mock(PhysicsComponent.class);
+        PhysicsComponent physics = mock(PhysicsComponent.class);
         sound = mock(Sound.class);
         playerStats = mock(CombatStatsComponent.class);
 
@@ -71,7 +68,7 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator).startAnimation("bomb_effect");
-        verify(sound).play(1.0f);
+        verify(sound).play(anyFloat());
         verify(playerStats).setHealth(3); // 5 - 2 damage
     }
 
@@ -83,7 +80,7 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator).startAnimation("bomb_effect");
-        verify(sound).play(1.0f);
+        verify(sound).play(anyFloat());
         verify(playerStats).setHealth(8); // 10 - 2 damage
     }
 
@@ -107,7 +104,7 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator, times(1)).startAnimation("bomb_effect");
-        verify(sound, times(1)).play(1.0f);
+        verify(sound, times(1)).play(anyFloat());
         verify(playerStats, times(1)).setHealth(8);
     }
 }

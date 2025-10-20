@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
+
 import java.util.Arrays;
 
 public class LeaderboardEntryDisplay extends UIComponent {
@@ -22,12 +23,10 @@ public class LeaderboardEntryDisplay extends UIComponent {
     private final long completionTime;
     private String enteredName; // null if skipped or empty
     Label errorLabel;
-    // Overlay manager for global UI coordination
-    public static final class UIOverlayManager {
-        private static boolean overlayActive = false;
-        public static boolean isOverlayActive() { return overlayActive; }
-        public static void setOverlayActive(boolean active) { overlayActive = active; }
-    }
+
+    private static boolean overlayActive = false;
+    public static boolean isOverlayActive() { return overlayActive; }
+    public static void setOverlayActive(boolean active) { overlayActive = active; }
 
     public LeaderboardEntryDisplay(long completionTime) {
         this.completionTime = completionTime;
@@ -126,7 +125,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         // Hide other UI + block input while leaderboard is active
         hideOtherUIElements();
         TooltipSystem.TooltipManager.setSuppressed(true);
-        UIOverlayManager.setOverlayActive(true);
+        setOverlayActive(true);
         blockAllInput();
     }
 
@@ -138,7 +137,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         showOtherUIElements();
         TooltipSystem.TooltipManager.setSuppressed(false);
         unblockAllInput();
-        UIOverlayManager.setOverlayActive(false);
+        setOverlayActive(false);
 
         dispose();
         entity.getEvents().trigger("leaderboardEntryComplete");

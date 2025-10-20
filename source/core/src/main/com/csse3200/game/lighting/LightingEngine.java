@@ -6,8 +6,6 @@ import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.files.UserSettings;
 
-import java.nio.file.attribute.UserDefinedFileAttributeView;
-
 /**
  * Processes lighting components using the Box2DLight library. Sets up the ray handler that is responsible
  * for rendering all lights to the screen.
