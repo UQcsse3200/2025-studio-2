@@ -1,7 +1,5 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
@@ -15,8 +13,6 @@ import com.csse3200.game.utils.math.Vector2Utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
-
-import static java.lang.Math.abs;
 
 /**
  * Input handler for the player for keyboard and touch (mouse) input.
@@ -90,10 +86,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
             }
         } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
             entity.getEvents().trigger("interact");
-        } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
-            if (cheatsOn) {
-                triggerAdrenalineEvent();
-            }
         } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
             //takes player off ladder if they are on one.
             this.onLadder = false;
@@ -229,8 +221,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
             // Need to mark the following keys as released
         } else if (keycode == Keymap.getActionKeyCode("PlayerJump")) {
         } else if (keycode == Keymap.getActionKeyCode("PlayerDash")) {
-        } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")) {
-        } else if (keycode == Keymap.getActionKeyCode("PlayerAdrenaline")) {
+        } else if (keycode == Keymap.getActionKeyCode("PlayerInteract")){
         } else if (keycode == Keymap.getActionKeyCode("PlayerCrouch")) {
         } else if (keycode == Keymap.getActionKeyCode("Enter")) {
         } else if (keycode == Keymap.getActionKeyCode("Reset")) {
@@ -247,7 +238,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (walkDirection.epsilonEquals(Vector2.Zero)) {
             entity.getEvents().trigger("walkStop");
         } else {
-            if (!onLadder && Math.abs(walkDirection.y) > 0f) {
+            if (!cheatsOn && !onLadder && Math.abs(walkDirection.y) > 0f) {
                 walkDirection.y = 0f;
             }
             entity.getEvents().trigger("walk", walkDirection);
@@ -260,10 +251,6 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private void triggerJumpEvent() {
         entity.getEvents().trigger("jump"); //put jump here
 
-    }
-
-    private void triggerAdrenalineEvent() {
-        entity.getEvents().trigger("toggleAdrenaline");
     }
 
     private void triggerDashEvent() {
@@ -364,7 +351,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
      */
     private Array<Entity> findLadders() {
         Array<Entity> ladd = new Array<>();
-        Array<Entity> bobs = ServiceLocator.getEntityService().get_entities();
+        Array<Entity> bobs = ServiceLocator.getEntityService().getEntities();
         for (Entity bob : bobs) {
             if (bob.getComponent(LadderComponent.class) != null) {
                 ladd.add(bob);

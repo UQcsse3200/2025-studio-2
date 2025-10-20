@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -12,22 +11,18 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.CollectableComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -35,16 +30,14 @@ import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.CollectableCounter;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.ui.achievements.AchievementToastUI;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,8 +45,10 @@ public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-    private static boolean keySpawned;
+    private boolean keySpawned;
     boolean has_laser = false;
+    private static final String PLATFORM_MAP_IMG_PATH = "images/platform-map.png";
+
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
             "images/button.png",
@@ -128,7 +123,7 @@ public class LevelOneGameArea extends GameArea {
             "images/rightSignpost.png",
             "images/leftSignpost.png",
             "images/signpost.png",
-            "images/platform-map.png",
+            PLATFORM_MAP_IMG_PATH,
             "images/ladder-map.png",
             "images/drone-map.png",
             "images/red_button-map.png",
@@ -140,6 +135,10 @@ public class LevelOneGameArea extends GameArea {
             "images/lost_hardware.png",
             "images/tutorials/jump.png",
             "images/tutorials/double_jump.png",
+            "images/door_open-map.png",
+            "images/platform-long-map.png",
+            "images/wall-map-1.png",
+            "images/wall-map-2.png",
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -173,7 +172,7 @@ public class LevelOneGameArea extends GameArea {
             "images/laser.atlas"
     };
     private int spacePressCount = 0;
-    private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
+    private final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
 
     public LevelOneGameArea(TerrainFactory terrainFactory) {
@@ -212,7 +211,7 @@ public class LevelOneGameArea extends GameArea {
         spawnAutoBomberDrone();
         spawnButtons();
         spawnTraps();
-        //spawnPlatformBat();
+        spawnPlatformBat();
         spawnLevelOneBatRoom();
         // spawnPlayerUpgrades();
         spawnPotion("health", 60, 28);
@@ -221,29 +220,21 @@ public class LevelOneGameArea extends GameArea {
         spawnObjectives();
         spawnTerminals();
         spawnBoxes();
-        spawnLasers();
+        //spawnLasers();
         spawnCollectables();
         spawnTutorials();
         spawnComputerTerminal();
+        spawnPrompts();
     }
 
     private void spawnTutorials() {
-      spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
-      spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
+      spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
+      spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
     }
 
     private void spawnTerminals() {
-        Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
-        Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test2"));
-        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test3"));
-        Entity terminal4 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test4"));
-        Entity terminal5 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test5"));
-        spawnEntityAt(terminal1, new GridPoint2(2, 4), true, true);
-        spawnEntityAt(terminal2, new GridPoint2(6, 4), true, true);
+        Entity terminal3 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
         spawnEntityAt(terminal3, new GridPoint2(10, 4), true, true);
-        spawnEntityAt(terminal4, new GridPoint2(14, 4), true, true);
-        spawnEntityAt(terminal5, new GridPoint2(18, 4), true, true);
-
     }
 
     private void spawnBoxes() {
@@ -251,12 +242,6 @@ public class LevelOneGameArea extends GameArea {
         spawnEntityAt(one, new GridPoint2(15, 15), true, true);
         Entity two = BoxFactory.createWeightedBox();
         spawnEntityAt(two, new GridPoint2(61, 36), true, true);
-
-        Entity three = BoxFactory.createReflectorBox();
-        spawnEntityAt(three, new GridPoint2(32, 15), true, true);
-
-        Entity four = BoxFactory.createMoveableBox();
-        spawnEntityAt(four, new GridPoint2(20, 18), true, true);
     }
     private void spawnLasers() {
         Entity e = LaserFactory.createLaserEmitter(-45f);
@@ -320,13 +305,15 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnWalls(){
         GridPoint2 leftWallPos = new GridPoint2(25,4);
-        Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity leftWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         leftWall.setScale(1,4.5f);
+        leftWall.addComponent(new MinimapComponent("images/wall-map-1.png"));
         spawnEntityAt(leftWall, leftWallPos, false, false);
 
         GridPoint2 rightWallPos = new GridPoint2(75,4);
-        Entity rightWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity rightWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         rightWall.setScale(2.5f,7.5f);
+        rightWall.addComponent(new MinimapComponent("images/wall-map-2.png"));
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }
 
@@ -668,28 +655,30 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnElevatedPlatforms() {
+        String platformLongImgPath = "images/platform-long-map.png";
+
         GridPoint2 step1Pos = new GridPoint2(21,6);
         Entity step1 = PlatformFactory.createStaticPlatform();
-        step1.addComponent(new MinimapComponent("images/platform-map.png"));
+        step1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         step1.setScale(2,0.5f);
         spawnEntityAt(step1, step1Pos,false, false);
 
         GridPoint2 step2Pos = new GridPoint2(15,9);
         Entity step2 = PlatformFactory.createStaticPlatform();
-        step2.addComponent(new MinimapComponent("images/platform-map.png"));
+        step2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         step2.setScale(1.5f,0.5f);
         spawnEntityAt(step2, step2Pos,false, false);
 
         GridPoint2 step3Pos = new GridPoint2(22,12);
         Entity step3 = PlatformFactory.createStaticPlatform();
-        step3.addComponent(new MinimapComponent("images/platform-map.png"));
+        step3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         step3.setScale(1.8f,0.5f);
         spawnEntityAt(step3, step3Pos,false, false);
 
 //        THESE TWO TO BE REPLACED WITH LADDERS
         GridPoint2 step4Pos = new GridPoint2(52,23);
         Entity step4 = PlatformFactory.createStaticPlatform();
-        step4.addComponent(new MinimapComponent("images/platform-map.png"));
+        step4.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         step4.setScale(1.8f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
 
@@ -701,7 +690,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step7Pos = new GridPoint2(45,18);
         Entity step7 = PlatformFactory.createStaticPlatform();
-        step7.addComponent(new MinimapComponent("images/platform-map.png"));
+        step7.addComponent(new MinimapComponent(platformLongImgPath));
         step7.setScale(3.5f,0.5f);
         spawnEntityAt(step7, step7Pos,false, false);
 
@@ -717,7 +706,7 @@ public class LevelOneGameArea extends GameArea {
         float speedButton = 2f;
 
         Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speedButton);
-        buttonPlatform.addComponent(new MinimapComponent("images/platform-map.png"));
+        buttonPlatform.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         buttonPlatform.setScale(2f, 0.5f);
         spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
         logger.info("Moving platform spawned at {}", buttonPlatformPos);
@@ -767,44 +756,44 @@ public class LevelOneGameArea extends GameArea {
         Vector2 offsetWorld  = new Vector2(0f, 4f);
         float speed = 2f;
         Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
-        moving1.addComponent(new MinimapComponent("images/platform-map.png"));
+        moving1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         moving1.setScale(2f,0.5f);
         spawnEntityAt(moving1, moving1Pos,false, false);
 
         GridPoint2 removeThis1 = new GridPoint2(48,35);
         Entity removeThis = PlatformFactory.createStaticPlatform();
-        removeThis.addComponent(new MinimapComponent("images/platform-map.png"));
+        removeThis.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         removeThis.setScale(2f,0.5f);
         spawnEntityAt(removeThis, removeThis1,false, false);
 
         GridPoint2 step9Pos = new GridPoint2(57,35);
         Entity step9 = PlatformFactory.createStaticPlatform();
-        step9.addComponent(new MinimapComponent("images/platform-map.png"));
+        step9.addComponent(new MinimapComponent(platformLongImgPath));
         step9.setScale(5f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
 
         GridPoint2 step11Pos = new GridPoint2(58,53);
         Entity step11 = PlatformFactory.createStaticPlatform();
-        step11.addComponent(new MinimapComponent("images/platform-map.png"));
+        step11.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         step11.setScale(1.8f,0.5f);
         spawnEntityAt(step11, step11Pos,false, false);
 
         GridPoint2 step12Pos = new GridPoint2(52,48);
         Entity step12 = PlatformFactory.createStaticPlatform();
-        step12.addComponent(new MinimapComponent("images/platform-map.png"));
+        step12.addComponent(new MinimapComponent(platformLongImgPath));
         step12.setScale(3.5f,0.5f);
         spawnEntityAt(step12, step12Pos,false, false);
 
         GridPoint2 step13Pos = new GridPoint2(70,48);
         Entity step13 = PlatformFactory.createStaticPlatform();
-        step13.addComponent(new MinimapComponent("images/platform-map.png"));
+        step13.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         step13.setScale(2f,0.5f);
         spawnEntityAt(step13, step13Pos,false, false);
     }
 
     public void spawnDoor() {
-        Entity door = ObstacleFactory.createDoor("key:door", this);
+        Entity door = ObstacleFactory.createDoor("key:door",  this, String.valueOf(MainGameScreen.Areas.CUTSCENE_ONE), false);
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
@@ -933,7 +922,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnBoxOnlyPlate() {
         Entity pressurePlatePlatform = PlatformFactory.createPressurePlatePlatform();
-        pressurePlatePlatform.addComponent(new MinimapComponent("images/platform-map.png"));
+        pressurePlatePlatform.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         pressurePlatePlatform.setScale(2f,0.5f);
         spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
 
@@ -956,19 +945,19 @@ public class LevelOneGameArea extends GameArea {
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
-        volatile1.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         volatile1.setScale(2f,0.5f);
         spawnEntityAt(volatile1, volatile1Pos,false, false);
 
         GridPoint2 volatile2Pos = new GridPoint2(32,24);
         Entity volatile2 = PlatformFactory.createVolatilePlatform(2f,1.5f);
-        volatile2.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         volatile2.setScale(1.8f,0.5f);
         spawnEntityAt(volatile2, volatile2Pos,false, false);
 
         GridPoint2 volatile3Pos = new GridPoint2(45,55);
         Entity volatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
-        volatile3.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         volatile3.setScale(1.8f,0.5f);
         spawnEntityAt(volatile3, volatile3Pos,false, false);
     }
@@ -1097,6 +1086,11 @@ public class LevelOneGameArea extends GameArea {
 //        spawnEntityAt(CollectableFactory.createObjective("glider", 2.0f, 2.0f),  new GridPoint2(15, 17), true, true);
 //        spawnEntityAt(CollectableFactory.createObjective("jetpack", 2.0f, 2.0f), new GridPoint2(18, 17), true, true);
     }
+    private void spawnPrompts() {
+        spawnEntityAt(CollectableFactory.createPrompt("Hit \"o\" to have a look at your objectives!",
+                        5, 2.0f,90.0f),
+                new GridPoint2(6, 15), true, true);
+    }
 
     private void spawnLevelOneBatRoom() {
         int offsetX = 0;
@@ -1187,27 +1181,27 @@ public class LevelOneGameArea extends GameArea {
 
 
 
-    public void spawnCollectable(Vector2 pos) {
+    public void spawnCollectable(GridPoint2 pos) {
         PhysicsComponent physics  = new PhysicsComponent();
         physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);
         Entity collectable = new Entity()
-                .addComponent(new TextureRenderComponent("images/lost_hardware.png"))
+                .addComponent(new TextureRenderComponent(texture))
                 .addComponent(physics)
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
                 .addComponent(new ItemCollectableComponent(this));
-                //.addComponent(new CollectableComponentV2("hardware"));
-        collectable.setPosition(pos);
         collectable.setScale(0.6f, 0.6f);
-        ServiceLocator.getEntityService().register(collectable);
+        spawnEntityAt(collectable, new GridPoint2(pos), true, true);
+        //ServiceLocator.getEntityService().register(collectable);
     }
 
     public void spawnCollectables() {
         Vector2 playerPos = player.getPosition();
-        CollectableCounter.reset();
+        //CollectableCounter.reset();
 
-        spawnCollectable(new Vector2(33.5f, -1.5f));
-        spawnCollectable(new Vector2(0f, 23f));
-        spawnCollectable(new Vector2(39.5f, 30f));
+        spawnCollectable(new GridPoint2(67, -3));
+        spawnCollectable(new GridPoint2(0, 46));
+        spawnCollectable(new GridPoint2(79, 60));
     }
 
     protected void loadAssets() {

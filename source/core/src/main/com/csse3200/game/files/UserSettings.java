@@ -204,6 +204,16 @@ public class UserSettings {
      */
     public float masterVolume = 1f;
     public float musicVolume = 1f;
+    /**
+     * Member for Brightness control;
+     */
+    private float brightnessValue = 0.3f;
+    public float getBrightnessValue() {
+      return brightnessValue;
+    }
+    public void setBrightnessValue(float value) {
+      brightnessValue = value;
+    }
 
     /**
      * Custom keybinds

@@ -3,17 +3,23 @@ package com.csse3200.game.components.computerterminal;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ComputerTerminalService;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
-public class ComputerTerminalServiceTest {
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+class ComputerTerminalServiceTest {
     @Test
     void openCloseToggleWithoutUiEntityIsSafe() {
         ComputerTerminalService svc = new ComputerTerminalService();
-        // Should not throw
-        svc.open(new Entity());
-        svc.close();
-        svc.toggle(new Entity());
-        svc.dispose();
+        try {
+          svc.open(new Entity());
+          svc.close();
+          svc.toggle(new Entity());
+          svc.dispose();
+        } catch (Exception e) {
+          assertNull(e); // unreachable
+        }
+
     }
 
     @Test
