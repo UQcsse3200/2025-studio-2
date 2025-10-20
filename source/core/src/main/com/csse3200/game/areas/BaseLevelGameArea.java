@@ -266,7 +266,13 @@ public abstract class BaseLevelGameArea extends GameArea {
             float fit = Math.max(vw / tex.getWidth(), vh / tex.getHeight());
             float scale = fit * (layer.scale <= 0f ? 1f : layer.scale);
 
-            bg.addScaledLayer(tex, layer.factor, layer.offsetX, layer.offsetY, scale);
+            System.out.println("SCALE: " + scale);
+
+            if (layer.tiled) {
+                bg.addTiledLayer(tex, layer.factor, true, true, 10f, 10f, layer.offsetX, layer.offsetY);
+            } else {
+                bg.addScaledLayer(tex, layer.factor, layer.offsetX, layer.offsetY, scale);
+            }
         }
 
         spawnEntity(new Entity().addComponent(bg));
