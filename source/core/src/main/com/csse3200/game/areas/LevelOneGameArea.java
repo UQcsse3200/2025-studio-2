@@ -45,7 +45,7 @@ public class LevelOneGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-    private static boolean keySpawned;
+    private boolean keySpawned;
     boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -136,6 +136,7 @@ public class LevelOneGameArea extends GameArea {
             "images/door_open-map.png",
             "images/platform-long-map.png"
     };
+    private final String platformMapImg = "images/platform-map.png";
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {
@@ -168,7 +169,7 @@ public class LevelOneGameArea extends GameArea {
             "images/laser.atlas"
     };
     private int spacePressCount = 0;
-    private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
+    private final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
     private final TerrainFactory terrainFactory;
 
     public LevelOneGameArea(TerrainFactory terrainFactory) {
@@ -649,28 +650,30 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnElevatedPlatforms() {
+        String platformLongImgPath = "images/platform-long-map.png";
+
         GridPoint2 step1Pos = new GridPoint2(21,6);
         Entity step1 = PlatformFactory.createStaticPlatform();
-        step1.addComponent(new MinimapComponent("images/platform-map.png"));
+        step1.addComponent(new MinimapComponent(platformMapImg));
         step1.setScale(2,0.5f);
         spawnEntityAt(step1, step1Pos,false, false);
 
         GridPoint2 step2Pos = new GridPoint2(15,9);
         Entity step2 = PlatformFactory.createStaticPlatform();
-        step2.addComponent(new MinimapComponent("images/platform-map.png"));
+        step2.addComponent(new MinimapComponent(platformMapImg));
         step2.setScale(1.5f,0.5f);
         spawnEntityAt(step2, step2Pos,false, false);
 
         GridPoint2 step3Pos = new GridPoint2(22,12);
         Entity step3 = PlatformFactory.createStaticPlatform();
-        step3.addComponent(new MinimapComponent("images/platform-map.png"));
+        step3.addComponent(new MinimapComponent(platformMapImg));
         step3.setScale(1.8f,0.5f);
         spawnEntityAt(step3, step3Pos,false, false);
 
 //        THESE TWO TO BE REPLACED WITH LADDERS
         GridPoint2 step4Pos = new GridPoint2(52,23);
         Entity step4 = PlatformFactory.createStaticPlatform();
-        step4.addComponent(new MinimapComponent("images/platform-map.png"));
+        step4.addComponent(new MinimapComponent(platformMapImg));
         step4.setScale(1.8f,0.5f);
         spawnEntityAt(step4, step4Pos,false, false);
 
@@ -682,7 +685,7 @@ public class LevelOneGameArea extends GameArea {
 
         GridPoint2 step7Pos = new GridPoint2(45,18);
         Entity step7 = PlatformFactory.createStaticPlatform();
-        step7.addComponent(new MinimapComponent("images/platform-long-map.png"));
+        step7.addComponent(new MinimapComponent(platformLongImgPath));
         step7.setScale(3.5f,0.5f);
         spawnEntityAt(step7, step7Pos,false, false);
 
@@ -698,7 +701,7 @@ public class LevelOneGameArea extends GameArea {
         float speedButton = 2f;
 
         Entity buttonPlatform = PlatformFactory.createButtonTriggeredPlatform(offsetWorldButton, speedButton);
-        buttonPlatform.addComponent(new MinimapComponent("images/platform-map.png"));
+        buttonPlatform.addComponent(new MinimapComponent(platformMapImg));
         buttonPlatform.setScale(2f, 0.5f);
         spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
         logger.info("Moving platform spawned at {}", buttonPlatformPos);
@@ -748,38 +751,38 @@ public class LevelOneGameArea extends GameArea {
         Vector2 offsetWorld  = new Vector2(0f, 4f);
         float speed = 2f;
         Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
-        moving1.addComponent(new MinimapComponent("images/platform-map.png"));
+        moving1.addComponent(new MinimapComponent(platformMapImg));
         moving1.setScale(2f,0.5f);
         spawnEntityAt(moving1, moving1Pos,false, false);
 
         GridPoint2 removeThis1 = new GridPoint2(48,35);
         Entity removeThis = PlatformFactory.createStaticPlatform();
-        removeThis.addComponent(new MinimapComponent("images/platform-map.png"));
+        removeThis.addComponent(new MinimapComponent(platformMapImg));
         removeThis.setScale(2f,0.5f);
         spawnEntityAt(removeThis, removeThis1,false, false);
 
         GridPoint2 step9Pos = new GridPoint2(57,35);
         Entity step9 = PlatformFactory.createStaticPlatform();
-        step9.addComponent(new MinimapComponent("images/platform-long-map.png"));
+        step9.addComponent(new MinimapComponent(platformLongImgPath));
         step9.setScale(5f,0.5f);
         spawnEntityAt(step9, step9Pos,false, false);
 
 
         GridPoint2 step11Pos = new GridPoint2(58,53);
         Entity step11 = PlatformFactory.createStaticPlatform();
-        step11.addComponent(new MinimapComponent("images/platform-map.png"));
+        step11.addComponent(new MinimapComponent(platformMapImg));
         step11.setScale(1.8f,0.5f);
         spawnEntityAt(step11, step11Pos,false, false);
 
         GridPoint2 step12Pos = new GridPoint2(52,48);
         Entity step12 = PlatformFactory.createStaticPlatform();
-        step12.addComponent(new MinimapComponent("images/platform-long-map.png"));
+        step12.addComponent(new MinimapComponent(platformLongImgPath));
         step12.setScale(3.5f,0.5f);
         spawnEntityAt(step12, step12Pos,false, false);
 
         GridPoint2 step13Pos = new GridPoint2(70,48);
         Entity step13 = PlatformFactory.createStaticPlatform();
-        step13.addComponent(new MinimapComponent("images/platform-map.png"));
+        step13.addComponent(new MinimapComponent(platformMapImg));
         step13.setScale(2f,0.5f);
         spawnEntityAt(step13, step13Pos,false, false);
     }
@@ -914,7 +917,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnBoxOnlyPlate() {
         Entity pressurePlatePlatform = PlatformFactory.createPressurePlatePlatform();
-        pressurePlatePlatform.addComponent(new MinimapComponent("images/platform-map.png"));
+        pressurePlatePlatform.addComponent(new MinimapComponent(platformMapImg));
         pressurePlatePlatform.setScale(2f,0.5f);
         spawnEntityAt(pressurePlatePlatform, new GridPoint2(32,17), true, true);
 
@@ -937,19 +940,19 @@ public class LevelOneGameArea extends GameArea {
     private void spawnVolatilePlatform(){
         GridPoint2 volatile1Pos = new GridPoint2(38,21);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
-        volatile1.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile1.addComponent(new MinimapComponent(platformMapImg));
         volatile1.setScale(2f,0.5f);
         spawnEntityAt(volatile1, volatile1Pos,false, false);
 
         GridPoint2 volatile2Pos = new GridPoint2(32,24);
         Entity volatile2 = PlatformFactory.createVolatilePlatform(2f,1.5f);
-        volatile2.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile2.addComponent(new MinimapComponent(platformMapImg));
         volatile2.setScale(1.8f,0.5f);
         spawnEntityAt(volatile2, volatile2Pos,false, false);
 
         GridPoint2 volatile3Pos = new GridPoint2(45,55);
         Entity volatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
-        volatile3.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile3.addComponent(new MinimapComponent(platformMapImg));
         volatile3.setScale(1.8f,0.5f);
         spawnEntityAt(volatile3, volatile3Pos,false, false);
     }
