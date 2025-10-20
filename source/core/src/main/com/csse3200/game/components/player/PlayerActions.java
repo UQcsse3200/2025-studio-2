@@ -256,7 +256,7 @@ public class PlayerActions extends Component {
    *
    * Before applying the impuse, the players vertical velocity is set to 0 to keep consistent jump heights
    */
-  void jump() {
+  public void jump() {
 
     if (isJumping && isDoubleJump) return;
 
@@ -284,7 +284,7 @@ public class PlayerActions extends Component {
    *
    * This method resets the players jump state, allowing them to jump again
    */
-  void onLand() {
+  public void onLand() {
     isJumping = false;
     isDoubleJump = false;
 
