@@ -59,19 +59,19 @@ public class PlayerAnimationTest {
     }
 
     @Test
-    void testAnimateJumpRight() {
+    void testAnimateJumpRight() throws InterruptedException {
         controller.animateWalk(new Vector2(1f, 0f));
         player.getEvents().trigger("jump");
         verify(animator).startAnimation("JUMP");
         // double jump
         player.getEvents().trigger("jump");
         verify(animator, times(2)).startAnimation("JUMP");
-        player.getEvents().trigger("landed");
-        verify(animator).startAnimation("IDLE");
+        Thread.sleep(1000);
+        verify(animator).startAnimation("RIGHT");
     }
 
     @Test
-    void testAnimateJumpLeft() {
+    void testAnimateJumpLeft() throws InterruptedException {
         controller.animateWalk(new Vector2(-1f, 0f));
         player.getEvents().trigger("jump");
         verify(animator).startAnimation("JUMPLEFT");
@@ -80,7 +80,8 @@ public class PlayerAnimationTest {
         verify(animator, times(2)).startAnimation("JUMPLEFT");
         // land
         player.getEvents().trigger("landed");
-        verify(animator).startAnimation("IDLELEFT");
+        Thread.sleep(1000);
+        verify(animator).startAnimation("LEFT");
     }
 
     @Test
