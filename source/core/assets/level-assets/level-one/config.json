@@ -1,0 +1,66 @@
+{
+  "name": "Level One",
+  "mapSize": [
+    80.0,
+    70.0
+  ],
+  "playerSpawn": [
+    1.0,
+    10.0
+  ],
+  "walls": {
+    "thickness": 0.1
+  },
+  "miniMap": "images/minimap_forest_area.png",
+  "music": "sounds/KindaLikeTycho.mp3"
+,
+  "entities": [
+    {"type": "ladder","id": "upper","x": 59,"y": 36,"centerX": false,"centerY": false,"height": 16,"offset": 11},
+    {"type": "ladder","id": "lower","x": 52,"y": 4,"centerX": false,"centerY": false,"height": 18,"offset": 13},
+    {"type": "sign_post","id": "right","x": 8,"y": 4,"direction": "right","centerX": true,"centerY": false},
+    {"type": "sign_post","id": "up","x": 55,"y": 4,"direction": "up","centerX": true,"centerY": false},
+    {"type": "sign_post","id": "left","x": 29,"y": 36,"direction": "left","centerX": true,"centerY": false},
+    {"type": "pressure_plate","subtype": "ladder","id": "upper","x": 65,"y": 36,"offset": 11},
+    {"type": "pressure_plate","subtype": "ladder","id": "lower","x": 73,"y": 4,"offset": 13},
+    {"type": "floor","subtype": "ground","x": -20,"y": -20,"sx": 16,"sy": 12,"centerX": false,"centerY": false},
+    {"type": "floor","subtype": "ground","x": 15,"y": -20,"sx": 25,"sy": 12,"centerX": false,"centerY": false},
+    {"type": "floor","subtype": "ground","x": 70,"y": -20,"sx": 25,"sy": 12,"centerX": false,"centerY": false},
+    {"type": "floor","subtype": "static_floor","x": 33,"y": 60,"sx": 5,"sy": 0.8,"centerX": false,"centerY": false},
+    {"type": "floor","subtype": "static_floor","x": 0,"y": 32,"sx": 16,"sy": 2,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 21,"y": 6,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 15,"y": 9,"sx": 1.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 22,"y": 12,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 52,"y": 23,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 45,"y": 18,"sx": 3.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "button","subtype": "platform","x": 56,"y": 23,"direction": "right","target": "platform","tooltip": "Platform Button\nPress E to Interact"},
+    {"type": "button","subtype": "platform","x": 76,"y": 23,"direction": "left","target": "platform"},
+    {"type": "platform","subtype": "moving","x": 38,"y": 26,"sx": 2,"sy": 0.5,"speed": 2,"dx": 0,"dy": 4,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 48,"y": 35,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 57,"y": 35,"sx": 5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 58,"y": 53,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 52,"y": 48,"sx": 3.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 70,"y": 48,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "volatile","x": 38,"y": 21,"sx": 2,"sy": 0.5,"speed": 2,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "volatile","x": 32,"y": 24,"sx": 1.8,"sy": 0.5,"speed": 2,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "volatile","x": 45,"y": 55,"sx": 1.8,"sy": 0.5,"speed": 2,"centerX": false,"centerY": false},
+    {"type": "death_zone","x": 12,"y": -10},
+    {"type": "wall","x": 25,"y": 4,"sx": 1,"sy": 4.5,"centerX": false,"centerY": false},
+    {"type": "wall","x": 75,"y": 4,"sx": 2.5,"sy": 7.5,"centerX": false,"centerY": false},
+    {"type": "door","subtype": "transition","id": "key:door","x": 35,"y": 62,"sx": 1,"sy": 2,"target": "CUTSCENE_ONE"},
+    {"type": "camera","id": 1,"x": 48,"y": 17,"speed": 25,"rotation": 0},
+    {"type": "camera","id": 2,"x": 74,"y": 13,"speed": 25,"rotation": 270},
+    {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_1","x": 55,"y": 12,"extra": "55,12;65,12"},
+    {"type": "collectable","subtype": "key","id": "key","x": 1,"y": 37,"target": "door"},
+    {"type": "button","subtype": "door","x": 79,"y": 20,"direction": "left","target": "key","tooltip": "Key Button\nPress E to Interact"},
+    {"type": "trap","x": 24,"y": 10,"rotation": 90,"safeX": 2,"safeY": 3},
+    {"type": "trap","x": 24,"y": 8,"rotation": 90,"safeX": 2,"safeY": 3},
+    {"type": "trap","x": 16,"y": 8,"rotation": 180,"safeX": 2,"safeY": 3},
+    {"type": "trap","x": 60,"y": 19,"rotation": 0,"safeX": 24,"safeY": 10},
+    {"type": "trap","x": 32,"y": 34,"rotation": 270,"safeX": 24,"safeY": 10},
+    {"type": "collectable","subtype": "potion","x": 60,"y": 28,"target": "health"},
+    {"type": "collectable","subtype": "potion","x": 10,"y": 15,"target": "health"},
+    {"type": "collectable","subtype": "potion","x": 72,"y": 12,"target": "dash"},
+    {"type": "box","subtype": "weighted","x": 15,"y": 15},
+    {"type": "box","subtype": "weighted","x": 61,"y": 36}
+  ]
+}

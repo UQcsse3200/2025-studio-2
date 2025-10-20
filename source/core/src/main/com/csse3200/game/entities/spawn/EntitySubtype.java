@@ -6,10 +6,13 @@ public enum EntitySubtype {
     VOLATILE(EntityType.PLATFORM),
     STATIC_PLATFORM(EntityType.PLATFORM),
     MOVING(EntityType.PLATFORM),
+    PLATE(EntityType.PLATFORM),
+    BUTTON(EntityType.PLATFORM),
 
     // Collectables
     KEY(EntityType.COLLECTABLE),
     POTION(EntityType.COLLECTABLE),
+    UPGRADE(EntityType.COLLECTABLE),
 
     // Boxes
     MOVEABLE(EntityType.BOX),
@@ -26,7 +29,20 @@ public enum EntitySubtype {
 
     // Door
     STATIC(EntityType.DOOR),
-    TRANSITION(EntityType.DOOR);
+    TRANSITION(EntityType.DOOR),
+
+    // Enemies
+    AUTO_BOMBER(EntityType.ENEMY),
+    SELF_DESTRUCT(EntityType.ENEMY),
+
+    // Tutorials
+    JUMP(EntityType.TUTORIAL),
+    DOUBLE_JUMP(EntityType.TUTORIAL),
+    DASH(EntityType.TUTORIAL),
+
+    // Pressure Plates
+    LADDER(EntityType.PRESSURE_PLATE),
+    NORMAL(EntityType.PRESSURE_PLATE),;
 
     /** Parent type for this subtype. */
     private final EntityType type;

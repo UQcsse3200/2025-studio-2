@@ -10,7 +10,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.npc.VolatilePlatformAnimationController;
-import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.platforms.MovingPlatformComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
@@ -20,8 +19,8 @@ import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -84,10 +83,12 @@ public class PlatformFactory {
    * @return
    */
   public static Entity createButtonTriggeredPlatform(Vector2 offsetWorld, float speed) {
+    ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);
+    collider.setFriction(2f);
     Entity platform = new Entity()
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
-        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+        .addComponent(collider)
         .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed))
         .addComponent(new MinimapComponent("images/platform.png"));
 

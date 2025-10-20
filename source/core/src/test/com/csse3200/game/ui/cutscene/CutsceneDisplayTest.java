@@ -1,6 +1,7 @@
 package com.csse3200.game.ui.cutscene;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -8,26 +9,24 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.csse3200.game.rendering.RenderService;
-import com.csse3200.game.ui.cutscene.CutsceneReaderComponent.TextBox;
-import com.badlogic.gdx.graphics.Texture;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.cutscene.CutsceneReaderComponent.TextBox;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;

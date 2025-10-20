@@ -12,6 +12,7 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
 import com.csse3200.game.components.computerterminal.SpritesheetSpec;
@@ -43,7 +44,6 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.*;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
-import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -261,7 +261,7 @@ public class MainGameScreen extends ScreenAdapter {
     lvlStartTime = gameTime.getTime();
     return switch (area) {
       case TUTORIAL ->  new TutorialGameArea(terrainFactory);
-      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
+      case LEVEL_ONE -> new LevelOneNewGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");

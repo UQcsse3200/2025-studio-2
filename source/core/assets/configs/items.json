@@ -34,5 +34,39 @@
       { "type": "buff_speed", "duration": 5 }
     ],
     "glowColor": [125, 140, 240]
+  },
+  {
+    "id": "upgrade:dash",
+    "name": "Dash Upgrade",
+    "sprite": "images/dash_powerup.png",
+    "description": "Unlocks the ability to dash",
+    "autoConsume": false,
+    "tags": ["UPGRADE"],
+    "scale": [0.8, 0.5]
+  },
+  {
+    "id": "upgrade:glide",
+    "name": "Glide Upgrade",
+    "sprite": "images/glide_powerup.png",
+    "description": "Unlocks the ability to glide",
+    "autoConsume": false,
+    "tags": ["UPGRADE"]
+  },
+  {
+    "id": "upgrade:jetpack",
+    "name": "Jetpack Upgrade",
+    "sprite": "images/jetpack_powerup.png",
+    "description": "Unlocks the ability to use the jetpack",
+    "autoConsume": false,
+    "tags": ["UPGRADE"]
+  },
+  {
+    "id": "misc:hardware",
+    "name": "Lost Hardware",
+    "sprite": "images/lost_hardware.png",
+    "description": "Hidden lost hardware",
+    "autoConsume": false,
+    "tags": ["HARDWARE"],
+    "glowColor": [40, 30, 55]
   }
 ]

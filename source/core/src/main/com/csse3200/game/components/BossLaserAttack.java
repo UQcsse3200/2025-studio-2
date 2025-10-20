@@ -1,18 +1,13 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.BossLaserFactory;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
 import com.csse3200.game.services.ServiceLocator;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * BossLaserAttack component handles:
@@ -35,9 +30,9 @@ public class BossLaserAttack extends Component {
 
 
     // Raycast collision masks
-    private static final short blockedOccluder = PhysicsLayer.OBSTACLE;
-    private static final short playerOccluder = PhysicsLayer.PLAYER;
-    private static final short hitMask = (short) ( blockedOccluder | playerOccluder);
+    private static final short BLOCKED_OCCLUDER = PhysicsLayer.OBSTACLE;
+    private static final short PLAYER_OCCLUDER = PhysicsLayer.PLAYER;
+    private static final short HIT_MASK = BLOCKED_OCCLUDER | PLAYER_OCCLUDER;
 
     public BossLaserAttack(Entity target) {
         this.target = target;
@@ -75,7 +70,6 @@ public class BossLaserAttack extends Component {
     private void spawnBossLaser() {
         Entity laser = BossLaserFactory.createBossLaser(target);
         laser.setPosition(entity.getPosition());
-        //gameArea.spawnEntity(laser);
     }
 
     private void performLaserRaycast() {
@@ -84,21 +78,21 @@ public class BossLaserAttack extends Component {
         Vector2 end = start.cpy().mulAdd(direction, MAX_DISTANCE);
 
         RaycastHit hit = new RaycastHit();
-        boolean hitSomething = physicsEngine.raycast(start, end, hitMask, hit);
+        boolean hitSomething = physicsEngine.raycast(start, end, HIT_MASK, hit);
 
         if (hitSomething) {
-            short cat = hit.fixture != null ? hit.fixture.getFilterData().categoryBits : blockedOccluder;
-            boolean isPlayer = (cat & playerOccluder) != 0;
+            short cat = hit.fixture != null ? hit.fixture.getFilterData().categoryBits : BLOCKED_OCCLUDER;
+            boolean isPlayer = (cat & PLAYER_OCCLUDER) != 0;
 
             if (isPlayer) damagePlayer(hit);
         }
     }
 
     private void damagePlayer(RaycastHit hit) {
-        Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
-        if (target == null) return;
+        Entity damageTarget = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
+        if (damageTarget == null) return;
 
-        CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
+        CombatStatsComponent targetStats = damageTarget.getComponent(CombatStatsComponent.class);
         if (targetStats != null) targetStats.hit(combatStats);
     }
 }
