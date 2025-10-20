@@ -1,12 +1,6 @@
 package com.csse3200.game.areas.terrain;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.GridPoint2;
-import com.csse3200.game.services.ResourceService;
-import com.csse3200.game.services.ServiceLocator;
 
 public class GridFactory {
     private static final GridPoint2 DEFAULT_MAP_SIZE = new GridPoint2(80, 70);
