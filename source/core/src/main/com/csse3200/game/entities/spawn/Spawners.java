@@ -171,6 +171,7 @@ public final class Spawners {
                 case MOVING -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
                 case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, 1f);
                 case PLATE -> PlatformFactory.createPressurePlatePlatform();
+                case REFLECTIVE -> PlatformFactory.createReflectivePlatform();
                 case BUTTON -> PlatformFactory.createButtonTriggeredPlatform(new Vector2(a.dx, a.dy), a.speed);
                 default -> PlatformFactory.createStaticPlatform();
             };
