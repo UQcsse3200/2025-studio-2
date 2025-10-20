@@ -7,7 +7,6 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.CodexEntry;
-import com.csse3200.game.services.ServiceLocator;
 
 /**
  * Special component that can be attached to codex terminal entries.
@@ -99,7 +98,7 @@ public class CodexTerminalComponent extends Component {
             entity.getComponent(TooltipSystem.TooltipComponent.class).dispose();
 
             // Set the codex entry to be unlocked
-            codexEntry.setUnlocked(ServiceLocator.getCodexService());
+            codexEntry.setUnlocked();
 
             // Prevent player from interacting after first interaction
             interactedWith = true;
