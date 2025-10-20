@@ -103,7 +103,19 @@ public class LevelTwoGameArea extends GameArea {
             "images/jetpack_powerup.png",
             "images/lost_hardware.png",
             "images/tutorials/dash.png",
-            "images/door_open-map.png"
+            "images/door_open-map.png",
+            "images/floor-map-4.png",
+            "images/floor-map-5.png",
+            "images/floor-map-6.png",
+            "images/platform-short-map.png",
+            "images/wall-map-3.png",
+            "images/wall-map-4.png",
+            "images/wall-map-5.png",
+            "images/wall-map-6.png",
+            "images/wall-map-7.png",
+            "images/wall-map-8.png",
+            "images/wall-map-9.png"
+
     };
     private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -184,37 +196,44 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 bottomWallPos = new GridPoint2(80,6);
         Entity bottomWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         bottomWall.setScale(2f,7f);
+        bottomWall.addComponent(new MinimapComponent("images/wall-map-3.png"));
         spawnEntityAt(bottomWall, bottomWallPos, false, false);
 
         GridPoint2 middleWallPos = new GridPoint2(54,24);
         Entity middleWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         middleWall.setScale(2f,6f);
+        middleWall.addComponent(new MinimapComponent("images/wall-map-4.png"));
         spawnEntityAt(middleWall, middleWallPos, false, false);
 
 //        TOP LEVEL
         GridPoint2 wall1Pos = new GridPoint2(33,44);
         Entity wall1 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall1.setScale(2f,8f);
+        wall1.addComponent(new MinimapComponent("images/wall-map-5.png"));
         spawnEntityAt(wall1, wall1Pos, false, false);
 
         GridPoint2 wall2Pos = new GridPoint2(46,44);
         Entity wall2 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall2.setScale(2f,6.5f);
+        wall2.addComponent(new MinimapComponent("images/wall-map-6.png"));
         spawnEntityAt(wall2, wall2Pos, false, false);
 
         GridPoint2 wall3Pos = new GridPoint2(59,44);
         Entity wall3 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall3.setScale(2f,5f);
+        wall3.addComponent(new MinimapComponent("images/wall-map-7.png"));
         spawnEntityAt(wall3, wall3Pos, false, false);
 
         GridPoint2 wall4Pos = new GridPoint2(72,44);
         Entity wall4 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall4.setScale(2f,3.5f);
+        wall4.addComponent(new MinimapComponent("images/wall-map-8.png"));
         spawnEntityAt(wall4, wall4Pos, false, false);
 
         GridPoint2 wall5Pos = new GridPoint2(85,44);
         Entity wall5 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall5.setScale(2f,2f);
+        wall5.addComponent(new MinimapComponent("images/wall-map-9.png"));
         spawnEntityAt(wall5, wall5Pos, false, false);
     }
 
@@ -387,21 +406,25 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 groundPos1 = new GridPoint2(0, 0);
         Entity ground1 = FloorFactory.createGroundFloor();
         ground1.setScale(5,2);
+        ground1.addComponent(new MinimapComponent("images/floor-map-4.png"));
         spawnEntityAt(ground1, groundPos1, false, false);
 
         GridPoint2 groundPos2 = new GridPoint2(25, 0);
         Entity ground2 = FloorFactory.createGroundFloor();
         ground2.setScale(37.5f,2f);
+        ground2.addComponent(new MinimapComponent("images/floor-map-5.png"));
         spawnEntityAt(ground2, groundPos2, false, false);
 
         GridPoint2 middleGroundPos = new GridPoint2(0, 20);
         Entity middleGround = FloorFactory.createStaticFloor();
         middleGround.setScale(42f,2);
+        middleGround.addComponent(new MinimapComponent("images/floor-map-6.png"));
         spawnEntityAt(middleGround, middleGroundPos, false, false);
 
         GridPoint2 topGroundPos = new GridPoint2(16, 40);
         Entity topGround = FloorFactory.createStaticFloor();
         topGround.setScale(42f,2);
+        topGround.addComponent(new MinimapComponent("images/floor-map-6.png"));
         spawnEntityAt(topGround, topGroundPos, false, false);
     }
 
@@ -534,7 +557,7 @@ public class LevelTwoGameArea extends GameArea {
             GridPoint2 platPos = new GridPoint2(j, 30);
             Entity plat = PlatformFactory.createStaticPlatform();
             plat.setScale(1, 0.5f);
-            plat.addComponent(new MinimapComponent("images/platform-map.png"));
+            plat.addComponent(new MinimapComponent("images/platform-short-map.png"));
             spawnEntityAt(plat, platPos, true, true);
         }
     }
@@ -597,6 +620,7 @@ public class LevelTwoGameArea extends GameArea {
 
             Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, platformSpeed);
             movingPlatform.setScale(1f, 0.5f);
+            movingPlatform.addComponent(new MinimapComponent("images/platform-short-map.png"));
             spawnEntityAt(movingPlatform, platformGridPos, true, true);
 
             //trap below
@@ -615,6 +639,7 @@ public class LevelTwoGameArea extends GameArea {
 
             Entity movingPlatform2 = PlatformFactory.createMovingPlatform(offsetWorld2, platformSpeed2);
             movingPlatform2.setScale(1f, 0.5f);
+            movingPlatform2.addComponent(new MinimapComponent("images/platform-short-map.png"));
             spawnEntityAt(movingPlatform2, platformGridPos2, true, true);
 
             //trap above
