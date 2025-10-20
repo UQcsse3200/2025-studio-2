@@ -48,6 +48,10 @@
     {"type": "laser","x": 63,"y": 3,"rotation": "65","centerX": false,"centerY": false},
     {"type": "laser","x": 95,"y": 39,"rotation": "270","centerX": false,"centerY": false},
     {"type": "laser","x": 96,"y": 21,"rotation": "270","centerX": false,"centerY": false},
-    {"type": "button","subtype": "platform","x": 100,"y": 24,"sx": 2,"sy": 5,"direction": "left"}
+    {"type": "button","subtype": "platform","x": 100,"y": 24,"sx": 2,"sy": 5,"direction": "left"},
+    {"type": "bat","x": 22,"y": 5,"speed": 5,"dx": 24,"dy": 12},
+    {"type": "bat","x": 14,"y": 11,"speed": 10,"dx": 18,"dy": 11},
+    {"type": "bat","x": 11,"y": 3,"speed": 15,"dx": 11,"dy": 15},
+    {"type": "bat","x": 8,"y": 4,"speed": 3,"dx": 10.5,"dy": 4}
   ]
 }
