@@ -395,6 +395,14 @@ public final class Spawners {
             addTooltip(bat, a.tooltip);
             return bat;
         });
+
+        /*
+        // --- Prompts ---
+        SpawnRegistry.register("prompt", a -> {
+            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+        });
+
+         */
     }
 
     // --- Helpers ---
