@@ -33,6 +33,7 @@ public enum EntitySubtype {
 
     // Enemies
     AUTO_BOMBER(EntityType.ENEMY),
+    SELF_DESTRUCT(EntityType.ENEMY),
 
     // Tutorials
     JUMP(EntityType.TUTORIAL),
