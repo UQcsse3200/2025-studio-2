@@ -57,8 +57,6 @@ public class LaserShowerComponent extends Component {
     private float dir = 90f;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
-    private static final float FIRE_COOLDOWN = 0f; // seconds between shots
-    private float timeSinceLastShot = 0f;
     private boolean laserActive = false;
 
 
@@ -110,14 +108,9 @@ public class LaserShowerComponent extends Component {
 
     @Override
     public void update() {
-        if (timeSinceLastShot > 0) {
-            timeSinceLastShot -= ServiceLocator.getTimeSource().getDeltaTime();
-        }
-
         // Only fire if laser is active AND cooldown expired
-        if (laserActive && timeSinceLastShot <= 0f) {
+        if (laserActive) {
             fireLaser();
-            timeSinceLastShot = FIRE_COOLDOWN; // reset cooldown
         }
     }
 

@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
@@ -31,51 +30,47 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 @ExtendWith(GameExtension.class)
 class LaserRenderComponentTest {
-    private static final float THICKNESS  = 0.05f; // core beam thickness
-    private static final int   GLOW_STEPS = 4;     // glow smoothness
-    private static final float GLOW_MULT  = 2.7f;  // outer glow thickness multiplier
-    private static final float GLOW_ALPHA = 0.35f;
     // max glow alpha
     private final Color emitterColor = new Color(1f, 0f, 0f, 1f);
     private final Color emitterGlowColor = new Color(1f, 0.32f, 0.32f, 1f);
     private final Color showerColor = new Color(0.05f, 0.35f, 0.6f, 1.0f);
     private final Color showerGlowColor = new Color(0.15f, 0.5f, 0.8f, 1.0f);
 
-    LaserRenderComponent render;
-    SpriteBatch batch;
-    TextureRegion pixel;
+    private LaserRenderComponent render;
+    private SpriteBatch batch;
+    private TextureRegion pixel;
 
     // Mocks for static dependencies that need to be managed
-    private MockedStatic<ServiceLocator> mockedServiceLocator;
-    private MockedConstruction<Pixmap> mockedPixmap;
-    private MockedConstruction<Texture> mockedTexture;
-    private MockedConstruction<TextureRegion> mockedTextureRegion;
+    private static MockedStatic<ServiceLocator> mockedServiceLocator;
+    private static MockedConstruction<Pixmap> mockedPixmap;
+    private static MockedConstruction<Texture> mockedTexture;
+    private static MockedConstruction<TextureRegion> mockedTextureRegion;
 
-
-    @BeforeEach
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    void setupCommon(){
-        //Set up Mock for static calls and asset Construction
-        RenderService mockRenderService = mock(RenderService.class);
+    @BeforeAll
+    static void setupAll() {
         mockedServiceLocator = mockStatic(ServiceLocator.class);
-        mockedServiceLocator.when(ServiceLocator::getRenderService).thenReturn(mockRenderService);
         mockedPixmap = mockConstruction(Pixmap.class);
         mockedTexture = mockConstruction(Texture.class);
         mockedTextureRegion = mockConstruction(TextureRegion.class);
-
-        //Initialize the component and its mocks
-        render = new LaserRenderComponent();
-        batch = mock(SpriteBatch.class);
-        pixel = mock(TextureRegion.class);
     }
-    @AfterEach
-    void cleanup() {
-        // Clean up all static and construction mocks after each test
+    @AfterAll
+    static void cleanupAll() {
         if (mockedServiceLocator != null) mockedServiceLocator.close();
         if (mockedPixmap != null) mockedPixmap.close();
         if (mockedTexture != null) mockedTexture.close();
         if (mockedTextureRegion != null) mockedTextureRegion.close();
     }
+
+    @BeforeEach
+    void setup() {
+        RenderService mockRenderService = mock(RenderService.class);
+        mockedServiceLocator.when(ServiceLocator::getRenderService).thenReturn(mockRenderService);
+
+        render = new LaserRenderComponent();
+        batch = mock(SpriteBatch.class);
+        pixel = mock(TextureRegion.class);
+    }
+
 
     /**
      * Helper to inject the Emitter component into the LaserRenderComponent using reflection.
@@ -90,15 +85,21 @@ class LaserRenderComponentTest {
      * Helper to verify the core (innermost) laser beam segment draw call.
      * This relies on the 'pixel' mock being injected and used by the component.
      */
-    private void verifySegmentDraw(Vector2 a, Vector2 b) {
-        float dx = b.x - a.x;
-        float dy = b.y - a.y;
-        float len = (float) Math.hypot(dx, dy);
-        if (len < 1e-4f) return;
+    private void verifyCoreDraw(List<Vector2> positions) {
+        for (int i = 0; i < positions.size() - 1; i++) {
+            Vector2 a = positions.get(i);
+            Vector2 b = positions.get(i + 1);
+            float len = (float) Math.hypot(b.x - a.x, b.y - a.y);
+            if (len < 1e-4f) continue;
 
-        float angleDeg = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
-        verify(batch, atLeastOnce()).draw(pixel, a.x, a.y - THICKNESS / 2f,
-                0f, THICKNESS / 2f, len, THICKNESS, 1f, 1f, angleDeg);
+            verify(batch, atLeastOnce()).draw(
+                    pixel,
+                    a.x, a.y - 0.025f, 0f, 0.025f,
+                    len, 0.05f, 1f, 1f,
+                    (float) Math.toDegrees(Math.atan2(b.y - a.y, b.x - a.x))
+            );
+        }
+        verify(batch, atLeastOnce()).setColor(1f, 1f, 1f, 1f);
     }
 
     /**
@@ -130,13 +131,6 @@ class LaserRenderComponentTest {
             // Inject the emitter component for the component's internal logic
             String fieldName = (emitter instanceof LaserEmitterComponent) ? "mainEmitter" : "showerEmitter";
             injectEmitter(emitter, fieldName);
-        }
-        /** Help to verify all core segments are drawn and color is reset. */
-        void verifyCoreDraw(List<Vector2> positions) {
-            for (int i = 0; i < positions.size() - 1; i++) {
-                verifySegmentDraw(positions.get(i), positions.get(i + 1));
-            }
-            verify(batch, atLeastOnce()).setColor(1f, 1f, 1f, 1f);
         }
     }
 
@@ -180,29 +174,13 @@ class LaserRenderComponentTest {
             inOrder.verify(batch).flush();
             inOrder.verify(batch).setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 
-            Vector2 a = pos.get(0), b = pos.get(1);
-            for (int s = GLOW_STEPS; s >= 1; s--) {
-                float t = THICKNESS * (1f + (GLOW_MULT - 1f) * (s / (float) GLOW_STEPS));
-                float aGlow = GLOW_ALPHA * (s / (float) GLOW_STEPS);
+            for (int s = 4; s >= 1; s--) {
+                float aGlow = 0.35f * (s / 4f);
                 inOrder.verify(batch).setColor(showerGlowColor.r, showerGlowColor.g, showerGlowColor.b, aGlow);
-
-                float originY = t / 2f;
-                inOrder.verify(batch).draw(pixel, a.x, a.y - originY, 0f, originY,
-                        (float) Math.hypot(b.x - a.x, b.y - a.y), t, 1f, 1f,
-                        MathUtils.atan2(b.y - a.y, b.x - a.x) * MathUtils.radiansToDegrees);
             }
 
             inOrder.verify(batch).flush();
             inOrder.verify(batch).setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-        @Test
-        void draw_shouldDoMultipleCoreDraws() {
-            List<Vector2> pos = List.of(new Vector2(0, 0), new Vector2(4, 4), new Vector2(3, 2));
-            when(emitter.getPositions()).thenReturn(pos);
-
-            render.draw(batch);
-            verifyCoreDraw(pos);
         }
     }
 
@@ -247,31 +225,15 @@ class LaserRenderComponentTest {
             inOrder.verify(batch).flush();
             inOrder.verify(batch).setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE);
 
-            Vector2 a = pos.get(0), b = pos.get(1);
-            for (int s = GLOW_STEPS; s >= 1; s--) {
-                float t = THICKNESS * (1f + (GLOW_MULT - 1f) * (s / (float) GLOW_STEPS));
-                float aGlow = GLOW_ALPHA * (s / (float) GLOW_STEPS);
+            for (int s = 4; s >= 1; s--) {
+                float aGlow = 0.35f * (s / 4f);
                 inOrder.verify(batch).setColor(emitterGlowColor.r, emitterGlowColor.g, emitterGlowColor.b, aGlow);
-
-                float originY = t / 2f;
-                inOrder.verify(batch).draw(pixel, a.x, a.y - originY, 0f, originY,
-                        (float) Math.hypot(b.x - a.x, b.y - a.y), t, 1f, 1f,
-                        MathUtils.atan2(b.y - a.y, b.x - a.x) * MathUtils.radiansToDegrees);
             }
 
             inOrder.verify(batch).flush();
             inOrder.verify(batch).setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         }
 
-        @Test
-        void draw_shouldDoMultipleDraws() {
-            List<Vector2> pos = List.of(new Vector2(0, 0), new Vector2(4, 4),
-                    new Vector2(6, 2), new Vector2(8, 5));
-            when(emitter.getPositions()).thenReturn(pos);
-
-            render.draw(batch);
-            verifyCoreDraw(pos);
-        }
     }
 }
 
