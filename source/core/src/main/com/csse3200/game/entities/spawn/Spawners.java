@@ -9,6 +9,7 @@ import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -38,6 +39,19 @@ public final class Spawners {
                 case REFLECTABLE -> BoxFactory.createReflectorBox();
                 case null, default -> BoxFactory.createStaticBox();
             };
+
+            if (!a.isVisible) {
+                box.getComponent(MoveableBoxComponent.class).setVisible(false);
+            }
+
+            if (a.target != null) {
+                Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
+
+                target.getEvents().addListener("puzzleCompleted", () -> {
+                    box.getEvents().trigger("setVisible", true);
+                });
+            }
+
             linkEntities(box, a.linked);
             addIdentifier(box, String.valueOf(a.id));
 
