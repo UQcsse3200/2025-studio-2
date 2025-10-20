@@ -207,7 +207,7 @@ public class UserSettings {
     /**
      * Member for Brightness control;
      */
-    public float brightnessValue = 0.3f;
+    private float brightnessValue = 0.3f;
     public float getBrightnessValue() {
       return brightnessValue;
     }
