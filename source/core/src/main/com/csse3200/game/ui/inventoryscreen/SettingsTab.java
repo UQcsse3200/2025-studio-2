@@ -43,7 +43,15 @@ public class SettingsTab implements InventoryTabInterface {
     private Label musicVolumeValue;
 
     private Sound buttonClickSound;
-    
+
+    private static final String[] backgroundSongs = {
+            "sounds/gamemusic.mp3",
+            "sounds/CircuitGoodness.mp3",
+            "sounds/KindaLikeTycho.mp3",
+            "sounds/Flow.mp3",
+            "sounds/BGM_03_mp3.mp3"
+    };
+
     // Key binding management  
     private final Map<String, TextButton> keyBindButtons = new HashMap<>();
     
@@ -150,8 +158,8 @@ public class SettingsTab implements InventoryTabInterface {
                 musicVolumeValue.setText(String.format("%.0f%%", value * 100));
 
                 //  Apply live change
-                updateCurrentMusicVolume();
-                logger.info("[UI] Music slider moved -> {} ({}%)", value, (int)(value * 100));
+//                updateCurrentMusicVolume();
+//                logger.info("[UI] Music slider moved -> {} ({}%)", value, (int)(value * 100));
             }
         });
     }
@@ -419,24 +427,20 @@ public class SettingsTab implements InventoryTabInterface {
         logger.info("[Apply] Saved settings: master={} music={}", settings.masterVolume, settings.musicVolume);
     }
 
-    // THIS WILL NEED TO BE UPDATED IF THE GAME AREA OR MUSIC TRACK CHANGES
-
     private void updateCurrentMusicVolume() {
         try {
-            String bgm = "sounds/BGM_03_mp3.mp3";
-            Music music = ServiceLocator.getResourceService().getAsset(bgm, Music.class);
-            if (music != null && music.isPlaying()) {
-                float master = masterVolumeSlider.getValue();
-                float musicVol = musicVolumeSlider.getValue();
-                float effective = master * musicVol;
+            float musicVol = musicVolumeSlider.getValue();
+            for (String i : backgroundSongs) {
+                if (!ServiceLocator.getResourceService().containsAsset(i, Music.class)) {
+                    continue;
+                }
+                Music music = ServiceLocator.getResourceService().getAsset(i, Music.class);
 
-                music.setVolume(musicVol);
-
-                // 📝 Log it
-                logger.info("[Audio] Updated current music volume -> master={} music={} effective={}",
-                        master, musicVol, effective);
-            } else {
-                logger.warn("[Audio] Tried to update music volume, but no music is playing.");
+                if (music != null && music.isPlaying()) {
+                    music.setVolume(musicVol);
+                } else {
+                    logger.warn("[Audio] Tried to update music volume, but no music is playing.");
+                }
             }
         } catch (Exception e) {
             logger.error("[Audio] Failed to update music volume", e);
