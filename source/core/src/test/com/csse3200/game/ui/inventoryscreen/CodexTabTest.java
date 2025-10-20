@@ -159,4 +159,20 @@ public class CodexTabTest {
             assertEquals("No entries found yet.", noEntriesLabel.getText().toString());
         }
     }
+
+    @Test
+    @DisplayName("Codex Tab is disposed with no errors")
+    void disposeNoError() {
+        // Build a codex tab
+        try (MockedStatic<ServiceLocator> mockLocator = mockStatic(ServiceLocator.class)) {
+            mockLocator.when(ServiceLocator::getCodexService).thenReturn(mockCodexService);
+
+            // Return empty list when attempting to retrieve entries
+            when(mockCodexService.getEntries(anyBoolean())).thenReturn(new ArrayList<>());
+            // Build codex tab
+            codexTab.build(skin);
+        }
+        // Dispose of the codex tab
+        assertDoesNotThrow(() -> codexTab.dispose());
+    }
 }
