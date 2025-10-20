@@ -51,8 +51,7 @@
   ],
   "atlases": [
     "images/PLAYER.atlas",
-    "images/drone.atlas",
-    "images/boss.atlas",
+    "images/doors.atlas",
     "images/volatile_platform.atlas",
     "images/timer.atlas",
     "images/flying_bat.atlas",
@@ -63,6 +62,7 @@
     "sounds/buttonsound.mp3",
     "sounds/damagesound.mp3",
     "sounds/deathsound.mp3",
+    "sounds/doorsound.mp3",
     "sounds/explosion.mp3",
     "sounds/hurt.mp3",
     "sounds/jetpacksound.mp3",
