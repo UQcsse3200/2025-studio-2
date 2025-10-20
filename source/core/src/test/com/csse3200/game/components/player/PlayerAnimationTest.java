@@ -66,7 +66,7 @@ public class PlayerAnimationTest {
         // double jump
         player.getEvents().trigger("jump");
         verify(animator, times(2)).startAnimation("JUMP");
-        Thread.sleep(1000);
+        Thread.sleep(500);
         verify(animator).startAnimation("RIGHT");
     }
 
@@ -80,7 +80,7 @@ public class PlayerAnimationTest {
         verify(animator, times(2)).startAnimation("JUMPLEFT");
         // land
         player.getEvents().trigger("landed");
-        Thread.sleep(1000);
+        Thread.sleep(500);
         verify(animator).startAnimation("LEFT");
     }
 
@@ -193,5 +193,48 @@ public class PlayerAnimationTest {
             controller.setAnimation(s);
             verify(animator).startAnimation("RIGHT");
         }
+    }
+
+    @Test
+    void testDashLeftRevertsLeft() throws InterruptedException {
+        controller.animateWalk(new Vector2(-1f, 0f));
+        verify(animator).startAnimation("LEFT");
+
+        player.getEvents().trigger("dash");
+        verify(animator).startAnimation("DASHLEFT");
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        Thread.sleep(500);
+        verify(animator).startAnimation("IDLELEFT");
+    }
+
+    @Test
+    void testDashLeftRevertsRight() throws InterruptedException {
+        controller.animateWalk(new Vector2(-1f, 0f));
+        verify(animator).startAnimation("LEFT");
+        player.getEvents().trigger("dash");
+        verify(animator).startAnimation("DASHLEFT");
+        player.getComponent(PlayerAnimationController.class).setXDirection(1);
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        Thread.sleep(500);
+        verify(animator).startAnimation("IDLE");
+    }
+
+    @Test
+    void testDashRightRevertsRight() throws InterruptedException {
+        player.getEvents().trigger("dash");
+        verify(animator).startAnimation("DASH");
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        Thread.sleep(1000);
+        verify(animator).startAnimation("IDLE");
+    }
+
+    @Test
+    void testDashRightRevertsLeft() throws InterruptedException {
+        player.getEvents().trigger("dash");
+        verify(animator).startAnimation("DASH");
+        player.getComponent(PlayerAnimationController.class).setXDirection(-1);
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        Thread.sleep(500);
+        verify(animator).startAnimation("IDLELEFT");
     }
 }

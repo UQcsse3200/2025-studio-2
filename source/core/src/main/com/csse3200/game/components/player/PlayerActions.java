@@ -417,15 +417,18 @@ public class PlayerActions extends Component {
   /**
    * Makes the player crouch
    */
-  void crouch() {
+  public void crouch() {
     StandingColliderComponent standing = entity.getComponent(StandingColliderComponent.class);
     CrouchingColliderComponent crouch =
             entity.getComponent(CrouchingColliderComponent.class);
+      System.out.println(11);
     if (crouching) {
+        System.out.println(22);
       crouching = false;
       standing.getFixtureRef().setSensor(false);
       crouch.getFixtureRef().setSensor(true);
     } else {
+        System.out.println(33);
       crouching = true;
       standing.getFixtureRef().setSensor(true);
       crouch.getFixtureRef().setSensor(false);
