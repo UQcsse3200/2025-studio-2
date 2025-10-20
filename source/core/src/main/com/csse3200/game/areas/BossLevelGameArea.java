@@ -268,7 +268,7 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnWalls() {
         // Lower wall between level halves
-        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"");
+        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"images/wall.png");
         lowerWall.setScale(2f,12f);
         spawnEntityAt(lowerWall, new GridPoint2(60, -4),
                 false, false);
@@ -279,7 +279,7 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(door, new GridPoint2(62, 20), true, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20, 30,  1,5f,"");
+        Entity upperWall = WallFactory.createWall(20, 30,  1,5f,"images/wall.png");
         upperWall.setScale(2f,15f);
         spawnEntityAt(upperWall, new GridPoint2(60, 23),
                 false, false);
@@ -406,7 +406,7 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(spikes2,
                 new GridPoint2(15,tileBounds.y - 15), true,  true);
 
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f,"images/wall.png");
         wall.setScale(1f,8f);
         spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
                 false, false);
