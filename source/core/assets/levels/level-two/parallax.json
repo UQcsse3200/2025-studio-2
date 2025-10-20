@@ -1,0 +1,6 @@
+{
+  "layers": [
+    { "texture": "images/lablevel/background/level2background.png", "factor": 0.0, "offsetY": 0.0, "scale": 0.0 },
+    { "texture": "images/lablevel/background/background2.png", "factor": 1.0, "offsetX": -20.0, "offsetY": -14.0, "scale": 0.057 }
+  ]
+}

@@ -2,6 +2,7 @@ package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
@@ -226,6 +227,15 @@ public final class Spawners {
             addIdentifier(button, String.valueOf(a.id));
 
             return button;
+        });
+
+        // --- Button Puzzle Manager ---
+        SpawnRegistry.register("button_manager", a -> {
+            Entity puzzleEntity = new Entity();
+            ButtonManagerComponent managerComponent = new ButtonManagerComponent();
+            puzzleEntity.addComponent(managerComponent);
+            addIdentifier(puzzleEntity, String.valueOf(a.id));
+            return puzzleEntity;
         });
 
         // --- Laser Detector ---
