@@ -7,7 +7,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CollectablesConfigJsonTest {
+class CollectablesConfigTest {
 
     @Test
     void loadFromJson_empty() {
