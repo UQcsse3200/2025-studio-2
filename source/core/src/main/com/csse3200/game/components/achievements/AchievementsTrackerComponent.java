@@ -36,9 +36,9 @@ public class AchievementsTrackerComponent extends Component {
         AchievementService.get().onLevelStarted();
     }
 
-    // If your level code knows the level number, call the service from there instead.
     private void onLevelCompleted() {
-        // e.g., AchievementService.get().onLevelCompleted(1);
+        // empty level completed handler. If your level code knows the level number,
+        // call the service from there instead. e.g., `AchievementService.get().onLevelCompleted(1);`
     }
 
     @Override

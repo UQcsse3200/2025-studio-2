@@ -17,7 +17,6 @@ import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
@@ -181,8 +180,8 @@ public class TutorialGameArea extends GameArea {
     }
 
     private void spawnTutorials() {
-        spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
-        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
     }
 
     private void spawnTerminals() {

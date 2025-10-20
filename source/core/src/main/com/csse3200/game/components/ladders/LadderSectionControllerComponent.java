@@ -73,7 +73,7 @@ public class LadderSectionControllerComponent extends Component {
 
     private List<LadderRungComponent> findExtendableRungs() {
         rungs.clear();
-        for (Entity e : ServiceLocator.getEntityService().get_entities()) {
+        for (Entity e : ServiceLocator.getEntityService().getEntities()) {
             LadderRungComponent rung = e.getComponent(LadderRungComponent.class);
             if (rung != null && id.equals(rung.getId()) && rung.getRungIdx() < extendCount) {
                 rungs.add(rung);

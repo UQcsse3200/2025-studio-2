@@ -8,14 +8,15 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.PositionSyncComponent;
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.minimap.MinimapComponent;
@@ -33,12 +34,10 @@ import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.ui.achievements.AchievementToastUI;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -175,7 +174,6 @@ public class LevelTwoGameArea extends GameArea {
         spawnAutoBomberDrone(15, 15, 30, 15);
         spawnAutoBomberDrone(52, 60, 60,58);
         spawnAutoBomberDrone(65, 60, 75,58);
-
         spawnCollectables();
         spawnMovingTraps();
         spawnTutorials();
@@ -191,7 +189,7 @@ public class LevelTwoGameArea extends GameArea {
 
     private void spawnTutorials() {
         // TODO: Comment this if the player should not have a dash upgrade by this point
-        spawnEntityAt(TutorialFactory.createDashTutorial(), new GridPoint2(14, 8), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createDashTutorial(), new GridPoint2(14, 8), true, true);
     }
 
     private void spawnDeathZone() {
@@ -207,38 +205,38 @@ public class LevelTwoGameArea extends GameArea {
 
     private void spawnWalls(){
         GridPoint2 bottomWallPos = new GridPoint2(80,5);
-        Entity bottomWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity bottomWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         bottomWall.setScale(2f,7.5f);
         spawnEntityAt(bottomWall, bottomWallPos, false, false);
 
         GridPoint2 middleWallPos = new GridPoint2(54,24);
-        Entity middleWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity middleWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         middleWall.setScale(2f,6f);
         spawnEntityAt(middleWall, middleWallPos, false, false);
 
 //        TOP LEVEL
         GridPoint2 wall1Pos = new GridPoint2(33,44);
-        Entity wall1 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall1 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall1.setScale(2f,8f);
         spawnEntityAt(wall1, wall1Pos, false, false);
 
         GridPoint2 wall2Pos = new GridPoint2(46,44);
-        Entity wall2 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall2 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall2.setScale(2f,6.5f);
         spawnEntityAt(wall2, wall2Pos, false, false);
 
         GridPoint2 wall3Pos = new GridPoint2(59,44);
-        Entity wall3 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall3 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall3.setScale(2f,5f);
         spawnEntityAt(wall3, wall3Pos, false, false);
 
         GridPoint2 wall4Pos = new GridPoint2(72,44);
-        Entity wall4 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall4 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall4.setScale(2f,3.5f);
         spawnEntityAt(wall4, wall4Pos, false, false);
 
         GridPoint2 wall5Pos = new GridPoint2(85,44);
-        Entity wall5 = WallFactory.createWall(25,0,1,20f,"");
+        Entity wall5 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall5.setScale(2f,2f);
         spawnEntityAt(wall5, wall5Pos, false, false);
     }

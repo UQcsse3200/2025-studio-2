@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -24,6 +23,9 @@ import java.util.Map;
  * Factory for creating collectable entities (e.g., keys, coins, potions).
  */
 public class CollectableFactory {
+    private CollectableFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static Map<String, CollectablesConfig> cfgs;
 

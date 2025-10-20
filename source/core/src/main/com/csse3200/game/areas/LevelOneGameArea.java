@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Camera;
@@ -12,24 +11,20 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.collectables.CollectableComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
 import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.ladders.LadderRungComponent;
 import com.csse3200.game.components.ladders.LadderSectionControllerComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
-import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -40,14 +35,11 @@ import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.CollectableCounter;
+import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.ui.achievements.AchievementToastUI;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -219,8 +211,8 @@ public class LevelOneGameArea extends GameArea {
     }
 
     private void spawnTutorials() {
-      spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
-      spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
+      spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(11, 5), true, true);
+      spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(13, 10), true, true);
     }
 
     private void spawnTerminals() {
@@ -296,12 +288,12 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnWalls(){
         GridPoint2 leftWallPos = new GridPoint2(25,4);
-        Entity leftWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity leftWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         leftWall.setScale(1,4.5f);
         spawnEntityAt(leftWall, leftWallPos, false, false);
 
         GridPoint2 rightWallPos = new GridPoint2(75,4);
-        Entity rightWall = WallFactory.createWall(25,0,1,20f,"");
+        Entity rightWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         rightWall.setScale(2.5f,7.5f);
         spawnEntityAt(rightWall, rightWallPos, false, false);
     }

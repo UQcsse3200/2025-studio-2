@@ -139,7 +139,7 @@ public final class Spawners {
 
         // -- Wall ---
         SpawnRegistry.register("wall", a -> {
-            Entity wall =  WallFactory.createWall(a.x, a.y, a.sx, a.sy, "");
+            Entity wall =  WallFactory.createWall(a.x, a.y, a.sx, a.sy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
             return wall;
         });
@@ -314,10 +314,10 @@ public final class Spawners {
             EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
 
             Entity tutorial = switch (subtype) {
-                case JUMP -> TutorialFactory.createJumpTutorial();
-                case DOUBLE_JUMP -> TutorialFactory.createDoubleJumpTutorial();
-                case DASH -> TutorialFactory.createDashTutorial();
-                case null, default -> TutorialFactory.createJumpTutorial();
+                case JUMP -> ActionIndicatorFactory.createJumpTutorial();
+                case DOUBLE_JUMP -> ActionIndicatorFactory.createDoubleJumpTutorial();
+                case DASH -> ActionIndicatorFactory.createDashTutorial();
+                case null, default -> ActionIndicatorFactory.createJumpTutorial();
             };
 
             return tutorial;

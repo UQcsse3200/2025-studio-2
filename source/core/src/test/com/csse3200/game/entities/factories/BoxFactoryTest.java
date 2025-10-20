@@ -1,13 +1,10 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -27,14 +24,11 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
-
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
-import javax.swing.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
