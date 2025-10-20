@@ -74,6 +74,7 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
 
+
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);

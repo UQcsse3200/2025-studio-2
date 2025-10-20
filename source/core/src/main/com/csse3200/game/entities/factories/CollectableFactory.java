@@ -210,5 +210,19 @@ public class CollectableFactory {
 
         return obj;
     }
+    public static Entity createPrompt(String promptMessage, int duration, float width, float height) {
+        Entity obj = new Entity()
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new ColliderComponent()
+                        .setLayer(PhysicsLayer.COLLECTABLE)
+                        .setSensor(true)) // not blocking, overlap only
+                .addComponent(new PromptComponent(promptMessage,duration));
+
+        // Size the sensor using the same pattern as your other collectables
+        obj.setScale(width, height);
+        PhysicsUtils.setScaledCollider(obj, width, height);
+
+        return obj;
+    }
 
 }

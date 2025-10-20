@@ -115,136 +115,138 @@ public class SettingsMenuDisplay extends UIComponent {
    * @return Table containing all settings UI components
    */
   private Table makeSettingsTable() {
-    // Get current values
-    UserSettings.Settings settings = UserSettings.get();
-    Table table = new Table();
-    table.columnDefaults(0).right().padRight(15f);
-    table.columnDefaults(1).left();
+      // Get current values
+      UserSettings.Settings settings = UserSettings.get();
 
-    // --- Display Section ---
-    Label displayHeader = new Label("Display", skin, "title");
-    table.add(displayHeader).colspan(2).center().padBottom(10f);
-    table.row().padTop(10f);
-    // Create components
-    Label fpsLabel = new Label("FPS Cap:", skin);
-    fpsText = new TextField(Integer.toString(settings.fps), skin);
+      // Root table that stacks sections vertically
+      Table root = new Table();
+      root.top().pad(20f);
 
-    Label fullScreenLabel = new Label("Fullscreen:", skin);
-    fullScreenCheck = new CheckBox("", skin);
-    fullScreenCheck.setChecked(settings.fullscreen);
+      // --- Display Section ---
+      Table displaySection = new Table();
+      displaySection.columnDefaults(0).right().padRight(15f);
+      displaySection.columnDefaults(1).left();
 
-    Label vsyncLabel = new Label("VSync:", skin);
-    vsyncCheck = new CheckBox("", skin);
-    vsyncCheck.setChecked(settings.vsync);
+      Label displayHeader = new Label("Display", skin, "title");
+      displaySection.add(displayHeader).colspan(2).center().padBottom(10f);
+      displaySection.row().padTop(10f);
 
-//    Label uiScaleLabel = new Label("ui Scale (Unused):", skin);
-//    uiScaleSlider = new Slider(0.2f, 2f, 0.1f, false, skin);
-//    uiScaleSlider.setValue(settings.uiScale);
-//    Label uiScaleValue = new Label(String.format("%.2fx", settings.uiScale), skin);
-    // --- Audio Section ---
-    table.row().padTop(20f);
-    Label audioHeader = new Label("Audio", skin, "title");
-    table.add(audioHeader).colspan(2).center();
-    table.row().padTop(10f);
-    // Master volume + music volume rows follow here
-    Label masterVolumeLabel = new Label("Master Volume:", skin);
-    masterVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
-    masterVolumeSlider.setValue(settings.masterVolume);
-    Label masterVolumeValue = new Label((int)(settings.masterVolume * 100) + "%", skin);
+      // Create components
+      Label fpsLabel = new Label("FPS Cap:", skin);
+      fpsText = new TextField(Integer.toString(settings.fps), skin);
 
-    Label musicVolumeLabel = new Label("Music Volume:", skin);
-    musicVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
-    musicVolumeSlider.setValue(settings.musicVolume);
-    Label musicVolumeValue = new Label((int)(settings.musicVolume * 100) + "%", skin);
-    Label displayModeLabel = new Label("Resolution:", skin);
-    displayModeSelect = new SelectBox<>(skin);
-    Monitor selectedMonitor = Gdx.graphics.getMonitor();
-    displayModeSelect.setItems(getDisplayModes(selectedMonitor));
+      Label fullScreenLabel = new Label("Fullscreen:", skin);
+      fullScreenCheck = new CheckBox("", skin);
+      fullScreenCheck.setChecked(settings.fullscreen);
 
-    // Set current display mode properly
-    StringDecorator<DisplayMode> currentMode =
-        getCurrentDisplayMode(displayModeSelect.getItems(), settings);
-    if (currentMode != null) {
-      displayModeSelect.setSelected(currentMode);
-    }
+      Label vsyncLabel = new Label("VSync:", skin);
+      vsyncCheck = new CheckBox("", skin);
+      vsyncCheck.setChecked(settings.vsync);
 
-    table.add(fpsLabel).right().padRight(15f);
-    table.add(fpsText).width(100).left();
 
-    table.row().padTop(10f);
-    table.add(fullScreenLabel).right().padRight(15f);
-    table.add(fullScreenCheck).left();
+      Label displayModeLabel = new Label("Resolution:", skin);
+      displayModeSelect = new SelectBox<>(skin);
+      Monitor selectedMonitor = Gdx.graphics.getMonitor();
+      displayModeSelect.setItems(getDisplayModes(selectedMonitor));
 
-    table.row().padTop(10f);
-    table.add(vsyncLabel).right().padRight(15f);
-    table.add(vsyncCheck).left();
+      // Set current display mode properly
+      StringDecorator<DisplayMode> currentMode =
+              getCurrentDisplayMode(displayModeSelect.getItems(), settings);
+      if (currentMode != null) {
+          displayModeSelect.setSelected(currentMode);
+      }
 
-//    table.row().padTop(10f);
-//    Table uiScaleTable = new Table();
-//    uiScaleTable.add(uiScaleSlider).width(100).left();
-//    uiScaleTable.add(uiScaleValue).left().padLeft(5f).expandX();
+      displaySection.add(fpsLabel).right().padRight(15f);
+      displaySection.add(fpsText).width(100).left();
 
-//    table.add(uiScaleLabel).right().padRight(15f);
-//    table.add(uiScaleTable).left();
+      displaySection.row().padTop(10f);
+      displaySection.add(fullScreenLabel).right().padRight(15f);
+      displaySection.add(fullScreenCheck).left();
 
-    table.row().padTop(10f);
-    table.add(displayModeLabel).right().padRight(15f);
-    table.add(displayModeSelect).left();
+      displaySection.row().padTop(10f);
+      displaySection.add(vsyncLabel).right().padRight(15f);
+      displaySection.add(vsyncCheck).left();
 
-    // Create master volume slider
-    table.row().padTop(10f);
-    Table masterVolumeTable = new Table();
-    masterVolumeTable.add(masterVolumeSlider).width(100).left();
-    masterVolumeTable.add(masterVolumeValue).left().padLeft(5f).expandX();
-    table.add(masterVolumeLabel).right().padRight(15f);
-    table.add(masterVolumeTable).left();
+      displaySection.row().padTop(10f);
+      displaySection.add(displayModeLabel).right().padRight(15f);
+      displaySection.add(displayModeSelect).left();
 
-    // Create music volume slider
-    table.row().padTop(10f);
-    Table musicVolumeTable = new Table();
-    musicVolumeTable.add(musicVolumeSlider).width(100).left();
-    musicVolumeTable.add(musicVolumeValue).left().padLeft(5f).expandX();
-    table.add(musicVolumeLabel).right().padRight(15f);
-    table.add(musicVolumeTable).left();
+      root.add(displaySection).padBottom(20f);
+      root.row();
 
-    // Events on inputs
-//    uiScaleSlider.addListener(
-//        (Event event) -> {
-//          float value = uiScaleSlider.getValue();
-//          uiScaleValue.setText(String.format("%.2fx", value));
-//          return true;
-//        });
+      // --- Audio Section ---
+      Table audioSection = new Table();
+      audioSection.columnDefaults(0).right().padRight(15f);
+      audioSection.columnDefaults(1).left();
 
-    // Handle slider events
-    masterVolumeSlider.addListener((Event event) -> {
-        float value = masterVolumeSlider.getValue();
-        int percent = (int)(masterVolumeSlider.getValue() * 100);
-        masterVolumeValue.setText(percent + "%");
-        return true;
-    });
+      Label audioHeader = new Label("Audio", skin, "title");
+      audioSection.add(audioHeader).colspan(2).center().padBottom(10f);
+      audioSection.row().padTop(10f);
 
-    musicVolumeSlider.addListener((Event event) -> {
-        int percent = (int)(musicVolumeSlider.getValue() * 100);
-        musicVolumeValue.setText(percent + "%");
-      return true;
-    });
+      // Master volume + music volume rows follow here
+      Label masterVolumeLabel = new Label("Master Volume:", skin);
+      masterVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
+      masterVolumeSlider.setValue(settings.masterVolume);
+      Label masterVolumeValue = new Label((int)(settings.masterVolume * 100) + "%", skin);
 
-    // --- Controls Section ---
-    table.row().padTop(20f);
-    Label controlsHeader = new Label("Controls", skin, "title");
-    table.add(controlsHeader).colspan(2).center();
-    table.row().padTop(10f);
+      Label musicVolumeLabel = new Label("Music Volume:", skin);
+      musicVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
+      musicVolumeSlider.setValue(settings.musicVolume);
+      Label musicVolumeValue = new Label((int)(settings.musicVolume * 100) + "%", skin);
 
-    // Key bindings + restore defaults follow here
-    Label keyBindLabel = new Label("Key Bindings:", skin);
-    table.add(keyBindLabel).colspan(2).center();
+      // Create master volume slider
+      Table masterVolumeTable = new Table();
+      masterVolumeTable.add(masterVolumeSlider).width(100).left();
+      masterVolumeTable.add(masterVolumeValue).left().padLeft(5f).expandX();
+      audioSection.add(masterVolumeLabel).right().padRight(15f);
+      audioSection.add(masterVolumeTable).left();
 
-    addKeyBindingControls(table);
+      // Create music volume slider
+      audioSection.row().padTop(10f);
+      Table musicVolumeTable = new Table();
+      musicVolumeTable.add(musicVolumeSlider).width(100).left();
+      musicVolumeTable.add(musicVolumeValue).left().padLeft(5f).expandX();
+      audioSection.add(musicVolumeLabel).right().padRight(15f);
+      audioSection.add(musicVolumeTable).left();
 
-    return table;
+      masterVolumeSlider.addListener((Event event) -> {
+          float value = masterVolumeSlider.getValue();
+          int percent = (int)(masterVolumeSlider.getValue() * 100);
+          masterVolumeValue.setText(percent + "%");
+          return true;
+      });
+
+      musicVolumeSlider.addListener((Event event) -> {
+          int percent = (int)(musicVolumeSlider.getValue() * 100);
+          musicVolumeValue.setText(percent + "%");
+          return true;
+      });
+
+      root.add(audioSection).padBottom(20f);
+      root.row();
+
+      // --- Controls Section ---
+      Table controlsSection = new Table();
+      controlsSection.columnDefaults(0).right().padRight(15f);
+      controlsSection.columnDefaults(1).left();
+
+      Label controlsHeader = new Label("Controls", skin, "title");
+      controlsSection.add(controlsHeader).colspan(2).center().padBottom(10f);
+      controlsSection.row().padTop(10f);
+
+      // Key bindings + restore defaults follow here
+      Label keyBindLabel = new Label("Key Bindings:", skin);
+      controlsSection.add(keyBindLabel).colspan(2).center();
+
+      addKeyBindingControls(controlsSection);
+
+      root.add(controlsSection).row();
+
+      return root;
   }
 
-  /**
+
+    /**
    * Creates UI controls for key binding configuration, allowing users to rebind game actions
    * to different keys. Generates buttons for each action in the keymap and includes a reset option.
    *

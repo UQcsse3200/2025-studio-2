@@ -82,7 +82,7 @@ public class CollectableComponentV2 extends Component {
                 if (texture != null) {
                     renderService.unregister(texture);
                     if (entity.getComponent(MinimapComponent.class)!= null) {
-                        Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
+                        Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/empty.png", Texture.class));
                         entity.getComponent(MinimapComponent.class).setMarker(marker);
                     }
                     cone.dispose();
