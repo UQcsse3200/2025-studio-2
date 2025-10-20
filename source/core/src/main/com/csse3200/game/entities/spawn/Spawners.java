@@ -14,6 +14,8 @@ import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,7 +289,21 @@ public final class Spawners {
         });
 
         // --- Death Zone ---
-        SpawnRegistry.register("death_zone", a -> DeathZoneFactory.createDeathZone());
+        SpawnRegistry.register("death_zone", a -> {
+            Entity deathZone = DeathZoneFactory.createDeathZone();
+
+            if(a.sx != 1 && a.sy != 1) {
+                deathZone.setScale(a.sx,a.sy);
+            }
+
+            if(a.extra != null) {
+                deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(Float.parseFloat(a.extra)),
+                        PhysicsComponent.AlignX.LEFT,
+                        PhysicsComponent.AlignY.BOTTOM);
+            }
+
+            return deathZone;
+        });
 
         // --- Upgrade ---
         SpawnRegistry.register("upgrade", a -> {
