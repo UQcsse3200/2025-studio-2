@@ -32,7 +32,7 @@ public class TutorialGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-    private static boolean keySpawned;
+    private boolean keySpawned;
     private static final String[] gameTextures = {
         "images/box_boy_leaf.png",
         "images/button.png",
@@ -110,6 +110,8 @@ public class TutorialGameArea extends GameArea {
         "images/lost_hardware.png",
         "images/tutorials/jump.png",
         "images/tutorials/double_jump.png",
+        "images/ladder-map.png",
+        "images/door_open-map.png",
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
