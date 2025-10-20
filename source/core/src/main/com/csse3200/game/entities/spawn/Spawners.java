@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
@@ -9,6 +10,7 @@ import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -228,13 +230,17 @@ public final class Spawners {
             Entity button = ButtonFactory.createButton(false, a.subtype, a.direction);
 
             if (a.extra != null) {
-                // link to button manager
-                Entity target = ServiceLocator.getEntityService().getEntityById(a.extra);
-                ButtonManagerComponent manager = target.getComponent(ButtonManagerComponent.class);
-                ButtonComponent buttonComp =  button.getComponent(ButtonComponent.class);
+                if(!a.extra.equals("evil")) {
+                    // link to button manager
+                    Entity target = ServiceLocator.getEntityService().getEntityById(a.extra);
+                    ButtonManagerComponent manager = target.getComponent(ButtonManagerComponent.class);
+                    ButtonComponent buttonComp = button.getComponent(ButtonComponent.class);
 
-                buttonComp.setPuzzleManager(manager);
-                manager.addButton(buttonComp);
+                    buttonComp.setPuzzleManager(manager);
+                    manager.addButton(buttonComp);
+                } else {
+                    addGlow(button);
+                }
             }
 
             if (a.target != null) {
@@ -422,5 +428,16 @@ public final class Spawners {
     private static void addIdentifier(Entity entity, String id) {
         if (id == null || id.isBlank()) return;
         entity.addComponent(new IdentifierComponent(id));
+    }
+
+    private static void addGlow(Entity entity) {
+        ConeLightComponent evilGlow = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                128,
+                new Color().set(1f, 0f, 0f, 0.6f),
+                2.5f,
+                0f,
+                180f);
+        entity.addComponent(evilGlow);
     }
 }
