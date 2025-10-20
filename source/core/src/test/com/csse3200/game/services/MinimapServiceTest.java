@@ -44,6 +44,17 @@ class MinimapServiceTest {
   }
 
   @Test
+  void shouldUpdateMarkerColor() {
+    Entity entity = new Entity();
+    Image marker = spy(new Image(mockTexture));
+
+    minimapService.trackEntity(entity, marker);
+    minimapService.setMarkerColor(entity, Color.RED);
+
+    verify(marker).setColor(Color.RED);
+  }
+
+  @Test
   void shouldNotTrackSameEntityTwice() {
     Entity entity = new Entity();
     Image marker1 = new Image(mockTexture);
@@ -72,17 +83,6 @@ class MinimapServiceTest {
 
     assertFalse(minimapService.getTrackedEntities().containsKey(entity));
     verify(mockMinimapDisplay).removeMarker(marker);
-  }
-
-  @Test
-  void shouldSetMarkerColor() {
-    Entity entity = new Entity();
-    Image marker = spy(new Image(mockTexture));
-
-    minimapService.trackEntity(entity, marker);
-    minimapService.setMarkerColor(entity, Color.RED);
-
-    verify(marker).setColor(Color.RED);
   }
 
   @Test
