@@ -57,7 +57,20 @@
     "images/terminal_off.png",
     "images/plate.png",
     "images/plate-pressed.png",
-    "images/downSignpost.png"
+    "images/downSignpost.png",
+    "images/door_open-map.png",
+    "images/floor-map-4.png",
+    "images/floor-map-5.png",
+    "images/floor-map-6.png",
+    "images/platform-short-map.png",
+    "images/wall-map-3.png",
+    "images/wall-map-4.png",
+    "images/wall-map-5.png",
+    "images/wall-map-6.png",
+    "images/wall-map-7.png",
+    "images/wall-map-8.png",
+    "images/wall-map-9.png",
+    "images/platform-map.png"
   ],
   "atlases": [
     "images/PLAYER.atlas",
