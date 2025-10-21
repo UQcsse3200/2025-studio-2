@@ -11,6 +11,7 @@
     "images/box_blue.png",
     "images/box_white.png",
     "images/blue_button.png",
+    "images/door_open-map.png",
     "images/spikes_sprite.png",
     "images/platform.png",
     "images/empty.png",
@@ -55,7 +56,8 @@
     "images/volatile_platform.atlas",
     "images/timer.atlas",
     "images/flying_bat.atlas",
-    "images/laser.atlas"
+    "images/laser.atlas",
+    "images/health-potion.atlas"
   ],
   "sounds": [
     "sounds/Impact4.ogg",
