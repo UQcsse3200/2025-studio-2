@@ -5,9 +5,11 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -20,6 +22,10 @@ import com.csse3200.game.entities.spawn.SpawnRegistry;
 import com.csse3200.game.entities.spawn.Spawners;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.HitboxComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -141,6 +147,7 @@ public class LevelThreeGameArea extends GameArea {
         if (cfg == null) throw new IllegalStateException("Level config not loaded");
         if (cfg.entities == null) throw new IllegalArgumentException("'entities' missing in level config");
         spawnParallaxBackground();
+        spawnCollectables();
 
         for (var e : cfg.entities) {
             var entity = SpawnRegistry.build(e.type, e);
@@ -245,6 +252,26 @@ public class LevelThreeGameArea extends GameArea {
 
         background.addComponent(parallaxBg);
         spawnEntity(background);
+    }
+
+    public void spawnCollectable(GridPoint2 pos) {
+        PhysicsComponent physics  = new PhysicsComponent();
+        physics.setBodyType(BodyDef.BodyType.StaticBody);
+        Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);
+        Entity collectable = new Entity()
+                .addComponent(new TextureRenderComponent(texture))
+                .addComponent(physics)
+                .addComponent(new HitboxComponent().setLayer(PhysicsLayer.COLLECTABLE))
+                .addComponent(new ItemCollectableComponent());
+        collectable.setScale(0.6f, 0.6f);
+        spawnEntityAt(collectable, new GridPoint2(pos), true, true);
+        //ServiceLocator.getEntityService().register(collectable);
+    }
+
+    public void spawnCollectables() {
+        spawnCollectable(new GridPoint2(18, -5));
+        spawnCollectable(new GridPoint2(0, 95));
+        spawnCollectable(new GridPoint2(45, 14));
     }
 
     private void unloadAssets() {

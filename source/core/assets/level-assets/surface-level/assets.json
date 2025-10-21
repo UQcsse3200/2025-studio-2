@@ -87,6 +87,7 @@
     "images/surfacelevel/3.png",
     "images/surfacelevel/4.png",
     "images/door_open-map.png",
+    "images/lost_hardware.png",
   ],
   "atlases": [
       "images/PLAYER.atlas",
