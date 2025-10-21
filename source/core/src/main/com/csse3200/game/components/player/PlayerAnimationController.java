@@ -122,16 +122,13 @@ public class PlayerAnimationController extends Component {
      * starts the player's crouching animation
      */
     public void animateCrouching() {
-        System.out.println(1);
         if (actions.getIsCrouching()) {
-            System.out.println(2);
             if (xDirection == 1) {
                 setAnimation("CROUCH");
             } else if (xDirection == -1) {
                 setAnimation("CROUCHLEFT");
             }
         } else {
-            System.out.println(3);
             if (xDirection == 1) {
                 setAnimation("IDLE");
             } else if (xDirection == -1) {
@@ -153,24 +150,18 @@ public class PlayerAnimationController extends Component {
         if (xDirection == 1) { // Facing Right
             if (actions.getIsCrouching()) {
                 animationName = "CROUCH";
-                System.out.println(1);
             } else if (stationary) {
                 animationName = "IDLE";
-                System.out.println(2);
             } else {
                 animationName = "RIGHT";
-                System.out.println(3);
             }
         } else { // Facing Left
             if (actions.getIsCrouching()) {
                 animationName = "CROUCHLEFT";
-                System.out.println(4);
             } else if (stationary) {
                 animationName = "IDLELEFT";
-                System.out.println(5);
             } else {
                 animationName = "LEFT";
-                System.out.println(6);
             }
         }
 
@@ -190,7 +181,6 @@ public class PlayerAnimationController extends Component {
         }
         // Don't cancel hurt animation
         if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
-            System.out.println(animationName);
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }

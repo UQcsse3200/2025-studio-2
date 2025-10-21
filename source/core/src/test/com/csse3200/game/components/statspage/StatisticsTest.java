@@ -1,26 +1,17 @@
 package com.csse3200.game.components.statspage;
 
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.components.CodexTerminalComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.files.FileLoader;
-import com.csse3200.game.physics.components.ColliderComponent;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.services.CodexEntry;
-import com.csse3200.game.services.ResourceService;
-import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

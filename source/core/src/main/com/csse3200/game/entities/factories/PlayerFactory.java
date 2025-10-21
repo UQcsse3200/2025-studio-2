@@ -19,8 +19,6 @@ import com.csse3200.game.physics.components.*;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
-import com.csse3200.game.achievements.AchievementService;
-import net.dermetfan.gdx.physics.box2d.PositionController;
 
 import java.util.List;
 
