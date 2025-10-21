@@ -39,6 +39,7 @@ import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsService;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.*;
@@ -261,7 +262,7 @@ public class MainGameScreen extends ScreenAdapter {
     lvlStartTime = gameTime.getTime();
     return switch (area) {
       case TUTORIAL ->  new TutorialGameArea(terrainFactory);
-      case LEVEL_ONE -> new BossLevelGameArea(terrainFactory);
+      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
@@ -393,32 +394,40 @@ public class MainGameScreen extends ScreenAdapter {
   @Override
   public void render(float delta) {
     if (!paused) {
-      // Update camera position to follow player
-      updateCameraFollow();
+        // Update camera position to follow player
+        updateCameraFollow();
 
-          physicsEngine.update();
-          ServiceLocator.getEntityService().update();
-          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              jumpCount++;
-              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
-                  levelOneArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
-                  levelTwoArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }
-          }
-          laserTimer += delta;
+        physicsEngine.update();
+        ServiceLocator.getEntityService().update();
 
-          // Check if 50 seconds have passed
-          if (laserTimer >= 50f) {
-              if (gameArea instanceof BossLevelGameArea bossLevel) {
-                  bossLevel.spawnLaserShower(); // spawn lasers
-              }
-              laserTimer = 0f; // reset timer
-          }
+        Entity player = gameArea.getPlayer();
+        if (player != null) {
+            // Continuously track player's current position (similar to PlayerActions)
+            Vector2 playerPos = player.getPosition().cpy(); // copy ensures immutability
 
-      }
+            if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                jumpCount++;
+                // Trigger laser shower based on jump count for each level
+                if (gameArea instanceof LevelTwoGameArea levelTwoArea && jumpCount == 20) {
+                    levelTwoArea.laserShowerChecker(delta, playerPos.x, playerPos.y);
+                    jumpCount = 0;
+                }
+            }
+            // Boss-level laser logic
+            if (gameArea instanceof BossLevelGameArea bossLevel) {
+                Vector2 currentPlayerPos = player.getPosition().cpy();
+                if (currentPlayerPos.x < 62f) { // skip laser when player is beyond x = 61
+                    laserTimer += delta;
+                    if (laserTimer >= 40f) {
+                        bossLevel.spawnLaserShower(currentPlayerPos.x, currentPlayerPos.y); // spawn lasers
+                        laserTimer = 0f; // reset timer
+                    }
+                }else{
+                    laserTimer=0f;
+                }
+            }
+        }
+    }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
   }
 
@@ -595,6 +604,8 @@ public class MainGameScreen extends ScreenAdapter {
    * Reset game area and re-add player's death listener
    */
   public void reset() {
+    jumpCount = 0;
+    laserTimer = 0f;
     gameArea.reset();
   }
 

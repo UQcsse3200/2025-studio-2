@@ -1,7 +1,6 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -33,7 +32,6 @@ import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.utils.CollectableCounter;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +98,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/glide_powerup.png",
             "images/jetpack_powerup.png",
             "images/laser-end.png",
+            "images/LaserShower-end.png",
             "images/jetpack_powerup.png",
             "images/lost_hardware.png",
             "images/tutorials/dash.png",
@@ -248,17 +247,15 @@ public class LevelTwoGameArea extends GameArea {
         newPlayer.getEvents().addListener("reset", this::reset);
         return newPlayer;
     }
-    public void spawnLaserShower() {
-        final float Y = player.getPosition().y + 10f;
-        final float X = player.getPosition().x;
-
-
-        for (int i = 0; i <= 2; i++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X - ((i+1)* (float) 5.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round((x+50f)), Math.round(Y)), true, true);
+    public void spawnLaserShower(float X , float Y) {
+        // Spawn lasers behind the player
+        for (int i = 0; i <= 5; i++) {
+            Entity laser = LaserFactory.createLaserShower(-90f); // Create a laser facing downward
+            float xBehind = X - ((i+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round((xBehind+10f)), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule laser disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
@@ -267,12 +264,14 @@ public class LevelTwoGameArea extends GameArea {
             },5f);
         }
 
-        for (int j = 0; j <=2; j++) {
-            Entity laser = LaserFactory.createLaserEmitter(-90f);
-            float x = X + ((j+1)* (float) 5.5);
-            spawnEntityAt(laser,new GridPoint2(Math.round(x-10f), Math.round(Y)), true, true);
+        // Spawn lasers ahead of the player
+        for (int j = 0; j <=5; j++) {
+            Entity laser = LaserFactory.createLaserShower(-90f); // Create a laser facing downward
+            float xAhead = X + ((j+1)* (float) 5.5);
+            spawnEntityAt(laser,new GridPoint2(Math.round(xAhead+10f), Math.round(Y+15f)), true, true);
             laser.getEvents().trigger("shootLaser");
 
+            // Schedule laser disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
@@ -281,10 +280,11 @@ public class LevelTwoGameArea extends GameArea {
             },5f);
         }
     }
-    public void laserShowerChecker(float delta) {
-            if (has_laser==false) {
-                spawnLaserShower();
-                has_laser = true;
+    public void laserShowerChecker(float delta,float X , float Y) {
+            if (!has_laser) { // Only spawn if no active laser
+                spawnLaserShower(X, Y);
+                has_laser = true; // Mark laser as active
+                // Reset the has_laser flag after 5 seconds to allow next spawn
                 Timer.schedule(new Timer.Task() {
                     @Override
                     public void run() {
