@@ -76,7 +76,8 @@
     "images/laser.atlas",
     "images/health-potion.atlas",
     "images/boss.atlas",
-    "images/drone.atlas"
+    "images/drone.atlas",
+    "images/animated-monitors.atlas"
   ],
   "sounds": [
     "sounds/Impact4.ogg",

@@ -453,7 +453,7 @@ public class EnemyFactory {
     public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                .addComponent(new ColliderComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
