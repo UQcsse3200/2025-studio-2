@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
+import com.csse3200.game.lighting.LightingEngine;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +36,12 @@ import java.util.Map;
 public class SettingsTab implements InventoryTabInterface {
     
     // UI Components
+    private Slider brightnessSlider;
     private Slider masterVolumeSlider;
     private Slider musicVolumeSlider;
     
     // Labels for real-time value updates
+    private Label brightnessValue;
     private Label masterVolumeValue;
     private Label musicVolumeValue;
 
@@ -74,6 +77,20 @@ public class SettingsTab implements InventoryTabInterface {
 
     private Table createSettingsTable(Skin skin, UserSettings.Settings settings) {
         Table table = new Table();
+
+        // Brightness Setting
+        Label brightnessLabel = new Label("Brightness:", skin);
+        brightnessSlider = new Slider(0f, 1f, 0.05f, false, skin);
+        brightnessSlider.setValue(settings.brightnessValue);
+        brightnessValue = new Label(String.format("%.0f%%", settings.brightnessValue * 100), skin);
+
+        Table brightnessTable = new Table();
+        brightnessTable.add(brightnessSlider).width(150).left();
+        brightnessTable.add(brightnessValue).left().padLeft(10f);
+
+        table.add(brightnessLabel).right().padRight(15f);
+        table.add(brightnessTable).left();
+        table.row().padTop(10f);
 
         // Master Volume Setting
         Label masterVolumeLabel = new Label("Master Volume:", skin);
@@ -124,11 +141,22 @@ public class SettingsTab implements InventoryTabInterface {
         table.add(applyBtn).colspan(2).center().width(100).height(40).pad(10f);
 
         // Add listeners for real-time value updates
-        setupListeners();
+        setupListeners(settings);
 
         return table;
     }
-    private void setupListeners() {
+    private void setupListeners(UserSettings.Settings settings) {
+        // Brightness slider listener
+        brightnessSlider.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                float value = brightnessSlider.getValue();
+                brightnessValue.setText(String.format("%.0f%%", value * 100));
+
+                logger.info("[UI] Brightness slider moved -> {} ({}%)", value, (int)(value * 100));
+            }
+        });
+
         // Master volume slider listener
         masterVolumeSlider.addListener(new ChangeListener() {
             @Override
@@ -390,6 +418,9 @@ public class SettingsTab implements InventoryTabInterface {
 
     private void applyChanges() {
         UserSettings.Settings settings = UserSettings.get();
+
+        // Set Brightness
+        updateBrightness(settings);
         
         // Apply volume settings
         settings.masterVolume = masterVolumeSlider.getValue();
@@ -430,7 +461,7 @@ public class SettingsTab implements InventoryTabInterface {
                 float musicVol = musicVolumeSlider.getValue();
                 float effective = master * musicVol;
 
-                music.setVolume(effective);
+                music.setVolume(musicVol);
 
                 // 📝 Log it
                 logger.info("[Audio] Updated current music volume -> master={} music={} effective={}",
@@ -441,6 +472,12 @@ public class SettingsTab implements InventoryTabInterface {
         } catch (Exception e) {
             logger.error("[Audio] Failed to update music volume", e);
         }
+    }
+    private void updateBrightness(UserSettings.Settings settings) {
+        settings.brightnessValue = brightnessSlider.getValue();
+        LightingEngine lightingEngine = ServiceLocator.getLightingService().getEngine();
+        lightingEngine.setAmbientLight(settings.brightnessValue);
+
     }
 
 

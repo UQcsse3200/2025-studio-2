@@ -10,6 +10,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsEngine;
@@ -140,7 +141,7 @@ public class LaserShowerComponent extends Component {
         * */
         Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
         if (laserSound != null) {
-            long soundId = laserSound .play(1.0f);
+            long soundId = laserSound.play(UserSettings.get().masterVolume);
             fadeOutSound(laserSound , soundId);
         }
 

@@ -60,7 +60,7 @@ public class ObstacleFactory {
     door.addComponent(new PhysicsComponent());
     door.addComponent(new ColliderComponent());
     door.addComponent(new HitboxComponent().setLayer(PhysicsLayer.OBSTACLE));
-    door.addComponent(new MinimapComponent("images/door_open.png"));
+    door.addComponent(new MinimapComponent("images/door_open-map.png"));
 
     // Make sure door starts in closed state
     door.getComponent(PhysicsComponent.class).getBody().setType(BodyDef.BodyType.StaticBody);
