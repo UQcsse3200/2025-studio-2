@@ -31,6 +31,7 @@ public final class ItemEffectRegistry {
         register("heal", new HealEffect());
         register("buff_speed", new BuffSpeedEffect());
         register("upgrade", new AddUpgrade());
+        register("objective", new AddObjective());
         register("misc", new AddHardware());
     }
 }
