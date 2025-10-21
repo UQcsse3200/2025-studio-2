@@ -18,7 +18,6 @@ class CollectablesConfigTest {
         assertNull(c.sprite);
         assertNull(c.description);
         assertFalse(c.autoConsume, "boolean defaults to false");
-        assertEquals(0, c.ttl);
         assertNull(c.tags);
         assertNull(c.effects);
         assertNull(c.glowColor);
@@ -34,7 +33,6 @@ class CollectablesConfigTest {
         "sprite": "images/items/health.png",
         "description": "Restores a small amount of health",
         "autoConsume": true,
-        "ttl": 30,
         "tags": ["potion", "consumable", "healing"],
         "effects": [
           { "type": "heal", "value": 25, "duration": 0 }
@@ -52,7 +50,6 @@ class CollectablesConfigTest {
         assertEquals("images/items/health.png", c.sprite);
         assertEquals("Restores a small amount of health", c.description);
         assertTrue(c.autoConsume);
-        assertEquals(30, c.ttl);
         assertEquals(List.of("potion", "consumable", "healing"), c.tags);
         assertNotNull(c.effects);
         assertEquals("heal", c.effects.getFirst().type);
@@ -81,7 +78,6 @@ class CollectablesConfigTest {
 
         // Defaults
         assertFalse(c.autoConsume);
-        assertEquals(0, c.ttl);
         assertNull(c.tags);
         assertNull(c.effects);
         assertNull(c.glowColor);
