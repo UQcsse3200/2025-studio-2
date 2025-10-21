@@ -87,7 +87,16 @@
     "images/surfacelevel/3.png",
     "images/surfacelevel/4.png",
     "images/terminal_on.png",
-    "images/terminal_off.png"
+    "images/terminal_off.png",
+    "images/floor-map-1.png",
+    "images/platform-map.png",
+    "images/red_button-map.png",
+    "images/door_open-map.png",
+    "images/door_open-map.png",
+    "images/platform-long-map.png",
+    "images/wall-map-1.png",
+    "images/wall-map-2.png",
+    "images/drone-map.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",

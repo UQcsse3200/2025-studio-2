@@ -9,6 +9,7 @@ import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -313,6 +314,8 @@ public class BoxFactory {
                     .addComponent(new CombatStatsComponent(1, damage))
                     .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
                     .addComponent(new AutonomousBoxComponent());
+
+            autonomousBox.addComponent(new MinimapComponent("images/flying_bat_map.png"));
 
 
 

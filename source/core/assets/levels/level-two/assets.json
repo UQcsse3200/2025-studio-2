@@ -57,7 +57,12 @@
     "images/terminal_off.png",
     "images/plate.png",
     "images/plate-pressed.png",
-    "images/downSignpost.png"
+    "images/downSignpost.png",
+    "images/floor-map-1.png",
+    "images/platform-map.png",
+    "images/red_button-map.png",
+    "images/door_open-map.png",
+    "images/drone-map.png"
   ],
   "atlases": [
     "images/PLAYER.atlas",
