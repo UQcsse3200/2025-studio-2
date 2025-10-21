@@ -87,7 +87,7 @@
     {"type": "objective","id": "door","x": 1,"y": 3,"sx": 2,"sy": 2},
     {"type": "objective","id": "dash_completed","x": 23,"y": 4,"sx": 0.2,"sy": 0.2},
     {"type": "objective","id": "keycard_completed","x": 1,"y": 37,"sx": 0.2,"sy": 0.2},
-    {"type": "terminal","id": "test","x": 3,"y": 4},
+    {"type": "terminal","id": "test","x": 6,"y": 4},
     {"type": "box","subtype": "weighted","x": 15,"y": 15},
     {"type": "box","subtype": "weighted","x": 61,"y": 36},
     {"type": "collectable","subtype": "misc","x": 67,"y": -3,"target": "hardware"},
@@ -100,6 +100,7 @@
     {"type": "box","subtype": "weighted","x": 75,"y": 50},
     {"type": "pressure_plate","subtype": "normal","id": "volatile_platform","x": 79,"y": 46},
     {"type": "platform","subtype": "plate","x": 70,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
-    {"type": "platform","subtype": "plate","x": 78,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"}
+    {"type": "platform","subtype": "plate","x": 78,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
+    {"type": "prompt", "x": 6, "y": 15, "speed": 5,  "dx":  2, "dy": 90, "extra": "Hit \"o\" to have a look at your objectives!"}
   ]
 }

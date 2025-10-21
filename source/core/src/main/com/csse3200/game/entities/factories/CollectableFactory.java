@@ -4,10 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -212,7 +210,7 @@ public class CollectableFactory {
 
         return obj;
     }
-    public static Entity createPrompt(String promptMessage, int duration, float width, float height) {
+    public static Entity createPrompt(String promptMessage, Float duration, float width, float height) {
         Entity obj = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent()
