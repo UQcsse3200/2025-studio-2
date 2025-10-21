@@ -19,6 +19,7 @@ public class MinimapComponent extends Component {
   private float scaleX = 1f;
   private float scaleY = 1f;
   private static final float BOUNDS_SCALAR = 0.0222857f; // dont ask...
+  private static final GridPoint2 DEFAULT_BOUNDS = new GridPoint2(100, 100);
 
 
   /**
@@ -43,10 +44,15 @@ public class MinimapComponent extends Component {
 
   @Override
   public void create() {
-    GridPoint2 tileBounds = ServiceLocator.getMainGameScreen().getGameArea().getMapBounds();
+    var screen = ServiceLocator.getMainGameScreen();
+    GridPoint2 tileBounds = screen == null ? DEFAULT_BOUNDS : screen.getGameArea().getMapBounds();
     MARKER_SCALE.set(tileBounds.x * BOUNDS_SCALAR * scaleX, tileBounds.y * BOUNDS_SCALAR * scaleY);
-    marker = new Image(ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class));
-    ServiceLocator.getMinimapService().trackEntity(entity, marker);
+    Texture asset = ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class);
+    if (asset == null) return;
+    marker = new Image(asset);
+    var svs = ServiceLocator.getMinimapService();
+    if (svs == null) return;
+    svs.trackEntity(entity, marker);
     rescaleMarker();
   }
 
