@@ -7,8 +7,8 @@ import com.csse3200.game.entities.Entity;
 public class PromptComponent extends CollectableComponent {
 
     public final String prompt;
-    public final int duration;
-    public PromptComponent(String prompt, int duration) {
+    public final Float duration;
+    public PromptComponent(String prompt, Float duration) {
         this.prompt = prompt;
         this.duration = duration;
     }
