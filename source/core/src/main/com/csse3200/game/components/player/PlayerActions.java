@@ -128,11 +128,9 @@ public class PlayerActions extends Component {
       jetpackFuel--;
       body.setGravityScale(0f); //for impulse to act upwards
          entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
-    } else if (jetpackFuel < FUEL_CAPACITY) {
-        if (!hasActivatedJetpack) {
-            jetpackFuel++;
-            entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
-        }
+    } else if ((jetpackFuel < FUEL_CAPACITY) && !hasActivatedJetpack) {
+      jetpackFuel++;
+      entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     }
 
     if (!isJetpackOn && !isGliding) {
@@ -351,10 +349,8 @@ public class PlayerActions extends Component {
    */
   private void glide(boolean on) {
     Body body = physicsComponent.getBody();
-    boolean isOutOfJumps = (isJumping) && (isDoubleJump);
 
     if (on) {
-
         body.setGravityScale(0.1f);
         body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0.5f)); // slow down the upwards movement
         isGliding = true;
@@ -411,14 +407,11 @@ public class PlayerActions extends Component {
     StandingColliderComponent standing = entity.getComponent(StandingColliderComponent.class);
     CrouchingColliderComponent crouch =
             entity.getComponent(CrouchingColliderComponent.class);
-      System.out.println(11);
     if (crouching) {
-        System.out.println(22);
       crouching = false;
       standing.getFixtureRef().setSensor(false);
       crouch.getFixtureRef().setSensor(true);
     } else {
-        System.out.println(33);
       crouching = true;
       standing.getFixtureRef().setSensor(true);
       crouch.getFixtureRef().setSensor(false);
@@ -490,7 +483,7 @@ public class PlayerActions extends Component {
     }
   }
 
-  public void setWalkSpeed(int x, int y) {
+  public static void setWalkSpeed(int x, int y) {
       WALK_SPEED = new Vector2((float)x, (float)y);
   }
 

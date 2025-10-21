@@ -325,11 +325,8 @@ public class MainGameScreen extends ScreenAdapter {
 
         // Build the new area
         GameArea newArea = getGameArea(area);
-        if (newArea == null) return;
 
         if (newArea != null) {
-            System.out.println("TIME" + lvlStartTime);
-            //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
             if (newArea instanceof CutsceneArea) {
                 StatsTracker.completeLevel();
             }
