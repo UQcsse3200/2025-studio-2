@@ -7,9 +7,9 @@ public class CollectablesConfig {
     public String sprite;
     public String description;
     public boolean autoConsume;
-    public int ttl = 0;
     public List<String> tags;
     public List<EffectConfig> effects;
     public List<Integer> glowColor;
     public List<Float> scale;
+    public String bag;
 }
