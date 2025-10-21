@@ -66,7 +66,6 @@ public class TooltipSystem {
         }
 
         private static TooltipDisplay activeDisplay;
-        
         /**
          * Register the active tooltip display component
          * @param display The TooltipDisplay component to register
@@ -74,7 +73,12 @@ public class TooltipSystem {
         public static void setActiveDisplay(TooltipDisplay display) {
             activeDisplay = display;
         }
-        
+
+        public static void setSuppressed(boolean value) {
+            if (value) {
+                hideTooltip(); // immediately clear any visible tooltip
+            }
+        }
         /**
          * Show a tooltip with the specified text and style
          * @param text The text to display

@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
@@ -7,11 +8,19 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.computerterminal.CaptchaResult;
+import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +45,19 @@ public final class Spawners {
                 case REFLECTABLE -> BoxFactory.createReflectorBox();
                 case null, default -> BoxFactory.createStaticBox();
             };
+
+            if (!a.isVisible) {
+                box.getComponent(MoveableBoxComponent.class).setVisible(false);
+            }
+
+            if (a.target != null) {
+                Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
+
+                target.getEvents().addListener("puzzleCompleted", () -> {
+                    box.getEvents().trigger("setVisible", true);
+                });
+            }
+
             linkEntities(box, a.linked);
             addIdentifier(box, String.valueOf(a.id));
 
@@ -140,7 +162,7 @@ public final class Spawners {
 
         // -- Wall ---
         SpawnRegistry.register("wall", a -> {
-            Entity wall =  WallFactory.createWall(a.x, a.y, a.sx, a.sy, "images/wall.png");
+            Entity wall =  WallFactory.createWall(a.x, a.y, a.dx, a.dy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
             return wall;
         });
@@ -153,6 +175,7 @@ public final class Spawners {
                 case MOVING -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
                 case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, 1f);
                 case PLATE -> PlatformFactory.createPressurePlatePlatform();
+                case REFLECTIVE -> PlatformFactory.createReflectivePlatform();
                 case BUTTON -> PlatformFactory.createButtonTriggeredPlatform(new Vector2(a.dx, a.dy), a.speed);
                 default -> PlatformFactory.createStaticPlatform();
             };
@@ -209,13 +232,17 @@ public final class Spawners {
             Entity button = ButtonFactory.createButton(false, a.subtype, a.direction);
 
             if (a.extra != null) {
-                // link to button manager
-                Entity target = ServiceLocator.getEntityService().getEntityById(a.extra);
-                ButtonManagerComponent manager = target.getComponent(ButtonManagerComponent.class);
-                ButtonComponent buttonComp =  button.getComponent(ButtonComponent.class);
+                if(!a.extra.equals("evil")) {
+                    // link to button manager
+                    Entity target = ServiceLocator.getEntityService().getEntityById(a.extra);
+                    ButtonManagerComponent manager = target.getComponent(ButtonManagerComponent.class);
+                    ButtonComponent buttonComp = button.getComponent(ButtonComponent.class);
 
-                buttonComp.setPuzzleManager(manager);
-                manager.addButton(buttonComp);
+                    buttonComp.setPuzzleManager(manager);
+                    manager.addButton(buttonComp);
+                } else {
+                    addGlow(button);
+                }
             }
 
             if (a.target != null) {
@@ -271,7 +298,21 @@ public final class Spawners {
         });
 
         // --- Death Zone ---
-        SpawnRegistry.register("death_zone", a -> DeathZoneFactory.createDeathZone());
+        SpawnRegistry.register("death_zone", a -> {
+            Entity deathZone = DeathZoneFactory.createDeathZone();
+
+            if(a.sx != 1 && a.sy != 1) {
+                deathZone.setScale(a.sx,a.sy);
+            }
+
+            if(a.extra != null) {
+                deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(Float.parseFloat(a.extra)),
+                        PhysicsComponent.AlignX.LEFT,
+                        PhysicsComponent.AlignY.BOTTOM);
+            }
+
+            return deathZone;
+        });
 
         // --- Upgrade ---
         SpawnRegistry.register("upgrade", a -> {
@@ -305,7 +346,10 @@ public final class Spawners {
 
             Entity enemy = switch (subtype) {
                 case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
-                case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(player, new Vector2(a.x, a.y)).addComponent(new ActivationComponent(a.id));
+                case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(
+                        player,
+                        new Vector2((float) a.x / 2, (float) a.y / 2)
+                ).addComponent(new ActivationComponent(a.id));
                 case null, default -> EnemyFactory.createPatrollingDrone(player, patrolRoute);
             };
 
@@ -360,6 +404,38 @@ public final class Spawners {
             addTooltip(bat, a.tooltip);
             return bat;
         });
+
+
+        // --- Prompts ---
+        SpawnRegistry.register("prompt", a -> {
+            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+        });
+
+        // --- Computer Terminal ---
+        SpawnRegistry.register("computer_terminal", a -> {
+            Entity terminal = ComputerTerminalFactory.createTerminal();
+
+            if (a.subtype != null && a.subtype.equals("transition")) {
+                terminal.getEvents().addListener("terminal:captchaResult", (CaptchaResult r) -> {
+                    if (r.success()) {
+                        // close terminal
+                        var svc = ServiceLocator.getComputerTerminalService();
+                        if (svc == null) return;
+                        svc.close();
+
+                        // transition level
+                        MainGameScreen screen = ServiceLocator.getMainGameScreen();
+                        var gameAreaEnum =  screen.getAreaEnum();
+                        var nextArea = screen.getNextArea(gameAreaEnum);
+                        screen.switchAreaRunnable(nextArea, player);
+                    }
+                });
+            }
+
+            return terminal;
+        });
+
+
     }
 
     // --- Helpers ---
@@ -379,5 +455,16 @@ public final class Spawners {
     private static void addIdentifier(Entity entity, String id) {
         if (id == null || id.isBlank()) return;
         entity.addComponent(new IdentifierComponent(id));
+    }
+
+    private static void addGlow(Entity entity) {
+        ConeLightComponent evilGlow = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                128,
+                new Color().set(1f, 0f, 0f, 0.6f),
+                2.5f,
+                0f,
+                180f);
+        entity.addComponent(evilGlow);
     }
 }

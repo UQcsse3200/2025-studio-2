@@ -8,6 +8,7 @@ public enum EntitySubtype {
     MOVING(EntityType.PLATFORM),
     PLATE(EntityType.PLATFORM),
     BUTTON(EntityType.PLATFORM),
+    REFLECTIVE(EntityType.PLATFORM),
 
     // Collectables
     KEY(EntityType.COLLECTABLE),

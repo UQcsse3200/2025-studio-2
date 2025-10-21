@@ -65,6 +65,9 @@ public class MainMenuDisplay extends UIComponent {
     loadBtn.setTransform(true);
     loadBtn.setOrigin(Align.center);
 
+    tutorialBtn.setTransform(true);
+    tutorialBtn.setOrigin(Align.center);
+
     leaderboardBtn.setTransform(true);
     leaderboardBtn.setOrigin(Align.center);
 
@@ -78,7 +81,7 @@ public class MainMenuDisplay extends UIComponent {
     exitBtn.setOrigin(Align.center);
 
 
-    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, leaderboardBtn, settingsBtn, statsBtn, exitBtn));
+    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, tutorialBtn, leaderboardBtn, settingsBtn, statsBtn, exitBtn));
     // Triggers an event when the button is pressed
     startBtn.addListener(
         new ChangeListener() {

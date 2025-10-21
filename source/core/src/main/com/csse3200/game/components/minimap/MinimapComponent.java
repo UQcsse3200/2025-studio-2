@@ -28,14 +28,33 @@ public class MinimapComponent extends Component {
 
   private static Image loadImageWithDefaultSize(String markerAsset) {
     Image marker = new Image(ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class));
-    if (markerAsset.equals("images/door_open.png")) {
-      marker.setSize(20f, 30f);
-    }
-    else if(markerAsset.equals("images/flying_bat_map.png")) {
-      marker.setSize(20f, 20f);
-    } else {
-      marker.setSize(10f, 10f); // Default marker size
-    }
+      switch (markerAsset) {
+          case "images/door_open-map.png" -> marker.setSize(20f, 40f);
+          case "images/platform-map.png" -> marker.setSize(30f, 8f);
+          case "images/platform-long-map.png" -> marker.setSize(60f, 8f);
+          case "images/platform-short-map.png" -> marker.setSize(15f, 8f);
+          case "images/flying_bat_map.png" -> marker.setSize(20f, 20f);
+          case "images/drone-map.png" -> marker.setSize(20f, 10f);
+          case "images/ladder-map.png" -> marker.setSize(13f, 13f);
+          case "images/floor-map-1.png" -> marker.setSize(250f, 208f);
+          case "images/floor-map-2.png" -> marker.setSize(450f, 208f);
+          case "images/floor-map-3.png" -> marker.setSize(200f, 208f);
+          case "images/floor-map-4.png" -> marker.setSize(90f, 35f);
+          case "images/floor-map-5.png" -> marker.setSize(667f, 35f);
+          case "images/floor-map-6.png" -> marker.setSize(750f, 35f);
+          case "images/gate-floor-map.png" -> marker.setSize(100f, 12f);
+          case "images/puzzle-floor-map.png" -> marker.setSize(260f, 35f);
+          case "images/wall-map-1.png" -> marker.setSize(15f, 79f);
+          case "images/wall-map-2.png" -> marker.setSize(45f, 132f);
+          case "images/wall-map-3.png" -> marker.setSize(25f, 130f);
+          case "images/wall-map-4.png" -> marker.setSize(35f, 105f);
+          case "images/wall-map-5.png" -> marker.setSize(35f, 141f);
+          case "images/wall-map-6.png" -> marker.setSize(35f, 115f);
+          case "images/wall-map-7.png" -> marker.setSize(35f, 87f);
+          case "images/wall-map-8.png" -> marker.setSize(35f, 61f);
+          case "images/wall-map-9.png" -> marker.setSize(35f, 33f);
+          default -> marker.setSize(15f, 20f); // Default marker size
+      }
 
     return marker;
   }
@@ -65,6 +84,9 @@ public class MinimapComponent extends Component {
 
   @Override
   public void dispose() {
-    ServiceLocator.getMinimapService().stopTracking(entity);
+      // Prevent crash if service has already been cleared
+      if (ServiceLocator.getMinimapService() != null) {
+          ServiceLocator.getMinimapService().stopTracking(entity);
+      }
   }
 }
