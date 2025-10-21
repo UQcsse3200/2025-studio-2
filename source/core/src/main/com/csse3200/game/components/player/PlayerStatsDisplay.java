@@ -51,10 +51,6 @@ public class PlayerStatsDisplay extends UIComponent {
      */
     private ProgressBar staminaBar;
     /**
-     * Image icon used in stamina bar
-     */
-    private Image staminaImage;
-    /**
      * Collectable Label
      */
     private Label collectableLabel;
@@ -109,9 +105,6 @@ public class PlayerStatsDisplay extends UIComponent {
         staminaTable.padTop(45f).padLeft(5f);
         staminaTable.setName("stamina");
         staminaTable.setUserObject(entity);
-
-        // Stamina image
-        staminaImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/stamina.png", Texture.class));
 
         // Stamina label
         staminaLabel = new Label("Stamina: ", skin, "large");
