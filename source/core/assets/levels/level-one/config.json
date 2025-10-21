@@ -57,7 +57,7 @@
     {"type": "wall","x": 25,"y": 4,"sx": 1,"sy": 4.5,"dx": 1, "dy": 20,"centerX": false,"centerY": false},
     {"type": "wall","x": 75,"y": 4,"sx": 2.5,"sy": 7.5,"dx": 1, "dy": 20,"centerX": false,"centerY": false},
 
-    {"type": "door","subtype": "transition","id": "key:door","x": 35,"y": 63.5,"sx": 1,"sy": 2,"target": "CUTSCENE_ONE","tooltip": "Unlock the door with the key"},
+    {"type": "door","subtype": "transition","id": "key:door","x": 35,"y": 62,"sx": 1,"sy": 2,"target": "CUTSCENE_ONE","tooltip": "Unlock the door with the key"},
 
     {"type": "collectable","subtype": "upgrade","x": 23,"y": 4,"target": "dash","tooltip": "Collect Dash Upgrade"},
 
