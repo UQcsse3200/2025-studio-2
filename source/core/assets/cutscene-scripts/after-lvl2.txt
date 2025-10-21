@@ -1,5 +1,5 @@
 #cutscene-bgs/facility_sky.png
-As I continue my ascent of the facility, I'm finding the abundance of cybernetic life increasingly apparent... And hostile.
-This hellscape is becoming more and more difficult to navigate. This next part of the facility seems especially vertical.
+As I continue my ascent of the facility, I'm finding the abundance of {COLOR=RED}cybernetic life{CLEARCOLOR} increasingly apparent{SLOWER}... And hostile.{NORMAL}
+This {COLOR=RED}hellscape{CLEARCOLOR} is becoming more and more difficult to navigate. This next part of the facility seems especially vertical.
 But even with these difficulties, there's no turning back now.
-I never thought I'd make it this far in, and I know I'll soon be encroaching upon the central AI's domain.
+I never thought I'd make it this far in, and I know I'll soon be encroaching upon the {COLOR=RED}central AI's{CLEARCOLOR} domain.
