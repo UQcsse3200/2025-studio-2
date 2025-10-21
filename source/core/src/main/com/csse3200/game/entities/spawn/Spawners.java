@@ -9,6 +9,7 @@ import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
@@ -18,6 +19,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -406,6 +408,30 @@ public final class Spawners {
         // --- Prompts ---
         SpawnRegistry.register("prompt", a -> {
             return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+        });
+
+        // --- Computer Terminal ---
+        SpawnRegistry.register("computer_terminal", a -> {
+            Entity terminal = ComputerTerminalFactory.createTerminal();
+
+            if (a.subtype != null && a.subtype.equals("transition")) {
+                terminal.getEvents().addListener("terminal:captchaResult", (CaptchaResult r) -> {
+                    if (r.success()) {
+                        // close terminal
+                        var svc = ServiceLocator.getComputerTerminalService();
+                        if (svc == null) return;
+                        svc.close();
+
+                        // transition level
+                        MainGameScreen screen = ServiceLocator.getMainGameScreen();
+                        var gameAreaEnum =  screen.getAreaEnum();
+                        var nextArea = screen.getNextArea(gameAreaEnum);
+                        screen.switchAreaRunnable(nextArea, player);
+                    }
+                });
+            }
+
+            return terminal;
         });
 
 

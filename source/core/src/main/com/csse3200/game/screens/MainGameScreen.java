@@ -277,7 +277,7 @@ public class MainGameScreen extends ScreenAdapter {
    * @param area - Current Areas game area.
    * @return next Areas game area.
    */
-  private Areas getNextArea(Areas area) {
+  public Areas getNextArea(Areas area) {
     return switch (area) {
       case LEVEL_ONE -> Areas.CUTSCENE_ONE;
       case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
@@ -307,7 +307,7 @@ public class MainGameScreen extends ScreenAdapter {
      * @param area   the target area enum
      * @param player the player entity to transfer to the new area, may be null
      */
-    private void switchAreaRunnable(Areas area, Entity player) {
+    public void switchAreaRunnable(Areas area, Entity player) {
         if (area == null) return;
 
         // Dispose old area
