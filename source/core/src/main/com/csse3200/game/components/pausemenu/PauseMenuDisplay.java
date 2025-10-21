@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.player.LeaderboardEntryDisplay;
 import com.csse3200.game.components.statisticspage.StatsTracker;
