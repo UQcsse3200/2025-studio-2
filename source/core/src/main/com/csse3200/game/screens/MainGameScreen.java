@@ -12,6 +12,7 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
 import com.csse3200.game.components.computerterminal.SpritesheetSpec;
@@ -21,6 +22,7 @@ import com.csse3200.game.components.gamearea.GameAreaDisplay;
 import com.csse3200.game.components.gamearea.PerformanceDisplay;
 import com.csse3200.game.components.maingame.MainGameActions;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab;
 import com.csse3200.game.components.player.InventoryComponent;
@@ -42,7 +44,6 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.*;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
-import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +65,9 @@ public class MainGameScreen extends ScreenAdapter {
           "images/puzzles/waldo_4x4.png",
           "images/puzzles/whichTutor_1x2.png"
   };
-  private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+
   // Camera follow parameters
+  private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
   private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother
@@ -90,13 +92,14 @@ public class MainGameScreen extends ScreenAdapter {
   private PauseInputComponent pauseInput;
   private LeaderboardComponent leaderboardComponent;
   private GameTime gameTime;
-    private MinimapDisplay minimapDisplay;
-    private PlayerStatsDisplay playerStatsDisplay;
-    private GameAreaDisplay levelTagDisplay;
+  private MinimapDisplay minimapDisplay;
+  private PlayerStatsDisplay playerStatsDisplay;
+  private GameAreaDisplay levelTagDisplay;
 
   public enum Areas {
     LEVEL_ONE,
     LEVEL_TWO,
+    LEVEL_THREE,
     SPRINT_ONE,
     TEMPLATE,
     FOREST,
@@ -155,25 +158,15 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
     gameAreaEnum = area;
+//    gameArea = getGameArea(Areas.LEVEL_THREE);
     gameArea = getGameArea(area);
     gameArea.create();
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
-    gameArea.getEvents().addListener("doorEntered", (Entity player) -> {
-      if (gameArea instanceof TutorialGameArea) {
-        // Go back to tutorial menu instead of next level
-        logger.info("Tutorial completed, returning to tutorial menu");
-        game.setScreen(new TutorialMenuScreen(game));
-      } else {
-        // Normal level progression
-        logger.info("Door entered, proceeding to next level");
-        handleLeaderboardEntry(player, getNextArea(area));
-      }
-    });
+    gameArea.getEvents().addListener("doorEntered", this::handleLeaderboardEntry);
     gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> {
-      switchArea(getNextArea(area), play);
+      switchArea(getNextArea(gameAreaEnum), play);
     });
-
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
     gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
 
@@ -189,7 +182,18 @@ public class MainGameScreen extends ScreenAdapter {
    * Centralized door-entered flow: gather stats, show leaderboard entry, hide HUD,
    * then resume HUD and switch to next area.
    */
-  private void handleLeaderboardEntry(Entity player, Areas nextArea) {
+  private void handleLeaderboardEntry(Entity player, Entity door) {
+      if (player == null || door == null) {
+          logger.warn("doorEntered: missing player or door; aborting transition.");
+          return;
+      }
+
+      DoorComponent dc = door.getComponent(DoorComponent.class);
+      if (dc == null) {
+          logger.warn("doorEntered: DoorComponent missing on door {}; skipping.", door);
+          return;
+      }
+
       // Gather stats
       CombatStatsComponent combat = player.getComponent(CombatStatsComponent.class);
       int health = (combat != null) ? combat.getHealth() : 0;
@@ -221,9 +225,33 @@ public class MainGameScreen extends ScreenAdapter {
           paused = false;
 
           // Now proceed to next area
-          switchArea(nextArea, player);
+          String target = dc.getTargetArea();
+          if (target != null && !target.isEmpty()) {
+              Areas targetEnum = parseTargetArea(target);
+              if (targetEnum != null) {
+                  logger.info("Door entered, switching to explicit target area: {}", targetEnum);
+                  switchArea(targetEnum, player);
+                  return;
+              } else {
+                  logger.warn("doorEntered: unknown targetArea '{}'; falling back.", target);
+              }
+          }
       });
   }
+
+    /**
+     * Parses a string into a valid Areas enum value.
+     *
+     * @param s the string to parse
+     * @return the corresponding Areas enum if valid, otherwise null
+     */
+    private Areas parseTargetArea(String s) {
+        try {
+            return Areas.valueOf(s.trim());
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
    * Get the GameArea mapped to the Areas area.
@@ -239,6 +267,7 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
+      case LEVEL_THREE -> new LevelThreeGameArea(terrainFactory);
       case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
       case END_GAME -> {
         // Go back to main menu
@@ -259,7 +288,8 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_ONE -> Areas.CUTSCENE_ONE;
       case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
       case LEVEL_TWO -> Areas.CUTSCENE_TWO;
-      case CUTSCENE_TWO -> Areas.BOSS_LEVEL;
+      case CUTSCENE_TWO -> Areas.LEVEL_THREE;
+      case LEVEL_THREE -> Areas.BOSS_LEVEL;
       // Last level should not return a new area
       case BOSS_LEVEL -> Areas.END_GAME;
       default -> throw new IllegalStateException("Unexpected value: " + area);
@@ -275,47 +305,64 @@ public class MainGameScreen extends ScreenAdapter {
     }
   }
 
-  private void switchAreaRunnable(Areas area, Entity player) {
-    if (area == null) return;
 
-    GameArea oldArea = gameArea;
+    /**
+     * Performs the actual area swap to the given target.
+     * Disposes the old area, creates the new one (with player if provided),
+     * and re-registers all global listeners for events.
+     *
+     * @param area   the target area enum
+     * @param player the player entity to transfer to the new area, may be null
+     */
+    private void switchAreaRunnable(Areas area, Entity player) {
+        if (area == null) return;
 
-    System.out.println("Area switched to " + area);
-    //TerrainFactory terrainFactory = new TerrainFactory(renderer.getCamera());
+        // Dispose old area
+        GameArea oldArea = gameArea;
+        if (oldArea != null) {
+            oldArea.dispose();
+        }
 
-    GameArea newArea = getGameArea(area);
-    Areas newLevel = getNextArea(area);
+        // Build the new area
+        GameArea newArea = getGameArea(area);
+        if (newArea == null) return;
 
-    if (newArea != null) {
-      System.out.println("TIME" + lvlStartTime);
-      //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
-      if (!(oldArea instanceof CutsceneArea)) {
-        StatsTracker.completeLevel();
-      }
+        if (newArea != null) {
+            System.out.println("TIME" + lvlStartTime);
+            //leaderboardComponent.updateLeaderboard(gameAreaEnum.toString(), gameTime.getTimeSince(lvlStartTime));
+            if (newArea instanceof CutsceneArea) {
+                StatsTracker.completeLevel();
+            }
 
-      gameArea = newArea;
-      gameAreaEnum = area;
+            // Swap in the new area
+            gameArea = newArea;
+            gameAreaEnum = area;
 
-      gameArea.getEvents().addListener("doorEntered", (Entity play) -> {
-        switchArea(newLevel, play);
-      });
-      gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> switchArea(newLevel, play));
+            if (player == null) {
+                gameArea.create();
+            } else {
+                InventoryComponent inv = player.getComponent(InventoryComponent.class);
+                if (inv != null) {
+                    inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+                }
+                gameArea.createWithPlayer(player);
+            }
 
-      InventoryComponent inv = player.getComponent(InventoryComponent.class);
-      if (inv != null) {
-          inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
-      }
+            gameArea.getEvents().addListener("doorEntered",
+                    this::handleLeaderboardEntry);
+            gameArea.getEvents().addListener("cutsceneFinished",
+                    (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
+            gameArea.getEvents().addListener("reset", this::onGameAreaReset);
 
-//        System.out.println("Health before switch: " + player.getComponent(CombatStatsComponent.class).getHealth());
-      gameArea.createWithPlayer(player);
-
-      gameArea.getEvents().addListener("reset", this::onGameAreaReset);
-      gameArea.getPlayer().getEvents().addListener("playerDied", this::showDeathScreen);
+            Entity currentPlayer = gameArea.getPlayer();
+            if (currentPlayer != null) {
+                currentPlayer.getEvents().addListener("playerDied", this::showDeathScreen);
+            } else {
+                logger.warn("switchAreaRunnable: gameArea.getPlayer() is null after create");
+            }
+        }
     }
 
-    oldArea.dispose();
-    oldArea = null; // Garbage collector?
-  }
 
   /**
    * Builds the small set of CAPTCHA specs used by the terminal

@@ -1,8 +1,10 @@
 package com.csse3200.game.components.computerterminal;
 
 import org.junit.jupiter.api.Test;
+
 import java.util.Set;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SpritesheetSpecTest {
     @Test

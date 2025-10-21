@@ -12,10 +12,10 @@ import org.slf4j.LoggerFactory;
 public class TerminalService {
   private static final Logger logger = LoggerFactory.getLogger(TerminalService.class);
   private static final Terminal terminalComponent = new Terminal();
-  private static final TerminalDisplay terminalDisplay = new TerminalDisplay();
   private static final Shell shell = Initializer.getInitializedShell();
+  private static final TerminalDisplay terminalDisplay = new TerminalDisplay();
 
-  /* This field will be used by the shell and therefore must not be final */
+  @SuppressWarnings("ALL") // This field will be used by the shell and therefore must not be final
   private static Float customTimeScale = 1.0f;
 
   private TerminalService() {
@@ -25,7 +25,7 @@ public class TerminalService {
   /**
    * This allows the terminal to attach its UI to the current screen's stage.
    **/
-  static public void register() {
+  public static void register() {
     logger.debug("Creating global terminal UI entity");
     Entity entity = new Entity()
         .addComponent(terminalComponent)
@@ -44,14 +44,14 @@ public class TerminalService {
    *
    * @return TerminalDisplay
    */
-  static public TerminalDisplay getTerminalDisplay() {
+  public static TerminalDisplay getTerminalDisplay() {
     return terminalDisplay;
   }
 
   /**
    * Toggle the terminal display on or off
    */
-  static public void toggle() {
+  public static void toggle() {
     logger.debug("Toggling terminal");
     terminalComponent.toggleIsOpen();
     terminalDisplay.getRoot().toFront();
@@ -71,7 +71,7 @@ public class TerminalService {
   /**
    * Focus the terminal input (the bottom pane where text is entered)
    */
-  static public void focusTerminalInput() {
+  public static void focusTerminalInput() {
     if (terminalComponent.isOpen()) {
       ServiceLocator.getRenderService().getStage().addActor(terminalDisplay.getRoot());
       ServiceLocator.getRenderService().getStage().setKeyboardFocus(terminalDisplay.getInputField());
@@ -83,7 +83,7 @@ public class TerminalService {
   /**
    * Execute the given command in the terminal
    */
-  static public void executeCurrentCommand() {
+  public static void executeCurrentCommand() {
     final String command = terminalDisplay.getInput();
     print("> " + String.join("  \n", command.split("\n")) + "\n");
     try {
@@ -105,7 +105,7 @@ public class TerminalService {
    *
    * @param obj the object to be printed
    */
-  static public void print(Object obj) {
+  public static void print(Object obj) {
     if (obj != null) {
       terminalDisplay.getHistoryArea().appendText(obj.toString());
     }
@@ -114,7 +114,7 @@ public class TerminalService {
   /**
    * @return the current Shell instance
    */
-  static public Shell getShell() {
+  public static Shell getShell() {
     return shell;
   }
 }

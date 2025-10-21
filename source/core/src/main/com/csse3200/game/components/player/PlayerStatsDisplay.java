@@ -3,6 +3,7 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -12,7 +13,6 @@ import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.utils.CollectablesSave;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 /**
  * A ui component for displaying player stats, e.g. health.
@@ -94,6 +94,7 @@ public class PlayerStatsDisplay extends UIComponent {
     stage.addActor(staminaTable);
     // Create collectable table
     collectableLabel = new Label("Lost Hardware collected: " + count + " / 9", skin, "large");
+    collectableLabel.setName("inputsCollected");
     stage.addActor(collectableLabel);
     createFuelTable();
     fuelTable.setVisible(false);

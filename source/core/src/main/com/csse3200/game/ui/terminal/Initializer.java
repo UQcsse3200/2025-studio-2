@@ -7,20 +7,25 @@ import java.lang.reflect.Field;
  * If you want to add you own snippets to be initialized, declare a `private static final String`
  * and assign it the code you want to run on shell startup.
  */
+@SuppressWarnings("ALL")
 public class Initializer {
-  static public Shell getInitializedShell() {
+
+  private Initializer() {
+    throw new IllegalStateException("Instantiating static util class");
+  }
+
+  public static Shell getInitializedShell() {
     Shell shell = new Shell(new Shell.Console() {
       @Override public void print(Object obj) { TerminalService.print(obj); }
       @Override public String next() { return null; }
       @Override public boolean hasNext() { return false; }
-      @Override public void close() {}
+      @Override public void close() { /* The terminal can never be closed */}
     });
     for (Field field : Initializer.class.getDeclaredFields()) {
-      field.setAccessible(true);
       try {
         Object fieldValue = field.get(null);
-        if (fieldValue instanceof String) {
-          shell.eval((String) fieldValue);
+        if (fieldValue instanceof String str) {
+          shell.eval(str);
         }
       } catch (IllegalAccessException e) {
         // Ignore
@@ -32,7 +37,7 @@ public class Initializer {
   /**
    * Setup basic shell functionality
    */
-  private static final String init = """
+  static final String INIT = """
     init = () {
       "This makes the function slightly faster as we only need to look at the top frame";
       globalThis = globalThis;
@@ -137,164 +142,162 @@ public class Initializer {
    * Setup debug functionality.
    * Note: There may be bugs due to external functionality changing.
    */
-  private static final String debug = """
-          debugInit = () {
-            "This makes the function slightly faster as we only need to look at the top frame";
-            setGlobal = setGlobal;
+  static final String DEBUG = """
+    "This makes the function slightly faster as we only need to look at the top frame";
+    setGlobal = setGlobal;
 
-            "--- Services ---";
-            setGlobal("TerminalService", .com.csse3200.game.ui.terminal.TerminalService);
-            setGlobal("ServiceLocator", .com.csse3200.game.services.ServiceLocator);
-            setGlobal("entityService", () { return(ServiceLocator.getEntityService()); });
-            setGlobal("renderService", () { return(ServiceLocator.getRenderService()); });
-            setGlobal("physicsService", () { return(ServiceLocator.getPhysicsService()); });
-            setGlobal("inputService", () { return(ServiceLocator.getInputService()); });
-            setGlobal("resourceService", () { return(ServiceLocator.getResourceService()); });
-            setGlobal("timeSource", () { return(ServiceLocator.getTimeSource()); });
+    "--- Services ---";
+    setGlobal("TerminalService", .com.csse3200.game.ui.terminal.TerminalService);
+    setGlobal("ServiceLocator", .com.csse3200.game.services.ServiceLocator);
+    setGlobal("entityService", () { return(ServiceLocator.getEntityService()); });
+    setGlobal("renderService", () { return(ServiceLocator.getRenderService()); });
+    setGlobal("physicsService", () { return(ServiceLocator.getPhysicsService()); });
+    setGlobal("inputService", () { return(ServiceLocator.getInputService()); });
+    setGlobal("resourceService", () { return(ServiceLocator.getResourceService()); });
+    setGlobal("timeSource", () { return(ServiceLocator.getTimeSource()); });
 
-            "--- Game Control ---";
-            "Set the game's time scale. e.g. timescale(0.5); for half speed.";
-            setGlobal("setTimescale", (scale) { TerminalService.customTimeScale = scale; });
+    "--- Game Control ---";
+    "Set the game's time scale. e.g. timescale(0.5); for half speed.";
+    setGlobal("setTimescale", (scale) { TerminalService.customTimeScale = scale; });
 
-            setGlobal(".oldTimeScale", 1.0);
+    setGlobal(".oldTimeScale", 1.0);
 
-            "Resume the game in the background";
-            setGlobal("resume", () {
-              ts = .com.csse3200.game.ui.terminal.TerminalService;
-              ts.customTimeScale = getGlobal(".oldTimeScale");
-            });
+    "Resume the game in the background";
+    setGlobal("resume", () {
+      ts = .com.csse3200.game.ui.terminal.TerminalService;
+      ts.customTimeScale = getGlobal(".oldTimeScale");
+    });
 
-            "Pause the game if resume was called before";
-            setGlobal("pause", () {
-              ts = .com.csse3200.game.ui.terminal.TerminalService;
-              setGlobal(".oldTimeScale", ts.customTimeScale);
-              ts.customTimeScale = 0.0;
-            });
+    "Pause the game if resume was called before";
+    setGlobal("pause", () {
+      ts = .com.csse3200.game.ui.terminal.TerminalService;
+      setGlobal(".oldTimeScale", ts.customTimeScale);
+      ts.customTimeScale = 0.0;
+    });
 
-            "Toggle physics debug rendering. e.g. debug(true);";
-            setGlobal("debug", (active) {
-              debug = ServiceLocator.renderService.getDebug();
-              debug.setActive(globalThis.isTruthy(active));
-            });
+    "Toggle physics debug rendering. e.g. debug(true);";
+    setGlobal("debug", (active) {
+      debug = ServiceLocator.renderService.getDebug();
+      debug.setActive(globalThis.isTruthy(active));
+    });
 
-            "--- Entity Manipulation ---";
-            "Get a list of all registered entities";
-            setGlobal("getEntities", () {
-              es = entityService();
-              return(es.entities);
-            });
+    "--- Entity Manipulation ---";
+    "Get a list of all registered entities";
+    setGlobal("getEntities", () {
+      es = entityService();
+      return(es.entities);
+    });
 
-            "Get a single entity by its ID. e.g. getEntity(1);";
-            setGlobal("getEntityById", (id) {
-              setGlobal(".id", id);
-              forEach(getEntities(), (entity) {
-                setGlobal(".entity", entity);
-                if (eql(entity.getId(), getGlobal(".id")), () { returnN(3, getGlobal(".entity")); });
-              });
-            });
+    "Get a single entity by its ID. e.g. getEntity(1);";
+    setGlobal("getEntityById", (id) {
+      setGlobal(".id", id);
+      forEach(getEntities(), (entity) {
+        setGlobal(".entity", entity);
+        if (eql(entity.getId(), getGlobal(".id")), () { returnN(3, getGlobal(".entity")); });
+      });
+    });
 
-            "--- Utilities ---";
-            "Inspect an object's fields and methods. e.g. inspect(services);";
-            setGlobal("inspect", (obj) {
-              setGlobal(".obj", obj);
-              if(not(isClass(obj)), () { obj = getGlobal(".obj"); setGlobal(".obj", obj.getClass()); });
-              cls = getGlobal(".obj");
-              setGlobal(".obj", obj);
+    "--- Utilities ---";
+    "Inspect an object's fields and methods. e.g. inspect(services);";
+    setGlobal("inspect", (obj) {
+      setGlobal(".obj", obj);
+      if(not(isClass(obj)), () { obj = getGlobal(".obj"); setGlobal(".obj", obj.getClass()); });
+      cls = getGlobal(".obj");
+      setGlobal(".obj", obj);
 
-              print("Inspecting Class: ", cls.getName(), "\n\n--- Fields ---\n");
+      print("Inspecting Class: ", cls.getName(), "
 
-              forEach(cls.getFields(), (field) {
-                setGlobal(".field", field);
-                tryCatch(() {
-                  field = getGlobal(".field");
-                  field.setAccessible(true);
-                  print(field.toGenericString(), " = ", field.get(getGlobal(".obj")), "\n");
-                }, (e) {
-                  print("Opps, An error occurred", e, "\n");
-                });
-              });
+--- Fields ---
+");
 
-              print("\n--- Methods ---\n", cls);
-              forEach(cls.getMethods(), (method) {
-                print(method.toGenericString(), "\n");
-              });
-            });
+      forEach(cls.getFields(), (field) {
+        setGlobal(".field", field);
+        tryCatch(() {
+          field = getGlobal(".field");
+          field.setAccessible(true);
+          print(field.toGenericString(), " = ", field.get(getGlobal(".obj")), "
+");
+        }, (e) {
+          print("Oops, An error occurred", e, "
+");
+        });
+      });
 
-            "List all local / global variables.";
-            setGlobal("env", () { return(globalThis.env); });
+      print("
+--- Methods ---
+", cls);
+      forEach(cls.getMethods(), (method) {
+        print(method.toGenericString(), "
+");
+      });
+    });
 
-            "Find the player, returns null if nothing is found";
-            setGlobal("getPlayer", () {
-              forEach(getEntities(), (entity) {
-                setGlobal(".entity", entity);
-                if (not(isNull(entity.getComponent(.com.csse3200.game.components.player.InventoryComponent))), () {
-                  returnN(3, getGlobal(".entity"));
-                });
-              });
-            });
-                           
-                           
+    "List all local / global variables.";
+    setGlobal("env", () { return(globalThis.env); });
 
-            "Prints this help message";
-            setGlobal("help", "
-              --- Help: In-Game Debug Shell ---
-              --- Core Functions and Constants ---
-              globalThis            - A reference to the current Shell instance.
-              true / false          - Boolean constants.
-              Shell                 - The Java Class object for the Shell interpreter.
-              Range                 - The Java Class object for creating numerical ranges.
-              print(...stuff)       - Prints one or more arguments to the terminal.
-              setGlobal(name, value)- Sets a variable in the global scope.
-              getGlobal(name)       - Retrieves a variable from the global scope.
-              exists(varName)       - Returns true if a variable with the given name exists.
-              getParentVar(key)     - Retrieves a variable from the parent function's scope.
+    "Find the player, returns null if nothing is found";
+    setGlobal("getPlayer", () {
+      ga = game.screen.getGameArea();
+      return(ga.getPlayer());
+    });
 
-              --- Conditional Logic & Control Flow ---
-              return(value)         - Returns a value from a function.
-              returnN(n, value)     - Returns a value from n nested function scopes.
-              if(cond, func)        - Executes func if cond is truthy.
-              ifElse(c, t, f)       - Executes t if c is truthy, else f.
-              while(cond, func)     - Executes func while cond is truthy.
-              forEach(iter, func)   - Executes func for each item in an iterable.
-              tryCatch(try, catch)  - Executes try func, calls catch func on ShellException.
-              eql(a, b)             - Performs a deep equality check on two objects.
-              and(a, b) / or(a, b)  - Logical AND and OR operations.
-              not(a)                - Logical NOT operation.
-              isNull(a)             - Returns true if the object a is null.
+    "Prints this help message";
+    setGlobal("help", "
+      --- Help: In-Game Debug Shell ---
+      --- Core Functions and Constants ---
+      globalThis            - A reference to the current Shell instance.
+      true / false          - Boolean constants.
+      Shell                 - The Java Class object for the Shell interpreter.
+      Range                 - The Java Class object for creating numerical ranges.
+      print(...stuff)       - Prints one or more arguments to the terminal.
+      setGlobal(name, value)- Sets a variable in the global scope.
+      getGlobal(name)       - Retrieves a variable from the global scope.
+      exists(varName)       - Returns true if a variable with the given name exists.
+      getParentVar(key)     - Retrieves a variable from the parent function's scope.
 
-              --- Game Control & State ---
-              debug(active)         - Toggles the physics debug view (truthy/falsy).
-              pause()               - Pauses the game by setting timescale to 0.
-              resume()              - Resumes the game by restoring the custom timescale.
-              setTimescale(scale)   - Sets the game's time scale (1.0 is normal, 0.0 is paused).
-                                      This is kept even after the terminal is closed
+      --- Conditional Logic & Control Flow ---
+      return(value)         - Returns a value from a function.
+      returnN(n, value)     - Returns a value from n nested function scopes.
+      if(cond, func)        - Executes func if cond is truthy.
+      ifElse(c, t, f)       - Executes t if c is truthy, else f.
+      while(cond, func)     - Executes func while cond is truthy.
+      forEach(iter, func)   - Executes func for each item in an iterable.
+      tryCatch(try, catch)  - Executes try func, calls catch func on ShellException.
+      eql(a, b)             - Performs a deep equality check on two objects.
+      and(a, b) / or(a, b)  - Logical AND and OR operations.
+      not(a)                - Logical NOT operation.
+      isNull(a)             - Returns true if the object a is null.
 
-              --- Entity Manipulation ---
-              getPlayer()           - Finds and returns the player entity if it exists.
-              getEntities()         - Returns an Array of all the game entities.
-              getEntityById(id)     - Finds and returns an entity given it's integer ID.
+      --- Game Control & State ---
+      debug(active)         - Toggles the physics debug view (truthy/falsy).
+      pause()               - Pauses the game by setting timescale to 0.
+      resume()              - Resumes the game by restoring the custom timescale.
+      setTimescale(scale)   - Sets the game's time scale (1.0 is normal, 0.0 is paused).
+                              This is kept even after the terminal is closed
 
-              --- Service Accessors ---
-              TerminalService       - Java Class for the TerminalService.
-              ServiceLocator        - Java Class for the ServiceLocator.
-              entityService()       - Returns the EntityService instance.
-              renderService()       - Returns the RenderService instance.
-              physicsService()      - Returns the PhysicsService instance.
-              inputService()        - Returns the InputService instance.
-              resourceService()     - Returns the ResourceService instance.
-              timeSource()          - Returns the GameTime instance.
+      --- Entity Manipulation ---
+      getPlayer()           - Finds and returns the player entity if it exists.
+      getEntities()         - Returns an Array of all the game entities.
+      getEntityById(id)     - Finds and returns an entity given it's integer ID.
 
-              --- Debugging Utilities ---
-              inspect(obj)          - Prints all public fields/methods of an object/class.
-              env()                 - Returns the Environment object (global state of the shell).
-              help                  - This help string.
-            ");
-          };
+      --- Service Accessors ---
+      TerminalService       - Java Class for the TerminalService.
+      ServiceLocator        - Java Class for the ServiceLocator.
+      entityService()       - Returns the EntityService instance.
+      renderService()       - Returns the RenderService instance.
+      physicsService()      - Returns the PhysicsService instance.
+      inputService()        - Returns the InputService instance.
+      resourceService()     - Returns the ResourceService instance.
+      timeSource()          - Returns the GameTime instance.
 
-          debugInit();
-          """;
+      --- Debugging Utilities ---
+      inspect(obj)          - Prints all public fields/methods of an object/class.
+      env()                 - Returns the Environment object (global state of the shell).
+      help                  - This help string.
+    ");
+  """;
 
-  private static final String cheats = """
+  private static final String CHEATS = """
                      
            setGlobal("kill", (entity) {
                 "Get the CombatStatsComponent from the target entity.";
@@ -331,23 +334,23 @@ public class Initializer {
               player = getPlayer();
               physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
               body = physics.getBody();
-              
+               
               setGlobal(".jetpack", jetpack);
               setGlobal(".es", es);
               setGlobal(".body", body);
-               
+          
               tryCatch(() {
                   jetpack = getGlobal(".jetpack");
                   es = getGlobal(".es");
                   body = getGlobal(".body");
-                  
+          
                   es.register(jetpack);
                   jetpack.setPosition(body.getWorldCenter());
                   print("Jetpack spawned!\n");
               }, (e) {
                   print("There is already a jetpack  in the level!\n");
               });
-             
+          
           });
           
           setGlobal("spawnGlider", () {
@@ -468,10 +471,7 @@ public class Initializer {
           
           setGlobal("teleport", (x, y) {
               player = getPlayer();
-              physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
-              body = physics.getBody();
-              vector = .com.badlogic.gdx.math.Vector2(x, y);
-              body.setTransform(vector, body.getAngle());
+              player.setPosition(x, y);
               print("Player teleported to: (", x, ",", y, ")\n");
           });
           

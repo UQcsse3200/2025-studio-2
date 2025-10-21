@@ -1,6 +1,7 @@
 package com.csse3200.game.entities;
 
 import com.badlogic.gdx.utils.Array;
+import com.csse3200.game.components.IdentifierComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,11 +56,26 @@ public class EntityService {
     }
   }
 
+    /**
+     * Return entity if there exists an identifierComponent associated with id
+     * @param id the id of the entity
+     * @return the entity associated with id, otherwise null
+     */
+  public Entity getEntityById(String id) {
+      for (Entity entity : entities) {
+          IdentifierComponent identity = entity.getComponent(IdentifierComponent.class);
+          if (identity != null && identity.getId().equals(id)) {
+              return entity;
+          }
+      }
+      return null;
+  }
+
   /**
    * Returns entities Array
    * @return entities array
    */
-  public Array<Entity> get_entities() {
+  public Array<Entity> getEntities() {
     return entities;
   }
 }

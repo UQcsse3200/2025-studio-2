@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -14,8 +15,8 @@ import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.*;
@@ -31,7 +32,6 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import box2dLight.RayHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +73,7 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
+
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);

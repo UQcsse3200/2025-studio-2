@@ -260,19 +260,19 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnWalls() {
         // Lower wall between level halves
-        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"");
+        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"images/wall.png");
         lowerWall.setScale(2f,10f);
         spawnEntityAt(lowerWall, new GridPoint2(60, -3),
                 false, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"images/wall.png");
         upperWall.setScale(2f,15f);
         spawnEntityAt(upperWall, new GridPoint2(60, tileBounds.y - 34),
                 false, false);
 
         // Wall blocking death pit
-        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"images/wall.png");
         deathPitWall.setScale(1.3f,13f);
         spawnEntityAt(deathPitWall, new GridPoint2(20, -3),
                 false, false);
@@ -457,7 +457,7 @@ public class BossLevelGameArea extends GameArea {
                 new GridPoint2(26, tileBounds.y - 34), false, true);
 
         // Create mini wall at edge (for lasers)
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f,"images/wall.png");
         wall.setScale(1f,2f);
         floorObjects[2] = wall;
         spawnEntityAt(wall, new GridPoint2(26, tileBounds.y - 38),
@@ -516,7 +516,7 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(spikes2,
                 new GridPoint2(15,tileBounds.y - 15), true,  true);
 
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f,"images/wall.png");
         wall.setScale(1f,8f);
         spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
                 false, false);

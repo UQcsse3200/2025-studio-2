@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
 
-
 import java.util.List;
 
 public class LaserRenderComponent extends RenderComponent {
@@ -46,6 +45,7 @@ public class LaserRenderComponent extends RenderComponent {
 
     @Override
     protected void draw(SpriteBatch batch) {
+        if (mainEmitter != null && !mainEmitter.getEnable()) return;
         List<Vector2> pts = null;
         if (mainEmitter != null) {
             pts = mainEmitter.getPositions();

@@ -7,8 +7,6 @@ import com.badlogic.gdx.physics.box2d.Fixture;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
-import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.input.InputService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
