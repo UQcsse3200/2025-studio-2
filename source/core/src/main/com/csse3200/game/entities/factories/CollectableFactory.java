@@ -37,7 +37,7 @@ public class CollectableFactory {
      * <ul>
      *   <li>A static {@link PhysicsComponent} and {@link ColliderComponent} configured
      *       as a sensor obstacle.</li>
-     *   <li>A {@link CollectableComponentV2} to handle collisions and inventory logic.</li>
+     *   <li>A {@link CollectableComponent} to handle collisions and inventory logic.</li>
      *   <li>Visual representation from either an animated {@link AnimationRenderComponent}
      *       if a sprite atlas is provided, or a {@link TextureRenderComponent} for static
      *       images.</li>
@@ -57,11 +57,7 @@ public class CollectableFactory {
         Entity e = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new CollectableComponentV2(itemId));
-
-        if (itemId.equals("misc:hardware")) {
-            e.addComponent(new ItemCollectableComponent(null));
-        }
+                .addComponent(new CollectableComponent(itemId));
 
         // add sprites and animations
 
@@ -82,8 +78,14 @@ public class CollectableFactory {
             PhysicsUtils.setScaledCollider(e, sx, sy);
         }
 
-        // backlight because it looks cool (thanks tristyn)
         // set color based on glowColor in item config
+        ConeLightComponent cone = getConeLightComponent(cfg);
+        e.addComponent(cone);
+
+        return e;
+    }
+
+    private static ConeLightComponent getConeLightComponent(CollectablesConfig cfg) {
         Color color = new Color();
         if (cfg.glowColor != null && !cfg.glowColor.isEmpty()) {
             color.set(cfg.glowColor.get(0) / 255f, cfg.glowColor.get(1) / 255f, cfg.glowColor.get(2) / 255f, 0.6f);
@@ -98,117 +100,6 @@ public class CollectableFactory {
                 0f,
                 180f
         );
-        e.addComponent(cone);
-
-        return e;
+        return cone;
     }
-
-    /**
-     * Builds a collectable key for {@code target}.
-     *
-     * @return a new key entity
-     * @see KeyComponent
-     */
-    @Deprecated
-    public static Entity createKey(String target) {
-        Entity key = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/key.png"))
-                .addComponent(new KeyComponent(target));
-        
-        key.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(key, 0.5f, 0.5f);
-
-        return key;
-    }
-
-    /**
-     * Builds a collectable upgrade that enable the dash ability
-     * @return a new upgrade entity
-     * @see UpgradesComponent
-     */
-    public static Entity createDashUpgrade() {
-        Entity dash = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
-                .addComponent(new UpgradesComponent("dash"));
-
-        dash.setScale(0.8f, 0.5f);
-        PhysicsUtils.setScaledCollider(dash, 0.5f, 0.5f);
-
-        return dash;
-    }
-
-    /**
-     * Build a new collectable glider upgrade that enables the glide ability
-     *
-     * @return a new upgrade entity
-     * @see UpgradesComponent
-     */
-    public static Entity createGlideUpgrade() {
-        Entity glide = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
-                .addComponent(new UpgradesComponent("glider"));
-
-        glide.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(glide, 0.5f, 0.5f);
-
-        return glide;
-    }
-
-    /**
-     * Builds a new collectable grappler upgrade that enables the grapple ability
-     *
-     * @return a new upgrade entity
-     * @see UpgradesComponent
-     */
-    public static Entity createJetpackUpgrade() {
-        Entity jetpack = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/jetpack_powerup.png"))
-                .addComponent(new UpgradesComponent("jetpack"));
-
-        jetpack.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(jetpack, 0.5f, 0.5f);
-
-        return jetpack;
-    }
-
-    /**
-     * Creates an invisible objective pickup with a large sensor collider.
-     * Default footprint is 2x2 world units (might tweak)
-     *
-     * @param objectiveId id routed through switch in ObjectiveCollectableComponent (e.g., "obj:plans")
-     */
-    public static Entity createObjective(String objectiveId) {
-        return createObjective(objectiveId, 2f, 2f);
-    }
-
-    /**
-     * Creates an invisible objective pickup with a custom sensor size (world units).
-     *
-     * @param objectiveId id routed through switch in ObjectiveCollectableComponent
-     * @param width collider width in world units
-     * @param height collider height in world units
-     */
-    public static Entity createObjective(String objectiveId, float width, float height) {
-        Entity obj = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent()
-                        .setLayer(PhysicsLayer.COLLECTABLE)
-                        .setSensor(true)) // not blocking, overlap only
-                .addComponent(new ObjectivesComponent(objectiveId));
-
-        // Size the sensor using the same pattern as your other collectables
-        obj.setScale(width, height);
-        PhysicsUtils.setScaledCollider(obj, width, height);
-
-        return obj;
-    }
-
 }

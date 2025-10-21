@@ -6,8 +6,7 @@ import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -17,7 +16,6 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.UUID;
 
 public final class Spawners {
@@ -54,21 +52,21 @@ public final class Spawners {
             // visibility listener logic
             if (a.extra != null) {
                 Entity toggler = ServiceLocator.getEntityService().getEntityById(a.extra);
-                collectable.getComponent(CollectableComponentV2.class).toggleVisibility(false);
+                collectable.getComponent(CollectableComponent.class).toggleVisibility(false);
 
                 // plate visibility logic -> show
                 toggler.getEvents().addListener("platePressed", () -> {
-                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(true);
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(true);
                 });
 
                 // plate visibility logic -> hide
                 toggler.getEvents().addListener("plateReleased", () -> {
-                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(false);
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(false);
                 });
 
                 // button visibility logic -> show/hide
                 toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
-                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(isPushed);
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(isPushed);
                 });
             }
 
@@ -257,7 +255,7 @@ public final class Spawners {
                 if (a.target.equals("jetpack")) {
                     Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
                     laserDetector.getEvents().addListener("detectingStart", () -> {
-                        UpgradesComponent cc = target.getComponent(UpgradesComponent.class);
+                        CollectableComponent cc = target.getComponent(CollectableComponent.class);
                         cc.toggleVisibility(true);
                     });
                 }
@@ -277,8 +275,8 @@ public final class Spawners {
 
         // --- Upgrade ---
         SpawnRegistry.register("upgrade", a -> {
-            Entity upgrade = CollectableFactory.createJetpackUpgrade();
-            if (a.isVisible == false) upgrade.getComponent(UpgradesComponent.class).toggleVisibility(false);
+            Entity upgrade = CollectableFactory.createCollectable("upgrade:jetpack");
+            if (a.isVisible == false) upgrade.getComponent(CollectableComponent.class).toggleVisibility(false);
             addIdentifier(upgrade, String.valueOf(a.id));
             return  upgrade;
         });
@@ -347,7 +345,8 @@ public final class Spawners {
 
         // --- Objectives ---
         SpawnRegistry.register("objective", a ->
-                CollectableFactory.createObjective(a.id, a.sx, a.sy));
+                CollectableFactory.createCollectable("potion:health"));
+//                CollectableFactory.createObjective(a.id, a.sx, a.sy));
 
         // --- Bats ---
         SpawnRegistry.register("bat", a -> {
