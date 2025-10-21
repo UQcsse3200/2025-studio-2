@@ -31,6 +31,7 @@ public class PlayerAnimationController extends Component {
     private float hurtDelay = 0.3f;
     private float dashDelay = 0.3f;
     private float jumpDelay = 0.8f;
+    private float deathDelay = 5.0f;
 
     public PlayerAnimationController(PlayerActions playerActions) {
         super();
@@ -48,6 +49,7 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
         entity.getEvents().addListener("hurt", this::animateHurt);
+        entity.getEvents().addListener("playerDied", this::animateDeath);
     }
 
     public void setAnimator(AnimationRenderComponent animator) {
@@ -142,6 +144,9 @@ public class PlayerAnimationController extends Component {
      * setAnimation: to avoid repeated startup of the same animations
      */
     public void revertAnimation() {
+        if (currentAnimation.equals("DEATH")) {
+            return;
+        }
         String animationName;
         boolean stationary = playerActions.getWalkDirection().equals(Vector2.Zero.cpy());
 
@@ -180,6 +185,9 @@ public class PlayerAnimationController extends Component {
      * setAnimation: to avoid repeated startup of the same animations
      */
     public void setAnimation(String animationName) {
+        if (currentAnimation.equals("DEATH") && !animationName.equals("SMOKE")) {
+            return;
+        }
         // Don't cancel hurt animation
         if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
             System.out.println(animationName);
@@ -224,6 +232,23 @@ public class PlayerAnimationController extends Component {
         }
         hurtTime = timer.getTime();
 
+    }
+
+    /**
+     * starts the player's death animation
+     */
+    public void animateDeath() {
+        setAnimation("DEATH");
+
+        scheduleTask.accept(this::animateSmoke, deathDelay);
+
+    }
+
+    /**
+     * starts the smoke animation
+     */
+    public void animateSmoke() {
+        setAnimation("SMOKE");
     }
 
     public void setXDirection(int i) {

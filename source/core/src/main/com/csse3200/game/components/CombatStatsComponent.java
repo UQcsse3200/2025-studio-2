@@ -143,8 +143,11 @@ public class CombatStatsComponent extends Component {
                 setHealth(newHealth);
 
 
-                // Animate hurt
-                entity.getEvents().trigger("hurt");
+                if (health > 0) {
+                    entity.getEvents().trigger("hurt");
+                } else {
+                    entity.getEvents().trigger("playerDied");
+                }
             }
         }
     }

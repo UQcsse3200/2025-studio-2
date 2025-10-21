@@ -61,6 +61,8 @@ public final class PlayerFactory {
         animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("DEATH", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("SMOKE", 0.2f, Animation.PlayMode.LOOP);
 
         PlayerActions playerActions = new PlayerActions();
 
