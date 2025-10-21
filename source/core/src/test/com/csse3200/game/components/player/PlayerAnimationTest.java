@@ -182,6 +182,18 @@ public class PlayerAnimationTest {
     }
 
     @Test
+    void testAnimateDeath() throws InterruptedException {
+        Runnable[] scheduled = new Runnable[1];
+        controller.scheduleTask = (runnable, delay) -> scheduled[0] = runnable;
+
+        player.getEvents().trigger("playerDied");
+        verify(animator).startAnimation("DEATH");
+
+        scheduled[0].run();
+        verify(animator).startAnimation("SMOKE");
+    }
+
+    @Test
     void testSetAnimation() {
         String[] animations = new String[] {"RIGHT", "LEFT", "DASH", "DASHLEFT", "HURT", "HURTLEFT",
                 "JUMP", "JUMPLEFT", "CROUCHMOVE", "CROUCHMOVELEFT", "IDLE", "IDLELEFT"};
