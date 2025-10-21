@@ -1188,9 +1188,6 @@ public class LevelOneGameArea extends GameArea {
     }
 
     public void spawnCollectables() {
-        Vector2 playerPos = player.getPosition();
-        //CollectableCounter.reset();
-
         spawnCollectable(new GridPoint2(67, -3));
         spawnCollectable(new GridPoint2(0, 46));
         spawnCollectable(new GridPoint2(79, 60));
