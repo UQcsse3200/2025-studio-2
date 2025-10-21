@@ -158,7 +158,6 @@ public final class Spawners {
             };
 
             floor.setScale(a.sx, a.sy);
-            floor.addComponent(new MinimapComponent("images/floor-map-1.png"));
             return floor;
         });
 
@@ -166,7 +165,6 @@ public final class Spawners {
         SpawnRegistry.register("wall", a -> {
             Entity wall =  WallFactory.createWall(a.x, a.y, a.dx, a.dy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
-            wall.addComponent(new MinimapComponent("images/wall-map-1.png"));
             return wall;
         });
 
@@ -412,7 +410,6 @@ public final class Spawners {
                     .build();
 
             addTooltip(bat, a.tooltip);
-            bat.addComponent(new MinimapComponent("images/flying_bat_map.png").setScale(2.5f));
             return bat;
         });
 

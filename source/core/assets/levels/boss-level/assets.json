@@ -49,6 +49,17 @@
     "images/laser-end",
     "images/minimap_forest_area.png",
     "images/minimap_player_marker.png",
+<<<<<<< HEAD
+    "images/floor-map-1.png",
+    "images/platform-map.png",
+    "images/red_button-map.png",
+    "images/door_open-map.png",
+    "images/door_open-map.png",
+    "images/platform-long-map.png",
+    "images/wall-map-1.png",
+    "images/wall-map-2.png",
+    "images/drone-map.png"
+=======
     "images/door_open-map.png",
     "images/floor-map-4.png",
     "images/floor-map-5.png",
@@ -62,6 +73,7 @@
     "images/wall-map-8.png",
     "images/wall-map-9.png",
     "images/platform-map.png"
+>>>>>>> 0e90f4a37849cb191cda74c553361486dee8f6ec
   ],
   "atlases": [
     "images/PLAYER.atlas",

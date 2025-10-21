@@ -88,6 +88,17 @@
     "images/surfacelevel/4.png",
     "images/terminal_on.png",
     "images/terminal_off.png",
+<<<<<<< HEAD
+    "images/floor-map-1.png",
+    "images/platform-map.png",
+    "images/red_button-map.png",
+    "images/door_open-map.png",
+    "images/door_open-map.png",
+    "images/platform-long-map.png",
+    "images/wall-map-1.png",
+    "images/wall-map-2.png",
+    "images/drone-map.png"
+=======
     "images/door_open-map.png",
     "images/platform-long-map.png",
     "images/platform-short-map.png",
@@ -111,6 +122,7 @@
     "images/gate-floor-map.png",
     "images/puzzle-floor-map.png",
     "images/platform-map.png"
+>>>>>>> 0e90f4a37849cb191cda74c553361486dee8f6ec
   ],
   "atlases": [
       "images/PLAYER.atlas",

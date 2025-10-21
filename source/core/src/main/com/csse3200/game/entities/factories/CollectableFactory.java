@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -58,6 +59,10 @@ public class CollectableFactory {
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new CollectableComponentV2(itemId));
+
+        if (itemId.equals("key:door")) {
+            e.addComponent(new MinimapComponent("images/key.png"));
+        }
 
         if (itemId.equals("misc:hardware")) {
             e.addComponent(new ItemCollectableComponent(null));
