@@ -1,12 +1,14 @@
 package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.computerterminal.CaptchaResult;
@@ -434,7 +436,30 @@ public final class Spawners {
             return terminal;
         });
 
+        // --- Boss ---
+        SpawnRegistry.register("boss", a -> {
+            Entity boss = EnemyFactory.createBossEnemy(player, new Vector2(a.x*2, a.y*2));
 
+            BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
+            if (spawnComp != null) {
+                spawnComp.resetTriggers();
+
+                spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
+
+            }
+
+            boss.getEvents().addListener("reset", () -> {
+                BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
+                if (spawnComponent != null) {
+                    spawnComponent.resetTriggers();
+                    spawnComponent.cleanupDrones();
+                }
+            });
+
+            return boss;
+        });
     }
 
     // --- Helpers ---

@@ -70,7 +70,8 @@
     "images/timer.atlas",
     "images/flying_bat.atlas",
     "images/laser.atlas",
-    "images/health-potion.atlas"
+    "images/health-potion.atlas",
+    "images/boss.atlas"
   ],
   "sounds": [
     "sounds/Impact4.ogg",
