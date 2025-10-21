@@ -101,6 +101,7 @@
     {"type": "pressure_plate","subtype": "normal","id": "volatile_platform","x": 79,"y": 46},
     {"type": "platform","subtype": "plate","x": 70,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
     {"type": "platform","subtype": "plate","x": 78,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
-    {"type": "prompt", "x": 6, "y": 15, "speed": 5,  "dx":  2, "dy": 90, "extra": "Hit \"o\" to have a look at your objectives!"}
+    {"type": "prompt", "x": 6, "y": 15, "speed": 5,  "dx":  2, "dy": 90, "extra": "Hit \"o\" to have a look at your objectives!"},
+    {"type": "prompt", "x": 58, "y": 48, "speed": 5,  "dx":  2, "dy": 2, "extra": "Hit \"j\" to have a look at your codex entries!"}
   ]
 }
