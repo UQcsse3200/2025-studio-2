@@ -1,7 +1,7 @@
 {
   "name": "The Surface",
   "mapSize": [50, 100],
-  "playerSpawn": [2, 10],
+  "playerSpawn": [2, 4],
   "walls": { "thickness": 0.1 },
   "miniMap": "images/minimap_forest_area.png",
   "music": "sounds/KindaLikeTycho.mp3",
@@ -58,6 +58,10 @@
     { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false},
 
     {"type": "terminal","id": "spam-email","x": 46,"y": 4},
-    {"type": "terminal","id": "final-broadcast","x": 4,"y": 46}
+    {"type": "terminal","id": "final-broadcast","x": 4,"y": 46},
+
+    {"type": "objective","id": "door","x": 2,"y": 0,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack","x": 2,"y": 0,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack_completed","x": 45,"y": 8,"sx": 0.2,"sy": 0.2}
   ]
 }
