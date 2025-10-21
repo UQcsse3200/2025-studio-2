@@ -2,6 +2,7 @@ package com.csse3200.game.components.minimap;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.csse3200.game.components.Component;
@@ -15,7 +16,10 @@ public class MinimapComponent extends Component {
   private final String markerAsset;
   private Image marker;
 
-  private Vector2 MARKER_SCALE = new Vector2(1.56f, 1.56f);
+  private final Vector2 MARKER_SCALE = new Vector2();
+  private float scaleX = 1f;
+  private float scaleY = 1f;
+  private static final float BOUNDS_SCALAR = 0.0222857f; // dont ask...
 
 
   /**
@@ -40,9 +44,11 @@ public class MinimapComponent extends Component {
 
   @Override
   public void create() {
+    GridPoint2 tileBounds = ServiceLocator.getMainGameScreen().getGameArea().getMapBounds();
+    MARKER_SCALE.set(tileBounds.x * BOUNDS_SCALAR * scaleX, tileBounds.y * BOUNDS_SCALAR * scaleY);
     marker = new Image(ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class));
-    rescaleMarker();
     ServiceLocator.getMinimapService().trackEntity(entity, marker);
+    rescaleMarker();
   }
 
   /**
@@ -64,17 +70,18 @@ public class MinimapComponent extends Component {
   }
 
   public MinimapComponent setScaleX(float sx) {
-    MARKER_SCALE.x = sx;
+    scaleX = sx;
     return this;
   }
 
   public MinimapComponent setScaleY(float sy) {
-    MARKER_SCALE.y = sy;
+    scaleY = sy;
     return this;
   }
 
   public MinimapComponent setScale(float scale) {
-    MARKER_SCALE.set(scale, scale);
+    scaleX = scale;
+    scaleY = scale;
     return this;
   }
 

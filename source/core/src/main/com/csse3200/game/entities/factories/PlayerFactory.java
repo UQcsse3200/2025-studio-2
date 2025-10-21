@@ -76,7 +76,8 @@ public final class PlayerFactory {
                 .addComponent(new CameraComponent())
                 .addComponent(new PlayerScreenTransitionComponent())
                 .addComponent(new PlayerDeathEffectComponent())
-                .addComponent(new MinimapComponent("images/minimap_player_marker.png").setScale(1f))
+                .addComponent(new MinimapComponent("images/minimap_player_marker.png")
+                        .setScaleY(0.7f).setScaleX(0.5f))
                 .addComponent(animator)
                 .addComponent(new PlayerAnimationController());
         // Stamina + sprint wiring
