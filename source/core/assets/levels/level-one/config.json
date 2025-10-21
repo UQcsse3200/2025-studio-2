@@ -36,6 +36,7 @@
     {"type": "platform","subtype": "static_platform","x": 22,"y": 12,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 52,"y": 23,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 45,"y": 18,"sx": 3.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 27,"y": 8,"sx": 1,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "button","id": "platform","x": 55,"y": 18,"sx": 2,"sy": 0.5,"speed": 2,"dx": 9,"dy": 0,"centerX": false,"centerY": false},
 
     {"type": "button","subtype": "platform","x": 56,"y": 23,"direction": "right","target": "platform","tooltip": "Platform Button\nPress E to Interact"},
