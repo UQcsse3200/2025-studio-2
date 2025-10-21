@@ -43,6 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
+import com.csse3200.game.achievements.AchievementService;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -783,8 +784,10 @@ public class LevelOneGameArea extends GameArea {
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(35,62), true, true);
-        door.getEvents().addListener("doorOpened", () -> {
-            AchievementProgression.onLevelComplete("level1");
+        Gdx.app.log("Achv", "L1: wiring listener for openDoor");
+        door.getEvents().addListener("openDoor", () -> {
+            Gdx.app.log("Achv", "L1: openDoor fired -> onLevelCompleted(1)");
+            AchievementService.get().onLevelCompleted(1);
         });
     }
 

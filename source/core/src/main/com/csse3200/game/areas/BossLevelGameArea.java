@@ -658,6 +658,8 @@ public class BossLevelGameArea extends GameArea {
     private void displayUI() {
         Entity ui = new Entity();
         ui.addComponent(new GameAreaDisplay("RUN. SURVIVE. [Boss Level]"));
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementsMenuUI());
+        ui.addComponent(new com.csse3200.game.ui.achievements.AchievementToastUI());
         ui.addComponent(new TooltipSystem.TooltipDisplay());
         spawnEntity(ui);
     }
