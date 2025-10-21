@@ -5,8 +5,8 @@
     "sprite": "images/key.png",
     "description": "Unlocks doors.",
     "autoConsume": false,
-    "ttl": 0,
     "tags": ["KEY"],
+    "bag": "inventory",
     "effects": []
   },
   {
@@ -15,7 +15,6 @@
     "sprite": "images/health-potion.atlas",
     "description": "Restores 10 HP.",
     "autoConsume": true,
-    "ttl": 0,
     "tags": ["CONSUMABLE"],
     "effects": [
       { "type": "heal", "value": 10 }
@@ -28,7 +27,6 @@
     "sprite": "images/speed-potion.atlas",
     "description": "Unlocks the dash ability when used.",
     "autoConsume": true,
-    "ttl": 0,
     "tags": ["CONSUMABLE"],
     "effects": [
       { "type": "buff_speed", "duration": 5 }
@@ -42,7 +40,8 @@
     "description": "Unlocks the ability to dash",
     "autoConsume": false,
     "tags": ["UPGRADE"],
-    "scale": [0.8, 0.5]
+    "scale": [0.8, 0.5],
+    "bag": "upgrades"
   },
   {
     "id": "upgrade:glide",
@@ -50,7 +49,11 @@
     "sprite": "images/glide_powerup.png",
     "description": "Unlocks the ability to glide",
     "autoConsume": false,
-    "tags": ["UPGRADE"]
+    "tags": ["UPGRADE"],
+    "effects": [
+      { "type": "upgrade" }
+    ],
+    "bag": "upgrades"
   },
   {
     "id": "upgrade:jetpack",
@@ -58,14 +61,18 @@
     "sprite": "images/jetpack_powerup.png",
     "description": "Unlocks the ability to use the jetpack",
     "autoConsume": false,
-    "tags": ["UPGRADE"]
+    "tags": ["UPGRADE"],
+    "effects": [
+      { "type": "upgrade" }
+    ],
+    "bag": "upgrades"
   },
   {
     "id": "misc:hardware",
     "name": "Lost Hardware",
     "sprite": "images/lost_hardware.png",
     "description": "Hidden lost hardware",
-    "autoConsume": false,
+    "autoConsume": true,
     "tags": ["HARDWARE"],
     "glowColor": [40, 30, 55]
   }
