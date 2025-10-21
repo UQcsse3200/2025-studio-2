@@ -14,7 +14,7 @@ public class LightingEngine implements Disposable {
     private final RayHandler rayHandler;
     private final CameraComponent camera;
 
-    private float ambientLight = UserSettings.get().brightnessValue;
+    private float ambientLight = UserSettings.get().getBrightnessValue();
 
     /**
      * Constructor method for the lighting engine. This is where some of the rayHandler's

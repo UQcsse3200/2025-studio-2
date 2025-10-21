@@ -66,7 +66,6 @@ public class TooltipSystem {
         }
 
         private static TooltipDisplay activeDisplay;
-        private static boolean suppressed;
         /**
          * Register the active tooltip display component
          * @param display The TooltipDisplay component to register
@@ -76,8 +75,7 @@ public class TooltipSystem {
         }
 
         public static void setSuppressed(boolean value) {
-            suppressed = value;
-            if (suppressed) {
+            if (value) {
                 hideTooltip(); // immediately clear any visible tooltip
             }
         }

@@ -17,7 +17,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
-import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.player.LeaderboardEntryDisplay;
 import com.csse3200.game.components.statisticspage.StatsTracker;
@@ -264,6 +263,10 @@ public class PauseMenuDisplay extends UIComponent {
         }
 
         Entity player = screen.getGameArea().getPlayer();
+        updateInputState(visible, player);
+    }
+
+    private void updateInputState(boolean visible, Entity player){
         if (visible) {
             rootTable.toFront();
             player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);

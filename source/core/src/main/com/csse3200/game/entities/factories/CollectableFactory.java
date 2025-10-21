@@ -208,7 +208,7 @@ public class CollectableFactory {
                 .addComponent(new ColliderComponent()
                         .setLayer(PhysicsLayer.COLLECTABLE)
                         .setSensor(true)) // not blocking, overlap only
-                .addComponent(new promptComponent(promptMessage,duration));
+                .addComponent(new PromptComponent(promptMessage,duration));
 
         // Size the sensor using the same pattern as your other collectables
         obj.setScale(width, height);

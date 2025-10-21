@@ -56,6 +56,7 @@ public class SettingsTab implements InventoryTabInterface {
     private final Map<String, Integer> pendingKeybinds = new HashMap<>();
     private InputListener rebindingListener = null;
     private static final Logger logger = LoggerFactory.getLogger(SettingsTab.class);
+    private static final String PERCENTAGE_FORMAT_LITERAL = "%.0f%%";
     @Override
     public Actor build(Skin skin) {
         buttonClickSound = ServiceLocator.getResourceService()
@@ -81,8 +82,8 @@ public class SettingsTab implements InventoryTabInterface {
         // Brightness Setting
         Label brightnessLabel = new Label("Brightness:", skin);
         brightnessSlider = new Slider(0f, 1f, 0.05f, false, skin);
-        brightnessSlider.setValue(settings.brightnessValue);
-        brightnessValue = new Label(String.format("%.0f%%", settings.brightnessValue * 100), skin);
+        brightnessSlider.setValue(settings.getBrightnessValue());
+        brightnessValue = new Label(String.format(PERCENTAGE_FORMAT_LITERAL, settings.getBrightnessValue() * 100), skin);
 
         Table brightnessTable = new Table();
         brightnessTable.add(brightnessSlider).width(150).left();
@@ -96,7 +97,7 @@ public class SettingsTab implements InventoryTabInterface {
         Label masterVolumeLabel = new Label("Master Volume:", skin);
         masterVolumeSlider = new Slider(0f, 1f, 0.05f, false, skin);
         masterVolumeSlider.setValue(settings.masterVolume);
-        masterVolumeValue = new Label(String.format("%.0f%%", settings.masterVolume * 100), skin);
+        masterVolumeValue = new Label(String.format(PERCENTAGE_FORMAT_LITERAL, settings.masterVolume * 100), skin);
 
         Table masterVolumeTable = new Table();
         masterVolumeTable.add(masterVolumeSlider).width(150).left();
@@ -110,7 +111,7 @@ public class SettingsTab implements InventoryTabInterface {
         Label musicVolumeLabel = new Label("Music Volume:", skin);
         musicVolumeSlider = new Slider(0f, 1f, 0.01f, false, skin);
         musicVolumeSlider.setValue(settings.musicVolume);
-        musicVolumeValue = new Label(String.format("%.0f%%", settings.musicVolume * 100), skin);
+        musicVolumeValue = new Label(String.format(PERCENTAGE_FORMAT_LITERAL, settings.musicVolume * 100), skin);
 
         Table musicVolumeTable = new Table();
         musicVolumeTable.add(musicVolumeSlider).width(150).left();
@@ -141,17 +142,17 @@ public class SettingsTab implements InventoryTabInterface {
         table.add(applyBtn).colspan(2).center().width(100).height(40).pad(10f);
 
         // Add listeners for real-time value updates
-        setupListeners(settings);
+        setupListeners();
 
         return table;
     }
-    private void setupListeners(UserSettings.Settings settings) {
+    private void setupListeners() {
         // Brightness slider listener
         brightnessSlider.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 float value = brightnessSlider.getValue();
-                brightnessValue.setText(String.format("%.0f%%", value * 100));
+                brightnessValue.setText(String.format(PERCENTAGE_FORMAT_LITERAL, value * 100));
 
                 logger.info("[UI] Brightness slider moved -> {} ({}%)", value, (int)(value * 100));
             }
@@ -162,7 +163,7 @@ public class SettingsTab implements InventoryTabInterface {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 float value = masterVolumeSlider.getValue();
-                masterVolumeValue.setText(String.format("%.0f%%", value * 100));
+                masterVolumeValue.setText(String.format(PERCENTAGE_FORMAT_LITERAL, value * 100));
 
                 //  Apply live change
                 updateCurrentMusicVolume();
@@ -175,7 +176,7 @@ public class SettingsTab implements InventoryTabInterface {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 float value = musicVolumeSlider.getValue();
-                musicVolumeValue.setText(String.format("%.0f%%", value * 100));
+                musicVolumeValue.setText(String.format(PERCENTAGE_FORMAT_LITERAL, value * 100));
 
                 //  Apply live change
                 updateCurrentMusicVolume();
@@ -425,7 +426,7 @@ public class SettingsTab implements InventoryTabInterface {
         // Apply volume settings
         settings.masterVolume = masterVolumeSlider.getValue();
         settings.musicVolume = musicVolumeSlider.getValue();
-        
+
         // Apply pending keybind changes
         for (Map.Entry<String, Integer> entry : pendingKeybinds.entrySet()) {
             Keymap.setActionKeyCode(entry.getKey(), entry.getValue());
@@ -463,7 +464,6 @@ public class SettingsTab implements InventoryTabInterface {
 
                 music.setVolume(musicVol);
 
-                // 📝 Log it
                 logger.info("[Audio] Updated current music volume -> master={} music={} effective={}",
                         master, musicVol, effective);
             } else {
@@ -473,11 +473,15 @@ public class SettingsTab implements InventoryTabInterface {
             logger.error("[Audio] Failed to update music volume", e);
         }
     }
-    private void updateBrightness(UserSettings.Settings settings) {
-        settings.brightnessValue = brightnessSlider.getValue();
-        LightingEngine lightingEngine = ServiceLocator.getLightingService().getEngine();
-        lightingEngine.setAmbientLight(settings.brightnessValue);
 
+    /**
+     * Updates Brightness instantly
+     * @param settings
+     */
+    private void updateBrightness(UserSettings.Settings settings) {
+        settings.setBrightnessValue(brightnessSlider.getValue());
+        LightingEngine lightingEngine = ServiceLocator.getLightingService().getEngine();
+        lightingEngine.setAmbientLight(settings.getBrightnessValue());
     }
 
 

@@ -42,8 +42,11 @@ public class LevelTwoGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-    private static boolean keySpawned;
+    private boolean keySpawned;
     boolean has_laser = false;
+    private static final String PLATFORM_MAP_IMG_PATH = "images/platform-map.png";
+    private static final String FLOOR_MAP6_IMG_PATH = "images/floor-map-6.png";
+    private static final String PLATFORM_SHORT_MAP_IMG_PATH = "images/platform-short-map.png";
 
     private static final String[] gameTextures = {
             "images/box_boy_leaf.png",
@@ -93,14 +96,26 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/background2.png",
             "images/glide_powerup.png",
             "images/jetpack_powerup.png",
-            "images/platform-map.png",
+            PLATFORM_MAP_IMG_PATH,
             "images/drone-map.png",
             "images/red_button-map.png",
             "images/laser-end.png",
             "images/jetpack_powerup.png",
             "images/lost_hardware.png",
             "images/tutorials/dash.png",
-            "images/door_open-map.png"
+            "images/door_open-map.png",
+            "images/floor-map-4.png",
+            "images/floor-map-5.png",
+            FLOOR_MAP6_IMG_PATH,
+            PLATFORM_SHORT_MAP_IMG_PATH,
+            "images/wall-map-3.png",
+            "images/wall-map-4.png",
+            "images/wall-map-5.png",
+            "images/wall-map-6.png",
+            "images/wall-map-7.png",
+            "images/wall-map-8.png",
+            "images/wall-map-9.png"
+
     };
     private static final String backgroundMusic = "sounds/Flow.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -210,37 +225,44 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 bottomWallPos = new GridPoint2(80,6);
         Entity bottomWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         bottomWall.setScale(2f,7f);
+        bottomWall.addComponent(new MinimapComponent("images/wall-map-3.png"));
         spawnEntityAt(bottomWall, bottomWallPos, false, false);
 
         GridPoint2 middleWallPos = new GridPoint2(54,24);
         Entity middleWall = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         middleWall.setScale(2f,6f);
+        middleWall.addComponent(new MinimapComponent("images/wall-map-4.png"));
         spawnEntityAt(middleWall, middleWallPos, false, false);
 
 //        TOP LEVEL
         GridPoint2 wall1Pos = new GridPoint2(33,44);
         Entity wall1 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall1.setScale(2f,8f);
+        wall1.addComponent(new MinimapComponent("images/wall-map-5.png"));
         spawnEntityAt(wall1, wall1Pos, false, false);
 
         GridPoint2 wall2Pos = new GridPoint2(46,44);
         Entity wall2 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall2.setScale(2f,6.5f);
+        wall2.addComponent(new MinimapComponent("images/wall-map-6.png"));
         spawnEntityAt(wall2, wall2Pos, false, false);
 
         GridPoint2 wall3Pos = new GridPoint2(59,44);
         Entity wall3 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall3.setScale(2f,5f);
+        wall3.addComponent(new MinimapComponent("images/wall-map-7.png"));
         spawnEntityAt(wall3, wall3Pos, false, false);
 
         GridPoint2 wall4Pos = new GridPoint2(72,44);
         Entity wall4 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall4.setScale(2f,3.5f);
+        wall4.addComponent(new MinimapComponent("images/wall-map-8.png"));
         spawnEntityAt(wall4, wall4Pos, false, false);
 
         GridPoint2 wall5Pos = new GridPoint2(85,44);
         Entity wall5 = WallFactory.createWall(25,0,1,20f, "images/wall.png");
         wall5.setScale(2f,2f);
+        wall5.addComponent(new MinimapComponent("images/wall-map-9.png"));
         spawnEntityAt(wall5, wall5Pos, false, false);
     }
 
@@ -370,21 +392,25 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 groundPos1 = new GridPoint2(0, 0);
         Entity ground1 = FloorFactory.createGroundFloor();
         ground1.setScale(5,2);
+        ground1.addComponent(new MinimapComponent("images/floor-map-4.png"));
         spawnEntityAt(ground1, groundPos1, false, false);
 
         GridPoint2 groundPos2 = new GridPoint2(25, 0);
         Entity ground2 = FloorFactory.createGroundFloor();
         ground2.setScale(37.5f,2f);
+        ground2.addComponent(new MinimapComponent("images/floor-map-5.png"));
         spawnEntityAt(ground2, groundPos2, false, false);
 
         GridPoint2 middleGroundPos = new GridPoint2(0, 20);
         Entity middleGround = FloorFactory.createStaticFloor();
         middleGround.setScale(42f,2);
+        middleGround.addComponent(new MinimapComponent(FLOOR_MAP6_IMG_PATH));
         spawnEntityAt(middleGround, middleGroundPos, false, false);
 
         GridPoint2 topGroundPos = new GridPoint2(16, 40);
         Entity topGround = FloorFactory.createStaticFloor();
         topGround.setScale(42f,2);
+        topGround.addComponent(new MinimapComponent(FLOOR_MAP6_IMG_PATH));
         spawnEntityAt(topGround, topGroundPos, false, false);
     }
 
@@ -393,25 +419,25 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 step1Pos = new GridPoint2(93,6);
         Entity step1 = PlatformFactory.createStaticPlatform();
         step1.setScale(2,0.5f);
-        step1.addComponent(new MinimapComponent("images/platform-map.png"));
+        step1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(step1, step1Pos,false, false);
 
         GridPoint2 step2Pos = new GridPoint2(90,10);
         Entity step2 = PlatformFactory.createStaticPlatform();
         step2.setScale(2,0.5f);
-        step2.addComponent(new MinimapComponent("images/platform-map.png"));
+        step2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(step2, step2Pos,false, false);
 
         GridPoint2 step3Pos = new GridPoint2(93,15);
         Entity step3 = PlatformFactory.createStaticPlatform();
         step3.setScale(2,0.5f);
-        step3.addComponent(new MinimapComponent("images/platform-map.png"));
+        step3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(step3, step3Pos,false, false);
 
         GridPoint2 step4Pos = new GridPoint2(90,19);
         Entity step4 = PlatformFactory.createStaticPlatform();
         step4.setScale(2,0.5f);
-        step4.addComponent(new MinimapComponent("images/platform-map.png"));
+        step4.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(step4, step4Pos,false, false);
 
 //        MIDDLE LEVEL
@@ -420,7 +446,7 @@ public class LevelTwoGameArea extends GameArea {
         float speed = 2f;
         Entity moving1 = PlatformFactory.createMovingPlatform(offsetWorld,speed);
         moving1.setScale(2f,0.5f);
-        moving1.addComponent(new MinimapComponent("images/platform-map.png"));
+        moving1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(moving1, moving1Pos,false, false);
 
         GridPoint2 moving2Pos = new GridPoint2(60,27);
@@ -428,88 +454,88 @@ public class LevelTwoGameArea extends GameArea {
         float speed2 = 2f;
         Entity moving2 = PlatformFactory.createMovingPlatform(offsetWorld2, speed2);
         moving2.setScale(2f,0.5f);
-        moving2.addComponent(new MinimapComponent("images/platform-map.png"));
+        moving2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(moving2, moving2Pos,false, false);
 
 //        LEFT GRAPPLE SECTION
         GridPoint2 left1Pos = new GridPoint2(8,26);
         Entity left1 = PlatformFactory.createStaticPlatform();
         left1.setScale(2,0.5f);
-        left1.addComponent(new MinimapComponent("images/platform-map.png"));
+        left1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(left1, left1Pos,false, false);
 
         GridPoint2 left2Pos = new GridPoint2(5,30);
         Entity left2 = PlatformFactory.createStaticPlatform();
         left2.setScale(2,0.5f);
-        left2.addComponent(new MinimapComponent("images/platform-map.png"));
+        left2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(left2, left2Pos,false, false);
 
         GridPoint2 left3Pos = new GridPoint2(8,35);
         Entity left3 = PlatformFactory.createStaticPlatform();
         left3.setScale(2,0.5f);
-        left3.addComponent(new MinimapComponent("images/platform-map.png"));
+        left3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(left3, left3Pos,false, false);
 
         GridPoint2 left4Pos = new GridPoint2(5,39);
         Entity left4 = PlatformFactory.createStaticPlatform();
         left4.setScale(2,0.5f);
-        left4.addComponent(new MinimapComponent("images/platform-map.png"));
+        left4.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(left4, left4Pos,false, false);
 
         GridPoint2 left5Pos = new GridPoint2(5,52);
         Entity left5 = PlatformFactory.createStaticPlatform();
         left5.setScale(2,0.5f);
-        left5.addComponent(new MinimapComponent("images/platform-map.png"));
+        left5.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(left5, left5Pos,false, false);
 
         GridPoint2 buttonBalconyPos = new GridPoint2(0,56);
         Entity buttonBalcony = PlatformFactory.createStaticPlatform();
         buttonBalcony.setScale(2,0.5f);
-        buttonBalcony.addComponent(new MinimapComponent("images/platform-map.png"));
+        buttonBalcony.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(buttonBalcony, buttonBalconyPos,false, false);
 
 //        TOP LEVEL
         GridPoint2 top1Pos = new GridPoint2(34,47);
         Entity top1 = PlatformFactory.createStaticPlatform();
         top1.setScale(2,0.5f);
-        top1.addComponent(new MinimapComponent("images/platform-map.png"));
+        top1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(top1, top1Pos,false, false);
 
         GridPoint2 top2Pos = new GridPoint2(41,52);
         Entity top2 = PlatformFactory.createStaticPlatform();
         top2.setScale(2,0.5f);
-        top2.addComponent(new MinimapComponent("images/platform-map.png"));
+        top2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(top2, top2Pos,false, false);
 
         GridPoint2 top3Pos = new GridPoint2(47,50);
         Entity top3 = PlatformFactory.createStaticPlatform();
         top3.setScale(2,0.5f);
-        top3.addComponent(new MinimapComponent("images/platform-map.png"));
+        top3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(top3, top3Pos,false, false);
 
         //platforms for button puzzle
         GridPoint2 buttonPlat1Pos = new GridPoint2(53,5);
         Entity buttonPlat1 = PlatformFactory.createStaticPlatform();
         buttonPlat1.setScale(2,0.5f);
-        buttonPlat1.addComponent(new MinimapComponent("images/platform-map.png"));
+        buttonPlat1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(buttonPlat1, buttonPlat1Pos,false, false);
 
         GridPoint2 buttonPlat2Pos = new GridPoint2(70,8);
         Entity buttonPlat2 = PlatformFactory.createStaticPlatform();
         buttonPlat2.setScale(2,0.5f);
-        buttonPlat2.addComponent(new MinimapComponent("images/platform-map.png"));
+        buttonPlat2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(buttonPlat2, buttonPlat2Pos,false, false);
 
         GridPoint2 buttonPlat3Pos = new GridPoint2(53,11);
         Entity buttonPlat3 = PlatformFactory.createStaticPlatform();
         buttonPlat3.setScale(2,0.5f);
-        buttonPlat3.addComponent(new MinimapComponent("images/platform-map.png"));
+        buttonPlat3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(buttonPlat3, buttonPlat3Pos,false, false);
 
         GridPoint2 buttonPlat4Pos = new GridPoint2(70,15);
         Entity ButtonPlat4 = PlatformFactory.createStaticPlatform();
         ButtonPlat4.setScale(2,0.5f);
-        ButtonPlat4.addComponent(new MinimapComponent("images/platform-map.png"));
+        ButtonPlat4.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(ButtonPlat4, buttonPlat4Pos,false, false);
 
         //platforms between traps
@@ -517,7 +543,7 @@ public class LevelTwoGameArea extends GameArea {
             GridPoint2 platPos = new GridPoint2(j, 30);
             Entity plat = PlatformFactory.createStaticPlatform();
             plat.setScale(1, 0.5f);
-            plat.addComponent(new MinimapComponent("images/platform-map.png"));
+            plat.addComponent(new MinimapComponent(PLATFORM_SHORT_MAP_IMG_PATH));
             spawnEntityAt(plat, platPos, true, true);
         }
     }
@@ -580,6 +606,7 @@ public class LevelTwoGameArea extends GameArea {
 
             Entity movingPlatform = PlatformFactory.createMovingPlatform(offsetWorld, platformSpeed);
             movingPlatform.setScale(1f, 0.5f);
+            movingPlatform.addComponent(new MinimapComponent(PLATFORM_SHORT_MAP_IMG_PATH));
             spawnEntityAt(movingPlatform, platformGridPos, true, true);
 
             //trap below
@@ -598,6 +625,7 @@ public class LevelTwoGameArea extends GameArea {
 
             Entity movingPlatform2 = PlatformFactory.createMovingPlatform(offsetWorld2, platformSpeed2);
             movingPlatform2.setScale(1f, 0.5f);
+            movingPlatform2.addComponent(new MinimapComponent(PLATFORM_SHORT_MAP_IMG_PATH));
             spawnEntityAt(movingPlatform2, platformGridPos2, true, true);
 
             //trap above
@@ -685,25 +713,25 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 volatile1Pos = new GridPoint2(68,31);
         Entity volatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         volatile1.setScale(2f,0.5f);
-        volatile1.addComponent(new MinimapComponent("images/platform-map.png"));
+        volatile1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(volatile1, volatile1Pos,false, false);
 
         GridPoint2 topVolatile1Pos = new GridPoint2(25,48);
         Entity topVolatile1 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile1.setScale(2f,0.5f);
-        topVolatile1.addComponent(new MinimapComponent("images/platform-map.png"));
+        topVolatile1.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(topVolatile1, topVolatile1Pos,false, false);
 
         GridPoint2 topVolatile2Pos = new GridPoint2(21,53);
         Entity topVolatile2 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile2.setScale(2f,0.5f);
-        topVolatile2.addComponent(new MinimapComponent("images/platform-map.png"));
+        topVolatile2.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(topVolatile2, topVolatile2Pos,false, false);
 
         GridPoint2 topVolatile3Pos = new GridPoint2(25,58);
         Entity topVolatile3 = PlatformFactory.createVolatilePlatform(2f,1.5f);
         topVolatile3.setScale(2f,0.5f);
-        topVolatile3.addComponent(new MinimapComponent("images/platform-map.png"));
+        topVolatile3.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(topVolatile3, topVolatile3Pos,false, false);
     }
 
