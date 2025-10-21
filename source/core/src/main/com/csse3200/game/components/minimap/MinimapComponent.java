@@ -2,10 +2,10 @@ package com.csse3200.game.components.minimap;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -15,7 +15,11 @@ public class MinimapComponent extends Component {
   private final String markerAsset;
   private Image marker;
 
-  private Vector2 MARKER_SCALE = new Vector2(1.56f, 1.56f);
+  private final Vector2 MARKER_SCALE = new Vector2();
+  private float scaleX = 1f;
+  private float scaleY = 1f;
+  private static final float BOUNDS_SCALAR = 0.0222857f; // dont ask...
+  private static final GridPoint2 DEFAULT_BOUNDS = new GridPoint2(100, 100);
 
 
   /**
@@ -35,19 +39,21 @@ public class MinimapComponent extends Component {
     float targetPxW = worldSize.x * pxPerWUX * MARKER_SCALE.x;
     float targetPxH = worldSize.y * pxPerWUY * MARKER_SCALE.y;
 
-    if (entity.getComponent(PlayerActions.class) != null) {
-      targetPxW = targetPxW / 3;
-      targetPxH = targetPxH / 2;
-    }
-
     marker.setSize(targetPxW, targetPxH);
   }
 
   @Override
   public void create() {
-    marker = new Image(ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class));
+    var screen = ServiceLocator.getMainGameScreen();
+    GridPoint2 tileBounds = screen == null ? DEFAULT_BOUNDS : screen.getGameArea().getMapBounds();
+    MARKER_SCALE.set(tileBounds.x * BOUNDS_SCALAR * scaleX, tileBounds.y * BOUNDS_SCALAR * scaleY);
+    Texture asset = ServiceLocator.getResourceService().getAsset(markerAsset, Texture.class);
+    if (asset == null) return;
+    marker = new Image(asset);
+    var svs = ServiceLocator.getMinimapService();
+    if (svs == null) return;
+    svs.trackEntity(entity, marker);
     rescaleMarker();
-    ServiceLocator.getMinimapService().trackEntity(entity, marker);
   }
 
   /**
@@ -69,17 +75,18 @@ public class MinimapComponent extends Component {
   }
 
   public MinimapComponent setScaleX(float sx) {
-    MARKER_SCALE.x = sx;
+    scaleX = sx;
     return this;
   }
 
   public MinimapComponent setScaleY(float sy) {
-    MARKER_SCALE.y = sy;
+    scaleY = sy;
     return this;
   }
 
   public MinimapComponent setScale(float scale) {
-    MARKER_SCALE.set(scale, scale);
+    scaleX = scale;
+    scaleY = scale;
     return this;
   }
 

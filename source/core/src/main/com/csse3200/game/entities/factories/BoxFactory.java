@@ -315,7 +315,7 @@ public class BoxFactory {
                     .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
                     .addComponent(new AutonomousBoxComponent());
 
-            autonomousBox.addComponent(new MinimapComponent("images/flying_bat_map.png"));
+            autonomousBox.addComponent(new MinimapComponent("images/flying_bat_map.png").setScale(2.5f));
 
 
 

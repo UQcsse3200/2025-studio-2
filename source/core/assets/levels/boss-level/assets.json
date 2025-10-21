@@ -55,7 +55,9 @@
     "images/drone-map.png",
     "images/door_open-map.png",
     "images/platform-map.png",
-    "images/flying_bat_map.png"
+    "images/flying_bat_map.png",
+    "images/platform-short-map.png",
+    "images/platform-long-map.png"
   ],
   "atlases": [
     "images/PLAYER.atlas",

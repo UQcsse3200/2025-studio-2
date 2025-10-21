@@ -14,7 +14,6 @@
     { "type": "floor", "subtype": "static_floor", "x": 24, "y": 15, "sx": 13, "sy": 100, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 48, "y": 4, "sx": 1, "sy": 5.5, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 23, "y": 7, "sx": 0.75, "sy": 4, "centerX": false, "centerY": false },
-
     { "type": "platform", "subtype": "volatile", "x": 0,  "y": 12, "sx": 2, "sy": 0.5, "speed": 0.5, "centerX": false, "centerY": false },
     { "type": "platform", "subtype": "volatile", "x": 10, "y": 18, "sx": 2, "sy": 0.5, "speed": 0.5 },
     { "type": "platform", "subtype": "volatile", "x": 3, "y": 35, "sx": 2, "sy": 0.5, "speed": 0.5 },

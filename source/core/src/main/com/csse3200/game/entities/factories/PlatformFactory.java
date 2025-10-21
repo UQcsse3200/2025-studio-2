@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.npc.VolatilePlatformAnimationController;
 import com.csse3200.game.components.platforms.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.platforms.MovingPlatformComponent;
@@ -49,8 +48,6 @@ public class PlatformFactory {
         .addComponent(new PhysicsComponent())
         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
 
-    platform.addComponent(new MinimapComponent("images/platform-map.png"));
-
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
   }
@@ -71,7 +68,6 @@ public class PlatformFactory {
         .addComponent(collider)
         .addComponent(new MovingPlatformComponent(offsetWorld, speed));
 
-    platform.addComponent(new MinimapComponent("images/platform-map.png"));
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
     return platform;
   }
@@ -92,7 +88,6 @@ public class PlatformFactory {
         .addComponent(collider)
         .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
 
-    platform.addComponent(new MinimapComponent("images/platform-map.png"));
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
     return platform;
   }
@@ -111,7 +106,6 @@ public class PlatformFactory {
             .addComponent(new PhysicsComponent())
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.LASER_REFLECTOR));
 
-    reflectorPlatform.addComponent(new MinimapComponent("images/platform-map.png"));
     reflectorPlatform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);createStaticPlatform();
 
     ConeLightComponent light = new ConeLightComponent(
@@ -151,7 +145,6 @@ public class PlatformFactory {
             .addComponent(new VolatilePlatformAnimationController())
             .addComponent(animator);
 
-    platform.addComponent(new MinimapComponent("images/platform-map.png"));
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
   }
@@ -168,7 +161,6 @@ public class PlatformFactory {
             .addComponent(new PhysicsComponent())
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
             .addComponent(new VolatilePlatformComponent(0f, 0f));
-    platform.addComponent(new MinimapComponent("images/platform-map.png"));
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
   }
