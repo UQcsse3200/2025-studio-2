@@ -115,6 +115,7 @@ public class MainGameScreen extends ScreenAdapter {
 
   public MainGameScreen(GdxGame game, Areas area) {
     this.game = game;
+    ServiceLocator.registerMainGameScreen(this);
 
     logger.debug("Initialising main game screen services");
     ServiceLocator.registerTimeSource(new GameTime());

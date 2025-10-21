@@ -12,7 +12,7 @@
     "thickness": 0.1
   },
   "miniMap": "images/minimap_forest_area.png",
-  "music": "sounds/BGM_03_mp3.mp3"
+  "music": "sounds/Siiiiiiiiiick bounce 1.mp3"
 ,
   "entities": [
     {"type": "platform","subtype": "static_platform","x": 3,"y": 24,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
