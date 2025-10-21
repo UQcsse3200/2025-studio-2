@@ -1,7 +1,9 @@
 package com.csse3200.game.components.ladders;
 
+import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.ArrayList;
@@ -19,6 +21,11 @@ public class LadderSectionControllerComponent extends Component {
     private int targetVisible = 0;
     private float stepTimer = 0f;
 
+    private Sound ladderSfx;
+    private int lastMoveDir = 0; // -1 retracting, 0 idle, +1 extending;
+    private boolean playedOnExtend = false;
+    private boolean playedOnRetract = false;
+
     public LadderSectionControllerComponent(String id, int extendCount, float stepInterval) {
         this.id = id;
         this.extendCount = extendCount;
@@ -29,6 +36,9 @@ public class LadderSectionControllerComponent extends Component {
     public void create() {
         findExtendableRungs();
 
+        ladderSfx = ServiceLocator.getResourceService().getAsset(
+                "sounds/laddersound.mp3", Sound.class);
+
         // setup listeners
         entity.getEvents().addListener("platePressed", this::onPressed);
         entity.getEvents().addListener("plateReleased", this::onReleased);
@@ -36,8 +46,18 @@ public class LadderSectionControllerComponent extends Component {
 
     @Override
     public void update() {
+        if (rungs.isEmpty()) return;
+
+        int moveDir = Integer.signum(targetVisible - visibleCount);
+        if (moveDir != 0 && moveDir != lastMoveDir) {
+            // direction flipped or started moving
+            playedOnExtend = false;
+            playedOnRetract = false;
+            lastMoveDir = moveDir;
+        }
+
         // if nothing to do stop quickly
-        if (visibleCount == targetVisible || rungs.isEmpty()) return;
+        if (visibleCount == targetVisible) return;
 
         // move one rung per interval towards the target
         stepTimer += ServiceLocator.getTimeSource().getDeltaTime();
@@ -52,6 +72,26 @@ public class LadderSectionControllerComponent extends Component {
                 // hide the last revealed rung
                 visibleCount--;
                 rungs.get(visibleCount).hide();
+            }
+        }
+
+        playSound();
+    }
+
+    private void playSound() {
+        if (ladderSfx == null || rungs.isEmpty()) return;
+
+        int half = rungs.size() / 2;
+
+        if (lastMoveDir > 0) {
+            if (!playedOnExtend && visibleCount >= half) {
+                ladderSfx.play(UserSettings.get().masterVolume);
+                playedOnExtend = true;
+            }
+        } else if (lastMoveDir < 0) {
+            if (!playedOnRetract && visibleCount <= half) {
+                ladderSfx.play(UserSettings.get().masterVolume);
+                playedOnRetract = true;
             }
         }
     }
