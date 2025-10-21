@@ -23,6 +23,7 @@
     { "type": "platform", "subtype": "static_platform", "x": 20,  "y": 50, "sx": 4, "sy": 0.5 },
     { "type": "platform", "subtype": "moving", "id": "pressurePlatePlatform", "x": 15.5, "y": 5, "sx": 2, "sy": 0.5, "dy": 0, "dx": -5, "speed": 1.5},
     { "type": "platform", "subtype": "moving", "x": 39, "y": 8, "sx": 3, "sy": 0.5, "dy": 0, "dx": -5.5, "speed": 2, "id": "movingPlatformPressurePlate" },
+    {"type": "platform","subtype": "static_platform","x": -1,"y": 67,"sx": 3.5,"sy": 0.5,"centerX": false,"centerY": false},
 
     { "type": "pressure_plate", "x": 15, "y": 6, "id": "keyPressurePlate", "linked": "pressurePlatePlatform"},
     { "type":  "pressure_plate", "x": 26, "y": 4, "target":  "movingPlatformPressurePlate", "extra": "platform" },
@@ -34,7 +35,7 @@
     { "type": "camera", "id": "camera", "x": 23, "y": 25, "rotation": 270, "speed": 25 },
 
     { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5, "sx": 1, "sy": 2 },
-    { "type": "door", "subtype": "transition", "target":  "BOSS_LEVEL", "id": "key:door", "x": 0, "y": 69, "sx": 1, "sy": 2 },
+    { "type": "door", "subtype": "transition", "target":  "BOSS_LEVEL", "id": "key:door", "x": 0, "y": 68, "sx": 1, "sy": 2, "centerX": false,"centerY": false },
 
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 1, "y": 30 },
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 14, "y": 52 },

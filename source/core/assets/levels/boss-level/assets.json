@@ -48,7 +48,20 @@
     "images/mirror-cube-on.png",
     "images/laser-end",
     "images/minimap_forest_area.png",
-    "images/minimap_player_marker.png"
+    "images/minimap_player_marker.png",
+    "images/door_open-map.png",
+    "images/floor-map-4.png",
+    "images/floor-map-5.png",
+    "images/floor-map-6.png",
+    "images/platform-short-map.png",
+    "images/wall-map-3.png",
+    "images/wall-map-4.png",
+    "images/wall-map-5.png",
+    "images/wall-map-6.png",
+    "images/wall-map-7.png",
+    "images/wall-map-8.png",
+    "images/wall-map-9.png",
+    "images/platform-map.png"
   ],
   "atlases": [
     "images/PLAYER.atlas",

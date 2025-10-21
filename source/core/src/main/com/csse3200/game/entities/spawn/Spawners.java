@@ -402,13 +402,13 @@ public final class Spawners {
             return bat;
         });
 
-        /*
+
         // --- Prompts ---
         SpawnRegistry.register("prompt", a -> {
             return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
         });
 
-         */
+
     }
 
     // --- Helpers ---
