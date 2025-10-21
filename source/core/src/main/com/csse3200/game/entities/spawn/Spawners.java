@@ -12,6 +12,7 @@ import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -157,6 +158,7 @@ public final class Spawners {
             };
 
             floor.setScale(a.sx, a.sy);
+            floor.addComponent(new MinimapComponent("images/floor-map-1.png"));
             return floor;
         });
 
@@ -164,6 +166,7 @@ public final class Spawners {
         SpawnRegistry.register("wall", a -> {
             Entity wall =  WallFactory.createWall(a.x, a.y, a.dx, a.dy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
+            wall.addComponent(new MinimapComponent("images/wall-map-1.png"));
             return wall;
         });
 
@@ -188,6 +191,14 @@ public final class Spawners {
             linkEntities(platform, a.linked);
             addIdentifier(platform, String.valueOf(a.id));
             platform.setScale(a.sx, a.sy);
+
+            String minimapTex = "images/platform-map.png";
+            if (a.sx >= 3.5f) {
+                minimapTex = "images/platform-long-map.png";
+            } else if (a.sx <= 1.0f) {
+                minimapTex = "images/platform-short-map.png";
+            }
+            platform.addComponent(new MinimapComponent(minimapTex));
 
             return platform;
         });
