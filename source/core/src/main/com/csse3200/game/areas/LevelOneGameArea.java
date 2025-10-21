@@ -225,7 +225,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnTerminals() {
         Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
-        spawnEntityAt(terminal1, new GridPoint2(3, 4), true, true);
+        spawnEntityAt(terminal1, new GridPoint2(4, 4), true, true);
         Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
         spawnEntityAt(terminal2, new GridPoint2(68, 49), true, true);
     }
