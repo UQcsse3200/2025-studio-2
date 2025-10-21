@@ -37,33 +37,31 @@ public class PlayerStatsDisplay extends UIComponent {
     private static final int MAX_HEARTS = 10;
 
     Table fuelTable;
-    private Image fuelImage;
-    private Label fuelLabel;
     private ProgressBar fuelBar;
-  /**
-   * Table used for storing all UI actors related to stamina bar
-   */
-  private Table staminaTable;
-  /**
-   * Stamina label
-   */
-  private Label staminaLabel;
-  /**
-   * Progress bar used to visually show stamina
-   */
-  private ProgressBar staminaBar;
-  /**
-   * Image icon used in stamina bar
-   */
-  private Image staminaImage;
-  /**
-   * Collectable Label
-   */
-  private Label collectableLabel;
-  /**
-   * count of number of collectable items collected
-   */
-  private int count = CollectablesSave.getCollectedCount();
+    /**
+     * Table used for storing all UI actors related to stamina bar
+     */
+    private Table staminaTable;
+    /**
+     * Stamina label
+     */
+    private Label staminaLabel;
+    /**
+     * Progress bar used to visually show stamina
+     */
+    private ProgressBar staminaBar;
+    /**
+     * Image icon used in stamina bar
+     */
+    private Image staminaImage;
+    /**
+     * Collectable Label
+     */
+    private Label collectableLabel;
+    /**
+     * count of number of collectable items collected
+     */
+    private int count = CollectablesSave.getCollectedCount();
 
     /**
      * Creates reusable ui styles and adds actors to the stage.
@@ -113,7 +111,6 @@ public class PlayerStatsDisplay extends UIComponent {
         staminaTable.setUserObject(entity);
 
         // Stamina image
-        float staminaSideLength = 30f;
         staminaImage = new Image(ServiceLocator.getResourceService().getAsset("images/playerstats/stamina.png", Texture.class));
 
         // Stamina label
@@ -125,7 +122,6 @@ public class PlayerStatsDisplay extends UIComponent {
         staminaBar.setValue((float) staminaComp.getCurrentStamina());
 
         // Add actors to stamina table
-        //staminaTable.add(staminaImage).size(staminaSideLength).pad(5);
         staminaTable.add(staminaLabel);
         staminaTable.add(staminaBar);
     }
@@ -152,12 +148,7 @@ public class PlayerStatsDisplay extends UIComponent {
         fuelTable.setName("Fuel");
         fuelTable.setUserObject(entity);
 
-
-        float fuelIconSize = 25f;
-        fuelImage = staminaImage;
-
-
-        fuelLabel = new Label("Fuel:    ", skin, "large");
+        Label fuelLabel = new Label("Fuel:    ", skin, "large");
 
         fuelBar = new ProgressBar(0f, 100f, 1f, false, skin);
         fuelBar.setValue(100f);
