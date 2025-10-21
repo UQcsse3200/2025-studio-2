@@ -1,2 +1,7 @@
-#cutscene-bgs/utopia.png
-Temp
+#cutscene-bgs/destroyed.png
+The drones spiralled towards the ground, rotors ceasing to spin.
+Blinking LEDs all around the room briefly flickered before fizzling out completely.
+The central AI, once suspended in the air, violently crashed into the ground, sending debris flying in all directions.
+A great, deafening silence filled the room. Not even the faintest electrical hum could be heard.
+I knew at that moment that I had won - humanity had one.
+No matter how long it took, no matter how difficult, we would rebuild.
