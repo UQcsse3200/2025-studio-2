@@ -46,7 +46,7 @@
     {"type": "laser","x": 63,"y": 25,"rotation": "335","centerX": false,"centerY": false},
     {"type": "laser","x": 63,"y": 3,"rotation": "65","centerX": false,"centerY": false},
     {"type": "laser","x": 95,"y": 39,"rotation": "270","centerX": false,"centerY": false},
-    {"type": "laser","x": 96,"y": 21,"rotation": "270","centerX": false,"centerY": false},
+    {"type": "laser","x": 95,"y": 21,"rotation": "270","centerX": false,"centerY": false},
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 77, "y": 16 },
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 81, "y": 22 },
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 73, "y": 30 },
