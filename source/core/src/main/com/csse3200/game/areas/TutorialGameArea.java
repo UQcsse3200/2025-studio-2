@@ -13,6 +13,7 @@ import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -112,6 +113,9 @@ public class TutorialGameArea extends GameArea {
         "images/tutorials/double_jump.png",
         "images/ladder-map.png",
         "images/door_open-map.png",
+        "images/floor-map-1.png",
+        "images/red_button-map.png",
+        "images/platform-map.png"
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -405,6 +409,7 @@ public class TutorialGameArea extends GameArea {
         GridPoint2 step1Pos = new GridPoint2(8,6);
         Entity step1 = PlatformFactory.createStaticPlatform();
         step1.setScale(2,0.5f);
+        step1.addComponent(new MinimapComponent("images/platform-map.png"));
         spawnEntityAt(step1, step1Pos,false, false);
 
         GridPoint2 step2Pos = new GridPoint2(2,9);
@@ -581,7 +586,7 @@ public class TutorialGameArea extends GameArea {
         door.setScale(1, 2);
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         //door.getComponent(DoorComponent.class).openDoor();
-        spawnEntityAt(door, new GridPoint2(63,53), true, true);
+        spawnEntityAt(door, new GridPoint2(63,54), true, true);
     }
 
     private void playMusic() {
