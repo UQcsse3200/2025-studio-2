@@ -4,7 +4,7 @@
   "playerSpawn": [2, 4],
   "walls": { "thickness": 0.1 },
   "miniMap": "images/minimap_forest_area.png",
-  "music": "sounds/KindaLikeTycho.mp3",
+  "music": "sounds/LIKEDACIRCUIT.mp3",
 
   "entities": [
     { "type":  "death_zone", "x":  0, "y": -7},
@@ -33,7 +33,7 @@
 
     { "type": "camera", "id": "camera", "x": 23, "y": 25, "rotation": 270, "speed": 25 },
 
-    { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5, "sx": 1, "sy": 2 },
+    { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5.5, "sx": 1, "sy": 2 },
     { "type": "door", "subtype": "transition", "target":  "BOSS_LEVEL", "id": "key:door", "x": 0, "y": 68, "sx": 1, "sy": 2, "centerX": false,"centerY": false },
 
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 1, "y": 30 },
