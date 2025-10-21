@@ -103,10 +103,13 @@ public class MainGameScreen extends ScreenAdapter {
     TEMPLATE,
     FOREST,
     CAVE,
-    CUTSCENE_ONE,
-    CUTSCENE_TWO,
     TUTORIAL,
-    BOSS_LEVEL
+    BOSS_LEVEL,
+    BEGINNING_CUTSCENE,
+    LEVEL_ONE_CUTSCENE,
+    LEVEL_TWO_CUTSCENE,
+    LEVEL_THREE_CUTSCENE,
+    END_CUTSCENE
   }
 
   public MainGameScreen(GdxGame game) {
@@ -267,11 +270,14 @@ public class MainGameScreen extends ScreenAdapter {
       return switch (area) {
           case TUTORIAL ->  new TutorialGameArea(gridFactory);
           case LEVEL_ONE -> new LevelOneGameArea(gridFactory);
-          case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
           case LEVEL_TWO -> new LevelTwoGameArea(gridFactory);
-          case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
           case LEVEL_THREE -> new LevelThreeGameArea(gridFactory);
           case BOSS_LEVEL ->  new BossLevelGameArea(gridFactory);
+          case BEGINNING_CUTSCENE -> new CutsceneArea("cutscene-scripts/beginning.txt");
+          case LEVEL_ONE_CUTSCENE -> new CutsceneArea("cutscene-scripts/after-lvl1.txt");
+          case LEVEL_TWO_CUTSCENE -> new CutsceneArea("cutscene-scripts/after-lvl2.txt");
+          case LEVEL_THREE_CUTSCENE -> new CutsceneArea("cutscene-scripts/after-lvl3.txt");
+          case END_CUTSCENE -> new CutsceneArea("cutscene-scripts/end.txt");
           default -> throw new IllegalStateException("Unexpected value: " + area);
       };
   }
@@ -283,12 +289,14 @@ public class MainGameScreen extends ScreenAdapter {
    */
   private Areas getNextArea(Areas area) {
     return switch (area) {
-      case LEVEL_ONE -> Areas.CUTSCENE_ONE;
-      case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
-      case LEVEL_TWO -> Areas.CUTSCENE_TWO;
-      case CUTSCENE_TWO -> Areas.LEVEL_THREE;
-      case LEVEL_THREE -> Areas.BOSS_LEVEL;
-      case BOSS_LEVEL -> Areas.SPRINT_ONE;
+      case LEVEL_ONE -> Areas.LEVEL_ONE_CUTSCENE;
+      case LEVEL_ONE_CUTSCENE -> Areas.LEVEL_TWO;
+      case LEVEL_TWO -> Areas.LEVEL_TWO_CUTSCENE;
+      case LEVEL_TWO_CUTSCENE -> Areas.LEVEL_THREE;
+      case LEVEL_THREE -> Areas.LEVEL_THREE_CUTSCENE;
+      case LEVEL_THREE_CUTSCENE -> Areas.BOSS_LEVEL;
+      case BOSS_LEVEL -> Areas.END_CUTSCENE;
+      case BEGINNING_CUTSCENE, END_CUTSCENE -> Areas.LEVEL_ONE; // Temp: Game loops
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }

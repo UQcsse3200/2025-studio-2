@@ -1,0 +1,15 @@
+#cutscene-bgs/utopia.png
+{COLOR=RED}CyberCorp{CLEARCOLOR}, a once great technology giant that boasted impressive technologies found nearly everywhere on Earth, now has a monopoly on the human race itself.
+At some point, in 2065, it's great big mound of a facility bellowed out an {SHAKE}ear-splitting{ENDSHAKE} signal, which was perpetuated through a series of satellite networks, device speakers and intercom systems.
+Not long after, A great deal of Earth's population {SICK}immediately turned{ENDSICK}.
+#cutscene-bgs/cybernetics.png
+{COLOR=RED}Cybernetic implants{CLEARCOLOR}, accessories nearly as abundant as phone's in the early 21st century, were overridden by the frequency, allowing {SICK}total control{ENDSICK} over one's mind.
+Living conditions degraded, structures fell, and Government ceased as some mysterious entity within {COLOR=RED}CyberCorp{CLEARCOLOR} carried out its great plan.
+#cutscene-bgs/dystopia.png
+It's 2077, and society is on the brink of collapse. Remaining humans, like myself, will soon {SHAKE}perish{ENDSHAKE}.
+A sentient, all-encompassing {COLOR=RED}artificial intelligence{CLEARCOLOR} controls everything - dictating the actions of the mindless human-robot hybrids that carry out its bidding.
+Small pockets of human civilisation are monitored by {COLOR=RED}surveillance drones{CLEARCOLOR} and {COLOR=RED}transhuman soldiers{CLEARCOLOR} like we're some sort of {SICK}science experiment{ENDSICK}.
+We're forced into labour the AI cannot yet automate, and made to purchase our own oxygen supply ever since it was all harvested and used by the AI.
+#cutscene-bgs/facility.png
+A week ago, I made a strategic break from it all. I disguised myself in military combat armour and trudged through the wasteland towards the old {COLOR=RED}CyberCorp facility.{CLEARCOLOR}
+Now I'm here, and my objective is clear: {COLOR=YELLOW}{SLOWER}{SHRINK}Eliminate the AI threat, or perish trying.{ENDSHRINK}{SLOWER}{CLEARCOLOR}

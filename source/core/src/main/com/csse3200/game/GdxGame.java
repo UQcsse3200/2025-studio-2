@@ -98,7 +98,7 @@ public class GdxGame extends Game {
     return switch (screenType) {
       case MAIN_MENU -> new MainMenuScreen(this);
       case MAIN_GAME -> {
-        MainGameScreen screen = new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+        MainGameScreen screen = new MainGameScreen(this, MainGameScreen.Areas.BEGINNING_CUTSCENE);
         ServiceLocator.registerMainGameScreen(screen);
         yield screen;
       }

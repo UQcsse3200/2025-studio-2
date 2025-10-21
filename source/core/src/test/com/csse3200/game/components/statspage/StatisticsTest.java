@@ -61,8 +61,8 @@ public class StatisticsTest {
             return levelTwoArea;
         });
 
-        when(mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_ONE)).thenReturn(cutsceneOneArea);
-        when(mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_TWO)).thenReturn(cutsceneTwoArea);
+        when(mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_ONE_CUTSCENE)).thenReturn(cutsceneOneArea);
+        when(mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_TWO_CUTSCENE)).thenReturn(cutsceneTwoArea);
     }
 
     @AfterEach
@@ -105,13 +105,13 @@ public class StatisticsTest {
         mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_ONE);
         assertEquals(1, StatsTracker.getLevelsCompleted());
 
-        mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_ONE);
+        mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_ONE_CUTSCENE);
         assertEquals(1, StatsTracker.getLevelsCompleted());
 
         mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_TWO);
         assertEquals(2, StatsTracker.getLevelsCompleted());
 
-        mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_TWO);
+        mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_TWO_CUTSCENE);
         assertEquals(2, StatsTracker.getLevelsCompleted());
     }
 
