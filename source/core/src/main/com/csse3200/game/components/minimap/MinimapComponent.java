@@ -5,7 +5,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.csse3200.game.components.Component;
+<<<<<<< HEAD
 import com.csse3200.game.components.player.PlayerActions;
+=======
+import com.csse3200.game.physics.components.PhysicsComponent;
+>>>>>>> 0e90f4a37849cb191cda74c553361486dee8f6ec
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -15,7 +19,7 @@ public class MinimapComponent extends Component {
   private final String markerAsset;
   private Image marker;
 
-  private static final float MARKER_SCALE = 1.56f;
+  private Vector2 MARKER_SCALE = new Vector2(1.56f, 1.56f);
 
 
   /**
@@ -32,8 +36,8 @@ public class MinimapComponent extends Component {
     float pxPerWUX = ServiceLocator.getMinimapService().getPixelsPerWorldUnitX();
     float pxPerWUY = ServiceLocator.getMinimapService().getPixelsPerWorldUnitY();
 
-    float targetPxW = worldSize.x * pxPerWUX * MARKER_SCALE;
-    float targetPxH = worldSize.y * pxPerWUY * MARKER_SCALE;
+    float targetPxW = worldSize.x * pxPerWUX * MARKER_SCALE.x;
+    float targetPxH = worldSize.y * pxPerWUY * MARKER_SCALE.y;
 
     if (entity.getComponent(PlayerActions.class) != null) {
       targetPxW = worldSize.x * pxPerWUX * MARKER_SCALE / 3;
@@ -66,6 +70,21 @@ public class MinimapComponent extends Component {
    */
   public void tintMarker(Color color) {
     ServiceLocator.getMinimapService().setMarkerColor(entity, color);
+  }
+
+  public MinimapComponent setScaleX(float sx) {
+    MARKER_SCALE.x = sx;
+    return this;
+  }
+
+  public MinimapComponent setScaleY(float sy) {
+    MARKER_SCALE.y = sy;
+    return this;
+  }
+
+  public MinimapComponent setScale(float scale) {
+    MARKER_SCALE.set(scale, scale);
+    return this;
   }
 
   @Override

@@ -36,6 +36,7 @@
     {"type": "platform","subtype": "static_platform","x": 22,"y": 12,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 52,"y": 23,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "static_platform","x": 45,"y": 18,"sx": 3.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 27,"y": 8,"sx": 1,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "platform","subtype": "button","id": "platform","x": 55,"y": 18,"sx": 2,"sy": 0.5,"speed": 2,"dx": 9,"dy": 0,"centerX": false,"centerY": false},
 
     {"type": "button","subtype": "platform","x": 56,"y": 23,"direction": "right","target": "platform","tooltip": "Platform Button\nPress E to Interact"},
@@ -87,7 +88,7 @@
     {"type": "objective","id": "door","x": 1,"y": 3,"sx": 2,"sy": 2},
     {"type": "objective","id": "dash_completed","x": 23,"y": 4,"sx": 0.2,"sy": 0.2},
     {"type": "objective","id": "keycard_completed","x": 1,"y": 37,"sx": 0.2,"sy": 0.2},
-    {"type": "terminal","id": "test","x": 3,"y": 4},
+    {"type": "terminal","id": "automation-need","x": 6,"y": 4},
     {"type": "box","subtype": "weighted","x": 15,"y": 15},
     {"type": "box","subtype": "weighted","x": 61,"y": 36},
     {"type": "collectable","subtype": "misc","x": 67,"y": -3,"target": "hardware"},
@@ -95,11 +96,13 @@
     {"type": "collectable","subtype": "misc","x": 79,"y": 60,"target": "hardware"},
     {"type": "tutorial","subtype": "jump","x": 13,"y": 3},
     {"type": "tutorial","subtype": "double_jump","x": 13,"y": 10},
-    {"type": "terminal","id": "test1","x": 68,"y": 49},
+    {"type": "terminal","id": "incident-report","x": 68,"y": 49},
     {"type": "platform","subtype": "static_platform","x": 73,"y": 45,"sx": 4,"sy": 0.5,"centerX": false,"centerY": false},
     {"type": "box","subtype": "weighted","x": 75,"y": 50},
     {"type": "pressure_plate","subtype": "normal","id": "volatile_platform","x": 79,"y": 46},
     {"type": "platform","subtype": "plate","x": 70,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
-    {"type": "platform","subtype": "plate","x": 78,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"}
+    {"type": "platform","subtype": "plate","x": 78,"y": 56,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
+    {"type": "prompt", "x": 6, "y": 15, "speed": 5,  "dx":  2, "dy": 90, "extra": "Hit \"o\" to have a look at your objectives!"},
+    {"type": "prompt", "x": 58, "y": 48, "speed": 5,  "dx":  2, "dy": 2, "extra": "Hit \"j\" to have a look at your codex entries!"}
   ]
 }

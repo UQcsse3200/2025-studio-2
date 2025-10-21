@@ -9,8 +9,10 @@ import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -18,6 +20,7 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,6 +158,7 @@ public final class Spawners {
             };
 
             floor.setScale(a.sx, a.sy);
+            floor.addComponent(new MinimapComponent("images/floor-map-1.png").setScaleX(1.73f));
             return floor;
         });
 
@@ -162,6 +166,7 @@ public final class Spawners {
         SpawnRegistry.register("wall", a -> {
             Entity wall =  WallFactory.createWall(a.x, a.y, a.dx, a.dy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
+            wall.addComponent(new MinimapComponent("images/wall-map-1.png"));
             return wall;
         });
 
@@ -186,6 +191,14 @@ public final class Spawners {
             linkEntities(platform, a.linked);
             addIdentifier(platform, String.valueOf(a.id));
             platform.setScale(a.sx, a.sy);
+
+            String minimapTex = "images/platform-map.png";
+            if (a.sx >= 3.5f) {
+                minimapTex = "images/platform-long-map.png";
+            } else if (a.sx <= 1.0f) {
+                minimapTex = "images/platform-short-map.png";
+            }
+            platform.addComponent(new MinimapComponent(minimapTex));
 
             return platform;
         });
@@ -399,16 +412,41 @@ public final class Spawners {
                     .build();
 
             addTooltip(bat, a.tooltip);
+            bat.addComponent(new MinimapComponent("images/flying_bat_map.png").setScale(3f));
             return bat;
         });
 
-        /*
+
         // --- Prompts ---
         SpawnRegistry.register("prompt", a -> {
             return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
         });
 
-         */
+        // --- Computer Terminal ---
+        SpawnRegistry.register("computer_terminal", a -> {
+            Entity terminal = ComputerTerminalFactory.createTerminal();
+
+            if (a.subtype != null && a.subtype.equals("transition")) {
+                terminal.getEvents().addListener("terminal:captchaResult", (CaptchaResult r) -> {
+                    if (r.success()) {
+                        // close terminal
+                        var svc = ServiceLocator.getComputerTerminalService();
+                        if (svc == null) return;
+                        svc.close();
+
+                        // transition level
+                        MainGameScreen screen = ServiceLocator.getMainGameScreen();
+                        var gameAreaEnum =  screen.getAreaEnum();
+                        var nextArea = screen.getNextArea(gameAreaEnum);
+                        screen.switchAreaRunnable(nextArea, player);
+                    }
+                });
+            }
+
+            return terminal;
+        });
+
+
     }
 
     // --- Helpers ---

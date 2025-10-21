@@ -225,7 +225,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnTerminals() {
         Entity terminal1 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
-        spawnEntityAt(terminal1, new GridPoint2(3, 4), true, true);
+        spawnEntityAt(terminal1, new GridPoint2(4, 4), true, true);
         Entity terminal2 = CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry("test"));
         spawnEntityAt(terminal2, new GridPoint2(68, 49), true, true);
     }
@@ -808,7 +808,7 @@ public class LevelOneGameArea extends GameArea {
     }
     private void spawnPrompts() {
         spawnEntityAt(CollectableFactory.createPrompt("Hit \"o\" to have a look at your objectives!",
-                        5, 2.0f,90.0f),
+                        5f, 2.0f,90.0f),
                 new GridPoint2(6, 15), true, true);
     }
 
