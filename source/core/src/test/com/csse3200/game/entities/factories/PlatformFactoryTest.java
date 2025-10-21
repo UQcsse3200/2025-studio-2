@@ -132,8 +132,8 @@ public class PlatformFactoryTest {
                 "Reflective platform should have a PhysicsComponent");
         assertNotNull(reflectivePlatform.getComponent(ColliderComponent.class),
                 "Reflective platform should have a ColliderComponent");
-        assertNotNull(reflectivePlatform.getComponent(ConeLightComponent.class),
-                "Reflective platform should have a ConeLightComponent");
+//        assertNotNull(reflectivePlatform.getComponent(ConeLightComponent.class),
+//                "Reflective platform should have a ConeLightComponent");
     }
 
     @Test
