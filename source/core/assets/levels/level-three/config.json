@@ -56,7 +56,7 @@
     { "type":  "enemy", "x": 6, "y": 11, "dy": 22, "dx": 19 },
     { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false},
 
-    {"type": "terminal","id": "test4","x": 46,"y": 4},
-    {"type": "terminal","id": "test5","x": 4,"y": 46}
+    {"type": "terminal","id": "spam-email","x": 46,"y": 4},
+    {"type": "terminal","id": "final-broadcast","x": 4,"y": 46}
   ]
 }
