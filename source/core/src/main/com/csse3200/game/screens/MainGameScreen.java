@@ -1,7 +1,6 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -261,13 +260,13 @@ public class MainGameScreen extends ScreenAdapter {
     lvlStartTime = gameTime.getTime();
     return switch (area) {
       case TUTORIAL ->  new TutorialGameArea(terrainFactory);
-      case LEVEL_ONE -> new LevelOneNewGameArea(terrainFactory);
+      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
-      case LEVEL_TWO -> new LevelTwoNewGameArea(terrainFactory);
+      case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
       case LEVEL_THREE -> new LevelThreeGameArea(terrainFactory);
-      case BOSS_LEVEL ->  new BossLevelNewGameArea(terrainFactory);
+      case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -390,33 +389,34 @@ public class MainGameScreen extends ScreenAdapter {
     return gameArea;
   }
 
+
   @Override
   public void render(float delta) {
     if (!paused) {
       // Update camera position to follow player
       updateCameraFollow();
 
-          physicsEngine.update();
-          ServiceLocator.getEntityService().update();
-          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              jumpCount++;
-              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
-                  levelOneArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
-                  levelTwoArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }
-          }
-          laserTimer += delta;
-
-          // Check if 50 seconds have passed
-          if (laserTimer >= 50f) {
-              if (gameArea instanceof BossLevelGameArea bossLevel) {
-                  bossLevel.spawnLaserShower(); // spawn lasers
-              }
-              laserTimer = 0f; // reset timer
-          }
+      physicsEngine.update();
+      ServiceLocator.getEntityService().update();
+//      if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+//          jumpCount++;
+//          if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
+//              levelOneArea.laserShowerChecker(delta);
+//              jumpCount = 0;
+//          }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
+//              levelTwoArea.laserShowerChecker(delta);
+//              jumpCount = 0;
+//          }
+//      }
+//      laserTimer += delta;
+//
+//      // Check if 50 seconds have passed
+//      if (laserTimer >= 50f) {
+//          if (gameArea instanceof BossLevelGameArea bossLevel) {
+//              bossLevel.spawnLaserShower(); // spawn lasers
+//          }
+//          laserTimer = 0f; // reset timer
+//      }
 
       }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
