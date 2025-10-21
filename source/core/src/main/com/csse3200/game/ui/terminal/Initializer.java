@@ -470,9 +470,12 @@ public class Initializer {
           });
           
           setGlobal("teleport", (x, y) {
-              player = getPlayer();
-              player.setPosition(x, y);
-              print("Player teleported to: (", x, ",", y, ")\n");
+                player = getPlayer();
+                physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+                body = physics.getBody();
+                vector = .com.badlogic.gdx.math.Vector2(x, y);
+                body.setTransform(vector, body.getAngle());
+                print("Player teleported to: (", x, ",", y, ")\n");
           });
           
           setGlobal("setSpeed", (x, y) {
