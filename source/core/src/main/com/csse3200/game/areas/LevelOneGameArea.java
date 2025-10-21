@@ -242,7 +242,7 @@ public class LevelOneGameArea extends GameArea {
             false);
         // Bottom
         spawnEntityAt(ObstacleFactory.createWall(worldBounds.x, WALL_THICKNESS),
-            new GridPoint2(0, 0), false, false);
+            new GridPoint2(0, -10), false, false);
     }
 
     private void spawnTutorials() {
