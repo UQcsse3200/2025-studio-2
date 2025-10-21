@@ -89,31 +89,11 @@
     "images/surfacelevel/4.png",
     "images/terminal_on.png",
     "images/terminal_off.png",
-<<<<<<< HEAD
     "images/floor-map-1.png",
     "images/platform-map.png",
     "images/red_button-map.png",
-    "images/door_open-map.png",
-    "images/door_open-map.png",
-    "images/platform-long-map.png",
-    "images/wall-map-1.png",
-    "images/wall-map-2.png",
-    "images/drone-map.png"
-=======
-    "images/door_open-map.png",
-    "images/floor-map-4.png",
-    "images/floor-map-5.png",
-    "images/floor-map-6.png",
-    "images/platform-short-map.png",
-    "images/wall-map-3.png",
-    "images/wall-map-4.png",
-    "images/wall-map-5.png",
-    "images/wall-map-6.png",
-    "images/wall-map-7.png",
-    "images/wall-map-8.png",
-    "images/wall-map-9.png",
-    "images/platform-map.png"
->>>>>>> 0e90f4a37849cb191cda74c553361486dee8f6ec
+    "images/drone-map.png",
+    "images/door_open-map.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",
@@ -142,6 +122,6 @@
     "sounds/explosion.mp3"
   ],
   "music": [
-    "sounds/KindaLikeTycho.mp3"
+    "sounds/LIKEDACIRCUIT.mp3"
   ]
 }

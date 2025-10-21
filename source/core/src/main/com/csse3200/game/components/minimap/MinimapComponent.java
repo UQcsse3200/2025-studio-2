@@ -5,11 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.csse3200.game.components.Component;
-<<<<<<< HEAD
 import com.csse3200.game.components.player.PlayerActions;
-=======
-import com.csse3200.game.physics.components.PhysicsComponent;
->>>>>>> 0e90f4a37849cb191cda74c553361486dee8f6ec
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -40,8 +36,8 @@ public class MinimapComponent extends Component {
     float targetPxH = worldSize.y * pxPerWUY * MARKER_SCALE.y;
 
     if (entity.getComponent(PlayerActions.class) != null) {
-      targetPxW = worldSize.x * pxPerWUX * MARKER_SCALE / 3;
-      targetPxH = worldSize.y * pxPerWUY * MARKER_SCALE / 2;
+      targetPxW = targetPxW / 3;
+      targetPxH = targetPxH / 2;
     }
 
     marker.setSize(targetPxW, targetPxH);

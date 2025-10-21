@@ -321,7 +321,7 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
 
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
+        drone.addComponent(new MinimapComponent("images/blow_drone-map.png"));
 
         // AITasks and selfDestruct behaviour is only added if valid target exists
         if (target != null) {
