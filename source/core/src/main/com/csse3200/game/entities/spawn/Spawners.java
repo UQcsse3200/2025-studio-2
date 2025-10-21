@@ -158,7 +158,7 @@ public final class Spawners {
             };
 
             floor.setScale(a.sx, a.sy);
-            floor.addComponent(new MinimapComponent("images/floor-map-1.png"));
+            floor.addComponent(new MinimapComponent("images/floor-map-1.png").setScaleX(1.73f));
             return floor;
         });
 
@@ -412,6 +412,7 @@ public final class Spawners {
                     .build();
 
             addTooltip(bat, a.tooltip);
+            bat.addComponent(new MinimapComponent("images/flying_bat_map.png").setScale(3f));
             return bat;
         });
 
