@@ -35,7 +35,7 @@ class DoorComponentTest {
         when(area.getEvents()).thenReturn(areaEvents);
 
         // Mock static CollectableService so InventoryComponent can add items
-        svcMock = mockStatic(CollectableService.class, withSettings().lenient());
+        svcMock = mockStatic(CollectableService.class, withSettings());
         svcMock.when(() -> CollectableService.get(anyString()))
                 .thenAnswer(inv -> {
                     String id = inv.getArgument(0);
