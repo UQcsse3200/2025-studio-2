@@ -1,9 +1,5 @@
 package com.csse3200.game.components.player;
 
-import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.EntityService;
-import com.csse3200.game.services.ServiceLocator;
-
 // Finds the first entity with an InventoryComponent
 public final class InventoryEntityLocator {
 //    private InventoryEntityLocator() {}

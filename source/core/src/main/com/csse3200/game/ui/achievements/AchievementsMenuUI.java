@@ -20,6 +20,8 @@ public class AchievementsMenuUI extends UIComponent {
     private ScrollPane scroller;
     private Label.LabelStyle rowStyle;
 
+    private static final String ACHV_MENU = "AchvMenu";
+
     @Override
     public void create() {
         super.create();
@@ -37,7 +39,7 @@ public class AchievementsMenuUI extends UIComponent {
 
         // List that will contain rows
         list = new Table(skin);
-        list.defaults().left().pad(6f);
+        list.defaults().left().pad(6.0f);
 
         // Bigger content area – target ~70% width, ~55% height of the viewport
         float bodyW = Math.min(vw * 0.7f, 900f);
@@ -52,7 +54,7 @@ public class AchievementsMenuUI extends UIComponent {
         content.add(new Label("[Achievements]", skin, "title")).left().row();
         content.add(scroller).width(bodyW).height(bodyH);
 
-        root.add(content).pad(16f);
+        root.add(content).pad(16.0f);
         root.pack();
 
         // Center on screen
@@ -118,6 +120,11 @@ public class AchievementsMenuUI extends UIComponent {
         }
     }
 
-    @Override public void draw(SpriteBatch batch) {}
-    @Override public void dispose() { if (root != null) root.remove(); super.dispose(); }
+    @Override public void draw(SpriteBatch batch) {
+        // Handled by the renderer
+    }
+    @Override public void dispose() {
+        if (null != root) root.remove();
+        super.dispose();
+    }
 }

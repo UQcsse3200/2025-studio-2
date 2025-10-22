@@ -88,8 +88,8 @@ public class AchievementToastUI extends Component implements AchievementService.
     private void showToast(AchievementId id, String title, String desc) {
         // Outer container
         Table toast = new Table(skin);
-        if (skin.has("toast-bg", Drawable.class)) {
-            toast.setBackground(skin.getDrawable("toast-bg"));
+        if (skin.has(TOAST_BG, Drawable.class)) {
+            toast.setBackground(skin.getDrawable(TOAST_BG));
         }
         toast.pad(10f).defaults().left().padBottom(4f);
 

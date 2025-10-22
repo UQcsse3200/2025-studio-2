@@ -73,6 +73,10 @@ class LaserRenderComponentTest {
             laser.addComponent(emitter);
             laser.addComponent(render);
 
+            if (emitter instanceof LaserEmitterComponent) {
+                when(((LaserEmitterComponent) emitter).getEnable()).thenReturn(true);
+            }
+
             String fieldName = (emitter instanceof LaserEmitterComponent) ? "mainEmitter" : "showerEmitter";
             injectEmitter(emitter, fieldName);
         }

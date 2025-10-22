@@ -1,6 +1,5 @@
 package com.csse3200.game.components.obstacles;
 
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.entities.Entity;
@@ -29,7 +28,9 @@ public class TrapComponent extends CombatStatsComponent {
      * @param health health
      */
     @Override
-    public void setHealth(int health) {    }
+    public void setHealth(int health) {
+        // traps should not be able to be damaged or healed.
+    }
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,
@@ -37,21 +38,27 @@ public class TrapComponent extends CombatStatsComponent {
      * @param health health
      */
     @Override
-    public void addHealth(int health) {    }
+    public void addHealth(int health) {
+        // traps should not be able to be damaged or healed.
+    }
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,
      * as traps should not be able to be damaged or healed.
      */
     @Override
-    public void hit(CombatStatsComponent attacker) {}
+    public void hit(CombatStatsComponent attacker) {
+        // traps should not be able to be damaged or healed.
+    }
 
     /**
      * Override CombatStatsComponent health-related functions to do nothing,
      * as traps should not be able to be damaged or healed.
      */
     @Override
-    public Boolean isDead() {return true;}
+    public Boolean isDead() {
+        return true;
+    }
 
     /**
      * Sets whether a player is in interaction range of this button
