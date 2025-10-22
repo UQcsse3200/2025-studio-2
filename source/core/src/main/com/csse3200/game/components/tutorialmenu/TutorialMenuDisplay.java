@@ -263,6 +263,7 @@ public class TutorialMenuDisplay extends UIComponent {
         itemsBtn.setColor(Color.WHITE);
         upgradesBtn.setColor(Color.WHITE);
         levelMechanicsBtn.setColor(Color.WHITE);
+        enemiesBtn.setColor(Color.WHITE);
         loreBtn.setColor(Color.WHITE);
 
         switch (currentSection) {
@@ -398,7 +399,11 @@ public class TutorialMenuDisplay extends UIComponent {
             if (frames.size == 0) return;
             
             Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
-            sprite = new AnimatedImage(animation);
+            AnimatedImage animatedImage = new AnimatedImage(animation);
+            if (scalingConfig.preserveAspectRatio) {
+                animatedImage.setScaling(Scaling.fit);
+            }
+            sprite = animatedImage;
         } else {
             Texture texture = ServiceLocator.getResourceService()
                     .getAsset(assetConfig.assetPath, Texture.class);
@@ -707,18 +712,26 @@ public class TutorialMenuDisplay extends UIComponent {
     sectionTitle.setColor(Color.GREEN);
     contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
-    // Create table for enemy sprites
+    // Create table for enemies
     Table enemiesTable = new Table();
     
-    // Add enemies
+    // Add all enemies in one row
     addDisplayColumn(enemiesTable,
         new AssetConfig("images/flying_bat.atlas", true, "flying_bat"),
-        new InfoConfig("Flying Bat", "Patrols an area with horizontal movement."),
-        new ScalingConfig(216, 216, false, 35, 70));
+        new InfoConfig("Flying Bat", "Patrols an area with quick movements!"),
+        new ScalingConfig(175, 175, true, 35, 35));
     addDisplayColumn(enemiesTable,
         new AssetConfig("images/drone.atlas", true, "angry_float"),
-        new InfoConfig("Patrolling Drone", "Patrols designated routes and tracks the player when detected."),
-        new ScalingConfig(216, 216, false, 35, 70));
+        new InfoConfig("Patrolling Drone", "Tracks the player and self-destructs in close vicinity!"),
+        new ScalingConfig(175, 175, true, 35, 35));
+    addDisplayColumn(enemiesTable,
+        new AssetConfig("images/drone.atlas", true, "drop"),
+        new InfoConfig("Bomber Drone", "Drops explosives from above!"),
+        new ScalingConfig(175, 175, true, 35, 35));
+    addDisplayColumn(enemiesTable,
+        new AssetConfig("images/drone.atlas", true, "teleport"),
+        new InfoConfig("Drone Behaviour", "Returns to patrol zone after losing the player."),
+        new ScalingConfig(175, 175, true, 35, 35));
     
     contentTable.add(enemiesTable).left().colspan(2).row();
     
@@ -727,7 +740,11 @@ public class TutorialMenuDisplay extends UIComponent {
             """
             These are some of the enemies you will encounter along your journey!
 
-            All enemies deal damage on contact and inflict knockback, so be careful when navigating around them.
+            [YELLOW]Bats[] fly quickly in set patterns. 
+            
+            [YELLOW]Drones[] have different attack methods. The self-destruct drone tracks and explodes when close to the player, while the bomber drone drops explosives from above.
+            
+            [RED]All enemies deal damage on contact and inflict knockback[], so be [GREEN]careful[] when navigating around them.
             """;
 
     Label infoText = new Label(markedUpText, skin);
