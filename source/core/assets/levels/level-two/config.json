@@ -144,6 +144,6 @@
     {"type": "button","subtype": "standard","x": 53,"y": 13,"direction": "right","extra": "manager"},
     {"type": "button","subtype": "standard","x": 73,"y": 17,"direction": "left","extra": "manager"},
     {"type": "box","subtype": "weighted","id": "box","x": 90,"y": 6,"target": "manager","isVisible": false},
-    {"type": "objective","id": "keycard_completed","x": 93,"y": 50,"sx": 0.2,"sy": 0.2}
+    {"type": "objective","id": "keycard_completed","x": 93,"y": 50,"sx": 0.2,"sy": 0.2, "extra": "key_button"}
   ]
 }

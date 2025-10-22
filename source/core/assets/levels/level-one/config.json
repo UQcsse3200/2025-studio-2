@@ -87,7 +87,7 @@
     {"type": "objective","id": "keycard","x": 1,"y": 5,"sx": 2,"sy": 2},
     {"type": "objective","id": "door","x": 1,"y": 5,"sx": 2,"sy": 2},
     {"type": "objective","id": "dash_completed","x": 23,"y": 4,"sx": 0.2,"sy": 0.2},
-    {"type": "objective","id": "keycard_completed","x": 1,"y": 37,"sx": 0.2,"sy": 0.2},
+    {"type": "objective","id": "keycard_completed","x": 1,"y": 37,"sx": 0.2,"sy": 0.2,"extra": "key_button"},
     {"type": "terminal","id": "automation-need","x": 6,"y": 4},
     {"type": "box","subtype": "weighted","x": 15,"y": 15},
     {"type": "box","subtype": "weighted","x": 61,"y": 36},

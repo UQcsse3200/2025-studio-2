@@ -92,6 +92,11 @@ public final class Spawners {
                 toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
                     collectable.getComponent(CollectableComponent.class).toggleVisibility(isPushed);
                 });
+
+                // laser detection visibility logic -> show
+                toggler.getEvents().addListener("detectingStart", () -> {
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(true);
+                });
             }
 
             // --- Hardware ---
@@ -104,7 +109,7 @@ public final class Spawners {
             }
 
             linkEntities(collectable, a.linked);
-            addIdentifier(collectable, a.id);
+            addIdentifier(collectable, a.target);
             addTooltip(collectable, a.tooltip);
             return collectable;
         });
@@ -297,15 +302,7 @@ public final class Spawners {
         SpawnRegistry.register("laser_detector", a -> {
             Entity laserDetector = LaserDetectorFactory.createLaserDetector(a.rotation);
 
-            if (a.target != null) {
-                if (a.target.equals("jetpack")) {
-                    Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
-                    laserDetector.getEvents().addListener("detectingStart", () -> {
-                        CollectableComponent cc = target.getComponent(CollectableComponent.class);
-                        cc.toggleVisibility(true);
-                    });
-                }
-            }
+            addIdentifier(laserDetector, String.valueOf(a.id));
             return laserDetector;
         });
 
@@ -417,6 +414,23 @@ public final class Spawners {
             if (target == null) throw new IllegalArgumentException("Objective spawn requires 'id'");
 
             e.getComponent(CollectableComponent.class).setEffectParam("objective", "target", target);
+
+            // visibility listener logic
+            if (a.extra != null) {
+                Entity toggler = ServiceLocator.getEntityService().getEntityById(a.extra);
+                e.getComponent(CollectableComponent.class).toggleVisibility(false);
+
+                // button visibility logic -> show/hide
+                toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+                    e.getComponent(CollectableComponent.class).toggleVisibility(isPushed);
+                });
+
+                // laser detection visibility logic -> show
+                toggler.getEvents().addListener("detectingStart", () -> {
+                    e.getComponent(CollectableComponent.class).toggleVisibility(true);
+                });
+            }
+
             return e;
         });
 
