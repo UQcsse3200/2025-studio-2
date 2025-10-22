@@ -18,6 +18,8 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Component for collectable items.
@@ -32,12 +34,18 @@ public class CollectableComponent extends Component {
     private final String itemId;
     private boolean collected = false;
 
+    private final Map<String, Map<String, String>> effectParams = new HashMap<>();
+
     ConeLightComponent cone;
     ColliderComponent collider;
     TextureRenderComponent texture;
     AnimationRenderComponent animation;
 
-
+    /**
+     * Creates a CollectableComponent for the given item.
+     *
+     * @param itemId the unique identifier of the collectable item this component represents
+     */
     public CollectableComponent(String itemId) {
         this.itemId = itemId;
     }
@@ -91,7 +99,8 @@ public class CollectableComponent extends Component {
      * <p>When called, a pickup sound is played and the item's identifier is
      * passed to the player's {@link InventoryComponent} for handling. The
      * inventory is responsible for deciding whether to store the item or
-     * apply its effects.</p>
+     * apply its effects. If injected effect params are present,
+     * they are passed to inventory.</p>
      *
      * @param player the player entity attempting to collect the item
      * @return {@code true} if the player had an {@link InventoryComponent} and
@@ -102,11 +111,14 @@ public class CollectableComponent extends Component {
         playPickupSfx();
 
         var inventory = player.getComponent(InventoryComponent.class);
-        if (inventory != null) {
+        if (inventory == null) return false;
+
+        if (effectParams.isEmpty()) {
             inventory.addItem(itemId);
-            return true;
+        } else {
+            inventory.addItem(itemId, effectParams);
         }
-        return false;
+        return true;
     }
 
     /**
@@ -158,4 +170,18 @@ public class CollectableComponent extends Component {
         pickupSound.play(UserSettings.get().masterVolume);
     }
 
+    /**
+     * Sets or overrides a parameter for a given effect type on this instance.
+     * <p>
+     * If the effect type has no existing parameter map, a new one is created.
+     * Passing a {@code null} effect type or key will result in no action.
+     *
+     * @param effectType the type of effect, used as the lookup key for the parameter map
+     * @param key the parameter name to set or overwrite
+     * @param value the parameter value to associate with the key
+     */
+    public void setEffectParam(String effectType, String key, String value) {
+        if (effectType == null || key == null) return;
+        effectParams.computeIfAbsent(effectType, k -> new HashMap<>()).put(key, value);
+    }
 }

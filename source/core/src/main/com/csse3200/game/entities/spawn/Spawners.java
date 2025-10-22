@@ -8,7 +8,6 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.collectables.CollectableComponent;
-import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
@@ -52,7 +51,6 @@ public final class Spawners {
 
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
-
                 target.getEvents().addListener("puzzleCompleted", () -> {
                     box.getEvents().trigger("setVisible", true);
                 });
@@ -314,14 +312,6 @@ public final class Spawners {
             return deathZone;
         });
 
-        // --- Upgrade ---
-        SpawnRegistry.register("upgrade", a -> {
-            Entity upgrade = CollectableFactory.createCollectable("upgrade:jetpack");
-            if (a.isVisible == false) upgrade.getComponent(CollectableComponent.class).toggleVisibility(false);
-            addIdentifier(upgrade, String.valueOf(a.id));
-            return  upgrade;
-        });
-
         // --- Enemies ---
         SpawnRegistry.register("enemy", a -> {
             // get patrol
@@ -363,9 +353,7 @@ public final class Spawners {
             }
 
             // anchor entity (returned to game area to position)
-            Entity anchor = LadderFactory.createLadderBase(ladderId, a.height, a.offset);
-
-            return anchor;
+            return LadderFactory.createLadderBase(ladderId, a.height, a.offset);
         });
 
         // --- Codex Terminal ---
@@ -387,10 +375,6 @@ public final class Spawners {
             return tutorial;
         });
 
-        // --- Objectives ---
-        SpawnRegistry.register("objective", a ->
-                CollectableFactory.createCollectable("potion:health"));
-//                CollectableFactory.createObjective(a.id, a.sx, a.sy));
 
         // --- Bats ---
         SpawnRegistry.register("bat", a -> {
@@ -405,10 +389,25 @@ public final class Spawners {
             return bat;
         });
 
+        // --- Objectives ---
+        SpawnRegistry.register("objective", a -> {
+            Entity e = CollectableFactory.createCollectable("objective");
+            String target = (a.id != null && !a.id.isBlank()) ? a.id : null;
+            if (target == null) throw new IllegalArgumentException("Objective spawn requires 'id'");
+
+            e.getComponent(CollectableComponent.class).setEffectParam("objective", "target", target);
+            return e;
+        });
+
 
         // --- Prompts ---
+//        SpawnRegistry.register("prompt", a -> {
+//            null;
+////            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+//        });
+
         SpawnRegistry.register("prompt", a -> {
-            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+            return CollectableFactory.createCollectable("potion:health");
         });
 
         // --- Computer Terminal ---
@@ -434,8 +433,6 @@ public final class Spawners {
 
             return terminal;
         });
-
-
     }
 
     // --- Helpers ---
