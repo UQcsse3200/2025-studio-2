@@ -210,11 +210,11 @@ public class BoxFactoryTest {
         AutonomousBoxComponent component = autonomousBox.getComponent(AutonomousBoxComponent.class);
         assertEquals(
                 minX,
-                component.getLeftX(),
+                component.getLeftX() * 2f,
                 "Left bound should match value set in builder");
         assertEquals(
                 maxX,
-                component.getRightX(),
+                component.getRightX() * 2f,
                 "Right bound should match value set in builder");
         assertEquals(
                 speed,

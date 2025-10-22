@@ -5,9 +5,12 @@
     "sprite": "images/key.png",
     "description": "Unlocks doors.",
     "autoConsume": false,
-    "ttl": 0,
     "tags": ["KEY"],
-    "effects": []
+    "bag": "inventory",
+    "sfx": "sounds/pickupsound_upgrade.mp3",
+    "effects": [
+      { "type": "remove_objective", "target": "keycard" }
+    ]
   },
   {
     "id": "potion:health",
@@ -15,8 +18,8 @@
     "sprite": "images/health-potion.atlas",
     "description": "Restores 10 HP.",
     "autoConsume": true,
-    "ttl": 0,
     "tags": ["CONSUMABLE"],
+    "sfx": "sounds/pickupsound_potion.mp3",
     "effects": [
       { "type": "heal", "value": 10 }
     ],
@@ -28,11 +31,75 @@
     "sprite": "images/speed-potion.atlas",
     "description": "Unlocks the dash ability when used.",
     "autoConsume": true,
-    "ttl": 0,
     "tags": ["CONSUMABLE"],
+    "sfx": "sounds/pickupsound_potion.mp3",
     "effects": [
       { "type": "buff_speed", "duration": 5 }
     ],
     "glowColor": [125, 140, 240]
+  },
+  {
+    "id": "upgrade:dash",
+    "name": "Dash Upgrade",
+    "sprite": "images/dash_powerup.png",
+    "description": "Unlocks the ability to dash",
+    "autoConsume": true,
+    "tags": ["UPGRADE"],
+    "scale": [0.8, 0.5],
+    "sfx": "sounds/pickupsound_upgrade.mp3",
+    "effects": [
+      { "type": "upgrade", "target": "dash" }
+    ]
+  },
+  {
+    "id": "upgrade:glide",
+    "name": "Glide Upgrade",
+    "sprite": "images/glide_powerup.png",
+    "description": "Unlocks the ability to glide",
+    "autoConsume": true,
+    "tags": ["UPGRADE"],
+    "sfx": "sounds/pickupsound_upgrade.mp3",
+    "effects": [
+      { "type": "upgrade", "target": "glider" }
+    ]
+  },
+  {
+    "id": "upgrade:jetpack",
+    "name": "Jetpack Upgrade",
+    "sprite": "images/jetpack_powerup.png",
+    "description": "Unlocks the ability to use the jetpack",
+    "autoConsume": true,
+    "tags": ["UPGRADE"],
+    "sfx": "sounds/pickupsound_upgrade.mp3",
+    "effects": [
+      { "type": "upgrade", "target": "jetpack" }
+    ]
+  },
+  {
+    "id": "misc:hardware",
+    "name": "Lost Hardware",
+    "sprite": "images/lost_hardware.png",
+    "description": "Hidden lost hardware",
+    "autoConsume": true,
+    "tags": ["HARDWARE"],
+    "sfx": "sounds/pickupsound_2.mp3",
+    "effects": [
+      { "type": "misc" }
+    ],
+    "glowColor": [40, 30, 55]
+  },
+  {
+    "id": "objective",
+    "name": "Generic Objective",
+    "sprite": "images/empty.png",
+    "description": "Objective",
+    "autoConsume": true,
+    "tags": ["OBJECTIVE"],
+    "bag": "objectives",
+    "sfx": null,
+    "effects": [
+      { "type": "objective"}
+    ],
+    "glowColor": [0, 0, 0]
   }
 ]

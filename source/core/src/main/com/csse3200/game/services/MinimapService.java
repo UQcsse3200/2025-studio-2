@@ -58,6 +58,16 @@ public class MinimapService implements Disposable {
     return textureBottomLeft.cpy();
   }
 
+  public float getPixelsPerWorldUnitX() {
+    float worldWidth = textureTopRight.x - textureBottomLeft.x;
+    return minimapTexture.getWidth() / worldWidth;
+  }
+
+  public float getPixelsPerWorldUnitY() {
+    float worldHeight = textureTopRight.y - textureBottomLeft.y;
+    return minimapTexture.getHeight() / worldHeight;
+  }
+
   /**
    * Sets the minimap display (to which entities are added).
    */
