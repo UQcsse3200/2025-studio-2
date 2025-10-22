@@ -81,7 +81,28 @@ public class SprintOneGameArea extends GameArea {
             "images/wall.png",
             "images/PLAYER.png",
             "images/ladder.png",
-            "images/cube.png"
+            "images/cube.png",
+            "images/minimap_forest_area.png",
+            "images/minimap_player_marker.png",
+            "images/flying_bat_map.png",
+            "images/ladder-map.png",
+            "images/door_open-map.png",
+            "images/ladder-map.png",
+            "images/drone-map.png",
+            "images/red_button-map.png",
+            "images/floor-map-1.png",
+            "images/floor-map-2.png",
+            "images/floor-map-3.png",
+            "images/gate-floor-map.png",
+            "images/puzzle-floor-map.png",
+            "images/tutorials/double_jump.png",
+            "images/door_open-map.png",
+            "images/platform-long-map.png",
+            "images/wall-map-1.png",
+            "images/wall-map-2.png",
+            "images/platform-map.png",
+            "images/platform-short-map.png",
+            "images/blow_drone-map.png"
     };
     private static final String[] forestTextureAtlases = {
             "images/terrain_iso_grass.atlas", "images/ghost.atlas", "images" +
