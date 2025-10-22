@@ -28,7 +28,7 @@ public class BossSpawnerComponentTest {
         // Clear any existing services
         ServiceLocator.clear();
 
-        // Mock EntityService
+
         entityService = mock(EntityService.class);
         ServiceLocator.registerEntityService(entityService);
 
