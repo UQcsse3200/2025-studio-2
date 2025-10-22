@@ -413,7 +413,7 @@ public final class Spawners {
 
         // --- Prompts ---
         SpawnRegistry.register("prompt", a -> {
-            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+            return HeadsUpDisplayFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
         });
 
         // --- Computer Terminal ---
