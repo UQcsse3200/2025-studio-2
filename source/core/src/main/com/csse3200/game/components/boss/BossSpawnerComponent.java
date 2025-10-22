@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.EnemyFactory;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Component for boss enemy to spawn self-destruct drones based on player position triggers
+ * Boss three-stage drone spawning component:
+ * * - Phase transitions based on the player's position as a trigger point;
+ * * - Each phase is configurable: drone variant, spawn interval, concurrency limit, total spawns, and pre-swing duration;
+ * * - Phase completion condition: Full spawns AND active count on the field is 0 -> switch back to pursuit animation/behavior.
  */
 public class BossSpawnerComponent extends Component {
 	private static final Logger logger = LoggerFactory.getLogger(BossSpawnerComponent.class);
@@ -20,25 +24,57 @@ public class BossSpawnerComponent extends Component {
 	private final List<Vector2> spawnTriggers;
 	private final List<Boolean> triggered;
 	private Entity player;
+
+	/** Cooldown: Wait between builds (set by stage config) */
 	private float spawnCooldown = 0f;
+
+	/** Pre-swing: start the animation ("generateDroneStart") before actually generating and wait for a while */
 	private float windup = 0f;
-	private final float spawnInterval;
+	private final float spawnInterval; //won't use for new component
 	private int currentTriggerIndex = 0;
 
 	// Track spawned drones for cleanup
 	private final List<Entity> spawnedDrones = new ArrayList<>();
 
 	// Maximum drones - fixed at 3
-	private static final int MAX_DRONES = 3;
-	private int totalDronesSpawned = 0;
+	//private static final int MAX_DRONES = 3;
+	//private int totalDronesSpawned = 0;
 
 	// Track if we've transitioned to chase after max drones
-	private boolean hasCompletedSpawning = false;
+	//private boolean hasCompletedSpawning = false;
+	/** phase config */
+	public static class PhaseConfig {
+		public final EnemyFactory.DroneVariant variant; // atlas and speed
+		public final float spawnInterval;               // generation interval /s
+		public final int   maxConcurrent;               // Concurrency limit (maximum number of players on the field at the same time)
+		public final int   totalToSpawn;                // How many are generated in this phase?
+		public final float windup;
+
+		public PhaseConfig(EnemyFactory.DroneVariant variant,
+						   float spawnInterval,
+						   int maxConcurrent,
+						   int totalToSpawn,
+						   float windup) {
+			this.variant = variant;
+			this.spawnInterval = spawnInterval;
+			this.maxConcurrent = maxConcurrent;
+			this.totalToSpawn = totalToSpawn;
+			this.windup = windup;
+		}
+	}
+	/** Stage configuration table (default for 3 stages) */
+	private final List<PhaseConfig> phaseConfigs = new ArrayList<>();
+	/** if stage complete */
+	private final List<Boolean> phaseCompleted = new ArrayList<>();
+	private boolean isSpawningActive = false;
+	/** The number of generated items in the current phase */
+	private int spawnedInPhase = 0;
+
 
 	/**
 	 * Create boss drone spawn component with configurable triggers
 	 * @param spawnTriggers List of player position thresholds that trigger spawning
-	 * @param spawnInterval Time between drone spawns during active phase
+	 * @param spawnInterval Time between drone spawns during active phase (old use)
 	 */
 	public BossSpawnerComponent(List<Vector2> spawnTriggers, float spawnInterval) {
 		this.spawnTriggers = new ArrayList<>(spawnTriggers);
@@ -47,8 +83,39 @@ public class BossSpawnerComponent extends Component {
 		for (int i = 0; i < spawnTriggers.size(); i++) {
 			triggered.add(false);
 		}
+		initDefaultPhaseConfigs(); // default config
 	}
-
+	/** default config */
+	private void initDefaultPhaseConfigs() {
+		// Phase 0：Scouting (slow, few, long intervals, short pre-swings)
+		phaseConfigs.add(new PhaseConfig(
+				EnemyFactory.DroneVariant.SCOUT,
+				1.5f, // spawnInterval
+				1,    // maxConcurrent
+				1,    // totalToSpawn
+				1.4f  // windup
+		));
+		// Phase 1：chaser (Medium)
+		phaseConfigs.add(new PhaseConfig(
+				EnemyFactory.DroneVariant.CHASER,
+				1.0f,
+				5,
+				5,
+				1.4f
+		));
+		// Phase 2: brutal (fast, frequent, short intervals, slightly longer pre-swing)
+		phaseConfigs.add(new PhaseConfig(
+				EnemyFactory.DroneVariant.BRUTAL,
+				0.7f,
+				7,
+				7,
+				1.4f
+		));
+		// finish initial
+		for (int i = 0; i < phaseConfigs.size(); i++) {
+			phaseCompleted.add(false);
+		}
+	}
 	@Override
 	public void create() {
 		super.create();
@@ -104,76 +171,122 @@ public class BossSpawnerComponent extends Component {
 	 * Start a new spawning phase
 	 */
 	private void startSpawningPhase() {
-		spawnCooldown = 0.5f; // wait for a second and then Start
+		// Validity & Completed Check: If there is no corresponding configuration or
+		// the stage has been completed, no further entry will be made.
+		if (currentTriggerIndex < 0 || currentTriggerIndex >= phaseConfigs.size()) {
+			logger.info("No phase config for trigger {}", currentTriggerIndex);
+			return;
+		}
+		if (phaseCompleted.get(currentTriggerIndex)) {
+			logger.info("Phase {} already completed, skip.", currentTriggerIndex);
+			return;
+		}
+
+		// Entry stage: reset count and timing
+		spawnedInPhase = 0;
+		isSpawningActive = true;
+		spawnCooldown = 0.5f; // Give it a little buffer at the beginning
+		windup = 0f;
+
+		// Throw events to Boss animation/performance/QA
 		entity.getEvents().trigger("spawningPhaseStart", currentTriggerIndex);
+		entity.getEvents().trigger("boss:phaseChanged", currentTriggerIndex);
+		logger.info("Phase {} started", currentTriggerIndex);
 	}
 
 	/**
 	 * Update drone spawning logic
 	 */
 	private void updateSpawning() {
-		if (totalDronesSpawned >= MAX_DRONES) {
-			if (!hasCompletedSpawning) {
+		if (!isSpawningActive) return;
+
+		if (currentTriggerIndex < 0 || currentTriggerIndex >= phaseConfigs.size()) return;
+		PhaseConfig cfg = phaseConfigs.get(currentTriggerIndex);
+
+		// Phase completion judgment: Fully generated and the field cleared -> Completed,
+		// switch back to chase
+		if (spawnedInPhase >= cfg.totalToSpawn && getActiveDroneCount() == 0) {
+			if (!phaseCompleted.get(currentTriggerIndex)) {
+				phaseCompleted.set(currentTriggerIndex, true);
 				entity.getEvents().trigger("chaseStart");
-				hasCompletedSpawning = true;
-				logger.info("Boss completed spawning phase - returning to chase");
+				logger.info("Phase {} completed -> back to chase", currentTriggerIndex);
 			}
-			return;  // Don't process spawning logic anymore
+			isSpawningActive = false;
+			return;
 		}
 
 		float dt = ServiceLocator.getTimeSource().getDeltaTime();
 
-		if (spawnCooldown > 0) {
-			spawnCooldown -= ServiceLocator.getTimeSource().getDeltaTime();
+		// Generation is cooling down
+		if (spawnCooldown > 0f) {
+			spawnCooldown -= dt;
 			return;
 		}
 
-		// Check if we should spawn a drone
-		if (currentTriggerIndex < spawnTriggers.size() && triggered.get(currentTriggerIndex)) {
-			// Generate animations before real spawn
+		// Not yet full, and concurrency limit not exceeded -> Prepare for a single generation
+		int alive = getActiveDroneCount();
+		if (spawnedInPhase < cfg.totalToSpawn && alive < cfg.maxConcurrent) {
+			// Do a pre-swing first and play the Generate Animation
 			if (windup <= 0f) {
-				windup = 2.8f; // Pre-swing duration
-				entity.getEvents().trigger("generateDroneStart");
+				windup = cfg.windup;
+				entity.getEvents().trigger("generateDroneStart"); // animation
 				return;
 			}
 
+			// Countdown ends -> actual generation
 			windup -= dt;
 			if (windup <= 0f) {
-				spawnDrone();                // real spawn
-				spawnCooldown = spawnInterval;
+				spawnDrone(cfg.variant);        // Build with variants
+				spawnedInPhase++;               // Current stage cumulative +1
+				spawnCooldown = cfg.spawnInterval; // next stage interval
 			}
 		}
+		// Otherwise: Either maxed out or not maxed out -> wait for existing drones to die/leave
 	}
 
 	/**
-	 * Spawn a self-destruct drone from the boss position
+	 * Spawn variables self-destruct drone from the boss position
 	 */
-	private void spawnDrone() {
-		// Check if we've reached the maximum drone limit
-		if (totalDronesSpawned >= MAX_DRONES) {
-			return;
-		}
-
+	private void spawnDrone(EnemyFactory.DroneVariant variant) {
 		Vector2 bossPos = entity.getPosition();
 		Vector2 spawnPos = getSpawnPositionAroundBoss(bossPos);
 
-		// Create self-destruct drone targeting the player
-		Entity drone = EnemyFactory.createBossSelfDestructDrone(player, spawnPos);
+		// create variable drones
+		Entity drone = EnemyFactory.createBossSelfDestructDrone(player, spawnPos, variant);
 
 		drone.setPosition(spawnPos);
 
-		// Register the drone
+		// register and activate
 		ServiceLocator.getEntityService().register(drone);
-		// Register first and then activated
+		// Make sure there is a frame available before scaling
+		AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
+		if (arc != null) {
+			// Start first (some components set the default frame when startAnimation)
+			try {
+				arc.startAnimation("angry_float");
+			} catch (Exception ignore) {
+				// 如果某个 atlas 没 angry_float，就退回 float
+				arc.startAnimation("float");
+			}
+			// 再缩放，避免 defaultTexture 为空
+			//arc.scaleEntity();
+		}
+
 		drone.getEvents().trigger("enemyActivated");
 
-		// Track the drone for cleanup
+		// count
 		spawnedDrones.add(drone);
-		totalDronesSpawned++;
 
-		// Trigger spawn event
-		entity.getEvents().trigger("droneSpawned", drone);
-		logger.info("Drone spawned successfully! Total: {}/{}", totalDronesSpawned, MAX_DRONES);
+		//animation trigger
+		entity.getEvents().trigger("droneSpawned");
+		logger.info("Drone spawned (variant: {}, alive: {})", variant, getActiveDroneCount());
+	}
+
+	/** Compatible with old logic: the default version without parameters is to refresh CHASER */
+	@SuppressWarnings("unused")
+	private void spawnDrone() {
+		spawnDrone(EnemyFactory.DroneVariant.CHASER);
+
 	}
 
 	/**
@@ -203,7 +316,7 @@ public class BossSpawnerComponent extends Component {
 	 */
 	private Vector2 getSpawnPositionAroundBoss(Vector2 bossPos) {
 		// Spawn drones around the boss in different positions
-		float offsetX = 2f;
+		float offsetX = 4f;
 		float offsetY = 0f;
 
 		return bossPos.cpy().add(offsetX, offsetY);
@@ -217,11 +330,18 @@ public class BossSpawnerComponent extends Component {
 			triggered.set(i, false);
 		}
 		currentTriggerIndex = 0;
+
 		spawnCooldown = 0f;
-		totalDronesSpawned = 0; // Reset drone counter on level reset
-		spawnedDrones.clear(); // Clear the tracking list
-		hasCompletedSpawning = false;  // Reset completion flag
-		logger.info("Triggers and drone counter reset");
+		windup = 0f;
+		spawnedInPhase = 0;
+		isSpawningActive = false;
+
+		for (int i = 0; i < phaseCompleted.size(); i++) {
+			phaseCompleted.set(i, false);
+		}
+
+		spawnedDrones.clear();
+		logger.info("Triggers & phase states reset");
 	}
 
 	/**
@@ -235,8 +355,8 @@ public class BossSpawnerComponent extends Component {
 			}
 		}
 		spawnedDrones.clear();
-		totalDronesSpawned = 0; // Reset counter
-		hasCompletedSpawning = false;  // Reset completion flag
+		spawnedInPhase = 0;
+		isSpawningActive = false;
 	}
 
 	@Override
@@ -273,27 +393,6 @@ public class BossSpawnerComponent extends Component {
 	 */
 	public int getTriggerCount() {
 		return spawnTriggers.size();
-	}
-
-	/**
-	 * Get current drone count
-	 */
-	public int getTotalDronesSpawned() {
-		return totalDronesSpawned;
-	}
-
-	/**
-	 * Get maximum drone limit
-	 */
-	public int getMaxDrones() {
-		return MAX_DRONES;
-	}
-
-	/**
-	 * Check if maximum drone limit has been reached
-	 */
-	public boolean isMaxDronesReached() {
-		return totalDronesSpawned >= MAX_DRONES;
 	}
 
 	/**
