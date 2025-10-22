@@ -354,7 +354,8 @@ public class EnemyFactory {
      * @return Self-destruct chase drone
      */
     public static Entity createBossSelfDestructDroneInternal(Entity target, Vector2 spawnPos,
-                                                             String atlasPath, float speed) {
+                                                             String atlasPath, float speed,
+                                                             float bombEffectFrameDuration) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
         //speed set
@@ -369,7 +370,7 @@ public class EnemyFactory {
 
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("bomb_effect", 0.1f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bomb_effect", bombEffectFrameDuration, Animation.PlayMode.NORMAL);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
@@ -422,7 +423,8 @@ public class EnemyFactory {
         // default atlas
         final String DEFAULT_ATLAS = "images/drone.atlas";
         final float DEFAULT_SPEED  = 3.1f;
-        return createBossSelfDestructDroneInternal(target, spawnPos, DEFAULT_ATLAS, DEFAULT_SPEED);
+        final float  DEFAULT_BOMB_FD = 0.08f;
+        return createBossSelfDestructDroneInternal(target, spawnPos, DEFAULT_ATLAS, DEFAULT_SPEED,DEFAULT_BOMB_FD);
     }
 
     /**
@@ -431,26 +433,31 @@ public class EnemyFactory {
     public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos, DroneVariant variant) {
         String atlasPath;
         float speed;
+        float bombFD;
 
         switch (variant) {
             case SCOUT:
                 atlasPath = "images/drone_scout.atlas";   //  SCOUT
                 speed = 1f;
+                bombFD  = 0.1f;
                 break;
             case BRUTAL:
                 atlasPath = "images/drone_brutal.atlas";  // BRUTAL
                 speed = 3.8f;
+                bombFD  = 0.01f;
                 break;
             case CHASER:
             default:
                 atlasPath = "images/drone_chaser.atlas";  // CHASER
                 speed = 2f;
+                bombFD  = 0.1f;
                 break;
         }
 
-        Entity drone = createBossSelfDestructDroneInternal(target, spawnPos, atlasPath, speed);
+        Entity drone = createBossSelfDestructDroneInternal(target, spawnPos, atlasPath, speed, bombFD);
         return drone;
     }
+
 
     /**
      * Creates a base enemy entity with a minimal, reusable set of components that all enemies share
