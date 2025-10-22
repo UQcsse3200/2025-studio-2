@@ -172,7 +172,7 @@ public class BossSpawnerComponent extends Component {
 		totalDronesSpawned++;
 
 		// Trigger spawn event
-		entity.getEvents().trigger("droneSpawned", drone);
+		entity.getEvents().trigger("generateDroneStart");
 		logger.info("Drone spawned successfully! Total: {}/{}", totalDronesSpawned, MAX_DRONES);
 	}
 
