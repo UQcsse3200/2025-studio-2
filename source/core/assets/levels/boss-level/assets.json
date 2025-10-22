@@ -94,7 +94,10 @@
     "sounds/pickupsound.mp3",
     "sounds/pickupsound_2.mp3",
     "sounds/pickupsound_potion.mp3",
-    "sounds/pickupsound_upgrade.mp3"
+    "sounds/pickupsound_upgrade.mp3",
+    "sounds/whooshsound.mp3",
+    "sounds/chimesound.mp3",
+    "sounds/interactsound.mp3"
   ],
   "music": [
     "sounds/Siiiiiiiiiick bounce 1.mp3"
