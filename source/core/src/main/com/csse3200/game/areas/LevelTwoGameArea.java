@@ -37,6 +37,7 @@ import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -246,8 +247,9 @@ public class LevelTwoGameArea extends GameArea {
         door.addComponent(new TooltipSystem.TooltipComponent("Unlock the door with the key", TooltipSystem.TooltipStyle.DEFAULT));
         // door.getComponent(DoorComponent.class).openDoor();
         spawnEntityAt(door, new GridPoint2(98,45), true, true);
-        door.getEvents().addListener("doorOpened", () -> {
-            AchievementProgression.onLevelComplete("level2");
+        door.getEvents().addListener("openDoor", () -> {
+            Gdx.app.log("Achv", "L2: openDoor fired -> onLevelCompleted(2)");
+            AchievementService.get().onLevelCompleted(2);
         });
     }
 
