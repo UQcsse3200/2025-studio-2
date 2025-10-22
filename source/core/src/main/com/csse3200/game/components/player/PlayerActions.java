@@ -306,27 +306,38 @@ public class PlayerActions extends Component {
    * Gives the player a boost of speed in the given direction
    */
   void dash() {
+    // 1) no dashing while crouching
     if (crouching) {
       return;
     }
 
+    // 2) stamina gate — consume or block dash
+    if (stamina != null && !stamina.tryConsumeForDash()) {
+      // Optional feedback hooks — safe to keep or remove if you don’t use them
+      entity.getEvents().trigger("ui:toast", "Not enough stamina to dash");
+      entity.getEvents().trigger("stamina:deny");
+      return;
+    }
+
+    // 3) perform dash
     moving = true;
     hasDashed = true;
 
     Body body = physicsComponent.getBody();
 
-    // Scale the direction vector to increase speed
+    // Scale the direction vector to increase speed for the impulse
     this.walkDirection.scl(DASH_SPEED_MULTIPLIER);
 
     Sound interactSound = ServiceLocator.getResourceService().getAsset(
             "sounds/whooshsound.mp3", Sound.class);
-    interactSound.play(UserSettings.get().masterVolume*0.2f);
+    interactSound.play(UserSettings.get().masterVolume * 0.2f);
 
     body.applyLinearImpulse(new Vector2(this.walkDirection.x, 0f), body.getWorldCenter(), true);
-    // Unscale the direction vector to ensure player does not infinitely dash in one direction
-    this.walkDirection.scl((float) 1 / DASH_SPEED_MULTIPLIER);
 
+    // Unscale to restore normal movement input
+    this.walkDirection.scl(1f / DASH_SPEED_MULTIPLIER);
   }
+
 
   /**
    * Makes the player attack.
