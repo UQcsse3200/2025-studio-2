@@ -44,7 +44,7 @@
     { "type": "collectable", "subtype": "key", "id": 1, "target": "door", "x": 1, "y": 15, "extra": "keyPressurePlate" },
     { "type": "collectable", "subtype": "key", "id": 2, "target": "door", "x": 19, "y": 73 },
 
-    { "type":  "upgrade", "subtype": "jetpack", "x": 45, "y": 8, "id": "jetpack", "isVisible":  false},
+    { "type":  "collectable", "subtype": "upgrade", "x": 45, "y": 8, "target": "jetpack", "isVisible":  false},
 
     { "type": "laser", "rotation":  -90, "x": 32, "y": 14, "sx": 0.5, "sy": 0.5 },
     { "type": "laser", "rotation":  -136, "x": 47, "y": 14, "sx": 0.5, "sy": 0.5 },
