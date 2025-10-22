@@ -139,10 +139,11 @@ class InventoryUpgradesEffectsTest {
     }
 
     @Test
-    void unknownItemId_isIgnored() {
-        int before = inv.getTotalCount(InventoryComponent.Bag.UPGRADES);
-        inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:unknown", 1); // cfg == null by stub
-        int after = inv.getTotalCount(InventoryComponent.Bag.UPGRADES);
-        assertEquals(before, after, "Unknown items should not be added");
+    void unknownItemId_throwsIllegalArgumentException() {
+        InventoryComponent inv = new InventoryComponent();
+
+        assertThrows(IllegalArgumentException.class, () ->
+                inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:unknown", 1)
+        );
     }
 }
