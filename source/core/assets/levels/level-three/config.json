@@ -60,7 +60,7 @@
     {"type": "terminal","id": "final-broadcast","x": 4,"y": 46},
 
     {"type": "objective","id": "door","x": 2,"y": 3,"sx": 2,"sy": 2},
-    {"type": "objective","id": "jetpack","x": 2,"y": 6,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack","x": 2,"y": 3,"sx": 2,"sy": 2},
     {"type": "objective","id": "jetpack_completed","x": 45,"y": 8,"sx": 0.2,"sy": 0.2}
   ]
 }
