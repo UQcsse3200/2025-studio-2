@@ -18,6 +18,10 @@ import com.csse3200.game.ui.UIComponent;
  * Never captures input, avoids duplicate HUD on respawn, and rate-limits refresh to prevent blinking.
  */
 public class DamageIndicatorUI extends UIComponent {
+    // --- KILL SWITCH: set true to disable this UI everywhere ---
+    private static final boolean DISABLED = true;
+// -----------------------------------------------------------
+
     private static final String ASSET_PATH = "images/damage_arrow.png";
 
     private static final float SHOW_TIME  = 1.35f; // seconds arrow stays visible
@@ -40,6 +44,8 @@ public class DamageIndicatorUI extends UIComponent {
     @Override
     public void create() {
         super.create();
+        if (DISABLED) return;
+
 
         // 1) Try to get the texture from the ResourceService (may throw if not preloaded)
         var resources = ServiceLocator.getResourceService();
@@ -125,6 +131,8 @@ public class DamageIndicatorUI extends UIComponent {
     }
 
     private void onDamageDirection(Vector2 dir) {
+        if (DISABLED) return;
+
         if (dir == null || dir.isZero(1e-6f) || Float.isNaN(dir.x) || Float.isNaN(dir.y)) return;
         if (cooldown > 0f) return;     // simple rate-limit to prevent "blinking"
 
@@ -139,6 +147,8 @@ public class DamageIndicatorUI extends UIComponent {
 
     @Override
     public void update() {
+        if (DISABLED) return;
+
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
         if (cooldown > 0f) cooldown -= dt;
 
@@ -164,6 +174,7 @@ public class DamageIndicatorUI extends UIComponent {
     @Override
     public void dispose() {
         super.dispose();
+        if (DISABLED) return;
         if (container != null) container.remove();
         if (ownsTexture && ownedTexture != null) {
             ownedTexture.dispose();
