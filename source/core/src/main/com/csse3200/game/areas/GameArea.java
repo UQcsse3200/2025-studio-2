@@ -47,7 +47,7 @@ public abstract class GameArea implements Disposable {
   }
 
   public GridPoint2 getMapBounds() {
-    return terrain.getMapBounds(0);
+    return grid.getMapBounds();
   }
 
   public void trigger(String eventName) {

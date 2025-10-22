@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.obstacles.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
@@ -15,6 +16,8 @@ import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.InputFactory;
 import com.csse3200.game.input.InputService;
+import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -54,6 +57,9 @@ class DoorComponentTest {
     @BeforeEach
     void setup() {
         ServiceLocator.registerPhysicsService(new PhysicsService());
+        LightingService lightingService = mock(LightingService.class);
+        when(lightingService.getEngine()).thenReturn(mock(LightingEngine.class));
+        ServiceLocator.registerLightingService(lightingService);
 
         InputService inputSvc = mock(InputService.class);
         InputFactory inputFactory = mock(InputFactory.class);
@@ -122,7 +128,8 @@ class DoorComponentTest {
     }
 
     private Entity makeKey(String keyId) {
-        Entity key = CollectableFactory.createKey(keyId);
+        Entity key = CollectableFactory.createCollectable(keyId);
+        key.removeComponent(key.getComponent(ConeLightComponent.class));
         key.create();
         return key;
     }

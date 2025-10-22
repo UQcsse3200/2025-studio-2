@@ -12,9 +12,21 @@ public class ItemCollectableComponent extends CollectableComponent {
     private static int count;
     private Vector2[] collected = new Vector2[9];
 
-    public ItemCollectableComponent() {
-      initialiseCollected();
+    /**
+     * Creates a CollectableComponent for the given item.
+     *
+     * @param itemId the unique identifier of the collectable item this component represents
+     * @param sfx
+     */
+    public ItemCollectableComponent(String itemId, String sfx) {
+        super(itemId, sfx);
+        initialiseCollected();
+
     }
+
+//    public ItemCollectableComponent() {
+//      initialiseCollected();
+//    }
 
     private void initialiseCollected() {
         collected = CollectablesSave.loadCollectedPositions();
@@ -25,23 +37,23 @@ public class ItemCollectableComponent extends CollectableComponent {
         return count;
     }
 
-    @Override
-    protected boolean onCollect(Entity collector) {
-        Vector2 currentPos = this.entity.getPosition();
-        if (!hasBeenCollected(currentPos)) {
-            addCollected(currentPos);
-            CollectablesSave.incrementCollectedCount();
-            count = CollectablesSave.getCollectedCount();
-        }
-        logger.debug("{}", this.entity.getPosition());
-        logger.info("CollectablesSave.getCollectedCount() = {}", count);
-        logger.info("CollectablesSave.getCollectedCount() = {}", count);
-
-        collector.getEvents().trigger("updateCollectables", count);
-        //CollectablesSave.resetCollectedCount();
-        //collector.removeComponent(this);
-        return true;
-    }
+//    @Override
+//    protected boolean onCollect(Entity collector) {
+//        Vector2 currentPos = this.entity.getPosition();
+//        if (!hasBeenCollected(currentPos)) {
+//            addCollected(currentPos);
+//            CollectablesSave.incrementCollectedCount();
+//            count = CollectablesSave.getCollectedCount();
+//        }
+//        logger.debug("{}", this.entity.getPosition());
+//        logger.info("CollectablesSave.getCollectedCount() = {}", count);
+//        logger.info("CollectablesSave.getCollectedCount() = {}", count);
+//
+//        collector.getEvents().trigger("updateCollectables", count);
+//        //CollectablesSave.resetCollectedCount();
+//        //collector.removeComponent(this);
+//        return true;
+//    }
 
     public boolean hasBeenCollected(Vector2 pos) {
         for (Vector2 v : collected) {

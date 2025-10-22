@@ -1,7 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
 import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;

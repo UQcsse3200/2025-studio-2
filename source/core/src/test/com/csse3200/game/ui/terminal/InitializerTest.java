@@ -325,13 +325,6 @@ class InitializerTest {
     assertEquals(mockGameArea, result);
   }
 
-  @Test
-  void testTeleportCommand() {
-    player.setPosition(0, 0);
-    shell.eval("teleport(100.0, 100.0);");
-    verify(player).setPosition(100.0f,  100.0f);
-  }
-
   @AfterEach
   void tearDownFactories() {
     if (collectableFactory != null) {

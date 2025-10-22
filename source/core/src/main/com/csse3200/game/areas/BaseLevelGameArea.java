@@ -9,8 +9,8 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.achievements.AchievementProgression;
-import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridComponent;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.LevelAssetsConfig;
 import com.csse3200.game.entities.configs.LevelConfig;
@@ -49,7 +49,7 @@ import java.util.Objects;
 public abstract class BaseLevelGameArea extends GameArea {
     private static final Logger logger = LoggerFactory.getLogger(BaseLevelGameArea.class);
 
-    protected final TerrainFactory terrainFactory;
+    protected final GridFactory gridFactory;
     protected final ResourceService rs = ServiceLocator.getResourceService();
 
     protected LevelConfig cfg;
@@ -63,10 +63,10 @@ public abstract class BaseLevelGameArea extends GameArea {
     /**
      * Create a new base level area.
      *
-     * @param tf terrain factory used to construct tile maps and collision
+     * @param gf grid factory used to construct tile maps and collision
      */
-    protected BaseLevelGameArea(TerrainFactory tf) {
-        this.terrainFactory = tf;
+    protected BaseLevelGameArea(GridFactory gf) {
+        this.gridFactory = gf;
     }
 
     protected abstract String configPath();
@@ -90,7 +90,7 @@ public abstract class BaseLevelGameArea extends GameArea {
     }
 
     /**
-     * Read level configs, construct terrain, spawn walls/HUD/minimap, and start music.
+     * Read level configs, construct grid, spawn walls/HUD/minimap, and start music.
      *
      * @throws NullPointerException if any required JSON cannot be loaded
      */
@@ -104,8 +104,8 @@ public abstract class BaseLevelGameArea extends GameArea {
         MAP_SIZE.set(cfg.mapSize[0], cfg.mapSize[1]);
         PLAYER_SPAWN.set(cfg.playerSpawn[0], cfg.playerSpawn[1]);
 
-        this.terrain = buildTerrain(MAP_SIZE);
-        spawnEntity(new Entity().addComponent(this.terrain));
+        grid = buildTerrain(MAP_SIZE);
+        spawnEntity(new Entity().addComponent(grid));
         spawnBoundaryWalls();
 
         spawnEntity(HeadsUpDisplayFactory.createHeadsUpDisplay(cfg.name));
@@ -201,21 +201,21 @@ public abstract class BaseLevelGameArea extends GameArea {
      * @param mapSize desired map size in tiles (width, height)
      * @return constructed terrain component ready to be spawned
      */
-    protected TerrainComponent buildTerrain(GridPoint2 mapSize) {
+    protected GridComponent buildTerrain(GridPoint2 mapSize) {
         TextureRegion empty = new TextureRegion(rs.getAsset("images/empty.png", Texture.class));
         GridPoint2 tilePx = new GridPoint2(empty.getRegionWidth(), empty.getRegionHeight());
-        TiledMap map = terrainFactory.createDefaultTiles(tilePx, empty, empty, empty, empty, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, map, tilePx);
+//        TiledMap map = gridFactory.createDefaultTiles(tilePx, empty, empty, empty, empty, );
+        return gridFactory.createGrid(mapSize, 0.5f);
     }
 
     /**
-     * Spawn world-boundary walls (left, right, top) derived from current {@link #terrain} bounds.
+     * Spawn world-boundary walls (left, right, top) derived from current {@link #grid} bounds.
      *
-     * <p>Assumes {@link #terrain} has already been assigned and spawned lol.</p>
+     * <p>Assumes {@link #grid} has already been assigned and spawned lol.</p>
      */
     private void spawnBoundaryWalls() {
-        float tile = terrain.getTileSize();
-        GridPoint2 bounds = terrain.getMapBounds(0);
+        float tile = grid.getTileSize();
+        GridPoint2 bounds = grid.getMapBounds();
         Vector2 world = new Vector2(bounds.x * tile, bounds.y * tile);
 
         spawnEntityAt(ObstacleFactory.createWall(WALL_THICKNESS, world.y), new GridPoint2(0, 0), false, false);
@@ -248,8 +248,8 @@ public abstract class BaseLevelGameArea extends GameArea {
         if (parallax == null || parallax.layers.isEmpty()) return;
 
         Camera cam = ServiceLocator.getRenderService().getRenderer().getCamera().getCamera();
-        GridPoint2 mapBounds = terrain.getMapBounds(0);
-        float ts = terrain.getTileSize();
+        GridPoint2 mapBounds = grid.getMapBounds();
+        float ts = grid.getTileSize();
         float worldW = mapBounds.x * ts, worldH = mapBounds.y * ts;
 
         ParallaxBackgroundComponent bg = new ParallaxBackgroundComponent(cam, worldW, worldH);
