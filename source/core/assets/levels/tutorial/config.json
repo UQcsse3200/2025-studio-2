@@ -1,0 +1,46 @@
+{
+  "name": "Tutorial",
+  "mapSize": [80, 70],
+  "playerSpawn": [1, 10],
+  "walls": { "thickness": 0.1 },
+  "miniMap": "images/minimap_forest_area.png",
+  "music": "sounds/KindaLikeTycho.mp3",
+  "entities": [
+    { "type": "tutorial", "subtype": "jump", "x": 6, "y": 5 },
+    { "type": "tutorial", "subtype": "double_jump", "x": 11, "y": 16 },
+
+    { "type": "terminal", "id": "entry 1", "x": 2, "y": 4 },
+    { "type": "terminal", "id": "entry 2", "x": 6, "y": 4 },
+    { "type": "terminal", "id": "entry 3", "x": 10, "y": 4 },
+
+    { "type": "box", "subtype": "weighted", "x": 4, "y": 4, "tooltip": "This might come in handy..." },
+
+    { "type": "death_zone", "x": 12, "y": -10 },
+
+    {"type": "ladder","id": "upper","x": 13,"y": 19,"centerX": false,"centerY": false,"height": 16,"offset": 11},
+    {"type": "pressure_plate","subtype": "ladder","id": "upper","x": 17,"y": 19,"offset": 11,"tooltip": "Push to Release Ladder"},
+
+    { "type": "floor", "subtype": "ground", "x": -20, "y": -20, "sx": 16, "sy": 12, "centerX": false, "centerY": false },
+    { "type": "floor", "subtype": "ground", "x": 70, "y": -20, "sx": 25, "sy": 12, "centerX": false, "centerY": false },
+    { "type": "floor", "subtype": "static_floor", "x": 62, "y": 51, "sx": 5, "sy": 0.8, "centerX": false, "centerY": false },
+    { "type": "floor", "subtype": "static_floor", "x": 15, "y": 32, "sx": 8, "sy": 1, "centerX": false, "centerY": false },
+
+    { "type": "platform", "subtype": "static_platform", "x": 8, "y": 6, "sx": 2, "sy": 0.5, "centerX": false, "centerY": false },
+    { "type": "platform", "subtype": "static_platform", "x": 2, "y": 9, "sx": 1.5, "sy": 0.5, "centerX": false, "centerY": false },
+    { "type": "platform", "subtype": "static_platform", "x": 8, "y": 12, "sx": 1.8, "sy": 0.5, "centerX": false, "centerY": false },
+    { "type": "platform", "subtype": "static_platform", "x": 12, "y": 18, "sx": 3.5, "sy": 0.5, "centerX": false, "centerY": false },
+    { "type": "platform", "subtype": "static_platform", "x": 8, "y": 38, "sx": 5, "sy": 0.5, "centerX": false, "centerY": false },
+
+    { "type": "bat", "x": 15, "y": 15, "speed": 2, "dx": 35, "dy": 40 },
+    { "type": "bat", "x": 23, "y": 23, "speed": 3.5, "dx": 35, "dy": 40 },
+    { "type": "bat", "x": 36, "y": 36, "speed": 5, "dx": 35, "dy": 40 },
+    { "type": "bat", "x": 50, "y": 50, "speed": 6, "dx": 35, "dy": 40 },
+
+    { "type": "door", "subtype": "transition", "target": "LEVEL_ONE", "id": "key:door", "x": 63, "y": 53, "sx": 1, "sy": 2, "tooltip": "Unlock the door with the key" },
+    { "type": "button", "subtype": "door", "id": "key_button", "direction": "left", "x": 79, "y": 4, "tooltip": "Door Button\nPress E to interact" },
+
+    { "type": "collectable", "subtype": "key", "id": "key", "target": "door", "x": 68, "y": 53, "extra": "key_button" },
+    { "type": "collectable", "subtype": "upgrade", "target": "glide", "x": 9, "y": 39, "tooltip": "Collect Glider Upgrade" },
+    { "type": "collectable", "subtype": "upgrade", "target": "jetpack", "x": 76, "y": 4 }
+  ]
+}

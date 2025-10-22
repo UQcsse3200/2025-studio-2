@@ -269,7 +269,7 @@ public class MainGameScreen extends ScreenAdapter {
   public GameArea getGameArea(Areas area) {
       lvlStartTime = gameTime.getTime();
       return switch (area) {
-//          case TUTORIAL ->  new TutorialGameArea(gridFactory);
+          case TUTORIAL ->  new TutorialGameArea(gridFactory);
           case LEVEL_ONE -> new LevelOneGameArea(gridFactory);
           case LEVEL_TWO -> new LevelTwoGameArea(gridFactory);
           case LEVEL_THREE -> new LevelThreeGameArea(gridFactory);
