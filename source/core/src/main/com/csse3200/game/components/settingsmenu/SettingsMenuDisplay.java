@@ -56,7 +56,8 @@ public class SettingsMenuDisplay extends UIComponent {
           "sounds/CircuitGoodness.mp3",
           "sounds/KindaLikeTycho.mp3",
           "sounds/Flow.mp3",
-          "sounds/BGM_03_mp3.mp3"
+          "sounds/LIKEDACIRCUIT.mp3",
+          "sounds/Siiiiiiiiiick bounce 1.mp3"
   };
 
   public SettingsMenuDisplay(GdxGame game) {
