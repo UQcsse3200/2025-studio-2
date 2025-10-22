@@ -22,6 +22,8 @@ public class InventoryComponent extends Component {
     /** Logical groupings for items held by the player. */
     public enum Bag { INVENTORY, UPGRADES, OBJECTIVES }
 
+    private boolean applyingEffects = false;
+
     /** Regular inventory items. */
     private final Map<String, Integer> inventory;
     /** Upgrade items. */
@@ -154,6 +156,44 @@ public class InventoryComponent extends Component {
     }
 
     /**
+     * Adds one instance of the given item and passes per-instance effect params.
+     * If the item is auto-consumable, effects are applied with the provided params.
+     * If non-auto, it’s stored normally.
+     *
+     * @param itemId        item identifier (e.g., "objective")
+     * @param effectParams  effectType -> (key -> value), e.g. {"objective":{"target":"dash"}}
+     */
+    public void addItem(String itemId, Map<String, Map<String, String>> effectParams) {
+        if (itemId == null) throw new NullPointerException("itemId");
+        if (effectParams == null || effectParams.isEmpty()) { addItem(itemId); return; }
+
+        CollectablesConfig cfg = CollectableService.get(itemId);
+        if (cfg == null) throw new IllegalArgumentException("No config found for " + itemId);
+
+        Bag bag = parseBag(cfg);
+        Map<String, Integer> map = mapFor(bag);
+
+        // Non-auto-consumables: store and return
+        if (!cfg.autoConsume) {
+            map.put(itemId, map.getOrDefault(itemId, 0) + 1);
+            return;
+        }
+
+        // Auto-consumables: merge per-effect params, then apply
+        if (cfg.effects != null) {
+            for (var e : cfg.effects) {
+                Map<String, String> per = effectParams.get(e.type);
+                if (per != null && !per.isEmpty()) {
+                    if (e.params == null) e.params = new java.util.HashMap<>();
+                    e.params.putAll(per); // inject overrides, e.g., target="dash"
+                }
+                var handler = ItemEffectRegistry.get(e.type);
+                if (handler != null) handler.apply(getEntity(), e);
+            }
+        }
+    }
+
+    /**
      * Add a single item to a specific bag.
      */
     @Deprecated
@@ -197,6 +237,26 @@ public class InventoryComponent extends Component {
         for (int i = 0; i < amount; i++) {
             applyEffects(cfg);
         }
+    }
+
+    /**
+     * Adds the specified item directly into the given bag without applying
+     * any collectable effects or config lookups.
+     * <p>
+     * Intended for internal use by effects (e.g., upgrades) that must
+     * place tokens in inventory without re-triggering the effect pipeline.
+     *
+     * @param bag    the inventory bag to add the item to
+     * @param itemId the identifier of the item to add
+     * @param amount how many items to add (must be > 0)
+     * @throws NullPointerException     if {@code itemId} is null
+     * @throws IllegalArgumentException if {@code amount <= 0}
+     */
+    public void addDirect(InventoryComponent.Bag bag, String itemId, int amount) {
+        if (itemId == null) throw new NullPointerException("itemId");
+        if (amount <= 0) throw new IllegalArgumentException("Amount must be > 0");
+        Map<String, Integer> map = mapFor(bag);
+        map.put(itemId, map.getOrDefault(itemId, 0) + amount);
     }
 
     /**
@@ -402,14 +462,19 @@ public class InventoryComponent extends Component {
    */
 
   private void applyEffects(CollectablesConfig cfg) {
-    if (cfg.effects == null || cfg.effects.isEmpty()) {
-      return;
-    }
-    for (var effect : cfg.effects) {
-      var handler = ItemEffectRegistry.get(effect.type);
-      if (handler != null) {
-        handler.apply(getEntity(), effect);
-      }
+    if (cfg.effects == null || cfg.effects.isEmpty()) return;
+    if (applyingEffects) return;
+    applyingEffects = true;
+
+    try {
+        for (var effect : cfg.effects) {
+            var handler = ItemEffectRegistry.get(effect.type);
+            if (handler != null) {
+                handler.apply(getEntity(), effect);
+            }
+        }
+    } finally {
+        applyingEffects = false;
     }
   }
 
