@@ -40,7 +40,9 @@ public class TutorialMenuDisplay extends UIComponent {
   // Track buttons to highlight the active one
   private TextButton basicsBtn;
   private TextButton itemsBtn;
-  private TextButton mechanicsBtn;
+  private TextButton upgradesBtn;
+  private TextButton levelMechanicsBtn;
+  private TextButton loreBtn;
 
   public TutorialMenuDisplay(GdxGame game) {
     this.game = game;
@@ -137,15 +139,30 @@ public class TutorialMenuDisplay extends UIComponent {
           updateButtonHighlight();
       });
 
-      mechanicsBtn = createSidebarButton("Mechanics", () -> {
-          currentSection = "mechanics";
+      upgradesBtn = createSidebarButton("Upgrades", () -> {
+          currentSection = "upgrades";
+          updateContent(currentSection);
+          updateButtonHighlight();
+      });
+
+      levelMechanicsBtn = createSidebarButton("Level Mechanics", () -> {
+          currentSection = "levelmechanics";
+          updateContent(currentSection);
+          updateButtonHighlight();
+      });
+      levelMechanicsBtn.getLabel().setFontScale(0.85f);
+
+      loreBtn = createSidebarButton("Lore", () -> {
+          currentSection = "lore";
           updateContent(currentSection);
           updateButtonHighlight();
       });
 
       sidebar.add(basicsBtn).width(240).height(70).padBottom(30).row();
       sidebar.add(itemsBtn).width(240).height(70).padBottom(30).row();
-      sidebar.add(mechanicsBtn).width(240).height(70).padBottom(30).row();
+      sidebar.add(upgradesBtn).width(240).height(70).padBottom(30).row();
+      sidebar.add(levelMechanicsBtn).width(240).height(70).padBottom(30).row();
+      sidebar.add(loreBtn).width(240).height(70).padBottom(30).row();
 
       // Set initial highlight
       updateButtonHighlight();
@@ -235,19 +252,25 @@ public class TutorialMenuDisplay extends UIComponent {
     private void updateButtonHighlight() {
         basicsBtn.setColor(Color.WHITE);
         itemsBtn.setColor(Color.WHITE);
-        mechanicsBtn.setColor(Color.WHITE);
+        upgradesBtn.setColor(Color.WHITE);
+        levelMechanicsBtn.setColor(Color.WHITE);
+        loreBtn.setColor(Color.WHITE);
 
         switch (currentSection) {
-            case "basics" -> basicsBtn.setColor(new Color(0f, 1f, 0f, 1f)); // green
+            case "basics" -> basicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
             case "items" -> itemsBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            case "mechanics" -> mechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case "upgrades" -> upgradesBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case "levelmechanics" -> levelMechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case "lore" -> loreBtn.setColor(new Color(0f, 1f, 0f, 1f));
         }
     }
 
     private boolean isActiveButton(TextButton button) {
         return (currentSection.equals("basics") && button == basicsBtn)
                 || (currentSection.equals("items") && button == itemsBtn)
-                || (currentSection.equals("mechanics") && button == mechanicsBtn);
+                || (currentSection.equals("upgrades") && button == upgradesBtn)
+                || (currentSection.equals("levelmechanics") && button == levelMechanicsBtn)
+                || (currentSection.equals("lore") && button == loreBtn);
     }
 
 
@@ -266,8 +289,14 @@ public class TutorialMenuDisplay extends UIComponent {
       case "items":
         showItemsContent();
         break;
-      case "mechanics":
+      case "upgrades":
         showMechanicsContent();
+        break;
+      case "levelmechanics":
+        showLevelMechanicsContent();
+        break;
+      case "lore":
+        showLoreContent();
         break;
       default:
         showBasicsContent();
@@ -493,16 +522,44 @@ public class TutorialMenuDisplay extends UIComponent {
   }
 
   /**
-   * Displays content for "Mechanics" section
+   * Displays content for "Upgrades" section
    */
   private void showMechanicsContent() {
-    Label sectionTitle = new Label("Mechanics", skin);
+    Label sectionTitle = new Label("Upgrades", skin);
     sectionTitle.setFontScale(1.5f);
     sectionTitle.setColor(Color.GREEN);
     contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
     // Placeholder content
-    Label placeholder = new Label("Game mechanics and advanced features will go here...", skin);
+    Label placeholder = new Label("upgrades", skin);
+    contentTable.add(placeholder).left().colspan(2).row();
+  }
+
+  /**
+   * Displays content for "Level Mechanics" section
+   */
+  private void showLevelMechanicsContent() {
+    Label sectionTitle = new Label("Level Mechanics", skin);
+    sectionTitle.setFontScale(1.5f);
+    sectionTitle.setColor(Color.GREEN);
+    contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
+    
+    // Placeholder content
+    Label placeholder = new Label("level mechanics", skin);
+    contentTable.add(placeholder).left().colspan(2).row();
+  }
+
+  /**
+   * Displays content for "Lore" section
+   */
+  private void showLoreContent() {
+    Label sectionTitle = new Label("Lore", skin);
+    sectionTitle.setFontScale(1.5f);
+    sectionTitle.setColor(Color.GREEN);
+    contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
+    
+    // Placeholder content
+    Label placeholder = new Label("lore", skin);
     contentTable.add(placeholder).left().colspan(2).row();
   }
 
