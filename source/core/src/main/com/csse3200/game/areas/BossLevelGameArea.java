@@ -36,18 +36,33 @@ public class BossLevelGameArea extends GameArea {
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     boolean has_laser = false;
+
+    private static final String NOTHING = "nothing";
+    private static final String RIGHT = "right";
+    private static final String LEFT = "left";
+    private static final String BUTTON_TOGGLED = "buttonToggled";
+    private static final String RESET = "reset";
+
+    private static final String PLATFORM = "platform";
+
+
+    private static final String BLUE_BUTTON = "images/blue_button.png";
+    private static final String WALL_PNG = "images/wall.png";
+
+    private static final String FLYING_BAT = "images/flying_bat.atlas";
+
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
             "images/button_pushed.png",
-            "images/blue_button.png",
+            BLUE_BUTTON,
             "images/blue_button_pushed.png",
             "images/red_button.png",
             "images/red_button_pushed.png",
             "images/box_orange.png",
             "images/box_blue.png",
             "images/box_white.png",
-            "images/blue_button.png",
+            BLUE_BUTTON,
             "images/spikes_sprite.png",
             "images/platform.png",
             "images/empty.png",
@@ -58,7 +73,7 @@ public class BossLevelGameArea extends GameArea {
             "images/button.png",
             "images/button_pushed.png",
             "images/blue_button_pushed.png",
-            "images/blue_button.png",
+            BLUE_BUTTON,
             "images/drone.png",
             "images/bomb.png",
             "images/cube.png",
@@ -66,7 +81,7 @@ public class BossLevelGameArea extends GameArea {
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/glide_powerup.png",
-            "images/wall.png",
+            WALL_PNG,
             "images/dash_powerup.png",
             "images/ladder.png",
             "images/ladder-base.png",
@@ -86,8 +101,8 @@ public class BossLevelGameArea extends GameArea {
             "images/minimap_forest_area.png",
             "images/minimap_player_marker.png"
     };
-    private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
-    private static final String[] musics = {backgroundMusic};
+    private static final String BACKGROUND_MUSIC = "sounds/BGM_03_mp3.mp3";
+    private static final String[] MUSICS = {BACKGROUND_MUSIC};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/buttonsound.mp3",
             "sounds/damagesound.mp3",
@@ -107,7 +122,7 @@ public class BossLevelGameArea extends GameArea {
             "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",
-            "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
+            FLYING_BAT, // Bat sprites from https://todemann.itch.io/bat (see Wiki)
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
@@ -260,19 +275,19 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnWalls() {
         // Lower wall between level halves
-        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"images/wall.png");
+        Entity lowerWall = WallFactory.createWall(15,0,1,5f,WALL_PNG);
         lowerWall.setScale(2f,10f);
         spawnEntityAt(lowerWall, new GridPoint2(60, -3),
                 false, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"images/wall.png");
+        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,WALL_PNG);
         upperWall.setScale(2f,15f);
         spawnEntityAt(upperWall, new GridPoint2(60, tileBounds.y - 34),
                 false, false);
 
         // Wall blocking death pit
-        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"images/wall.png");
+        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,WALL_PNG);
         deathPitWall.setScale(1.3f,13f);
         spawnEntityAt(deathPitWall, new GridPoint2(20, -3),
                 false, false);
@@ -344,25 +359,25 @@ public class BossLevelGameArea extends GameArea {
 
         // Spawn buttons
         // First button (easy enough to reach hopefully)
-        Entity button1 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        Entity button1 = ButtonFactory.createPuzzleButton(false, NOTHING, LEFT, manager);
         spawnEntityAt(button1, new GridPoint2(32,1), true,  true);
 
         // Centre button
-        Entity button2 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
+        Entity button2 = ButtonFactory.createPuzzleButton(false, NOTHING, RIGHT, manager);
         spawnEntityAt(button2, new GridPoint2(38,8), true,  true);
 
         // Ceiling button - NOT FOR USE IN-GAME UNLESS HIGH DIFFICULTY WANTED
-//        Entity button3 = ButtonFactory.createPuzzleButton(false, "nothing", "down", manager);
+//        Entity button3 = ButtonFactory.createPuzzleButton(false, NOTHING, "down", manager);
 //        spawnEntityAt(button3, new GridPoint2(43,16), true,  true);
 
         // Buttons next to each other
-        Entity button4 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        Entity button4 = ButtonFactory.createPuzzleButton(false, NOTHING, LEFT, manager);
         spawnEntityAt(button4, new GridPoint2(55,8), true,  true);
-        Entity button5 = ButtonFactory.createPuzzleButton(false, "nothing", "right", manager);
+        Entity button5 = ButtonFactory.createPuzzleButton(false, NOTHING, RIGHT, manager);
         spawnEntityAt(button5, new GridPoint2(51,8), true,  true);
 
         // Button in the wall
-        Entity button6 = ButtonFactory.createPuzzleButton(false, "nothing", "left", manager);
+        Entity button6 = ButtonFactory.createPuzzleButton(false, NOTHING, LEFT, manager);
         spawnEntityAt(button6, new GridPoint2(59,13), true,  true);
 
         puzzleEntity.getEvents().addListener("puzzleCompleted", () -> {
@@ -423,10 +438,10 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(buttonPlatform, buttonPlatformPos, false, false);
 
         // Spawn the button
-        Entity button = ButtonFactory.createButton(false, "platform", "right");
+        Entity button = ButtonFactory.createButton(false, PLATFORM, RIGHT);
         spawnEntityAt(button, buttonPos, true, true);
 
-        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+        button.getEvents().addListener(BUTTON_TOGGLED, (Boolean isPressed) -> {
             if (isPressed) {
                 buttonPlatform.getEvents().trigger("activatePlatform");
             } else {
@@ -457,8 +472,8 @@ public class BossLevelGameArea extends GameArea {
                 new GridPoint2(26, tileBounds.y - 34), false, true);
 
         // Create mini wall at edge (for lasers)
-        Entity wall = WallFactory.createWall(10,0,1,5f,"images/wall.png");
-        wall.setScale(1f,2f);
+        Entity wall = WallFactory.createWall(10, 0, 1, 5f, WALL_PNG);
+        wall.setScale(1f, 2f);
         floorObjects[2] = wall;
         spawnEntityAt(wall, new GridPoint2(26, tileBounds.y - 38),
                 false, false);
@@ -544,7 +559,7 @@ public class BossLevelGameArea extends GameArea {
         BoxFactory.AutonomousBoxBuilder horizontalBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalBat = horizontalBatBuilder
                 .moveX(15, 18).moveY(tileBounds.y - 23, tileBounds.y - 23)
-                .texture("images/flying_bat.atlas")
+                .texture(FLYING_BAT)
                 .speed(10f).build();
         spawnEntityAt(horizontalBat, new GridPoint2(
                 (int) horizontalBatBuilder.getSpawnX() * 2,
@@ -554,7 +569,7 @@ public class BossLevelGameArea extends GameArea {
         BoxFactory.AutonomousBoxBuilder chaoticBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity chaoticBat = chaoticBatBuilder
                 .moveX(22f, 24f).moveY(18f, 25f)
-                .texture("images/flying_bat.atlas")
+                .texture(FLYING_BAT)
                 .speed(5f).build();
         spawnEntityAt(chaoticBat, new GridPoint2(
                 (int) (chaoticBatBuilder.getSpawnX() * 2),
@@ -569,7 +584,7 @@ public class BossLevelGameArea extends GameArea {
         BoxFactory.AutonomousBoxBuilder firstBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity verticalBat = firstBatBuilder
                 .moveX(5.5f, 5.5f).moveY(13f, 25f)
-                .texture("images/flying_bat.atlas")
+                .texture(FLYING_BAT)
                 .speed(15f) // very hyperactive bat but it's ok we don't need realism
                 .build();
         spawnEntityAt(verticalBat, new GridPoint2(
@@ -580,7 +595,7 @@ public class BossLevelGameArea extends GameArea {
         BoxFactory.AutonomousBoxBuilder safeBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalBat = safeBatBuilder
                 .moveX(8, 10.5f).moveY(tileBounds.y - 30, tileBounds.y - 30)
-                .texture("images/flying_bat.atlas")
+                .texture(FLYING_BAT)
                 .build();
         spawnEntityAt(horizontalBat, new GridPoint2(
                 (int) safeBatBuilder.getSpawnX() * 2,
@@ -604,7 +619,7 @@ public class BossLevelGameArea extends GameArea {
         }
         spawnEntityAt(boss, spawnPos, true, true);
 
-        boss.getEvents().addListener("reset", () -> {
+        boss.getEvents().addListener(RESET, () -> {
             BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
             if (spawnComponent != null) {
                 spawnComponent.resetTriggers();
@@ -635,7 +650,7 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private void playMusic() {
-        Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+        Music music = ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class);
         music.setLooping(true);
         music.setVolume(UserSettings.getMusicVolumeNormalized());
         music.play();
@@ -644,14 +659,14 @@ public class BossLevelGameArea extends GameArea {
     protected Entity spawnPlayer() {
         Entity newPlayer = PlayerFactory.createPlayer(new ArrayList<>());
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
-        newPlayer.getEvents().addListener("reset", this::reset);
+        newPlayer.getEvents().addListener(RESET, this::reset);
         return newPlayer;
     }
 
     protected Entity spawnPlayer(List<Component> componentList) {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
-        newPlayer.getEvents().addListener("reset", this::reset);
+        newPlayer.getEvents().addListener(RESET, this::reset);
         return newPlayer;
     }
 
@@ -762,11 +777,11 @@ public class BossLevelGameArea extends GameArea {
         logger.info("Moving platform spawned at {}", buttonPlatformPos);
 
         //start button
-        Entity button = ButtonFactory.createButton(false, "platform", "left");
+        Entity button = ButtonFactory.createButton(false, PLATFORM, LEFT);
         spawnEntityAt(button, buttonStartPos, true, true);
         logger.info("Platform button spawned at {}", buttonStartPos);
 
-        button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+        button.getEvents().addListener(BUTTON_TOGGLED, (Boolean isPressed) -> {
             if (isPressed) {
                 logger.info("Button pressed — activating platform");
                 buttonPlatform.getEvents().trigger("activatePlatform");
@@ -783,11 +798,11 @@ public class BossLevelGameArea extends GameArea {
      */
     private void spawnEndgameButton() {
         GridPoint2 buttonPos = new GridPoint2(tileBounds.x, tileBounds.y / 2);
-        Entity winGameButton = ButtonFactory.createButton(false, "platform", "left");
+        Entity winGameButton = ButtonFactory.createButton(false, PLATFORM, LEFT);
         winGameButton.setScale(2f, 5f);
         spawnEntityAt(winGameButton, buttonPos, true, true);
 
-        winGameButton.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+        winGameButton.getEvents().addListener(BUTTON_TOGGLED, (Boolean isPressed) -> {
             this.trigger("doorEntered"); // it's not a door but it changes level so
         });
     }
@@ -801,7 +816,7 @@ public class BossLevelGameArea extends GameArea {
     protected void loadAssets() {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
-        resourceService.loadMusic(musics);
+        resourceService.loadMusic(MUSICS);
         resourceService.loadTextures(gameTextures);
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadSounds(gameSounds);
@@ -818,13 +833,13 @@ public class BossLevelGameArea extends GameArea {
         resourceService.unloadAssets(gameTextures);
         resourceService.unloadAssets(gameTextureAtlases);
         resourceService.unloadAssets(gameSounds);
-        resourceService.unloadAssets(musics);
+        resourceService.unloadAssets(MUSICS);
     }
 
     @Override
     public void dispose() {
         super.dispose();
-        ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class).stop();
+        ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class).stop();
         this.unloadAssets();
     }
 }

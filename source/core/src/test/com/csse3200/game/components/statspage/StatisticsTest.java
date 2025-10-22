@@ -1,5 +1,7 @@
 package com.csse3200.game.components.statspage;
 
+import com.csse3200.game.achievements.AchievementId;
+import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.collectables.UpgradesComponent;
@@ -27,6 +29,9 @@ public class StatisticsTest {
 
     private MockedStatic<FileLoader> fileLoaderMock;
     private MainGameScreen mainGameScreen;
+
+    private AchievementService service;
+    private AchievementService.Listener mockListener;
 
     /**
      * setUp() was authored with assistance from ChatGPT-5
@@ -63,6 +68,12 @@ public class StatisticsTest {
 
         when(mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_ONE)).thenReturn(cutsceneOneArea);
         when(mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_TWO)).thenReturn(cutsceneTwoArea);
+
+        service = AchievementService.get(); // singleton
+        service.devReset(); // reset all unlocked achievements
+
+        mockListener = mock(AchievementService.Listener.class);
+        service.addListener(mockListener);
     }
 
     @AfterEach
@@ -131,13 +142,43 @@ public class StatisticsTest {
         verify(mockInventory).addItem(InventoryComponent.Bag.UPGRADES, "test_upgrade");
     }
 
+    /**
+     * testUnlockedAchievements() was authored with assistance from ChatGPT-5
+     * Date: 16/10/25
+     */
     @Test
     void testUnlockedAchievements() {
-        StatsTracker.unlockAchievement();
-        assertEquals(1, StatsTracker.getAchievementsUnlocked());
+        // Testing completed level 1 with no stamina depletion
+        service.onLevelStarted();
+        service.onLevelCompleted(1);
 
-        StatsTracker.unlockAchievement();
+        assert(service.isUnlocked(AchievementId.LEVEL_1_COMPLETE));
+        assert(service.isUnlocked(AchievementId.STAMINA_MASTER));
+
+        verify(mockListener, times(1))
+                .onUnlocked(eq(AchievementId.LEVEL_1_COMPLETE), anyString(), anyString());
+        verify(mockListener, times(1))
+                .onUnlocked(eq(AchievementId.STAMINA_MASTER), anyString(), anyString());
+
         assertEquals(2, StatsTracker.getAchievementsUnlocked());
+    }
+
+    @Test
+    void testJumpCounter() {
+        assertEquals(0, StatsTracker.getJumpCount());
+        for (int i = 0; i < 5; i++) {
+            StatsTracker.addJump();
+        }
+        assertEquals(5, StatsTracker.getJumpCount());
+    }
+
+    @Test
+    void testCodexReads() {
+        assertEquals(0, StatsTracker.getCodexReads());
+        for (int i = 0; i < 5; i++) {
+            StatsTracker.addCodex();
+        }
+        assertEquals(5, StatsTracker.getCodexReads());
     }
 
     @Test
