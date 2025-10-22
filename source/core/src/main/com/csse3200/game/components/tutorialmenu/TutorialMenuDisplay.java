@@ -334,7 +334,7 @@ public class TutorialMenuDisplay extends UIComponent {
             case SECTION_LEVEL_MECHANICS -> levelMechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
             case SECTION_ENEMIES -> enemiesBtn.setColor(new Color(0f, 1f, 0f, 1f));
             case SECTION_LORE -> loreBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            default -> {} // No action needed for unknown sections
+            default -> throw new IllegalStateException("Unexpected section: " + currentSection);
         }
     }
 
