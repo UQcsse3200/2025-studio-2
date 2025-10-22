@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.physics.PhysicsLayer;
@@ -19,6 +18,7 @@ import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Factory for creating collectable entities (e.g., keys, coins, potions).
@@ -70,37 +70,61 @@ public class CollectableFactory {
             e.addComponent(anim);
         } else {
             e.addComponent(new TextureRenderComponent(
-                    (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png"));
-            // change scale of non potion collectables
+                    (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png")
+            );
             float sx = cfg.scale != null ? cfg.scale.get(0) : 0.5f;
             float sy = cfg.scale != null ? cfg.scale.get(1) : 0.5f;
-
             e.setScale(sx, sy);
             PhysicsUtils.setScaledCollider(e, sx, sy);
         }
 
         // set color based on glowColor in item config
-        ConeLightComponent cone = getConeLightComponent(cfg);
-        e.addComponent(cone);
 
+        if (!Objects.equals(cfg.sprite, "images/missing.png")) {
+            ConeLightComponent cone = getConeLightComponent(cfg);
+            e.addComponent(cone);
+        }
         return e;
     }
 
+    /**
+     * Creates a {@link ConeLightComponent} for a collectable based on its configuration.
+     * <p>
+     * If the {@link CollectablesConfig#glowColor} is defined, the light color is set
+     * using the provided RGB values (scaled to [0,1]) with a fixed alpha of 0.6.
+     * If no glow color is provided, a default soft yellowish light is used.
+     * </p>
+     *
+     * @param cfg the collectable configuration containing optional glow color settings
+     * @return a configured {@link ConeLightComponent} with radius, direction, and cone angle preset
+     */
     private static ConeLightComponent getConeLightComponent(CollectablesConfig cfg) {
         Color color = new Color();
+
         if (cfg.glowColor != null && !cfg.glowColor.isEmpty()) {
-            color.set(cfg.glowColor.get(0) / 255f, cfg.glowColor.get(1) / 255f, cfg.glowColor.get(2) / 255f, 0.6f);
+            color.set(
+                    cfg.glowColor.get(0) / 255f,
+                    cfg.glowColor.get(1) / 255f,
+                    cfg.glowColor.get(2) / 255f,
+                    0.6f
+            );
         } else {
-            color.set(1f, 1f, 230f/255f, 0.6f);
+            color.set(
+                    1f,
+                    1f,
+                    230f/255f,
+                    0.6f);
         }
-        ConeLightComponent cone = new ConeLightComponent(
-                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+        return new ConeLightComponent(
+                ServiceLocator
+                        .getLightingService()
+                        .getEngine()
+                        .getRayHandler(),
                 128,
                 color,
                 1.5f,
                 0f,
                 180f
         );
-        return cone;
     }
 }

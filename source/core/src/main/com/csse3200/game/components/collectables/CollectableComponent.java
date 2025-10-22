@@ -65,32 +65,22 @@ public class CollectableComponent extends Component {
     private void onCollisionStart(Entity player) {
         HitboxComponent cc = player.getComponent(HitboxComponent.class);
         if (cc == null || (cc.getLayer() != PhysicsLayer.PLAYER) || collected) return;
-
         collected = collect(player);
-        if (collected) {
-            // retrieve render service and visual components
-            RenderService renderService = ServiceLocator.getRenderService();
-            AnimationRenderComponent animation = entity.getComponent(AnimationRenderComponent.class);
-            ConeLightComponent cone = entity.getComponent(ConeLightComponent.class);
 
-            // remove atlas or static texture from game area
+        // remove atlas or static texture from game area
+
+        if (collected) {
+            RenderService renderService = ServiceLocator.getRenderService();
+            toggleVisibility(false);
             if (animation != null) {
                 renderService.unregister(animation);
+            } else if (texture != null) {
+                renderService.unregister(texture);
+            } else if (cone != null) {
                 cone.dispose();
-            } else {
-                TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
-                if (texture != null) {
-                    renderService.unregister(texture);
-                    if (entity.getComponent(MinimapComponent.class)!= null) {
-                        Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
-                        entity.getComponent(MinimapComponent.class).setMarker(marker);
-                    }
-                    cone.dispose();
-                }
             }
             entity.setEnabled(false);
         }
-
     }
 
     /**
