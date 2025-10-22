@@ -35,13 +35,10 @@ import com.csse3200.game.services.ServiceLocator;
 import box2dLight.RayHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
- * Factory for creating different types of enemies.
- * - Base drones pursue the player but are otherwise idle.
- * - Patrolling drones follow a patrol route.
+ * Factory for creating enemy and boss entities.
+ * Build enemies via dedicated helpers.
  */
 public class EnemyFactory {
     private static final EnemyConfigs configs =
@@ -50,9 +47,8 @@ public class EnemyFactory {
     // Light colors for bomber
     private static final Color BOMBER_IDLE_COLOR = new Color(0.5f, 0.5f, 1f, 0.8f);  // Blue-ish
     private static final Color BOMBER_ALERT_COLOR = new Color(1f, 0.3f, 0.3f, 1f);   // Red
-    private static final Vector2 HITBOX_OFFSET = new Vector2(0.0f, 10f);
 
-    // === [NEW] Drone variants for boss spawning ===
+    // Drone variants spawned by boss
     public enum DroneVariant {
         SCOUT,   // tiny, low speed
         CHASER,  // regular, middle speed
@@ -78,7 +74,6 @@ public class EnemyFactory {
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
-
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
@@ -150,7 +145,7 @@ public class EnemyFactory {
                 .addComponent(new DroneAnimationController())
                 .addComponent(new BombTrackerComponent());
 
-        // Add cone light for downward detection
+        // Cone light component for downward detection
         RayHandler rayHandler = ServiceLocator.getLightingService().getEngine().getRayHandler();
         ConeLightComponent lightComponent = new ConeLightComponent(
                 rayHandler,
@@ -166,7 +161,7 @@ public class EnemyFactory {
         // Add cone detector for target detection
         ConeDetectorComponent detectorComponent = new ConeDetectorComponent(
                 target,
-                PhysicsLayer.OBSTACLE,  // occluder mask
+                PhysicsLayer.OBSTACLE,
                 "bomber_" + bomberId     // unique ID
         );
         drone.addComponent(detectorComponent);
@@ -240,7 +235,7 @@ public class EnemyFactory {
         // Add patrol route component
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
-        // Add patrol task with lowest priority
+        // Add patrol task
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent.addTask(new BombPatrolTask(1f)); // Priority 1 - default behavior
 
@@ -254,10 +249,9 @@ public class EnemyFactory {
      * immediately yields back to patrol.
      * @param target reference entity (usually player) for bomb direction
      * @param patrolRoute array of waypoints defining the patrol route
-     * @param bomberId unique ID for this bomber
      * @return an automatic bombing patrol drone entity
      */
-    public static Entity createAutoBomberDrone(Entity target, Vector2[] patrolRoute, String bomberId) {
+    public static Entity createAutoBomberDrone(Entity target, Vector2[] patrolRoute) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
 
@@ -296,7 +290,12 @@ public class EnemyFactory {
         return drone;
     }
 
-
+    /**
+     * Create a self-destruction drone variant that chases its target then explodes near the target.
+     * @param target entity to pursue and self destruct near
+     * @param spawnPos optional spawn position
+     * @return a self-destruction drone entity
+     */
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
@@ -349,10 +348,15 @@ public class EnemyFactory {
 
 
     /**
-     * Creates a self-destruct drone for boss spawning (no teleport/cooldown behavior)
-     * @param target Player entity to chase and self-destruct on
-     * @param spawnPos Spawn position
-     * @return Self-destruct chase drone
+     * Creates a self-destruct drone variant specifically for boss spawning.
+     * Minimal behaviour (no teleport or cooldown functionality). The drone is activated
+     * immediately and enters a permanent chase state until exploding.
+     * @param target entity the player will pursue and explode near
+     * @param spawnPos optional spawn position
+     * @param atlasPath texture atlas path used for drone animations
+     * @param speed max movement speed
+     * @param bombEffectFrameDuration per-frame duration for the bomb_effect
+     * @return a constructed self-destruct chase drone
      */
     public static Entity createBossSelfDestructDroneInternal(Entity target, Vector2 spawnPos,
                                                              String atlasPath, float speed,
@@ -406,9 +410,6 @@ public class EnemyFactory {
                     "Atlas " + atlasPath + " missing required regions: angry_float/float");
         }
 
-        //animator.scaleEntity();
-        //animator.startAnimation("angry_float"); // Permanent chase animation
-
         // Set position directly
         if (spawnPos != null) {
             drone.setPosition(spawnPos);
@@ -418,7 +419,11 @@ public class EnemyFactory {
     }
 
     /**
-     * [New] Old signature kept for compatibility. Default to CHASER variant with default atlas.
+     * Convenience overload for creating a boss-spawned self-destruct drone with default
+     * atlas/speed/effect timings (CHASER-like baseline).
+     * @param target entity to chase
+     * @param spawnPos optional spawn position
+     * @return a constructed self-destruct chase drone
      */
     public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos) {
         // default atlas
@@ -429,7 +434,13 @@ public class EnemyFactory {
     }
 
     /**
-     * [NEW] Overload with variant: choose atlas + speed by variant.
+     * Variant-aware overload for creating a boss self-destruct drone, Selects atlas,
+     * speed and bomb effect timing based on variant. Behaviour remains the same for boss-spawned
+     * drones: no teleport or cooldown, immediate chase on activation.
+     * @param target entity to chase
+     * @param spawnPos optional spawn position
+     * @param variant drone variant that determines atlas/speed/effect tuning
+     * @return a constructed self-destruct chase drone
      */
     public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos, DroneVariant variant) {
         String atlasPath;
@@ -455,14 +466,13 @@ public class EnemyFactory {
                 break;
         }
 
-        Entity drone = createBossSelfDestructDroneInternal(target, spawnPos, atlasPath, speed, bombFD);
-        return drone;
+        return createBossSelfDestructDroneInternal(target, spawnPos, atlasPath, speed, bombFD);
     }
 
 
     /**
      * Creates a base enemy entity with a minimal, reusable set of components that all enemies share
-     * (physics, movement, collider, hitbox and AI task holder (with no tasks).
+     * (physics, movement, collider, hit-box and AI task holder (with no tasks).
      * @return enemy
      */
     private static Entity createBaseEnemy() {
@@ -488,17 +498,15 @@ public class EnemyFactory {
     }
 
     /**
-     * !! WIP !!
-     * Creates a minimal Boss entity for the boss level.
-     * Current (placeholder) behaviour:
-     * - Reuses the drone atlas (scaled up)
-     * - Kinematic body with zero gravity, movement will be handled by camera
-     * - High health, no contact/kill logic wired yet
-     * - Empty AI task component for future boss behaviours (other drone spawns, lasers, etc.)
-     *
-     * @param target Player entity (unused for now)
-     * @param spawnPos Initial spawn position
-     * @return Boss entity
+     * Builds the boss entity for the boss level with core combat/AI/rendering components and a
+     * single empty {@link BossSpawnerComponent}. Triggers are configured externally in
+     * {@link com.csse3200.game.entities.spawn.Spawners}.
+     * - Chases the player
+     * - {@link BossLaserAttackComponent} for ranged laser attacks
+     * - {@link BossTouchKillComponent} for player death on contact
+     * @param target the target entity used by attack and AI components
+     * @param spawnPos optional initial world position
+     * @return the constructed boss entity
      */
     public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
@@ -515,8 +523,6 @@ public class EnemyFactory {
 
         if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
 
-        // TODO: Replace with dedicated boss atlas/animations
-        // Placeholder visuals: Reuse drone atlas so we can render something in the game area
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(ServiceLocator.getResourceService()
                         .getAsset("images/boss.atlas", TextureAtlas.class));
@@ -545,7 +551,6 @@ public class EnemyFactory {
         float colliderHeight = (actualBossHeightInPixels / canvasSize);
 
         Vector2 centerPos = boss.getCenterPosition();
-        centerPos.x = centerPos.x ;
         centerPos.y = centerPos.y + 0.1f;
 
         // Set precise collider dimensions

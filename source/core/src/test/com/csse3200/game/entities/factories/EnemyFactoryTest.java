@@ -10,13 +10,11 @@ import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.boss.BossAnchorComponent;
-import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
 import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
-import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
@@ -323,7 +321,7 @@ public class EnemyFactoryTest {
     @Test
     void createAutoBomberDrone_hasBaseEnemyComponents() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
+        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route);
 
         assertNotNull(autoBomberDrone.getComponent(PhysicsComponent.class),
                 "Drone should have a PhysicsComponent");
@@ -342,7 +340,7 @@ public class EnemyFactoryTest {
     @Test
     void createAutoBomberDrone_hasAnimations() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
+        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route);
 
         AnimationRenderComponent anim = autoBomberDrone.getComponent(AnimationRenderComponent.class);
         assertNotNull(anim, "Drone should have an AnimationRenderComponent");
@@ -353,7 +351,7 @@ public class EnemyFactoryTest {
     @Test
     void autoBomberDrone_startsOnFloatAnim() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
+        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route);
         AnimationRenderComponent arc = autoBomberDrone.getComponent(AnimationRenderComponent.class);
         assertEquals("drop", arc.getCurrentAnimation());
         assertTrue(arc.hasAnimation("drop"));
@@ -362,7 +360,7 @@ public class EnemyFactoryTest {
     @Test
     void createAutoBomberDrone_hasCorrectCombatStats() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
+        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route);
 
         CombatStatsComponent stats = autoBomberDrone.getComponent(CombatStatsComponent.class);
         assertNotNull(stats, "Drone should have a CombatStatsComponent");
@@ -373,7 +371,7 @@ public class EnemyFactoryTest {
     @Test
     void createAutoBomberDrone_addsSpawnPosition() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
+        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), route);
         SpawnPositionComponent sp = autoBomberDrone.getComponent(SpawnPositionComponent.class);
         assertNotNull(sp);
         assertEquals(route[0], sp.getSpawnPos(),
@@ -382,7 +380,7 @@ public class EnemyFactoryTest {
 
     @Test
     void createAutoBomberDrone_doesNotAddNullSpawnPos() {
-        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), null, "bomber1");
+        Entity autoBomberDrone = EnemyFactory.createAutoBomberDrone(new Entity(), null);
         assertNull(autoBomberDrone.getComponent(SpawnPositionComponent.class),
                 "No SpawnPositionComponent when initialised with null spawnPos");
     }
@@ -390,8 +388,8 @@ public class EnemyFactoryTest {
     @Test
     void createAutoBomberDrone_returnsDistinct() {
         Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-        Entity a = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
-        Entity b = EnemyFactory.createAutoBomberDrone(new Entity(), route, "bomber1");
+        Entity a = EnemyFactory.createAutoBomberDrone(new Entity(), route);
+        Entity b = EnemyFactory.createAutoBomberDrone(new Entity(), route);
         assertNotSame(a, b, "Drones should be distinct");
 
         AITaskComponent ai_a = a.getComponent(AITaskComponent.class);

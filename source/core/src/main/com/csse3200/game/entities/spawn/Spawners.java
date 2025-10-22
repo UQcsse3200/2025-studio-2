@@ -1,7 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
@@ -26,7 +25,6 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -353,7 +351,7 @@ public final class Spawners {
             EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
 
             Entity enemy = switch (subtype) {
-                case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
+                case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute);
                 case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(
                         player,
                         new Vector2((float) a.x / 2, (float) a.y / 2)
