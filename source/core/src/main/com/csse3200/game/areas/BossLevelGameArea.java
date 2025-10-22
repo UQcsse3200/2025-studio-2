@@ -420,7 +420,7 @@ public class BossLevelGameArea extends GameArea {
      * Spawns the bats over and around the red herring path area
      */
     private void spawnBatsUpwardPath() {
-        // Bat over first jump (stick low in the double jump to avoid it!
+        // Bat over first jump
         BoxFactory.AutonomousBoxBuilder horizontalBatBuilder = new BoxFactory.AutonomousBoxBuilder();
         Entity horizontalBat = horizontalBatBuilder
                 .moveX(15, 18).moveY(tileBounds.y - 23, tileBounds.y - 23)
