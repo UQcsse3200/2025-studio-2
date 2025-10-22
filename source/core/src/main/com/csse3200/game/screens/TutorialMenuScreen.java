@@ -18,20 +18,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The screen displaying tutorial information and controls.
+ * The screen displaying tutorial information panels, sprites, mechanics and controls. The tutorial level can also be launceded from here.
  */
 public class TutorialMenuScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(TutorialMenuScreen.class);
   private final String[] tutorialMenuTextures = {
-      "images/superintelligence_menu_background.png"
-      // Add your tutorial images here when you create them:
-      // "images/tutorial/movement.png",
-      // "images/tutorial/key_item.png",
-      // "images/tutorial/dash_mechanic.png",
+      "images/superintelligence_menu_background.png",
+      "images/key.png",
+      "images/dash_powerup.png",
+      "images/glide_powerup.png",
+      "images/jetpack_powerup.png",
+      "images/button.png",
+      "images/cube.png",
+      "images/plate.png",
+      "images/ladder.png",
+      "images/spikes_sprite.png",
+      "images/terminal_on.png",
+      "images/lost_hardware.png"
   };
   
   private final String[] tutorialMenuAtlases = {
-      "images/PLAYER.atlas"
+      "images/PLAYER.atlas",
+      "images/health-potion.atlas",
+      "images/speed-potion.atlas",
+      "images/slow-potion.atlas",
+      "images/laser.atlas",
+      "images/doors.atlas",
+      "images/animated-monitors.atlas",
+      "images/flying_bat.atlas",
+      "images/drone.atlas"
   };
 
   private final GdxGame game;
