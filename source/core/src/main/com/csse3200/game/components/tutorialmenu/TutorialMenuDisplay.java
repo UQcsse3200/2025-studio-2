@@ -43,6 +43,7 @@ public class TutorialMenuDisplay extends UIComponent {
   private TextButton itemsBtn;
   private TextButton upgradesBtn;
   private TextButton levelMechanicsBtn;
+  private TextButton enemiesBtn;
   private TextButton loreBtn;
 
   public TutorialMenuDisplay(GdxGame game) {
@@ -153,6 +154,12 @@ public class TutorialMenuDisplay extends UIComponent {
       });
       levelMechanicsBtn.getLabel().setFontScale(0.85f);
 
+      enemiesBtn = createSidebarButton("Enemies", () -> {
+          currentSection = "enemies";
+          updateContent(currentSection);
+          updateButtonHighlight();
+      });
+
       loreBtn = createSidebarButton("Lore", () -> {
           currentSection = "lore";
           updateContent(currentSection);
@@ -163,6 +170,7 @@ public class TutorialMenuDisplay extends UIComponent {
       sidebar.add(itemsBtn).width(240).height(70).padBottom(30).row();
       sidebar.add(upgradesBtn).width(240).height(70).padBottom(30).row();
       sidebar.add(levelMechanicsBtn).width(240).height(70).padBottom(30).row();
+      sidebar.add(enemiesBtn).width(240).height(70).padBottom(30).row();
       sidebar.add(loreBtn).width(240).height(70).padBottom(30).row();
 
       // Set initial highlight
@@ -262,6 +270,7 @@ public class TutorialMenuDisplay extends UIComponent {
             case "items" -> itemsBtn.setColor(new Color(0f, 1f, 0f, 1f));
             case "upgrades" -> upgradesBtn.setColor(new Color(0f, 1f, 0f, 1f));
             case "levelmechanics" -> levelMechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case "enemies" -> enemiesBtn.setColor(new Color(0f, 1f, 0f, 1f));
             case "lore" -> loreBtn.setColor(new Color(0f, 1f, 0f, 1f));
         }
     }
@@ -271,6 +280,7 @@ public class TutorialMenuDisplay extends UIComponent {
                 || (currentSection.equals("items") && button == itemsBtn)
                 || (currentSection.equals("upgrades") && button == upgradesBtn)
                 || (currentSection.equals("levelmechanics") && button == levelMechanicsBtn)
+                || (currentSection.equals("enemies") && button == enemiesBtn)
                 || (currentSection.equals("lore") && button == loreBtn);
     }
 
@@ -295,6 +305,9 @@ public class TutorialMenuDisplay extends UIComponent {
         break;
       case "levelmechanics":
         showLevelMechanicsContent();
+        break;
+      case "enemies":
+        showEnemiesContent();
         break;
       case "lore":
         showLoreContent();
@@ -683,6 +696,20 @@ public class TutorialMenuDisplay extends UIComponent {
     infoText.setStyle(markupStyle);
     
     contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
+  }
+
+  /**
+   * Displays content for "Enemies" section
+   */
+  private void showEnemiesContent() {
+    Label sectionTitle = new Label("Enemies", skin);
+    sectionTitle.setFontScale(1.5f);
+    sectionTitle.setColor(Color.GREEN);
+    contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
+    
+    // Placeholder content
+    Label placeholder = new Label("enemy", skin);
+    contentTable.add(placeholder).left().colspan(2).row();
   }
 
   /**
