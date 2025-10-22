@@ -3,6 +3,7 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -43,6 +44,7 @@ public class WallFactory {
             .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE));
     wall.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     wall.getComponent(TextureRenderComponent.class).scaleEntity();
+    wall.addComponent(new MinimapComponent("images/floor-map-1.png"));
 
     wall.setPosition(x + width / 2.0f, y + height / 2.0f);
     return wall;

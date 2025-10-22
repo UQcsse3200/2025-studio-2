@@ -17,6 +17,8 @@ public class StatsTracker {
     private static int deathCount;
     private static int achievementsUnlocked;
     private static int lostHardwareCollected;
+    private static int jumpCount;
+    private static int codexReads;
 
     private static long sessionStartTime;
 
@@ -56,6 +58,8 @@ public class StatsTracker {
         levelsCompleted = 0;
         deathCount = 0;
         achievementsUnlocked = 0;
+        jumpCount = 0;
+        codexReads = 0;
     }
 
     /**
@@ -87,6 +91,21 @@ public class StatsTracker {
      */
     public static void unlockAchievement() {
         achievementsUnlocked++;
+        saveStats();
+    }
+
+    /**
+     * Increment jump counter
+     */
+    public static void addJump() {
+        jumpCount++;
+    }
+
+    /**
+     * Increment codex reads
+     */
+    public static void addCodex() {
+        codexReads++;
         saveStats();
     }
 
@@ -134,6 +153,21 @@ public class StatsTracker {
     }
 
     /**
+     * Retrieve jump counter
+     */
+    public static int getJumpCount() {
+        return jumpCount;
+    }
+
+    /**
+     * Retrieve codex reads
+     */
+    public static int getCodexReads() {
+        return codexReads;
+    }
+
+
+    /**
      * Save stats to JSON
      */
     public static void saveStats() {
@@ -144,8 +178,10 @@ public class StatsTracker {
         data.deathCount = deathCount;
         data.achievementsUnlocked = achievementsUnlocked;
         data.lostHardwareCollected = lostHardwareCollected;
+        data.jumpCount = jumpCount;
+        data.codexReads = codexReads;
 
-        FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.LOCAL);
+        FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.EXTERNAL);
     }
 
     /**
@@ -153,7 +189,7 @@ public class StatsTracker {
      */
     public static void loadStats() {
         StatsData data = FileLoader.readClass(StatsData.class, FILE_PATH,
-                FileLoader.Location.LOCAL);
+                FileLoader.Location.EXTERNAL);
         if (data != null) {
             playtime = data.playtime;
             upgradesCollected = data.upgradesCollected;
@@ -161,6 +197,8 @@ public class StatsTracker {
             deathCount = data.deathCount;
             achievementsUnlocked = data.achievementsUnlocked;
             lostHardwareCollected = data.lostHardwareCollected;
+            jumpCount = data.jumpCount;
+            codexReads = data.codexReads;
         } else {
             resetSession();
         }

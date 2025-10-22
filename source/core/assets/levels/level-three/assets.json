@@ -86,8 +86,27 @@
     "images/surfacelevel/2.png",
     "images/surfacelevel/3.png",
     "images/surfacelevel/4.png",
+    "images/terminal_on.png",
+    "images/terminal_off.png",
+    "images/flying_bat_map.png",
+    "images/ladder-map.png",
     "images/door_open-map.png",
     "images/lost_hardware.png",
+    "images/ladder-map.png",
+    "images/drone-map.png",
+    "images/red_button-map.png",
+    "images/floor-map-1.png",
+    "images/floor-map-2.png",
+    "images/floor-map-3.png",
+    "images/gate-floor-map.png",
+    "images/puzzle-floor-map.png",
+    "images/tutorials/double_jump.png",
+    "images/door_open-map.png",
+    "images/platform-long-map.png",
+    "images/wall-map-1.png",
+    "images/wall-map-2.png",
+    "images/platform-map.png",
+    "images/platform-short-map.png",
   ],
   "atlases": [
       "images/PLAYER.atlas",
@@ -113,9 +132,12 @@
     "sounds/damagesound.mp3",
     "sounds/thudsound.mp3",
     "sounds/chimesound.mp3",
-    "sounds/explosion.mp3"
+    "sounds/explosion.mp3",
+    "sounds/pickupsound_2.mp3",
+    "sounds/pickupsound_potion.mp3",
+    "sounds/pickupsound_upgrade.mp3"
   ],
   "music": [
-    "sounds/KindaLikeTycho.mp3"
+    "sounds/LIKEDACIRCUIT.mp3"
   ]
 }

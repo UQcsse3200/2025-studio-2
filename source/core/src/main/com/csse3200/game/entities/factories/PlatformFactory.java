@@ -84,6 +84,8 @@ public class PlatformFactory {
    * @return
    */
   public static Entity createButtonTriggeredPlatform(Vector2 offsetWorld, float speed) {
+    ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);
+    collider.setFriction(2f);
     Entity platform = new Entity()
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
@@ -119,7 +121,7 @@ public class PlatformFactory {
             0f,
             180f
     ).setFollowEntity(false);
-    reflectorPlatform.addComponent(light);
+    //reflectorPlatform.addComponent(light);
 
     return reflectorPlatform;
   }

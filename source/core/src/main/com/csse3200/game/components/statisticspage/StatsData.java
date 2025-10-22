@@ -10,4 +10,6 @@ public class StatsData {
     public int deathCount;
     public int achievementsUnlocked;
     public int lostHardwareCollected;
+    public int jumpCount;
+    public int codexReads;
 }

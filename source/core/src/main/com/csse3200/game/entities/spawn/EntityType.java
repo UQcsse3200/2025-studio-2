@@ -16,7 +16,13 @@ public enum EntityType {
     SIGN_POST,
     UPGRADE,
     WALL,
-    LASER_DETECTOR;
+    LASER_DETECTOR,
+    ENEMY,
+    TERMINAL,
+    TUTORIAL,
+    OBJECTIVE,
+    BAT,
+    LADDER;
 
     @Override public String toString() { return name().toLowerCase(); }
 

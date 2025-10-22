@@ -1,7 +1,6 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -96,20 +95,21 @@ public class MainGameScreen extends ScreenAdapter {
   private GameAreaDisplay levelTagDisplay;
 
   public enum Areas {
+    BEGINNING_CUTSCENE,
     LEVEL_ONE,
+    LEVEL_ONE_CUTSCENE,
     LEVEL_TWO,
+    LEVEL_TWO_CUTSCENE,
     LEVEL_THREE,
+    LEVEL_THREE_CUTSCENE,
+    BOSS_LEVEL,
+    END_CUTSCENE,
+    END_GAME,
+    TUTORIAL,
     SPRINT_ONE,
     TEMPLATE,
     FOREST,
     CAVE,
-    TUTORIAL,
-    BOSS_LEVEL,
-    BEGINNING_CUTSCENE,
-    LEVEL_ONE_CUTSCENE,
-    LEVEL_TWO_CUTSCENE,
-    LEVEL_THREE_CUTSCENE,
-    END_CUTSCENE
   }
 
   public MainGameScreen(GdxGame game) {
@@ -118,6 +118,7 @@ public class MainGameScreen extends ScreenAdapter {
 
   public MainGameScreen(GdxGame game, Areas area) {
     this.game = game;
+    ServiceLocator.registerMainGameScreen(this);
 
     logger.debug("Initialising main game screen services");
     ServiceLocator.registerTimeSource(new GameTime());
@@ -164,7 +165,7 @@ public class MainGameScreen extends ScreenAdapter {
 
     // As some levels progress to the next level via doors and some via cutscenes ending, add both
     gameArea.getEvents().addListener("doorEntered", this::handleLeaderboardEntry);
-    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) -> 
+    gameArea.getEvents().addListener("cutsceneFinished", (Entity play) ->
         switchArea(getNextArea(gameAreaEnum), play)
     );
     gameArea.getEvents().addListener("reset", this::onGameAreaReset);
@@ -278,6 +279,11 @@ public class MainGameScreen extends ScreenAdapter {
           case LEVEL_TWO_CUTSCENE -> new CutsceneArea("cutscene-scripts/after-lvl2.txt");
           case LEVEL_THREE_CUTSCENE -> new CutsceneArea("cutscene-scripts/after-lvl3.txt");
           case END_CUTSCENE -> new CutsceneArea("cutscene-scripts/end.txt");
+          case END_GAME -> {
+            // Go back to main menu
+            game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+            yield null;
+          }
           default -> throw new IllegalStateException("Unexpected value: " + area);
       };
   }
@@ -287,8 +293,9 @@ public class MainGameScreen extends ScreenAdapter {
    * @param area - Current Areas game area.
    * @return next Areas game area.
    */
-  private Areas getNextArea(Areas area) {
+  public Areas getNextArea(Areas area) {
     return switch (area) {
+      case BEGINNING_CUTSCENE -> Areas.LEVEL_ONE;
       case LEVEL_ONE -> Areas.LEVEL_ONE_CUTSCENE;
       case LEVEL_ONE_CUTSCENE -> Areas.LEVEL_TWO;
       case LEVEL_TWO -> Areas.LEVEL_TWO_CUTSCENE;
@@ -296,7 +303,7 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_THREE -> Areas.LEVEL_THREE_CUTSCENE;
       case LEVEL_THREE_CUTSCENE -> Areas.BOSS_LEVEL;
       case BOSS_LEVEL -> Areas.END_CUTSCENE;
-      case BEGINNING_CUTSCENE, END_CUTSCENE -> Areas.LEVEL_ONE; // Temp: Game loops
+      case END_CUTSCENE -> Areas.END_GAME;
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -319,7 +326,7 @@ public class MainGameScreen extends ScreenAdapter {
      * @param area   the target area enum
      * @param player the player entity to transfer to the new area, may be null
      */
-    private void switchAreaRunnable(Areas area, Entity player) {
+    public void switchAreaRunnable(Areas area, Entity player) {
         if (area == null) return;
 
         // Dispose old area
@@ -330,31 +337,32 @@ public class MainGameScreen extends ScreenAdapter {
 
         // Build the new area
         GameArea newArea = getGameArea(area);
-        if (newArea == null) return;
 
-        if (newArea instanceof CutsceneArea) {
-            StatsTracker.completeLevel();
-        }
-
-        // Swap in the new area
-        gameArea = newArea;
-        gameAreaEnum = area;
-
-        if (player == null) {
-            gameArea.create();
-        } else {
-            InventoryComponent inv = player.getComponent(InventoryComponent.class);
-            if (inv != null) {
-                inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+        if (newArea != null) {
+            if (newArea instanceof CutsceneArea) {
+                StatsTracker.completeLevel();
             }
-            gameArea.createWithPlayer(player);
-        }
 
-        gameArea.getEvents().addListener("doorEntered",
-                this::handleLeaderboardEntry);
-        gameArea.getEvents().addListener("cutsceneFinished",
-                (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
-        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+            // Swap in the new area
+            gameArea = newArea;
+            gameAreaEnum = area;
+
+            if (player == null) {
+                gameArea.create();
+            } else {
+                InventoryComponent inv = player.getComponent(InventoryComponent.class);
+                if (inv != null) {
+                    inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+                }
+                gameArea.createWithPlayer(player);
+            }
+
+            gameArea.getEvents().addListener("doorEntered",
+                    this::handleLeaderboardEntry);
+            gameArea.getEvents().addListener("cutsceneFinished",
+                    (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
+            gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+        }
 
         Entity currentPlayer = gameArea.getPlayer();
         if (currentPlayer != null) {
@@ -402,33 +410,34 @@ public class MainGameScreen extends ScreenAdapter {
     return gameArea;
   }
 
+
   @Override
   public void render(float delta) {
     if (!paused) {
       // Update camera position to follow player
       updateCameraFollow();
 
-          physicsEngine.update();
-          ServiceLocator.getEntityService().update();
-          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              jumpCount++;
-              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
-                  levelOneArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
-                  levelTwoArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }
-          }
-          laserTimer += delta;
+      physicsEngine.update();
+      ServiceLocator.getEntityService().update();
+//      if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+//          jumpCount++;
+//          if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
+//              levelOneArea.laserShowerChecker(delta);
+//              jumpCount = 0;
+//          }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
+//              levelTwoArea.laserShowerChecker(delta);
+//              jumpCount = 0;
+//          }
+//      }
+      laserTimer += delta;
 
-          // Check if 50 seconds have passed
-          if (laserTimer >= 50f) {
-              if (gameArea instanceof BossLevelGameArea bossLevel) {
-                  bossLevel.spawnLaserShower(); // spawn lasers
-              }
-              laserTimer = 0f; // reset timer
+      // Check if 50 seconds have passed
+      if (laserTimer >= 50f) {
+          if (gameArea instanceof BossLevelGameArea bossLevel) {
+              bossLevel.spawnLaserShower(); // spawn lasers
           }
+          laserTimer = 0f; // reset timer
+      }
 
       }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.

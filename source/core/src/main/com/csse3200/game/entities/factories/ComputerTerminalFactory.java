@@ -56,7 +56,7 @@ public final class ComputerTerminalFactory {
         terminal.addComponent(new ComputerTerminalComponent());
 
         terminal.setScale(2.5f, 2.5f);
-        PhysicsUtils.setScaledCollider(terminal, 3.0f, 3.0f);
+        PhysicsUtils.setScaledCollider(terminal, 2.0f, 2.0f);
 
         // Start animation after entity is assembled
         animator.startAnimation("terminal");

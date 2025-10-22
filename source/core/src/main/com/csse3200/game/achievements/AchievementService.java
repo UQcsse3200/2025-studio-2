@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ObjectMap;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 
 /**
  * Minimal achievements service for:
@@ -140,6 +141,7 @@ public class AchievementService {
         for (Listener l : listeners) {
             l.onUnlocked(id, title, description);
         }
+        StatsTracker.unlockAchievement();
     }
 
     private void load() {

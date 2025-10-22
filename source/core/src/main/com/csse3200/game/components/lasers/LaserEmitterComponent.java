@@ -138,6 +138,9 @@ public class LaserEmitterComponent extends Component {
             // if no hit on block and rebound laser reaches max dist hitting nothing
             if (!hitSomething) {
                 positions.add(end);
+                RaycastHit endHit = new RaycastHit();
+                endHit.point = end.cpy();
+                updateHitLight(endHit);
                 break;
             }
 

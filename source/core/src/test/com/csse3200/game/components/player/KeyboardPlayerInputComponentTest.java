@@ -1,7 +1,7 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.utils.Array;
-import com.csse3200.game.components.LadderComponent;
+import com.csse3200.game.components.ladders.LadderComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.Test;

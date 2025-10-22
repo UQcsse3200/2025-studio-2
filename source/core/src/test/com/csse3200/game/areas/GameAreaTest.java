@@ -161,11 +161,11 @@ class GameAreaTest {
 //      assertEquals(newHealth,
 //              gameArea.getPlayer().getComponent(CombatStatsComponent.class).getHealth());
 
-        // Add an item to player inventory
-        gameArea.getPlayer().getComponent(InventoryComponent.class)
-            .addItems(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
-        assertEquals(itemCount,
-            gameArea.player.getComponent(InventoryComponent.class).getGrandTotalCount());
+      // Add an item to player inventory
+      gameArea.getPlayer().getComponent(InventoryComponent.class)
+              .addDirect(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
+      assertEquals(itemCount,
+              gameArea.player.getComponent(InventoryComponent.class).getGrandTotalCount());
 
         // Reload gameArea, should load saved components
         gameArea.reset();

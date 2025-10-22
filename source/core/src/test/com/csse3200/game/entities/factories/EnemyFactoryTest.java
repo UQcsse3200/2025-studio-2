@@ -29,6 +29,7 @@ import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.DebugRenderer;
 import com.csse3200.game.rendering.RenderService;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -71,6 +72,7 @@ public class EnemyFactoryTest {
         ServiceLocator.registerResourceService(rs);
         rs.loadTextureAtlases(new String[]{"images/drone.atlas"});
         rs.loadTextureAtlases(new String[]{"images/boss.atlas"});
+        rs.loadTextures(new String[]{"images/drone-map.png"});
         rs.loadAll();
 
         // Mock time source needed for AI tasks

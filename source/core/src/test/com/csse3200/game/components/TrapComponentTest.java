@@ -68,4 +68,60 @@ class TrapComponentTest {
     System.out.println(spikeTrap.getPosition());
     assert player.getComponent(CombatStatsComponent.class).getHealth() == playerInitHealth - trapComponent.getBaseAttack();
   }
+    @Test
+    void testDamageUp() {
+        int playerInitHealth = player.getComponent(CombatStatsComponent.class).getHealth();
+        trapComponent.damage(playerCollider);
+        assert player.getComponent(CombatStatsComponent.class).getHealth()
+                == playerInitHealth - trapComponent.getBaseAttack();
+    }
+
+    @Test
+    void testHealthAliveUnchanging() {
+        assert trapComponent.isDead();
+        int trapInitHealth = trapComponent.getHealth();
+        trapComponent.addHealth(50);
+        assert trapComponent.getHealth() == trapInitHealth;
+        trapComponent.hit(player.getComponent(CombatStatsComponent.class));
+        assert trapComponent.getHealth() == trapInitHealth;
+    }
+
+    @Test
+    void testDamageLeft() {
+        CombatStatsComponent playerCombat = player.getComponent(CombatStatsComponent.class);
+        int playerInitHealth = playerCombat.getHealth();
+        Entity rotatedSpikes = TrapFactory.createSpikes(new Vector2(0, 0), 90f);
+        player.setPosition(new Vector2(rotatedSpikes.getPosition().x - 1f,
+                rotatedSpikes.getPosition().y + 0.1f));
+        trapComponent = rotatedSpikes.getComponent(TrapComponent.class);
+        trapComponent.damage(playerCollider);
+        assert playerCombat.getHealth()
+                == playerInitHealth - trapComponent.getBaseAttack();
+    }
+
+    @Test
+    void testDamageRight() {
+        CombatStatsComponent playerCombat = player.getComponent(CombatStatsComponent.class);
+        int playerInitHealth = playerCombat.getHealth();
+        Entity rotatedSpikes = TrapFactory.createSpikes(new Vector2(0, 0), 270f);
+        player.setPosition(new Vector2(rotatedSpikes.getPosition().x + 1f,
+                rotatedSpikes.getPosition().y + 0.1f));
+        trapComponent = rotatedSpikes.getComponent(TrapComponent.class);
+        trapComponent.damage(playerCollider);
+        assert playerCombat.getHealth()
+                == playerInitHealth - trapComponent.getBaseAttack();
+    }
+
+    @Test
+    void testDamageDown() {
+        CombatStatsComponent playerCombat = player.getComponent(CombatStatsComponent.class);
+        int playerInitHealth = playerCombat.getHealth();
+        Entity rotatedSpikes = TrapFactory.createSpikes(new Vector2(0, 0), 180f);
+        player.setPosition(new Vector2(rotatedSpikes.getPosition().x,
+                rotatedSpikes.getPosition().y - 0.1f));
+        trapComponent = rotatedSpikes.getComponent(TrapComponent.class);
+        trapComponent.damage(playerCollider);
+        assert playerCombat.getHealth()
+                == playerInitHealth - trapComponent.getBaseAttack();
+    }
 }

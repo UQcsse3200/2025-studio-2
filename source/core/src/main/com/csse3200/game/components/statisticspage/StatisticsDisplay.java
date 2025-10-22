@@ -80,6 +80,12 @@ public class StatisticsDisplay extends UIComponent {
         Label lostHardwareCounterLabel = new Label("Lost Hardware collected:", skin);
         Label lostHardwareCounterValue = new Label(String.valueOf(StatsTracker.getLostHardwareCollected()), skin);
 
+        Label jumpCounterLabel = new Label("Jump Count:", skin);
+        Label jumpCounterValue = new Label(String.valueOf(StatsTracker.getJumpCount()), skin);
+
+        Label codexCounterLabel = new Label("Codex Entries Read:", skin);
+        Label codexCounterValue = new Label(String.valueOf(StatsTracker.getCodexReads()), skin);
+
         table.add(playtimeLabel).pad(10f).padLeft(50f).right();
         table.add(playtimeValue).pad(10f).left().row();
 
@@ -97,6 +103,12 @@ public class StatisticsDisplay extends UIComponent {
 
         table.add(lostHardwareCounterLabel).pad(10f).padLeft(50f).right();
         table.add(lostHardwareCounterValue).pad(10f).left().row();
+
+        table.add(jumpCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(jumpCounterValue).pad(10f).left().row();
+
+        table.add(codexCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(codexCounterValue).pad(10f).left().row();
 
         TextButton exitBtn = new TextButton("Exit", skin);
 
