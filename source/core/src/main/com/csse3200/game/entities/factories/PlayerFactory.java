@@ -21,6 +21,9 @@ import java.util.List;
 
 /**
  * Factory to create a player entity.
+ *
+ * <p>Predefined player properties are loaded from a config stored as a json file and should have
+ * the properties stored in 'PlayerConfig'.
  */
 public class PlayerFactory {
     private static final PlayerConfig stats = loadPlayerConfig();
@@ -57,6 +60,7 @@ public class PlayerFactory {
         animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser_effact", 0.1f, Animation.PlayMode.NORMAL);
 
         Entity player =
                 new Entity()
@@ -75,11 +79,9 @@ public class PlayerFactory {
                         .addComponent(new CameraComponent())
                         .addComponent(new PlayerScreenTransitionComponent())
                         .addComponent(new PlayerDeathEffectComponent())
-                        .addComponent(new MinimapComponent("images/minimap_player_marker.png"));
-
-        player
-                .addComponent(animator)
-                .addComponent(new PlayerAnimationController());
+                        .addComponent(new MinimapComponent("images/minimap_player_marker.png"))
+                        .addComponent(animator)
+                        .addComponent(new PlayerAnimationController());
 
         // --- Stamina ---
         StaminaComponent stamina = new StaminaComponent(
@@ -89,6 +91,16 @@ public class PlayerFactory {
                 (int) stats.staminaRegenDelaySeconds
         );
         player.addComponent(stamina);
+
+
+// Laser hit listener
+      player.getEvents().addListener("laserHit", (Vector2 pos) -> {
+          AnimationRenderComponent anim = player.getComponent(AnimationRenderComponent.class);
+          if (anim != null && anim.hasAnimation("laser_effact")) {
+              anim.startAnimation("laser_effact");
+          }
+      });
+
 
         // Sprint toggle
         player.getEvents().addListener("sprintStart", () -> {

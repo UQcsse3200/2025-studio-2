@@ -24,13 +24,15 @@ public class TouchAttackComponent extends Component {
   private float knockbackForce = 0f;
   private CombatStatsComponent combatStats;
   private HitboxComponent hitboxComponent;
-
+  private CombatStatsComponent attackerStats;
   /**
    * Create a component which attacks entities on collision, without knockback.
    * @param targetLayer The physics layer of the target's collider.
    */
   public TouchAttackComponent(short targetLayer) {
     this.targetLayer = targetLayer;
+    this.attackerStats = null;
+
   }
 
   /**
@@ -38,9 +40,10 @@ public class TouchAttackComponent extends Component {
    * @param targetLayer The physics layer of the target's collider.
    * @param knockback The magnitude of the knockback applied to the entity.
    */
-  public TouchAttackComponent(short targetLayer, float knockback) {
+  public TouchAttackComponent(short targetLayer, float knockback,CombatStatsComponent attackerStats) {
     this.targetLayer = targetLayer;
     this.knockbackForce = knockback;
+    this.attackerStats = attackerStats;
   }
 
   /**
@@ -60,7 +63,8 @@ public class TouchAttackComponent extends Component {
   }
 
   private void onCollisionStart(Fixture me, Fixture other) {
-    if (hitboxComponent.getFixture() != me) {
+      System.out.println("Laser collision detected: me=" + me + ", other=" + other);
+    if ( hitboxComponent == null || hitboxComponent.getFixture() == null) {
       // Not triggered by hitbox, ignore
       return;
     }
@@ -70,13 +74,31 @@ public class TouchAttackComponent extends Component {
       return;
     }
 
-    // Try to attack target.
-    Entity target = ((BodyUserData) other.getBody().getUserData()).entity;
-    CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
-    if (targetStats != null) {
-      targetStats.hit(combatStats);
+    Object data = other.getBody().getUserData();
+    if (!(data instanceof BodyUserData) ){
+        return;
     }
 
+
+    // Try to attack target.
+    Entity target = ((BodyUserData)data).entity;
+    if(target == null) return;
+
+    CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
+
+      // Try to attack target
+      if(targetStats != null && attackerStats != null) {
+          targetStats.hit(attackerStats); // existing
+          System.out.println("TouchAttackComponent: Laser hit " + target + " for " + attackerStats.getBaseAttack() + " damage");
+      }
+
+
+// Step 1 fallback: Use this entity's CombatStatsComponent if attackerStats is null (for lasers)
+      if (targetStats != null && attackerStats == null) {CombatStatsComponent laserStats = entity.getComponent(CombatStatsComponent.class);
+          if (laserStats != null) {targetStats.addHealth(-laserStats.getBaseAttack());
+              System.out.println("TouchAttackComponent: Laser fallback dealt " + laserStats.getBaseAttack() + " damage to " + target);
+          }
+      }
     // Apply knockback
     PhysicsComponent physicsComponent = target.getComponent(PhysicsComponent.class);
     if (physicsComponent != null && knockbackForce > 0f) {

@@ -46,7 +46,11 @@ import org.slf4j.LoggerFactory;
  */
 public class MainGameScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(MainGameScreen.class);
-  private static final String[] mainGameTextures = {"images/playerstats/health.png", "images/playerstats/stamina.png"};
+
+
+
+  private static final String[] mainGameTextures = {"images/playerstats/health.png", "images/playerstats/stamina.png", "images/heart.png"};
+
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
   // Camera follow parameters
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
@@ -294,6 +298,19 @@ public class MainGameScreen extends ScreenAdapter {
   @Override
   public void dispose() {
     logger.debug("Disposing main game screen");
+      if (renderer != null) {
+          renderer.dispose();
+      }
+
+      // Fix: Check if lightingEngine is not null before disposing it
+      if (lightingEngine != null) {
+          lightingEngine.dispose();
+      }
+
+
+    unloadAssets();
+
+
 
     ServiceLocator.getEntityService().dispose();
     lightingEngine.dispose();
@@ -310,6 +327,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(mainGameTextures);
+    resourceService.loadTextureAtlas("images/drone.atlas");
     ServiceLocator.getResourceService().loadAll();
   }
 
@@ -317,6 +335,7 @@ public class MainGameScreen extends ScreenAdapter {
     logger.debug("Unloading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.unloadAssets(mainGameTextures);
+
   }
 
   public boolean isPaused() {

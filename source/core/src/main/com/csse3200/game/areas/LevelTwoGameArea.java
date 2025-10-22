@@ -1,6 +1,18 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.csse3200.game.ai.tasks.AITaskComponent;
+
+import com.csse3200.game.components.tasks.LaserChaseTask;
+import com.csse3200.game.components.tasks.LaserAttackTask;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.tasks.LaserAttackTask;
+import com.csse3200.game.components.tasks.LaserChaseTask;
+import com.csse3200.game.entities.Entity;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.GridPoint2;
+import com.csse3200.game.entities.factories.EnemyFactory;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -139,6 +151,8 @@ public class LevelTwoGameArea extends GameArea {
         spawnObjectives();
         //spawnBomberDrone();
         spawnSelfDestructDrone();
+        spawnLaserDrone();
+
         spawnAutoBomberDrone();
         //spawnMovingTraps(); //TO BE UNCOMMENTED WHEN PositionSyncComponent IS PUSHED AND SAME WITH METHOD ITSELF
     }
@@ -483,7 +497,43 @@ public class LevelTwoGameArea extends GameArea {
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
     }
+    private void spawnLaserDrone() {
 
+
+        // Patrolling laser drone
+        GridPoint2 patrolStart = new GridPoint2(20, 20);
+        GridPoint2 patrolEnd = new GridPoint2(30, 20);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(patrolStart),
+                terrain.tileToWorldPosition(patrolEnd)
+        };
+        Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
+        spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
+
+        // --- Setup AI tasks for stationary drone ---
+        AITaskComponent ai = patrolLaserDrone.getComponent(AITaskComponent.class);
+        if (ai == null) {
+            ai = new AITaskComponent();
+            patrolLaserDrone.addComponent(ai);
+        }
+
+        com.csse3200.game.components.tasks.LaserChaseTask chaseTask = new com.csse3200.game.components.tasks.LaserChaseTask(player, 10, 8f, 1f, 0.5f);
+        com.csse3200.game.components.tasks.LaserAttackTask attackTask = new com.csse3200.game.components.tasks.LaserAttackTask(player, 15, 5f, 15f, 10);
+        ai.addTask(chaseTask).addTask(attackTask);
+
+        // Add detection events so drone fires when player enters cone
+        ConeDetectorComponent detector = patrolLaserDrone.getComponent(ConeDetectorComponent.class);
+        if (detector != null) {
+            detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
+                chaseTask.activate();
+                attackTask.setTargetDetected(true); // Enable laser firing
+            });
+            detector.getEntity().getEvents().addListener("targetLost", (Entity e) -> {
+                chaseTask.deactivate();
+                attackTask.setTargetDetected(false); // Stop firing
+            });
+        }
+    }
     /*
     private void spawnMovingTraps() {
         //moving traps

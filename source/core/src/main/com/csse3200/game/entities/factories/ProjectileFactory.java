@@ -1,5 +1,9 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.csse3200.game.rendering.AnimationRenderComponent;
+//import com.csse3200.game.components.DisposalComponent;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -11,6 +15,12 @@ import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.ServiceLocator;
+//import com.csse3200.game.components.DisposalComponent;
+import com.csse3200.game.components.projectiles.LaserComponent;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.components.PhysicsMovementComponent;
+import com.csse3200.game.components.TouchAttackComponent;
 
 /**
  * Factory to create projectile entities like bombs, bullets, etc.
@@ -62,6 +72,48 @@ public class ProjectileFactory {
 
         return bomb;
     }
+
+    public static Entity createLaser(Entity shooter, Vector2 direction, float speed, int damage) {
+        Entity laser = new Entity()
+                .addComponent(new PhysicsComponent())
+                .addComponent(new PhysicsMovementComponent())
+                .addComponent(new ColliderComponent().setSensor(true).setLayer(PhysicsLayer.PROJECTILE));
+
+// Create CombatStatsComponent for the laser
+        CombatStatsComponent laserStats = new CombatStatsComponent(1, damage);
+        laser.addComponent(laserStats);
+        laser.addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 0f, laserStats));
+
+        laser.addComponent(new HitboxComponent().setLayer(PhysicsLayer.PROJECTILE));
+        laser.addComponent(new LaserComponent(shooter, speed, damage));
+
+// Animation render using laser atlas
+        TextureAtlas laserAtlas = ServiceLocator.getResourceService()
+                .getAsset("images/Laser.atlas", TextureAtlas.class);
+        AnimationRenderComponent animator = new AnimationRenderComponent(laserAtlas);
+        animator.addAnimation("laser_attack", 0.05f, Animation.PlayMode.LOOP); // moving laser
+        animator.addAnimation("laser_effact", 0.05f, Animation.PlayMode.NORMAL); // hit effect
+        animator.startAnimation("laser_attack");
+        laser.addComponent(animator);
+
+// Set initial velocity
+        laser.getComponent(PhysicsComponent.class)
+                .setBodyType(BodyDef.BodyType.DynamicBody);
+        laser.getComponent(PhysicsComponent.class)
+                .getBody()
+                .setLinearVelocity(direction.cpy().scl(speed));
+
+// Scale laser beam and collider
+        laser.setScale(1.8f, 0.8f);
+        PhysicsUtils.setScaledCollider(laser, 1.8f, 0.8f);
+
+// Register entity
+        ServiceLocator.getEntityService().register(laser);
+
+        return laser;
+    }
+
+
 
     /**
      * Creates a simple projectile (for potential future use)

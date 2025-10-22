@@ -33,6 +33,11 @@ import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.ai.tasks.AITaskComponent;
+import com.csse3200.game.components.tasks.LaserAttackTask;
+import com.csse3200.game.ai.tasks.PriorityTask;
+import com.csse3200.game.components.tasks.LaserChaseTask;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -76,6 +81,7 @@ public class LevelOneGameArea extends GameArea {
             "images/blue_button.png",
             "images/drone.png",
             "images/bomb.png",
+            "images/laser_final.png",
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/glide_powerup.png",
@@ -144,6 +150,7 @@ public class LevelOneGameArea extends GameArea {
             "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
             "images/doors.atlas",
+            "images/Laser.atlas",
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);
@@ -190,6 +197,8 @@ public class LevelOneGameArea extends GameArea {
         spawnPotion("health", 10, 15);
         spawnPotion("dash", 72, 12);
         spawnObjectives();
+        spawnLaserDrone();
+        spawnBomberDrone();
         spawnTerminals();
         spawnBoxes();
         spawnLasers();
@@ -282,8 +291,9 @@ public class LevelOneGameArea extends GameArea {
             Entity ladder = LadderFactory.createStaticLadder();
             ladder.setScale(1f, 1f);
             spawnEntityAt(ladder, ladderPos, false, false);
-
         }
+
+
         // Lower ladder
         lowerLadderBottomSegments.clear();
         isLowerLadderExtended = false;
@@ -614,9 +624,9 @@ public class LevelOneGameArea extends GameArea {
 
 //        RIGHT PATH
         //GridPoint2 step8Pos = new GridPoint2(58,18);
-        // Entity step8 = PlatformFactory.createStaticPlatform();
-        // step8.setScale(2f,0.5f);
-        // spawnEntityAt(step8, step8Pos,false, false);
+       // Entity step8 = PlatformFactory.createStaticPlatform();
+       // step8.setScale(2f,0.5f);
+       // spawnEntityAt(step8, step8Pos,false, false);
 
         // MOVING PLATFORM WITH BUTTONS
         GridPoint2 buttonPlatformPos = new GridPoint2(55, 18);
@@ -727,7 +737,50 @@ public class LevelOneGameArea extends GameArea {
         Entity newPlayer = PlayerFactory.createPlayer(componentList);
         spawnEntityAt(newPlayer, PLAYER_SPAWN, true, true);
         newPlayer.getEvents().addListener("reset", this::reset);
+        // Add listener for laser hit to trigger animation
+        newPlayer.getEvents().addListener("laser_effact", () -> {
+            newPlayer.getEvents().trigger("laser_effact");
+        });
         return newPlayer;
+    }
+
+
+    private void spawnLaserDrone() {
+
+
+        // Patrolling laser drone
+        GridPoint2 patrolStart = new GridPoint2(30, 12);
+        GridPoint2 patrolEnd = new GridPoint2(40, 12);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(patrolStart),
+                terrain.tileToWorldPosition(patrolEnd)
+        };
+        Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
+        spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
+
+        // --- Setup AI tasks for stationary drone ---
+        AITaskComponent ai = patrolLaserDrone.getComponent(AITaskComponent.class);
+        if (ai == null) {
+            ai = new AITaskComponent();
+            patrolLaserDrone.addComponent(ai);
+        }
+
+        LaserChaseTask chaseTask = new LaserChaseTask(player, 5, 8f, 1f, 0.5f);
+        LaserAttackTask attackTask = new LaserAttackTask(player, 12, 3f, 15f, 10);
+        ai.addTask(chaseTask).addTask(attackTask);
+
+        // Add detection events so drone fires when player enters cone
+        ConeDetectorComponent detector = patrolLaserDrone.getComponent(ConeDetectorComponent.class);
+        if (detector != null) {
+            detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
+                chaseTask.activate();
+                attackTask.setTargetDetected(true); // Enable laser firing
+            });
+            detector.getEntity().getEvents().addListener("targetLost", (Entity e) -> {
+                chaseTask.deactivate();
+                attackTask.setTargetDetected(false); // Stop firing
+            });
+        }
     }
     private void displayUI() {
         Entity ui = new Entity();
@@ -1071,6 +1124,8 @@ public class LevelOneGameArea extends GameArea {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadMusic(musics);
+        resourceService.loadTextureAtlases(new String[]{"images/drone.atlas","images/Laser.atlas"});
+        resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadTextures(gameTextures);
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadSounds(gameSounds);
