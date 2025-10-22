@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The screen displaying tutorial information and controls.
+ * The screen displaying tutorial information panels, sprites, mechanics and controls. The tutorial level can also be launceded from here.
  */
 public class TutorialMenuScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(TutorialMenuScreen.class);
