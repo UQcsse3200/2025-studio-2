@@ -1,2 +1,14 @@
-#cutscene-bgs/utopia.png
-Temp
+#cutscene-bgs/core_door.png
+The ascent ends here. Ahead lies a massive  barrier - security seals humming with energy.
+Through the fogged glass, I can just make out the faint silhouette of the {COLOR=RED}core chamber{CLEARCOLOR}... pulsing and alive.
+#cutscene-bgs/keypad.png
+My visor warns of abnormal power readings and a spike in electromagnetic activity.
+It’s calling to me - the same signal that enslaved millions still radiates from this level.
+Whatever is controlling the facility... it’s waiting.
+#cutscene-bgs/core_door.png
+This is it. Beyond this corridor lies the {COLOR=RED}primary control centre{CLEARCOLOR} — the heart of the AI itself.
+My systems are already straining just standing here; the air buzzes with static and dread.
+{SLOWER}{SHAKE}Something powerful is in there... and it knows I'm coming.{ENDSHAKE}{NORMAL}
+I’ve come too far to turn back now.
+One final breach, one final fight.
+{COLOR=YELLOW}Whatever waits ahead... it ends now.{CLEARCOLOR}
