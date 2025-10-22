@@ -182,7 +182,7 @@ public class PlayerAnimationTest {
     }
 
     @Test
-    void testAnimateDeath() throws InterruptedException {
+    void testAnimateDeath() {
         Runnable[] scheduled = new Runnable[1];
         controller.scheduleTask = (runnable, delay) -> scheduled[0] = runnable;
 
@@ -243,5 +243,40 @@ public class PlayerAnimationTest {
         verify(animator).startAnimation("IDLELEFT");
     }
 
+    @Test
+    void testJumpLeftRevertsLeft() {
+        player.getComponent(PlayerAnimationController.class).setXDirection(-1);
+        player.getEvents().trigger("jump");
+        verify(animator).startAnimation("JUMPLEFT");
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        verify(animator).startAnimation("IDLELEFT");
+    }
 
+    @Test
+    void testJumpLeftRevertsRight() {
+        player.getComponent(PlayerAnimationController.class).setXDirection(-1);
+        player.getEvents().trigger("jump");
+        verify(animator).startAnimation("JUMPLEFT");
+        player.getComponent(PlayerAnimationController.class).setXDirection(1);
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        verify(animator).startAnimation("IDLE");
+    }
+
+
+    @Test
+    void testJumpRightRevertsLeft() {
+        player.getEvents().trigger("jump");
+        verify(animator).startAnimation("JUMP");
+        player.getComponent(PlayerAnimationController.class).setXDirection(-1);
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        verify(animator).startAnimation("IDLELEFT");
+    }
+
+    @Test
+    void testJumpRightRevertsRight() {
+        player.getEvents().trigger("jump");
+        verify(animator).startAnimation("JUMP");
+        player.getComponent(PlayerAnimationController.class).revertAnimation();
+        verify(animator).startAnimation("IDLE");
+    }
 }
