@@ -1,6 +1,5 @@
 package com.csse3200.game.components.statisticspage;
 
-import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.files.FileLoader;
 
 import java.util.logging.Level;
@@ -149,7 +148,7 @@ public class StatsTracker {
      * Retrieve lost hardware counter
      */
     public static int getLostHardwareCollected() {
-        return ItemCollectableComponent.getCount();
+        return lostHardwareCollected;
     }
 
     /**

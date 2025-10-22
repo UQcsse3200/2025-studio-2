@@ -2,7 +2,9 @@ package com.csse3200.game.entities.spawn;
 
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.LevelConfig;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,20 +1,23 @@
 package com.csse3200.game.components.player;
 
-import com.csse3200.game.components.collectables.effects.ItemEffectHandler;
 import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.entities.configs.EffectConfig;
 import com.csse3200.game.services.CollectableService;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.withSettings;
 
 /**
  * Verifies upgrade items via the new inventory + effect pipeline (EffectConfig.target).

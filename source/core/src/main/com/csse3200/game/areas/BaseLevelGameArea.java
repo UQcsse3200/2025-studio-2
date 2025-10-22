@@ -3,14 +3,13 @@ package com.csse3200.game.areas;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.GridComponent;
 import com.csse3200.game.areas.terrain.GridFactory;
+import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.LevelAssetsConfig;
 import com.csse3200.game.entities.configs.LevelConfig;
@@ -24,7 +23,6 @@ import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -202,9 +200,6 @@ public abstract class BaseLevelGameArea extends GameArea {
      * @return constructed terrain component ready to be spawned
      */
     protected GridComponent buildTerrain(GridPoint2 mapSize) {
-        TextureRegion empty = new TextureRegion(rs.getAsset("images/empty.png", Texture.class));
-        GridPoint2 tilePx = new GridPoint2(empty.getRegionWidth(), empty.getRegionHeight());
-//        TiledMap map = gridFactory.createDefaultTiles(tilePx, empty, empty, empty, empty, );
         return gridFactory.createGrid(mapSize, 0.5f);
     }
 
@@ -285,8 +280,8 @@ public abstract class BaseLevelGameArea extends GameArea {
     public void spawnLaserShower() {
         if (player == null) return; // safety check
 
-        final float Y = player.getPosition().y + 20f; // spawn above player
-        final float X = player.getPosition().x;
+        float Y = player.getPosition().y + 20f; // spawn above player
+        float X = player.getPosition().x;
 
         // Spawn 3 lasers to the left
         for (int i = 0; i <= 2; i++) {

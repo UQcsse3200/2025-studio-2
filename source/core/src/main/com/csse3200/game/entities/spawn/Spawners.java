@@ -1,7 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
@@ -9,8 +8,8 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
-import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
@@ -26,7 +25,6 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 

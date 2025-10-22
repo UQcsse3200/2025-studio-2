@@ -66,7 +66,6 @@ public class TerminalUiComponent extends UIComponent {
     private final Random rng = new Random();
 
     // Stage and textures.
-    private Stage stage;
     private Texture bgTex, blueTex;
 
     // Root container that centers and scales the PixelPerfectPlacer.
@@ -113,10 +112,8 @@ public class TerminalUiComponent extends UIComponent {
     @Override
     public void create() {
         super.create();
-        RenderService renderService = ServiceLocator.getRenderService();
         ResourceService resources = ServiceLocator.getResourceService();
 
-        this.stage   = renderService.getStage();
         this.bgTex   = resources.getAsset(BG_TEXTURE, Texture.class);
         this.blueTex = resources.getAsset(BLUE_TEXTURE, Texture.class);
 
@@ -144,7 +141,7 @@ public class TerminalUiComponent extends UIComponent {
         });
 
         stage.addCaptureListener(new InputListener() {
-            @Override public boolean keyDown(InputEvent event, int keycode) {
+            public boolean sink(InputEvent event, int keycode) {
                 if (!visible) return false;
 
                 // Let E bubble to the root listener above (so it can close the terminal)
@@ -157,13 +154,12 @@ public class TerminalUiComponent extends UIComponent {
                 return true;     // consumed
             }
 
+            @Override public boolean keyDown(InputEvent event, int keycode) {
+                return sink(event, keycode);
+            }
+
             @Override public boolean keyUp(InputEvent event, int keycode) {
-                if (!visible) return false;
-                if (keycode == Input.Keys.E || keycode == Input.Keys.ESCAPE) {
-                    return false;
-                }
-                event.stop();
-                return true;
+                return sink(event, keycode);
             }
         });
     }
@@ -469,5 +465,8 @@ public class TerminalUiComponent extends UIComponent {
     }
 
     @Override protected void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch batch) { }
-    @Override public void dispose() { if (root != null) root.remove(); super.dispose(); }
+    @Override public void dispose() {
+        if (root != null) root.remove();
+        super.dispose();
+    }
 }

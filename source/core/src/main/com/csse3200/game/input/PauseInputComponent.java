@@ -5,7 +5,6 @@ import com.csse3200.game.components.computerterminal.TerminalUiComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.ui.cutscene.CutsceneArea;
 
 /**
  * A class extending InputComponent handling pause menu related key presses.

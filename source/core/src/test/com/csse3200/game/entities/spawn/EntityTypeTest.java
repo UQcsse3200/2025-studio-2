@@ -1,6 +1,7 @@
 package com.csse3200.game.entities.spawn;
 
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class EntityTypeTest {
