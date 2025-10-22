@@ -95,7 +95,7 @@ loadScripts(document, 'script');</script>
 </dl>
 <dl class="notes">
 <dt>Direct Known Subclasses:</dt>
-<dd><code><a href="BossLevelGameArea.html" title="class in com.csse3200.game.areas">BossLevelGameArea</a></code>, <code><a href="../ui/cutscene/CutsceneArea.html" title="class in com.csse3200.game.ui.cutscene">CutsceneArea</a></code>, <code><a href="LevelOneGameArea.html" title="class in com.csse3200.game.areas">LevelOneGameArea</a></code>, <code><a href="LevelThreeGameArea.html" title="class in com.csse3200.game.areas">LevelThreeGameArea</a></code>, <code><a href="LevelTwoGameArea.html" title="class in com.csse3200.game.areas">LevelTwoGameArea</a></code>, <code><a href="SprintOneGameArea.html" title="class in com.csse3200.game.areas">SprintOneGameArea</a></code>, <code><a href="TemplateGameArea.html" title="class in com.csse3200.game.areas">TemplateGameArea</a></code>, <code><a href="TutorialGameArea.html" title="class in com.csse3200.game.areas">TutorialGameArea</a></code></dd>
+<dd><code><a href="BaseLevelGameArea.html" title="class in com.csse3200.game.areas">BaseLevelGameArea</a></code>, <code><a href="../ui/cutscene/CutsceneArea.html" title="class in com.csse3200.game.ui.cutscene">CutsceneArea</a></code>, <code><a href="TemplateGameArea.html" title="class in com.csse3200.game.areas">TemplateGameArea</a></code></dd>
 </dl>
 <hr>
 <div class="type-signature"><span class="modifiers">public abstract class </span><span class="element-name type-name-label">GameArea</span>
@@ -203,86 +203,89 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../events/EventHandler.html" title="class in com.csse3200.game.events">EventHandler</a></code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getEvents()" class="member-name-link">getEvents</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPlayer()" class="member-name-link">getPlayer</a>()</code></div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.math.GridPoint2</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getMapBounds()" class="member-name-link">getMapBounds</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#loadAssets()" class="member-name-link">loadAssets</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getPlayer()" class="member-name-link">getPlayer</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#loadAssets()" class="member-name-link">loadAssets</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Loads assets</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#loadEntities()" class="member-name-link">loadEntities</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#loadEntities()" class="member-name-link">loadEntities</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Loads all entities in a given area</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#loadPrerequisites()" class="member-name-link">loadPrerequisites</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#loadPrerequisites()" class="member-name-link">loadPrerequisites</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Loads prerequisites for each area.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#recordDeathLocation(com.badlogic.gdx.math.Vector2)" class="member-name-link">recordDeathLocation</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;location)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#recordDeathLocation(com.badlogic.gdx.math.Vector2)" class="member-name-link">recordDeathLocation</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;location)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Records the death location of the player (does NOT copy the location).</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#reset()" class="member-name-link">reset</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Resets the game area</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveComponents(com.csse3200.game.components.CombatStatsComponent,com.csse3200.game.components.player.InventoryComponent)" class="member-name-link">saveComponents</a><wbr>(<a href="../components/CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a>&nbsp;combatStats,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#saveComponents(com.csse3200.game.components.CombatStatsComponent,com.csse3200.game.components.player.InventoryComponent)" class="member-name-link">saveComponents</a><wbr>(<a href="../components/CombatStatsComponent.html" title="class in com.csse3200.game.components">CombatStatsComponent</a>&nbsp;combatStats,
  <a href="../components/player/InventoryComponent.html" title="class in com.csse3200.game.components.player">InventoryComponent</a>&nbsp;inventory)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Save a copy of all the components we want to store for resets/level switches.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDeathLocations(java.util.ArrayList)" class="member-name-link">setDeathLocations</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;com.badlogic.gdx.math.Vector2&gt;&nbsp;deathLocations)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDeathLocations(java.util.ArrayList)" class="member-name-link">setDeathLocations</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ArrayList.html" title="class or interface in java.util" class="external-link">ArrayList</a>&lt;com.badlogic.gdx.math.Vector2&gt;&nbsp;deathLocations)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the list of death locations.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDeathMarkerTexture(com.badlogic.gdx.graphics.Texture)" class="member-name-link">setDeathMarkerTexture</a><wbr>(com.badlogic.gdx.graphics.Texture&nbsp;texture)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setDeathMarkerTexture(com.badlogic.gdx.graphics.Texture)" class="member-name-link">setDeathMarkerTexture</a><wbr>(com.badlogic.gdx.graphics.Texture&nbsp;texture)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Sets the texture to use for the death marker.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnDeathMarker(com.badlogic.gdx.math.Vector2)" class="member-name-link">spawnDeathMarker</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;location)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnDeathMarker(com.badlogic.gdx.math.Vector2)" class="member-name-link">spawnDeathMarker</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;location)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Spawns a death marker at the given location.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnDeathMarkers()" class="member-name-link">spawnDeathMarkers</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnDeathMarkers()" class="member-name-link">spawnDeathMarkers</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Spawns a death marker at the death location.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnEntity(com.csse3200.game.entities.Entity)" class="member-name-link">spawnEntity</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnEntity(com.csse3200.game.entities.Entity)" class="member-name-link">spawnEntity</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Spawn entity at its current position</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnEntityAt(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.GridPoint2,boolean,boolean)" class="member-name-link">spawnEntityAt</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>protected void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#spawnEntityAt(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.GridPoint2,boolean,boolean)" class="member-name-link">spawnEntityAt</a><wbr>(<a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;entity,
  com.badlogic.gdx.math.GridPoint2&nbsp;tilePos,
  boolean&nbsp;centerX,
  boolean&nbsp;centerY)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Spawn entity on a given tile.</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract <a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#spawnPlayer()" class="member-name-link">spawnPlayer</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract <a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#spawnPlayer()" class="member-name-link">spawnPlayer</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Spawns player</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract <a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#spawnPlayer(java.util.List)" class="member-name-link">spawnPlayer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&gt;&nbsp;componentList)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code>protected abstract <a href="../entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3"><code><a href="#spawnPlayer(java.util.List)" class="member-name-link">spawnPlayer</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="../components/Component.html" title="class in com.csse3200.game.components">Component</a>&gt;&nbsp;componentList)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab3">
 <div class="block">Spawns player with previous components</div>
 </div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trigger(java.lang.String)" class="member-name-link">trigger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;eventName)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#trigger(java.lang.String)" class="member-name-link">trigger</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;eventName)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -374,6 +377,12 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <section class="detail" id="getEvents()">
 <h3>getEvents</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="../events/EventHandler.html" title="class in com.csse3200.game.events">EventHandler</a></span>&nbsp;<span class="element-name">getEvents</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getMapBounds()">
+<h3>getMapBounds</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">com.badlogic.gdx.math.GridPoint2</span>&nbsp;<span class="element-name">getMapBounds</span>()</div>
 </section>
 </li>
 <li>

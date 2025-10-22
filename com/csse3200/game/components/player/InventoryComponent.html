@@ -160,32 +160,42 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds one instance of the given item to the inventory.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItem(java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
-<div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">Prefer bagged version: addItem(Bag.INVENTORY, itemId).</div>
-</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addDirect(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)" class="member-name-link">addDirect</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
  <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Adds <code>amount</code> instances of itemId to the specified bag.</div>
+<div class="block">Adds the specified item directly into the given bag without applying
+ any collectable effects or config lookups.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItems(java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
- int&nbsp;amount)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
-<div class="block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">Prefer bagged version: addItems(Bag.INVENTORY, itemId, amount).</div>
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
 </div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItem(java.lang.String)" class="member-name-link">addItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds one instance of the given item to the inventory via addItems</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItem(java.lang.String,java.util.Map)" class="member-name-link">addItem</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;effectParams)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds one instance of the given item and passes per-instance effect params.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6"><code><a href="#addItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4 method-summary-table-tab6">
+<div class="block"><span class="deprecated-label">Deprecated.</span></div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#addItems(java.lang.String,int)" class="member-name-link">addItems</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Adds <code>amount</code> instances of itemId to the specified bag.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#existsAnywhere(java.lang.String)" class="member-name-link">existsAnywhere</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</code></div>
@@ -429,40 +439,102 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="addItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
+<section class="detail" id="addItem(java.lang.String)">
 <h3>addItem</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="block">Adds one instance of the given item to the inventory.
- <p>
- If the item's config has <code>autoConsume == true</code>, its effects are applied
- immediately and the item is not stored. Otherwise the item is added to the
- inventory stack; if it is not yet present, a new stack is created with count 1.
- </p></div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="block">Adds one instance of the given item to the inventory via addItems</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>bag</code> - which bag to modify</dd>
 <dd><code>itemId</code> - non-null item identifier (e.g., "key:door")</dd>
 <dt>Throws:</dt>
-<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if itemId is null</dd>
 </dl>
 </section>
 </li>
 <li>
-<section class="detail" id="addItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)">
+<section class="detail" id="addItems(java.lang.String,int)">
 <h3>addItems</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
  int&nbsp;amount)</span></div>
 <div class="block">Adds <code>amount</code> instances of itemId to the specified bag.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
-<dd><code>bag</code> - which bag to modify</dd>
 <dd><code>itemId</code> - non-null item identifier</dd>
 <dd><code>amount</code> - number of instances to add (must be &gt;= 0)</dd>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if bag or itemId is null</dd>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if amount is negative</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addItem(java.lang.String,java.util.Map)">
+<h3>addItem</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>,<wbr><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&gt;&gt;&nbsp;effectParams)</span></div>
+<div class="block">Adds one instance of the given item and passes per-instance effect params.
+ If the item is auto-consumable, effects are applied with the provided params.
+ If non-auto, it’s stored normally.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>itemId</code> - item identifier (e.g., "objective")</dd>
+<dd><code>effectParams</code> - effectType -&gt; (key -&gt; value), e.g. {"objective":{"target":"dash"}}</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addItem(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String)">
+<h3>addItem</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Add a single item to a specific bag.</div>
+</section>
+</li>
+<li>
+<section class="detail" id="addItems(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)">
+<h3>addItems</h3>
+<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
+</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</span></div>
+<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span></div>
+<div class="block">Add multiple items to a specific bag.
+
+ <p>If the config is non-auto-consumable, items are stored in the given <code>bag</code>.
+ If the config is auto-consumable, effects are applied immediately (the bag is ignored),
+ exactly <code>amount</code> times.</p></div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>bag</code> - destination bag (must not be null) for non-auto-consumables</dd>
+<dd><code>itemId</code> - item id (must not be null)</dd>
+<dd><code>amount</code> - number of items to add (must be &gt; 0)</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>bag</code> or <code>itemId</code> is null</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>amount</code> /le 0 or no config is found</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="addDirect(com.csse3200.game.components.player.InventoryComponent.Bag,java.lang.String,int)">
+<h3>addDirect</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addDirect</span><wbr><span class="parameters">(<a href="InventoryComponent.Bag.html" title="enum class in com.csse3200.game.components.player">InventoryComponent.Bag</a>&nbsp;bag,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
+ int&nbsp;amount)</span></div>
+<div class="block">Adds the specified item directly into the given bag without applying
+ any collectable effects or config lookups.
+ <p>
+ Intended for internal use by effects (e.g., upgrades) that must
+ place tokens in inventory without re-triggering the effect pipeline.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>bag</code> - the inventory bag to add the item to</dd>
+<dd><code>itemId</code> - the identifier of the item to add</dd>
+<dd><code>amount</code> - how many items to add (must be &gt; 0)</dd>
+<dt>Throws:</dt>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/NullPointerException.html" title="class or interface in java.lang" class="external-link">NullPointerException</a></code> - if <code>itemId</code> is null</dd>
+<dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>amount &lt;= 0</code></dd>
 </dl>
 </section>
 </li>
@@ -615,27 +687,6 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>total count across all bags (inventory + upgrades + objectives)</dd>
 </dl>
-</section>
-</li>
-<li>
-<section class="detail" id="addItem(java.lang.String)">
-<h3>addItem</h3>
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItem</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId)</span></div>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">Prefer bagged version: addItem(Bag.INVENTORY, itemId).</div>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="addItems(java.lang.String,int)">
-<h3>addItems</h3>
-<div class="member-signature"><span class="annotations"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/Deprecated.html" title="class or interface in java.lang" class="external-link">@Deprecated</a>
-</span><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">addItems</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;itemId,
- int&nbsp;amount)</span></div>
-<div class="deprecation-block"><span class="deprecated-label">Deprecated.</span>
-<div class="deprecation-comment">Prefer bagged version: addItems(Bag.INVENTORY, itemId, amount).</div>
-</div>
 </section>
 </li>
 <li>

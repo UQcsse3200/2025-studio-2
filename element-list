@@ -14,6 +14,7 @@ com.csse3200.game.components.deathscreen
 com.csse3200.game.components.enemy
 com.csse3200.game.components.gamearea
 com.csse3200.game.components.inventory
+com.csse3200.game.components.ladders
 com.csse3200.game.components.lasers
 com.csse3200.game.components.leaderboardpage
 com.csse3200.game.components.lighting

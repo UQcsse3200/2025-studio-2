@@ -117,14 +117,19 @@ loadScripts(document, 'script');</script>
  <a href="../configs/LevelConfig.E.html" title="class in com.csse3200.game.entities.configs">LevelConfig.E</a>&nbsp;a)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register(java.lang.String,com.csse3200.game.entities.spawn.EntitySpawner)" class="member-name-link">register</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
- <a href="EntitySpawner.html" title="interface in com.csse3200.game.entities.spawn">EntitySpawner</a>&nbsp;spawner)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#clear()" class="member-name-link">clear</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Registers a spawner under a given type identifier.</div>
+<div class="block">Clears all registered spawners.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unregister(java.lang.String)" class="member-name-link">unregister</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#register(java.lang.String,com.csse3200.game.entities.spawn.EntitySpawner)" class="member-name-link">register</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type,
+ <a href="EntitySpawner.html" title="interface in com.csse3200.game.entities.spawn">EntitySpawner</a>&nbsp;spawner)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Registers a spawner under a given type identifier.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#unregister(java.lang.String)" class="member-name-link">unregister</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;type)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Removes a spawner from the registry.</div>
 </div>
 </div>
@@ -173,6 +178,13 @@ loadScripts(document, 'script');</script>
 <dt>Parameters:</dt>
 <dd><code>type</code> - the type identifier of the spawner to remove</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="clear()">
+<h3>clear</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">clear</span>()</div>
+<div class="block">Clears all registered spawners.</div>
 </section>
 </li>
 </ul>

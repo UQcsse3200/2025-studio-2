@@ -112,44 +112,6 @@ loadScripts(document, 'script');</script>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new collectable entity instance based on its configuration ID.</div>
 </div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createDashUpgrade()" class="member-name-link">createDashUpgrade</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Builds a collectable upgrade that enable the dash ability</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createGlideUpgrade()" class="member-name-link">createGlideUpgrade</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Build a new collectable glider upgrade that enables the glide ability</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createJetpackUpgrade()" class="member-name-link">createJetpackUpgrade</a>()</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Builds a new collectable grappler upgrade that enables the grapple ability</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createKey(java.lang.String)" class="member-name-link">createKey</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;target)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Builds a collectable key for <code>target</code>.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createObjective(java.lang.String)" class="member-name-link">createObjective</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates an invisible objective pickup with a large sensor collider.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createObjective(java.lang.String,float,float)" class="member-name-link">createObjective</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId,
- float&nbsp;width,
- float&nbsp;height)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates an invisible objective pickup with a custom sensor size (world units).</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createPrompt(java.lang.String,int,float,float)" class="member-name-link">createPrompt</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;promptMessage,
- int&nbsp;duration,
- float&nbsp;width,
- float&nbsp;height)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -178,7 +140,7 @@ loadScripts(document, 'script');</script>
  <ul>
    <li>A static <a href="../../physics/components/PhysicsComponent.html" title="class in com.csse3200.game.physics.components"><code>PhysicsComponent</code></a> and <a href="../../physics/components/ColliderComponent.html" title="class in com.csse3200.game.physics.components"><code>ColliderComponent</code></a> configured
        as a sensor obstacle.</li>
-   <li>A <a href="../../components/collectables/CollectableComponentV2.html" title="class in com.csse3200.game.components.collectables"><code>CollectableComponentV2</code></a> to handle collisions and inventory logic.</li>
+   <li>A <a href="../../components/collectables/CollectableComponent.html" title="class in com.csse3200.game.components.collectables"><code>CollectableComponent</code></a> to handle collisions and inventory logic.</li>
    <li>Visual representation from either an animated <a href="../../rendering/AnimationRenderComponent.html" title="class in com.csse3200.game.rendering"><code>AnimationRenderComponent</code></a>
        if a sprite atlas is provided, or a <a href="../../rendering/TextureRenderComponent.html" title="class in com.csse3200.game.rendering"><code>TextureRenderComponent</code></a> for static
        images.</li>
@@ -192,110 +154,6 @@ loadScripts(document, 'script');</script>
 <dt>Throws:</dt>
 <dd><code><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/IllegalArgumentException.html" title="class or interface in java.lang" class="external-link">IllegalArgumentException</a></code> - if <code>itemId</code> is not registered</dd>
 </dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createKey(java.lang.String)">
-<h3>createKey</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createKey</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;target)</span></div>
-<div class="block">Builds a collectable key for <code>target</code>.</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a new key entity</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../components/collectables/KeyComponent.html" title="class in com.csse3200.game.components.collectables"><code>KeyComponent</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createDashUpgrade()">
-<h3>createDashUpgrade</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createDashUpgrade</span>()</div>
-<div class="block">Builds a collectable upgrade that enable the dash ability</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a new upgrade entity</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../components/collectables/UpgradesComponent.html" title="class in com.csse3200.game.components.collectables"><code>UpgradesComponent</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createGlideUpgrade()">
-<h3>createGlideUpgrade</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createGlideUpgrade</span>()</div>
-<div class="block">Build a new collectable glider upgrade that enables the glide ability</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a new upgrade entity</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../components/collectables/UpgradesComponent.html" title="class in com.csse3200.game.components.collectables"><code>UpgradesComponent</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createJetpackUpgrade()">
-<h3>createJetpackUpgrade</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createJetpackUpgrade</span>()</div>
-<div class="block">Builds a new collectable grappler upgrade that enables the grapple ability</div>
-<dl class="notes">
-<dt>Returns:</dt>
-<dd>a new upgrade entity</dd>
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../components/collectables/UpgradesComponent.html" title="class in com.csse3200.game.components.collectables"><code>UpgradesComponent</code></a></li>
-</ul>
-</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createObjective(java.lang.String)">
-<h3>createObjective</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createObjective</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId)</span></div>
-<div class="block">Creates an invisible objective pickup with a large sensor collider.
- Default footprint is 2x2 world units (might tweak)</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>objectiveId</code> - id routed through switch in ObjectiveCollectableComponent (e.g., "obj:plans")</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createObjective(java.lang.String,float,float)">
-<h3>createObjective</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createObjective</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;objectiveId,
- float&nbsp;width,
- float&nbsp;height)</span></div>
-<div class="block">Creates an invisible objective pickup with a custom sensor size (world units).</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>objectiveId</code> - id routed through switch in ObjectiveCollectableComponent</dd>
-<dd><code>width</code> - collider width in world units</dd>
-<dd><code>height</code> - collider height in world units</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createPrompt(java.lang.String,int,float,float)">
-<h3>createPrompt</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createPrompt</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;promptMessage,
- int&nbsp;duration,
- float&nbsp;width,
- float&nbsp;height)</span></div>
 </section>
 </li>
 </ul>
