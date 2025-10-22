@@ -24,7 +24,10 @@ public class TutorialMenuScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(TutorialMenuScreen.class);
   private final String[] tutorialMenuTextures = {
       "images/superintelligence_menu_background.png",
-      "images/key.png"
+      "images/key.png",
+      "images/dash_powerup.png",
+      "images/glide_powerup.png",
+      "images/jetpack_powerup.png"
   };
   
   private final String[] tutorialMenuAtlases = {

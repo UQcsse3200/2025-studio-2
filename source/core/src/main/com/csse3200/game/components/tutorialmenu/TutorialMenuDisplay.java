@@ -290,7 +290,7 @@ public class TutorialMenuDisplay extends UIComponent {
         showItemsContent();
         break;
       case "upgrades":
-        showMechanicsContent();
+        showUpgradesContent();
         break;
       case "levelmechanics":
         showLevelMechanicsContent();
@@ -432,6 +432,33 @@ public class TutorialMenuDisplay extends UIComponent {
     }
 
     /**
+     * Helper to add an upgrade column with a single upgrade sprite.
+     */
+    private void addUpgradeColumn(Table upgradesTable, String upgradeTexturePath, 
+                                   String upgradeName, String description) {
+        Texture upgradeTexture = ServiceLocator.getResourceService()
+                .getAsset(upgradeTexturePath, Texture.class);
+        
+        Image upgradeImage = new Image(upgradeTexture);
+
+        Table column = new Table();
+        column.add(upgradeImage).size(216, 216).padBottom(15).center().row();
+
+        Label nameLabel = new Label(upgradeName, skin);
+        nameLabel.setFontScale(1.3f);
+        nameLabel.setColor(Color.YELLOW);
+        column.add(nameLabel).center().padTop(5).row();
+
+        Label descLabel = new Label(description, skin);
+        descLabel.setFontScale(1.0f);
+        descLabel.setWrap(true);
+        descLabel.setAlignment(Align.center);
+        column.add(descLabel).width(250).center().padTop(5).row();
+
+        upgradesTable.add(column).padLeft(100).padRight(120).padBottom(10).expandX().fillX();
+    }
+
+    /**
      * Creates a styled sidebar button with hover scaling and click handling.
      */
     private TextButton createSidebarButton(String text, Runnable onClick) {
@@ -503,13 +530,18 @@ public class TutorialMenuDisplay extends UIComponent {
     
     contentTable.add(itemsTable).left().colspan(2).row();
     
+    // Get inventory keybind
+    int inventoryKey = Keymap.getActionKeyCode("PauseInventory");
+    String inventoryKeyName = Input.Keys.toString(inventoryKey);
+    
     // Informational text with markup
     String markedUpText =
             """
             Collect items throughout your journey to aid your survival!
     
             Some items are [RED]auto-consumed[] when collected, while others can be stored in your inventory.
-            """;
+            
+            You can view collected items by accessing your inventory with [RED]""" + inventoryKeyName + "[].";
     
     Label infoText = new Label(markedUpText, skin);
     infoText.setFontScale(1.2f);
@@ -524,15 +556,54 @@ public class TutorialMenuDisplay extends UIComponent {
   /**
    * Displays content for "Upgrades" section
    */
-  private void showMechanicsContent() {
+  private void showUpgradesContent() {
     Label sectionTitle = new Label("Upgrades", skin);
     sectionTitle.setFontScale(1.5f);
     sectionTitle.setColor(Color.GREEN);
     contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
-    // Placeholder content
-    Label placeholder = new Label("upgrades", skin);
-    contentTable.add(placeholder).left().colspan(2).row();
+    // Create table for upgrade sprites
+    Table upgradesTable = new Table();
+    
+    // Get keybinds dynamically
+    int dashKey = Keymap.getActionKeyCode("PlayerDash");
+    String dashKeyName = Input.Keys.toString(dashKey);
+    
+    int glideKey = Keymap.getActionKeyCode("Glide");
+    String glideKeyName = Input.Keys.toString(glideKey);
+    
+    int jumpKey = Keymap.getActionKeyCode("PlayerJump");
+    String jumpKeyName = Input.Keys.toString(jumpKey);
+    
+    // Add each upgrade column with powerup sprites
+    addUpgradeColumn(upgradesTable, "images/dash_powerup.png", 
+        "Dash", "[RED]" + dashKeyName + "[]\nQuickly dash forward to dodge enemies and manoeuvre past obstacles.");
+    addUpgradeColumn(upgradesTable, "images/glide_powerup.png", 
+        "Glider", "[RED]" + glideKeyName + " (hold)[]\nGlide through the air and reach distant platforms.");
+    addUpgradeColumn(upgradesTable, "images/jetpack_powerup.png", 
+        "Jetpack", "[RED]" + jumpKeyName + " (double tap)[]\nFly through the air with enhanced vertical mobility.");
+    
+    contentTable.add(upgradesTable).left().colspan(2).row();
+    
+    // Get upgrades menu keybind
+    int upgradesKey = Keymap.getActionKeyCode("PauseUpgrades");
+    String upgradesKeyName = Input.Keys.toString(upgradesKey);
+    
+    // Informational text with markup
+    String markedUpText =
+            """
+            Unlock upgrades to enhance your movement abilities! These upgrades can be collected throughout the world.
+            
+            You can view collected upgrades by pressing [RED]""" + upgradesKeyName + "[].";
+    
+    Label infoText = new Label(markedUpText, skin);
+    infoText.setFontScale(1.2f);
+    infoText.setWrap(true);
+    Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+    markupStyle.fontColor = Color.WHITE;
+    infoText.setStyle(markupStyle);
+    
+    contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
   }
 
   /**
