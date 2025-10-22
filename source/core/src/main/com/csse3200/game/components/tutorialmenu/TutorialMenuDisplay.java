@@ -627,11 +627,11 @@ public class TutorialMenuDisplay extends UIComponent {
     // First row: Buttons, Moveable Boxes, Pressure Plates, Ladders (preserve aspect ratio)
     addDisplayColumn(mechanicsRow1,
         new AssetConfig("images/button.png", false, null),
-        new InfoConfig("Buttons", getKeybindText("PlayerInteract") + "\nInteract to activate mechanisms."),
+        new InfoConfig("Buttons", getKeybindText("PlayerInteract") + " [RED](interact)[]\nInteract to activate mechanisms."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow1,
         new AssetConfig("images/cube.png", false, null),
-        new InfoConfig("Moveable Boxes", getKeybindText("PlayerInteract") + "\nPick up and place to solve puzzles."),
+        new InfoConfig("Moveable Boxes", getKeybindText("PlayerInteract") + " [RED](interact)[]\nPick up and place to solve puzzles."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow1,
         new AssetConfig("images/plate.png", false, null),
@@ -639,10 +639,10 @@ public class TutorialMenuDisplay extends UIComponent {
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow1,
         new AssetConfig("images/ladder.png", false, null),
-        new InfoConfig("Ladders", getKeybindText("PlayerUp") + " (hold)\nClimb to reach higher areas."),
+        new InfoConfig("Ladders", getKeybindText("PlayerUp") + " [RED](hold)[]\nClimb to reach higher areas."),
         new ScalingConfig(175, 175, true, 40, 40));
     
-    contentTable.add(mechanicsRow1).left().colspan(2).row();
+    contentTable.add(mechanicsRow1).left().colspan(2).padBottom(30).row();
     
     // Create table for second row of mechanics
     Table mechanicsRow2 = new Table();
@@ -657,20 +657,22 @@ public class TutorialMenuDisplay extends UIComponent {
         new InfoConfig("Spikes", "Deals damage and knocks player back."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow2,
-        new AssetConfig("images/terminal_on.png", false, null),
-        new InfoConfig("Minigame Terminals", getKeybindText("PlayerInteract") + "\nComplete minigames to progress."),
+        new AssetConfig("images/animated-monitors.atlas", true, "terminal"),
+        new InfoConfig("Minigame Terminals", getKeybindText("PlayerInteract") + " [RED](interact)[]\nComplete minigames to progress."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow2,
         new AssetConfig("images/doors.atlas", true, "door_closed"),
-        new InfoConfig("Doors", getKeybindText("PlayerInteract") + "\nRequires key. Level exit."),
+        new InfoConfig("Doors", getKeybindText("PlayerInteract") + " [RED](interact)[]\nRequires key. Level exit."),
         new ScalingConfig(175, 175, true, 40, 40));
     
-    contentTable.add(mechanicsRow2).left().colspan(2).row();
+    contentTable.add(mechanicsRow2).left().colspan(2).padBottom(30).row();
     
     // Informational text with markup
     String markedUpText =
             """
-            Master these mechanics to navigate through the facility and overcome obstacles!
+            Use these mechanics to navigate through certain obstacles and complete the level!
+
+            Some of these mechanics can be seen in the practice level. Access this via the [GREEN]Practice![] button on the left.
             """;
     
     Label infoText = new Label(markedUpText, skin);
