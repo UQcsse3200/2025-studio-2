@@ -35,9 +35,69 @@ import org.slf4j.LoggerFactory;
  */
 public class TutorialMenuDisplay extends UIComponent {
   private static final Logger logger = LoggerFactory.getLogger(TutorialMenuDisplay.class);
+  
+  // Section identifiers
+  private static final String SECTION_BASICS = "basics";
+  private static final String SECTION_ITEMS = "items";
+  private static final String SECTION_UPGRADES = "upgrades";
+  private static final String SECTION_LEVEL_MECHANICS = "levelmechanics";
+  private static final String SECTION_ENEMIES = "enemies";
+  private static final String SECTION_LORE = "lore";
+  
+  // Asset paths - Atlases
+  private static final String PLAYER_ATLAS = "images/PLAYER.atlas";
+  private static final String DRONE_ATLAS = "images/drone.atlas";
+  private static final String HEALTH_POTION_ATLAS = "images/health-potion.atlas";
+  private static final String SPEED_POTION_ATLAS = "images/speed-potion.atlas";
+  private static final String SLOW_POTION_ATLAS = "images/slow-potion.atlas";
+  private static final String FLYING_BAT_ATLAS = "images/flying_bat.atlas";
+  private static final String LASER_ATLAS = "images/laser.atlas";
+  private static final String MONITORS_ATLAS = "images/animated-monitors.atlas";
+  private static final String DOORS_ATLAS = "images/doors.atlas";
+  
+  // Asset paths - Images
+  private static final String BACKGROUND_IMAGE = "images/superintelligence_menu_background.png";
+  private static final String KEY_IMAGE = "images/key.png";
+  private static final String DASH_POWERUP_IMAGE = "images/dash_powerup.png";
+  private static final String GLIDE_POWERUP_IMAGE = "images/glide_powerup.png";
+  private static final String JETPACK_POWERUP_IMAGE = "images/jetpack_powerup.png";
+  private static final String BUTTON_IMAGE = "images/button.png";
+  private static final String CUBE_IMAGE = "images/cube.png";
+  private static final String PLATE_IMAGE = "images/plate.png";
+  private static final String LADDER_IMAGE = "images/ladder.png";
+  private static final String SPIKES_IMAGE = "images/spikes_sprite.png";
+  private static final String TERMINAL_ON_IMAGE = "images/terminal_on.png";
+  private static final String LOST_HARDWARE_IMAGE = "images/lost_hardware.png";
+  
+  // Animation regions
+  private static final String COLLECTABLE_SPIN_ANIMATION = "collectable-spin";
+  private static final String PLAYER_LEFT_ANIMATION = "LEFT";
+  private static final String PLAYER_RIGHT_ANIMATION = "RIGHT";
+  private static final String PLAYER_CROUCH_ANIMATION = "CROUCH";
+  private static final String PLAYER_JUMP_ANIMATION = "JUMP";
+  private static final String LASER_ON_ANIMATION = "laser-on";
+  private static final String TERMINAL_ANIMATION = "terminal";
+  private static final String DOOR_CLOSED_ANIMATION = "door_closed";
+  private static final String FLYING_BAT_ANIMATION = "flying_bat";
+  private static final String DRONE_ANGRY_FLOAT_ANIMATION = "angry_float";
+  private static final String DRONE_DROP_ANIMATION = "drop";
+  private static final String DRONE_TELEPORT_ANIMATION = "teleport";
+  
+  // Action keys
+  private static final String ACTION_PLAYER_INTERACT = "PlayerInteract";
+  private static final String ACTION_PLAYER_LEFT = "PlayerLeft";
+  private static final String ACTION_PLAYER_RIGHT = "PlayerRight";
+  private static final String ACTION_PLAYER_CROUCH = "PlayerCrouch";
+  private static final String ACTION_PLAYER_JUMP = "PlayerJump";
+  private static final String ACTION_PLAYER_DASH = "PlayerDash";
+  private static final String ACTION_PLAYER_UP = "PlayerUp";
+  private static final String ACTION_PAUSE_INVENTORY = "PauseInventory";
+  private static final String ACTION_PAUSE_UPGRADES = "PauseUpgrades";
+  private static final String ACTION_PAUSE_CODEX = "PauseCodex";
+  
   private final GdxGame game;
   private Table contentTable;
-  private String currentSection = "basics";
+  private String currentSection = SECTION_BASICS;
   
   // Track buttons to highlight the active one
   private TextButton basicsBtn;
@@ -61,7 +121,7 @@ public class TutorialMenuDisplay extends UIComponent {
     // Background image
     Image background = new Image(
         ServiceLocator.getResourceService()
-            .getAsset("images/superintelligence_menu_background.png", Texture.class));
+            .getAsset(BACKGROUND_IMAGE, Texture.class));
     background.setFillParent(true);
     stage.addActor(background);
 
@@ -131,38 +191,38 @@ public class TutorialMenuDisplay extends UIComponent {
 
       // Category buttons
       basicsBtn = createSidebarButton("The Basics", () -> {
-          currentSection = "basics";
+          currentSection = SECTION_BASICS;
           updateContent(currentSection);
           updateButtonHighlight();
       });
 
       itemsBtn = createSidebarButton("Items", () -> {
-          currentSection = "items";
+          currentSection = SECTION_ITEMS;
           updateContent(currentSection);
           updateButtonHighlight();
       });
 
       upgradesBtn = createSidebarButton("Upgrades", () -> {
-          currentSection = "upgrades";
+          currentSection = SECTION_UPGRADES;
           updateContent(currentSection);
           updateButtonHighlight();
       });
 
       levelMechanicsBtn = createSidebarButton("Level Mechanics", () -> {
-          currentSection = "levelmechanics";
+          currentSection = SECTION_LEVEL_MECHANICS;
           updateContent(currentSection);
           updateButtonHighlight();
       });
       levelMechanicsBtn.getLabel().setFontScale(0.85f);
 
       enemiesBtn = createSidebarButton("Enemies", () -> {
-          currentSection = "enemies";
+          currentSection = SECTION_ENEMIES;
           updateContent(currentSection);
           updateButtonHighlight();
       });
 
       loreBtn = createSidebarButton("Lore", () -> {
-          currentSection = "lore";
+          currentSection = SECTION_LORE;
           updateContent(currentSection);
           updateButtonHighlight();
       });
@@ -268,22 +328,23 @@ public class TutorialMenuDisplay extends UIComponent {
         loreBtn.setColor(Color.WHITE);
 
         switch (currentSection) {
-            case "basics" -> basicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            case "items" -> itemsBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            case "upgrades" -> upgradesBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            case "levelmechanics" -> levelMechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            case "enemies" -> enemiesBtn.setColor(new Color(0f, 1f, 0f, 1f));
-            case "lore" -> loreBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case SECTION_BASICS -> basicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case SECTION_ITEMS -> itemsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case SECTION_UPGRADES -> upgradesBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case SECTION_LEVEL_MECHANICS -> levelMechanicsBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case SECTION_ENEMIES -> enemiesBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            case SECTION_LORE -> loreBtn.setColor(new Color(0f, 1f, 0f, 1f));
+            default -> {} // No action needed for unknown sections
         }
     }
 
     private boolean isActiveButton(TextButton button) {
-        return (currentSection.equals("basics") && button == basicsBtn)
-                || (currentSection.equals("items") && button == itemsBtn)
-                || (currentSection.equals("upgrades") && button == upgradesBtn)
-                || (currentSection.equals("levelmechanics") && button == levelMechanicsBtn)
-                || (currentSection.equals("enemies") && button == enemiesBtn)
-                || (currentSection.equals("lore") && button == loreBtn);
+        return (currentSection.equals(SECTION_BASICS) && button == basicsBtn)
+                || (currentSection.equals(SECTION_ITEMS) && button == itemsBtn)
+                || (currentSection.equals(SECTION_UPGRADES) && button == upgradesBtn)
+                || (currentSection.equals(SECTION_LEVEL_MECHANICS) && button == levelMechanicsBtn)
+                || (currentSection.equals(SECTION_ENEMIES) && button == enemiesBtn)
+                || (currentSection.equals(SECTION_LORE) && button == loreBtn);
     }
 
 
@@ -296,26 +357,13 @@ public class TutorialMenuDisplay extends UIComponent {
     contentTable.clear();
     
     switch (section) {
-      case "basics":
-        showBasicsContent();
-        break;
-      case "items":
-        showItemsContent();
-        break;
-      case "upgrades":
-        showUpgradesContent();
-        break;
-      case "levelmechanics":
-        showLevelMechanicsContent();
-        break;
-      case "enemies":
-        showEnemiesContent();
-        break;
-      case "lore":
-        showLoreContent();
-        break;
-      default:
-        showBasicsContent();
+      case SECTION_BASICS -> showBasicsContent();
+      case SECTION_ITEMS -> showItemsContent();
+      case SECTION_UPGRADES -> showUpgradesContent();
+      case SECTION_LEVEL_MECHANICS -> showLevelMechanicsContent();
+      case SECTION_ENEMIES -> showEnemiesContent();
+      case SECTION_LORE -> showLoreContent();
+      default -> showBasicsContent();
     }
   }
 
@@ -501,20 +549,20 @@ public class TutorialMenuDisplay extends UIComponent {
 
         // Add each movement control with animated sprites and keybinds
         addDisplayColumn(spriteTable, 
-                new AssetConfig("images/PLAYER.atlas", true, "LEFT"),
-                new InfoConfig("Move Left", getKeybindText("PlayerLeft") + "\nMove your character to the left."),
+                new AssetConfig(PLAYER_ATLAS, true, PLAYER_LEFT_ANIMATION),
+                new InfoConfig("Move Left", getKeybindText(ACTION_PLAYER_LEFT) + "\nMove your character to the left."),
                 new ScalingConfig(288, 216, false, 35, 35));
         addDisplayColumn(spriteTable,
-                new AssetConfig("images/PLAYER.atlas", true, "RIGHT"),
-                new InfoConfig("Move Right", getKeybindText("PlayerRight") + "\nMove your character to the right."),
+                new AssetConfig(PLAYER_ATLAS, true, PLAYER_RIGHT_ANIMATION),
+                new InfoConfig("Move Right", getKeybindText(ACTION_PLAYER_RIGHT) + "\nMove your character to the right."),
                 new ScalingConfig(288, 216, false, 35, 35));
         addDisplayColumn(spriteTable,
-                new AssetConfig("images/PLAYER.atlas", true, "CROUCH"),
-                new InfoConfig("Crouch", getKeybindText("PlayerCrouch") + "\nFit through tight spaces."),
+                new AssetConfig(PLAYER_ATLAS, true, PLAYER_CROUCH_ANIMATION),
+                new InfoConfig("Crouch", getKeybindText(ACTION_PLAYER_CROUCH) + "\nFit through tight spaces."),
                 new ScalingConfig(288, 216, false, 35, 35));
         addDisplayColumn(spriteTable,
-                new AssetConfig("images/PLAYER.atlas", true, "JUMP"),
-                new InfoConfig("Jump", getKeybindText("PlayerJump") + "\nReach higher platforms. Double-tap for double-jump!"),
+                new AssetConfig(PLAYER_ATLAS, true, PLAYER_JUMP_ANIMATION),
+                new InfoConfig("Jump", getKeybindText(ACTION_PLAYER_JUMP) + "\nReach higher platforms. Double-tap for double-jump!"),
                 new ScalingConfig(288, 216, false, 35, 35));
 
         contentTable.add(spriteTable).left().colspan(2).row();
@@ -549,19 +597,19 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // Add each item column (animated atlases and static texture)
     addDisplayColumn(itemsTable,
-            new AssetConfig("images/health-potion.atlas", true, "collectable-spin"),
+            new AssetConfig(HEALTH_POTION_ATLAS, true, COLLECTABLE_SPIN_ANIMATION),
             new InfoConfig("Health Potion", "Restores HP when collected."),
             new ScalingConfig(216, 216, false, 35, 70));
     addDisplayColumn(itemsTable,
-            new AssetConfig("images/speed-potion.atlas", true, "collectable-spin"),
+            new AssetConfig(SPEED_POTION_ATLAS, true, COLLECTABLE_SPIN_ANIMATION),
             new InfoConfig("Speed Boost", "Temporarily increases your movement speed."),
             new ScalingConfig(216, 216, false, 35, 70));
     addDisplayColumn(itemsTable,
-            new AssetConfig("images/slow-potion.atlas", true, "collectable-spin"),
+            new AssetConfig(SLOW_POTION_ATLAS, true, COLLECTABLE_SPIN_ANIMATION),
             new InfoConfig("Slow Potion", "Slows down nearby enemies temporarily."),
             new ScalingConfig(216, 216, false, 35, 70));
     addDisplayColumn(itemsTable,
-            new AssetConfig("images/key.png", false, null),
+            new AssetConfig(KEY_IMAGE, false, null),
             new InfoConfig("Key Card", "Required to unlock doors and progress."),
             new ScalingConfig(216, 216, false, 35, 70));
     
@@ -574,7 +622,7 @@ public class TutorialMenuDisplay extends UIComponent {
     
             Some items are [RED]auto-consumed[] when collected, while others can be stored in your inventory.
             
-            You can view collected items by accessing your inventory with """ + " " + getKeybindText("PauseInventory") + ".";
+            You can view collected items by accessing your inventory with """ + " " + getKeybindText(ACTION_PAUSE_INVENTORY) + ".";
     
     Label infoText = new Label(markedUpText, skin);
     infoText.setFontScale(1.2f);
@@ -600,16 +648,16 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // Add each upgrade column with powerup sprites (static textures)
     addDisplayColumn(upgradesTable,
-        new AssetConfig("images/dash_powerup.png", false, null),
-        new InfoConfig("Dash", getKeybindText("PlayerDash") + "\nQuickly dash forward to dodge enemies and manoeuvre past obstacles."),
+        new AssetConfig(DASH_POWERUP_IMAGE, false, null),
+        new InfoConfig("Dash", getKeybindText(ACTION_PLAYER_DASH) + "\nQuickly dash forward to dodge enemies and manoeuvre past obstacles."),
         new ScalingConfig(216, 216, false, 100, 120));
     addDisplayColumn(upgradesTable,
-        new AssetConfig("images/glide_powerup.png", false, null),
+        new AssetConfig(GLIDE_POWERUP_IMAGE, false, null),
         new InfoConfig("Glider", getKeybindText("Glide") + " (hold)\nGlide through the air and reach distant platforms."),
         new ScalingConfig(216, 216, false, 100, 120));
     addDisplayColumn(upgradesTable,
-        new AssetConfig("images/jetpack_powerup.png", false, null),
-        new InfoConfig("Jetpack", getKeybindText("PlayerJump") + " (double tap)\nFly through the air with enhanced vertical mobility."),
+        new AssetConfig(JETPACK_POWERUP_IMAGE, false, null),
+        new InfoConfig("Jetpack", getKeybindText(ACTION_PLAYER_JUMP) + " (double tap)\nFly through the air with enhanced vertical mobility."),
         new ScalingConfig(216, 216, false, 100, 120));
     
     contentTable.add(upgradesTable).left().colspan(2).row();
@@ -619,7 +667,7 @@ public class TutorialMenuDisplay extends UIComponent {
             """
             Unlock upgrades to enhance your movement abilities! These upgrades can be collected throughout the world.
             
-            You can view collected upgrades by pressing """ + " " + getKeybindText("PauseUpgrades") + ".";
+            You can view collected upgrades by pressing """ + " " + getKeybindText(ACTION_PAUSE_UPGRADES) + ".";
     
     Label infoText = new Label(markedUpText, skin);
     infoText.setFontScale(1.2f);
@@ -645,20 +693,20 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // First row: Buttons, Moveable Boxes, Pressure Plates, Ladders (preserve aspect ratio)
     addDisplayColumn(mechanicsRow1,
-        new AssetConfig("images/button.png", false, null),
-        new InfoConfig("Buttons", getKeybindText("PlayerInteract") + " [RED](interact)[]\nInteract to activate mechanisms."),
+        new AssetConfig(BUTTON_IMAGE, false, null),
+        new InfoConfig("Buttons", getKeybindText(ACTION_PLAYER_INTERACT) + " [RED](interact)[]\nInteract to activate mechanisms."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow1,
-        new AssetConfig("images/cube.png", false, null),
-        new InfoConfig("Moveable Boxes", getKeybindText("PlayerInteract") + " [RED](interact)[]\nPick up and place to solve puzzles."),
+        new AssetConfig(CUBE_IMAGE, false, null),
+        new InfoConfig("Moveable Boxes", getKeybindText(ACTION_PLAYER_INTERACT) + " [RED](interact)[]\nPick up and place to solve puzzles."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow1,
-        new AssetConfig("images/plate.png", false, null),
+        new AssetConfig(PLATE_IMAGE, false, null),
         new InfoConfig("Pressure Plates", "Press with player or box to activate."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow1,
-        new AssetConfig("images/ladder.png", false, null),
-        new InfoConfig("Ladders", getKeybindText("PlayerUp") + " [RED](hold)[]\nClimb to reach higher areas."),
+        new AssetConfig(LADDER_IMAGE, false, null),
+        new InfoConfig("Ladders", getKeybindText(ACTION_PLAYER_UP) + " [RED](hold)[]\nClimb to reach higher areas."),
         new ScalingConfig(175, 175, true, 40, 40));
     
     contentTable.add(mechanicsRow1).left().colspan(2).padBottom(30).row();
@@ -668,20 +716,20 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // Second row: Lasers, Spikes, Minigame Terminals, Doors (preserve aspect ratio)
     addDisplayColumn(mechanicsRow2,
-        new AssetConfig("images/laser.atlas", true, "laser-on"),
+        new AssetConfig(LASER_ATLAS, true, LASER_ON_ANIMATION),
         new InfoConfig("Lasers", "Damages player. Can be blocked with boxes."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow2,
-        new AssetConfig("images/spikes_sprite.png", false, null),
+        new AssetConfig(SPIKES_IMAGE, false, null),
         new InfoConfig("Spikes", "Deals damage and knocks player back."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow2,
-        new AssetConfig("images/animated-monitors.atlas", true, "terminal"),
-        new InfoConfig("Minigame Terminals", getKeybindText("PlayerInteract") + " [RED](interact)[]\nComplete minigames to progress."),
+        new AssetConfig(MONITORS_ATLAS, true, TERMINAL_ANIMATION),
+        new InfoConfig("Minigame Terminals", getKeybindText(ACTION_PLAYER_INTERACT) + " [RED](interact)[]\nComplete minigames to progress."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(mechanicsRow2,
-        new AssetConfig("images/doors.atlas", true, "door_closed"),
-        new InfoConfig("Doors", getKeybindText("PlayerInteract") + " [RED](interact)[]\nRequires key. Level exit."),
+        new AssetConfig(DOORS_ATLAS, true, DOOR_CLOSED_ANIMATION),
+        new InfoConfig("Doors", getKeybindText(ACTION_PLAYER_INTERACT) + " [RED](interact)[]\nRequires key. Level exit."),
         new ScalingConfig(175, 175, true, 40, 40));
     
     contentTable.add(mechanicsRow2).left().colspan(2).padBottom(30).row();
@@ -718,19 +766,19 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // Add all enemies in one row
     addDisplayColumn(enemiesTable,
-        new AssetConfig("images/flying_bat.atlas", true, "flying_bat"),
+        new AssetConfig(FLYING_BAT_ATLAS, true, FLYING_BAT_ANIMATION),
         new InfoConfig("Flying Bat", "Patrols an area with quick movements!"),
         new ScalingConfig(175, 175, true, 35, 35));
     addDisplayColumn(enemiesTable,
-        new AssetConfig("images/drone.atlas", true, "angry_float"),
+        new AssetConfig(DRONE_ATLAS, true, DRONE_ANGRY_FLOAT_ANIMATION),
         new InfoConfig("Patrolling Drone", "Tracks the player and self-destructs in close vicinity!"),
         new ScalingConfig(175, 175, true, 35, 35));
     addDisplayColumn(enemiesTable,
-        new AssetConfig("images/drone.atlas", true, "drop"),
+        new AssetConfig(DRONE_ATLAS, true, DRONE_DROP_ANIMATION),
         new InfoConfig("Bomber Drone", "Drops explosives from above!"),
         new ScalingConfig(175, 175, true, 35, 35));
     addDisplayColumn(enemiesTable,
-        new AssetConfig("images/drone.atlas", true, "teleport"),
+        new AssetConfig(DRONE_ATLAS, true, DRONE_TELEPORT_ANIMATION),
         new InfoConfig("Drone Behaviour", "Returns to patrol zone after losing the player."),
         new ScalingConfig(175, 175, true, 35, 35));
     
@@ -772,11 +820,11 @@ public class TutorialMenuDisplay extends UIComponent {
     
     // Add lore items
     addDisplayColumn(loreTable,
-        new AssetConfig("images/terminal_on.png", false, null),
-        new InfoConfig("CODEX Terminals", getKeybindText("PlayerInteract") + " [RED](interact)[]\nThese terminals contain crucial information about the current state of the world."),
+        new AssetConfig(TERMINAL_ON_IMAGE, false, null),
+        new InfoConfig("CODEX Terminals", getKeybindText(ACTION_PLAYER_INTERACT) + " [RED](interact)[]\nThese terminals contain crucial information about the current state of the world."),
         new ScalingConfig(175, 175, true, 40, 40));
     addDisplayColumn(loreTable,
-        new AssetConfig("images/lost_hardware.png", false, null),
+        new AssetConfig(LOST_HARDWARE_IMAGE, false, null),
         new InfoConfig("Lost Hardware", "Scattered throughout the world, these remnants hold the key to your past."),
         new ScalingConfig(175, 175, true, 40, 40));
     
@@ -793,7 +841,7 @@ public class TutorialMenuDisplay extends UIComponent {
             
             Currently, you have collected [GREEN]""" + CollectablesSave.getCollectedCount() + " out of 9[] pieces of lost hardware.\n" + """
             
-            You can access collected [YELLOW]CODEX[] entries by pressing """ + " " + getKeybindText("PauseCodex") + "."
+            You can access collected [YELLOW]CODEX[] entries by pressing """ + " " + getKeybindText(ACTION_PAUSE_CODEX) + "."
             ;
     Label infoLabel = new Label(markedUpText, skin);
     infoLabel.setWrap(true);
