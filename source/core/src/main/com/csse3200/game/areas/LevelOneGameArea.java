@@ -747,40 +747,54 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnLaserDrone() {
 
-
-        // Patrolling laser drone
+// --- Laser Drone Patrol Path ---
         GridPoint2 patrolStart = new GridPoint2(30, 12);
         GridPoint2 patrolEnd = new GridPoint2(40, 12);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(patrolStart),
                 terrain.tileToWorldPosition(patrolEnd)
         };
+
+// --- Create Laser Drone Entity ---
         Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
         spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
 
-        // --- Setup AI tasks for stationary drone ---
+// --- Setup AI Tasks ---
         AITaskComponent ai = patrolLaserDrone.getComponent(AITaskComponent.class);
         if (ai == null) {
             ai = new AITaskComponent();
             patrolLaserDrone.addComponent(ai);
         }
 
-        LaserChaseTask chaseTask = new LaserChaseTask(player, 5, 8f, 1f, 0.5f);
+        LaserChaseTask chaseTask = new LaserChaseTask(player, 5, 8f, 2f, 0.5f);
         LaserAttackTask attackTask = new LaserAttackTask(player, 12, 3f, 15f, 10);
         ai.addTask(chaseTask).addTask(attackTask);
 
-        // Add detection events so drone fires when player enters cone
+// --- Y Lock Setup ---
+        final float patrolY = 12f; // Maximum allowed Y position (drone won't go above this)
+
+// --- Detection Logic ---
         ConeDetectorComponent detector = patrolLaserDrone.getComponent(ConeDetectorComponent.class);
         if (detector != null) {
             detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
                 chaseTask.activate();
-                attackTask.setTargetDetected(true); // Enable laser firing
+                attackTask.setTargetDetected(true);
             });
+
             detector.getEntity().getEvents().addListener("targetLost", (Entity e) -> {
                 chaseTask.deactivate();
-                attackTask.setTargetDetected(false); // Stop firing
+                attackTask.setTargetDetected(false);
             });
         }
+
+// --- Keep drone from going upward ---
+        patrolLaserDrone.getEvents().addListener("update", () -> {
+            Vector2 pos = patrolLaserDrone.getPosition();
+// If drone tries to go above patrolY, bring it back down
+            if (pos.y > patrolY) {
+                patrolLaserDrone.setPosition(pos.x, patrolY);
+            }
+        });
     }
     private void displayUI() {
         Entity ui = new Entity();
