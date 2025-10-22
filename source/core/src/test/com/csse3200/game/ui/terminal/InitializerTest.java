@@ -271,7 +271,13 @@ class InitializerTest {
   void testGodModeCommand() {
     shell.eval("godMode();");
 
-    verify(player.getComponent(CombatStatsComponent.class)).setHealth(9999);
+    int health = player.getComponent(CombatStatsComponent.class).getHealth();
+
+    player.getComponent(CombatStatsComponent.class).setHealth(0);
+
+    // Ensure health has not changed with god mode on
+    assertEquals(health, player.getComponent(CombatStatsComponent.class).getHealth());
+
   }
 
 //  @Test

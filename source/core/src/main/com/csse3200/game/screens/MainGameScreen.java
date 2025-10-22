@@ -106,7 +106,9 @@ public class MainGameScreen extends ScreenAdapter {
     CUTSCENE_ONE,
     CUTSCENE_TWO,
     TUTORIAL,
-    BOSS_LEVEL
+    BOSS_LEVEL,
+    CUTSCENE_THREE,
+    END_GAME
   }
 
   public MainGameScreen(GdxGame game) {
@@ -266,6 +268,13 @@ public class MainGameScreen extends ScreenAdapter {
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
       case LEVEL_THREE -> new LevelThreeGameArea(terrainFactory);
       case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
+      // this is a place-holder cutscene for now, replace script path with real one
+      case CUTSCENE_THREE -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
+      case END_GAME -> {
+        // Go back to main menu
+        game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+        yield null;
+      }
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -282,7 +291,9 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_TWO -> Areas.CUTSCENE_TWO;
       case CUTSCENE_TWO -> Areas.LEVEL_THREE;
       case LEVEL_THREE -> Areas.BOSS_LEVEL;
-      case BOSS_LEVEL -> Areas.SPRINT_ONE;
+      // Last level should not return a new area
+      case BOSS_LEVEL -> Areas.CUTSCENE_THREE;
+      case CUTSCENE_THREE -> Areas.END_GAME;
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }
@@ -316,37 +327,38 @@ public class MainGameScreen extends ScreenAdapter {
 
         // Build the new area
         GameArea newArea = getGameArea(area);
-        if (newArea == null) return;
 
-        if (newArea instanceof CutsceneArea) {
-            StatsTracker.completeLevel();
-        }
-
-        // Swap in the new area
-        gameArea = newArea;
-        gameAreaEnum = area;
-
-        if (player == null) {
-            gameArea.create();
-        } else {
-            InventoryComponent inv = player.getComponent(InventoryComponent.class);
-            if (inv != null) {
-                inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+        if (newArea != null) {
+            if (newArea instanceof CutsceneArea) {
+                StatsTracker.completeLevel();
             }
-            gameArea.createWithPlayer(player);
-        }
 
-        gameArea.getEvents().addListener("doorEntered",
-                this::handleLeaderboardEntry);
-        gameArea.getEvents().addListener("cutsceneFinished",
-                (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
-        gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+            // Swap in the new area
+            gameArea = newArea;
+            gameAreaEnum = area;
 
-        Entity currentPlayer = gameArea.getPlayer();
-        if (currentPlayer != null) {
-            currentPlayer.getEvents().addListener("playerDied", this::showDeathScreen);
-        } else {
-            logger.warn("switchAreaRunnable: gameArea.getPlayer() is null after create");
+            if (player == null) {
+                gameArea.create();
+            } else {
+                InventoryComponent inv = player.getComponent(InventoryComponent.class);
+                if (inv != null) {
+                    inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
+                }
+                gameArea.createWithPlayer(player);
+            }
+
+            gameArea.getEvents().addListener("doorEntered",
+                    this::handleLeaderboardEntry);
+            gameArea.getEvents().addListener("cutsceneFinished",
+                    (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
+            gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+
+            Entity currentPlayer = gameArea.getPlayer();
+            if (currentPlayer != null) {
+                currentPlayer.getEvents().addListener("playerDied", this::showDeathScreen);
+            } else {
+                logger.warn("switchAreaRunnable: gameArea.getPlayer() is null after create");
+            }
         }
     }
 
