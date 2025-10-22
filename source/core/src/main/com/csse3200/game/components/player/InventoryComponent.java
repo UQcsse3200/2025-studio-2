@@ -22,6 +22,8 @@ public class InventoryComponent extends Component {
     /** Logical groupings for items held by the player. */
     public enum Bag { INVENTORY, UPGRADES, OBJECTIVES }
 
+    private boolean applyingEffects = false;
+
     /** Regular inventory items. */
     private final Map<String, Integer> inventory;
     /** Upgrade items. */
@@ -141,16 +143,15 @@ public class InventoryComponent extends Component {
         Bag bag = parseBag(cfg);
         Map<String, Integer> map = mapFor(bag);
 
-        // Apply collection effects
-        if (cfg.effects != null) {
-            for (int i = 0; i < amount; i++) {
-                applyEffects(cfg);
-            }
-        }
-
-        // Handle non-auto-consumables
+        // Handle undefined and non-auto-consumables
         if (!cfg.autoConsume) {
             map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+            return;
+        }
+
+        // Handle auto-consumables
+        for (int i = 0; i < amount; i++) {
+            applyEffects(cfg);
         }
     }
 
@@ -172,6 +173,12 @@ public class InventoryComponent extends Component {
         Bag bag = parseBag(cfg);
         Map<String, Integer> map = mapFor(bag);
 
+        // Non-auto-consumables: store and return
+        if (!cfg.autoConsume) {
+            map.put(itemId, map.getOrDefault(itemId, 0) + 1);
+            return;
+        }
+
         // Auto-consumables: merge per-effect params, then apply
         if (cfg.effects != null) {
             for (var e : cfg.effects) {
@@ -183,9 +190,6 @@ public class InventoryComponent extends Component {
                 var handler = ItemEffectRegistry.get(e.type);
                 if (handler != null) handler.apply(getEntity(), e);
             }
-        }
-        if (!cfg.autoConsume) {
-            map.put(itemId, map.getOrDefault(itemId, 0) + 1);
         }
     }
 
@@ -222,14 +226,16 @@ public class InventoryComponent extends Component {
             throw new IllegalArgumentException("No config found for " + itemId);
         }
 
-        if (cfg.effects != null) {
-            for (int i = 0; i < amount; i++) {
-                applyEffects(cfg);
-            }
-        }
+        // Non-auto-consumables: store in the specified bag
         if (!cfg.autoConsume) {
             Map<String, Integer> map = mapFor(bag);
             map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+            return;
+        }
+
+        // Auto-consumables: apply effects immediately (bag is not used)
+        for (int i = 0; i < amount; i++) {
+            applyEffects(cfg);
         }
     }
 
@@ -457,14 +463,19 @@ public class InventoryComponent extends Component {
 
   private void applyEffects(CollectablesConfig cfg) {
     if (cfg.effects == null || cfg.effects.isEmpty()) return;
+    if (applyingEffects) return;
+    applyingEffects = true;
 
-    for (var effect : cfg.effects) {
-        var handler = ItemEffectRegistry.get(effect.type);
-        if (handler != null) {
-            handler.apply(getEntity(), effect);
+    try {
+        for (var effect : cfg.effects) {
+            var handler = ItemEffectRegistry.get(effect.type);
+            if (handler != null) {
+                handler.apply(getEntity(), effect);
+            }
         }
+    } finally {
+        applyingEffects = false;
     }
-
   }
 
     /**
