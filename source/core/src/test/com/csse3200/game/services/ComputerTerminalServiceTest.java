@@ -1,7 +1,6 @@
-package com.csse3200.game.components.computerterminal;
+package com.csse3200.game.services;
 
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.ComputerTerminalService;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNull;

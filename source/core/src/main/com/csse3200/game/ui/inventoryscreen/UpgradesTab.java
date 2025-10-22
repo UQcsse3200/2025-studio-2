@@ -5,11 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -17,6 +15,7 @@ import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 
@@ -94,31 +93,21 @@ public class UpgradesTab implements InventoryTabInterface {
     float canvasH = screenH * (2f / 3f);
     float canvasW = canvasH * BASE_ASPECT;
 
-    PixelPerfectPlacer placer = new PixelPerfectPlacer(bgTex);
 
     // Invisible "close" button placed exactly over the background's close icon area
-    Button closeButton = new Button(new Button.ButtonStyle());
-    closeButton.addListener(new ChangeListener() {
-      @Override public void changed(ChangeEvent event, Actor actor) {
-        if (screen != null) {
-          if (screen.isPaused()) screen.togglePaused();  // unpause
-          screen.togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY); // hide pause UI
-        } else {
-          Gdx.app.log("UpgradesTab", "MainGameScreen was null; close ignored.");
-        }
-      }
-    });
-    placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
+      Map<PauseMenuDisplay.Tab, Rect> tabs = new EnumMap<>(PauseMenuDisplay.Tab.class);
+      tabs.put(PauseMenuDisplay.Tab.INVENTORY, TAB_INVENTORY);
+      tabs.put(PauseMenuDisplay.Tab.OBJECTIVES, TAB_OBJECTIVE);
 
-    // Hotspots that switch tabs, maintaining paused state
-    addTabHotspot(placer, TAB_INVENTORY, PauseMenuDisplay.Tab.INVENTORY);
-    addTabHotspot(placer, TAB_OBJECTIVE, PauseMenuDisplay.Tab.OBJECTIVES);
+      PixelPerfectPlacer placer = PauseMenuDisplay.makeTabScaffold(
+              screen, bgTex, CLOSE_BUTTON_POS, tabs);
 
-    // Layer the upgrade visuals + player
+      // Layer the upgrade visuals + player
     addCharacterLayers(placer);
 
-    Table root = new Table();
-    root.add(placer).center().size(canvasW, canvasH);
+    Container<PixelPerfectPlacer> root = new Container<>(placer);
+    root.size(canvasW, canvasH);
+    root.align(Align.center);
     return root;
   }
 
@@ -234,7 +223,7 @@ public class UpgradesTab implements InventoryTabInterface {
    * @param tab target pause-menu tab to display
    */
   private void addTabHotspot(PixelPerfectPlacer placer, Rect rect, PauseMenuDisplay.Tab tab) {
-    Button b = new Button(new Button.ButtonStyle());
+    Button b = new Button(new Button.ButtonStyle());b.setName("tab:" + tab.name());
     b.addListener(new ChangeListener() {
       @Override public void changed(ChangeEvent event, Actor actor) {
         if (screen != null) screen.togglePauseMenu(tab);
@@ -252,6 +241,6 @@ public class UpgradesTab implements InventoryTabInterface {
     playerTex.dispose();
     packTex.dispose();
     gliderTex.dispose();
-    // dashTex.dispose();
+    dashTex.dispose();
   }
 }

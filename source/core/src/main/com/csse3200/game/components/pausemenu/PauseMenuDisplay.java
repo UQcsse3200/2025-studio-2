@@ -9,10 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.GdxGame;
@@ -27,8 +25,11 @@ import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.HoverEffectHelper;
+import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.*;
+
+import java.util.Map;
 
 public class PauseMenuDisplay extends UIComponent {
     private final MainGameScreen screen;
@@ -241,6 +242,7 @@ public class PauseMenuDisplay extends UIComponent {
 
     public void setVisible(boolean visible) {
         rootTable.setVisible(visible);
+
         boolean shouldShowHud = !visible && !LeaderboardEntryDisplay.isOverlayActive();
         Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
         if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
@@ -273,18 +275,13 @@ public class PauseMenuDisplay extends UIComponent {
             player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
             pauseMenuNavigationComponent.setEnabled(currentTab != Tab.SETTINGS);
 
-            // Enable navigation and register input component when the pause menu becomes visible
             if (currentTab == Tab.INVENTORY) {
                 navigationComponent.enableNavigation();
             } else {
                 navigationComponent.disableNavigation();
             }
         } else {
-            // Disable navigation and unregister input component when the pause menu is hidden
             navigationComponent.disableNavigation();
-            KeyboardPlayerInputComponent playerInputComponent = player.getComponent(KeyboardPlayerInputComponent.class);
-            playerInputComponent.setEnabled(true);
-            playerInputComponent.resetInputState();
 
             pauseMenuNavigationComponent.setEnabled(false);
 
@@ -296,6 +293,62 @@ public class PauseMenuDisplay extends UIComponent {
             }
 
         }
+    }
+
+    /**
+     * Builds a PixelPerfectPlacer with:
+     * - a named "closeButton" that unpauses (if paused) and hides the pause UI
+     *
+     * @param screen the owning MainGameScreen
+     * @param bgTex background image for the placer
+     * @param closeRect pixel rect for the close hotspot
+     * @param tabRects map of tab -> pixel rect for tab hotspots
+     */
+    public static PixelPerfectPlacer makeTabScaffold(
+            MainGameScreen screen,
+            Texture bgTex,
+            PixelPerfectPlacer.Rect closeRect,
+            Map<Tab, PixelPerfectPlacer.Rect> tabRects
+    ) {
+        PixelPerfectPlacer placer = new PixelPerfectPlacer(bgTex);
+
+        // Close button hotspot
+        Button close = new Button(new Button.ButtonStyle());
+        close.setName("closeButton"); // for tests
+        close.addListener(new ChangeListener() {
+            @Override public void changed(ChangeEvent event, Actor actor) {
+                if (screen != null) {
+                    if (screen.isPaused()) screen.togglePaused(); // unpause
+                    screen.togglePauseMenu(Tab.INVENTORY); // hide pause UI
+                }
+            }
+        });
+        placer.addOverlay(close, closeRect);
+
+        // Tab hotspots
+        if (tabRects != null) {
+            for (var e : tabRects.entrySet()) {
+                Tab tab = e.getKey();
+                PixelPerfectPlacer.Rect r  = e.getValue();
+                Button b = new Button(new Button.ButtonStyle());
+                b.setName("tab:" + tab.name()); // test-friendly
+                b.addListener(new ChangeListener() {
+                    @Override public void changed(ChangeEvent event, Actor actor) {
+                        if (screen != null) screen.togglePauseMenu(tab);
+                    }
+                });
+                placer.addOverlay(b, r);
+            }
+        }
+
+        return placer;
+    }
+
+    private static boolean isTerminalOpen() {
+        var stage = ServiceLocator.getRenderService().getStage();
+        if (stage == null) return false;
+        Actor a = stage.getRoot().findActor("terminalRoot");
+        return a != null && a.isVisible();
     }
 
     /**
