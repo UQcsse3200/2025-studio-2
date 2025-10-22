@@ -8,7 +8,9 @@
     "tags": ["KEY"],
     "bag": "inventory",
     "sfx": "sounds/pickupsound_upgrade.mp3",
-    "effects": []
+    "effects": [
+      { "type": "remove_objective", "target": "keycard" }
+    ]
   },
   {
     "id": "potion:health",
