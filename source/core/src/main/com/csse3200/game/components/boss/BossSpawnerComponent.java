@@ -278,7 +278,7 @@ public class BossSpawnerComponent extends Component {
 		spawnedDrones.add(drone);
 
 		//animation trigger
-		entity.getEvents().trigger("droneSpawned", drone);
+		entity.getEvents().trigger("droneSpawned");
 		logger.info("Drone spawned (variant: {}, alive: {})", variant, getActiveDroneCount());
 	}
 
