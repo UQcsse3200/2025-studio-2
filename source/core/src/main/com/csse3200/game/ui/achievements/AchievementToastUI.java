@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
@@ -27,6 +28,8 @@ public class AchievementToastUI extends Component implements AchievementService.
     // --- trophy asset (lazy-loaded) ---
     private Texture trophyTex;
     private Drawable trophyDrawable;
+    private static final String TOAST_BG = "toast-bg";
+
 
     @Override
     public void create() {
@@ -91,6 +94,7 @@ public class AchievementToastUI extends Component implements AchievementService.
         if (skin.has(TOAST_BG, Drawable.class)) {
             toast.setBackground(skin.getDrawable(TOAST_BG));
         }
+
         toast.pad(10f).defaults().left().padBottom(4f);
 
         // Optional left icon (only for sprint/adrenaline)
