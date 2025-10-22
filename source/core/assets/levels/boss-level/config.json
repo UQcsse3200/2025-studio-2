@@ -54,6 +54,7 @@
     {"type": "bat","x": 40,"y": 12,"speed": 5,"dx": 50,"dy": 25},
     {"type": "bat","x": 16,"y": 4,"speed": 10,"dx": 25,"dy": 4},
     {"type": "bat","x": 11,"y": 3,"speed": 15,"dx": 11,"dy": 25},
-    {"type":  "boss", "x": 1, "y": 40}
+    {"type":  "boss", "x": 1, "y": 40},
+    {"type": "death_zone","x": 63,"y": -2,"sx": 100,"sy": 0.5,"extra": "0.8"}
   ]
 }
