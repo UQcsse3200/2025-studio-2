@@ -339,29 +339,29 @@ public class MainGameScreen extends ScreenAdapter {
         GameArea newArea = getGameArea(area);
 
         if (newArea != null) {
-            if (newArea instanceof CutsceneArea) {
-                StatsTracker.completeLevel();
+          if (newArea instanceof CutsceneArea) {
+            StatsTracker.completeLevel();
+          }
+
+          // Swap in the new area
+          gameArea = newArea;
+          gameAreaEnum = area;
+
+          if (player == null) {
+            gameArea.create();
+          } else {
+            InventoryComponent inv = player.getComponent(InventoryComponent.class);
+            if (inv != null) {
+              inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
             }
+            gameArea.createWithPlayer(player);
+          }
 
-            // Swap in the new area
-            gameArea = newArea;
-            gameAreaEnum = area;
-
-            if (player == null) {
-                gameArea.create();
-            } else {
-                InventoryComponent inv = player.getComponent(InventoryComponent.class);
-                if (inv != null) {
-                    inv.resetBag(InventoryComponent.Bag.OBJECTIVES);
-                }
-                gameArea.createWithPlayer(player);
-            }
-
-            gameArea.getEvents().addListener("doorEntered",
-                    this::handleLeaderboardEntry);
-            gameArea.getEvents().addListener("cutsceneFinished",
-                    (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
-            gameArea.getEvents().addListener("reset", this::onGameAreaReset);
+          gameArea.getEvents().addListener("doorEntered",
+              this::handleLeaderboardEntry);
+          gameArea.getEvents().addListener("cutsceneFinished",
+              (Entity play) -> switchArea(getNextArea(gameAreaEnum), play));
+          gameArea.getEvents().addListener("reset", this::onGameAreaReset);
         }
 
         Entity currentPlayer = gameArea.getPlayer();
