@@ -12,19 +12,19 @@ public class AddUpgrade implements ItemEffectHandler {
         if (player == null || cfg == null) return false;
 
         if (cfg.target == null || cfg.target.isBlank()) {
-            throw new IllegalArgumentException("AddUpgrade requires cfg.target (e.g., \"dash\")");
+            throw new IllegalArgumentException(
+                    "AddUpgrade requires a non-null target (e.g., \"dash\")"
+            );
         }
-        final String upgradeId = cfg.target.trim();
+        final String upgradeId = cfg.target;
 
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
         if (inv == null) return false;
 
-        // Remove corresponding objective
+        // Remove corresponding objectives and add to inventory
         inv.removeItem(InventoryComponent.Bag.OBJECTIVES, upgradeId);
-
-        // Only add + count if not already owned
         if (!inv.hasItem(InventoryComponent.Bag.UPGRADES, upgradeId)) {
-            inv.addItems(InventoryComponent.Bag.UPGRADES, upgradeId, 1);
+            inv.addDirect(InventoryComponent.Bag.UPGRADES, upgradeId, 1);
             StatsTracker.addUpgrade();
         }
         return true;

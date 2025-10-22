@@ -38,34 +38,34 @@
     "name": "Dash Upgrade",
     "sprite": "images/dash_powerup.png",
     "description": "Unlocks the ability to dash",
-    "autoConsume": false,
+    "autoConsume": true,
     "tags": ["UPGRADE"],
     "scale": [0.8, 0.5],
-    "bag": "upgrades"
+    "effects": [
+      { "type": "upgrade", "target": "dash" }
+    ]
   },
   {
     "id": "upgrade:glide",
     "name": "Glide Upgrade",
     "sprite": "images/glide_powerup.png",
     "description": "Unlocks the ability to glide",
-    "autoConsume": false,
+    "autoConsume": true,
     "tags": ["UPGRADE"],
     "effects": [
-      { "type": "upgrade" }
-    ],
-    "bag": "upgrades"
+      { "type": "upgrade", "target": "glider" }
+    ]
   },
   {
     "id": "upgrade:jetpack",
     "name": "Jetpack Upgrade",
     "sprite": "images/jetpack_powerup.png",
     "description": "Unlocks the ability to use the jetpack",
-    "autoConsume": false,
+    "autoConsume": true,
     "tags": ["UPGRADE"],
     "effects": [
-      { "type": "upgrade" }
-    ],
-    "bag": "upgrades"
+      { "type": "upgrade", "target": "jetpack" }
+    ]
   },
   {
     "id": "misc:hardware",
@@ -75,5 +75,18 @@
     "autoConsume": true,
     "tags": ["HARDWARE"],
     "glowColor": [40, 30, 55]
+  },
+  {
+    "id": "objective",
+    "name": "Generic Objective",
+    "sprite": "images/empty.png",
+    "description": "Objective",
+    "autoConsume": true,
+    "tags": ["OBJECTIVE"],
+    "bag": "objectives",
+    "effects": [
+      { "type": "objective"}
+    ],
+    "glowColor": [0, 0, 0]
   }
 ]
