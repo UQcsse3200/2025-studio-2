@@ -435,7 +435,7 @@ public class EnemyFactory {
         switch (variant) {
             case SCOUT:
                 atlasPath = "images/drone_scout.atlas";   //  SCOUT
-                speed = 2.6f;
+                speed = 1f;
                 break;
             case BRUTAL:
                 atlasPath = "images/drone_brutal.atlas";  // BRUTAL
@@ -444,13 +444,11 @@ public class EnemyFactory {
             case CHASER:
             default:
                 atlasPath = "images/drone_chaser.atlas";  // CHASER
-                speed = 3.1f;
+                speed = 2f;
                 break;
         }
 
         Entity drone = createBossSelfDestructDroneInternal(target, spawnPos, atlasPath, speed);
-        // test
-        drone.getEvents().trigger("variantTagged", variant.name());
         return drone;
     }
 

@@ -477,9 +477,9 @@ public class BossLevelGameArea extends GameArea {
             spawnComp.resetTriggers();
 
             // You can change these values to trigger when it spawns the drones
+            spawnComp.addSpawnTrigger(new Vector2(1f, 0f));
+            spawnComp.addSpawnTrigger(new Vector2(10f, 0f));
             spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
-            spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
-            spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
 
         }
         spawnEntityAt(boss, spawnPos, true, true);
