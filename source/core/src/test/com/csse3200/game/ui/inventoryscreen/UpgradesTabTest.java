@@ -1,4 +1,4 @@
-package com.csse3200.game.inventory;
+package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,7 +12,6 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
