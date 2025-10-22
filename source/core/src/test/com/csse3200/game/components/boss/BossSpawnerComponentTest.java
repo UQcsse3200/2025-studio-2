@@ -54,7 +54,7 @@ public class BossSpawnerComponentTest {
 
         Array<Entity> world = new Array<>();
         world.add(playerEntityMock);
-        when(entityService.get_entities()).thenReturn(world);
+        when(entityService.getEntities()).thenReturn(world);
     }
 
     @AfterEach
@@ -143,7 +143,7 @@ public class BossSpawnerComponentTest {
 
     @Test
     void handlesEmptyEntityService_gracefully() {
-        when(entityService.get_entities()).thenReturn(new Array<>());
+        when(entityService.getEntities()).thenReturn(new Array<>());
 
         List<Vector2> triggers = List.of(new Vector2(10f, 0f));
         spawner = new BossSpawnerComponent(triggers, 2f);
