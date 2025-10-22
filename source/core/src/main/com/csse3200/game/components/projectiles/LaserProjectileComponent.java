@@ -200,6 +200,7 @@ public class LaserProjectileComponent extends Component {
         }
 
         hasHit = true;
+        showHitEffect();
         logger.debug("Laser projectile hit obstacle");
         disposeProjectile();
     }

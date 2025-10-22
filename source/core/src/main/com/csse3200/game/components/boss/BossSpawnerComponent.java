@@ -286,6 +286,7 @@ public class BossSpawnerComponent extends Component {
 	@SuppressWarnings("unused")
 	private void spawnDrone() {
 		spawnDrone(EnemyFactory.DroneVariant.CHASER);
+
 	}
 
 	/**
