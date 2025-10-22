@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-public class CodexTerminalComponentTest {
+class CodexTerminalComponentTest {
     /**
      * Terminal entity the component being tested is added to
      */

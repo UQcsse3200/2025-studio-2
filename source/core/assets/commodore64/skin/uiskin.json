@@ -74,6 +74,26 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
       down: button,
       over: button-hover-cyan
     }
+    "tutorialButton": {
+      font: commodore-64,
+      fontColor: light_grey,
+      downFontColor: green,
+      up: button,
+      down: button-down,
+      over: button-down,
+      overFontColor: white
+    }
+    "redButton": {
+      font: commodore-64,
+      fontColor: light_grey,
+      downFontColor: red,
+      up: button,
+      down: button-down,
+      over: button-down,
+      overFontColor: white
+    }
+
+
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: { up: button, down: button-down }

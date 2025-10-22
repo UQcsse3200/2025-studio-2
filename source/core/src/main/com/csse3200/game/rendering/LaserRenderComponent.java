@@ -12,7 +12,6 @@ import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.entities.Entity;
 
-
 import java.util.List;
 
 /**

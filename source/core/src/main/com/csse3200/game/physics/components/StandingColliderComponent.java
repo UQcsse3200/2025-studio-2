@@ -9,9 +9,9 @@ import com.csse3200.game.physics.PhysicsLayer;
 
 public class StandingColliderComponent extends ColliderComponent {
     private Fixture fixture;
-    private static Vector2 OFFSET = new Vector2(0.9f, 0.5f);
-    private final float BOX_WIDTH = 0.3f;
-    private final float BOX_HEIGHT = 0.45f;
+    private static final Vector2 OFFSET = new Vector2(0.9f, 0.5f);
+    private static final float BOX_WIDTH = 0.3f;
+    private static final float BOX_HEIGHT = 0.45f;
 
     @Override
     public void create() {

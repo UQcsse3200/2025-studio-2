@@ -2,15 +2,14 @@ package com.csse3200.game.rendering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.crashinvaders.vfx.VfxManager;
 import com.csse3200.game.components.CameraComponent;
-import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +44,7 @@ public class Renderer implements Disposable {
         spriteBatch,
         new Stage(new ScreenViewport(), spriteBatch),
         ServiceLocator.getRenderService(),
-        debugRenderer);
+            debugRenderer);
 
     /* TODO: Remove prior to production
     Temporary zoom adjustment for whole-level screenshots.  Meant for development/debugging only.
