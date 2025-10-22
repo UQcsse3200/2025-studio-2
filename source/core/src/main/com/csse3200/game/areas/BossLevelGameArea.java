@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.gamearea.GameAreaDisplay;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossLevelGameArea extends GameArea {
-    private static final GridPoint2 mapSize = new GridPoint2(100,34);
+    private static final GridPoint2 mapSize = new GridPoint2(100,57);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
     private boolean keySpawned;
@@ -85,8 +86,9 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
+            "images/laser-end",
             "images/minimap_forest_area.png",
-            "images/minimap_player_marker.png"
+            "images/minimap_player_marker.png",
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -106,13 +108,16 @@ public class BossLevelGameArea extends GameArea {
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
-            "images/doors.atlas",
-            "images/drone.atlas",
+            "images/drone.atlas", // <---
             "images/boss.atlas", // Comment out these lines to fix the loading time
+            "images/doors.atlas",
             "images/volatile_platform.atlas",
             "images/timer.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/laser.atlas"
+            "images/laser.atlas",
+            "images/drone_scout.atlas",
+            "images/drone_chaser.atlas",
+            "images/drone_brutal.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
     private final TerrainFactory terrainFactory;

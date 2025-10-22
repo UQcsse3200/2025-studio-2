@@ -45,7 +45,7 @@ public class LevelTwoGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-    private boolean keySpawned;
+    private static boolean keySpawned;
     boolean has_laser = false;
     private static final String PLATFORM_MAP_IMG_PATH = "images/platform-map.png";
     private static final String FLOOR_MAP6_IMG_PATH = "images/floor-map-6.png";
@@ -99,9 +99,6 @@ public class LevelTwoGameArea extends GameArea {
             "images/lablevel/background/background2.png",
             "images/glide_powerup.png",
             "images/jetpack_powerup.png",
-            PLATFORM_MAP_IMG_PATH,
-            "images/drone-map.png",
-            "images/red_button-map.png",
             "images/laser-end.png",
             "images/LaserShower-end.png",
             "images/jetpack_powerup.png",
@@ -498,7 +495,6 @@ public class LevelTwoGameArea extends GameArea {
         GridPoint2 left4Pos = new GridPoint2(5,39);
         Entity left4 = PlatformFactory.createStaticPlatform();
         left4.setScale(2,0.5f);
-        left4.addComponent(new MinimapComponent(PLATFORM_MAP_IMG_PATH));
         spawnEntityAt(left4, left4Pos,false, false);
 
         GridPoint2 left5Pos = new GridPoint2(5,52);

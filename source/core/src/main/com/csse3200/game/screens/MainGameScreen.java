@@ -158,6 +158,7 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
     gameAreaEnum = area;
+//    gameArea = getGameArea(Areas.BOSS_LEVEL);
 //    gameArea = getGameArea(Areas.LEVEL_THREE);
     gameArea = getGameArea(area);
     gameArea.create();
@@ -262,7 +263,7 @@ public class MainGameScreen extends ScreenAdapter {
     lvlStartTime = gameTime.getTime();
     return switch (area) {
       case TUTORIAL ->  new TutorialGameArea(terrainFactory);
-      case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
+      case LEVEL_ONE -> new BossLevelGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
