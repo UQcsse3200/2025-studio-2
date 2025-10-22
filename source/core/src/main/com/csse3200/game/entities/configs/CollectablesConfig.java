@@ -11,4 +11,5 @@ public class CollectablesConfig {
     public List<String> tags;
     public List<EffectConfig> effects;
     public List<Integer> glowColor;
+    public List<Float> scale;
 }

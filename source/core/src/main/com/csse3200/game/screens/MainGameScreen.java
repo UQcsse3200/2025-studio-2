@@ -1,7 +1,6 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -12,6 +11,7 @@ import com.csse3200.game.GdxGame;
 import com.csse3200.game.areas.*;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.computerterminal.SimpleCaptchaBank;
 import com.csse3200.game.components.computerterminal.SpritesheetSpec;
@@ -43,7 +43,6 @@ import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.*;
 import com.csse3200.game.ui.cutscene.CutsceneArea;
-import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,6 +115,7 @@ public class MainGameScreen extends ScreenAdapter {
 
   public MainGameScreen(GdxGame game, Areas area) {
     this.game = game;
+    ServiceLocator.registerMainGameScreen(this);
 
     logger.debug("Initialising main game screen services");
     ServiceLocator.registerTimeSource(new GameTime());
@@ -277,7 +277,7 @@ public class MainGameScreen extends ScreenAdapter {
    * @param area - Current Areas game area.
    * @return next Areas game area.
    */
-  private Areas getNextArea(Areas area) {
+  public Areas getNextArea(Areas area) {
     return switch (area) {
       case LEVEL_ONE -> Areas.CUTSCENE_ONE;
       case CUTSCENE_ONE, SPRINT_ONE -> Areas.LEVEL_TWO;
@@ -307,7 +307,7 @@ public class MainGameScreen extends ScreenAdapter {
      * @param area   the target area enum
      * @param player the player entity to transfer to the new area, may be null
      */
-    private void switchAreaRunnable(Areas area, Entity player) {
+    public void switchAreaRunnable(Areas area, Entity player) {
         if (area == null) return;
 
         // Dispose old area
@@ -390,33 +390,34 @@ public class MainGameScreen extends ScreenAdapter {
     return gameArea;
   }
 
+
   @Override
   public void render(float delta) {
     if (!paused) {
       // Update camera position to follow player
       updateCameraFollow();
 
-          physicsEngine.update();
-          ServiceLocator.getEntityService().update();
-          if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-              jumpCount++;
-              if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
-                  levelOneArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
-                  levelTwoArea.laserShowerChecker(delta);
-                  jumpCount = 0;
-              }
-          }
-          laserTimer += delta;
-
-          // Check if 50 seconds have passed
-          if (laserTimer >= 50f) {
-              if (gameArea instanceof BossLevelGameArea bossLevel) {
-                  bossLevel.spawnLaserShower(); // spawn lasers
-              }
-              laserTimer = 0f; // reset timer
-          }
+      physicsEngine.update();
+      ServiceLocator.getEntityService().update();
+//      if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+//          jumpCount++;
+//          if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
+//              levelOneArea.laserShowerChecker(delta);
+//              jumpCount = 0;
+//          }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
+//              levelTwoArea.laserShowerChecker(delta);
+//              jumpCount = 0;
+//          }
+//      }
+//      laserTimer += delta;
+//
+//      // Check if 50 seconds have passed
+//      if (laserTimer >= 50f) {
+//          if (gameArea instanceof BossLevelGameArea bossLevel) {
+//              bossLevel.spawnLaserShower(); // spawn lasers
+//          }
+//          laserTimer = 0f; // reset timer
+//      }
 
       }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.

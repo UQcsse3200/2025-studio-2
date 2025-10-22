@@ -34,7 +34,7 @@ public class CodexTerminalFactory {
         Entity terminal = new Entity();
 
         // Add texture
-        terminal.addComponent(new TextureRenderComponent("images/terminal_on.png"));
+        terminal.addComponent(new TextureRenderComponent("images/terminal_on.png").setLayer(0));
         // Add physics
         terminal.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
         // Add collider

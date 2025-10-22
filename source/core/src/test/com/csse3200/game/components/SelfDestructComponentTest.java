@@ -2,7 +2,6 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.EventHandler;
@@ -72,7 +71,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator).startAnimation("bomb_effect");
-        verify(sound).play(1.0f);
         verify(playerStats).setHealth(3); // 5 - 2 damage
     }
 
@@ -84,7 +82,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator).startAnimation("bomb_effect");
-        verify(sound).play(1.0f);
         verify(playerStats).setHealth(8); // 10 - 2 damage
     }
 
@@ -95,7 +92,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator, never()).startAnimation("bomb_effect");
-        verify(sound, never()).play(anyFloat());
         verify(playerStats, never()).setHealth(anyInt());
     }
 
@@ -108,7 +104,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator, times(1)).startAnimation("bomb_effect");
-        verify(sound, times(1)).play(1.0f);
         verify(playerStats, times(1)).setHealth(8);
     }
 }

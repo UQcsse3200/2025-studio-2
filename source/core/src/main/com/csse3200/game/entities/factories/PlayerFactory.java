@@ -3,8 +3,11 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.*;
-import com.csse3200.game.components.achievements.AchievementsTrackerComponent;
+import com.csse3200.game.achievements.AchievementService;
+import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.player.*;
 import com.csse3200.game.entities.Entity;
@@ -16,7 +19,6 @@ import com.csse3200.game.physics.components.*;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
-import com.csse3200.game.achievements.AchievementService;
 
 import java.util.List;
 
@@ -74,7 +76,8 @@ public final class PlayerFactory {
                 .addComponent(new CameraComponent())
                 .addComponent(new PlayerScreenTransitionComponent())
                 .addComponent(new PlayerDeathEffectComponent())
-                .addComponent(new MinimapComponent("images/minimap_player_marker.png"))
+                .addComponent(new MinimapComponent("images/minimap_player_marker.png")
+                        .setScaleY(0.7f).setScaleX(0.5f))
                 .addComponent(animator)
                 .addComponent(new PlayerAnimationController());
         // Stamina + sprint wiring

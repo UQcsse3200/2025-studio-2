@@ -1,10 +1,9 @@
 package com.csse3200.game.entities.factories;
 
 import box2dLight.ConeLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.csse3200.game.ai.tasks.AITaskComponent;
@@ -12,9 +11,7 @@ import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.npc.DroneAnimationController;
-import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.configs.BaseEntityConfig;
@@ -22,6 +19,7 @@ import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.lighting.LightingService;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -31,13 +29,10 @@ import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.DebugRenderer;
 import com.csse3200.game.rendering.RenderService;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.lighting.ConeDetectorComponent;
-import com.csse3200.game.lighting.LightingService;
-import box2dLight.RayHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,6 +72,7 @@ public class EnemyFactoryTest {
         ServiceLocator.registerResourceService(rs);
         rs.loadTextureAtlases(new String[]{"images/drone.atlas"});
         rs.loadTextureAtlases(new String[]{"images/boss.atlas"});
+        rs.loadTextures(new String[]{"images/drone-map.png"});
         rs.loadAll();
 
         // Mock time source needed for AI tasks

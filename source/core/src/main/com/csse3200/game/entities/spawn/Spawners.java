@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.spawn;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
@@ -7,20 +8,26 @@ import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
-import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.collectables.CollectableComponentV2;
 import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.computerterminal.CaptchaResult;
+import com.csse3200.game.components.enemy.ActivationComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
+import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.configs.LevelConfig;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.events.listeners.EventListener1;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.util.Objects;
 import java.util.UUID;
 
 public final class Spawners {
@@ -41,6 +48,19 @@ public final class Spawners {
                 case REFLECTABLE -> BoxFactory.createReflectorBox();
                 case null, default -> BoxFactory.createStaticBox();
             };
+
+            if (!a.isVisible) {
+                box.getComponent(MoveableBoxComponent.class).setVisible(false);
+            }
+
+            if (a.target != null) {
+                Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
+
+                target.getEvents().addListener("puzzleCompleted", () -> {
+                    box.getEvents().trigger("setVisible", true);
+                });
+            }
+
             linkEntities(box, a.linked);
             addIdentifier(box, String.valueOf(a.id));
 
@@ -68,6 +88,11 @@ public final class Spawners {
                 toggler.getEvents().addListener("plateReleased", () -> {
                     collectable.getComponent(CollectableComponentV2.class).toggleVisibility(false);
                 });
+
+                // button visibility logic -> show/hide
+                toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
+                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(isPushed);
+                });
             }
 
             linkEntities(collectable, a.linked);
@@ -89,25 +114,38 @@ public final class Spawners {
 
         // --- Pressure Plate ---
         SpawnRegistry.register("pressure_plate", a -> {
-            Entity plate = PressurePlateFactory.createBoxOnlyPlate();
-            linkEntities(plate, a.linked);
-            addIdentifier(plate, String.valueOf(a.id));
-            addTooltip(plate, a.tooltip);
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+            Entity plate;
 
-            if (a.target != null && a.extra != null) {
-                if (a.extra.equals("platform")) {
-                    Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
-                    target.getEvents().trigger("stop");
+            if (subtype == EntitySubtype.LADDER) {
+                String ladderId = String.valueOf(a.id);
+                if (ladderId == null || ladderId.isBlank()) {
+                    throw new IllegalArgumentException("ladder_plate needs an  id matching its ladder");
+                }
 
-                    plate.getEvents().addListener("platePressed", () -> {
-                        target.getEvents().trigger("start");
-                    });
+                plate = PressurePlateFactory.createLadderPlate(ladderId, a.offset, 0.05f);
+            } else {
+                plate = PressurePlateFactory.createBoxOnlyPlate();
+                linkEntities(plate, a.linked);
+                addIdentifier(plate, String.valueOf(a.id));
 
-                    plate.getEvents().addListener("plateReleased", () -> {
+                if (a.target != null && a.extra != null) {
+                    if (a.extra.equals("platform")) {
+                        Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
                         target.getEvents().trigger("stop");
-                    });
+
+                        plate.getEvents().addListener("platePressed", () -> {
+                            target.getEvents().trigger("start");
+                        });
+
+                        plate.getEvents().addListener("plateReleased", () -> {
+                            target.getEvents().trigger("stop");
+                        });
+                    }
                 }
             }
+            addTooltip(plate, a.tooltip);
+
             return plate;
         });
 
@@ -127,7 +165,7 @@ public final class Spawners {
 
         // -- Wall ---
         SpawnRegistry.register("wall", a -> {
-            Entity wall =  WallFactory.createWall(a.x, a.y, a.sx, a.sy, "");
+            Entity wall =  WallFactory.createWall(a.x, a.y, a.dx, a.dy, "images/wall.png");
             wall.setScale(a.sx, a.sy);
             return wall;
         });
@@ -139,12 +177,28 @@ public final class Spawners {
             Entity platform = switch (subtype) {
                 case MOVING -> PlatformFactory.createMovingPlatform(new Vector2(a.dx, a.dy), a.speed);
                 case VOLATILE -> PlatformFactory.createVolatilePlatform(a.speed, 1f);
+                case PLATE -> PlatformFactory.createPressurePlatePlatform();
+                case REFLECTIVE -> PlatformFactory.createReflectivePlatform();
+                case BUTTON -> PlatformFactory.createButtonTriggeredPlatform(new Vector2(a.dx, a.dy), a.speed);
                 default -> PlatformFactory.createStaticPlatform();
             };
+
+            if (subtype == EntitySubtype.PLATE && a.target != null) {
+                Entity  target = ServiceLocator.getEntityService().getEntityById(a.target);
+                platform.getComponent(VolatilePlatformComponent.class).linkToPlate(target);
+            }
 
             linkEntities(platform, a.linked);
             addIdentifier(platform, String.valueOf(a.id));
             platform.setScale(a.sx, a.sy);
+
+            String minimapTex = "images/platform-map.png";
+            if (a.sx >= 3.5f) {
+                minimapTex = "images/platform-long-map.png";
+            } else if (a.sx <= 1.0f) {
+                minimapTex = "images/platform-short-map.png";
+            }
+            platform.addComponent(new MinimapComponent(minimapTex));
 
             return platform;
         });
@@ -188,14 +242,30 @@ public final class Spawners {
             if (a.subtype == null) a.subtype = "standard";
             Entity button = ButtonFactory.createButton(false, a.subtype, a.direction);
 
+            if (a.extra != null) {
+                if(!a.extra.equals("evil")) {
+                    // link to button manager
+                    Entity target = ServiceLocator.getEntityService().getEntityById(a.extra);
+                    ButtonManagerComponent manager = target.getComponent(ButtonManagerComponent.class);
+                    ButtonComponent buttonComp = button.getComponent(ButtonComponent.class);
+
+                    buttonComp.setPuzzleManager(manager);
+                    manager.addButton(buttonComp);
+                } else {
+                    addGlow(button);
+                }
+            }
+
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
 
-                button.getEvents().addListener("buttonToggled", (Boolean __) -> {
-                    if (button.getComponent(ButtonComponent.class).isPushed()) {
+                button.getEvents().addListener("buttonToggled", (Boolean isPressed) -> {
+                    if (isPressed) {
                         target.getEvents().trigger("disable");
+                        target.getEvents().trigger("activatePlatform");
                     } else {
                         target.getEvents().trigger("enable");
+                        target.getEvents().trigger("deactivatePlatform");
                     }
                 });
             }
@@ -205,6 +275,14 @@ public final class Spawners {
             addIdentifier(button, String.valueOf(a.id));
 
             return button;
+        });
+
+        // --- Button Manager ---
+        SpawnRegistry.register("button_manager", a -> {
+            Entity manager = new Entity().addComponent(new ButtonManagerComponent());
+
+            addIdentifier(manager, String.valueOf(a.id));
+            return manager;
         });
 
         // --- Laser Detector ---
@@ -231,7 +309,21 @@ public final class Spawners {
         });
 
         // --- Death Zone ---
-        SpawnRegistry.register("death_zone", a -> DeathZoneFactory.createDeathZone());
+        SpawnRegistry.register("death_zone", a -> {
+            Entity deathZone = DeathZoneFactory.createDeathZone();
+
+            if(a.sx != 1 && a.sy != 1) {
+                deathZone.setScale(a.sx,a.sy);
+            }
+
+            if(a.extra != null) {
+                deathZone.getComponent(ColliderComponent.class).setAsBoxAligned(deathZone.getScale().scl(Float.parseFloat(a.extra)),
+                        PhysicsComponent.AlignX.LEFT,
+                        PhysicsComponent.AlignY.BOTTOM);
+            }
+
+            return deathZone;
+        });
 
         // --- Upgrade ---
         SpawnRegistry.register("upgrade", a -> {
@@ -242,67 +334,140 @@ public final class Spawners {
         });
 
         // --- Enemies ---
-        SpawnRegistry.register("enemy",
-                a -> EnemyFactory.createPatrollingDrone(
+        SpawnRegistry.register("enemy", a -> {
+            // get patrol
+            Vector2[] patrolRoute;
+            if (a.extra == null || a.extra.isBlank()) {
+                patrolRoute = new Vector2[] {new Vector2(a.x / 2f, a.y / 2f), new Vector2(a.dx / 2f, a.dy / 2f)};
+            } else {
+                String[] patrolPts = a.extra.split(";");
+
+                patrolRoute = new Vector2[patrolPts.length];
+
+                for (int i = 0; i < patrolRoute.length; i++) {
+                    String[] parts = patrolPts[i].split(",");
+                    float x = Float.parseFloat(parts[0]) / 2f;
+                    float y = Float.parseFloat(parts[1]) / 2f;
+                    patrolRoute[i] = new Vector2(x,y);
+                }
+            }
+
+            // get subtype
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+
+            Entity enemy = switch (subtype) {
+                case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
+                case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(
                         player,
-                        new Vector2[] { new Vector2(a.x, a.y), new Vector2(a.dx, a.dy), new Vector2(a.dy, a.x) }
-                )
-        );
+                        new Vector2((float) a.x / 2, (float) a.y / 2)
+                ).addComponent(new ActivationComponent(a.id));
+                case null, default -> EnemyFactory.createPatrollingDrone(player, patrolRoute);
+            };
 
-        SpawnRegistry.register("ladder_plate", a -> {
-            String ladderId = String.valueOf(a.id);
-            if (ladderId == null || ladderId.isBlank()) {
-                throw new IllegalArgumentException("ladder_plate needs an  id matching its ladder");
-            }
-
-            int offset = 0;
-
-            if (a.extra != null) {
-                try {
-                    offset = Integer.parseInt(a.extra);
-                } catch (NumberFormatException ignored) {}
-            }
-
-            Entity plate = PressurePlateFactory.createLadderPlate(ladderId, offset, 0.05f);
-            addTooltip(plate, a.tooltip);
-            return plate;
+            return enemy;
         });
 
         SpawnRegistry.register("ladder", a -> {
-            /*
-            * Fields
-            *   a.id        -> ladder section id
-            *   a.x, a.y    -> base tile pos
-            *   a.extra     -> "height:16,offset:11"
-            * */
-
             String ladderId = String.valueOf(a.id);
             if (ladderId == null || ladderId.isBlank()) {
                 throw new IllegalArgumentException("ladder needs an id to group rungs/plates");
             }
 
-            // parse 'extra'
-            int height = 1;
-            int offset = 0;
-            if (a.extra != null) {
-                for (String part : a.extra.split(",")) {
-                    String[] kv = part.trim().split(":");
-                    if (kv.length == 2) {
-                        String k =  kv[0].trim().toLowerCase();
-                        String v = kv[1].trim();
-                        try {
-                            if (k.equals("height")) height = Integer.parseInt(v);
-                            if (k.equals("offset")) offset = Integer.parseInt(v);
-                        } catch (NumberFormatException ignored) {}
-                    }
-                }
-            }
-            if (height <= 0) throw new IllegalArgumentException("height must be > 0");
-
             // anchor entity (returned to game area to position)
-            Entity anchor = LadderFactory.createLadderBase(ladderId, height, offset);
+            Entity anchor = LadderFactory.createLadderBase(ladderId, a.height, a.offset);
 
             return anchor;
+        });
+
+        // --- Codex Terminal ---
+        SpawnRegistry.register("terminal", a ->
+                CodexTerminalFactory.createTerminal(ServiceLocator.getCodexService().getEntry(a.id)));
+
+        // --- Tutorials ---
+
+        SpawnRegistry.register("tutorial", a -> {
+            EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
+
+            Entity tutorial = switch (subtype) {
+                case JUMP -> ActionIndicatorFactory.createJumpTutorial();
+                case DOUBLE_JUMP -> ActionIndicatorFactory.createDoubleJumpTutorial();
+                case DASH -> ActionIndicatorFactory.createDashTutorial();
+                case null, default -> ActionIndicatorFactory.createJumpTutorial();
+            };
+
+            return tutorial;
+        });
+
+        // --- Objectives ---
+        SpawnRegistry.register("objective", a ->
+                CollectableFactory.createObjective(a.id, a.sx, a.sy));
+
+        // --- Bats ---
+        SpawnRegistry.register("bat", a -> {
+            BoxFactory.AutonomousBoxBuilder builder = new BoxFactory.AutonomousBoxBuilder();
+            Entity bat = builder
+                    .moveX(a.x, a.dx).moveY(a.y, a.dy)
+                    .texture("images/flying_bat.atlas")
+                    .speed(a.speed)
+                    .build();
+
+            addTooltip(bat, a.tooltip);
+            return bat;
+        });
+
+
+        // --- Prompts ---
+        SpawnRegistry.register("prompt", a -> {
+            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+        });
+
+        // --- Computer Terminal ---
+        SpawnRegistry.register("computer_terminal", a -> {
+            Entity terminal = ComputerTerminalFactory.createTerminal();
+
+            if (a.subtype != null && a.subtype.equals("transition")) {
+                terminal.getEvents().addListener("terminal:captchaResult", (CaptchaResult r) -> {
+                    if (r.success()) {
+                        // close terminal
+                        var svc = ServiceLocator.getComputerTerminalService();
+                        if (svc == null) return;
+                        svc.close();
+
+                        // transition level
+                        MainGameScreen screen = ServiceLocator.getMainGameScreen();
+                        var gameAreaEnum =  screen.getAreaEnum();
+                        var nextArea = screen.getNextArea(gameAreaEnum);
+                        screen.switchAreaRunnable(nextArea, player);
+                    }
+                });
+            }
+
+            return terminal;
+        });
+
+        // --- Boss ---
+        SpawnRegistry.register("boss", a -> {
+            Entity boss = EnemyFactory.createBossEnemy(player, new Vector2(a.x*2, a.y*2));
+
+            BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
+            if (spawnComp != null) {
+                spawnComp.resetTriggers();
+
+                spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
+
+            }
+
+            boss.getEvents().addListener("reset", () -> {
+                BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
+                if (spawnComponent != null) {
+                    spawnComponent.resetTriggers();
+                    spawnComponent.cleanupDrones();
+                }
+            });
+
+            return boss;
         });
     }
 
@@ -323,5 +488,16 @@ public final class Spawners {
     private static void addIdentifier(Entity entity, String id) {
         if (id == null || id.isBlank()) return;
         entity.addComponent(new IdentifierComponent(id));
+    }
+
+    private static void addGlow(Entity entity) {
+        ConeLightComponent evilGlow = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                128,
+                new Color().set(1f, 0f, 0f, 0.6f),
+                2.5f,
+                0f,
+                180f);
+        entity.addComponent(evilGlow);
     }
 }

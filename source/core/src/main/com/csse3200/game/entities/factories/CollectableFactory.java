@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
-import com.csse3200.game.components.collectables.ObjectivesComponent;
-import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
@@ -27,6 +24,9 @@ import java.util.Map;
  * Factory for creating collectable entities (e.g., keys, coins, potions).
  */
 public class CollectableFactory {
+    private CollectableFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static Map<String, CollectablesConfig> cfgs;
 
@@ -60,6 +60,14 @@ public class CollectableFactory {
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
                 .addComponent(new CollectableComponentV2(itemId));
 
+        if (itemId.equals("key:door")) {
+            e.addComponent(new MinimapComponent("images/key.png"));
+        }
+
+        if (itemId.equals("misc:hardware")) {
+            e.addComponent(new ItemCollectableComponent(null));
+        }
+
         // add sprites and animations
 
         if (cfg.sprite != null && cfg.sprite.endsWith(".atlas")) {
@@ -72,8 +80,11 @@ public class CollectableFactory {
             e.addComponent(new TextureRenderComponent(
                     (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png"));
             // change scale of non potion collectables
-            e.setScale(0.5f, 0.5f);
-            PhysicsUtils.setScaledCollider(e, 0.5f, 0.5f);
+            float sx = cfg.scale != null ? cfg.scale.get(0) : 0.5f;
+            float sy = cfg.scale != null ? cfg.scale.get(1) : 0.5f;
+
+            e.setScale(sx, sy);
+            PhysicsUtils.setScaledCollider(e, sx, sy);
         }
 
         // backlight because it looks cool (thanks tristyn)
@@ -103,6 +114,7 @@ public class CollectableFactory {
      * @return a new key entity
      * @see KeyComponent
      */
+    @Deprecated
     public static Entity createKey(String target) {
         Entity key = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
@@ -196,6 +208,20 @@ public class CollectableFactory {
                         .setLayer(PhysicsLayer.COLLECTABLE)
                         .setSensor(true)) // not blocking, overlap only
                 .addComponent(new ObjectivesComponent(objectiveId));
+
+        // Size the sensor using the same pattern as your other collectables
+        obj.setScale(width, height);
+        PhysicsUtils.setScaledCollider(obj, width, height);
+
+        return obj;
+    }
+    public static Entity createPrompt(String promptMessage, Float duration, float width, float height) {
+        Entity obj = new Entity()
+                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
+                .addComponent(new ColliderComponent()
+                        .setLayer(PhysicsLayer.COLLECTABLE)
+                        .setSensor(true)) // not blocking, overlap only
+                .addComponent(new PromptComponent(promptMessage,duration));
 
         // Size the sensor using the same pattern as your other collectables
         obj.setScale(width, height);

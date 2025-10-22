@@ -2,27 +2,26 @@ package com.csse3200.game.components.npc;
 
 import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 public class BossAnimationController extends Component {
     AnimationRenderComponent animator;
     private String currentAnimation = "";
     // Generate the "minimum display time" of the animation（Fine-tune as needed 0.3~0.6）
-    private float generateHold = 0f;
+    private float generateHold;
     // If the generation has just finished, but is still in the "display window", suspend and return to the chase
-    private boolean pendingChase = false;
+    private boolean pendingChase;
+
+    private static final String BOSS_ANIM = "BossAnim";
+    private static final String BOSS_CHASE = "bossChase";
 
     @Override
     public void create() {
         super.create();
         animator = this.entity.getComponent(AnimationRenderComponent.class);
         entity.getEvents().addListener("generateDroneStart", this::animateGenerateDrone);
-        // ★ Compatible: If external/test triggers the version with parameters, map it to the same logic
-        //entity.getEvents().addListener("generateDroneStart", (Integer ignored) -> animateGenerateDrone());
-        //entity.getEvents().addListener("generateDroneStart", (Entity ignored)  -> animateGenerateDrone());
-
         entity.getEvents().addListener("droneSpawned", (Entity d) -> onDroneSpawned());
         entity.getEvents().addListener("chaseStart", this::animateChase);
         entity.getEvents().addListener("touchKillStart", this::animateTouchKill);
@@ -36,24 +35,26 @@ public class BossAnimationController extends Component {
         if (generateHold > 0f) {
             generateHold -= ServiceLocator.getTimeSource().getDeltaTime();
             if (generateHold <= 0f && pendingChase) {
-                setAnimation("bossChase");
+                setAnimation(BOSS_CHASE);
                 pendingChase = false;
             }
         }
-    }private void onDroneSpawned() {
-        Gdx.app.log("BossAnim", "droneSpawned");
+    }
+
+    private void onDroneSpawned() {
+        // Gdx.app.log(BOSS_ANIM, "droneSpawned");
         if (generateHold > 0f) {
             // Still in the animation display period: Don't switch yet,
             // wait until the display period is over before returning to the cruise
             pendingChase = true;
         } else {
             // back to chase
-            setAnimation("bossChase");
+            setAnimation(BOSS_CHASE);
         }
     }
 
     void animateChase() {
-        setAnimation("bossChase");
+        setAnimation(BOSS_CHASE);
         // Avoid external switching back to chase while still holding
         pendingChase = false;
         generateHold = 0f;
@@ -62,7 +63,7 @@ public class BossAnimationController extends Component {
 
     void animateGenerateDrone() {
         setAnimation("bossGenerateDrone");
-        Gdx.app.log("BossAnim", "generateDroneStart");
+        // Gdx.app.log(BOSS_ANIM, "generateDroneStart");
         // Each time you receive "Start Generating", reset the display window
         generateHold = 0.8f; // If you want it to be more obvious, turn it up, e.g 0.6f
         pendingChase = false; // A new round of generation, clean up the previous round of suspension
@@ -87,6 +88,6 @@ public class BossAnimationController extends Component {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
-        Gdx.app.log("BossAnim", "setAnimation -> " + animationName);
+        // Gdx.app.log(BOSS_ANIM, "setAnimation -> " + animationName);
     }
 }

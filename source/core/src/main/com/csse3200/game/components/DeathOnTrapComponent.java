@@ -5,15 +5,15 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.obstacles.TrapComponent;
-import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.npc.DroneAnimationController;
 
 /**
  * Component that handles drone death when touching traps or death zones.
@@ -83,7 +83,7 @@ public class DeathOnTrapComponent extends Component {
         // Play sound
         Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND, Sound.class);
         if (explosionSound != null) {
-            long soundId = explosionSound.play(1.0f);
+            long soundId = explosionSound.play(UserSettings.get().masterVolume);
             fadeOutSound(explosionSound, soundId, 0.5f);
         }
 

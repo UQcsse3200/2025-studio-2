@@ -25,7 +25,7 @@ import static com.badlogic.gdx.Gdx.app;
  * machine (See the State Pattern).
  */
 public class GdxGame extends Game {
-  public static final String savePath = "configs/save.json";
+  public static final String SAVE_PATH = "configs/save.json";
 
   private static final Logger logger = LoggerFactory.getLogger(GdxGame.class);
 
@@ -99,7 +99,7 @@ public class GdxGame extends Game {
       case MAIN_MENU -> new MainMenuScreen(this);
       case MAIN_GAME -> {
         MainGameScreen screen = new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
-        ServiceLocator.registerMainGameScreen(screen);
+        //ServiceLocator.registerMainGameScreen(screen);
         yield screen;
       }
       case TUTORIAL -> new TutorialMenuScreen(this);
@@ -107,11 +107,11 @@ public class GdxGame extends Game {
       case STATISTICS -> new StatisticsScreen(this);
       case LEADERBOARD -> new LeaderboardScreen(this);
       case LOAD_LEVEL -> {
-        SaveConfig saveConfig = loadSave(savePath);
+        SaveConfig saveConfig = loadSave(SAVE_PATH);
 
         // Load into the correct area, pass the player the old inventory.
         MainGameScreen game = new MainGameScreen(this, saveConfig.area);
-        ServiceLocator.registerMainGameScreen(game);
+        //ServiceLocator.registerMainGameScreen(game);
 
         InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
         inventoryComponent.setInventory(saveConfig.inventory);
@@ -138,20 +138,18 @@ public class GdxGame extends Game {
     // Make sure area is valid
     try {
       MainGameScreen.Areas.valueOf(save.area.toString());
-    } catch (IllegalArgumentException e) {
-      // Level is not in the list, start from level 1
-      save.area = MainGameScreen.Areas.LEVEL_ONE;
-    } catch (NullPointerException e) {
-      // No level initialized, start from level 1
+    } catch (IllegalArgumentException | NullPointerException e) {
+      // IllegalArgumentException: Level is not in the list, start from level 1
+      // NullPointerException: No level initialized, start from level 1
       save.area = MainGameScreen.Areas.LEVEL_ONE;
     }
 
     // Make sure inventory and upgrades exist
     if (save.inventory == null) {
-      save.inventory = new HashMap<String, Integer>();
+      save.inventory = new HashMap<>();
     }
     if (save.upgrades == null) {
-      save.upgrades = new HashMap<String, Integer>();
+      save.upgrades = new HashMap<>();
     }
 
     return save;

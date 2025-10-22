@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -14,8 +15,9 @@ import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.*;
@@ -31,7 +33,6 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import box2dLight.RayHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +75,8 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
 
+        drone.addComponent(new MinimapComponent("images/drone-map.png"));
+
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
         CooldownTask cooldownTask = new CooldownTask(3f);
@@ -104,6 +107,8 @@ public class EnemyFactory {
     public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
         Entity drone = createDrone(target, patrolRoute[0]);
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
+
+        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
 
@@ -138,6 +143,8 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController())
                 .addComponent(new BombTrackerComponent());
+
+        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         // Add cone light for downward detection
         RayHandler rayHandler = ServiceLocator.getLightingService().getEngine().getRayHandler();
@@ -229,6 +236,8 @@ public class EnemyFactory {
         // Add patrol route component
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
+        drone.addComponent(new MinimapComponent("images/drone-map.png"));
+
         // Add patrol task with lowest priority
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent.addTask(new BombPatrolTask(1f)); // Priority 1 - default behavior
@@ -270,6 +279,8 @@ public class EnemyFactory {
                 .addComponent(new AutoBombDropComponent(target, 2f)) // 2 sec auto bomb drop
                 .addComponent(new BombTrackerComponent());
 
+        drone.addComponent(new MinimapComponent("images/drone-map.png"));
+
         // AI setup with just patrol
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         BombPatrolTask patrolTask = new BombPatrolTask(1f);
@@ -309,6 +320,8 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
+
+        drone.addComponent(new MinimapComponent("images/blow_drone-map.png"));
 
         // AITasks and selfDestruct behaviour is only added if valid target exists
         if (target != null) {
@@ -365,6 +378,8 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
+
+        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         // Add self-destruct component
         if (target != null) {
@@ -438,7 +453,7 @@ public class EnemyFactory {
     public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                .addComponent(new ColliderComponent())
+                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())

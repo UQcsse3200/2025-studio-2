@@ -1,21 +1,22 @@
 package com.csse3200.game.components.minimap;
 
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import net.dermetfan.utils.Pair;
 
 import java.util.Map;
 
@@ -146,7 +147,9 @@ public class MinimapDisplay extends UIComponent {
     minimapImage.setPosition(cameraMinimapOrigin.x, cameraMinimapOrigin.y);
 
     for (Map.Entry<Entity, Image> entry : ServiceLocator.getMinimapService().getTrackedEntities().entrySet()) {
-      final Vector2 minimapCoords = worldToMinimapCoordinates(entry.getKey().getPosition());
+      Vector2 pos = entry.getKey().getComponent(InventoryComponent.class) == null ?
+              entry.getKey().getPosition() : entry.getKey().getPosition().cpy().add(0.5f, 0f);
+      final Vector2 minimapCoords = worldToMinimapCoordinates(pos);
       Image marker = entry.getValue();
       marker.setPosition(cameraMinimapOrigin.x + minimapCoords.x, cameraMinimapOrigin.y + minimapCoords.y);
     }

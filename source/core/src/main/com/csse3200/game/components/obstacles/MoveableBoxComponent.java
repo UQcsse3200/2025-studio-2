@@ -56,6 +56,10 @@ public class MoveableBoxComponent extends Component {
     private boolean savedBullet;
     private final Vector2 initPos = new Vector2();
 
+    private static final Vector2 HIDDEN_POS = new Vector2(-100f, -100f);
+    private boolean isVisible = true;
+    private boolean queueVisible = true;
+
     /**
      * Sets the internal camera variable.
      * This camera variable is then used when doing mouse pointer calculations
@@ -104,6 +108,11 @@ public class MoveableBoxComponent extends Component {
             entity.getEvents().addListener("laserHit", this::toggleOn);
             entity.getEvents().addListener("laserOff", this::toggleOn);
         }
+        entity.getEvents().addListener("setVisible", this::setVisible);
+    }
+
+    public void setVisible(boolean visible) {
+        queueVisible = visible;
     }
 
     /**
@@ -308,6 +317,19 @@ public class MoveableBoxComponent extends Component {
                 toggleOn(false);
             }
         }
+
+        // do visibility
+        if (!queueVisible) {
+            isVisible = false;
+            entity.setPosition(HIDDEN_POS);
+            boxPhysics.getBody().setAwake(false);
+        } else if (!isVisible) {
+            isVisible = true;
+            entity.setPosition(initPos);
+            boxPhysics.getBody().setAwake(true);
+        }
+
+        if (!isVisible) return;
 
         // check out of bounds
         if (entity.getPosition().y <= -5f) {

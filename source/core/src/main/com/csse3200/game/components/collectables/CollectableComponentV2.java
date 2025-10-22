@@ -6,6 +6,7 @@ import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -27,6 +28,9 @@ public class CollectableComponentV2 extends Component {
     private final String itemId;
     private boolean collected = false;
 
+    private final String type;
+    private final String subtype;
+
     ConeLightComponent cone;
     ColliderComponent collider;
     TextureRenderComponent texture;
@@ -36,6 +40,14 @@ public class CollectableComponentV2 extends Component {
 
     public CollectableComponentV2(String itemId) {
         this.itemId = itemId;
+
+        String[] parts = itemId.split(":");
+        this.type = parts[0].isBlank() ? "null" : parts[0];
+        if (parts.length > 1) {
+            this.subtype = parts[1].isBlank() ? "null" : parts[1];
+        } else {
+            this.subtype = null;
+        }
     }
 
     /**
@@ -70,7 +82,7 @@ public class CollectableComponentV2 extends Component {
                 if (texture != null) {
                     renderService.unregister(texture);
                     if (entity.getComponent(MinimapComponent.class)!= null) {
-                        Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/minimap_forest_area.png", Texture.class));
+                        Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/empty.png", Texture.class));
                         entity.getComponent(MinimapComponent.class).setMarker(marker);
                     }
                     cone.dispose();
@@ -97,8 +109,20 @@ public class CollectableComponentV2 extends Component {
 
         var inventory = player.getComponent(InventoryComponent.class);
         if (inventory != null) {
+            if (type.equals("upgrade")) {
+                if (!inventory.hasItem(InventoryComponent.Bag.UPGRADES, subtype)) {
+                    inventory.addItem(InventoryComponent.Bag.UPGRADES, subtype);
+                    inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, subtype);
+                    StatsTracker.addUpgrade();
+                }
+            }
+
+            if (itemId.equals("misc:hardware")) {
+                entity.getComponent(ItemCollectableComponent.class).onCollect(player);
+            }
+
             inventory.addItem(InventoryComponent.Bag.INVENTORY, itemId);
-            if (itemId.equals("key:door")) {
+            if (type.equals("key")) {
                 inventory.removeItem(InventoryComponent.Bag.OBJECTIVES, "keycard");
             }
             return true;

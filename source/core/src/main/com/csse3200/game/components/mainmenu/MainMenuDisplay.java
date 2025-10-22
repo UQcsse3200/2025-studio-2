@@ -1,12 +1,10 @@
 package com.csse3200.game.components.mainmenu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -18,7 +16,6 @@ import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.Provider;
 import java.util.Arrays;
 
 /**
@@ -68,6 +65,9 @@ public class MainMenuDisplay extends UIComponent {
     loadBtn.setTransform(true);
     loadBtn.setOrigin(Align.center);
 
+    tutorialBtn.setTransform(true);
+    tutorialBtn.setOrigin(Align.center);
+
     leaderboardBtn.setTransform(true);
     leaderboardBtn.setOrigin(Align.center);
 
@@ -81,7 +81,7 @@ public class MainMenuDisplay extends UIComponent {
     exitBtn.setOrigin(Align.center);
 
 
-    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, leaderboardBtn, settingsBtn, statsBtn, exitBtn));
+    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, tutorialBtn, leaderboardBtn, settingsBtn, statsBtn, exitBtn));
     // Triggers an event when the button is pressed
     startBtn.addListener(
         new ChangeListener() {

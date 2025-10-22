@@ -14,8 +14,6 @@ import com.csse3200.game.utils.math.Vector2Utils;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static java.lang.Math.abs;
-
 /**
  * Input handler for the player for keyboard and touch (mouse) input.
  * This input handler only uses keyboard input.
@@ -353,7 +351,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
      */
     private Array<Entity> findLadders() {
         Array<Entity> ladd = new Array<>();
-        Array<Entity> bobs = ServiceLocator.getEntityService().get_entities();
+        Array<Entity> bobs = ServiceLocator.getEntityService().getEntities();
         for (Entity bob : bobs) {
             if (bob.getComponent(LadderComponent.class) != null) {
                 ladd.add(bob);

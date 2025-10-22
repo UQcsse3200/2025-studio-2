@@ -1,8 +1,5 @@
 package com.csse3200.game.input;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.csse3200.game.extensions.GameExtension;
@@ -14,6 +11,10 @@ import org.mockito.MockedStatic;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class SettingsInputComponentTest {

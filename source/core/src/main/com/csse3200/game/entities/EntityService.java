@@ -75,7 +75,7 @@ public class EntityService {
    * Returns entities Array
    * @return entities array
    */
-  public Array<Entity> get_entities() {
+  public Array<Entity> getEntities() {
     return entities;
   }
 }

@@ -1,0 +1,11 @@
+{
+  "layers": [
+    { "texture": "images/cavelevel/background/7.png", "factor": 0.0, "offsetX": -17, "offsetY": -14, "scale": 3.456 },
+    { "texture": "images/cavelevel/background/6.png", "factor": 0.2, "offsetX": -17, "offsetY": -14, "scale": 3.456 },
+    { "texture": "images/cavelevel/background/5.png", "factor": 0.3, "offsetX": -17, "offsetY": -14, "scale": 3.456 },
+    { "texture": "images/cavelevel/background/4.png", "factor": 0.4, "offsetX": -17, "offsetY": -14, "scale": 3.456 },
+    { "texture": "images/cavelevel/background/3.png", "factor": 0.6, "offsetX": -17, "offsetY": -14, "scale": 3.456 },
+    { "texture": "images/cavelevel/background/2.png", "factor": 0.8, "offsetX": -17, "offsetY": -14, "scale": 3.456 },
+    { "texture": "images/cavelevel/background/1.png", "factor": 1.0, "offsetX": -17, "offsetY": -14, "scale": 3.456 }
+  ]
+}
