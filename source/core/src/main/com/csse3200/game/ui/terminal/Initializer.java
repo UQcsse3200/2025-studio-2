@@ -308,10 +308,12 @@ public class Initializer {
                   stats = getParentVar("stats");
                   stats.setHealth(0);
                   entity = getParentVar("entity");
-                  print("Entity ", entity.getId(), " has been killed!\\n");
+                  print("Entity ", entity.getId(), " has been killed!
+                  
+                  ");
                 }, () {
                   entity = getParentVar("entity");
-                  print("Entity ", entity.getId(), " has no health to set!\\n");
+                  print("Entity ", entity.getId(), " has no health to set!");
                 });
               });
               

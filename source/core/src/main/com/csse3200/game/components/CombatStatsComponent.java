@@ -68,7 +68,7 @@ public class CombatStatsComponent extends Component {
         int oldHealth = this.health;
         this.health = Math.max(0, health);
 
-        if (entity != null) {
+        if (entity != null && !isInvulnerable) {
             entity.getEvents().trigger("updateHealth", this.health);
             if (oldHealth > 0 && this.health == 0) {
                 entity.getEvents().trigger("playerDied");
