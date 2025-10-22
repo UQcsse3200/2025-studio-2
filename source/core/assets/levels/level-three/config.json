@@ -43,13 +43,12 @@
     { "type": "collectable", "subtype": "key", "id": 1, "target": "door", "x": 1, "y": 15, "extra": "keyPressurePlate" },
     { "type": "collectable", "subtype": "key", "id": 2, "target": "door", "x": 19, "y": 73 },
 
-    { "type":  "collectable", "subtype": "upgrade", "x": 45, "y": 8, "target": "jetpack", "isVisible":  false},
+    { "type": "laser_detector","id": "detector", "x": 48.5, "y": 11, "rotation": 90, "centerX": false, "centerY": false },
+    { "type":  "collectable", "subtype": "upgrade", "x": 45, "y": 8, "target": "jetpack", "extra": "detector"},
 
     { "type": "laser", "rotation":  -90, "x": 32, "y": 14, "sx": 0.5, "sy": 0.5 },
     { "type": "laser", "rotation":  -136, "x": 47, "y": 14, "sx": 0.5, "sy": 0.5 },
     { "type": "laser", "rotation":  180, "x": 23, "y": 65, "sx": 0.5, "sy": 0.5, "id": "laser" },
-
-    { "type": "laser_detector", "x": 48.5, "y": 11, "rotation": 90, "target": "jetpack", "centerX": false, "centerY": false },
 
     { "type": "button", "direction": "left", "target": "laser", "x": 23, "y": 52, "tooltip": "Press button to turn on/off the super secure laser"},
 
@@ -59,8 +58,8 @@
     {"type": "terminal","id": "spam-email","x": 46,"y": 4},
     {"type": "terminal","id": "final-broadcast","x": 4,"y": 46},
 
-    {"type": "objective","id": "door","x": 2,"y": 3,"sx": 2,"sy": 2},
-    {"type": "objective","id": "jetpack","x": 2,"y": 6,"sx": 2,"sy": 2},
-    {"type": "objective","id": "jetpack_completed","x": 45,"y": 8,"sx": 0.2,"sy": 0.2}
+    {"type": "objective","id": "door","x": 2,"y": 0,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack","x": 2,"y": 0,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack_completed","x": 45,"y": 8,"sx": 0.2,"sy": 0.2, "extra": "detector"}
   ]
 }
