@@ -707,9 +707,33 @@ public class TutorialMenuDisplay extends UIComponent {
     sectionTitle.setColor(Color.GREEN);
     contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
-    // Placeholder content
-    Label placeholder = new Label("enemy", skin);
-    contentTable.add(placeholder).left().colspan(2).row();
+    // Create table for enemy sprites
+    Table enemiesTable = new Table();
+    
+    // Add flying bat enemy
+    addDisplayColumn(enemiesTable,
+        new AssetConfig("images/flying_bat.atlas", true, "flying_bat"),
+        new InfoConfig("Flying Bat", "Patrols an area with horizontal movement."),
+        new ScalingConfig(216, 216, false, 35, 70));
+    
+    contentTable.add(enemiesTable).left().colspan(2).row();
+    
+    // Informational text with markup
+    String markedUpText =
+            """
+            These are some of the enemies you will encounter along your journey!
+
+            All enemies deal damage on contact and inflict knockback, so be careful when navigating around them.
+            """;
+
+    Label infoText = new Label(markedUpText, skin);
+    infoText.setFontScale(1.2f);
+    infoText.setWrap(true);
+    Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+    markupStyle.fontColor = Color.WHITE;
+    infoText.setStyle(markupStyle);
+
+    contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
   }
 
   /**

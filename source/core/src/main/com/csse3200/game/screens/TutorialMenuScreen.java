@@ -42,7 +42,8 @@ public class TutorialMenuScreen extends ScreenAdapter {
       "images/slow-potion.atlas",
       "images/laser.atlas",
       "images/doors.atlas",
-      "images/animated-monitors.atlas"
+      "images/animated-monitors.atlas",
+      "images/flying_bat.atlas"
   };
 
   private final GdxGame game;
