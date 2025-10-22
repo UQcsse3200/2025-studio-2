@@ -17,7 +17,6 @@ import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
-import com.csse3200.game.entities.factories.LadderFactory;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
 import com.csse3200.game.services.ResourceService;
@@ -33,7 +32,7 @@ public class TutorialGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(80,70);
     private static final float WALL_THICKNESS = 0.1f;
     private static final GridPoint2 PLAYER_SPAWN = new GridPoint2(1, 10);
-    private static boolean keySpawned;
+    private boolean keySpawned;
     private static final String[] gameTextures = {
         "images/box_boy_leaf.png",
         "images/button.png",
@@ -111,6 +110,8 @@ public class TutorialGameArea extends GameArea {
         "images/lost_hardware.png",
         "images/tutorials/jump.png",
         "images/tutorials/double_jump.png",
+        "images/ladder-map.png",
+        "images/door_open-map.png",
     };
     private static final String backgroundMusic = "sounds/KindaLikeTycho.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -181,8 +182,8 @@ public class TutorialGameArea extends GameArea {
     }
 
     private void spawnTutorials() {
-        spawnEntityAt(TutorialFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
-        spawnEntityAt(TutorialFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createJumpTutorial(), new GridPoint2(6, 5), true, true);
+        spawnEntityAt(ActionIndicatorFactory.createDoubleJumpTutorial(), new GridPoint2(11, 16), true, true);
     }
 
     private void spawnTerminals() {

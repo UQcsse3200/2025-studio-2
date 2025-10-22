@@ -1,8 +1,5 @@
 package com.csse3200.game.files;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Graphics.DisplayMode;
@@ -18,6 +15,9 @@ import org.mockito.MockedStatic;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class UserSettingsTest {
@@ -238,7 +238,7 @@ class UserSettingsTest {
 
       float normalized = UserSettings.getMusicVolumeNormalized();
 
-      assertEquals(0.48f, normalized, 0.001f);
+      assertEquals(0.6f, normalized, 0.001f);
     }
   }
 

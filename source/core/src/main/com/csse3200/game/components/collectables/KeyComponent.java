@@ -1,9 +1,7 @@
 package com.csse3200.game.components.collectables;
 
-import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.ServiceLocator;
 
 /**
  * A collectable key component that allows the player to pick up and store keys

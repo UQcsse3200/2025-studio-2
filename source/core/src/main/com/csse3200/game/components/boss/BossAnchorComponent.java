@@ -38,7 +38,8 @@ public class BossAnchorComponent extends Component {
         float left = cam.position.x - cam.viewportWidth * 0.5f;
         float midY = cam.position.y + offsetY;
 
-        float w = entity.getScale().x, h = entity.getScale().y;
+        float w = entity.getScale().x;
+        float h = entity.getScale().y;
         float cx = left + marginX + w * 0.5f;  // left edge pinned at marginX
 
         if (phys != null && phys.getBody() != null) {
