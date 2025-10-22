@@ -42,6 +42,16 @@ public class CollectablesSave {
         prefs.flush();
     }
 
+    public static boolean isPositionCollected(Vector2 pos) {
+        for (int i = 0; i < 9; i++) {
+            Vector2 savedPos = getCollectedPosition(i);
+            if (savedPos.epsilonEquals(pos, 1f)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static Vector2[] loadCollectedPositions() {
         Vector2[] positions = new Vector2[9];
         for (int i = 0; i < 9; i++) {

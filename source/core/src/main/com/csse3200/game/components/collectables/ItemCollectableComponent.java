@@ -43,7 +43,7 @@ public class ItemCollectableComponent extends CollectableComponent {
         return true;
     }
 
-    private boolean hasBeenCollected(Vector2 pos) {
+    public boolean hasBeenCollected(Vector2 pos) {
         for (Vector2 v : collected) {
             if (v.x != 0 && v.y != 0 && v.epsilonEquals(pos, 0.01f)) {
                 return true;
