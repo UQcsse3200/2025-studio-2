@@ -1,6 +1,5 @@
 package com.csse3200.game.entities.factories;
 
-import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -16,9 +15,8 @@ import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
-import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.*;
@@ -34,6 +32,7 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+import box2dLight.RayHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,6 +50,14 @@ public class EnemyFactory {
     private static final Color BOMBER_IDLE_COLOR = new Color(0.5f, 0.5f, 1f, 0.8f);  // Blue-ish
     private static final Color BOMBER_ALERT_COLOR = new Color(1f, 0.3f, 0.3f, 1f);   // Red
     private static final Vector2 HITBOX_OFFSET = new Vector2(0.0f, 10f);
+
+    // === [NEW] Drone variants for boss spawning ===
+    public enum DroneVariant {
+        SCOUT,   // tiny, low speed
+        CHASER,  // regular, middle speed
+        BRUTAL   // high speed
+    }
+
 
     /**
      * Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
@@ -76,8 +83,6 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
-
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
@@ -109,8 +114,6 @@ public class EnemyFactory {
     public static Entity createPatrollingDrone(Entity target, Vector2[] patrolRoute) {
         Entity drone = createDrone(target, patrolRoute[0]);
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
-
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
 
@@ -145,8 +148,6 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController())
                 .addComponent(new BombTrackerComponent());
-
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         // Add cone light for downward detection
         RayHandler rayHandler = ServiceLocator.getLightingService().getEngine().getRayHandler();
@@ -238,8 +239,6 @@ public class EnemyFactory {
         // Add patrol route component
         drone.addComponent(new PatrolRouteComponent(patrolRoute));
 
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
-
         // Add patrol task with lowest priority
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         aiComponent.addTask(new BombPatrolTask(1f)); // Priority 1 - default behavior
@@ -281,8 +280,6 @@ public class EnemyFactory {
                 .addComponent(new AutoBombDropComponent(target, 2f)) // 2 sec auto bomb drop
                 .addComponent(new BombTrackerComponent());
 
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
-
         // AI setup with just patrol
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         BombPatrolTask patrolTask = new BombPatrolTask(1f);
@@ -323,8 +320,6 @@ public class EnemyFactory {
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
 
-        drone.addComponent(new MinimapComponent("images/blow_drone-map.png"));
-
         // AITasks and selfDestruct behaviour is only added if valid target exists
         if (target != null) {
             drone.addComponent(new SelfDestructComponent(target));
@@ -358,28 +353,28 @@ public class EnemyFactory {
      * @param spawnPos Spawn position
      * @return Self-destruct chase drone
      */
-    public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos) {
+    public static Entity createBossSelfDestructDroneInternal(Entity target, Vector2 spawnPos,
+                                                             String atlasPath, float speed) {
         BaseEntityConfig config = configs.drone;
         Entity drone = createBaseEnemy();
-        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(3.1f);
+        //speed set
+        drone.getComponent(PhysicsMovementComponent.class).setMaxSpeed(speed);
 
+        //physic
         PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
         physics.setBodyType(BodyDef.BodyType.DynamicBody);
 
-        AnimationRenderComponent animator =
-                new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(atlasPath, TextureAtlas.class);
+        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
 
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("bomb_effect", 0.08f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bomb_effect", 0.1f, Animation.PlayMode.NORMAL);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
-
-        drone.addComponent(new MinimapComponent("images/drone-map.png"));
 
         // Add self-destruct component
         if (target != null) {
@@ -399,14 +394,61 @@ public class EnemyFactory {
             drone.getEvents().trigger("enemyActivated");
         }
 
-        animator.scaleEntity();
-        animator.startAnimation("angry_float"); // Permanent chase animation
+        // First make sure the required sequence frames are in the atlas, then start the animation
+        if (atlas.findRegions("angry_float").size > 0) {
+            animator.startAnimation("angry_float");
+        } else if (atlas.findRegions("float").size > 0) {
+            animator.startAnimation("float");
+        } else {
+            throw new com.badlogic.gdx.utils.GdxRuntimeException(
+                    "Atlas " + atlasPath + " missing required regions: angry_float/float");
+        }
+
+        //animator.scaleEntity();
+        //animator.startAnimation("angry_float"); // Permanent chase animation
 
         // Set position directly
         if (spawnPos != null) {
             drone.setPosition(spawnPos);
         }
 
+        return drone;
+    }
+
+    /**
+     * [New] Old signature kept for compatibility. Default to CHASER variant with default atlas.
+     */
+    public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos) {
+        // default atlas
+        final String DEFAULT_ATLAS = "images/drone.atlas";
+        final float DEFAULT_SPEED  = 3.1f;
+        return createBossSelfDestructDroneInternal(target, spawnPos, DEFAULT_ATLAS, DEFAULT_SPEED);
+    }
+
+    /**
+     * [NEW] Overload with variant: choose atlas + speed by variant.
+     */
+    public static Entity createBossSelfDestructDrone(Entity target, Vector2 spawnPos, DroneVariant variant) {
+        String atlasPath;
+        float speed;
+
+        switch (variant) {
+            case SCOUT:
+                atlasPath = "images/drone_scout.atlas";   //  SCOUT
+                speed = 1f;
+                break;
+            case BRUTAL:
+                atlasPath = "images/drone_brutal.atlas";  // BRUTAL
+                speed = 3.8f;
+                break;
+            case CHASER:
+            default:
+                atlasPath = "images/drone_chaser.atlas";  // CHASER
+                speed = 2f;
+                break;
+        }
+
+        Entity drone = createBossSelfDestructDroneInternal(target, spawnPos, atlasPath, speed);
         return drone;
     }
 
@@ -422,7 +464,7 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,10f))
                         .addComponent(new AITaskComponent())// Want this empty for base enemies
                         .addComponent(new DeathOnTrapComponent());
 
@@ -453,9 +495,9 @@ public class EnemyFactory {
     public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NPC))
+                .addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                .addComponent(new CombatStatsComponent(9999, 9999))
+                .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
                 .addComponent(new BossAnimationController())
                 .addComponent(new BossAnchorComponent(1.0f, 0f))
@@ -513,12 +555,12 @@ public class EnemyFactory {
 
         // Add drone spawning component with default triggers
         //  can configure these in BossLevelGameArea by getting the component and calling addSpawnTrigger()
-        List<Vector2> defaultTriggers = new ArrayList<>();
-        defaultTriggers.add(new Vector2(10f, 0f));  // Default trigger 1
-        defaultTriggers.add(new Vector2(40f, 0f));  // Default trigger 2
-        defaultTriggers.add(new Vector2(60f, 0f));  // Default trigger 3
+//        List<Vector2> defaultTriggers = new ArrayList<>();
+//        defaultTriggers.add(new Vector2(10f, 0f));  // Default trigger 1
+//        defaultTriggers.add(new Vector2(40f, 0f));  // Default trigger 2
+//        defaultTriggers.add(new Vector2(60f, 0f));  // Default trigger 3
 
-        BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(defaultTriggers, 4f);
+        BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(new ArrayList<>(), 4f);
         boss.addComponent(droneSpawner);
 
         return boss;
