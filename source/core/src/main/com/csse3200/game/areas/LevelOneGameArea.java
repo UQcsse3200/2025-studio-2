@@ -840,8 +840,8 @@ public class LevelOneGameArea extends GameArea {
     private void spawnLaserDrone() {
 
 // Laser Drone Patrol Path
-        GridPoint2 patrolStart = new GridPoint2(35, 14);
-        GridPoint2 patrolEnd = new GridPoint2(40, 14);
+        GridPoint2 patrolStart = new GridPoint2(40, 12);
+        GridPoint2 patrolEnd = new GridPoint2(45, 14);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(patrolStart),
                 terrain.tileToWorldPosition(patrolEnd)
