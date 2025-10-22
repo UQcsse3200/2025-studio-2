@@ -564,15 +564,6 @@ public class EnemyFactory {
         BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(new ArrayList<>(), 4f);
         boss.addComponent(droneSpawner);
 
-        // Add the spawner component with triggers
-        List<Vector2> triggers = Arrays.asList(
-                new Vector2(5, 0),
-                new Vector2(5, 0),
-                new Vector2(23, 0)
-        );
-
-        boss.addComponent(new BossSpawnerComponent(triggers, 2.0f));
-
         return boss;
     }
 

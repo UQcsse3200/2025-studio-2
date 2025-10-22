@@ -326,9 +326,7 @@ public class BossSpawnerComponent extends Component {
 	 * Reset all triggers (for level reset)
 	 */
 	public void resetTriggers() {
-		for (int i = 0; i < triggered.size(); i++) {
-			triggered.set(i, false);
-		}
+        triggered.replaceAll(ignored -> false);
 		currentTriggerIndex = 0;
 
 		spawnCooldown = 0f;
@@ -336,9 +334,7 @@ public class BossSpawnerComponent extends Component {
 		spawnedInPhase = 0;
 		isSpawningActive = false;
 
-		for (int i = 0; i < phaseCompleted.size(); i++) {
-			phaseCompleted.set(i, false);
-		}
+        phaseCompleted.replaceAll(ignored -> false);
 
 		spawnedDrones.clear();
 		logger.info("Triggers & phase states reset");
