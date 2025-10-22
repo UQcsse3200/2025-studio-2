@@ -1,8 +1,11 @@
 package com.csse3200.game.components;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -38,6 +41,8 @@ public class SelfDestructComponent extends Component {
             body.setLinearVelocity(0f, 0f);
             body.setAngularVelocity(0f);
             body.setActive(false);
+            Image marker = new Image(ServiceLocator.getResourceService().getAsset("images/empty.png", Texture.class));
+            entity.getComponent(MinimapComponent.class).setMarker(marker);
         }
 
         // Stop explosion anim

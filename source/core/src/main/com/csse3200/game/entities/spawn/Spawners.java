@@ -1,17 +1,19 @@
 package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
-import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
@@ -24,6 +26,7 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.UUID;
 
 public final class Spawners {
@@ -186,6 +189,14 @@ public final class Spawners {
             linkEntities(platform, a.linked);
             addIdentifier(platform, String.valueOf(a.id));
             platform.setScale(a.sx, a.sy);
+
+            String minimapTex = "images/platform-map.png";
+            if (a.sx >= 3.5f) {
+                minimapTex = "images/platform-long-map.png";
+            } else if (a.sx <= 1.0f) {
+                minimapTex = "images/platform-short-map.png";
+            }
+            platform.addComponent(new MinimapComponent(minimapTex));
 
             return platform;
         });
@@ -401,13 +412,8 @@ public final class Spawners {
 
 
         // --- Prompts ---
-//        SpawnRegistry.register("prompt", a -> {
-//            null;
-////            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
-//        });
-
         SpawnRegistry.register("prompt", a -> {
-            return CollectableFactory.createCollectable("potion:health");
+            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
         });
 
         // --- Computer Terminal ---
@@ -432,6 +438,31 @@ public final class Spawners {
             }
 
             return terminal;
+        });
+
+        // --- Boss ---
+        SpawnRegistry.register("boss", a -> {
+            Entity boss = EnemyFactory.createBossEnemy(player, new Vector2(a.x*2, a.y*2));
+
+            BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
+            if (spawnComp != null) {
+                spawnComp.resetTriggers();
+
+                spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
+
+            }
+
+            boss.getEvents().addListener("reset", () -> {
+                BossSpawnerComponent spawnComponent = boss.getComponent(BossSpawnerComponent.class);
+                if (spawnComponent != null) {
+                    spawnComponent.resetTriggers();
+                    spawnComponent.cleanupDrones();
+                }
+            });
+
+            return boss;
         });
     }
 

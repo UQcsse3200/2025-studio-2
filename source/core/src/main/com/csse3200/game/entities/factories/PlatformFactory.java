@@ -116,7 +116,7 @@ public class PlatformFactory {
             0f,
             180f
     ).setFollowEntity(false);
-    reflectorPlatform.addComponent(light);
+    //reflectorPlatform.addComponent(light);
 
     return reflectorPlatform;
   }
