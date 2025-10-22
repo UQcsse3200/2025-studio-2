@@ -158,6 +158,7 @@ public class MainGameScreen extends ScreenAdapter {
     terrainFactory = new TerrainFactory(renderer.getCamera());
 
     gameAreaEnum = area;
+//    gameArea = getGameArea(Areas.BOSS_LEVEL);
 //    gameArea = getGameArea(Areas.LEVEL_THREE);
     gameArea = getGameArea(area);
     gameArea.create();

@@ -86,7 +86,7 @@ public class BossLevelGameArea extends GameArea {
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
             "images/minimap_forest_area.png",
-            "images/minimap_player_marker.png"
+            "images/minimap_player_marker.png",
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
@@ -112,7 +112,10 @@ public class BossLevelGameArea extends GameArea {
             "images/volatile_platform.atlas",
             "images/timer.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/laser.atlas"
+            "images/laser.atlas",
+            "images/drone_scout.atlas",
+            "images/drone_chaser.atlas",
+            "images/drone_brutal.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
     private final TerrainFactory terrainFactory;
