@@ -33,5 +33,6 @@ public final class ItemEffectRegistry {
         register("upgrade", new AddUpgrade());
         register("objective", new AddObjective());
         register("misc", new AddHardware());
+        register("remove_objective", new RemoveObjective());
     }
 }
