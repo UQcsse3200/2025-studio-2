@@ -8,8 +8,13 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.SelfDestructComponent;
+import com.csse3200.game.components.boss.BossAnchorComponent;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
+import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
+import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.ChaseTask;
 import com.csse3200.game.entities.Entity;
@@ -577,6 +582,145 @@ public class EnemyFactoryTest {
         assertNotNull(phys, "Boss should have PhysicsComponent");
         assertEquals(BodyDef.BodyType.KinematicBody, phys.getBody().getType(),
                 "Boss should have a kinematic body");
+    }
+
+
+    @Test
+    void createBomberDrone_hasCorrectCombatStats() {
+        Entity bomber = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0,0), "test");
+        CombatStatsComponent stats = bomber.getComponent(CombatStatsComponent.class);
+        assertNotNull(stats);
+    }
+
+    @Test
+    void createBossSelfDestructDrone_hasAllComponents() {
+        Entity target = new Entity();
+        Entity drone = EnemyFactory.createBossSelfDestructDrone(target, new Vector2(0, 0));
+
+        assertNotNull(drone.getComponent(CombatStatsComponent.class), "Should have combat stats");
+        assertNotNull(drone.getComponent(AnimationRenderComponent.class), "Should have animation renderer");
+        assertNotNull(drone.getComponent(AITaskComponent.class), "Should have AI task component");
+        assertNotNull(drone.getComponent(PhysicsMovementComponent.class), "Should have physics movement");
+
+        // Check specific boss self-destruct drone properties
+        PhysicsMovementComponent physics = drone.getComponent(PhysicsMovementComponent.class);
+        assertEquals(3.1f, physics.getMaxSpeed(), 0.01f, "Should have increased max speed");
+
+        AnimationRenderComponent animator = drone.getComponent(AnimationRenderComponent.class);
+        assertEquals("angry_float", animator.getCurrentAnimation(), "Should start in angry_float animation");
+    }
+
+    @Test
+    void createBossSelfDestructDrone_withNullTarget() {
+        Entity drone = EnemyFactory.createBossSelfDestructDrone(null, new Vector2(0, 0));
+        assertNotNull(drone, "Should create drone even with null target");
+        assertNotNull(drone.getComponent(CombatStatsComponent.class), "Should have basic components");
+    }
+
+    @Test
+    void createBossSelfDestructDrone_setsPositionCorrectly() {
+        Vector2 spawnPos = new Vector2(5, 5);
+        Entity drone = EnemyFactory.createBossSelfDestructDrone(new Entity(), spawnPos);
+
+        assertEquals(spawnPos, drone.getPosition(), "Should set correct position");
+    }
+
+    @Test
+    void createPatrollingBomberDrone_hasPatrolComponents() {
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity drone = EnemyFactory.createPatrollingBomberDrone(new Entity(), route, "test");
+
+        assertNotNull(drone.getComponent(PatrolRouteComponent.class), "Should have patrol route component");
+        PatrolRouteComponent patrol = drone.getComponent(PatrolRouteComponent.class);
+        assertArrayEquals(route, patrol.getWaypoints(), "Should store correct waypoints");
+    }
+
+    @Test
+    void createPatrollingBomberDrone_hasSpawnPosition() {
+        Vector2[] route = {new Vector2(2, 3), new Vector2(4, 5)};
+        Entity drone = EnemyFactory.createPatrollingBomberDrone(new Entity(), route, "test");
+
+        SpawnPositionComponent spawn = drone.getComponent(SpawnPositionComponent.class);
+        assertNotNull(spawn, "Should have spawn position component");
+        assertEquals(route[0], spawn.getSpawnPos(), "Should use first waypoint as spawn position");
+    }
+
+    @Test
+    void createPatrollingBomberDrone_hasBomberComponents() {
+        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
+        Entity drone = EnemyFactory.createPatrollingBomberDrone(new Entity(), route, "test");
+
+        assertNotNull(drone.getComponent(CombatStatsComponent.class), "Should have combat stats");
+        assertNotNull(drone.getComponent(AnimationRenderComponent.class), "Should have animations");
+        assertTrue(drone.getComponent(AnimationRenderComponent.class).hasAnimation("bidle"), "Should have bomber animations");
+    }
+
+    @Test
+    void createSelfDestructionDrone_withNullTarget() {
+        Entity drone = EnemyFactory.createSelfDestructionDrone(null, new Vector2(0, 0));
+        assertNotNull(drone, "Should create drone even with null target");
+        assertNull(drone.getComponent(SelfDestructComponent.class),
+                "Should not have self-destruct component when target is null");
+
+        assertNotNull(drone.getComponent(CombatStatsComponent.class), "Should have combat stats");
+        assertNotNull(drone.getComponent(AnimationRenderComponent.class), "Should have animations");
+    }
+
+    @Test
+    void createSelfDestructionDrone_withNullTargetHasCorrectAnimation() {
+        Entity drone = EnemyFactory.createSelfDestructionDrone(null, new Vector2(0, 0));
+
+        AnimationRenderComponent animator = drone.getComponent(AnimationRenderComponent.class);
+        assertNotNull(animator, "Should have animation component");
+        assertEquals("float", animator.getCurrentAnimation(), "Should start in float animation");
+    }
+
+
+    @Test
+    void boss_hasAllSpecificComponents() {
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
+
+        assertNotNull(boss.getComponent(BossAnchorComponent.class), "Should have boss anchor component");
+        assertNotNull(boss.getComponent(BossTouchKillComponent.class), "Should have boss touch kill component");
+        assertNotNull(boss.getComponent(BossAnimationController.class), "Should have boss animation controller");
+        assertNotNull(boss.getComponent(BossSpawnerComponent.class), "Should have boss spawner component");
+    }
+
+    @Test
+    void boss_hasCorrectAnimations() {
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
+        AnimationRenderComponent anim = boss.getComponent(AnimationRenderComponent.class);
+
+        assertTrue(anim.hasAnimation("bossChase"), "Should have bossChase animation");
+        assertTrue(anim.hasAnimation("bossGenerateDrone"), "Should have bossGenerateDrone animation");
+        assertTrue(anim.hasAnimation("bossTouchKill"), "Should have bossTouchKill animation");
+        assertTrue(anim.hasAnimation("bossShootLaser"), "Should have bossShootLaser animation");
+        assertTrue(anim.hasAnimation("touchKillEffect"), "Should have touchKillEffect animation");
+    }
+
+    @Test
+    void boss_hasCorrectScale() {
+        Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
+
+        Vector2 scale = boss.getScale();
+        assertTrue(scale.x > 0 && scale.y > 0, "Boss should have positive scale");
+    }
+
+    @Test
+    void createBaseEnemy_hasAllComponents() {
+        Entity drone = EnemyFactory.createDrone(new Entity(), new Vector2(0, 0));
+
+        assertNotNull(drone.getComponent(PhysicsComponent.class));
+        assertNotNull(drone.getComponent(PhysicsMovementComponent.class));
+        assertNotNull(drone.getComponent(ColliderComponent.class));
+        assertNotNull(drone.getComponent(HitboxComponent.class));
+        assertNotNull(drone.getComponent(AITaskComponent.class));
+
+        PhysicsMovementComponent movement = drone.getComponent(PhysicsMovementComponent.class);
+        assertEquals(1.4f, movement.getMaxSpeed(), 0.01f, "Base enemy should have correct max speed");
+
+        PhysicsComponent physics = drone.getComponent(PhysicsComponent.class);
+        assertEquals(0f, physics.getBody().getGravityScale(), "Base enemy should have zero gravity");
     }
 
     private Entity createEntityWithPosition(Vector2 pos) {
