@@ -710,10 +710,14 @@ public class TutorialMenuDisplay extends UIComponent {
     // Create table for enemy sprites
     Table enemiesTable = new Table();
     
-    // Add flying bat enemy
+    // Add enemies
     addDisplayColumn(enemiesTable,
         new AssetConfig("images/flying_bat.atlas", true, "flying_bat"),
         new InfoConfig("Flying Bat", "Patrols an area with horizontal movement."),
+        new ScalingConfig(216, 216, false, 35, 70));
+    addDisplayColumn(enemiesTable,
+        new AssetConfig("images/drone.atlas", true, "angry_float"),
+        new InfoConfig("Patrolling Drone", "Patrols designated routes and tracks the player when detected."),
         new ScalingConfig(216, 216, false, 35, 70));
     
     contentTable.add(enemiesTable).left().colspan(2).row();
