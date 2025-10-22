@@ -345,6 +345,62 @@ public class TutorialMenuDisplay extends UIComponent {
     }
 
     /**
+     * Helper to add an item column (sprite + name + description) to the items table.
+     */
+    private void addItemColumn(Table itemsTable, String atlasPath, String itemName, String description) {
+        TextureAtlas itemAtlas = ServiceLocator.getResourceService()
+                .getAsset(atlasPath, TextureAtlas.class);
+        
+        Array<TextureAtlas.AtlasRegion> frames = itemAtlas.findRegions("collectable-spin");
+        if (frames.size == 0) return;
+
+        Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
+        AnimatedImage sprite = new AnimatedImage(animation);
+
+        Table column = new Table();
+        column.add(sprite).size(216, 216).padBottom(15).center().row();
+
+        Label nameLabel = new Label(itemName, skin);
+        nameLabel.setFontScale(1.3f);
+        nameLabel.setColor(Color.YELLOW);
+        column.add(nameLabel).center().padTop(5).row();
+
+        Label descLabel = new Label(description, skin);
+        descLabel.setFontScale(1.0f);
+        descLabel.setWrap(true);
+        descLabel.setAlignment(Align.center);
+        column.add(descLabel).width(250).center().padTop(5).row();
+
+        itemsTable.add(column).padLeft(35).padRight(70).padBottom(10).expandX().fillX();
+    }
+
+    /**
+     * Helper to add a static item column (texture + name + description) to the items table.
+     */
+    private void addStaticItemColumn(Table itemsTable, String texturePath, String itemName, String description) {
+        Texture itemTexture = ServiceLocator.getResourceService()
+                .getAsset(texturePath, Texture.class);
+        
+        Image sprite = new Image(itemTexture);
+
+        Table column = new Table();
+        column.add(sprite).size(216, 216).padBottom(15).center().row();
+
+        Label nameLabel = new Label(itemName, skin);
+        nameLabel.setFontScale(1.3f);
+        nameLabel.setColor(Color.YELLOW);
+        column.add(nameLabel).center().padTop(5).row();
+
+        Label descLabel = new Label(description, skin);
+        descLabel.setFontScale(1.0f);
+        descLabel.setWrap(true);
+        descLabel.setAlignment(Align.center);
+        column.add(descLabel).width(250).center().padTop(5).row();
+
+        itemsTable.add(column).padLeft(35).padRight(70).padBottom(10).expandX().fillX();
+    }
+
+    /**
      * Creates a styled sidebar button with hover scaling and click handling.
      */
     private TextButton createSidebarButton(String text, Runnable onClick) {
@@ -405,9 +461,33 @@ public class TutorialMenuDisplay extends UIComponent {
     sectionTitle.setColor(Color.GREEN);
     contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
-    // Placeholder content
-    Label placeholder = new Label("Item descriptions and usage will go here...", skin);
-    contentTable.add(placeholder).left().colspan(2).row();
+    // Create table for item sprites
+    Table itemsTable = new Table();
+    
+    // Add each item column
+    addItemColumn(itemsTable, "images/health-potion.atlas", "Health Potion", "Restores HP when collected.");
+    addItemColumn(itemsTable, "images/speed-potion.atlas", "Speed Boost", "Temporarily increases your movement speed.");
+    addItemColumn(itemsTable, "images/slow-potion.atlas", "Slow Potion", "Slows down nearby enemies temporarily.");
+    addStaticItemColumn(itemsTable, "images/key.png", "Key Card", "Required to unlock doors and progress.");
+    
+    contentTable.add(itemsTable).left().colspan(2).row();
+    
+    // Informational text with markup
+    String markedUpText =
+            """
+            Collect items throughout your journey to aid your survival!
+    
+            Some items are [RED]auto-consumed[] when collected, while others can be stored in your inventory.
+            """;
+    
+    Label infoText = new Label(markedUpText, skin);
+    infoText.setFontScale(1.2f);
+    infoText.setWrap(true);
+    Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+    markupStyle.fontColor = Color.WHITE;
+    infoText.setStyle(markupStyle);
+    
+    contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
   }
 
   /**
