@@ -173,14 +173,16 @@ loadScripts(document, 'script');</script>
 <div class="block">Exit the game.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="entities/configs/SaveConfig.html" title="class in com.csse3200.game.entities.configs">SaveConfig</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadSave(java.lang.String)" class="member-name-link">loadSave</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#loadSave(java.lang.String,com.csse3200.game.files.FileLoader.Location)" class="member-name-link">loadSave</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path,
+ <a href="files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a>&nbsp;location)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Return a valid save config</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveLevel(com.csse3200.game.screens.MainGameScreen.Areas,com.csse3200.game.entities.Entity,java.lang.String)" class="member-name-link">saveLevel</a><wbr>(<a href="screens/MainGameScreen.Areas.html" title="enum class in com.csse3200.game.screens">MainGameScreen.Areas</a>&nbsp;area,
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#saveLevel(com.csse3200.game.screens.MainGameScreen.Areas,com.csse3200.game.entities.Entity,java.lang.String,com.csse3200.game.files.FileLoader.Location)" class="member-name-link">saveLevel</a><wbr>(<a href="screens/MainGameScreen.Areas.html" title="enum class in com.csse3200.game.screens">MainGameScreen.Areas</a>&nbsp;area,
  <a href="entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</code></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path,
+ <a href="files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a>&nbsp;location)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setScreen(com.csse3200.game.GdxGame.ScreenType)" class="member-name-link">setScreen</a><wbr>(<a href="GdxGame.ScreenType.html" title="enum class in com.csse3200.game">GdxGame.ScreenType</a>&nbsp;screenType)</code></div>
@@ -211,14 +213,6 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="SAVE_PATH">
 <h3>SAVE_PATH</h3>
 <div class="member-signature"><span class="modifiers">public static final</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a></span>&nbsp;<span class="element-name">SAVE_PATH</span></div>
-<dl class="notes">
-<dt>See Also:</dt>
-<dd>
-<ul class="tag-list">
-<li><a href="../../../constant-values.html#com.csse3200.game.GdxGame.SAVE_PATH">Constant Field Values</a></li>
-</ul>
-</dd>
-</dl>
 </section>
 </li>
 </ul>
@@ -250,11 +244,12 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="saveLevel(com.csse3200.game.screens.MainGameScreen.Areas,com.csse3200.game.entities.Entity,java.lang.String)">
+<section class="detail" id="saveLevel(com.csse3200.game.screens.MainGameScreen.Areas,com.csse3200.game.entities.Entity,java.lang.String,com.csse3200.game.files.FileLoader.Location)">
 <h3>saveLevel</h3>
 <div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">saveLevel</span><wbr><span class="parameters">(<a href="screens/MainGameScreen.Areas.html" title="enum class in com.csse3200.game.screens">MainGameScreen.Areas</a>&nbsp;area,
  <a href="entities/Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;player,
- <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</span></div>
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path,
+ <a href="files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a>&nbsp;location)</span></div>
 </section>
 </li>
 <li>
@@ -281,9 +276,10 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="loadSave(java.lang.String)">
+<section class="detail" id="loadSave(java.lang.String,com.csse3200.game.files.FileLoader.Location)">
 <h3>loadSave</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="entities/configs/SaveConfig.html" title="class in com.csse3200.game.entities.configs">SaveConfig</a></span>&nbsp;<span class="element-name">loadSave</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="entities/configs/SaveConfig.html" title="class in com.csse3200.game.entities.configs">SaveConfig</a></span>&nbsp;<span class="element-name">loadSave</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;path,
+ <a href="files/FileLoader.Location.html" title="enum class in com.csse3200.game.files">FileLoader.Location</a>&nbsp;location)</span></div>
 <div class="block">Return a valid save config</div>
 <dl class="notes">
 <dt>Parameters:</dt>

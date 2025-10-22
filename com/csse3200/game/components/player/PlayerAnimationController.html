@@ -126,7 +126,7 @@ loadScripts(document, 'script');</script>
 <div class="summary-table two-column-summary">
 <div class="table-header col-first">Constructor</div>
 <div class="table-header col-last">Description</div>
-<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E()" class="member-name-link">PlayerAnimationController</a>()</code></div>
+<div class="col-constructor-name even-row-color"><code><a href="#%3Cinit%3E(com.csse3200.game.components.player.PlayerActions)" class="member-name-link">PlayerAnimationController</a><wbr>(<a href="PlayerActions.html" title="class in com.csse3200.game.components.player">PlayerActions</a>&nbsp;playerActions)</code></div>
 <div class="col-last even-row-color">&nbsp;</div>
 </div>
 </section>
@@ -153,14 +153,24 @@ loadScripts(document, 'script');</script>
 <div class="block">starts the player's dash animation</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateHurt()" class="member-name-link">animateHurt</a>()</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateDeath()" class="member-name-link">animateDeath</a>()</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">starts the player's hurt animation</div>
+<div class="block">starts the player's death animation</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateJump()" class="member-name-link">animateJump</a>()</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateHurt()" class="member-name-link">animateHurt</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">starts the player's hurt animation</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateJump()" class="member-name-link">animateJump</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">starts the player's jump animation</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateSmoke()" class="member-name-link">animateSmoke</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">starts the smoke animation</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#animateStop()" class="member-name-link">animateStop</a>()</code></div>
@@ -178,15 +188,23 @@ loadScripts(document, 'script');</script>
 <div class="block">Called when the entity is created and registered.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAnimation(java.lang.String)" class="member-name-link">setAnimation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;animationName)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#revertAnimation()" class="member-name-link">revertAnimation</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">setAnimation: to avoid repeated startup of the same animations</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAnimator(com.csse3200.game.rendering.AnimationRenderComponent)" class="member-name-link">setAnimator</a><wbr>(<a href="../../rendering/AnimationRenderComponent.html" title="class in com.csse3200.game.rendering">AnimationRenderComponent</a>&nbsp;animator)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAnimation(java.lang.String)" class="member-name-link">setAnimation</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;animationName)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">setAnimation: to avoid repeated startup of the same animations</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAnimator(com.csse3200.game.rendering.AnimationRenderComponent)" class="member-name-link">setAnimator</a><wbr>(<a href="../../rendering/AnimationRenderComponent.html" title="class in com.csse3200.game.rendering">AnimationRenderComponent</a>&nbsp;animator)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTimer(com.csse3200.game.services.GameTime)" class="member-name-link">setTimer</a><wbr>(<a href="../../services/GameTime.html" title="class in com.csse3200.game.services">GameTime</a>&nbsp;timer)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTimer(com.csse3200.game.services.GameTime)" class="member-name-link">setTimer</a><wbr>(<a href="../../services/GameTime.html" title="class in com.csse3200.game.services">GameTime</a>&nbsp;timer)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setXDirection(int)" class="member-name-link">setXDirection</a><wbr>(int&nbsp;i)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
@@ -229,9 +247,9 @@ loadScripts(document, 'script');</script>
 <h2>Constructor Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="&lt;init&gt;()">
+<section class="detail" id="&lt;init&gt;(com.csse3200.game.components.player.PlayerActions)">
 <h3>PlayerAnimationController</h3>
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">PlayerAnimationController</span>()</div>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="element-name">PlayerAnimationController</span><wbr><span class="parameters">(<a href="PlayerActions.html" title="class in com.csse3200.game.components.player">PlayerActions</a>&nbsp;playerActions)</span></div>
 </section>
 </li>
 </ul>
@@ -296,6 +314,13 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="revertAnimation()">
+<h3>revertAnimation</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">revertAnimation</span>()</div>
+<div class="block">setAnimation: to avoid repeated startup of the same animations</div>
+</section>
+</li>
+<li>
 <section class="detail" id="setAnimation(java.lang.String)">
 <h3>setAnimation</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setAnimation</span><wbr><span class="parameters">(<a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/lang/String.html" title="class or interface in java.lang" class="external-link">String</a>&nbsp;animationName)</span></div>
@@ -314,6 +339,26 @@ loadScripts(document, 'script');</script>
 <h3>animateHurt</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">animateHurt</span>()</div>
 <div class="block">starts the player's hurt animation</div>
+</section>
+</li>
+<li>
+<section class="detail" id="animateDeath()">
+<h3>animateDeath</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">animateDeath</span>()</div>
+<div class="block">starts the player's death animation</div>
+</section>
+</li>
+<li>
+<section class="detail" id="animateSmoke()">
+<h3>animateSmoke</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">animateSmoke</span>()</div>
+<div class="block">starts the smoke animation</div>
+</section>
+</li>
+<li>
+<section class="detail" id="setXDirection(int)">
+<h3>setXDirection</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setXDirection</span><wbr><span class="parameters">(int&nbsp;i)</span></div>
 </section>
 </li>
 </ul>
