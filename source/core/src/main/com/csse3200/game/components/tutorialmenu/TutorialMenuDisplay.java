@@ -305,49 +305,6 @@ public class TutorialMenuDisplay extends UIComponent {
   }
 
     /**
-     * Displays content for "The Basics" section
-     */
-    private void showBasicsContent() {
-        Label sectionTitle = new Label("The Basics", skin);
-        sectionTitle.setFontScale(1.5f);
-        sectionTitle.setColor(Color.GREEN);
-        contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
-
-        Table spriteTable = new Table();
-
-        // Add each movement control with animated sprites and keybinds
-        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "LEFT",
-                "Move Left", getKeybindText("PlayerLeft") + "\nMove your character to the left.",
-                288, 216, false, 35, 35);
-        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "RIGHT",
-                "Move Right", getKeybindText("PlayerRight") + "\nMove your character to the right.",
-                288, 216, false, 35, 35);
-        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "CROUCH",
-                "Crouch", getKeybindText("PlayerCrouch") + "\nFit through tight spaces.",
-                288, 216, false, 35, 35);
-        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "JUMP",
-                "Jump", getKeybindText("PlayerJump") + "\nReach higher platforms. Double-tap for double-jump!",
-                288, 216, false, 35, 35);
-
-        contentTable.add(spriteTable).left().colspan(2).row();
-
-        // Informational text with markup
-        String markedUpText =
-                """
-                These are the basic movement controls. Practice combining them to navigate the world effectively!
-                """;
-
-        Label infoText = new Label(markedUpText, skin);
-        infoText.setFontScale(1.2f);
-        infoText.setWrap(true);
-        Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
-        markupStyle.fontColor = Color.WHITE;
-        infoText.setStyle(markupStyle);
-
-        contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
-    }
-
-    /**
      * Helper method to get a formatted keybind string with red color markup.
      * 
      * @param actionKey The action key name (e.g., "PlayerJump", "PlayerDash")
@@ -360,65 +317,104 @@ public class TutorialMenuDisplay extends UIComponent {
     }
 
     /**
+     * Configuration for asset loading (texture or atlas)
+     */
+    private static class AssetConfig {
+        String assetPath;
+        boolean isAnimated;
+        String animationRegion;
+
+        AssetConfig(String assetPath, boolean isAnimated, String animationRegion) {
+            this.assetPath = assetPath;
+            this.isAnimated = isAnimated;
+            this.animationRegion = animationRegion;
+        }
+    }
+
+    /**
+     * Configuration for display information (title and description)
+     */
+    private static class InfoConfig {
+        String title;
+        String description;
+
+        InfoConfig(String title, String description) {
+            this.title = title;
+            this.description = description;
+        }
+    }
+
+    /**
+     * Configuration for sprite sizing and padding
+     */
+    private static class ScalingConfig {
+        float spriteWidth;
+        float spriteHeight;
+        boolean preserveAspectRatio;
+        float padLeft;
+        float padRight;
+
+        ScalingConfig(float spriteWidth, float spriteHeight, boolean preserveAspectRatio,
+                     float padLeft, float padRight) {
+            this.spriteWidth = spriteWidth;
+            this.spriteHeight = spriteHeight;
+            this.preserveAspectRatio = preserveAspectRatio;
+            this.padLeft = padLeft;
+            this.padRight = padRight;
+        }
+    }
+
+    /**
      * Unified helper to add a display column (sprite + name + description).
      * Handles both animated atlases and static textures.
      * Used for all tutorial panes (basics, items, upgrades, and level mechanics).
      * 
      * @param table The table to add the column to
-     * @param assetPath Path to the asset (atlas or texture)
-     * @param isAnimated Whether the asset is an animated atlas
-     * @param animationRegion Animation region name (only used if isAnimated is true)
-     * @param title The title text (displayed in yellow)
-     * @param description The description text
-     * @param spriteWidth Sprite width
-     * @param spriteHeight Sprite height
-     * @param preserveAspectRatio Whether to preserve aspect ratio (for different shaped sprites)
-     * @param padLeft Left padding
-     * @param padRight Right padding
+     * @param assetConfig Configuration for the asset (path, animation info)
+     * @param infoConfig Configuration for display text (title, description)
+     * @param scalingConfig Configuration for sizing and padding
      */
-    private void addDisplayColumn(Table table, String assetPath, boolean isAnimated, String animationRegion,
-                                   String title, String description,
-                                   float spriteWidth, float spriteHeight, boolean preserveAspectRatio,
-                                   float padLeft, float padRight) {
+    private void addDisplayColumn(Table table, AssetConfig assetConfig, 
+                                   InfoConfig infoConfig, ScalingConfig scalingConfig) {
         Actor sprite;
         
-        if (isAnimated) {
+        if (assetConfig.isAnimated) {
             TextureAtlas atlas = ServiceLocator.getResourceService()
-                    .getAsset(assetPath, TextureAtlas.class);
-            Array<TextureAtlas.AtlasRegion> frames = atlas.findRegions(animationRegion);
+                    .getAsset(assetConfig.assetPath, TextureAtlas.class);
+            Array<TextureAtlas.AtlasRegion> frames = atlas.findRegions(assetConfig.animationRegion);
             if (frames.size == 0) return;
             
             Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
             sprite = new AnimatedImage(animation);
         } else {
             Texture texture = ServiceLocator.getResourceService()
-                    .getAsset(assetPath, Texture.class);
+                    .getAsset(assetConfig.assetPath, Texture.class);
             Image image = new Image(texture);
-            if (preserveAspectRatio) {
+            if (scalingConfig.preserveAspectRatio) {
                 image.setScaling(Scaling.fit);
             }
             sprite = image;
         }
 
         Table column = new Table();
-        if (preserveAspectRatio) {
-            column.add(sprite).prefSize(spriteWidth, spriteHeight).padBottom(15).center().row();
+        if (scalingConfig.preserveAspectRatio) {
+            column.add(sprite).prefSize(scalingConfig.spriteWidth, scalingConfig.spriteHeight).padBottom(15).center().row();
         } else {
-            column.add(sprite).size(spriteWidth, spriteHeight).padBottom(15).center().row();
+            column.add(sprite).size(scalingConfig.spriteWidth, scalingConfig.spriteHeight).padBottom(15).center().row();
         }
 
-        Label nameLabel = new Label(title, skin);
+        Label nameLabel = new Label(infoConfig.title, skin);
         nameLabel.setFontScale(1.3f);
         nameLabel.setColor(Color.YELLOW);
         column.add(nameLabel).center().padTop(5).row();
 
-        Label descLabel = new Label(description, skin);
+        Label descLabel = new Label(infoConfig.description, skin);
         descLabel.setFontScale(1.0f);
         descLabel.setWrap(true);
         descLabel.setAlignment(Align.center);
         column.add(descLabel).width(250).center().padTop(5).row();
 
-        table.add(column).padLeft(padLeft).padRight(padRight).padBottom(10).expandX().fillX();
+        table.add(column).padLeft(scalingConfig.padLeft).padRight(scalingConfig.padRight).padBottom(10).expandX().fillX();
     }
 
     /**
@@ -473,6 +469,53 @@ public class TutorialMenuDisplay extends UIComponent {
     game.setScreen(new MainGameScreen(game, area));
   }
 
+    /**
+     * Displays content for "The Basics" section
+     */
+    private void showBasicsContent() {
+        Label sectionTitle = new Label("The Basics", skin);
+        sectionTitle.setFontScale(1.5f);
+        sectionTitle.setColor(Color.GREEN);
+        contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
+
+        Table spriteTable = new Table();
+
+        // Add each movement control with animated sprites and keybinds
+        addDisplayColumn(spriteTable, 
+                new AssetConfig("images/PLAYER.atlas", true, "LEFT"),
+                new InfoConfig("Move Left", getKeybindText("PlayerLeft") + "\nMove your character to the left."),
+                new ScalingConfig(288, 216, false, 35, 35));
+        addDisplayColumn(spriteTable,
+                new AssetConfig("images/PLAYER.atlas", true, "RIGHT"),
+                new InfoConfig("Move Right", getKeybindText("PlayerRight") + "\nMove your character to the right."),
+                new ScalingConfig(288, 216, false, 35, 35));
+        addDisplayColumn(spriteTable,
+                new AssetConfig("images/PLAYER.atlas", true, "CROUCH"),
+                new InfoConfig("Crouch", getKeybindText("PlayerCrouch") + "\nFit through tight spaces."),
+                new ScalingConfig(288, 216, false, 35, 35));
+        addDisplayColumn(spriteTable,
+                new AssetConfig("images/PLAYER.atlas", true, "JUMP"),
+                new InfoConfig("Jump", getKeybindText("PlayerJump") + "\nReach higher platforms. Double-tap for double-jump!"),
+                new ScalingConfig(288, 216, false, 35, 35));
+
+        contentTable.add(spriteTable).left().colspan(2).row();
+
+        // Informational text with markup
+        String markedUpText =
+                """
+                These are the basic movement controls. Practice combining them to navigate the world effectively!
+                """;
+
+        Label infoText = new Label(markedUpText, skin);
+        infoText.setFontScale(1.2f);
+        infoText.setWrap(true);
+        Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+        markupStyle.fontColor = Color.WHITE;
+        infoText.setStyle(markupStyle);
+
+        contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
+    }
+
   /**
    * Displays content for "Items" section
    */
@@ -486,14 +529,22 @@ public class TutorialMenuDisplay extends UIComponent {
     Table itemsTable = new Table();
     
     // Add each item column (animated atlases and static texture)
-    addDisplayColumn(itemsTable, "images/health-potion.atlas", true, "collectable-spin",
-            "Health Potion", "Restores HP when collected.", 216, 216, false, 35, 70);
-    addDisplayColumn(itemsTable, "images/speed-potion.atlas", true, "collectable-spin",
-            "Speed Boost", "Temporarily increases your movement speed.", 216, 216, false, 35, 70);
-    addDisplayColumn(itemsTable, "images/slow-potion.atlas", true, "collectable-spin",
-            "Slow Potion", "Slows down nearby enemies temporarily.", 216, 216, false, 35, 70);
-    addDisplayColumn(itemsTable, "images/key.png", false, null,
-            "Key Card", "Required to unlock doors and progress.", 216, 216, false, 35, 70);
+    addDisplayColumn(itemsTable,
+            new AssetConfig("images/health-potion.atlas", true, "collectable-spin"),
+            new InfoConfig("Health Potion", "Restores HP when collected."),
+            new ScalingConfig(216, 216, false, 35, 70));
+    addDisplayColumn(itemsTable,
+            new AssetConfig("images/speed-potion.atlas", true, "collectable-spin"),
+            new InfoConfig("Speed Boost", "Temporarily increases your movement speed."),
+            new ScalingConfig(216, 216, false, 35, 70));
+    addDisplayColumn(itemsTable,
+            new AssetConfig("images/slow-potion.atlas", true, "collectable-spin"),
+            new InfoConfig("Slow Potion", "Slows down nearby enemies temporarily."),
+            new ScalingConfig(216, 216, false, 35, 70));
+    addDisplayColumn(itemsTable,
+            new AssetConfig("images/key.png", false, null),
+            new InfoConfig("Key Card", "Required to unlock doors and progress."),
+            new ScalingConfig(216, 216, false, 35, 70));
     
     contentTable.add(itemsTable).left().colspan(2).row();
     
@@ -529,15 +580,18 @@ public class TutorialMenuDisplay extends UIComponent {
     Table upgradesTable = new Table();
     
     // Add each upgrade column with powerup sprites (static textures)
-    addDisplayColumn(upgradesTable, "images/dash_powerup.png", false, null,
-        "Dash", getKeybindText("PlayerDash") + "\nQuickly dash forward to dodge enemies and manoeuvre past obstacles.",
-        216, 216, false, 100, 120);
-    addDisplayColumn(upgradesTable, "images/glide_powerup.png", false, null,
-        "Glider", getKeybindText("Glide") + " (hold)\nGlide through the air and reach distant platforms.",
-        216, 216, false, 100, 120);
-    addDisplayColumn(upgradesTable, "images/jetpack_powerup.png", false, null,
-        "Jetpack", getKeybindText("PlayerJump") + " (double tap)\nFly through the air with enhanced vertical mobility.",
-        216, 216, false, 100, 120);
+    addDisplayColumn(upgradesTable,
+        new AssetConfig("images/dash_powerup.png", false, null),
+        new InfoConfig("Dash", getKeybindText("PlayerDash") + "\nQuickly dash forward to dodge enemies and manoeuvre past obstacles."),
+        new ScalingConfig(216, 216, false, 100, 120));
+    addDisplayColumn(upgradesTable,
+        new AssetConfig("images/glide_powerup.png", false, null),
+        new InfoConfig("Glider", getKeybindText("Glide") + " (hold)\nGlide through the air and reach distant platforms."),
+        new ScalingConfig(216, 216, false, 100, 120));
+    addDisplayColumn(upgradesTable,
+        new AssetConfig("images/jetpack_powerup.png", false, null),
+        new InfoConfig("Jetpack", getKeybindText("PlayerJump") + " (double tap)\nFly through the air with enhanced vertical mobility."),
+        new ScalingConfig(216, 216, false, 100, 120));
     
     contentTable.add(upgradesTable).left().colspan(2).row();
     
@@ -571,18 +625,22 @@ public class TutorialMenuDisplay extends UIComponent {
     Table mechanicsRow1 = new Table();
     
     // First row: Buttons, Moveable Boxes, Pressure Plates, Ladders (preserve aspect ratio)
-    addDisplayColumn(mechanicsRow1, "images/button.png", false, null,
-        "Buttons", getKeybindText("PlayerInteract") + "\nInteract to activate mechanisms.",
-        175, 175, true, 40, 40);
-    addDisplayColumn(mechanicsRow1, "images/cube.png", false, null,
-        "Moveable Boxes", getKeybindText("PlayerInteract") + "\nPick up and place to solve puzzles.",
-        175, 175, true, 40, 40);
-    addDisplayColumn(mechanicsRow1, "images/plate.png", false, null,
-        "Pressure Plates", "Press with player or box to activate.",
-        175, 175, true, 40, 40);
-    addDisplayColumn(mechanicsRow1, "images/ladder.png", false, null,
-        "Ladders", getKeybindText("PlayerUp") + " (hold)\nClimb to reach higher areas.",
-        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow1,
+        new AssetConfig("images/button.png", false, null),
+        new InfoConfig("Buttons", getKeybindText("PlayerInteract") + "\nInteract to activate mechanisms."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(mechanicsRow1,
+        new AssetConfig("images/cube.png", false, null),
+        new InfoConfig("Moveable Boxes", getKeybindText("PlayerInteract") + "\nPick up and place to solve puzzles."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(mechanicsRow1,
+        new AssetConfig("images/plate.png", false, null),
+        new InfoConfig("Pressure Plates", "Press with player or box to activate."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(mechanicsRow1,
+        new AssetConfig("images/ladder.png", false, null),
+        new InfoConfig("Ladders", getKeybindText("PlayerUp") + " (hold)\nClimb to reach higher areas."),
+        new ScalingConfig(175, 175, true, 40, 40));
     
     contentTable.add(mechanicsRow1).left().colspan(2).row();
     
@@ -590,18 +648,22 @@ public class TutorialMenuDisplay extends UIComponent {
     Table mechanicsRow2 = new Table();
     
     // Second row: Lasers, Spikes, Minigame Terminals, Doors (preserve aspect ratio)
-    addDisplayColumn(mechanicsRow2, "images/laser.atlas", true, "laser-on",
-        "Lasers", "Damages player. Can be blocked with boxes.",
-        175, 175, true, 40, 40);
-    addDisplayColumn(mechanicsRow2, "images/spikes_sprite.png", false, null,
-        "Spikes", "Deals damage and knocks player back.",
-        175, 175, true, 40, 40);
-    addDisplayColumn(mechanicsRow2, "images/terminal_on.png", false, null,
-        "Minigame Terminals", getKeybindText("PlayerInteract") + "\nComplete minigames to progress.",
-        175, 175, true, 40, 40);
-    addDisplayColumn(mechanicsRow2, "images/doors.atlas", true, "door_closed",
-        "Doors", getKeybindText("PlayerInteract") + "\nRequires key. Level exit.",
-        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow2,
+        new AssetConfig("images/laser.atlas", true, "laser-on"),
+        new InfoConfig("Lasers", "Damages player. Can be blocked with boxes."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(mechanicsRow2,
+        new AssetConfig("images/spikes_sprite.png", false, null),
+        new InfoConfig("Spikes", "Deals damage and knocks player back."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(mechanicsRow2,
+        new AssetConfig("images/terminal_on.png", false, null),
+        new InfoConfig("Minigame Terminals", getKeybindText("PlayerInteract") + "\nComplete minigames to progress."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(mechanicsRow2,
+        new AssetConfig("images/doors.atlas", true, "door_closed"),
+        new InfoConfig("Doors", getKeybindText("PlayerInteract") + "\nRequires key. Level exit."),
+        new ScalingConfig(175, 175, true, 40, 40));
     
     contentTable.add(mechanicsRow2).left().colspan(2).row();
     
