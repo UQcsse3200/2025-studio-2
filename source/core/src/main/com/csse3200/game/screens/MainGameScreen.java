@@ -260,12 +260,10 @@ public class MainGameScreen extends ScreenAdapter {
   public GameArea getGameArea(Areas area) {
     lvlStartTime = gameTime.getTime();
     return switch (area) {
-      case TUTORIAL ->  new TutorialGameArea(terrainFactory);
       case LEVEL_ONE -> new LevelOneGameArea(terrainFactory);
       case CUTSCENE_ONE -> new CutsceneArea("cutscene-scripts/cutscene1.txt");
       case LEVEL_TWO -> new LevelTwoGameArea(terrainFactory);
       case CUTSCENE_TWO -> new CutsceneArea("cutscene-scripts/cutscene2.txt");
-      case SPRINT_ONE -> new SprintOneGameArea(terrainFactory);
       case LEVEL_THREE -> new LevelThreeGameArea(terrainFactory);
       case BOSS_LEVEL ->  new BossLevelGameArea(terrainFactory);
       default -> throw new IllegalStateException("Unexpected value: " + area);

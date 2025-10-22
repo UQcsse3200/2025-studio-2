@@ -5,8 +5,8 @@
     "sprite": "images/key.png",
     "description": "Unlocks doors.",
     "autoConsume": false,
-    "ttl": 0,
     "tags": ["KEY"],
+    "bag": "inventory",
     "effects": []
   },
   {
@@ -15,7 +15,6 @@
     "sprite": "images/health-potion.atlas",
     "description": "Restores 10 HP.",
     "autoConsume": true,
-    "ttl": 0,
     "tags": ["CONSUMABLE"],
     "effects": [
       { "type": "heal", "value": 10 }
@@ -28,7 +27,6 @@
     "sprite": "images/speed-potion.atlas",
     "description": "Unlocks the dash ability when used.",
     "autoConsume": true,
-    "ttl": 0,
     "tags": ["CONSUMABLE"],
     "effects": [
       { "type": "buff_speed", "duration": 5 }
@@ -40,33 +38,55 @@
     "name": "Dash Upgrade",
     "sprite": "images/dash_powerup.png",
     "description": "Unlocks the ability to dash",
-    "autoConsume": false,
+    "autoConsume": true,
     "tags": ["UPGRADE"],
-    "scale": [0.8, 0.5]
+    "scale": [0.8, 0.5],
+    "effects": [
+      { "type": "upgrade", "target": "dash" }
+    ]
   },
   {
     "id": "upgrade:glide",
     "name": "Glide Upgrade",
     "sprite": "images/glide_powerup.png",
     "description": "Unlocks the ability to glide",
-    "autoConsume": false,
-    "tags": ["UPGRADE"]
+    "autoConsume": true,
+    "tags": ["UPGRADE"],
+    "effects": [
+      { "type": "upgrade", "target": "glider" }
+    ]
   },
   {
     "id": "upgrade:jetpack",
     "name": "Jetpack Upgrade",
     "sprite": "images/jetpack_powerup.png",
     "description": "Unlocks the ability to use the jetpack",
-    "autoConsume": false,
-    "tags": ["UPGRADE"]
+    "autoConsume": true,
+    "tags": ["UPGRADE"],
+    "effects": [
+      { "type": "upgrade", "target": "jetpack" }
+    ]
   },
   {
     "id": "misc:hardware",
     "name": "Lost Hardware",
     "sprite": "images/lost_hardware.png",
     "description": "Hidden lost hardware",
-    "autoConsume": false,
+    "autoConsume": true,
     "tags": ["HARDWARE"],
     "glowColor": [40, 30, 55]
+  },
+  {
+    "id": "objective",
+    "name": "Generic Objective",
+    "sprite": "images/empty.png",
+    "description": "Objective",
+    "autoConsume": true,
+    "tags": ["OBJECTIVE"],
+    "bag": "objectives",
+    "effects": [
+      { "type": "objective"}
+    ],
+    "glowColor": [0, 0, 0]
   }
 ]

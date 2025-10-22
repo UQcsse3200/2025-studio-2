@@ -9,9 +9,8 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.computerterminal.CaptchaResult;
+import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
@@ -55,7 +54,6 @@ public final class Spawners {
 
             if (a.target != null) {
                 Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
-
                 target.getEvents().addListener("puzzleCompleted", () -> {
                     box.getEvents().trigger("setVisible", true);
                 });
@@ -77,21 +75,21 @@ public final class Spawners {
             // visibility listener logic
             if (a.extra != null) {
                 Entity toggler = ServiceLocator.getEntityService().getEntityById(a.extra);
-                collectable.getComponent(CollectableComponentV2.class).toggleVisibility(false);
+                collectable.getComponent(CollectableComponent.class).toggleVisibility(false);
 
                 // plate visibility logic -> show
                 toggler.getEvents().addListener("platePressed", () -> {
-                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(true);
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(true);
                 });
 
                 // plate visibility logic -> hide
                 toggler.getEvents().addListener("plateReleased", () -> {
-                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(false);
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(false);
                 });
 
                 // button visibility logic -> show/hide
                 toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
-                    collectable.getComponent(CollectableComponentV2.class).toggleVisibility(isPushed);
+                    collectable.getComponent(CollectableComponent.class).toggleVisibility(isPushed);
                 });
             }
 
@@ -293,7 +291,7 @@ public final class Spawners {
                 if (a.target.equals("jetpack")) {
                     Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
                     laserDetector.getEvents().addListener("detectingStart", () -> {
-                        UpgradesComponent cc = target.getComponent(UpgradesComponent.class);
+                        CollectableComponent cc = target.getComponent(CollectableComponent.class);
                         cc.toggleVisibility(true);
                     });
                 }
@@ -323,14 +321,6 @@ public final class Spawners {
             }
 
             return deathZone;
-        });
-
-        // --- Upgrade ---
-        SpawnRegistry.register("upgrade", a -> {
-            Entity upgrade = CollectableFactory.createJetpackUpgrade();
-            if (a.isVisible == false) upgrade.getComponent(UpgradesComponent.class).toggleVisibility(false);
-            addIdentifier(upgrade, String.valueOf(a.id));
-            return  upgrade;
         });
 
         // --- Enemies ---
@@ -374,9 +364,7 @@ public final class Spawners {
             }
 
             // anchor entity (returned to game area to position)
-            Entity anchor = LadderFactory.createLadderBase(ladderId, a.height, a.offset);
-
-            return anchor;
+            return LadderFactory.createLadderBase(ladderId, a.height, a.offset);
         });
 
         // --- Codex Terminal ---
@@ -398,9 +386,6 @@ public final class Spawners {
             return tutorial;
         });
 
-        // --- Objectives ---
-        SpawnRegistry.register("objective", a ->
-                CollectableFactory.createObjective(a.id, a.sx, a.sy));
 
         // --- Bats ---
         SpawnRegistry.register("bat", a -> {
@@ -415,10 +400,20 @@ public final class Spawners {
             return bat;
         });
 
+        // --- Objectives ---
+        SpawnRegistry.register("objective", a -> {
+            Entity e = CollectableFactory.createCollectable("objective");
+            String target = (a.id != null && !a.id.isBlank()) ? a.id : null;
+            if (target == null) throw new IllegalArgumentException("Objective spawn requires 'id'");
+
+            e.getComponent(CollectableComponent.class).setEffectParam("objective", "target", target);
+            return e;
+        });
+
 
         // --- Prompts ---
         SpawnRegistry.register("prompt", a -> {
-            return CollectableFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
+            return HeadsUpDisplayFactory.createPrompt(a.extra, a.speed, a.dx, a.dy);
         });
 
         // --- Computer Terminal ---
