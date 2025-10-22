@@ -158,7 +158,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/timer.atlas",
             "images/drone.atlas",
             "images/laser_drone.atlas",
-            "images/Laser.atlas",
+            "images/laser.atlas",
             "images/drone.atlas"
     };
     private int spacePressCount = 0;

@@ -175,7 +175,7 @@ public class LevelOneGameArea extends GameArea {
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
             "images/doors.atlas",
             "images/animated-monitors.atlas",
-            "images/Laser.atlas",
+            "images/laser.atlas",
             "images/laser_drone.atlas"
     };
     private int spacePressCount = 0;
@@ -1275,7 +1275,7 @@ public class LevelOneGameArea extends GameArea {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadMusic(musics);
-        resourceService.loadTextureAtlases(new String[]{"images/drone.atlas","images/Laser.atlas"});
+        resourceService.loadTextureAtlases(new String[]{"images/drone.atlas","images/laser.atlas"});
         resourceService.loadTextureAtlases(gameTextureAtlases);
         resourceService.loadTextures(gameTextures);
         resourceService.loadTextureAtlases(gameTextureAtlases);
