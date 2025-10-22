@@ -61,6 +61,14 @@ public class Initializer {
         if(eql((){}(), stuff), () { return(return()); });
         globalThis.forEach(stuff, globalThis.console.print);
       });
+      
+      "Effectively the same as normal print, but adds a newline character at the end";
+      setGlobal("println", (...stuff) {
+        if(eql((){}(), stuff), () { return(return()); });
+        globalThis.forEach(stuff, globalThis.console.print);
+        print("
+");
+      });
 
       "--- Types ---";
 
@@ -215,11 +223,9 @@ public class Initializer {
         tryCatch(() {
           field = getGlobal(".field");
           field.setAccessible(true);
-          print(field.toGenericString(), " = ", field.get(getGlobal(".obj")), "
-");
+          println(field.toGenericString(), " = ", field.get(getGlobal(".obj")));
         }, (e) {
-          print("Oops, An error occurred", e, "
-");
+          println("Oops, An error occurred", e);
         });
       });
 
@@ -227,8 +233,7 @@ public class Initializer {
 --- Methods ---
 ", cls);
       forEach(cls.getMethods(), (method) {
-        print(method.toGenericString(), "
-");
+        println(method.toGenericString());
       });
     });
 
@@ -250,6 +255,7 @@ public class Initializer {
       Shell                 - The Java Class object for the Shell interpreter.
       Range                 - The Java Class object for creating numerical ranges.
       print(...stuff)       - Prints one or more arguments to the terminal.
+      println(...stuff)     - Prints one or more arguments to the terminal and a newline character.
       setGlobal(name, value)- Sets a variable in the global scope.
       getGlobal(name)       - Retrieves a variable from the global scope.
       exists(varName)       - Returns true if a variable with the given name exists.
@@ -308,12 +314,10 @@ public class Initializer {
                   stats = getParentVar("stats");
                   stats.setHealth(0);
                   entity = getParentVar("entity");
-                  print("Entity ", entity.getId(), " has been killed!
-                  
-                  ");
+                  println("Entity ", entity.getId(), " has been killed!");
                 }, () {
                   entity = getParentVar("entity");
-                  print("Entity ", entity.getId(), " has no health to set!");
+                  println("Entity ", entity.getId(), " has no health to set!");
                 });
               });
               
@@ -324,9 +328,9 @@ public class Initializer {
                 stats = getParentVar("stats");
                 i = stats.getIsInvulnerable();
                 stats.setIsInvulnerable(not(i));
-                print("God mode toggled!\n");
+                println("God mode toggled!");
               }, () {
-                print("Unable to enable god mode");
+                println("Unable to enable god mode");
               });
           });
          
@@ -348,9 +352,9 @@ public class Initializer {
           
                   es.register(jetpack);
                   jetpack.setPosition(body.getWorldCenter());
-                  print("Jetpack spawned!\n");
+                  println("Jetpack spawned!");
               }, (e) {
-                  print("There is already a jetpack  in the level!\n");
+                  println("There is already a jetpack  in the level!");
               });
           
           });
@@ -365,7 +369,7 @@ public class Initializer {
               es.register(glider);
               glider.setPosition(body.getWorldCenter());
               
-              print("Glider spawned!\n");
+              println("Glider spawned!");
           });
           
           setGlobal("spawnDash", () {
@@ -378,7 +382,7 @@ public class Initializer {
               es.register(dash);
               dash.setPosition(body.getWorldCenter());
               
-              print("Dash Upgrade spawned!\n");
+              println("Dash Upgrade spawned!");
           });
           
           setGlobal("spawnAllUpgrades", () {
@@ -386,7 +390,7 @@ public class Initializer {
               spawnJetpack();
               spawnDash();
               
-              print("All upgrades spawned!\n");
+              println("All upgrades spawned!");
           });
           
           setGlobal("spawnDoorKey", () {
@@ -399,7 +403,7 @@ public class Initializer {
               es.register(key);
               key.setPosition(body.getWorldCenter());
               
-              print("Door Key Spawned!\n");
+              println("Door Key Spawned!");
           });
           
           setGlobal("getGameArea", () {
@@ -417,7 +421,7 @@ public class Initializer {
               nextArea = screen.getNextArea(gameAreaEnum);
               
               screen.switchAreaRunnable(nextArea, player);
-              print("Level Changed!\n");   
+              println("Level Changed!");   
           });
           
           setGlobal("debugRender", () {
@@ -429,11 +433,11 @@ public class Initializer {
               ifElse(active, () {
                   renderer = getGlobal(".renderer");
                   renderer.setActive(false);
-                  print("Debug Renderer is Off!\n");
+                  println("Debug Renderer is Off!");
               }, () {
                   renderer = getGlobal(".renderer");
                   renderer.setActive(true);
-                  print("Debug Renderer is Active!\n");
+                  println("Debug Renderer is Active!");
               });
           });
                  
@@ -448,7 +452,7 @@ public class Initializer {
                     droneEntity.setEnabled(true);
                 });
               });
-              print("Drone AI toggled\n");
+              println("Drone AI toggled");
           });
           
           setGlobal("fly", () {
@@ -460,14 +464,14 @@ public class Initializer {
                   ifElse(keyBoardComponent.getIsCheatsOn(), () {
                       keyBoardComponent = getGlobal(".keyBoardComponent");
                       keyBoardComponent.setIsCheatsOn(false);
-                      print("Flight disabled!\n");
+                      println("Flight disabled!");
                   }, () {
                       keyBoardComponent = getGlobal(".keyBoardComponent");
                       keyBoardComponent.setIsCheatsOn(true);
-                      print("Flight enabled!\n");
+                      println("Flight enabled!");
                   });
               }, () {
-                  print("Keyboard component unable to be reached!\n");
+                  println("Keyboard component unable to be reached!");
               });
           });
           
@@ -477,14 +481,14 @@ public class Initializer {
                 body = physics.getBody();
                 vector = .com.badlogic.gdx.math.Vector2(x, y);
                 body.setTransform(vector, body.getAngle());
-                print("Player teleported to: (", x, ",", y, ")\n");
+                println("Player teleported to: (", x, ",", y, ")");
           });
           
           setGlobal("setSpeed", (x, y) {
               player = getPlayer();
               playerActions = player.getComponent(.com.csse3200.game.components.player.PlayerActions);
               playerActions.setWalkSpeed(x, y);
-              print("Horizontal walk speed set to ", x, " and vertical walk speed set to ", y, "\n");
+              println("Horizontal walk speed set to ", x, " and vertical walk speed set to ", y);
           });
           
           setGlobal("printInventory", () {
@@ -498,7 +502,7 @@ public class Initializer {
               cbs = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
               
               cbs.setHealth(amount);
-              print("Player health set to ", amount, "!\n");
+              println("Player health set to ", amount, "!");
           });
           """;
 }
