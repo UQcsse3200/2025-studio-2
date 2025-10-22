@@ -62,7 +62,7 @@ public class BossAnimationController extends Component {
         setAnimation("bossGenerateDrone");
         Gdx.app.log("BossAnim", "generateDroneStart");
         // Each time you receive "Start Generating", reset the display window
-        generateHold = 0.9f; // If you want it to be more obvious, turn it up, e.g 0.6f
+        generateHold = 1f; // If you want it to be more obvious, turn it up, e.g 0.6f
         pendingChase = true; // Set flag to return to chase after hold expires
     }
 

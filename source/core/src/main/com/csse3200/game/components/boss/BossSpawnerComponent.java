@@ -91,8 +91,8 @@ public class BossSpawnerComponent extends Component {
 		phaseConfigs.add(new PhaseConfig(
 				EnemyFactory.DroneVariant.SCOUT,
 				1.5f, // spawnInterval
-				3,    // maxConcurrent
-				3,    // totalToSpawn
+				0,    // maxConcurrent
+				0,    // totalToSpawn
 				1.4f  // windup
 		));
 		// Phase 1：chaser (Medium)
@@ -316,8 +316,8 @@ public class BossSpawnerComponent extends Component {
 	 */
 	private Vector2 getSpawnPositionAroundBoss(Vector2 bossPos) {
 		// Spawn drones around the boss in different positions
-		float offsetX = 3f;
-		float offsetY = 4f;
+		float offsetX = 4f;
+		float offsetY = 0f;
 
 		return bossPos.cpy().add(offsetX, offsetY);
 	}

@@ -369,7 +369,7 @@ public class EnemyFactory {
 
         animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("bomb_effect", 0.08f, Animation.PlayMode.NORMAL);
+        animator.addAnimation("bomb_effect", 0.1f, Animation.PlayMode.NORMAL);
 
         drone
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
@@ -398,7 +398,7 @@ public class EnemyFactory {
         if (atlas.findRegions("angry_float").size > 0) {
             animator.startAnimation("angry_float");
         } else if (atlas.findRegions("float").size > 0) {
-            animator.startAnimation("float"); // 兜底
+            animator.startAnimation("float");
         } else {
             throw new com.badlogic.gdx.utils.GdxRuntimeException(
                     "Atlas " + atlasPath + " missing required regions: angry_float/float");
@@ -464,7 +464,7 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,10f))
                         .addComponent(new AITaskComponent())// Want this empty for base enemies
                         .addComponent(new DeathOnTrapComponent());
 
