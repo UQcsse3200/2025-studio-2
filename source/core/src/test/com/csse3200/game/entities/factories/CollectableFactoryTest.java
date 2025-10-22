@@ -2,7 +2,6 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.csse3200.game.components.collectables.CollectableComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
 import com.csse3200.game.lighting.LightingService;
@@ -72,7 +71,7 @@ public class CollectableFactoryTest {
 
     @Test
     public void testCreateCollectable_hasCorrectPhysicsBody() {
-        Entity key = CollectableFactory.createKey("pink-key");
+        Entity key = CollectableFactory.createCollectable("pink-key");
         PhysicsComponent physics = key.getComponent(PhysicsComponent.class);
         ColliderComponent collider = key.getComponent(ColliderComponent.class);
 

@@ -2,22 +2,28 @@ package com.csse3200.game.components.statisticspage;
 
 import com.csse3200.game.files.FileLoader;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Stats logic handling class
  */
 public class StatsTracker {
+    private static final Logger logger = Logger.getLogger(StatsTracker.class.getName());
     private static long playtime; // in ms
     private static int upgradesCollected;
     private static int levelsCompleted;
     private static int deathCount;
     private static int achievementsUnlocked;
+    private static int jumpCount;
+    private static int codexReads;
 
     private static long sessionStartTime;
 
     private static final String FILE_PATH = "configs/stats.json";
 
-    public StatsTracker() {
-        loadStats();
+    private StatsTracker() {
+        throw new IllegalStateException("Instantiating static util class");
     }
 
     /**
@@ -26,7 +32,7 @@ public class StatsTracker {
     public static void startSession() {
         loadStats();
         sessionStartTime = System.currentTimeMillis();
-        System.out.println("Session start");
+        logger.info("Session start");
     }
 
     /**
@@ -34,8 +40,10 @@ public class StatsTracker {
      */
     public static void endSession() {
         playtime += System.currentTimeMillis() - sessionStartTime;
-        System.out.println("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
-        System.out.println("Total playtime before save: " + playtime);
+        if (logger.isLoggable(Level.INFO)) {
+            logger.info("Session duration: " + (System.currentTimeMillis() - sessionStartTime));
+            logger.info("Total playtime before save: " + playtime);
+        }
         saveStats();
     }
 
@@ -48,6 +56,8 @@ public class StatsTracker {
         levelsCompleted = 0;
         deathCount = 0;
         achievementsUnlocked = 0;
+        jumpCount = 0;
+        codexReads = 0;
     }
 
     /**
@@ -79,6 +89,21 @@ public class StatsTracker {
      */
     public static void unlockAchievement() {
         achievementsUnlocked++;
+        saveStats();
+    }
+
+    /**
+     * Increment jump counter
+     */
+    public static void addJump() {
+        jumpCount++;
+    }
+
+    /**
+     * Increment codex reads
+     */
+    public static void addCodex() {
+        codexReads++;
         saveStats();
     }
 
@@ -119,6 +144,20 @@ public class StatsTracker {
     }
 
     /**
+     * Retrieve jump counter
+     */
+    public static int getJumpCount() {
+        return jumpCount;
+    }
+
+    /**
+     * Retrieve codex reads
+     */
+    public static int getCodexReads() {
+        return codexReads;
+    }
+
+    /**
      * Save stats to JSON
      */
     public static void saveStats() {
@@ -128,8 +167,10 @@ public class StatsTracker {
         data.levelsCompleted = levelsCompleted;
         data.deathCount = deathCount;
         data.achievementsUnlocked = achievementsUnlocked;
+        data.jumpCount = jumpCount;
+        data.codexReads = codexReads;
 
-        FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.LOCAL);
+        FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.EXTERNAL);
     }
 
     /**
@@ -137,13 +178,15 @@ public class StatsTracker {
      */
     public static void loadStats() {
         StatsData data = FileLoader.readClass(StatsData.class, FILE_PATH,
-                FileLoader.Location.LOCAL);
+                FileLoader.Location.EXTERNAL);
         if (data != null) {
             playtime = data.playtime;
             upgradesCollected = data.upgradesCollected;
             levelsCompleted = data.levelsCompleted;
             deathCount = data.deathCount;
             achievementsUnlocked = data.achievementsUnlocked;
+            jumpCount = data.jumpCount;
+            codexReads = data.codexReads;
         } else {
             resetSession();
         }

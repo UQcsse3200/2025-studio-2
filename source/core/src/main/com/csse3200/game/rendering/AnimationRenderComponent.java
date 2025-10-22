@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
@@ -31,8 +30,8 @@ import java.util.Map;
  *
  * Texture atlases can be created using: <br>
  * - libgdx texture packer (included in External Libraries/gdx-tools) <br>
- * - gdx-texture-packer-gui (recommended) https://github.com/crashinvaders/gdx-texture-packer-gui <br>
- * - other third-party tools, e.g. https://www.codeandweb.com/texturepacker <br>
+ * - gdx-texture-packer-gui (recommended) <a href="https://github.com/crashinvaders/gdx-texture-packer-gui">...</a> <br>
+ * - other third-party tools, e.g. <a href="https://www.codeandweb.com/texturepacker">...</a> <br>
  */
 public class AnimationRenderComponent extends RenderComponent {
   private static final Logger logger = LoggerFactory.getLogger(AnimationRenderComponent.class);
@@ -44,7 +43,6 @@ public class AnimationRenderComponent extends RenderComponent {
   private float animationPlayTime;
   private boolean isPaused = false;
   private boolean flipX = false;
-  private boolean flipY = false;
   private float rotation = 0f;
   private Vector2 origin;
 
@@ -70,6 +68,9 @@ public class AnimationRenderComponent extends RenderComponent {
     this.animationPlayTime = other.animationPlayTime;
     this.isPaused = other.isPaused;
     this.currentAnimation = other.currentAnimation;
+    this.flipX = other.flipX;
+    this.rotation = other.rotation;
+    this.origin = other.origin;
   }
 
   /**
@@ -140,6 +141,7 @@ public class AnimationRenderComponent extends RenderComponent {
    */
   public void startAnimation(String name) {
     Animation<TextureRegion> animation = animations.getOrDefault(name, null);
+
     if (animation == null) {
       logger.error(
           "Attempted to play unknown animation {}. Ensure animation is added before playback.",
@@ -175,14 +177,12 @@ public class AnimationRenderComponent extends RenderComponent {
    * @param flip whether to flip the entity horizontally
    */
   public void setFlipX(boolean flip) {
-      //Vector2 scale = entity.getScale();
-      //entity.setScale(flip ? -Math.abs(scale.x) : Math.abs(scale.x), scale.y);
       this.flipX = flip;
   }
 
   /**
    * Rotates the animation around the origin which is {@code scale.w / 2f, scale.h / 2f}
-   * by default unless manually overrided with {@code setOrigin()}.
+   * by default unless manually overridden with {@code setOrigin()}.
    *
    * @param rotation rotation in degrees
    */
@@ -243,9 +243,8 @@ public class AnimationRenderComponent extends RenderComponent {
         originY = origin.y;
     }
     float sx = flipX ? -1f : 1f;
-    float sy = flipY ? -1f : 1f;
+    float sy = 1f;
     batch.draw(region, pos.x, pos.y, originX, originY, w, h, sx, sy, rotation);
-    //batch.draw(region, pos.x, pos.y, scale.x, scale.y);
     if (!isPaused) {
       animationPlayTime += timeSource.getDeltaTime();
     }
@@ -254,7 +253,6 @@ public class AnimationRenderComponent extends RenderComponent {
   @Override
   public void dispose() {
     // Keep the atlas for future using
-    //atlas.dispose();
     super.dispose();
   }
 }

@@ -1,12 +1,10 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.csse3200.game.components.LadderComponent;
+import com.csse3200.game.components.ladders.LadderComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.input.InputComponent;
 import com.csse3200.game.input.Keymap;
@@ -15,8 +13,6 @@ import com.csse3200.game.utils.math.Vector2Utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
-
-import static java.lang.Math.abs;
 
 /**
  * Input handler for the player for keyboard and touch (mouse) input.
@@ -39,6 +35,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private Array<Entity> ladders = null;
 
     private Boolean onLadder = false;
+    private boolean acquiredTriggered = false;
 
     public KeyboardPlayerInputComponent() {
         super(5);
@@ -242,7 +239,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
         if (walkDirection.epsilonEquals(Vector2.Zero)) {
             entity.getEvents().trigger("walkStop");
         } else {
-            if (!onLadder && Math.abs(walkDirection.y) > 0f) {
+            if (!cheatsOn && !onLadder && Math.abs(walkDirection.y) > 0f) {
                 walkDirection.y = 0f;
             }
             entity.getEvents().trigger("walk", walkDirection);
@@ -277,6 +274,10 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private void triggerJetpackEvent() {
 
         if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "jetpack")) {
+            if (!acquiredTriggered) {
+                entity.getEvents().trigger("acquiredJetpack");
+                acquiredTriggered = true;
+            }
             entity.getEvents().trigger("jetpackOn");
         }
 
@@ -355,7 +356,7 @@ public class KeyboardPlayerInputComponent extends InputComponent {
      */
     private Array<Entity> findLadders() {
         Array<Entity> ladd = new Array<>();
-        Array<Entity> bobs = ServiceLocator.getEntityService().get_entities();
+        Array<Entity> bobs = ServiceLocator.getEntityService().getEntities();
         for (Entity bob : bobs) {
             if (bob.getComponent(LadderComponent.class) != null) {
                 ladd.add(bob);

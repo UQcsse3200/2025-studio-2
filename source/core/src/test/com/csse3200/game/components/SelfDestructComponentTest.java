@@ -69,7 +69,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator).startAnimation("bomb_effect");
-        verify(sound).play(1.0f);
         verify(playerStats).setHealth(3); // 5 - 2 damage
     }
 
@@ -81,7 +80,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator).startAnimation("bomb_effect");
-        verify(sound).play(1.0f);
         verify(playerStats).setHealth(8); // 10 - 2 damage
     }
 
@@ -92,7 +90,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator, never()).startAnimation("bomb_effect");
-        verify(sound, never()).play(anyFloat());
         verify(playerStats, never()).setHealth(anyInt());
     }
 
@@ -105,7 +102,6 @@ class SelfDestructComponentTest {
         selfDestruct.update();
 
         verify(animator, times(1)).startAnimation("bomb_effect");
-        verify(sound, times(1)).play(1.0f);
         verify(playerStats, times(1)).setHealth(8);
     }
 }

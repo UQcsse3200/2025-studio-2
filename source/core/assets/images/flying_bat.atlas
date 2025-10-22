@@ -20,8 +20,7 @@ flying_bat
 index:5
 bounds:516,516,255,255
 flying_bat
-index:2
-bounds:259,2,255,255
-flying_bat
 index:7
 bounds:516,259,255,255
+flying_bat 2
+bounds:259,2,255,255

@@ -1,14 +1,16 @@
 package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.utils.Array;
-import com.csse3200.game.components.LadderComponent;
+import com.csse3200.game.components.ladders.LadderComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.Method;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(GameExtension.class)
 public class KeyboardPlayerInputComponentTest {

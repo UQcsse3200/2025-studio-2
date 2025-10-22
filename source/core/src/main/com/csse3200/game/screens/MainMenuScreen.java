@@ -31,8 +31,8 @@ public class MainMenuScreen extends ScreenAdapter {
       "images/superintelligence_title.png",
       "images/superintelligence_menu_background.png"};
 
-  private static final String backgroundMusic = "sounds/gamemusic.mp3";
-  private static final String[] musics = {backgroundMusic};
+  private static final String BACKGROUND_MUSIC = "sounds/gamemusic.mp3";
+  private static final String[] musics = {BACKGROUND_MUSIC};
 
   public MainMenuScreen(GdxGame game) {
     this.game = game;
@@ -52,7 +52,7 @@ public class MainMenuScreen extends ScreenAdapter {
   }
 
   private void playMusic() {
-    Music music = ServiceLocator.getResourceService().getAsset(backgroundMusic, Music.class);
+    Music music = ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class);
     music.setLooping(true);
     music.setVolume(UserSettings.getMusicVolumeNormalized());
     music.play();

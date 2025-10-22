@@ -3,28 +3,18 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
-import com.csse3200.game.components.*;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
-import com.csse3200.game.physics.raycast.AllHitCallback;
-import com.csse3200.game.physics.raycast.RaycastHit;
-import com.csse3200.game.physics.raycast.SingleHitCallback;
-import com.csse3200.game.rendering.RenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.badlogic.gdx.physics.box2d.*;
-import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.utils.math.Vector2Utils;
-
-import java.awt.*;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -35,7 +25,7 @@ public class PlayerActions extends Component {
   private static Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
-  private static final float   SPRINT_MULT = 2.3f;
+  private static final float SPRINT_MULT = 2.3f;
 
   private static final int DASH_SPEED_MULTIPLIER = 30;
   private static final float JUMP_IMPULSE_FACTOR = 20f;
@@ -66,6 +56,7 @@ public class PlayerActions extends Component {
   private int jetpackFuel = FUEL_CAPACITY;
   private boolean isJetpackOn = false;
   private boolean isGliding = false;
+  private boolean hasActivatedJetpack;
 
   private Sound jetpackSound = ServiceLocator.getResourceService().getAsset(
           "sounds/jetpacksound.mp3", Sound.class);
@@ -136,8 +127,10 @@ public class PlayerActions extends Component {
     if (isJetpackOn) {
       jetpackFuel--;
       body.setGravityScale(0f); //for impulse to act upwards
-    } else if (jetpackFuel < FUEL_CAPACITY) {
+         entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
+    } else if ((jetpackFuel < FUEL_CAPACITY) && !hasActivatedJetpack) {
       jetpackFuel++;
+      entity.getEvents().trigger("updateJetpackFuel", jetpackFuel);
     }
 
     if (!isJetpackOn && !isGliding) {
@@ -195,8 +188,10 @@ public class PlayerActions extends Component {
       impulseY = deltaVy * body.getMass();
 
     } else if (isJetpackOn) {
+        float targetVy = 7f;
+        float deltaVy = targetVy - velocity.y;
+        impulseY = deltaVy * body.getMass();
 
-      impulseY = 1.1f * 1.2f * body.getMass();
     } else {
       //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
         if (!isGliding) {
@@ -254,7 +249,7 @@ public class PlayerActions extends Component {
    *
    * Before applying the impuse, the players vertical velocity is set to 0 to keep consistent jump heights
    */
-  void jump() {
+  public void jump() {
 
     if (isJumping && isDoubleJump) return;
 
@@ -272,6 +267,8 @@ public class PlayerActions extends Component {
 
       body.applyLinearImpulse(new Vector2(0f, impulseY), body.getWorldCenter(), true);
 
+      StatsTracker.addJump();
+
       isJumping = true;
   }
 
@@ -280,9 +277,10 @@ public class PlayerActions extends Component {
    *
    * This method resets the players jump state, allowing them to jump again
    */
-  void onLand() {
+  public void onLand() {
     isJumping = false;
     isDoubleJump = false;
+    hasActivatedJetpack = false;
 
 //    Sound interactSound = ServiceLocator.getResourceService().getAsset(
 //            "sounds/thudsound.mp3", Sound.class);
@@ -351,14 +349,12 @@ public class PlayerActions extends Component {
    */
   private void glide(boolean on) {
     Body body = physicsComponent.getBody();
-    boolean isOutOfJumps = (isJumping) && (isDoubleJump);
 
-    if (on && isOutOfJumps) {
-      if (body.getLinearVelocity().y < 0.5f) {
-
+    if (on) {
         body.setGravityScale(0.1f);
+        body.setLinearVelocity(new Vector2(body.getLinearVelocity().x, 0.5f)); // slow down the upwards movement
         isGliding = true;
-      }
+
     } else {
       body.setGravityScale(1f);
       isGliding = false;
@@ -369,9 +365,12 @@ public class PlayerActions extends Component {
    * Used to activate the jetpack upgrade for the player - allows for upwards movement
    */
   private void jetpackOn() {
-    isJetpackOn = true;
-    isJumping = true;
-    jetpackSound.loop(UserSettings.get().masterVolume);
+
+          isJetpackOn = true;
+          isJumping = true;
+          hasActivatedJetpack = true;
+          jetpackSound.loop(UserSettings.get().masterVolume);
+
   }
 
   /**
@@ -404,7 +403,7 @@ public class PlayerActions extends Component {
   /**
    * Makes the player crouch
    */
-  void crouch() {
+  public void crouch() {
     StandingColliderComponent standing = entity.getComponent(StandingColliderComponent.class);
     CrouchingColliderComponent crouch =
             entity.getComponent(CrouchingColliderComponent.class);
@@ -484,7 +483,7 @@ public class PlayerActions extends Component {
     }
   }
 
-  public void setWalkSpeed(int x, int y) {
+  public static void setWalkSpeed(int x, int y) {
       WALK_SPEED = new Vector2((float)x, (float)y);
   }
 

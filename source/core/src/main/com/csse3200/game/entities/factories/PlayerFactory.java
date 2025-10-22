@@ -3,8 +3,11 @@ package com.csse3200.game.entities.factories;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.components.*;
-import com.csse3200.game.components.achievements.AchievementsTrackerComponent;
+import com.csse3200.game.achievements.AchievementService;
+import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.player.*;
 import com.csse3200.game.entities.Entity;
@@ -16,7 +19,6 @@ import com.csse3200.game.physics.components.*;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
-import com.csse3200.game.achievements.AchievementService;
 
 import java.util.List;
 
@@ -57,6 +59,10 @@ public final class PlayerFactory {
         animator.addAnimation("DASHLEFT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURT", 0.2f, Animation.PlayMode.LOOP);
         animator.addAnimation("HURTLEFT", 0.2f, Animation.PlayMode.LOOP);
+        animator.addAnimation("DEATH", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("SMOKE", 0.2f, Animation.PlayMode.LOOP);
+
+        PlayerActions playerActions = new PlayerActions();
 
         Entity player = new Entity()
                 .addComponent(new PhysicsComponent())
@@ -65,7 +71,7 @@ public final class PlayerFactory {
                 .addComponent(new FootColliderComponent())
                 .addComponent(new ColliderComponent()) // Interactions
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
-                .addComponent(new PlayerActions())
+                .addComponent(playerActions)
                 .addComponent(new CombatStatsComponent(stats.health, stats.baseAttack))
                 .addComponent(new InventoryComponent())
                 .addComponent(input)
@@ -74,9 +80,10 @@ public final class PlayerFactory {
                 .addComponent(new CameraComponent())
                 .addComponent(new PlayerScreenTransitionComponent())
                 .addComponent(new PlayerDeathEffectComponent())
-                .addComponent(new MinimapComponent("images/minimap_player_marker.png"))
+                .addComponent(new MinimapComponent("images/minimap_player_marker.png")
+                        .setScaleY(0.7f).setScaleX(0.5f))
                 .addComponent(animator)
-                .addComponent(new PlayerAnimationController());
+                .addComponent(new PlayerAnimationController(playerActions));
         // Stamina + sprint wiring
         StaminaComponent stamina = new StaminaComponent(100f, 10f, 25f, 20);
         player.addComponent(stamina);
