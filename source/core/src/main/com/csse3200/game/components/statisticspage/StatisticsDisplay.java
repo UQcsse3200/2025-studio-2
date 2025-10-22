@@ -77,6 +77,9 @@ public class StatisticsDisplay extends UIComponent {
         Label achievementCounterLabel = new Label("Achievements:", skin);
         Label achievementCounterValue = new Label(String.valueOf(StatsTracker.getAchievementsUnlocked()), skin);
 
+        Label lostHardwareCounterLabel = new Label("Lost Hardware collected:", skin);
+        Label lostHardwareCounterValue = new Label(String.valueOf(StatsTracker.getLostHardwareCollected()), skin);
+
         table.add(playtimeLabel).pad(10f).padLeft(50f).right();
         table.add(playtimeValue).pad(10f).left().row();
 
@@ -91,6 +94,9 @@ public class StatisticsDisplay extends UIComponent {
 
         table.add(achievementCounterLabel).pad(10f).padLeft(50f).right();
         table.add(achievementCounterValue).pad(10f).left().row();
+
+        table.add(lostHardwareCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(lostHardwareCounterValue).pad(10f).left().row();
 
         TextButton exitBtn = new TextButton("Exit", skin);
 
