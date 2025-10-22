@@ -150,8 +150,47 @@ public class TutorialMenuDisplay extends UIComponent {
       // Set initial highlight
       updateButtonHighlight();
 
-      // Add spacer to push back button to bottom
+      // Add spacer to push practice and back buttons to bottom
       sidebar.row().expandY();
+
+      // Practice button
+      TextButton practiceBtn = new TextButton("Practice!", skin);
+      practiceBtn.setTransform(true);
+      practiceBtn.setOrigin(Align.center);
+
+      // Click action
+      practiceBtn.addListener(new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent event, Actor actor) {
+              logger.debug("Practice Level button clicked");
+              launchPracticeLevel(MainGameScreen.Areas.TUTORIAL);
+          }
+      });
+
+      // Hover effects
+      practiceBtn.addListener(new ClickListener() {
+          @Override
+          public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
+              // Pulse animation + green tint
+              practiceBtn.addAction(Actions.forever(
+                      Actions.sequence(
+                              Actions.scaleTo(1.1f, 1.1f, 0.3f),
+                              Actions.scaleTo(1f, 1f, 0.3f)
+                      )
+              ));
+              practiceBtn.addAction(Actions.color(Color.GREEN, 0.2f));
+          }
+
+          @Override
+          public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
+              // Stop pulsing, reset to normal
+              practiceBtn.clearActions();
+              practiceBtn.addAction(Actions.scaleTo(1f, 1f, 0.1f));
+              practiceBtn.addAction(Actions.color(Color.WHITE, 0.2f));
+          }
+      });
+
+      sidebar.add(practiceBtn).width(240).height(70).padBottom(20).bottom().row();
 
       // Back button (separate style, not using createSidebarButton)
       TextButton backBtn = new TextButton("Back", skin, "redButton");
@@ -278,46 +317,6 @@ public class TutorialMenuDisplay extends UIComponent {
         infoText.setStyle(markupStyle);
 
         contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
-
-        // Practice button
-        // Practice button
-        TextButton practiceBtn = new TextButton("Practice!", skin);
-        practiceBtn.setTransform(true);
-        practiceBtn.setOrigin(Align.center);
-
-        // Click action
-        practiceBtn.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, Actor actor) {
-                logger.debug("Practice Level button clicked");
-                launchPracticeLevel(MainGameScreen.Areas.TUTORIAL);
-            }
-        });
-
-        // Hover effects
-        practiceBtn.addListener(new ClickListener() {
-            @Override
-            public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
-                // Pulse animation + green tint
-                practiceBtn.addAction(Actions.forever(
-                        Actions.sequence(
-                                Actions.scaleTo(1.1f, 1.1f, 0.3f),
-                                Actions.scaleTo(1f, 1f, 0.3f)
-                        )
-                ));
-                practiceBtn.addAction(Actions.color(Color.GREEN, 0.2f));
-            }
-
-            @Override
-            public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
-                // Stop pulsing, reset to normal
-                practiceBtn.clearActions();
-                practiceBtn.addAction(Actions.scaleTo(1f, 1f, 0.1f));
-                practiceBtn.addAction(Actions.color(Color.WHITE, 0.2f));
-            }
-        });
-
-        contentTable.add(practiceBtn).width(300).height(60).padTop(40).center().colspan(2).row();
     }
 
     /**
