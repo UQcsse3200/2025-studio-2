@@ -289,6 +289,12 @@ public class BoxFactory {
          */
         public Entity build() {
             Entity autonomousBox = new Entity();
+
+
+//
+
+
+
             if (texturePath.endsWith(".atlas")) {
                 TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
                 AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
@@ -309,10 +315,13 @@ public class BoxFactory {
             autonomousBox
                     .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                     .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                    .addComponent(new HitboxComponent())
-                    .addComponent(new CombatStatsComponent(1, damage))
-                    .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                    .addComponent(new AutonomousBoxComponent());
+
+                            .addComponent(new HitboxComponent().setLayer(PhysicsLayer.ENEMY));
+            CombatStatsComponent boxStats = new CombatStatsComponent(1, damage);
+            autonomousBox
+                            .addComponent(boxStats)
+                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,knockback, boxStats))
+                            .addComponent(new AutonomousBoxComponent());
 
 
 

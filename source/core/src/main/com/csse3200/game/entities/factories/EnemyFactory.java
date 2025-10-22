@@ -26,6 +26,7 @@ import com.csse3200.game.entities.configs.EnemyConfigs;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
+import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
@@ -286,6 +287,97 @@ public class EnemyFactory {
         return drone;
     }
 
+    private static final Color LASER_IDLE_COLOR = new Color(0.5f, 1f, 0.5f, 0.8f); // Green-ish
+    private static final Color LASER_ALERT_COLOR = new Color(1f, 0.2f, 0.2f, 1f); // Red
+
+    public static Entity createLaserDrone(Entity player, Vector2 spawnPos, String laserId) {
+        BaseEntityConfig config = configs.drone;
+        Entity drone = createBaseEnemy();
+
+        if (spawnPos != null) {
+            drone.addComponent(new SpawnPositionComponent(spawnPos));
+        }
+
+// Animator setup (only laser_attack)
+        AnimationRenderComponent animator = new AnimationRenderComponent(
+                ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class)
+        );
+        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation("laser_attack", 0.1f, Animation.PlayMode.LOOP);
+
+        animator.startAnimation("float");
+        drone.addComponent(animator)
+                .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
+                .addComponent(new DroneAnimationController());
+        animator.setEntity(drone);
+        animator.startAnimation("laser_attack");
+        animator.scaleEntity();
+
+// Cone light
+        RayHandler rayHandler = ServiceLocator.getLightingService().getEngine().getRayHandler();
+        ConeLightComponent lightComponent = new ConeLightComponent(
+                rayHandler, 100, LASER_IDLE_COLOR, 6f, -90f, 60f
+        );
+        lightComponent.setFollowEntity(true);
+        drone.addComponent(lightComponent);
+
+// Detector
+        ConeDetectorComponent detector = new ConeDetectorComponent(player, PhysicsLayer.OBSTACLE, "laser_" + laserId);
+        drone.addComponent(detector);
+
+// AI component
+        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
+        if (ai == null) {
+            ai = new AITaskComponent();
+            drone.addComponent(ai);
+        }
+
+// Laser Tasks
+        LaserChaseTask chaseTask = new LaserChaseTask(player, 10, 8f, 3f, 0.5f);
+        LaserAttackTask attackTask = new LaserAttackTask(player, 15, 8f, 15f, 10);
+        CooldownTask cooldownTask = new CooldownTask(3f, "laser_attack");
+
+// Add tasks once to AI
+        ai.addTask(chaseTask)
+                .addTask(attackTask)
+                .addTask(cooldownTask);
+
+// Detection events
+        drone.getEvents().addListener("targetDetected", (Entity detected) -> {
+            lightComponent.setColor(LASER_ALERT_COLOR);
+            chaseTask.activate();
+            attackTask.setTargetDetected(true); // Start firing
+            cooldownTask.deactivate();
+        });
+
+        drone.getEvents().addListener("targetLost", (Entity lost) -> {
+            lightComponent.setColor(LASER_IDLE_COLOR);
+            chaseTask.deactivate();
+            attackTask.setTargetDetected(false); // Stop firing
+            cooldownTask.activate();
+        });
+
+// Ensure hitbox for TouchAttackComponent
+        if (drone.getComponent(HitboxComponent.class) == null) {
+            drone.addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC));
+        }
+        if (drone.getComponent(TouchAttackComponent.class) == null) {
+            drone.addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, 40f,new CombatStatsComponent(1,0)));
+        }
+
+        PhysicsUtils.setScaledCollider(drone, 1f, 0.8f);
+
+        return drone;
+    }
+
+    public static Entity createPatrollingLaserDrone(Entity target, Vector2[] patrolRoute, String laserId) {
+        Entity drone = createLaserDrone(target, patrolRoute[0], laserId);
+        drone.addComponent(new PatrolRouteComponent(patrolRoute));
+        drone.getComponent(AITaskComponent.class).addTask(new PatrolTask(1f)); // low priority
+        return drone;
+    }
+
 
     public static Entity createSelfDestructionDrone(Entity target, Vector2 spawnPos){
         BaseEntityConfig config = configs.drone;
@@ -408,7 +500,7 @@ public class EnemyFactory {
                         .addComponent(new PhysicsMovementComponent())
                         .addComponent(new ColliderComponent())
                         .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f))
+                        .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER,40f,new CombatStatsComponent(1,0)))
                         .addComponent(new AITaskComponent())// Want this empty for base enemies
                         .addComponent(new DeathOnTrapComponent());
 

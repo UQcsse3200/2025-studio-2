@@ -66,8 +66,14 @@ public class MainGameScreen extends ScreenAdapter {
           "images/puzzles/whichTutor_1x2.png"
   };
 
-  // Camera follow parameters
+
+
+
+ // private static final String[] mainGameTextures = {"images/playerstats/health.png", "images/playerstats/stamina.png"};
+
   private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
+  // Camera follow parameters
+  //private static final Vector2 CAMERA_POSITION = new Vector2(7.5f, 7.5f);
   private static final float DEADZONE_H_FRAC = 0.40f; // Horizontal deadzone fraction (40% of screen width)
   private static final float DEADZONE_V_FRAC = 0.35f; // Vertical deadzone fraction (35% of screen height)
   private static final float CAMERA_LERP_X = 0.0795f; // Camera smoothing factor, lower = smoother

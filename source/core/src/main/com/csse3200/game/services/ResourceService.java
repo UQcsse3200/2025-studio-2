@@ -143,6 +143,14 @@ public class ResourceService implements Disposable {
     loadAssets(textureNames, Texture.class);
   }
 
+    /**
+     * Loads a single texture atlas with all regions in it
+     * @param fileName Path of the atlas file
+     */
+    public void loadTextureAtlas(String fileName) {
+        logger.debug("Loading texture atlas: {}", fileName);
+        assetManager.load(fileName, TextureAtlas.class);
+    }
   /**
    * Loads a list of texture atlas assets into the asset manager.
    *

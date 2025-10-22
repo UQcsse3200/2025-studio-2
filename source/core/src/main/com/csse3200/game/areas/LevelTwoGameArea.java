@@ -1,6 +1,18 @@
 package com.csse3200.game.areas;
 
 import com.badlogic.gdx.Gdx;
+import com.csse3200.game.ai.tasks.AITaskComponent;
+
+import com.csse3200.game.components.tasks.LaserChaseTask;
+import com.csse3200.game.components.tasks.LaserAttackTask;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.tasks.LaserAttackTask;
+import com.csse3200.game.components.tasks.LaserChaseTask;
+import com.csse3200.game.entities.Entity;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.GridPoint2;
+import com.csse3200.game.entities.factories.EnemyFactory;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
@@ -84,6 +96,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/blue_button.png",
             "images/drone.png",
             "images/bomb.png",
+            "images/laser_final.png",
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/wall.png",
@@ -144,7 +157,9 @@ public class LevelTwoGameArea extends GameArea {
             "images/doors.atlas",
             "images/timer.atlas",
             "images/drone.atlas",
-            "images/laser.atlas"
+            "images/laser.atlas",
+            "images/Laser.atlas",
+            "images/drone.atlas"
     };
     private int spacePressCount = 0;
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
@@ -178,6 +193,8 @@ public class LevelTwoGameArea extends GameArea {
         spawnObjectives();
         //spawnBomberDrone();
         spawnSelfDestructDrone();
+        spawnLaserDrone();
+
         spawnAutoBomberDrone();
         spawnCollectables();
         spawnMovingTraps();
@@ -611,6 +628,57 @@ public class LevelTwoGameArea extends GameArea {
         ).addComponent(new ActivationComponent("1"));
 
         spawnEntityAt(selfDestructDrone, spawnTile, true, true);
+    }
+    private void spawnLaserDrone() {
+
+// Laser Drone Patrol Path
+        GridPoint2 patrolStart = new GridPoint2(55, 48);
+        GridPoint2 patrolEnd = new GridPoint2(65, 48);
+        Vector2[] patrolRoute = {
+                terrain.tileToWorldPosition(patrolStart),
+                terrain.tileToWorldPosition(patrolEnd)
+        };
+
+//Create Laser Drone Entity
+        Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
+        spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
+
+
+        AITaskComponent ai = patrolLaserDrone.getComponent(AITaskComponent.class);
+        if (ai == null) {
+            ai = new AITaskComponent();
+            patrolLaserDrone.addComponent(ai);
+        }
+
+        LaserChaseTask chaseTask = new LaserChaseTask(player, 5, 8f, 2f, 0.5f);
+        LaserAttackTask attackTask = new LaserAttackTask(player, 12, 3f, 15f, 10);
+        ai.addTask(chaseTask).addTask(attackTask);
+
+
+        final float patrolY = 48f; // Maximum allowed Y position (drone won't go above this)
+
+// Detection Logic
+        ConeDetectorComponent detector = patrolLaserDrone.getComponent(ConeDetectorComponent.class);
+        if (detector != null) {
+            detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
+                chaseTask.activate();
+                attackTask.setTargetDetected(true);
+            });
+
+            detector.getEntity().getEvents().addListener("targetLost", (Entity e) -> {
+                chaseTask.deactivate();
+                attackTask.setTargetDetected(false);
+            });
+        }
+
+//Keep drone from going UPWARDS
+        patrolLaserDrone.getEvents().addListener("update", () -> {
+            Vector2 pos = patrolLaserDrone.getPosition();
+// If drone tries to go above PATROL bring it back down
+            if (pos.y > patrolY) {
+                patrolLaserDrone.setPosition(pos.x, patrolY);
+            }
+        });
     }
 
     private void spawnMovingTraps() {
