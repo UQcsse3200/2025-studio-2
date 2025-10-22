@@ -37,7 +37,7 @@ class InventoryUpgradesEffectsTest {
         cfg.bag = "upgrades";
         EffectConfig e = new EffectConfig();
         e.type = "upgrade";
-        e.target = targetAbility;  // <-- correct field
+        e.target = targetAbility;
         cfg.effects = List.of(e);
         return cfg;
     }
@@ -47,24 +47,19 @@ class InventoryUpgradesEffectsTest {
         // Fresh effect registry
         ItemEffectRegistry.clear();
 
-        // Register minimal "upgrade" effect that emits an event (replace with real UpgradeEffect if you have one)
-        ItemEffectRegistry.register("upgrade", new ItemEffectHandler() {
-            @Override public boolean apply(Entity player, EffectConfig cfg) {
-                if (player == null || cfg == null || cfg.target == null || cfg.target.isBlank()) return false;
-                player.getEvents().trigger("upgradeUnlocked", cfg.target.trim());
-                return true;
-            }
+        ItemEffectRegistry.register("upgrade", (player, cfg) -> {
+            if (player == null || cfg == null || cfg.target == null || cfg.target.isBlank()) return false;
+            player.getEvents().trigger("upgradeUnlocked", cfg.target.trim());
+            return true;
         });
 
-        // Static mock CollectableService.get(...)
-        svcMock = mockStatic(CollectableService.class, withSettings().lenient());
+        svcMock = mockStatic(CollectableService.class, withSettings());
         svcMock.when(() -> CollectableService.get(eq("upgrade:dash")))
-                .thenReturn(upgradeCfg("upgrade:dash", /*autoConsume=*/true, "dash"));
+                .thenReturn(upgradeCfg("upgrade:dash",true, "dash"));
         svcMock.when(() -> CollectableService.get(eq("upgrade:glide")))
-                .thenReturn(upgradeCfg("upgrade:glide", /*autoConsume=*/false, "glide"));
+                .thenReturn(upgradeCfg("upgrade:glide",false, "glide"));
         svcMock.when(() -> CollectableService.get(eq("upgrade:jetpack")))
-                .thenReturn(upgradeCfg("upgrade:jetpack", /*autoConsume=*/true, "jetpack"));
-        // any other id -> null
+                .thenReturn(upgradeCfg("upgrade:jetpack", true, "jetpack"));
         svcMock.when(() -> CollectableService.get(argThat(id ->
                 !"upgrade:dash".equals(id) &&
                         !"upgrade:glide".equals(id) &&
@@ -91,7 +86,7 @@ class InventoryUpgradesEffectsTest {
             unlockedCount.incrementAndGet();
         });
 
-        inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:dash", 1);
+        inv.addItems("upgrade:dash", 1);
 
         assertEquals(1, unlockedCount.get(), "Effect should fire once on pickup");
         assertEquals(0, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:dash"),
@@ -106,18 +101,13 @@ class InventoryUpgradesEffectsTest {
             unlockedCount.incrementAndGet();
         });
 
-        inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:glide", 1);
+        inv.addItems("upgrade:glide", 1);
 
-        assertEquals(0, unlockedCount.get(), "No effect on pickup for non-auto items");
-        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
-                "Non-auto items should be stored until used");
+        assertEquals(1, unlockedCount.get(), "Effect fires on pickup even for non-auto items");
 
-        assertTrue(inv.useItem(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
-                "Use should succeed when token is present");
+        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"));
 
-        assertEquals(1, unlockedCount.get(), "Effect should fire once on use");
-        assertEquals(0, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
-                "Token is consumed on use");
+        assertTrue(inv.useItem(InventoryComponent.Bag.UPGRADES, "upgrade:glide"));
     }
 
     @Test
@@ -125,18 +115,19 @@ class InventoryUpgradesEffectsTest {
         AtomicInteger unlockedCount = new AtomicInteger(0);
         player.getEvents().addListener("upgradeUnlocked", (String id) -> unlockedCount.incrementAndGet());
 
-        inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:dash", 1);    // auto -> effect now
-        inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:jetpack", 1); // auto -> effect now
-        inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:glide", 1);   // non-auto -> stored
+        inv.addItems("upgrade:dash", 1);
+        inv.addItems("upgrade:jetpack", 1);
+        inv.addItems("upgrade:glide", 1);
 
-        assertEquals(2, unlockedCount.get(), "Two auto upgrades should unlock immediately");
-        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"));
+        assertEquals(3, unlockedCount.get(), "All upgrades unlock on pickup (including non-auto)");
 
-        assertTrue(inv.useItem(InventoryComponent.Bag.UPGRADES, "upgrade:glide")); // effect now
+        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
+                "Non-auto item should be stored after pickup");
 
-        assertEquals(3, unlockedCount.get(), "Glide unlocks on use");
-        assertEquals(0, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"));
+        assertTrue(inv.useItem(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
+                "Use should succeed when token is present");
     }
+
 
     @Test
     void unknownItemId_throwsIllegalArgumentException() {

@@ -1,15 +1,18 @@
 package com.csse3200.game.components.collectables.effects;
 
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.EffectConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Effect handler that removes a specific objective from the OBJECTIVES bag
  * if it exists in the player's inventory.
  */
 public class RemoveObjective implements ItemEffectHandler {
+    private static final Logger logger = LoggerFactory.getLogger(RemoveObjective.class);
+
     /**
      * Removes the specified objective from the player's OBJECTIVES bag.
      *
@@ -27,9 +30,8 @@ public class RemoveObjective implements ItemEffectHandler {
         InventoryComponent inv = player.getComponent(InventoryComponent.class);
         if (inv == null) return false;
 
-        if (!inv.hasItem(InventoryComponent.Bag.UPGRADES, cfg.target)) {
-            inv.addDirect(InventoryComponent.Bag.UPGRADES, cfg.target, 1);
-            StatsTracker.addUpgrade();
+        if (inv.hasItem(InventoryComponent.Bag.OBJECTIVES, cfg.target)) {
+            inv.removeItem(InventoryComponent.Bag.OBJECTIVES, cfg.target);
         }
         return true;
     }

@@ -143,15 +143,11 @@ public class InventoryComponent extends Component {
         Bag bag = parseBag(cfg);
         Map<String, Integer> map = mapFor(bag);
 
-        // Handle undefined and non-auto-consumables
-        if (!cfg.autoConsume) {
-            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
-            return;
-        }
-
-        // Handle auto-consumables
         for (int i = 0; i < amount; i++) {
             applyEffects(cfg);
+        }
+        if (!cfg.autoConsume) {
+            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
         }
     }
 
@@ -165,7 +161,10 @@ public class InventoryComponent extends Component {
      */
     public void addItem(String itemId, Map<String, Map<String, String>> effectParams) {
         if (itemId == null) throw new NullPointerException("itemId");
-        if (effectParams == null || effectParams.isEmpty()) { addItem(itemId); return; }
+        if (effectParams == null || effectParams.isEmpty()) {
+            addItem(itemId);
+            return;
+        }
 
         CollectablesConfig cfg = CollectableService.get(itemId);
         if (cfg == null) throw new IllegalArgumentException("No config found for " + itemId);
@@ -173,13 +172,6 @@ public class InventoryComponent extends Component {
         Bag bag = parseBag(cfg);
         Map<String, Integer> map = mapFor(bag);
 
-        // Non-auto-consumables: store and return
-        if (!cfg.autoConsume) {
-            map.put(itemId, map.getOrDefault(itemId, 0) + 1);
-            return;
-        }
-
-        // Auto-consumables: merge per-effect params, then apply
         if (cfg.effects != null) {
             for (var e : cfg.effects) {
                 Map<String, String> per = effectParams.get(e.type);
@@ -190,6 +182,9 @@ public class InventoryComponent extends Component {
                 var handler = ItemEffectRegistry.get(e.type);
                 if (handler != null) handler.apply(getEntity(), e);
             }
+        }
+        if (!cfg.autoConsume) {
+            map.put(itemId, map.getOrDefault(itemId, 0) + 1);
         }
     }
 
@@ -226,16 +221,12 @@ public class InventoryComponent extends Component {
             throw new IllegalArgumentException("No config found for " + itemId);
         }
 
-        // Non-auto-consumables: store in the specified bag
+        for (int i = 0; i < amount; i++) {
+            applyEffects(cfg);
+        }
         if (!cfg.autoConsume) {
             Map<String, Integer> map = mapFor(bag);
             map.put(itemId, map.getOrDefault(itemId, 0) + amount);
-            return;
-        }
-
-        // Auto-consumables: apply effects immediately (bag is not used)
-        for (int i = 0; i < amount; i++) {
-            applyEffects(cfg);
         }
     }
 
