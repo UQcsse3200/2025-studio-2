@@ -1,7 +1,7 @@
 #cutscene-bgs/destroyed.png
-The {COLOR=RED}drones{CLEARCOLOR} {SHAKE}spiralled{ENDSHAKE} towards the ground, rotors ceasing to spin.
-Blinking LEDs all around the room briefly flickered before {SHAKE}fizzling{ENDSHAKE} out completely.
-The {COLOR=RED}central AI{CLEARCOLOR}, once suspended in the air, {SHAKE}violently crashed{ENDSHAKE} into the ground, sending debris flying in all directions.
-A great, deafening silence filled the room. Not even the faintest electrical hum could be heard.
-I knew at that moment that I had won - {COLOR=YELLOW}{SHRINK}{SLOWER}humanity had won{CLEARCOLOR}{ENDSHRINK}{SLOWER}.
-No matter how long it takes, no matter how difficult, we would rebuild.
+The {COLOR=RED}drones{CLEARCOLOR} {SHAKE}spiraled{ENDSHAKE} toward the ground, their rotors falling silent.
+Blinking LEDs across the room flickered one last time before {SHAKE}fizzling{ENDSHAKE} out completely.
+The {COLOR=RED}central AI{CLEARCOLOR}, once suspended above me, {SHAKE}crashed violently{ENDSHAKE} into the floor, hurling debris in every direction.
+A great, deafening silence followed - not even the faintest electrical hum remained.
+In that moment, I knew I had won - {COLOR=YELLOW}{SLOWER}{SHRINK} knew humanity had won.{ENDSHRINK}{SLOWER}{CLEARCOLOR}
+No matter how long it takes, no matter how hard it becomes, we will rebuild.
