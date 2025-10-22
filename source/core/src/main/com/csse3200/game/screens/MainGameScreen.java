@@ -407,15 +407,15 @@ public class MainGameScreen extends ScreenAdapter {
 //              jumpCount = 0;
 //          }
 //      }
-//      laserTimer += delta;
-//
-//      // Check if 50 seconds have passed
-//      if (laserTimer >= 50f) {
-//          if (gameArea instanceof BossLevelGameArea bossLevel) {
-//              bossLevel.spawnLaserShower(); // spawn lasers
-//          }
-//          laserTimer = 0f; // reset timer
-//      }
+      laserTimer += delta;
+
+      // Check if 50 seconds have passed
+      if (laserTimer >= 50f) {
+          if (gameArea instanceof BossLevelGameArea bossLevel) {
+              bossLevel.spawnLaserShower(); // spawn lasers
+          }
+          laserTimer = 0f; // reset timer
+      }
 
       }
       renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
