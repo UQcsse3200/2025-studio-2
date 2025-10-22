@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.achievements.AchievementProgression;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
@@ -14,15 +15,13 @@ import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.LevelAssetsConfig;
 import com.csse3200.game.entities.configs.LevelConfig;
 import com.csse3200.game.entities.configs.ParallaxConfig;
-import com.csse3200.game.entities.factories.FloorFactory;
-import com.csse3200.game.entities.factories.HeadsUpDisplayFactory;
-import com.csse3200.game.entities.factories.ObstacleFactory;
-import com.csse3200.game.entities.factories.PlayerFactory;
+import com.csse3200.game.entities.factories.*;
 import com.csse3200.game.entities.spawn.SpawnRegistry;
 import com.csse3200.game.entities.spawn.Spawners;
 import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.rendering.parallax.ParallaxBackgroundComponent;
+import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.Component;
@@ -276,5 +275,48 @@ public abstract class BaseLevelGameArea extends GameArea {
         }
 
         spawnEntity(new Entity().addComponent(bg));
+    }
+
+    /**
+     * Spawns in the laser shower on the level based on the players position.
+     * <p> This function is called within {@link MainGameScreen} where it determines what
+     * level it is on and the frequency at which to spawn the lasers.</p>
+     */
+    public void spawnLaserShower() {
+        if (player == null) return; // safety check
+
+        final float Y = player.getPosition().y + 20f; // spawn above player
+        final float X = player.getPosition().x;
+
+        // Spawn 3 lasers to the left
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i + 1) * 7.5f); // offset left
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            // Remove laser after 5 seconds
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+
+        // Spawn 3 lasers to the right
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((i + 1) * 7.5f); // offset right
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
     }
 }
