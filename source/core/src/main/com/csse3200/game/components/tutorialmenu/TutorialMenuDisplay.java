@@ -313,17 +313,21 @@ public class TutorialMenuDisplay extends UIComponent {
         sectionTitle.setColor(Color.GREEN);
         contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
 
-        // Get the player atlas
-        TextureAtlas playerAtlas = ServiceLocator.getResourceService()
-                .getAsset("images/PLAYER.atlas", TextureAtlas.class);
-
         Table spriteTable = new Table();
 
-        // Add each control column if frames exist
-        addControlColumn(spriteTable, playerAtlas.findRegions("LEFT"), "PlayerLeft", "Move Left");
-        addControlColumn(spriteTable, playerAtlas.findRegions("RIGHT"), "PlayerRight", "Move Right");
-        addControlColumn(spriteTable, playerAtlas.findRegions("CROUCH"), "PlayerCrouch", "Crouch");
-        addControlColumn(spriteTable, playerAtlas.findRegions("JUMP"), "PlayerJump", "Jump");
+        // Add each movement control with animated sprites and keybinds
+        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "LEFT",
+                "Move Left", getKeybindText("PlayerLeft") + "\nMove your character to the left.",
+                288, 216, false, 35, 35);
+        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "RIGHT",
+                "Move Right", getKeybindText("PlayerRight") + "\nMove your character to the right.",
+                288, 216, false, 35, 35);
+        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "CROUCH",
+                "Crouch", getKeybindText("PlayerCrouch") + "\nFit through tight spaces.",
+                288, 216, false, 35, 35);
+        addDisplayColumn(spriteTable, "images/PLAYER.atlas", true, "JUMP",
+                "Jump", getKeybindText("PlayerJump") + "\nReach higher platforms. Double-tap for double-jump!",
+                288, 216, false, 35, 35);
 
         contentTable.add(spriteTable).left().colspan(2).row();
 
@@ -331,12 +335,6 @@ public class TutorialMenuDisplay extends UIComponent {
         String markedUpText =
                 """
                 These are the basic movement controls. Practice combining them to navigate the world effectively!
-        
-                [RED]Crouch[] to fit through tight spaces.
-        
-                Use [RED]jump[] to reach higher platforms. 
-        
-                You can [CYAN]double-jump[] by pressing [RED]jump[] again while in the air!
                 """;
 
         Label infoText = new Label(markedUpText, skin);
@@ -350,49 +348,66 @@ public class TutorialMenuDisplay extends UIComponent {
     }
 
     /**
-     * Helper to add a control column (sprite + key + description) to the sprite table.
+     * Helper method to get a formatted keybind string with red color markup.
+     * 
+     * @param actionKey The action key name (e.g., "PlayerJump", "PlayerDash")
+     * @return Formatted string with red color markup (e.g., "[RED]SPACE[]")
      */
-    private void addControlColumn(Table spriteTable, Array<TextureAtlas.AtlasRegion> frames,
-                                  String actionKey, String description) {
-        if (frames.size == 0) return;
-
-        Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
-        AnimatedImage sprite = new AnimatedImage(animation);
-
-        Table column = new Table();
-        column.add(sprite).size(288, 216).padTop(-50).padBottom(15).center().row();
-
+    private String getKeybindText(String actionKey) {
         int keyCode = Keymap.getActionKeyCode(actionKey);
         String keyName = Input.Keys.toString(keyCode);
-        Label keyLabel = new Label(keyName, skin);
-        keyLabel.setFontScale(1.5f);
-        keyLabel.setColor(Color.RED);
-        column.add(keyLabel).center().padTop(5).row();
-
-        Label descLabel = new Label(description, skin);
-        descLabel.setFontScale(1.0f);
-        column.add(descLabel).center().padTop(5).row();
-
-        spriteTable.add(column).padLeft(35).padRight(35).padBottom(10);
+        return "[RED]" + keyName + "[]";
     }
 
     /**
-     * Helper to add an item column (sprite + name + description) to the items table.
+     * Unified helper to add a display column (sprite + name + description).
+     * Handles both animated atlases and static textures.
+     * Used for all tutorial panes (basics, items, upgrades, and level mechanics).
+     * 
+     * @param table The table to add the column to
+     * @param assetPath Path to the asset (atlas or texture)
+     * @param isAnimated Whether the asset is an animated atlas
+     * @param animationRegion Animation region name (only used if isAnimated is true)
+     * @param title The title text (displayed in yellow)
+     * @param description The description text
+     * @param spriteWidth Sprite width
+     * @param spriteHeight Sprite height
+     * @param preserveAspectRatio Whether to preserve aspect ratio (for different shaped sprites)
+     * @param padLeft Left padding
+     * @param padRight Right padding
      */
-    private void addItemColumn(Table itemsTable, String atlasPath, String itemName, String description) {
-        TextureAtlas itemAtlas = ServiceLocator.getResourceService()
-                .getAsset(atlasPath, TextureAtlas.class);
+    private void addDisplayColumn(Table table, String assetPath, boolean isAnimated, String animationRegion,
+                                   String title, String description,
+                                   float spriteWidth, float spriteHeight, boolean preserveAspectRatio,
+                                   float padLeft, float padRight) {
+        Actor sprite;
         
-        Array<TextureAtlas.AtlasRegion> frames = itemAtlas.findRegions("collectable-spin");
-        if (frames.size == 0) return;
-
-        Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
-        AnimatedImage sprite = new AnimatedImage(animation);
+        if (isAnimated) {
+            TextureAtlas atlas = ServiceLocator.getResourceService()
+                    .getAsset(assetPath, TextureAtlas.class);
+            Array<TextureAtlas.AtlasRegion> frames = atlas.findRegions(animationRegion);
+            if (frames.size == 0) return;
+            
+            Animation<TextureRegion> animation = new Animation<>(0.1f, frames, Animation.PlayMode.LOOP);
+            sprite = new AnimatedImage(animation);
+        } else {
+            Texture texture = ServiceLocator.getResourceService()
+                    .getAsset(assetPath, Texture.class);
+            Image image = new Image(texture);
+            if (preserveAspectRatio) {
+                image.setScaling(Scaling.fit);
+            }
+            sprite = image;
+        }
 
         Table column = new Table();
-        column.add(sprite).size(216, 216).padBottom(15).center().row();
+        if (preserveAspectRatio) {
+            column.add(sprite).prefSize(spriteWidth, spriteHeight).padBottom(15).center().row();
+        } else {
+            column.add(sprite).size(spriteWidth, spriteHeight).padBottom(15).center().row();
+        }
 
-        Label nameLabel = new Label(itemName, skin);
+        Label nameLabel = new Label(title, skin);
         nameLabel.setFontScale(1.3f);
         nameLabel.setColor(Color.YELLOW);
         column.add(nameLabel).center().padTop(5).row();
@@ -403,87 +418,7 @@ public class TutorialMenuDisplay extends UIComponent {
         descLabel.setAlignment(Align.center);
         column.add(descLabel).width(250).center().padTop(5).row();
 
-        itemsTable.add(column).padLeft(35).padRight(70).padBottom(10).expandX().fillX();
-    }
-
-    /**
-     * Helper to add a static item column (texture + name + description) to the items table.
-     */
-    private void addStaticItemColumn(Table itemsTable, String texturePath, String itemName, String description) {
-        Texture itemTexture = ServiceLocator.getResourceService()
-                .getAsset(texturePath, Texture.class);
-        
-        Image sprite = new Image(itemTexture);
-
-        Table column = new Table();
-        column.add(sprite).size(216, 216).padBottom(15).center().row();
-
-        Label nameLabel = new Label(itemName, skin);
-        nameLabel.setFontScale(1.3f);
-        nameLabel.setColor(Color.YELLOW);
-        column.add(nameLabel).center().padTop(5).row();
-
-        Label descLabel = new Label(description, skin);
-        descLabel.setFontScale(1.0f);
-        descLabel.setWrap(true);
-        descLabel.setAlignment(Align.center);
-        column.add(descLabel).width(250).center().padTop(5).row();
-
-        itemsTable.add(column).padLeft(35).padRight(70).padBottom(10).expandX().fillX();
-    }
-
-    /**
-     * Helper to add an upgrade column with a single upgrade sprite.
-     */
-    private void addUpgradeColumn(Table upgradesTable, String upgradeTexturePath, 
-                                   String upgradeName, String description) {
-        Texture upgradeTexture = ServiceLocator.getResourceService()
-                .getAsset(upgradeTexturePath, Texture.class);
-        
-        Image upgradeImage = new Image(upgradeTexture);
-
-        Table column = new Table();
-        column.add(upgradeImage).size(216, 216).padBottom(15).center().row();
-
-        Label nameLabel = new Label(upgradeName, skin);
-        nameLabel.setFontScale(1.3f);
-        nameLabel.setColor(Color.YELLOW);
-        column.add(nameLabel).center().padTop(5).row();
-
-        Label descLabel = new Label(description, skin);
-        descLabel.setFontScale(1.0f);
-        descLabel.setWrap(true);
-        descLabel.setAlignment(Align.center);
-        column.add(descLabel).width(250).center().padTop(5).row();
-
-        upgradesTable.add(column).padLeft(100).padRight(120).padBottom(10).expandX().fillX();
-    }
-
-    /**
-     * Helper to add a level mechanic column (sprite + name + description) to the mechanics table.
-     */
-    private void addMechanicColumn(Table mechanicsTable, String texturePath, String mechanicName, String description) {
-        Texture mechanicTexture = ServiceLocator.getResourceService()
-                .getAsset(texturePath, Texture.class);
-        
-        Image sprite = new Image(mechanicTexture);
-        sprite.setScaling(Scaling.fit); // Preserve aspect ratio
-
-        Table column = new Table();
-        column.add(sprite).prefSize(175, 175).padBottom(15).center().row();
-
-        Label nameLabel = new Label(mechanicName, skin);
-        nameLabel.setFontScale(1.3f);
-        nameLabel.setColor(Color.YELLOW);
-        column.add(nameLabel).center().padTop(5).row();
-
-        Label descLabel = new Label(description, skin);
-        descLabel.setFontScale(1.0f);
-        descLabel.setWrap(true);
-        descLabel.setAlignment(Align.center);
-        column.add(descLabel).width(250).center().padTop(5).row();
-
-        mechanicsTable.add(column).padLeft(35).padRight(70).padBottom(10).expandX().fillX();
+        table.add(column).padLeft(padLeft).padRight(padRight).padBottom(10).expandX().fillX();
     }
 
     /**
@@ -550,17 +485,17 @@ public class TutorialMenuDisplay extends UIComponent {
     // Create table for item sprites
     Table itemsTable = new Table();
     
-    // Add each item column
-    addItemColumn(itemsTable, "images/health-potion.atlas", "Health Potion", "Restores HP when collected.");
-    addItemColumn(itemsTable, "images/speed-potion.atlas", "Speed Boost", "Temporarily increases your movement speed.");
-    addItemColumn(itemsTable, "images/slow-potion.atlas", "Slow Potion", "Slows down nearby enemies temporarily.");
-    addStaticItemColumn(itemsTable, "images/key.png", "Key Card", "Required to unlock doors and progress.");
+    // Add each item column (animated atlases and static texture)
+    addDisplayColumn(itemsTable, "images/health-potion.atlas", true, "collectable-spin",
+            "Health Potion", "Restores HP when collected.", 216, 216, false, 35, 70);
+    addDisplayColumn(itemsTable, "images/speed-potion.atlas", true, "collectable-spin",
+            "Speed Boost", "Temporarily increases your movement speed.", 216, 216, false, 35, 70);
+    addDisplayColumn(itemsTable, "images/slow-potion.atlas", true, "collectable-spin",
+            "Slow Potion", "Slows down nearby enemies temporarily.", 216, 216, false, 35, 70);
+    addDisplayColumn(itemsTable, "images/key.png", false, null,
+            "Key Card", "Required to unlock doors and progress.", 216, 216, false, 35, 70);
     
     contentTable.add(itemsTable).left().colspan(2).row();
-    
-    // Get inventory keybind
-    int inventoryKey = Keymap.getActionKeyCode("PauseInventory");
-    String inventoryKeyName = Input.Keys.toString(inventoryKey);
     
     // Informational text with markup
     String markedUpText =
@@ -569,7 +504,7 @@ public class TutorialMenuDisplay extends UIComponent {
     
             Some items are [RED]auto-consumed[] when collected, while others can be stored in your inventory.
             
-            You can view collected items by accessing your inventory with [RED]""" + inventoryKeyName + "[].";
+            You can view collected items by accessing your inventory with """ + " " + getKeybindText("PauseInventory") + ".";
     
     Label infoText = new Label(markedUpText, skin);
     infoText.setFontScale(1.2f);
@@ -593,36 +528,25 @@ public class TutorialMenuDisplay extends UIComponent {
     // Create table for upgrade sprites
     Table upgradesTable = new Table();
     
-    // Get keybinds dynamically
-    int dashKey = Keymap.getActionKeyCode("PlayerDash");
-    String dashKeyName = Input.Keys.toString(dashKey);
-    
-    int glideKey = Keymap.getActionKeyCode("Glide");
-    String glideKeyName = Input.Keys.toString(glideKey);
-    
-    int jumpKey = Keymap.getActionKeyCode("PlayerJump");
-    String jumpKeyName = Input.Keys.toString(jumpKey);
-    
-    // Add each upgrade column with powerup sprites
-    addUpgradeColumn(upgradesTable, "images/dash_powerup.png", 
-        "Dash", "[RED]" + dashKeyName + "[]\nQuickly dash forward to dodge enemies and manoeuvre past obstacles.");
-    addUpgradeColumn(upgradesTable, "images/glide_powerup.png", 
-        "Glider", "[RED]" + glideKeyName + " (hold)[]\nGlide through the air and reach distant platforms.");
-    addUpgradeColumn(upgradesTable, "images/jetpack_powerup.png", 
-        "Jetpack", "[RED]" + jumpKeyName + " (double tap)[]\nFly through the air with enhanced vertical mobility.");
+    // Add each upgrade column with powerup sprites (static textures)
+    addDisplayColumn(upgradesTable, "images/dash_powerup.png", false, null,
+        "Dash", getKeybindText("PlayerDash") + "\nQuickly dash forward to dodge enemies and manoeuvre past obstacles.",
+        216, 216, false, 100, 120);
+    addDisplayColumn(upgradesTable, "images/glide_powerup.png", false, null,
+        "Glider", getKeybindText("Glide") + " (hold)\nGlide through the air and reach distant platforms.",
+        216, 216, false, 100, 120);
+    addDisplayColumn(upgradesTable, "images/jetpack_powerup.png", false, null,
+        "Jetpack", getKeybindText("PlayerJump") + " (double tap)\nFly through the air with enhanced vertical mobility.",
+        216, 216, false, 100, 120);
     
     contentTable.add(upgradesTable).left().colspan(2).row();
-    
-    // Get upgrades menu keybind
-    int upgradesKey = Keymap.getActionKeyCode("PauseUpgrades");
-    String upgradesKeyName = Input.Keys.toString(upgradesKey);
     
     // Informational text with markup
     String markedUpText =
             """
             Unlock upgrades to enhance your movement abilities! These upgrades can be collected throughout the world.
             
-            You can view collected upgrades by pressing [RED]""" + upgradesKeyName + "[].";
+            You can view collected upgrades by pressing """ + " " + getKeybindText("PauseUpgrades") + ".";
     
     Label infoText = new Label(markedUpText, skin);
     infoText.setFontScale(1.2f);
@@ -641,44 +565,45 @@ public class TutorialMenuDisplay extends UIComponent {
     Label sectionTitle = new Label("Level Mechanics", skin);
     sectionTitle.setFontScale(1.5f);
     sectionTitle.setColor(Color.GREEN);
-    contentTable.add(sectionTitle).padBottom(20).left().colspan(4).row();
-    
-    // Get keybinds dynamically
-    int interactKey = Keymap.getActionKeyCode("PlayerInteract");
-    String interactKeyName = Input.Keys.toString(interactKey);
-    
-    int upKey = Keymap.getActionKeyCode("PlayerUp");
-    String upKeyName = Input.Keys.toString(upKey);
+    contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
     // Create table for first row of mechanics
     Table mechanicsRow1 = new Table();
     
-    // First row: Buttons, Moveable Boxes, Pressure Plates, Ladders
-    addMechanicColumn(mechanicsRow1, "images/button.png", 
-        "Buttons", "[RED]" + interactKeyName + "[]\nInteract to activate mechanisms.");
-    addMechanicColumn(mechanicsRow1, "images/cube.png", 
-        "Moveable Boxes", "[RED]" + interactKeyName + "[]\nPick up and place to solve puzzles.");
-    addMechanicColumn(mechanicsRow1, "images/plate.png", 
-        "Pressure Plates", "Press with player or box to activate.");
-    addMechanicColumn(mechanicsRow1, "images/ladder.png", 
-        "Ladders", "[RED]" + upKeyName + " (hold)[]\nClimb to reach higher areas.");
+    // First row: Buttons, Moveable Boxes, Pressure Plates, Ladders (preserve aspect ratio)
+    addDisplayColumn(mechanicsRow1, "images/button.png", false, null,
+        "Buttons", getKeybindText("PlayerInteract") + "\nInteract to activate mechanisms.",
+        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow1, "images/cube.png", false, null,
+        "Moveable Boxes", getKeybindText("PlayerInteract") + "\nPick up and place to solve puzzles.",
+        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow1, "images/plate.png", false, null,
+        "Pressure Plates", "Press with player or box to activate.",
+        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow1, "images/ladder.png", false, null,
+        "Ladders", getKeybindText("PlayerUp") + " (hold)\nClimb to reach higher areas.",
+        175, 175, true, 40, 40);
     
-    contentTable.add(mechanicsRow1).left().colspan(4).row();
+    contentTable.add(mechanicsRow1).left().colspan(2).row();
     
     // Create table for second row of mechanics
     Table mechanicsRow2 = new Table();
     
-    // Second row: Lasers, Spikes, Minigame Terminals, Doors
-    addMechanicColumn(mechanicsRow2, "images/laser.png", 
-        "Lasers", "Damages player. Can be blocked with boxes.");
-    addMechanicColumn(mechanicsRow2, "images/spikes_sprite.png", 
-        "Spikes", "Deals damage and knocks player back.");
-    addMechanicColumn(mechanicsRow2, "images/terminal_on.png", 
-        "Minigame Terminals", "[RED]" + interactKeyName + "[]\nComplete minigames to progress.");
-    addMechanicColumn(mechanicsRow2, "images/door_closed.png", 
-        "Doors", "[RED]" + interactKeyName + "[]\nRequires key. Level exit.");
+    // Second row: Lasers, Spikes, Minigame Terminals, Doors (preserve aspect ratio)
+    addDisplayColumn(mechanicsRow2, "images/laser.atlas", true, "laser-on",
+        "Lasers", "Damages player. Can be blocked with boxes.",
+        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow2, "images/spikes_sprite.png", false, null,
+        "Spikes", "Deals damage and knocks player back.",
+        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow2, "images/terminal_on.png", false, null,
+        "Minigame Terminals", getKeybindText("PlayerInteract") + "\nComplete minigames to progress.",
+        175, 175, true, 40, 40);
+    addDisplayColumn(mechanicsRow2, "images/doors.atlas", true, "door_closed",
+        "Doors", getKeybindText("PlayerInteract") + "\nRequires key. Level exit.",
+        175, 175, true, 40, 40);
     
-    contentTable.add(mechanicsRow2).left().colspan(4).row();
+    contentTable.add(mechanicsRow2).left().colspan(2).row();
     
     // Informational text with markup
     String markedUpText =
@@ -693,7 +618,7 @@ public class TutorialMenuDisplay extends UIComponent {
     markupStyle.fontColor = Color.WHITE;
     infoText.setStyle(markupStyle);
     
-    contentTable.add(infoText).fillX().padTop(30).left().colspan(4).row();
+    contentTable.add(infoText).fillX().padTop(30).left().colspan(2).row();
   }
 
   /**

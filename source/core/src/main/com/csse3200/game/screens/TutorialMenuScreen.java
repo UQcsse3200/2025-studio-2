@@ -32,10 +32,8 @@ public class TutorialMenuScreen extends ScreenAdapter {
       "images/cube.png",
       "images/plate.png",
       "images/ladder.png",
-      "images/laser.png",
       "images/spikes_sprite.png",
-      "images/terminal_on.png",
-      "images/door_closed.png"
+      "images/terminal_on.png"
   };
   
   private final String[] tutorialMenuAtlases = {
@@ -43,7 +41,8 @@ public class TutorialMenuScreen extends ScreenAdapter {
       "images/health-potion.atlas",
       "images/speed-potion.atlas",
       "images/slow-potion.atlas",
-      "images/laser.atlas"
+      "images/laser.atlas",
+      "images/doors.atlas"
   };
 
   private final GdxGame game;
