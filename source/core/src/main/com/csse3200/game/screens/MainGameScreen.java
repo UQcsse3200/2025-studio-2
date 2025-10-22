@@ -303,7 +303,7 @@ public class MainGameScreen extends ScreenAdapter {
       case LEVEL_THREE -> Areas.LEVEL_THREE_CUTSCENE;
       case LEVEL_THREE_CUTSCENE -> Areas.BOSS_LEVEL;
       case BOSS_LEVEL -> Areas.END_CUTSCENE;
-      case END_CUTSCENE -> Areas.END_GAME;
+      case END_CUTSCENE, TUTORIAL -> Areas.END_GAME;
       default -> throw new IllegalStateException("Unexpected value: " + area);
     };
   }

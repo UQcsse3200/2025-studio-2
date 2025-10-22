@@ -22,7 +22,7 @@
 
     { "type": "floor", "subtype": "ground", "x": -20, "y": -20, "sx": 16, "sy": 12, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "ground", "x": 70, "y": -20, "sx": 25, "sy": 12, "centerX": false, "centerY": false },
-    { "type": "floor", "subtype": "static_floor", "x": 62, "y": 51, "sx": 5, "sy": 0.8, "centerX": false, "centerY": false },
+    { "type": "floor", "subtype": "static_floor", "x": 62, "y": 21, "sx": 5, "sy": 0.8, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 15, "y": 32, "sx": 8, "sy": 1, "centerX": false, "centerY": false },
 
     { "type": "platform", "subtype": "static_platform", "x": 8, "y": 6, "sx": 2, "sy": 0.5, "centerX": false, "centerY": false },
@@ -36,10 +36,10 @@
     { "type": "bat", "x": 36, "y": 36, "speed": 5, "dx": 35, "dy": 40 },
     { "type": "bat", "x": 50, "y": 50, "speed": 6, "dx": 35, "dy": 40 },
 
-    { "type": "door", "subtype": "transition", "target": "LEVEL_ONE", "id": "key:door", "x": 63, "y": 53, "sx": 1, "sy": 2, "tooltip": "Unlock the door with the key" },
+    { "type": "door", "subtype": "transition", "target": "LEVEL_ONE", "id": "key:door", "x": 63, "y": 23, "sx": 1, "sy": 2, "tooltip": "Unlock the door with the key" },
     { "type": "button", "subtype": "door", "id": "key_button", "direction": "left", "x": 79, "y": 4, "tooltip": "Door Button\nPress E to interact" },
 
-    { "type": "collectable", "subtype": "key", "id": "key", "target": "door", "x": 68, "y": 53, "extra": "key_button" },
+    { "type": "collectable", "subtype": "key", "id": "key", "target": "door", "x": 68, "y": 23, "extra": "key_button" },
     { "type": "collectable", "subtype": "upgrade", "target": "glide", "x": 9, "y": 39, "tooltip": "Collect Glider Upgrade" },
     { "type": "collectable", "subtype": "upgrade", "target": "jetpack", "x": 76, "y": 4 }
   ]
