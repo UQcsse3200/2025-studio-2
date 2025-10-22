@@ -100,7 +100,7 @@ public class GdxGame extends Game {
       case MAIN_MENU -> new MainMenuScreen(this);
       case MAIN_GAME -> {
         MainGameScreen screen = new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
-        ServiceLocator.registerMainGameScreen(screen);
+        //ServiceLocator.registerMainGameScreen(screen);
         yield screen;
       }
       case TUTORIAL -> new TutorialMenuScreen(this);
@@ -112,7 +112,7 @@ public class GdxGame extends Game {
 
         // Load into the correct area, pass the player the old inventory.
         MainGameScreen game = new MainGameScreen(this, saveConfig.area);
-        ServiceLocator.registerMainGameScreen(game);
+        //ServiceLocator.registerMainGameScreen(game);
 
         InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
         inventoryComponent.setInventory(saveConfig.inventory);

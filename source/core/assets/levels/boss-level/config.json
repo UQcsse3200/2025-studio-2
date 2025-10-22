@@ -1,0 +1,60 @@
+{
+  "name": "Final Level: The Boss",
+  "mapSize": [
+    100.0,
+    45.0
+  ],
+  "playerSpawn": [
+    5.0,
+    29.0
+  ],
+  "walls": {
+    "thickness": 0.1
+  },
+  "miniMap": "images/minimap_forest_area.png",
+  "music": "sounds/Siiiiiiiiiick bounce 1.mp3"
+,
+  "entities": [
+    {"type": "platform","subtype": "static_platform","x": 3,"y": 24,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 13,"y": 16,"sx": 1.8,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 8,"y": 11,"sx": 1,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 28,"y": 4,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "volatile","x": 13,"y": 1,"sx": 1,"sy": 0.5,"speed": 0.8,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 40,"y": 7,"sx": 1,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 50,"y": 18,"sx": 1.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "volatile","x": 47,"y": 9,"sx": 1.5,"sy": 0.5,"speed": 1.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "button","id": "platform","x": 57,"y": 11,"sx": 1.5,"sy": 0.5,"speed": 20,"dx": -20,"dy": 0,"centerX": false,"centerY": false},
+    {"type": "button","subtype": "platform","x": 59,"y": 12,"direction": "left","target": "platform", "extra": "evil" },
+    {"type": "platform","subtype": "static_platform","x": 57,"y": 25,"sx": 1.5,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "door","subtype": "static","id": "key:door","x": 62,"y": 20,"sx": 1,"sy": 1.5,"centerX": true,"centerY": false},
+    {"type": "button","subtype": "door", "id": "key_button","x": 59,"y": 26,"direction": "left","tooltip": "Key Button\nPress E to Interact"},
+    {"type": "collectable","subtype": "key","id": "key","x": 50,"y": 19,"target": "door", "extra":  "key_button"},
+    {"type": "platform","subtype": "static_platform","x": 63,"y": 12,"sx": 2,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 74,"y": 16,"sx": 1,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 81,"y": 20,"sx": 1,"sy": 0.5,"centerX": false,"centerY": false},
+    {"type": "platform","subtype": "static_platform","x": 77,"y": 25,"sx": 1,"sy": 0.5,"centerX": false},
+    {"type": "platform","subtype": "static_platform","x": 70,"y": 30,"sx": 1,"sy": 0.5,"centerX": false},
+    {"type": "platform","subtype": "reflective","x": 78,"y": 35,"sx": 3,"sy": 0.5, "centerX": true,"centerY": true},
+    {"type": "platform","subtype": "static_platform","x": 90,"y": 23,"sx": 6,"sy": 0.8,"centerX": false,"centerY": false},
+    {"type": "wall","x": 60,"y": -4,"sx": 2,"sy": 12, "dx": 1, "dy": 5,"centerX": false,"centerY": false},
+    {"type": "wall","x": 60,"y": 23,"sx": 2,"sy": 15, "dx": 1, "dy": 5,"centerX": false,"centerY": false},
+    {"type": "death_zone","x": 0,"y": -2,"sx": 100,"sy": 0.5,"extra": "0.8"},
+    {"type": "trap","x": 15,"y": 17,"rotation": 90,"safeX": 2.5,"safeY": 14.5,"centerX": true,"centerY": true},
+    {"type": "trap","x": 15,"y": 19,"rotation": 90,"safeX": 2.5,"safeY": 14.5,"centerX": true,"centerY": true},
+    {"type": "wall","x": 16,"y": 16,"sx": 1,"sy": 12, "dx": 1, "dy": 5, "centerX": false,"centerY": false},
+    {"type": "box","subtype": "moveable","x": 64,"y": 15,"centerX": false,"centerY": false},
+    {"type": "laser","x": 63,"y": 25,"rotation": "335","centerX": false,"centerY": false},
+    {"type": "laser","x": 63,"y": 3,"rotation": "65","centerX": false,"centerY": false},
+    {"type": "laser","x": 90,"y": 39,"rotation": "270","centerX": false,"centerY": false},
+    {"type": "laser","x": 95,"y": 21,"rotation": "270","centerX": false,"centerY": false},
+    { "type": "collectable", "subtype": "potion", "target": "health", "x": 77, "y": 16 },
+    { "type": "collectable", "subtype": "potion", "target": "health", "x": 81, "y": 22 },
+    { "type": "collectable", "subtype": "potion", "target": "health", "x": 73, "y": 30 },
+    {"type": "computer_terminal","subtype": "transition","x": 98,"y": 26},
+    {"type": "bat","x": 40,"y": 12,"speed": 5,"dx": 50,"dy": 25},
+    {"type": "bat","x": 16,"y": 4,"speed": 10,"dx": 25,"dy": 4},
+    {"type": "bat","x": 11,"y": 3,"speed": 15,"dx": 11,"dy": 25},
+    {"type":  "boss", "x": 1, "y": 40},
+    {"type": "death_zone","x": 63,"y": -2,"sx": 100,"sy": 0.5,"extra": "0.8"}
+  ]
+}

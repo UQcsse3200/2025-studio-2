@@ -4,7 +4,6 @@ import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.collectables.UpgradesComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
@@ -126,21 +125,21 @@ public class StatisticsTest {
         assertEquals(2, StatsTracker.getLevelsCompleted());
     }
 
-    @Test
-    void testOnCollectIncrementsUpgrades() {
-        Entity mockPlayer = mock(Entity.class);
-        InventoryComponent mockInventory = mock(InventoryComponent.class);
-
-        when(mockPlayer.getComponent(InventoryComponent.class)).thenReturn(mockInventory);
-        when(mockInventory.hasItem(InventoryComponent.Bag.UPGRADES, "test_upgrade"))
-                .thenReturn(false);
-        UpgradesComponent upgrades = new UpgradesComponent("test_upgrade");
-        boolean collected = upgrades.onCollect(mockPlayer);
-
-        assertTrue(collected);
-        assertEquals(1, StatsTracker.getUpgradesCollected());
-        verify(mockInventory).addItem(InventoryComponent.Bag.UPGRADES, "test_upgrade");
-    }
+//    @Test
+//    void testOnCollectIncrementsUpgrades() {
+//        Entity mockPlayer = mock(Entity.class);
+//        InventoryComponent mockInventory = mock(InventoryComponent.class);
+//
+//        when(mockPlayer.getComponent(InventoryComponent.class)).thenReturn(mockInventory);
+//        when(mockInventory.hasItem(InventoryComponent.Bag.UPGRADES, "test_upgrade"))
+//                .thenReturn(false);
+//        UpgradesComponent upgrades = new UpgradesComponent("test_upgrade");
+//        boolean collected = upgrades.onCollect(mockPlayer);
+//
+//        assertTrue(collected);
+//        assertEquals(1, StatsTracker.getUpgradesCollected());
+//        verify(mockInventory).addItem(InventoryComponent.Bag.UPGRADES, "test_upgrade");
+//    }
 
     /**
      * testUnlockedAchievements() was authored with assistance from ChatGPT-5

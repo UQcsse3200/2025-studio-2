@@ -336,7 +336,7 @@ public class Initializer {
          
           setGlobal("spawnJetpack", () {
               es = entityService();
-              jetpack = .com.csse3200.game.entities.factories.CollectableFactory.createJetpackUpgrade();
+              jetpack = .com.csse3200.game.entities.factories.CollectableFactory.createCollectable("upgrade:jetpack");
               player = getPlayer();
               physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
               body = physics.getBody();
@@ -361,7 +361,7 @@ public class Initializer {
           
           setGlobal("spawnGlider", () {
               es = entityService();
-              glider = .com.csse3200.game.entities.factories.CollectableFactory.createGlideUpgrade();
+              glider = .com.csse3200.game.entities.factories.CollectableFactory.createCollectable("upgrade:glide");
               player = getPlayer();
               physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
               body = physics.getBody();
@@ -374,7 +374,7 @@ public class Initializer {
           
           setGlobal("spawnDash", () {
               es = entityService();
-              dash = .com.csse3200.game.entities.factories.CollectableFactory.createDashUpgrade();
+              dash = .com.csse3200.game.entities.factories.CollectableFactory.createCollectable("upgrade:dash");
               player = getPlayer();
               physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
               body = physics.getBody();

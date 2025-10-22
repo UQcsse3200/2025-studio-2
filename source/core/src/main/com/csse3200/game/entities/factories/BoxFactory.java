@@ -9,6 +9,7 @@ import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
@@ -173,8 +174,8 @@ public class BoxFactory {
          * @return the builder for chaining the horizontal movement bounds
          */
         public AutonomousBoxBuilder moveX(float minX, float maxX) {
-            this.minMoveX = minX;
-            this.maxMoveX = maxX;
+            this.minMoveX = minX / 2f;
+            this.maxMoveX = maxX / 2f;
             this.spawnX = (minX + maxX) / 2f;
             return this;
         }
@@ -188,8 +189,8 @@ public class BoxFactory {
          * @return the builder for chaining the vertical movement bounds
          */
         public AutonomousBoxBuilder moveY(float minY, float maxY) {
-            this.minMoveY = minY;
-            this.maxMoveY = maxY;
+            this.minMoveY = minY / 2f;
+            this.maxMoveY = maxY / 2f;
             this.spawnY = (minY + maxY) / 2f;
             return this;
         }
@@ -313,6 +314,8 @@ public class BoxFactory {
                     .addComponent(new CombatStatsComponent(1, damage))
                     .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
                     .addComponent(new AutonomousBoxComponent());
+
+            autonomousBox.addComponent(new MinimapComponent("images/flying_bat_map.png").setScale(2.5f));
 
 
 
