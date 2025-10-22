@@ -498,7 +498,7 @@ public class EnemyFactory {
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
                 .addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                .addComponent(new CombatStatsComponent(9999, 100))
+                .addComponent(new CombatStatsComponent(9999, 9999))
                 .addComponent(new AITaskComponent())
                 .addComponent(new BossAnimationController())
                 .addComponent(new BossAnchorComponent(1.0f, 0f))

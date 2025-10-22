@@ -2,20 +2,17 @@ package com.csse3200.game.components.npc;
 
 import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.Component;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
 
 public class BossAnimationController extends Component {
     AnimationRenderComponent animator;
     private String currentAnimation = "";
     // Generate the "minimum display time" of the animation（Fine-tune as needed 0.3~0.6）
-    private float generateHold;
+    private float generateHold = 0f;
     // If the generation has just finished, but is still in the "display window", suspend and return to the chase
-    private boolean pendingChase;
-
-    private static final String BOSS_ANIM = "BossAnim";
-    private static final String BOSS_CHASE = "bossChase";
+    private boolean pendingChase = false;
 
     @Override
     public void create() {
