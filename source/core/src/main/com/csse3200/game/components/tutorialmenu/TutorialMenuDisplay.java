@@ -26,6 +26,7 @@ import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
+import com.csse3200.game.utils.CollectablesSave;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -766,9 +767,38 @@ public class TutorialMenuDisplay extends UIComponent {
     sectionTitle.setColor(Color.GREEN);
     contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
     
-    // Placeholder content
-    Label placeholder = new Label("lore", skin);
-    contentTable.add(placeholder).left().colspan(2).row();
+    // Create table for lore items
+    Table loreTable = new Table();
+    
+    // Add lore items
+    addDisplayColumn(loreTable,
+        new AssetConfig("images/terminal_on.png", false, null),
+        new InfoConfig("CODEX Terminals", getKeybindText("PlayerInteract") + " [RED](interact)[]\nThese terminals contain crucial information about the current state of the world."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    addDisplayColumn(loreTable,
+        new AssetConfig("images/lost_hardware.png", false, null),
+        new InfoConfig("Lost Hardware", "Scattered throughout the world, these remnants hold the key to your past."),
+        new ScalingConfig(175, 175, true, 40, 40));
+    
+    contentTable.add(loreTable).left().colspan(2).expandX().fillX().row();
+    
+    // Informational text with markup
+    String markedUpText =
+            """
+            Explore the world and uncover the mysteries of the world we live in.
+
+            [YELLOW]CODEX Terminals[] and [YELLOW]Lost Hardware[] provide valuable insights into the downfall of the human race.
+
+            [YELLOW]Lost Hardware[] can be collected in hidden locations throughout the world. You can track your progress in the bottom left of the UI.
+            
+            Currently, you have collected [GREEN]""" + CollectablesSave.getCollectedCount() + " out of 9[] pieces of lost hardware.\n" + """
+            
+            You can access collected [YELLOW]CODEX[] entries by pressing """ + " " + getKeybindText("PauseCodex") + "."
+            ;
+    Label infoLabel = new Label(markedUpText, skin);
+    infoLabel.setWrap(true);
+    infoLabel.setAlignment(Align.left);
+    contentTable.add(infoLabel).left().colspan(2).padTop(30).expandX().fillX().row();
   }
 
   @Override

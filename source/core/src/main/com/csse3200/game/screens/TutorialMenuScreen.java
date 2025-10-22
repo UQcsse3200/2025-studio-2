@@ -32,7 +32,9 @@ public class TutorialMenuScreen extends ScreenAdapter {
       "images/cube.png",
       "images/plate.png",
       "images/ladder.png",
-      "images/spikes_sprite.png"
+      "images/spikes_sprite.png",
+      "images/terminal_on.png",
+      "images/lost_hardware.png"
   };
   
   private final String[] tutorialMenuAtlases = {
