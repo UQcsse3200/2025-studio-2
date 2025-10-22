@@ -35,6 +35,7 @@ import com.csse3200.game.services.ServiceLocator;
 import box2dLight.RayHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -560,15 +561,17 @@ public class EnemyFactory {
 
         animator.startAnimation("bossChase");
 
-        // Add drone spawning component with default triggers
-        //  can configure these in BossLevelGameArea by getting the component and calling addSpawnTrigger()
-//        List<Vector2> defaultTriggers = new ArrayList<>();
-//        defaultTriggers.add(new Vector2(10f, 0f));  // Default trigger 1
-//        defaultTriggers.add(new Vector2(40f, 0f));  // Default trigger 2
-//        defaultTriggers.add(new Vector2(60f, 0f));  // Default trigger 3
-
         BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(new ArrayList<>(), 4f);
         boss.addComponent(droneSpawner);
+
+        // Add the spawner component with triggers
+        List<Vector2> triggers = Arrays.asList(
+                new Vector2(5, 0),
+                new Vector2(5, 0),
+                new Vector2(23, 0)
+        );
+
+        boss.addComponent(new BossSpawnerComponent(triggers, 2.0f));
 
         return boss;
     }

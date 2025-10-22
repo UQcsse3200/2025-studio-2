@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -401,37 +402,45 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
 
-  @Override
-  public void render(float delta) {
-    if (!paused) {
-      // Update camera position to follow player
-      updateCameraFollow();
+    @Override
+    public void render(float delta) {
+        if (!paused) {
+            // Update camera position to follow player
+            updateCameraFollow();
 
-      physicsEngine.update();
-      ServiceLocator.getEntityService().update();
-//      if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-//          jumpCount++;
-//          if (gameArea instanceof LevelOneGameArea levelOneArea && jumpCount == 30) {
-//              levelOneArea.laserShowerChecker(delta);
-//              jumpCount = 0;
-//          }else if (gameArea instanceof LevelTwoGameArea levelTwoArea&& jumpCount == 20) {
-//              levelTwoArea.laserShowerChecker(delta);
-//              jumpCount = 0;
-//          }
-//      }
-      laserTimer += delta;
+            physicsEngine.update();
+            ServiceLocator.getEntityService().update();
 
-      // Check if 50 seconds have passed
-      if (laserTimer >= 50f) {
-          if (gameArea instanceof BossLevelGameArea bossLevel) {
-              bossLevel.spawnLaserShower(); // spawn lasers
-          }
-          laserTimer = 0f; // reset timer
-      }
+            Entity player = gameArea.getPlayer();
+            if (player != null) {
+                // Continuously track player's current position (similar to PlayerActions)
+                Vector2 playerPos = player.getPosition().cpy(); // copy ensures immutability
 
-      }
-      renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
-  }
+                if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+                    jumpCount++;
+                    // Trigger laser shower based on jump count for each level
+                    if (gameArea instanceof LevelTwoGameArea levelTwoArea && jumpCount == 20) {
+                        levelTwoArea.laserShowerChecker(delta, playerPos.x, playerPos.y);
+                        jumpCount = 0;
+                    }
+                }
+                // Boss-level laser logic
+                if (gameArea instanceof BossLevelGameArea bossLevel) {
+                    Vector2 currentPlayerPos = player.getPosition().cpy();
+                    if (currentPlayerPos.x < 62f) { // skip laser when player is beyond x = 61
+                        laserTimer += delta;
+                        if (laserTimer >= 40f) {
+                            bossLevel.spawnLaserShower(playerPos.x, playerPos.y);// spawn lasers
+                            laserTimer = 0f; // reset timer
+                        }
+                    }else{
+                        laserTimer=0f;
+                    }
+                }
+            }
+        }
+        renderer.render(lightingEngine);  // new render flow used to render lights in the game screen only.
+    }
 
   /**
    * Updates the camera position to follow the player entity.
@@ -606,6 +615,8 @@ public class MainGameScreen extends ScreenAdapter {
    * Reset game area and re-add player's death listener
    */
   public void reset() {
+    jumpCount = 0;
+    laserTimer = 0f;
     gameArea.reset();
   }
 
@@ -614,7 +625,7 @@ public class MainGameScreen extends ScreenAdapter {
   }
 
   // Set last keycode for inventory when tab is clicked
-  public void reflectPauseTabClick(PauseMenuDisplay.Tab tab) {
+  public void reflectPauseTabClick(Tab tab) {
     if (pauseInput != null) {
       pauseInput.setLastKeycodeForTab(tab);
     }

@@ -471,9 +471,9 @@ public final class Spawners {
             if (spawnComp != null) {
                 spawnComp.resetTriggers();
 
-                spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
-                spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
-                spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(5f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(5f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(23f, 0f));
 
             }
 

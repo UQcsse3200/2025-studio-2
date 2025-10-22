@@ -79,8 +79,8 @@
     "images/drone.atlas",
     "images/animated-monitors.atlas",
     "images/drone_scout.atlas",
-    "images/drone_chaser.atlas",
-    "images/drone_brutal.atlas"
+    "images/drone_brutal.atlas",
+    "images/drone_chaser.atlas"
   ],
   "sounds": [
     "sounds/Impact4.ogg",
