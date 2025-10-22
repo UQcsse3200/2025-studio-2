@@ -31,6 +31,7 @@ import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.achievements.AchievementToastUI;
 import com.csse3200.game.ui.achievements.AchievementsMenuUI;
+import com.csse3200.game.utils.CollectablesSave;
 import com.csse3200.game.utils.math.GridPoint2Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -255,6 +256,10 @@ public class LevelThreeGameArea extends GameArea {
     }
 
     public void spawnCollectable(GridPoint2 pos) {
+        Vector2 worldPos = new Vector2((float) pos.x / 2, (float) pos.y / 2);
+        if (CollectablesSave.isPositionCollected(worldPos)) {
+            return;
+        }
         PhysicsComponent physics  = new PhysicsComponent();
         physics.setBodyType(BodyDef.BodyType.StaticBody);
         Texture texture = ServiceLocator.getResourceService().getAsset("images/lost_hardware.png", Texture.class);

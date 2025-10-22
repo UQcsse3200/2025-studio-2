@@ -1,5 +1,6 @@
 package com.csse3200.game.components.statisticspage;
 
+import com.csse3200.game.components.collectables.ItemCollectableComponent;
 import com.csse3200.game.files.FileLoader;
 
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ public class StatsTracker {
     private static int levelsCompleted;
     private static int deathCount;
     private static int achievementsUnlocked;
+    private static int lostHardwareCollected;
 
     private static long sessionStartTime;
 
@@ -125,6 +127,13 @@ public class StatsTracker {
     }
 
     /**
+     * Retrieve lost hardware counter
+     */
+    public static int getLostHardwareCollected() {
+        return ItemCollectableComponent.getCount();
+    }
+
+    /**
      * Save stats to JSON
      */
     public static void saveStats() {
@@ -134,6 +143,7 @@ public class StatsTracker {
         data.levelsCompleted = levelsCompleted;
         data.deathCount = deathCount;
         data.achievementsUnlocked = achievementsUnlocked;
+        data.lostHardwareCollected = lostHardwareCollected;
 
         FileLoader.writeClass(data, FILE_PATH, FileLoader.Location.LOCAL);
     }
@@ -150,6 +160,7 @@ public class StatsTracker {
             levelsCompleted = data.levelsCompleted;
             deathCount = data.deathCount;
             achievementsUnlocked = data.achievementsUnlocked;
+            lostHardwareCollected = data.lostHardwareCollected;
         } else {
             resetSession();
         }

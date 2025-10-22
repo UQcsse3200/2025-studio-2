@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 public class ItemCollectableComponent extends CollectableComponent {
     private static final Logger logger = LoggerFactory.getLogger(ItemCollectableComponent.class);
 
-    private int count;
+    private static int count;
     private Vector2[] collected = new Vector2[9];
 
     public ItemCollectableComponent() {
@@ -19,6 +19,10 @@ public class ItemCollectableComponent extends CollectableComponent {
     private void initialiseCollected() {
         collected = CollectablesSave.loadCollectedPositions();
         count = CollectablesSave.getCollectedCount();
+    }
+
+    public static int getCount() {
+        return count;
     }
 
     @Override
@@ -34,10 +38,12 @@ public class ItemCollectableComponent extends CollectableComponent {
         logger.info("CollectablesSave.getCollectedCount() = {}", count);
 
         collector.getEvents().trigger("updateCollectables", count);
+        //CollectablesSave.resetCollectedCount();
+        //collector.removeComponent(this);
         return true;
     }
 
-    private boolean hasBeenCollected(Vector2 pos) {
+    public boolean hasBeenCollected(Vector2 pos) {
         for (Vector2 v : collected) {
             if (v.x != 0 && v.y != 0 && v.epsilonEquals(pos, 0.01f)) {
                 return true;
