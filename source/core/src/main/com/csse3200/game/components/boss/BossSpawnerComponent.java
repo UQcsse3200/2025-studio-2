@@ -91,8 +91,8 @@ public class BossSpawnerComponent extends Component {
 		phaseConfigs.add(new PhaseConfig(
 				EnemyFactory.DroneVariant.SCOUT,
 				1.5f, // spawnInterval
-				0,    // maxConcurrent
-				0,    // totalToSpawn
+				1,    // maxConcurrent
+				1,    // totalToSpawn
 				1.4f  // windup
 		));
 		// Phase 1：chaser (Medium)
