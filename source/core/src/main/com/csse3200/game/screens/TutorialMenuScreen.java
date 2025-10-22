@@ -27,14 +27,23 @@ public class TutorialMenuScreen extends ScreenAdapter {
       "images/key.png",
       "images/dash_powerup.png",
       "images/glide_powerup.png",
-      "images/jetpack_powerup.png"
+      "images/jetpack_powerup.png",
+      "images/button.png",
+      "images/cube.png",
+      "images/plate.png",
+      "images/ladder.png",
+      "images/laser.png",
+      "images/spikes_sprite.png",
+      "images/terminal_on.png",
+      "images/door_closed.png"
   };
   
   private final String[] tutorialMenuAtlases = {
       "images/PLAYER.atlas",
       "images/health-potion.atlas",
       "images/speed-potion.atlas",
-      "images/slow-potion.atlas"
+      "images/slow-potion.atlas",
+      "images/laser.atlas"
   };
 
   private final GdxGame game;

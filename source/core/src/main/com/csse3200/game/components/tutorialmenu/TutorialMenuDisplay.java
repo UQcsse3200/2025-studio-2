@@ -20,6 +20,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Scaling;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
@@ -459,6 +460,33 @@ public class TutorialMenuDisplay extends UIComponent {
     }
 
     /**
+     * Helper to add a level mechanic column (sprite + name + description) to the mechanics table.
+     */
+    private void addMechanicColumn(Table mechanicsTable, String texturePath, String mechanicName, String description) {
+        Texture mechanicTexture = ServiceLocator.getResourceService()
+                .getAsset(texturePath, Texture.class);
+        
+        Image sprite = new Image(mechanicTexture);
+        sprite.setScaling(Scaling.fit); // Preserve aspect ratio
+
+        Table column = new Table();
+        column.add(sprite).prefSize(175, 175).padBottom(15).center().row();
+
+        Label nameLabel = new Label(mechanicName, skin);
+        nameLabel.setFontScale(1.3f);
+        nameLabel.setColor(Color.YELLOW);
+        column.add(nameLabel).center().padTop(5).row();
+
+        Label descLabel = new Label(description, skin);
+        descLabel.setFontScale(1.0f);
+        descLabel.setWrap(true);
+        descLabel.setAlignment(Align.center);
+        column.add(descLabel).width(250).center().padTop(5).row();
+
+        mechanicsTable.add(column).padLeft(35).padRight(70).padBottom(10).expandX().fillX();
+    }
+
+    /**
      * Creates a styled sidebar button with hover scaling and click handling.
      */
     private TextButton createSidebarButton(String text, Runnable onClick) {
@@ -613,11 +641,59 @@ public class TutorialMenuDisplay extends UIComponent {
     Label sectionTitle = new Label("Level Mechanics", skin);
     sectionTitle.setFontScale(1.5f);
     sectionTitle.setColor(Color.GREEN);
-    contentTable.add(sectionTitle).padBottom(20).left().colspan(2).row();
+    contentTable.add(sectionTitle).padBottom(20).left().colspan(4).row();
     
-    // Placeholder content
-    Label placeholder = new Label("level mechanics", skin);
-    contentTable.add(placeholder).left().colspan(2).row();
+    // Get keybinds dynamically
+    int interactKey = Keymap.getActionKeyCode("PlayerInteract");
+    String interactKeyName = Input.Keys.toString(interactKey);
+    
+    int upKey = Keymap.getActionKeyCode("PlayerUp");
+    String upKeyName = Input.Keys.toString(upKey);
+    
+    // Create table for first row of mechanics
+    Table mechanicsRow1 = new Table();
+    
+    // First row: Buttons, Moveable Boxes, Pressure Plates, Ladders
+    addMechanicColumn(mechanicsRow1, "images/button.png", 
+        "Buttons", "[RED]" + interactKeyName + "[]\nInteract to activate mechanisms.");
+    addMechanicColumn(mechanicsRow1, "images/cube.png", 
+        "Moveable Boxes", "[RED]" + interactKeyName + "[]\nPick up and place to solve puzzles.");
+    addMechanicColumn(mechanicsRow1, "images/plate.png", 
+        "Pressure Plates", "Press with player or box to activate.");
+    addMechanicColumn(mechanicsRow1, "images/ladder.png", 
+        "Ladders", "[RED]" + upKeyName + " (hold)[]\nClimb to reach higher areas.");
+    
+    contentTable.add(mechanicsRow1).left().colspan(4).row();
+    
+    // Create table for second row of mechanics
+    Table mechanicsRow2 = new Table();
+    
+    // Second row: Lasers, Spikes, Minigame Terminals, Doors
+    addMechanicColumn(mechanicsRow2, "images/laser.png", 
+        "Lasers", "Damages player. Can be blocked with boxes.");
+    addMechanicColumn(mechanicsRow2, "images/spikes_sprite.png", 
+        "Spikes", "Deals damage and knocks player back.");
+    addMechanicColumn(mechanicsRow2, "images/terminal_on.png", 
+        "Minigame Terminals", "[RED]" + interactKeyName + "[]\nComplete minigames to progress.");
+    addMechanicColumn(mechanicsRow2, "images/door_closed.png", 
+        "Doors", "[RED]" + interactKeyName + "[]\nRequires key. Level exit.");
+    
+    contentTable.add(mechanicsRow2).left().colspan(4).row();
+    
+    // Informational text with markup
+    String markedUpText =
+            """
+            Master these mechanics to navigate through the facility and overcome obstacles!
+            """;
+    
+    Label infoText = new Label(markedUpText, skin);
+    infoText.setFontScale(1.2f);
+    infoText.setWrap(true);
+    Label.LabelStyle markupStyle = new Label.LabelStyle(infoText.getStyle());
+    markupStyle.fontColor = Color.WHITE;
+    infoText.setStyle(markupStyle);
+    
+    contentTable.add(infoText).fillX().padTop(30).left().colspan(4).row();
   }
 
   /**
