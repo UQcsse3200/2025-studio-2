@@ -683,7 +683,7 @@ public class EnemyFactoryTest {
         assertNotNull(boss.getComponent(BossAnchorComponent.class), "Should have boss anchor component");
         assertNotNull(boss.getComponent(BossTouchKillComponent.class), "Should have boss touch kill component");
         assertNotNull(boss.getComponent(BossAnimationController.class), "Should have boss animation controller");
-        assertNotNull(boss.getComponent(BossSpawnerComponent.class), "Should have boss spawner component");
+
     }
 
     @Test

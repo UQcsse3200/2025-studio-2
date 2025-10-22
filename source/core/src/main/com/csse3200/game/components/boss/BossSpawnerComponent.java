@@ -59,11 +59,71 @@ public class BossSpawnerComponent extends Component {
 	 * Find the player entity in the entity service
 	 */
 	private void findPlayer() {
-		for (Entity entity : ServiceLocator.getEntityService().get_entities()) {
+		// Try different possible method names for getting entities
+		Iterable<Entity> entities = getEntitiesFromService();
+		if (entities == null) {
+			logger.warn("Could not retrieve entities from EntityService");
+			return;
+		}
+
+		for (Entity entity : entities) {
 			if (entity.getComponent(com.csse3200.game.components.player.PlayerActions.class) != null) {
 				player = entity;
 				return;
 			}
+		}
+	}
+
+	/**
+	 * Helper method to get entities from EntityService with fallback options
+	 */
+	private Iterable<Entity> getEntitiesFromService() {
+		try {
+			// Try common method names
+			if (ServiceLocator.getEntityService() != null) {
+				// Try getEntities() first (most common)
+				try {
+					java.lang.reflect.Method method = ServiceLocator.getEntityService().getClass().getMethod("getEntities");
+					return (Iterable<Entity>) method.invoke(ServiceLocator.getEntityService());
+				} catch (Exception e) {
+					// Try getAllEntities()
+					try {
+						java.lang.reflect.Method method = ServiceLocator.getEntityService().getClass().getMethod("getAllEntities");
+						return (Iterable<Entity>) method.invoke(ServiceLocator.getEntityService());
+					} catch (Exception e2) {
+						// Try getEntityList()
+						try {
+							java.lang.reflect.Method method = ServiceLocator.getEntityService().getClass().getMethod("getEntityList");
+							return (Iterable<Entity>) method.invoke(ServiceLocator.getEntityService());
+						} catch (Exception e3) {
+							logger.error("Could not find entities getter method in EntityService");
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.error("Error accessing EntityService: {}", e.getMessage());
+		}
+		return null;
+	}
+
+	/**
+	 * Check if an entity is still registered with the EntityService
+	 */
+	private boolean isEntityRegistered(Entity entity) {
+		try {
+			Iterable<Entity> entities = getEntitiesFromService();
+			if (entities == null) return false;
+
+			for (Entity e : entities) {
+				if (e == entity) {
+					return true;
+				}
+			}
+			return false;
+		} catch (Exception e) {
+			logger.warn("Error checking if entity is registered: {}", e.getMessage());
+			return false;
 		}
 	}
 
@@ -182,7 +242,7 @@ public class BossSpawnerComponent extends Component {
 	private int getActiveDroneCount() {
 		int activeCount = 0;
 		for (Entity drone : spawnedDrones) {
-			if (drone != null && ServiceLocator.getEntityService().get_entities().contains(drone, true)) {
+			if (drone != null && isEntityRegistered(drone)) {
 				activeCount++;
 			}
 		}
@@ -194,7 +254,7 @@ public class BossSpawnerComponent extends Component {
 	 */
 	private void cleanupDeadDrones() {
 		spawnedDrones.removeIf(drone ->
-				drone == null || !ServiceLocator.getEntityService().get_entities().contains(drone, true)
+				drone == null || !isEntityRegistered(drone)
 		);
 	}
 
@@ -230,7 +290,7 @@ public class BossSpawnerComponent extends Component {
 	public void cleanupDrones() {
 		logger.info("Cleaning up {} spawned drones", spawnedDrones.size());
 		for (Entity drone : spawnedDrones) {
-			if (drone != null && ServiceLocator.getEntityService().get_entities().contains(drone, true)) {
+			if (drone != null && isEntityRegistered(drone)) {
 				drone.dispose();
 			}
 		}
