@@ -76,7 +76,8 @@ public class CollectableComponent extends Component {
                 renderService.unregister(animation);
             } else if (texture != null) {
                 renderService.unregister(texture);
-            } else if (cone != null) {
+            }
+            if (cone != null) {
                 cone.dispose();
             }
             entity.setEnabled(false);
