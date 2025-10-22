@@ -7,6 +7,7 @@
     "autoConsume": false,
     "tags": ["KEY"],
     "bag": "inventory",
+    "sfx": "sounds/pickupsound_upgrade.mp3",
     "effects": []
   },
   {
@@ -16,6 +17,7 @@
     "description": "Restores 10 HP.",
     "autoConsume": true,
     "tags": ["CONSUMABLE"],
+    "sfx": "sounds/pickupsound_potion.mp3",
     "effects": [
       { "type": "heal", "value": 10 }
     ],
@@ -28,6 +30,7 @@
     "description": "Unlocks the dash ability when used.",
     "autoConsume": true,
     "tags": ["CONSUMABLE"],
+    "sfx": "sounds/pickupsound_potion.mp3",
     "effects": [
       { "type": "buff_speed", "duration": 5 }
     ],
@@ -41,6 +44,7 @@
     "autoConsume": true,
     "tags": ["UPGRADE"],
     "scale": [0.8, 0.5],
+    "sfx": "sounds/pickupsound_upgrade.mp3",
     "effects": [
       { "type": "upgrade", "target": "dash" }
     ]
@@ -52,6 +56,7 @@
     "description": "Unlocks the ability to glide",
     "autoConsume": true,
     "tags": ["UPGRADE"],
+    "sfx": "sounds/pickupsound_upgrade.mp3",
     "effects": [
       { "type": "upgrade", "target": "glider" }
     ]
@@ -63,6 +68,7 @@
     "description": "Unlocks the ability to use the jetpack",
     "autoConsume": true,
     "tags": ["UPGRADE"],
+    "sfx": "sounds/pickupsound_upgrade.mp3",
     "effects": [
       { "type": "upgrade", "target": "jetpack" }
     ]
@@ -74,6 +80,10 @@
     "description": "Hidden lost hardware",
     "autoConsume": true,
     "tags": ["HARDWARE"],
+    "sfx": "sounds/pickupsound_2.mp3",
+    "effects": [
+      { "type": "misc" }
+    ],
     "glowColor": [40, 30, 55]
   },
   {
@@ -84,6 +94,7 @@
     "autoConsume": true,
     "tags": ["OBJECTIVE"],
     "bag": "objectives",
+    "sfx": null,
     "effects": [
       { "type": "objective"}
     ],

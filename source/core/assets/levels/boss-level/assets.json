@@ -91,7 +91,10 @@
     "sounds/thudsound.mp3",
     "sounds/walksound.mp3",
     "sounds/laserShower.mp3",
-    "sounds/pickupsound.mp3"
+    "sounds/pickupsound.mp3",
+    "sounds/pickupsound_2.mp3",
+    "sounds/pickupsound_potion.mp3",
+    "sounds/pickupsound_upgrade.mp3"
   ],
   "music": [
     "sounds/Siiiiiiiiiick bounce 1.mp3"

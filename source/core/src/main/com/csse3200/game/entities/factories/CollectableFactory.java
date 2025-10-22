@@ -58,7 +58,7 @@ public class CollectableFactory {
         Entity e = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new CollectableComponent(itemId));
+                .addComponent(new CollectableComponent(itemId, cfg.sfx));
 
         // add sprites and animations
 

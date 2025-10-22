@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.Objects;
 import java.util.UUID;
 
 public final class Spawners {
@@ -91,6 +92,15 @@ public final class Spawners {
                 toggler.getEvents().addListener("buttonToggled", (Boolean isPushed) -> {
                     collectable.getComponent(CollectableComponent.class).toggleVisibility(isPushed);
                 });
+            }
+
+            // --- Hardware ---
+
+            if (Objects.equals(a.subtype, "misc")) {
+                collectable.getComponent(CollectableComponent.class)
+                        .setEffectParam("misc", "x", Float.toString(a.x));
+                collectable.getComponent(CollectableComponent.class)
+                        .setEffectParam("misc", "y", Float.toString(a.y));
             }
 
             linkEntities(collectable, a.linked);
@@ -409,7 +419,6 @@ public final class Spawners {
             e.getComponent(CollectableComponent.class).setEffectParam("objective", "target", target);
             return e;
         });
-
 
         // --- Prompts ---
         SpawnRegistry.register("prompt", a -> {

@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.configs;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -10,5 +11,5 @@ public class EffectConfig {
     public double value;
     public int duration = 0;
     public String target;
-    public Map<String, String> params;
+    public Map<String, String> params = new HashMap<>();
 }

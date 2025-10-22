@@ -7,6 +7,16 @@ import com.csse3200.game.entities.configs.EffectConfig;
 
 /** Adds an upgrade to the player's inventory and updates stats. */
 public class AddUpgrade implements ItemEffectHandler {
+    /**
+     * Applies the upgrade effect to the given player.
+     *
+     * @param player the player entity that should receive the upgrade
+     * @param cfg the effect configuration specifying the target upgrade
+     * @return {@code true} if the upgrade was successfully applied,
+     *         {@code false} if the player lacks an {@link InventoryComponent}
+     *         or parameters were invalid
+     * @throws IllegalArgumentException if the {@code cfg.target} is null or blank
+     */
     @Override
     public boolean apply(Entity player, EffectConfig cfg) {
         if (player == null || cfg == null) return false;

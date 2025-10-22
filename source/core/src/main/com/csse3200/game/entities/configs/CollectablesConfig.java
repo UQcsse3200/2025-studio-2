@@ -9,6 +9,7 @@ public class CollectablesConfig {
     public String name;
     public String sprite;
     public String description;
+    public String sfx;
     public boolean autoConsume;
     public List<String> tags;
     public List<EffectConfig> effects;

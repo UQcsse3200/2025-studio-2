@@ -131,7 +131,10 @@
     "sounds/damagesound.mp3",
     "sounds/thudsound.mp3",
     "sounds/chimesound.mp3",
-    "sounds/explosion.mp3"
+    "sounds/explosion.mp3",
+    "sounds/pickupsound_2.mp3",
+    "sounds/pickupsound_potion.mp3",
+    "sounds/pickupsound_upgrade.mp3"
   ],
   "music": [
     "sounds/LIKEDACIRCUIT.mp3"

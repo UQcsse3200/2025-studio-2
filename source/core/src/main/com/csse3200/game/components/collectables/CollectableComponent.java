@@ -32,6 +32,8 @@ import java.util.Map;
  */
 public class CollectableComponent extends Component {
     private final String itemId;
+    private final String sfx;
+
     private boolean collected = false;
 
     private final Map<String, Map<String, String>> effectParams = new HashMap<>();
@@ -46,8 +48,9 @@ public class CollectableComponent extends Component {
      *
      * @param itemId the unique identifier of the collectable item this component represents
      */
-    public CollectableComponent(String itemId) {
+    public CollectableComponent(String itemId, String sfx) {
         this.itemId = itemId;
+        this.sfx = sfx;
     }
 
     /**
@@ -156,9 +159,11 @@ public class CollectableComponent extends Component {
      * the {@link ResourceService} during level or game initialization.</p>
      */
     private void playPickupSfx() {
-        ResourceService rs = ServiceLocator.getResourceService();
-        Sound pickupSound = rs.getAsset("sounds/pickupsound.mp3", Sound.class);
-        pickupSound.play(UserSettings.get().masterVolume);
+        if (sfx != null) {
+            ResourceService rs = ServiceLocator.getResourceService();
+            Sound pickupSound = rs.getAsset(sfx, Sound.class);
+            pickupSound.play(UserSettings.get().masterVolume);
+        }
     }
 
     /**

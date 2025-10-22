@@ -117,8 +117,8 @@
     {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_1","x": 15,"y": 15,"extra": "15,15;30,15"},
     {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_2","x": 52,"y": 60,"extra": "52,60;60,58"},
     {"type": "enemy","subtype": "auto_bomber","id": "auto_bomber_3","x": 65,"y": 60,"extra": "65,60;75,58"},
-    {"type": "objective","id": "door","x": 1,"y": 3,"sx": 2,"sy": 2},
-    {"type": "objective","id": "keycard","x": 1,"y": 3,"sx": 2,"sy": 2},
+    {"type": "objective","id": "door","x": 1,"y": 5,"sx": 2,"sy": 2},
+    {"type": "objective","id": "keycard","x": 1,"y": 5,"sx": 2,"sy": 2},
 
     {"type": "pressure_plate","subtype": "normal","id": "volatile_platform","x": 18,"y": 44,"tooltip": "Platform Plate\nPress to reveal platform"},
     {"type": "platform","subtype": "plate","x": 10,"y": 48,"sx": 2,"sy": 0.5,"target": "volatile_platform"},
