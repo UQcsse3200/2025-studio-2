@@ -212,7 +212,7 @@ public class InventoryComponent extends Component {
      * @param itemId item id (must not be null)
      * @param amount number of items to add (must be > 0)
      * @throws NullPointerException     if {@code bag} or {@code itemId} is null
-     * @throws IllegalArgumentException if {@code amount} <= 0 or no config is found
+     * @throws IllegalArgumentException if {@code amount} /le 0 or no config is found
      */
     @Deprecated
     public void addItems(Bag bag, String itemId, int amount) {
