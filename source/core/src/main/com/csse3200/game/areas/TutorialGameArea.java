@@ -140,7 +140,7 @@ public class TutorialGameArea extends GameArea {
         "images/speed-potion.atlas",
         "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
         "images/doors.atlas",
-        "images/laser.atlas"
+        "images/laser_drone.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(TutorialGameArea.class);
     private final TerrainFactory terrainFactory;

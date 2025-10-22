@@ -29,7 +29,7 @@ public class LaserFactory {
      */
     public static Entity createLaserEmitter(float dir) {
         // setup animations
-        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class);
+        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser_drone.atlas", TextureAtlas.class);
         AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
         if (atlas != null) {
             animator.addAnimation("laser-on", 0.1f, Animation.PlayMode.LOOP);

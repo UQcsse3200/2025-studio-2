@@ -1,90 +1,47 @@
-
-laser_final.png
-size: 256, 512
-format: RGBA8888
-filter: Nearest, Nearest
-repeat: none
-laser_attack
-  rotate: false
-  xy: 2, 394
-  size: 174, 96
-  orig: 240, 96
-  offset: 11, 0
-  index: 0
-laser_attack
-  rotate: false
-  xy: 2, 296
-  size: 168, 96
-  orig: 240, 96
-  offset: 59, 0
-  index: 1
-laser_attack
-  rotate: false
-  xy: 90, 100
-  size: 67, 96
-  orig: 240, 96
-  offset: 69, 0
-  index: 2
-laser_attack
-  rotate: false
-  xy: 181, 198
-  size: 67, 96
-  orig: 240, 96
-  offset: 114, 0
-  index: 3
-laser_effact
-  rotate: false
-  xy: 172, 296
-  size: 82, 96
-  orig: 96, 96
-  offset: 7, 0
-  index: 0
-laser_effact
-  rotate: false
-  xy: 178, 394
-  size: 73, 96
-  orig: 96, 96
-  offset: 13, 0
-  index: 1
-laser_effact
-  rotate: false
-  xy: 2, 198
-  size: 90, 96
-  orig: 96, 96
-  offset: 3, 0
-  index: 2
-laser_effact
-  rotate: false
-  xy: 2, 100
-  size: 86, 96
-  orig: 96, 96
-  offset: 5, 0
-  index: 3
-laser_effact
-  rotate: false
-  xy: 94, 198
-  size: 85, 96
-  orig: 96, 96
-  offset: 9, 0
-  index: 4
-laser_effact
-  rotate: false
-  xy: 2, 2
-  size: 78, 96
-  orig: 96, 96
-  offset: 11, 0
-  index: 5
-laser_effact
-  rotate: false
-  xy: 82, 2
-  size: 52, 96
-  orig: 96, 96
-  offset: 23, 0
-  index: 6
-default
-  rotate: false
-  xy: 0, 0
-  size: 1, 1
-  orig: 1, 1
-  offset: 0, 0
-  index: 0
+laser.png
+	size: 128, 128
+	repeat: none
+laser-on
+	bounds: 2, 2, 22, 24
+laser-on
+	bounds: 26, 2, 22, 24
+laser-on
+	bounds: 50, 2, 22, 24
+laser-on
+	bounds: 74, 2, 22, 24
+laser-on
+	bounds: 98, 2, 22, 24
+laser-on
+	bounds: 2, 28, 22, 24
+laser-on
+	bounds: 26, 28, 22, 24
+laser-turning-on
+	bounds: 50, 28, 22, 24
+laser-turning-on
+	bounds: 74, 28, 22, 24
+laser-turning-on
+	bounds: 98, 28, 22, 24
+laser-turning-on
+	bounds: 2, 54, 22, 24
+laser-turning-on
+	bounds: 26, 54, 22, 24
+laser-turning-on
+	bounds: 50, 54, 22, 24
+laser-turning-on
+	bounds: 74, 54, 22, 24
+laser-turning-off
+	bounds: 74, 54, 22, 24
+laser-turning-off
+	bounds: 50, 54, 22, 24
+laser-turning-off
+	bounds: 26, 54, 22, 24
+laser-turning-off
+	bounds: 2, 54, 22, 24
+laser-turning-off
+	bounds: 98, 28, 22, 24
+laser-turning-off
+	bounds: 74, 28, 22, 24
+laser-turning-off
+	bounds: 50, 28, 22, 24
+laser-off
+    bounds: 98, 54, 22, 24

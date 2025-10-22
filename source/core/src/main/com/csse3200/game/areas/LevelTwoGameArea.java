@@ -157,7 +157,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/doors.atlas",
             "images/timer.atlas",
             "images/drone.atlas",
-            "images/laser.atlas",
+            "images/laser_drone.atlas",
             "images/Laser.atlas",
             "images/drone.atlas"
     };

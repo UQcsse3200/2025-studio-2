@@ -86,7 +86,7 @@
     "images/surfacelevel/2.png",
     "images/surfacelevel/3.png",
     "images/surfacelevel/4.png",
-    "images/door_open-map.png",
+    "images/door_open-map.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",
@@ -96,7 +96,7 @@
       "images/speed-potion.atlas",
       "images/flying_bat.atlas",
       "images/doors.atlas",
-      "images/laser.atlas"
+      "images/laser_drone.atlas"
   ],
   "sounds": [
     "sounds/Impact4.ogg",

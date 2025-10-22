@@ -89,7 +89,7 @@ public class ProjectileFactory {
 
 // Animation render using laser atlas
         TextureAtlas laserAtlas = ServiceLocator.getResourceService()
-                .getAsset("images/Laser.atlas", TextureAtlas.class);
+                .getAsset("images/laser_drone.atlas", TextureAtlas.class);
         AnimationRenderComponent animator = new AnimationRenderComponent(laserAtlas);
         animator.addAnimation("laser_attack", 0.05f, Animation.PlayMode.LOOP); // moving laser
         animator.addAnimation("laser_effact", 0.05f, Animation.PlayMode.NORMAL); // hit effect

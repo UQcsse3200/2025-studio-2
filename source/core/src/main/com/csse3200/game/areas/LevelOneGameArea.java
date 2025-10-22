@@ -176,7 +176,7 @@ public class LevelOneGameArea extends GameArea {
             "images/doors.atlas",
             "images/animated-monitors.atlas",
             "images/Laser.atlas",
-            "images/laser.atlas"
+            "images/laser_drone.atlas"
     };
     private int spacePressCount = 0;
     private final Logger logger = LoggerFactory.getLogger(LevelOneGameArea.class);

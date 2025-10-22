@@ -108,7 +108,7 @@ public class BossLevelGameArea extends GameArea {
             "images/volatile_platform.atlas",
             "images/timer.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/laser.atlas"
+            "images/laser_drone.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
     private final TerrainFactory terrainFactory;
