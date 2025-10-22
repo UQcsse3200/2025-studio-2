@@ -7,20 +7,25 @@ import java.lang.reflect.Field;
  * If you want to add you own snippets to be initialized, declare a `private static final String`
  * and assign it the code you want to run on shell startup.
  */
+@SuppressWarnings("ALL")
 public class Initializer {
-  static public Shell getInitializedShell() {
+
+  private Initializer() {
+    throw new IllegalStateException("Instantiating static util class");
+  }
+
+  public static Shell getInitializedShell() {
     Shell shell = new Shell(new Shell.Console() {
       @Override public void print(Object obj) { TerminalService.print(obj); }
       @Override public String next() { return null; }
       @Override public boolean hasNext() { return false; }
-      @Override public void close() {}
+      @Override public void close() { /* The terminal can never be closed */}
     });
     for (Field field : Initializer.class.getDeclaredFields()) {
-      field.setAccessible(true);
       try {
         Object fieldValue = field.get(null);
-        if (fieldValue instanceof String) {
-          shell.eval((String) fieldValue);
+        if (fieldValue instanceof String str) {
+          shell.eval(str);
         }
       } catch (IllegalAccessException e) {
         // Ignore
@@ -32,7 +37,7 @@ public class Initializer {
   /**
    * Setup basic shell functionality
    */
-  private static final String init = """
+  static final String INIT = """
     init = () {
       "This makes the function slightly faster as we only need to look at the top frame";
       globalThis = globalThis;
@@ -137,8 +142,7 @@ public class Initializer {
    * Setup debug functionality.
    * Note: There may be bugs due to external functionality changing.
    */
-  private static final String debug = """
-  debugInit = () {
+  static final String DEBUG = """
     "This makes the function slightly faster as we only need to look at the top frame";
     setGlobal = setGlobal;
 
@@ -201,22 +205,30 @@ public class Initializer {
       cls = getGlobal(".obj");
       setGlobal(".obj", obj);
 
-      print("Inspecting Class: ", cls.getName(), "\n\n--- Fields ---\n");
+      print("Inspecting Class: ", cls.getName(), "
+
+--- Fields ---
+");
 
       forEach(cls.getFields(), (field) {
         setGlobal(".field", field);
         tryCatch(() {
           field = getGlobal(".field");
           field.setAccessible(true);
-          print(field.toGenericString(), " = ", field.get(getGlobal(".obj")), "\n");
+          print(field.toGenericString(), " = ", field.get(getGlobal(".obj")), "
+");
         }, (e) {
-          print("Opps, An error occurred", e, "\n");
+          print("Oops, An error occurred", e, "
+");
         });
       });
 
-      print("\n--- Methods ---\n", cls);
+      print("
+--- Methods ---
+", cls);
       forEach(cls.getMethods(), (method) {
-        print(method.toGenericString(), "\n");
+        print(method.toGenericString(), "
+");
       });
     });
 
@@ -225,12 +237,8 @@ public class Initializer {
 
     "Find the player, returns null if nothing is found";
     setGlobal("getPlayer", () {
-      forEach(getEntities(), (entity) {
-        setGlobal(".entity", entity);
-        if (not(isNull(entity.getComponent(.com.csse3200.game.components.player.InventoryComponent))), () {
-          returnN(3, getGlobal(".entity"));
-        });
-      });
+      ga = game.screen.getGameArea();
+      return(ga.getPlayer());
     });
 
     "Prints this help message";
@@ -287,8 +295,203 @@ public class Initializer {
       env()                 - Returns the Environment object (global state of the shell).
       help                  - This help string.
     ");
-  };
+  """;
 
-  debugInit();
+  static final String CHEATS = """
+    setGlobal("kill", (entity) {
+      "Get the CombatStatsComponent from the target entity
+      Note the use of .class to get the class object.";
+
+        stats = entity.getComponent(.com.csse3200.game.components.CombatStatsComponent);
+        ifElse(exists("stats"), () {
+          stats = getParentVar("stats");
+          stats.setHealth(0);
+          entity = getParentVar("entity");
+          print("Entity ", entity.getId(), " has been killed!\\n");
+        }, () {
+          entity = getParentVar("entity");
+          print("Entity ", entity.getId(), " has no health to set!\\n");
+        });
+      });
+
+    setGlobal("godMode", () {
+      player = getPlayer();
+      stats = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
+      ifElse(exists("stats"), () {
+        stats = getParentVar("stats");
+        stats.setHealth(9999);
+        print("God mode enabled
+");
+      }, () {
+        print("Unable to enable god mode");
+      });
+    });
+
+    setGlobal("spawnJetpack", () {
+      es = entityService();
+      jetpack = .com.csse3200.game.entities.factories.CollectableFactory.createJetpackUpgrade();
+      player = getPlayer();
+      physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+      body = physics.getBody();
+
+      es.register(jetpack);
+      jetpack.setPosition(body.getWorldCenter());
+
+      print("Jetpack spawned!
+");
+    });
+
+    setGlobal("spawnGlider", () {
+      es = entityService();
+      glider = .com.csse3200.game.entities.factories.CollectableFactory.createGlideUpgrade();
+      player = getPlayer();
+      physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+      body = physics.getBody();
+
+      es.register(glider);
+      glider.setPosition(body.getWorldCenter());
+
+      print("Glider spawned!
+");
+    });
+
+    setGlobal("spawnDash", () {
+      es = entityService();
+      dash = .com.csse3200.game.entities.factories.CollectableFactory.createDashUpgrade();
+      player = getPlayer();
+      physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+      body = physics.getBody();
+
+      es.register(dash);
+      dash.setPosition(body.getWorldCenter());
+
+      print("Dash Upgrade spawned!
+");
+    });
+
+    setGlobal("spawnAllUpgrades", () {
+      spawnGlider();
+      spawnJetpack();
+      spawnDash();
+
+      print("All upgrades spawned!
+");
+    });
+
+    setGlobal("spawnDoorKey", () {
+      es = entityService();
+      key = .com.csse3200.game.entities.factories.CollectableFactory.createCollectable("key:door");
+      player = getPlayer();
+      physics = player.getComponent(.com.csse3200.game.physics.components.PhysicsComponent);
+      body = physics.getBody();
+
+      es.register(key);
+      key.setPosition(body.getWorldCenter());
+
+      print("Door Key Spawned!
+");
+    });
+
+    setGlobal("getGameArea", () {
+      screen = ServiceLocator.getMainGameScreen();
+      gameAreaEnum = screen.getAreaEnum();
+      gameArea = screen.getGameArea(gameAreaEnum);
+      returnN(1, gameArea);
+    });
+
+    setGlobal("goNextLevel", () {
+      player = getPlayer();
+      screen = ServiceLocator.getMainGameScreen();
+      gameAreaEnum = screen.getAreaEnum();
+      nextArea = screen.getNextArea(gameAreaEnum);
+      screen.switchAreaRunnable(nextArea, player);
+      print("Level Changed!
+");
+    });
+
+    setGlobal("debugRender", () {
+      renderService = ServiceLocator.getRenderService();
+      renderer = renderService.getDebug();
+      active = renderer.getActive();
+      setGlobal(".renderer", renderer);
+
+      ifElse(active, () {
+        renderer = getGlobal(".renderer");
+        renderer.setActive(false);
+        print("Debug Renderer is Off!
+");
+      }, () {
+        renderer = getGlobal(".renderer");
+        renderer.setActive(true);
+        print("Debug Renderer is Active!
+");
+      });
+    });
+
+    setGlobal("toggleOnAI", () {
+      forEachAI((droneEntity) {
+        setGlobal(".droneEntity", droneEntity);
+        ifElse(droneEntity.getEnabled, () {
+          droneEntity = getGlobal(".droneEntity");
+          droneEntity.setEnabled(false);
+        }, () {
+          droneEntity = getGlobal(".droneEntity");
+          droneEntity.setEnabled(true);
+        });
+      });
+      print("Drone AI toggled
+");
+    });
+
+    setGlobal("fly", () {
+      player = getPlayer();
+      keyBoardComponent = player.getComponent(.com.csse3200.game.components.player.KeyboardPlayerInputComponent);
+      setGlobal(".keyBoardComponent", keyBoardComponent);
+      ifElse(not(isNull(keyBoardComponent)), () {
+        keyBoardComponent = getGlobal(".keyBoardComponent");
+        ifElse(keyBoardComponent.getIsCheatsOn(), () {
+          keyBoardComponent = getGlobal(".keyBoardComponent");
+          keyBoardComponent.setIsCheatsOn(false);
+          print("Flight disabled!
+");
+        }, () {
+          keyBoardComponent = getGlobal(".keyBoardComponent");
+          keyBoardComponent.setIsCheatsOn(true);
+          print("Flight enabled!
+");
+        });
+      }, () {
+        print("Keyboard component unable to be reached!
+");
+      });
+    });
+
+    setGlobal("teleport", (x, y) {
+      player = getPlayer();
+      player.setPosition(x, y);
+    });
+
+    setGlobal("setSpeed", (x, y) {
+      player = getPlayer();
+      playerActions = player.getComponent(.com.csse3200.game.components.player.PlayerActions);
+      playerActions.setWalkSpeed(x, y);
+      print("Horizontal walk speed set to ", x, " and vertical walk speed set to ", y, "
+");
+    });
+
+    setGlobal("printInventory", () {
+      player = getPlayer();
+      inv = player.getComponent(.com.csse3200.game.components.player.InventoryComponent);
+      print(inv.printItems());
+    });
+
+    setGlobal("setHealth", (amount) {
+      player = getPlayer();
+      cbs = player.getComponent(.com.csse3200.game.components.CombatStatsComponent);
+
+      cbs.setHealth(amount);
+      print("Player health set to ", amount, "!
+");
+    });
   """;
 }

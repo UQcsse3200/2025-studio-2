@@ -1,12 +1,10 @@
 package com.csse3200.game.components.mainmenu;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
@@ -18,7 +16,6 @@ import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.security.Provider;
 import java.util.Arrays;
 
 /**
@@ -56,22 +53,35 @@ public class MainMenuDisplay extends UIComponent {
 
     TextButton startBtn = new TextButton("Start", skin, "mainMenu");
     TextButton loadBtn = new TextButton("Load", skin, "mainMenu");
+    TextButton tutorialBtn = new TextButton("Tutorial", skin, "mainMenu");
+    TextButton leaderboardBtn = new TextButton("Leaderboard", skin, "mainMenu");
     TextButton settingsBtn = new TextButton("Settings", skin, "mainMenu");
+    TextButton statsBtn = new TextButton("Stats", skin, "mainMenu");
     TextButton exitBtn = new TextButton("Exit", skin, "mainMenu");
+
     startBtn.setTransform(true);
     startBtn.setOrigin(Align.center);
 
     loadBtn.setTransform(true);
     loadBtn.setOrigin(Align.center);
 
+    tutorialBtn.setTransform(true);
+    tutorialBtn.setOrigin(Align.center);
+
+    leaderboardBtn.setTransform(true);
+    leaderboardBtn.setOrigin(Align.center);
+
     settingsBtn.setTransform(true);
     settingsBtn.setOrigin(Align.center);
+
+    statsBtn.setTransform(true);
+    statsBtn.setOrigin(Align.center);
 
     exitBtn.setTransform(true);
     exitBtn.setOrigin(Align.center);
 
 
-      HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, settingsBtn, exitBtn));
+    HoverEffectHelper.applyHoverEffects(Arrays.asList(startBtn, loadBtn, tutorialBtn, leaderboardBtn, settingsBtn, statsBtn, exitBtn));
     // Triggers an event when the button is pressed
     startBtn.addListener(
         new ChangeListener() {
@@ -93,6 +103,25 @@ public class MainMenuDisplay extends UIComponent {
           }
         });
 
+    tutorialBtn.addListener(
+        new ChangeListener() {
+          @Override
+          public void changed(ChangeEvent changeEvent, Actor actor) {
+            logger.debug("Tutorial button clicked");
+            entity.getEvents().trigger("tutorial");
+          }
+        });
+
+    leaderboardBtn.addListener(
+        new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent changeEvent, Actor actor) {
+                logger.debug("Leaderboard button clicked");
+                buttonClickSound.play(UserSettings.get().masterVolume);
+                entity.getEvents().trigger("leaderboard");
+            }
+        });
+
     settingsBtn.addListener(
         new ChangeListener() {
           @Override
@@ -103,11 +132,20 @@ public class MainMenuDisplay extends UIComponent {
           }
         });
 
+    statsBtn.addListener(
+      new ChangeListener() {
+        @Override
+        public void changed(ChangeEvent changeEvent, Actor actor) {
+          logger.debug("Stats button clicked");
+          buttonClickSound.play(UserSettings.get().masterVolume);
+          entity.getEvents().trigger("stats");
+          }
+      });
+
     exitBtn.addListener(
         new ChangeListener() {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
-
             logger.debug("Exit button clicked");
             buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("exit");
@@ -123,7 +161,10 @@ public class MainMenuDisplay extends UIComponent {
     row.setTransform(true);
     row.add(startBtn).padLeft(15f).padRight(15f);
     row.add(loadBtn).padLeft(15f).padRight(15f);
+    row.add(tutorialBtn).padLeft(15f).padRight(15f);
+    row.add(leaderboardBtn).padLeft(15f).padRight(15f);
     row.add(settingsBtn).padLeft(15f).padRight(15f);
+    row.add(statsBtn).padLeft(15f).padRight(15f);
     row.add(exitBtn).padLeft(15f).padRight(15f);
     table.add(row);
 

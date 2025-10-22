@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,7 +39,7 @@ public class CodexService implements Disposable {
      * @param id The id of the entry.
      * @return The entry with the matching id, or null if it does not exist
      */
-    public CodexEntry getEntry(String id) throws IllegalArgumentException {
+    public CodexEntry getEntry(String id) {
         CodexEntry entry = entries.get(id);
 
         // Create error if entry with that title does not exist.
@@ -55,7 +56,7 @@ public class CodexService implements Disposable {
      * @param unlockedOnly Flag for filtering any codex entries which have not been unlocked.
      * @return All unlocked entries stored by service as an array list.
      */
-    public ArrayList<CodexEntry> getEntries(boolean unlockedOnly) {
+    public List<CodexEntry> getEntries(boolean unlockedOnly) {
         // Turn values in map into stream.
         Stream<CodexEntry> codexEntryStream = entries.values().stream();
 
@@ -78,14 +79,21 @@ public class CodexService implements Disposable {
         String[] fileLines = fileContents.split("\\r?\\n");
 
         // Iterate through file by three lines each
-        for (int i = 0; i + 2 < fileLines.length; i += 3) {
-            String id = fileLines[i];
-            String title = fileLines[i + 1];
-            String text = fileLines[i + 2];
+        for (int i = 0; i < fileLines.length; i += 3) {
+            // Only parse if there's enough lines left
+            if (i + 2 < fileLines.length) {
+                String id = fileLines[i];
+                String title = fileLines[i + 1];
+                String text = fileLines[i + 2];
 
-            // Prevent adding entries with no ID or title
-            if (id != null && !id.trim().isEmpty() && title != null) {
-                entries.put(id, new CodexEntry(title, text));
+                // Skip invalid codex entries
+                if (id != null && !id.trim().isEmpty() && title != null && !title.trim().isEmpty()) {
+                    entries.put(id, new CodexEntry(title, text));
+                } else {
+                    logger.warn("Skipping malformed codex entry at line {}", i + 1);
+                }
+            } else {
+                logger.warn("Incomplete codex entry found starting at line {}", i + 1);
             }
         }
     }

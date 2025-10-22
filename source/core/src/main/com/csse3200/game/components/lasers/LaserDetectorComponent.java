@@ -5,7 +5,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
@@ -13,7 +12,7 @@ import com.csse3200.game.services.ServiceLocator;
 /**
  * This component is used on a laser detector entity and is responsible for initialising the
  * cone light position. It also updates the state of the detector when the entity gets
- * the event trigger from the {@code LaserEmitterComponent}.
+ * the event trigger from the {@code LaserShowerComponent}.
  */
 public class LaserDetectorComponent extends Component {
 

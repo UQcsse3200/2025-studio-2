@@ -1,7 +1,5 @@
 package com.csse3200.game.components;
 
-import com.csse3200.game.components.*;
-
 public class WallComponent extends Component {
     private boolean slippery;
 

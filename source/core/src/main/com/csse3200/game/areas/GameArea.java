@@ -7,19 +7,19 @@ import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.areas.terrain.TerrainComponent;
-import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
-import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
+import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.services.CollectableService;
-import com.csse3200.game.services.MinimapService;
+import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.physics.ObjectContactListener;
 import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.CollectableService;
+import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.events.EventHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,6 +60,16 @@ public abstract class GameArea implements Disposable {
 
   protected GameArea() {
     areaEntities = new ArrayList<>();
+    createDeathMarkerTexture();
+  }
+
+  private void createDeathMarkerTexture() {
+    Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
+    pixmap.setColor(Color.RED);
+    pixmap.drawLine(0, 0, 15, 15);
+    pixmap.drawLine(15, 0, 0, 15);
+    deathMarkerTexture = new Texture(pixmap);
+    pixmap.dispose();
   }
 
   /**
@@ -106,7 +116,7 @@ public abstract class GameArea implements Disposable {
    */
   protected void spawnDeathMarker(Vector2 location) {
     Entity marker = new Entity();
-    marker.addComponent(new TextureRenderComponent(deathMarkerTexture));
+    marker.addComponent(new TextureRenderComponent(deathMarkerTexture).setLayer(0));
     marker.setPosition(location);
     marker.setScale(0.5f, 0.5f);
     spawnEntity(marker);
@@ -116,17 +126,6 @@ public abstract class GameArea implements Disposable {
    * Spawns a death marker at the death location.
    */
   public void spawnDeathMarkers() {
-    if (deathMarkerTexture == null) {
-      // fallback for testing
-      Pixmap pixmap = new Pixmap(16, 16, Pixmap.Format.RGBA8888);
-      pixmap.setColor(Color.RED);
-      pixmap.drawLine(0, 0, 15, 15);
-      pixmap.drawLine(15, 0, 0, 15);
-      deathMarkerTexture = new Texture(pixmap);
-      pixmap.dispose();
-      // throw new RuntimeException("Death marker texture not set");
-    }
-
     for (Vector2 location : deathLocations) spawnDeathMarker(location);
   }
 
@@ -179,7 +178,7 @@ public abstract class GameArea implements Disposable {
    */
   public void reset() {
     isResetting = true;
-    final int oldEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    final int oldEntityCount = ServiceLocator.getEntityService().getEntities().size;
     // Delete all entities within the room
     // Note: Using GameArea's dispose() instead of the specific area's as this does not unload assets (in theory).
     dispose();
@@ -191,11 +190,12 @@ public abstract class GameArea implements Disposable {
     // the start of the level. Copies are used in order to not lose the original components when
     // the original player is disposed.
     player = spawnPlayer(getComponents());
+    createDeathMarkerTexture();
     spawnDeathMarkers();
 
     loadEntities();
 
-    final int newEntityCount = ServiceLocator.getEntityService().get_entities().size;
+    final int newEntityCount = ServiceLocator.getEntityService().getEntities().size;
     if (oldEntityCount != newEntityCount) {
       logger.error(
           "only {} entities should exist but {} entities exist now, {} Entities Leaked!!!",
@@ -329,7 +329,7 @@ public abstract class GameArea implements Disposable {
 
     MinimapDisplay.MinimapOptions options = new MinimapDisplay.MinimapOptions();
     options.position = MinimapDisplay.MinimapPosition.BOTTOM_RIGHT;
-    MinimapDisplay minimapDisplay = new MinimapDisplay(300f, options);
+    MinimapDisplay minimapDisplay = new MinimapDisplay(200f, options);
     minimapService.setDisplay(minimapDisplay);
 
     Entity minimapEntity = new Entity();

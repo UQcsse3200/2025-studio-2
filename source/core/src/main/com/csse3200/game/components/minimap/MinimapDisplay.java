@@ -1,21 +1,20 @@
 package com.csse3200.game.components.minimap;
 
-import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.MinimapService;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import net.dermetfan.utils.Pair;
 
 import java.util.Map;
 
@@ -185,6 +184,9 @@ public class MinimapDisplay extends UIComponent {
    * @param visible: Set the visibility of minimap display to this value.
    */
   public void setVisible(boolean visible) {
-    rootTable.setVisible(visible);
+      if (rootTable != null) {
+          rootTable.setVisible(visible);
+      }
   }
+
 }

@@ -2,6 +2,7 @@ package com.csse3200.game.entities.factories;
 
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.csse3200.game.components.LadderComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -29,6 +30,7 @@ public class LadderFactory {
                         .addComponent(new PhysicsComponent())
                         .addComponent(new ColliderComponent().setLayer(PhysicsLayer.NONE))
                         .addComponent(new LadderComponent());
+        ladder.addComponent(new MinimapComponent("images/ladder-map.png"));
         ladder.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
         ladder.getComponent(TextureRenderComponent.class).scaleEntity();
 

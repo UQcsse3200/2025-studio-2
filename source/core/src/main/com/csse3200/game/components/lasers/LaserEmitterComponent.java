@@ -13,6 +13,7 @@ import com.csse3200.game.physics.PhysicsEngine;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.raycast.RaycastHit;
+import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -60,12 +61,26 @@ public class LaserEmitterComponent extends Component {
     private Entity hitLight = null;
     private Entity lastDetectorHit = null;
 
+    private AnimationRenderComponent animator;
+    private ConeLightComponent emitterLight;
+
+    private boolean enabled = true;
+    private boolean lastEnabled = true;
+
     public LaserEmitterComponent() {
 
     }
 
     public LaserEmitterComponent(float dir) {
         this.dir = dir;
+    }
+
+    private void setEnable(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public boolean getEnable() {
+        return this.enabled;
     }
 
     @Override
@@ -75,10 +90,15 @@ public class LaserEmitterComponent extends Component {
             throw new IllegalStateException("Physics engine not found");
         }
         combatStats = entity.getComponent(CombatStatsComponent.class);
+        animator = entity.getComponent(AnimationRenderComponent.class);
+        emitterLight = entity.getComponent(ConeLightComponent.class);
 
         if (ServiceLocator.getLightingService() != null) {
             hitLight = createPointLight();
         }
+
+        entity.getEvents().addListener("enable", () -> setEnable(true));
+        entity.getEvents().addListener("disable", () -> setEnable(false));
     }
 
     @Override
@@ -94,11 +114,18 @@ public class LaserEmitterComponent extends Component {
         * reflection is calculated using the impact angle and the normal vector of the surface
         * hit. the process is repeated until we run out of rebounds or length.
         * */
+        if (lastEnabled !=  enabled) {
+            setLightVisibility(enabled);
+            setAnimation(enabled);
+            setHitTexture(enabled);
+            lastEnabled = enabled;
+        }
+        if (!enabled) return;
 
         positions.clear();
 
         // add initial point
-        Vector2 start = entity.getPosition().cpy().add(0.5f, 0.5f); // offset to centre
+        Vector2 start = entity.getPosition().cpy().add(entity.getScale().x / 2f, entity.getScale().y / 2f); // offset to centre
         positions.add(start.cpy());
 
         Vector2 dirVec = new Vector2(1f, 0f).rotateDeg(dir).nor();
@@ -150,13 +177,9 @@ public class LaserEmitterComponent extends Component {
             } else {
                 if (isDetector) {
                     triggerDetector(hit);
-                    if (hitLight != null) {
-                        hitLight.getComponent(ConeLightComponent.class).setActive(false);
-                    }
+                    setLightVisibility(false);
                 } else {
-                    if (hitLight != null) {
-                        hitLight.getComponent(ConeLightComponent.class).setActive(true);
-                    }
+                    setLightVisibility(true);
                 }
 
                 updateHitLight(hit);
@@ -214,6 +237,27 @@ public class LaserEmitterComponent extends Component {
         ServiceLocator.getEntityService().register(light);
 
         return light;
+    }
+
+    private void setLightVisibility(boolean visible) {
+        if (hitLight != null) {
+            hitLight.getComponent(ConeLightComponent.class).setActive(visible);
+        }
+    }
+
+    private void setHitTexture(boolean visible) {
+        if  (hitLight != null) {
+            hitLight.getComponent(TextureRenderComponent.class).setEnabled(visible);
+        }
+    }
+
+    private void setAnimation(boolean visible) {
+        if (animator != null) {
+            animator.startAnimation(visible ? "laser-on"  : "laser-off");
+        }
+        if (emitterLight != null) {
+            emitterLight.setActive(visible);
+        }
     }
 
     private void updateHitLight(RaycastHit hit) {

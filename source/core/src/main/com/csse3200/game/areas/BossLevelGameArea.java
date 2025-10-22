@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.areas.terrain.TerrainComponent;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.ButtonManagerComponent;
@@ -34,6 +35,7 @@ public class BossLevelGameArea extends GameArea {
     private static final GridPoint2 mapSize = new GridPoint2(100,57);
     private static final float WALL_THICKNESS = 0.1f;
     private static GridPoint2 PLAYER_SPAWN;
+    boolean has_laser = false;
     private static final String[] gameTextures = {
             "images/button.png",
             "images/key.png",
@@ -43,16 +45,10 @@ public class BossLevelGameArea extends GameArea {
             "images/red_button.png",
             "images/red_button_pushed.png",
             "images/box_orange.png",
-            "images/minimap_player_marker.png",
-            "images/minimap_forest_area.png",
             "images/box_blue.png",
             "images/box_white.png",
             "images/blue_button.png",
             "images/spikes_sprite.png",
-            "images/TechWallBase.png",
-            "images/TechWallVariant1.png",
-            "images/TechWallVariant2.png",
-            "images/TechWallVariant3.png",
             "images/platform.png",
             "images/empty.png",
             "images/gate.png",
@@ -64,7 +60,6 @@ public class BossLevelGameArea extends GameArea {
             "images/blue_button_pushed.png",
             "images/blue_button.png",
             "images/drone.png",
-            "images/boss.png",
             "images/bomb.png",
             "images/cube.png",
             "images/laser-end.png",
@@ -75,15 +70,6 @@ public class BossLevelGameArea extends GameArea {
             "images/dash_powerup.png",
             "images/ladder.png",
             "images/ladder-base.png",
-            "images/cavelevel/tile000.png",
-            "images/cavelevel/tile001.png",
-            "images/cavelevel/tile002.png",
-            "images/cavelevel/tile014.png",
-            "images/cavelevel/tile015.png",
-            "images/cavelevel/tile016.png",
-            "images/cavelevel/tile028.png",
-            "images/cavelevel/tile029.png",
-            "images/cavelevel/tile030.png",
             "images/blackSquare.png",
             "images/cavelevel/background/1.png",
             "images/cavelevel/background/2.png",
@@ -96,39 +82,32 @@ public class BossLevelGameArea extends GameArea {
             "images/pressure_plate_pressed.png",
             "images/mirror-cube-off.png",
             "images/mirror-cube-on.png",
+            "images/laser-end",
+            "images/minimap_forest_area.png",
+            "images/minimap_player_marker.png"
     };
     private static final String backgroundMusic = "sounds/BGM_03_mp3.mp3";
     private static final String[] musics = {backgroundMusic};
     private static final String[] gameSounds = {"sounds/Impact4.ogg",
             "sounds/buttonsound.mp3",
-            "sounds/chimesound.mp3",
-            "sounds/CircuitGoodness.mp3",
             "sounds/damagesound.mp3",
             "sounds/deathsound.mp3",
-            "sounds/doorsound.mp3",
             "sounds/explosion.mp3",
-            "sounds/Flow.mp3",
-            "sounds/gamemusic.mp3",
             "sounds/hurt.mp3",
-            "sounds/interactsound.mp3",
+//            "sounds/interactsound.mp3",
             "sounds/jetpacksound.mp3",
-            "sounds/KindaLikeTycho.mp3",
-            "sounds/laddersound.mp3",
-            "sounds/pickupsound.mp3",
             "sounds/thudsound.mp3",
             "sounds/walksound.mp3",
-            "sounds/whooshsound.mp3"
+            "sounds/laserShower.mp3",
+            "sounds/pickupsound.mp3"
     };
     private static final String[] gameTextureAtlases = {
             "images/PLAYER.atlas",
-            "images/drone.atlas",
-            "images/boss.atlas",
+            "images/drone.atlas", // <---
+            "images/boss.atlas", // Comment out these lines to fix the loading time
             "images/volatile_platform.atlas",
             "images/timer.atlas",
-            "images/health-potion.atlas",
-            "images/speed-potion.atlas",
             "images/flying_bat.atlas", // Bat sprites from https://todemann.itch.io/bat (see Wiki)
-            "images/doors.atlas",
             "images/laser.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(BossLevelGameArea.class);
@@ -156,7 +135,7 @@ public class BossLevelGameArea extends GameArea {
         spawnObjectives();
         spawnLaserPuzzle();
         spawnEndgameButton();
-        spawnBoss();
+        spawnBoss(); // Comment out this line if removing the long-loading assets
     }
 
     /**
@@ -237,25 +216,63 @@ public class BossLevelGameArea extends GameArea {
         endgamePlatform.setScale(6f, 0.8f);
         spawnEntityAt(endgamePlatform, endgamePos,false, false);
     }
+    public void spawnLaserShower() {
+        if (player == null) return; // safety check
+
+        final float Y = player.getPosition().y + 20f; // spawn above player
+        final float X = player.getPosition().x;
+
+        // Spawn 3 lasers to the left
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i + 1) * 7.5f); // offset left
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            // Remove laser after 5 seconds
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+
+        // Spawn 3 lasers to the right
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((i + 1) * 7.5f); // offset right
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
+            laser.getEvents().trigger("shootLaser");
+
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    laser.dispose();
+                }
+            }, 5f);
+        }
+    }
+
 
     /**
      * Spawn the walls between the two halves of the level, as well as next to the death pit
      */
     private void spawnWalls() {
         // Lower wall between level halves
-        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"");
+        Entity lowerWall = WallFactory.createWall(15,0,1,5f,"images/wall.png");
         lowerWall.setScale(2f,10f);
         spawnEntityAt(lowerWall, new GridPoint2(60, -3),
                 false, false);
 
         // Upper wall between level halves
-        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity upperWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"images/wall.png");
         upperWall.setScale(2f,15f);
         spawnEntityAt(upperWall, new GridPoint2(60, tileBounds.y - 34),
                 false, false);
 
         // Wall blocking death pit
-        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"");
+        Entity deathPitWall = WallFactory.createWall(20,tileBounds.y - 40,1,5f,"images/wall.png");
         deathPitWall.setScale(1.3f,13f);
         spawnEntityAt(deathPitWall, new GridPoint2(20, -3),
                 false, false);
@@ -440,7 +457,7 @@ public class BossLevelGameArea extends GameArea {
                 new GridPoint2(26, tileBounds.y - 34), false, true);
 
         // Create mini wall at edge (for lasers)
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f,"images/wall.png");
         wall.setScale(1f,2f);
         floorObjects[2] = wall;
         spawnEntityAt(wall, new GridPoint2(26, tileBounds.y - 38),
@@ -456,7 +473,7 @@ public class BossLevelGameArea extends GameArea {
     private void spawnFirstDrop() {
         // Volatile platform player initially spawns on
         GridPoint2 initialPos = new GridPoint2(3,tileBounds.y - 10);
-        Entity initialPlatform = PlatformFactory.createVolatilePlatform(0.6f, 1f);
+        Entity initialPlatform = PlatformFactory.createStaticPlatform();
         initialPlatform.setScale(2,0.5f);
         spawnEntityAt(initialPlatform, initialPos,false, false);
 
@@ -499,7 +516,7 @@ public class BossLevelGameArea extends GameArea {
         spawnEntityAt(spikes2,
                 new GridPoint2(15,tileBounds.y - 15), true,  true);
 
-        Entity wall = WallFactory.createWall(10,0,1,5f,"");
+        Entity wall = WallFactory.createWall(10,0,1,5f,"images/wall.png");
         wall.setScale(1f,8f);
         spawnEntityAt(wall, new GridPoint2(16, tileBounds.y - 18),
                 false, false);
@@ -725,13 +742,12 @@ public class BossLevelGameArea extends GameArea {
     }
 
     private TerrainComponent createDefaultTerrain() {
-        // Use empty texture for invisible terrain grid
         final ResourceService resourceService = ServiceLocator.getResourceService();
-        TextureRegion emptyTile = new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
-
-        GridPoint2 tilePixelSize = new GridPoint2(emptyTile.getRegionWidth(), emptyTile.getRegionHeight());
-        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, emptyTile, emptyTile, emptyTile, emptyTile, mapSize);
-        return terrainFactory.createInvisibleFromTileMap(0.5f, tiledMap, tilePixelSize);
+        TextureRegion baseTile =
+                new TextureRegion(resourceService.getAsset("images/empty.png", Texture.class));
+        GridPoint2 tilePixelSize = new GridPoint2(baseTile.getRegionWidth(), baseTile.getRegionHeight());
+        TiledMap tiledMap = terrainFactory.createDefaultTiles(tilePixelSize, baseTile, baseTile, baseTile, baseTile, mapSize);
+        return terrainFactory.createFromTileMap(0.5f, tiledMap, tilePixelSize);
     }
 
     private void spawnEvilMovingPlatform() {

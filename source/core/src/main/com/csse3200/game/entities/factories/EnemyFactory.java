@@ -1,5 +1,6 @@
 package com.csse3200.game.entities.factories;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -14,8 +15,8 @@ import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
-import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.npc.BossAnimationController;
 import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.tasks.*;
@@ -32,7 +33,6 @@ import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.PhysicsMovementComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import box2dLight.RayHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +74,7 @@ public class EnemyFactory {
                 .addComponent(new CombatStatsComponent(config.health, config.baseAttack))
                 .addComponent(animator)
                 .addComponent(new DroneAnimationController());
+
 
         AITaskComponent aiComponent = drone.getComponent(AITaskComponent.class);
         ChaseTask chaseTask = new ChaseTask(target, 5f, 3f);
@@ -255,8 +256,7 @@ public class EnemyFactory {
         if (patrolRoute != null && patrolRoute.length > 0) {
             drone
                     .addComponent(new SpawnPositionComponent(patrolRoute[0]))
-                    .addComponent(new PatrolRouteComponent(patrolRoute))
-                    .addComponent(new BombTrackerComponent());
+                    .addComponent(new PatrolRouteComponent(patrolRoute));
         }
 
         AnimationRenderComponent animator =
@@ -549,7 +549,7 @@ public class EnemyFactory {
                 new AnimationRenderComponent(ServiceLocator.getResourceService()
                         .getAsset("images/boss.atlas", TextureAtlas.class));
         animator.addAnimation("bossChase", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("bossGenerateDrone", 0.3f, Animation.PlayMode.LOOP);
+        animator.addAnimation("bossGenerateDrone", 0.15f, Animation.PlayMode.LOOP);
         animator.addAnimation("bossTouchKill", 0.1f, Animation.PlayMode.NORMAL);
         animator.addAnimation("bossShootLaser", 0.1f, Animation.PlayMode.NORMAL);
         animator.addAnimation("touchKillEffect", 1f, Animation.PlayMode.NORMAL);
@@ -572,11 +572,12 @@ public class EnemyFactory {
         BossSpawnerComponent droneSpawner = new  BossSpawnerComponent(defaultTriggers, 4f);
         boss.addComponent(droneSpawner);
 
+        /* already triggers in component, Avoid repeated triggers
         // Wire up drone spawning events to animations
         boss.getEvents().addListener("spawningPhaseStart", (Integer phase) -> {
             boss.getEvents().trigger("generateDroneStart");
         });
-
+        */
         return boss;
     }
 

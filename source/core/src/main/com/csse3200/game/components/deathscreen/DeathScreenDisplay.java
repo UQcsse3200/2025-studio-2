@@ -23,6 +23,7 @@ import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.obstacles.TrapComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
 import com.csse3200.game.components.projectiles.BombComponent;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputComponent;
@@ -37,7 +38,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Logger;
 
 /**
@@ -271,6 +271,7 @@ public class DeathScreenDisplay extends UIComponent {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 buttonClickSound.play(UserSettings.get().masterVolume);
+                StatsTracker.endSession();
                 game.setScreen(GdxGame.ScreenType.MAIN_MENU);
             }
         });
@@ -290,6 +291,7 @@ public class DeathScreenDisplay extends UIComponent {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 buttonClickSound.play(UserSettings.get().masterVolume);
+                StatsTracker.endSession();
                 Gdx.app.exit();
             }
         });

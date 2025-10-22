@@ -2,6 +2,7 @@ package com.csse3200.game.components.player;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
@@ -10,8 +11,7 @@ import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
+import com.csse3200.game.utils.CollectablesSave;
 
 /**
  * A ui component for displaying player stats, e.g. health.
@@ -36,22 +36,30 @@ public class PlayerStatsDisplay extends UIComponent {
      */
     private static final int MAX_HEARTS = 10;
 
-    /**
-     * Table used for storing all UI actors related to stamina bar
-     */
-    private Table staminaTable;
-    /**
-     * Stamina label
-     */
-    private Label staminaLabel;
-    /**
-     * Progress bar used to visually show stamina
-     */
-    private ProgressBar staminaBar;
-    /**
-     * Image icon used in stamina bar
-     */
-    private Image staminaImage;
+  /**
+   * Table used for storing all UI actors related to stamina bar
+   */
+  private Table staminaTable;
+  /**
+   * Stamina label
+   */
+  private Label staminaLabel;
+  /**
+   * Progress bar used to visually show stamina
+   */
+  private ProgressBar staminaBar;
+  /**
+   * Image icon used in stamina bar
+   */
+  private Image staminaImage;
+  /**
+   * Collectable Label
+   */
+  private Label collectableLabel;
+  /**
+   * count of number of collectable items collected
+   */
+  private int count = CollectablesSave.getCollectedCount();
 
     /**
      * Creates reusable ui styles and adds actors to the stage.
@@ -61,23 +69,27 @@ public class PlayerStatsDisplay extends UIComponent {
         super.create();
         addActors();
 
-        entity.getEvents().addListener("updateHealth", this::updatePlayerHealthUI);
-        entity.getEvents().addListener("updateStamina", this::updatePlayerStaminaUI);
-    }
+    entity.getEvents().addListener("updateHealth", this::updatePlayerHealthUI);
+    entity.getEvents().addListener("updateStamina", this::updatePlayerStaminaUI);
+    entity.getEvents().addListener("updateCollectables", this::updateCollectableUI);
+  }
 
-    /**
-     * Creates actors and positions them on the stage using a table.
-     *
-     * @see Table for positioning options
-     */
-    private void addActors() {
-        // Create health table
-        createHealthTable();
-        stage.addActor(healthTable);
-        // Create stamina table
-        createStaminaTable();
-        stage.addActor(staminaTable);
-    }
+  /**
+   * Creates actors and positions them on the stage using a table.
+   * @see Table for positioning options
+   */
+  private void addActors() {
+    // Create health table
+    createHealthTable();
+    stage.addActor(healthTable);
+    // Create stamina table
+    createStaminaTable();
+    stage.addActor(staminaTable);
+    // Create collectable table
+    collectableLabel = new Label("Lost Hardware collected: " + count + " / 9", skin, "large");
+    collectableLabel.setName("inputsCollected");
+    stage.addActor(collectableLabel);
+  }
 
     /**
      * Helper method that creates and sets up the initial stamina table
@@ -173,15 +185,28 @@ public class PlayerStatsDisplay extends UIComponent {
         staminaBar.setValue(stamina);
     }
 
-    @Override
-    public void draw(SpriteBatch batch) {
-        // Drawing is handled by the stage
-    }
+  @Override
+  public void draw(SpriteBatch batch) {
+    // Drawing is handled by the stage
+  }
 
-    @Override
-    public void dispose() {
-        super.dispose();
-        if (healthTable != null) healthTable.remove();
-        if (staminaTable != null) staminaTable.remove();
-    }
+  /**
+   * Updates the number of collected items on the UI.
+   * @param count the number of items collected
+   */
+  public void updateCollectableUI(int count) {
+    collectableLabel.setText("Lost hardware collected: " + count + " / 9");
+  }
+
+  @Override
+  public void dispose() {
+    super.dispose();
+    if (healthTable != null) healthTable.remove();
+    if (staminaTable != null) staminaTable.remove();
+    if (collectableLabel != null) collectableLabel.remove();
+  }
+  public void setVisible(boolean visible) {
+      if (healthTable != null) healthTable.setVisible(visible);
+      if (staminaTable != null) staminaTable.setVisible(visible);
+  }
 }

@@ -3,27 +3,17 @@ package com.csse3200.game.components.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
-import com.csse3200.game.components.*;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.csse3200.game.components.CameraComponent;
+import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.StaminaComponent;
 import com.csse3200.game.files.UserSettings;
-import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.CrouchingColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.physics.components.StandingColliderComponent;
-import com.csse3200.game.physics.raycast.AllHitCallback;
-import com.csse3200.game.physics.raycast.RaycastHit;
-import com.csse3200.game.physics.raycast.SingleHitCallback;
-import com.csse3200.game.rendering.RenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.badlogic.gdx.physics.box2d.*;
-import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.utils.math.Vector2Utils;
-
-import java.awt.*;
 
 /**
  * Action component for interacting with the player. Player events should be initialised in create()
@@ -31,7 +21,7 @@ import java.awt.*;
  */
 public class PlayerActions extends Component {
   private static final float MAX_ACCELERATION = 70f;
-  private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
+  private static Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
   private static final float   SPRINT_MULT = 2.3f;
@@ -198,18 +188,20 @@ public class PlayerActions extends Component {
       impulseY = 1.1f * 1.2f * body.getMass();
     } else {
       //entity.getComponent(KeyboardPlayerInputComponent.class).setOnLadder(false);
-      entity.getEvents().trigger("gravityForPlayerOn");
+        if (!isGliding) {
+           entity.getEvents().trigger("gravityForPlayerOn");
+        }
       impulseY = 0f;
     }
 
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
+    body.applyLinearImpulse(new Vector2(impulse.x, impulseY), body.getWorldCenter(), true);
 
-    /**
-    Vector2 impulse =
-            new Vector2((desiredVelocity.x - velocity.x) * inAirControl, 0).scl(body.getMass());
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);
-     */
+
+    /*Vector2 impulse =
+            new Vector2((desiredVelocity.x - velocity.x), 0).scl(body.getMass());
+    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);*/
+
   }
 
   /**
@@ -479,6 +471,10 @@ public class PlayerActions extends Component {
     } else {
       body.setGravityScale(1f);
     }
+  }
+
+  public void setWalkSpeed(int x, int y) {
+      WALK_SPEED = new Vector2((float)x, (float)y);
   }
 
   private void gravityOff() {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,7 +21,6 @@ import java.util.List;
  */
 public class InputService implements InputProcessor, GestureDetector.GestureListener {
   private static final Logger logger = LoggerFactory.getLogger(InputService.class);
-  private static final InputFactory.InputType inputType = InputFactory.InputType.KEYBOARD;
 
   private static final Comparator<InputComponent> comparator =
       Collections.reverseOrder(Comparator.comparingInt(InputComponent::getPriority));
@@ -29,7 +29,7 @@ public class InputService implements InputProcessor, GestureDetector.GestureList
   private final InputFactory inputFactory;
 
   public InputService() {
-    this(InputFactory.createFromInputType(inputType));
+    this(InputFactory.create());
   }
 
   public InputService(InputFactory inputFactory) {
