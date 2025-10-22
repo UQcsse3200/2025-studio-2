@@ -14,6 +14,7 @@ import com.csse3200.game.entities.Entity;
 public class BossChaseTask extends DefaultTask implements PriorityTask {
     private final Entity player;
     private Vector2 stopPoint; // (stopX, stopY) in world coordinates
+    private Vector2 currentTarget;
 
     private MovementTask movementTask;
     private boolean chasing = true; // true: chase player, false: go to stop point
@@ -57,10 +58,9 @@ public class BossChaseTask extends DefaultTask implements PriorityTask {
 
         // Check player's position
         chasing = player.getPosition().x < stopPoint.x;
+        currentTarget = chasing ? player.getPosition() : stopPoint;
 
-        // Create/start movement
-        Vector2 targetPos = chasing ? player.getPosition() : stopPoint;
-        movementTask = new MovementTask(targetPos);
+        movementTask = new MovementTask(currentTarget);
         movementTask.create(owner);
         movementTask.start();
 
@@ -81,8 +81,8 @@ public class BossChaseTask extends DefaultTask implements PriorityTask {
             return;
         }
 
-        Vector2 targetPos = chasing ? player.getPosition() : stopPoint;
-        movementTask.setTarget(targetPos);
+        currentTarget = chasing ? player.getPosition() : stopPoint;
+        movementTask.setTarget(currentTarget);
 
         if (movementTask.getStatus() != Status.ACTIVE) {
             movementTask.start();
@@ -118,5 +118,14 @@ public class BossChaseTask extends DefaultTask implements PriorityTask {
     private boolean hasReachedStopPoint() {
         Vector2 pos = owner.getEntity().getCenterPosition();
         return pos.dst2(stopPoint) <= 0.5f;
+    }
+
+    /**
+     * Get current target
+     * @return a copy of the current movement target the boss is pursuing
+     * (either player position or stop point)
+     */
+    public Vector2 getCurrentTarget() {
+        return currentTarget == null ? null : currentTarget.cpy();
     }
 }
