@@ -150,6 +150,9 @@ public class TutorialMenuDisplay extends UIComponent {
       // Set initial highlight
       updateButtonHighlight();
 
+      // Add spacer to push back button to bottom
+      sidebar.row().expandY();
+
       // Back button (separate style, not using createSidebarButton)
       TextButton backBtn = new TextButton("Back", skin, "redButton");
       backBtn.setTransform(true);
@@ -181,7 +184,7 @@ public class TutorialMenuDisplay extends UIComponent {
       });
 
       backBtn.setColor(Color.RED);
-      sidebar.add(backBtn).width(240).height(70).bottom().padTop(20);
+      sidebar.add(backBtn).width(240).height(70).bottom();
 
       return sidebar;
   }
