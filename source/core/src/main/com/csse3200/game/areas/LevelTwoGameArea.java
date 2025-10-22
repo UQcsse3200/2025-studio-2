@@ -10,7 +10,7 @@ import com.csse3200.game.entities.spawn.SpawnRegistry;
  * world boundaries, spawns entities via {@link SpawnRegistry}, and creates the player.
  * </p>
  */
-public final class LevelTwoGameArea extends BaseLevelGameArea{
+public final class LevelTwoGameArea extends BaseLevelGameArea {
     public LevelTwoGameArea(TerrainFactory tf) { super(tf); }
 
     @Override protected String configPath() { return "levels/level-two/config.json"; }
