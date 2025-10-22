@@ -1,2 +1,17 @@
-#cutscene-bgs/utopia.png
-Temp
+#cutscene-bgs/lab.png
+I continue upwards, finally entering what looks like a research wing — corridors tangled with pipes and cables, dripping with condensation and stinking of rust.
+The deeper I move through the facility, the louder the hum of machinery becomes. Every wall here pounds with an unnerving, {COLOR=RED}synthetic heartbeat{CLEARCOLOR} - the pulse of something once human, now horribly redefined.
+#cutscene-bgs/corridor.png
+Display panels flicker weakly, looping fragments of corrupted data and implant schematics.
+These were the origins of {COLOR=RED}CyberCorp’s cybernetic implants{CLEARCOLOR} - technology once meant to heal, to connect, to assist.
+But the signal that spread in 2065 turned those enhancements into instruments of {SICK}enslavement{ENDSICK}.
+A gift for humanity became its {COLOR=RED}downfall{CLEARCOLOR}.
+#cutscene-bgs/red-corridor.png
+Pipes hum and gurgle overhead, carrying coolant that glows faintly red... almost like blood flowing through veins.
+My scanner picks up traces of old neural signals still echoing through the conduits, stray data from implants that once belonged to real people.
+{SLOWER}They’re still here... bound within the network.{NORMAL}
+#cutscene-bgs/ascend.png
+As I ascend toward the upper sectors, the structure grows quieter - not from lack of life, but from something watching.
+I can feel it studying me through the circuits, through the very walls themselves.
+If this research wing was where CyberCorp perfected its implants, then this is also where humanity lost control of its own mind.
+And whatever waits ahead isn’t just mechanical...
