@@ -82,6 +82,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/blue_button.png",
             "images/drone.png",
             "images/bomb.png",
+            "images/laser_final.png",
             "images/camera-body.png",
             "images/camera-lens.png",
             "images/wall.png",
@@ -120,6 +121,7 @@ public class LevelTwoGameArea extends GameArea {
             "images/volatile_platform.atlas",
             "images/doors.atlas",
             "images/timer.atlas",
+            "images/Laser.atlas",
             "images/drone.atlas"
     };
     private static final Logger logger = LoggerFactory.getLogger(LevelTwoGameArea.class);
@@ -499,40 +501,54 @@ public class LevelTwoGameArea extends GameArea {
     }
     private void spawnLaserDrone() {
 
-
-        // Patrolling laser drone
-        GridPoint2 patrolStart = new GridPoint2(20, 20);
-        GridPoint2 patrolEnd = new GridPoint2(30, 20);
+// Laser Drone Patrol Path
+        GridPoint2 patrolStart = new GridPoint2(55, 48);
+        GridPoint2 patrolEnd = new GridPoint2(65, 48);
         Vector2[] patrolRoute = {
                 terrain.tileToWorldPosition(patrolStart),
                 terrain.tileToWorldPosition(patrolEnd)
         };
+
+//Create Laser Drone Entity
         Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
         spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
 
-        // --- Setup AI tasks for stationary drone ---
+
         AITaskComponent ai = patrolLaserDrone.getComponent(AITaskComponent.class);
         if (ai == null) {
             ai = new AITaskComponent();
             patrolLaserDrone.addComponent(ai);
         }
 
-        com.csse3200.game.components.tasks.LaserChaseTask chaseTask = new com.csse3200.game.components.tasks.LaserChaseTask(player, 10, 8f, 1f, 0.5f);
-        com.csse3200.game.components.tasks.LaserAttackTask attackTask = new com.csse3200.game.components.tasks.LaserAttackTask(player, 15, 5f, 15f, 10);
+        LaserChaseTask chaseTask = new LaserChaseTask(player, 5, 8f, 2f, 0.5f);
+        LaserAttackTask attackTask = new LaserAttackTask(player, 12, 3f, 15f, 10);
         ai.addTask(chaseTask).addTask(attackTask);
 
-        // Add detection events so drone fires when player enters cone
+
+        final float patrolY = 48f; // Maximum allowed Y position (drone won't go above this)
+
+// Detection Logic
         ConeDetectorComponent detector = patrolLaserDrone.getComponent(ConeDetectorComponent.class);
         if (detector != null) {
             detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
                 chaseTask.activate();
-                attackTask.setTargetDetected(true); // Enable laser firing
+                attackTask.setTargetDetected(true);
             });
+
             detector.getEntity().getEvents().addListener("targetLost", (Entity e) -> {
                 chaseTask.deactivate();
-                attackTask.setTargetDetected(false); // Stop firing
+                attackTask.setTargetDetected(false);
             });
         }
+
+//Keep drone from going UPWARDS
+        patrolLaserDrone.getEvents().addListener("update", () -> {
+            Vector2 pos = patrolLaserDrone.getPosition();
+// If drone tries to go above PATROL bring it back down
+            if (pos.y > patrolY) {
+                patrolLaserDrone.setPosition(pos.x, patrolY);
+            }
+        });
     }
     /*
     private void spawnMovingTraps() {

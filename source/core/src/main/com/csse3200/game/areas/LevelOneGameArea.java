@@ -747,7 +747,7 @@ public class LevelOneGameArea extends GameArea {
 
     private void spawnLaserDrone() {
 
-// --- Laser Drone Patrol Path ---
+// Laser Drone Patrol Path
         GridPoint2 patrolStart = new GridPoint2(30, 12);
         GridPoint2 patrolEnd = new GridPoint2(40, 12);
         Vector2[] patrolRoute = {
@@ -755,11 +755,11 @@ public class LevelOneGameArea extends GameArea {
                 terrain.tileToWorldPosition(patrolEnd)
         };
 
-// --- Create Laser Drone Entity ---
+//Create Laser Drone Entity
         Entity patrolLaserDrone = EnemyFactory.createPatrollingLaserDrone(player, patrolRoute, "laser02");
         spawnEntityAt(patrolLaserDrone, patrolStart, true, true);
 
-// --- Setup AI Tasks ---
+
         AITaskComponent ai = patrolLaserDrone.getComponent(AITaskComponent.class);
         if (ai == null) {
             ai = new AITaskComponent();
@@ -770,10 +770,10 @@ public class LevelOneGameArea extends GameArea {
         LaserAttackTask attackTask = new LaserAttackTask(player, 12, 3f, 15f, 10);
         ai.addTask(chaseTask).addTask(attackTask);
 
-// --- Y Lock Setup ---
+
         final float patrolY = 12f; // Maximum allowed Y position (drone won't go above this)
 
-// --- Detection Logic ---
+// Detection Logic
         ConeDetectorComponent detector = patrolLaserDrone.getComponent(ConeDetectorComponent.class);
         if (detector != null) {
             detector.getEntity().getEvents().addListener("targetDetected", (Entity e) -> {
@@ -787,10 +787,10 @@ public class LevelOneGameArea extends GameArea {
             });
         }
 
-// --- Keep drone from going upward ---
+//Keep drone from going UPWARDS
         patrolLaserDrone.getEvents().addListener("update", () -> {
             Vector2 pos = patrolLaserDrone.getPosition();
-// If drone tries to go above patrolY, bring it back down
+// If drone tries to go above PATROL bring it back down
             if (pos.y > patrolY) {
                 patrolLaserDrone.setPosition(pos.x, patrolY);
             }
