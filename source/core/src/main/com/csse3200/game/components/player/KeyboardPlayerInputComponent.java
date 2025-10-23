@@ -4,6 +4,8 @@ import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.csse3200.game.entities.EntityService;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.components.ladders.LadderComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.input.InputComponent;
@@ -22,6 +24,9 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     private final Vector2 walkDirection = Vector2.Zero.cpy();
 
     private boolean isGliding;
+    private InventoryComponent getInv() {
+        return entity != null ? entity.getComponent(InventoryComponent.class) : null;
+    }
 
     private int[] CHEAT_INPUT_HISTORY = new int[4];
     private int cheatPosition = 0;
@@ -254,7 +259,8 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
 
     private void triggerDashEvent() {
-        if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "dash")) {
+        InventoryComponent inv = entity.getComponent(InventoryComponent.class);
+        if (inv != null && inv.hasItem(InventoryComponent.Bag.UPGRADES, "dash")) {
             entity.getEvents().trigger("dash");
         }
     }
@@ -264,22 +270,18 @@ public class KeyboardPlayerInputComponent extends InputComponent {
     }
 
     private void triggerGlideEvent(boolean status) {
-        if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "glider")) {
+        InventoryComponent inv = entity.getComponent(InventoryComponent.class);
+        if (inv != null && inv.hasItem(InventoryComponent.Bag.UPGRADES, "glider")) {
             entity.getEvents().trigger("glide", status);
         }
         isGliding = status;
     }
 
     private void triggerJetpackEvent() {
-
-        if (entity.getComponent(InventoryComponent.class).hasItem(InventoryComponent.Bag.UPGRADES, "jetpack")) {
-            if (!acquiredTriggered) {
-                entity.getEvents().trigger("acquiredJetpack");
-                acquiredTriggered = true;
-            }
+        InventoryComponent inv = entity.getComponent(InventoryComponent.class);
+        if (inv != null && inv.hasItem(InventoryComponent.Bag.UPGRADES, "jetpack")) {
             entity.getEvents().trigger("jetpackOn");
         }
-
     }
 
     private void triggerJetpackOffEvent() {
