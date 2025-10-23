@@ -61,7 +61,6 @@ public class PauseMenuDisplay extends UIComponent {
         this.game = game;
     }
 
-
     /**
      * @return the current stage in use
      */

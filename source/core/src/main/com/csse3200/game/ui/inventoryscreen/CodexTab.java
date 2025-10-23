@@ -137,7 +137,7 @@ public class CodexTab implements InventoryTabInterface {
         titleBgPixmap.fill();
         titleBgTexture = new Texture(titleBgPixmap);
         titleBgDrawable = new TextureRegionDrawable(titleBgTexture);
-        entryBgPixmap.dispose();
+        titleBgPixmap.dispose();
     }
 
     private void addEntriesToLogicalTable(Table logicalTable, Skin skin) {
