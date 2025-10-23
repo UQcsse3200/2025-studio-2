@@ -1,12 +1,9 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.audio.Sound;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.entities.configs.CollectablesConfig;
-import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.CollectableService;
-import com.csse3200.game.services.ServiceLocator;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +21,8 @@ public class InventoryComponent extends Component {
 
     /** Logical groupings for items held by the player. */
     public enum Bag { INVENTORY, UPGRADES, OBJECTIVES }
+
+    private boolean applyingEffects = false;
 
     /** Regular inventory items. */
     private final Map<String, Integer> inventory;
@@ -53,7 +52,7 @@ public class InventoryComponent extends Component {
         this.objectives = new HashMap<>(other.objectives);
     }
 
-    // Read-only views (preferred getters)
+    // --- Read-only views  ---
 
     /**
      * @return unmodifiable view of the INVENTORY bag
@@ -76,7 +75,7 @@ public class InventoryComponent extends Component {
         return Collections.unmodifiableMap(objectives);
     }
 
-    // Copy getters
+    // --- Copy getters ---
 
     /**
      * @return copy of the INVENTORY bag
@@ -92,7 +91,7 @@ public class InventoryComponent extends Component {
         return new HashMap<>(upgrades);
     }
 
-    // Setters (Should be used with great caution, currently only here for saving/loading)
+    // --- Setters ---
 
     /**
      * Add all items from a passed inventory.
@@ -110,60 +109,145 @@ public class InventoryComponent extends Component {
         this.upgrades.putAll(upgrades);
     }
 
-    // Generic bag operations (recommended API)
+    // --- Generic bag operations ---
 
     /**
-     * Adds one instance of the given item to the inventory.
-     * <p>
-     * If the item's config has {@code autoConsume == true}, its effects are applied
-     * immediately and the item is not stored. Otherwise the item is added to the
-     * inventory stack; if it is not yet present, a new stack is created with count 1.
-     * </p>
+     * Adds one instance of the given item to the inventory via addItems
      *
-     * @param bag which bag to modify
      * @param itemId non-null item identifier (e.g., "key:door")
-     * @throws NullPointerException if bag or itemId is null
+     * @throws NullPointerException if itemId is null
      */
-    public void addItem(Bag bag, String itemId) {
-        Sound pickupSound = ServiceLocator.getResourceService().getAsset(
-              "sounds/pickupsound.mp3", Sound.class);
-        pickupSound.play(UserSettings.get().masterVolume);
-
-        addItems(bag, itemId, 1);
+    public void addItem(String itemId) {
+        addItems(itemId, 1);
     }
 
     /**
      * Adds {@code amount} instances of itemId to the specified bag.
      *
-     * @param bag which bag to modify
      * @param itemId non-null item identifier
      * @param amount number of instances to add (must be >= 0)
      * @throws NullPointerException if bag or itemId is null
      * @throws IllegalArgumentException if amount is negative
      */
-    public void addItems(Bag bag, String itemId, int amount) {
-        if (bag == null)    throw new NullPointerException("bag");
+    public void addItems(String itemId, int amount) {
         if (itemId == null) throw new NullPointerException("itemId");
         if (amount <= 0)     throw new IllegalArgumentException("Amount cannot be negative");
 
+        // Retrieve config
+        CollectablesConfig cfg = CollectableService.get(itemId);
+        if (cfg == null) {
+            throw new IllegalArgumentException("No config found for " + itemId);
+        }
+
+        // Determine item bag
+        Bag bag = parseBag(cfg);
         Map<String, Integer> map = mapFor(bag);
 
-        // CollectableService should only run on inventory items, not upgrades or objectives
-        if (bag == Bag.INVENTORY) {
-            var cfg = CollectableService.get(itemId);
-            if (cfg == null) return;
-
-            if (cfg.autoConsume) {
-                for (int i = 0; i < amount; i++) {
-                    applyEffects(cfg);
-                }
-            } else {
-                map.put(itemId, map.getOrDefault(itemId, 0) + amount);
-            }
+        for (int i = 0; i < amount; i++) {
+            applyEffects(cfg);
         }
-        else {
+        if (!cfg.autoConsume) {
             map.put(itemId, map.getOrDefault(itemId, 0) + amount);
         }
+    }
+
+    /**
+     * Adds one instance of the given item and passes per-instance effect params.
+     * If the item is auto-consumable, effects are applied with the provided params.
+     * If non-auto, it’s stored normally.
+     *
+     * @param itemId        item identifier (e.g., "objective")
+     * @param effectParams  effectType -> (key -> value), e.g. {"objective":{"target":"dash"}}
+     */
+    public void addItem(String itemId, Map<String, Map<String, String>> effectParams) {
+        if (itemId == null) throw new NullPointerException("itemId");
+        if (effectParams == null || effectParams.isEmpty()) {
+            addItem(itemId);
+            return;
+        }
+
+        CollectablesConfig cfg = CollectableService.get(itemId);
+        if (cfg == null) throw new IllegalArgumentException("No config found for " + itemId);
+
+        Bag bag = parseBag(cfg);
+        Map<String, Integer> map = mapFor(bag);
+
+        if (cfg.effects != null) {
+            for (var e : cfg.effects) {
+                Map<String, String> per = effectParams.get(e.type);
+                if (per != null && !per.isEmpty()) {
+                    if (e.params == null) e.params = new java.util.HashMap<>();
+                    e.params.putAll(per); // inject overrides, e.g., target="dash"
+                }
+                var handler = ItemEffectRegistry.get(e.type);
+                if (handler != null) handler.apply(getEntity(), e);
+            }
+        }
+        if (!cfg.autoConsume) {
+            map.put(itemId, map.getOrDefault(itemId, 0) + 1);
+        }
+    }
+
+    /**
+     * Add a single item to a specific bag.
+     */
+    @Deprecated
+    public void addItem(Bag bag, String itemId) {
+        addItems(bag, itemId, 1);
+    }
+
+    /**
+     * Add multiple items to a specific bag.
+     *
+     * <p>If the config is non-auto-consumable, items are stored in the given {@code bag}.
+     * If the config is auto-consumable, effects are applied immediately (the bag is ignored),
+     * exactly {@code amount} times.</p>
+     *
+     * @param bag    destination bag (must not be null) for non-auto-consumables
+     * @param itemId item id (must not be null)
+     * @param amount number of items to add (must be > 0)
+     * @throws NullPointerException     if {@code bag} or {@code itemId} is null
+     * @throws IllegalArgumentException if {@code amount} /le 0 or no config is found
+     */
+    @Deprecated
+    public void addItems(Bag bag, String itemId, int amount) {
+        if (bag == null)      throw new NullPointerException("bag");
+        if (itemId == null)   throw new NullPointerException("itemId");
+        if (amount <= 0)      throw new IllegalArgumentException("Amount must be > 0");
+
+        // Retrieve config
+        CollectablesConfig cfg = CollectableService.get(itemId);
+        if (cfg == null) {
+            throw new IllegalArgumentException("No config found for " + itemId);
+        }
+
+        for (int i = 0; i < amount; i++) {
+            applyEffects(cfg);
+        }
+        if (!cfg.autoConsume) {
+            Map<String, Integer> map = mapFor(bag);
+            map.put(itemId, map.getOrDefault(itemId, 0) + amount);
+        }
+    }
+
+    /**
+     * Adds the specified item directly into the given bag without applying
+     * any collectable effects or config lookups.
+     * <p>
+     * Intended for internal use by effects (e.g., upgrades) that must
+     * place tokens in inventory without re-triggering the effect pipeline.
+     *
+     * @param bag    the inventory bag to add the item to
+     * @param itemId the identifier of the item to add
+     * @param amount how many items to add (must be > 0)
+     * @throws NullPointerException     if {@code itemId} is null
+     * @throws IllegalArgumentException if {@code amount <= 0}
+     */
+    public void addDirect(InventoryComponent.Bag bag, String itemId, int amount) {
+        if (itemId == null) throw new NullPointerException("itemId");
+        if (amount <= 0) throw new IllegalArgumentException("Amount must be > 0");
+        Map<String, Integer> map = mapFor(bag);
+        map.put(itemId, map.getOrDefault(itemId, 0) + amount);
     }
 
     /**
@@ -269,27 +353,21 @@ public class InventoryComponent extends Component {
 
         Map<String, Integer> map = mapFor(bag);
         int have = map.getOrDefault(itemId, 0);
-        if (have <= 0) return 0;
+        if (have == 0) return 0;
 
-        int used = Math.min(have, amount);
-        int remaining = have - used;
-        if (remaining >= 0) {
-            var cfg = CollectableService.get(itemId);
-            if (cfg == null) return 0;
+        int toUse = Math.min(have, amount);
+        CollectablesConfig cfg = CollectableService.get(itemId);
+        if (cfg == null) return 0;
 
-            if (map.get(itemId) != null && map.get(itemId) > 0) {
-                for (int i = 0; i < used; i++) {
-                    applyEffects(cfg);
-                }
-            }
+        // Apply effects
+        for (int i = 0; i < toUse; i++) applyEffects(cfg);
 
-            map.put(itemId, remaining);
-        }
-        else {
-            map.remove(itemId);
-        }
+        // Update or remove
+        int remaining = have - toUse;
+        if (remaining == 0) map.remove(itemId);
+        else map.put(itemId, remaining);
 
-        return used;
+        return toUse;
     }
 
     // Bag helpers
@@ -318,16 +396,6 @@ public class InventoryComponent extends Component {
     }
 
     // Backward compatibility: treat "inventory" as the default bag
-
-    /** @deprecated Prefer bagged version: addItem(Bag.INVENTORY, itemId). */
-    @Deprecated public void addItem(String itemId) {
-        addItem(Bag.INVENTORY, itemId);
-    }
-
-    /** @deprecated Prefer bagged version: addItems(Bag.INVENTORY, itemId, amount). */
-    @Deprecated public void addItems(String itemId, int amount) {
-        addItems(Bag.INVENTORY, itemId, amount);
-    }
 
     /** @deprecated Prefer bagged version: hasItem(Bag.INVENTORY, itemId). */
     @Deprecated public boolean hasItem(String itemId) {
@@ -385,14 +453,19 @@ public class InventoryComponent extends Component {
    */
 
   private void applyEffects(CollectablesConfig cfg) {
-    if (cfg.effects == null || cfg.effects.isEmpty()) {
-      return;
-    }
-    for (var effect : cfg.effects) {
-      var handler = ItemEffectRegistry.get(effect.type);
-      if (handler != null) {
-        handler.apply(getEntity(), effect);
-      }
+    if (cfg.effects == null || cfg.effects.isEmpty()) return;
+    if (applyingEffects) return;
+    applyingEffects = true;
+
+    try {
+        for (var effect : cfg.effects) {
+            var handler = ItemEffectRegistry.get(effect.type);
+            if (handler != null) {
+                handler.apply(getEntity(), effect);
+            }
+        }
+    } finally {
+        applyingEffects = false;
     }
   }
 
@@ -434,4 +507,26 @@ public class InventoryComponent extends Component {
       }
   }
 
+    /**
+     * Determines which {@link Bag} an item belongs to based on its config.
+     *
+     * <p>If the config or its {@code bag} field is null/blank, or if the
+     * value cannot be parsed into a valid {@link Bag} enum constant, this
+     * method defaults to {@link Bag#INVENTORY}.</p>
+     *
+     * <p>The comparison is case-insensitive and leading/trailing whitespace
+     * is ignored.</p>
+     *
+     * @param cfg the collectable's configuration
+     * @return the resolved {@link Bag}, or {@link Bag#INVENTORY} if not set or invalid
+     */
+
+    private static Bag parseBag(CollectablesConfig cfg) {
+        if (cfg == null || cfg.bag == null || cfg.bag.isBlank()) return Bag.INVENTORY;
+        try {
+            return Bag.valueOf(cfg.bag.trim().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return Bag.INVENTORY;
+        }
+    }
 }

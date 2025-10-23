@@ -71,7 +71,7 @@ public class CollectableFactoryTest {
 
     @Test
     public void testCreateCollectable_hasCorrectPhysicsBody() {
-        Entity key = CollectableFactory.createKey("pink-key");
+        Entity key = CollectableFactory.createCollectable("pink-key");
         PhysicsComponent physics = key.getComponent(PhysicsComponent.class);
         ColliderComponent collider = key.getComponent(ColliderComponent.class);
 

@@ -83,6 +83,12 @@ public class StatisticsDisplay extends UIComponent {
         Label achievementCounterLabel = new Label("Achievements:", skin);
         Label achievementCounterValue = new Label(String.valueOf(StatsTracker.getAchievementsUnlocked()), skin);
 
+        Label jumpCounterLabel = new Label("Jump Count:", skin);
+        Label jumpCounterValue = new Label(String.valueOf(StatsTracker.getJumpCount()), skin);
+
+        Label codexCounterLabel = new Label("Codex Entries Read:", skin);
+        Label codexCounterValue = new Label(String.valueOf(StatsTracker.getCodexReads()), skin);
+
         table.add(playtimeLabel).pad(10f).padLeft(50f).right();
         table.add(playtimeValue).pad(10f).left().row();
 
@@ -97,6 +103,12 @@ public class StatisticsDisplay extends UIComponent {
 
         table.add(achievementCounterLabel).pad(10f).padLeft(50f).right();
         table.add(achievementCounterValue).pad(10f).left().row();
+
+        table.add(jumpCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(jumpCounterValue).pad(10f).left().row();
+
+        table.add(codexCounterLabel).pad(10f).padLeft(50f).right();
+        table.add(codexCounterValue).pad(10f).left().row();
 
         TextButton exitBtn = new TextButton("Exit", skin);
 

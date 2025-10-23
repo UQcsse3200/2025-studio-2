@@ -64,7 +64,6 @@ public class TrapFactory {
 
         switch (direction) {
             case 0: // Facing up
-                center.x *= 0.7f;
                 center.y *= 0.5f;
                 alignY = PhysicsComponent.AlignY.BOTTOM;
                 break;

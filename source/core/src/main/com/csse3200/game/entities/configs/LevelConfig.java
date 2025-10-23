@@ -99,5 +99,11 @@ public class LevelConfig {
 
         /** Initial collectable visibility */
         public Boolean isVisible = true;
+
+        /** Used in ladders, determines the height of the ladder */
+        public int height = 1;
+
+        /** Used in ladders, the offset of always visible ladder rungs */
+        public int offset = 0;
     }
 }

@@ -141,6 +141,7 @@ public class AnimationRenderComponent extends RenderComponent {
    */
   public void startAnimation(String name) {
     Animation<TextureRegion> animation = animations.getOrDefault(name, null);
+
     if (animation == null) {
       logger.error(
           "Attempted to play unknown animation {}. Ensure animation is added before playback.",
