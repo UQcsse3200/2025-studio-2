@@ -1,5 +1,6 @@
 package com.csse3200.game.components.leaderboardpage;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.LeaderboardComponent;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
@@ -30,6 +32,7 @@ public class LeaderboardDisplay extends UIComponent {
     private static final float Z_INDEX = 2f;
     private Table table;
     private Table topTable;
+    private Sound buttonClickSound;
 
     private final LeaderboardComponent leaderboardComponent;
 
@@ -63,6 +66,9 @@ public class LeaderboardDisplay extends UIComponent {
         background.setFillParent(true);
         stage.addActor(background);
 
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
+
         table = new Table();
         table.setFillParent(true);
         table.center();
@@ -94,7 +100,7 @@ public class LeaderboardDisplay extends UIComponent {
                 new ChangeListener() {
                     @Override
                     public void changed(ChangeEvent changeEvent, Actor actor) {
-
+                        buttonClickSound.play(UserSettings.get().masterVolume);
                         logger.debug("Exit button clicked");
                         entity.getEvents().trigger("exit");
                     }

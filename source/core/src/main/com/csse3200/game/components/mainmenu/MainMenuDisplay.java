@@ -108,6 +108,7 @@ public class MainMenuDisplay extends UIComponent {
           @Override
           public void changed(ChangeEvent changeEvent, Actor actor) {
             logger.debug("Tutorial button clicked");
+            buttonClickSound.play(UserSettings.get().masterVolume);
             entity.getEvents().trigger("tutorial");
           }
         });

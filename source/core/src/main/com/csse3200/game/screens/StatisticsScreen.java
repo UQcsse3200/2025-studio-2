@@ -27,6 +27,10 @@ public class StatisticsScreen extends ScreenAdapter {
                 "images/superintelligence_menu_background.png",
     };
 
+    private final String[] statsMenuSounds = {
+            "sounds/buttonsound.mp3"
+    };
+
     private final GdxGame game;
     private final Renderer renderer;
 
@@ -72,6 +76,7 @@ public class StatisticsScreen extends ScreenAdapter {
         logger.debug("Loading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.loadTextures(STATISTICS_SCREEN_TEXTURES);
+        resourceService.loadSounds(statsMenuSounds);
         ServiceLocator.getResourceService().loadAll();
     }
 
@@ -79,6 +84,7 @@ public class StatisticsScreen extends ScreenAdapter {
         logger.debug("Unloading assets");
         ResourceService resourceService = ServiceLocator.getResourceService();
         resourceService.unloadAssets(STATISTICS_SCREEN_TEXTURES);
+        resourceService.unloadAssets(statsMenuSounds);
     }
 
     /**
