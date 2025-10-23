@@ -131,6 +131,7 @@ public class LaserRenderComponent extends RenderComponent {
     // Accessors for color and glow
     public Color getColor() { return color; }
     public Color getGlowColor() { return glowColor; }
+    @Override
     public void setEntity(Entity entity) {
         this.entity = entity;
     }

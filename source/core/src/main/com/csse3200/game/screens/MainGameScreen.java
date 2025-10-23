@@ -420,7 +420,7 @@ public class MainGameScreen extends ScreenAdapter {
                     jumpCount++;
                     // Trigger laser shower based on jump count for each level
                     if (gameArea instanceof LevelTwoGameArea levelTwoArea && jumpCount == 20) {
-                        levelTwoArea.laserShowerChecker(delta, playerPos.x, playerPos.y);
+                        levelTwoArea.laserShowerChecker(playerPos.x, playerPos.y);
                         jumpCount = 0;
                     }
                 }
@@ -429,7 +429,7 @@ public class MainGameScreen extends ScreenAdapter {
                     Vector2 currentPlayerPos = player.getPosition().cpy();
                     if (currentPlayerPos.x < 62f) { // skip laser when player is beyond x = 61
                         laserTimer += delta;
-                        if (laserTimer >= 40f) {
+                        if (laserTimer >= 5f) {
                             bossLevel.spawnLaserShower(playerPos.x, playerPos.y);// spawn lasers
                             laserTimer = 0f; // reset timer
                         }
