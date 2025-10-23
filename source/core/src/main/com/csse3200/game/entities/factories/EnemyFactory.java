@@ -461,7 +461,7 @@ public class EnemyFactory {
             case CHASER:
             default:
                 atlasPath = "images/drone_chaser.atlas";  // CHASER
-                speed = 2.1f;
+                speed = 6f;
                 bombFD  = 0.1f;
                 break;
         }
