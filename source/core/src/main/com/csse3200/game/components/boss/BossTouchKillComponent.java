@@ -12,6 +12,8 @@ import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.services.ServiceLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * When this entity touches a valid enemy's hitbox, deal damage to them and apply a knockback.
@@ -22,6 +24,8 @@ import com.csse3200.game.services.ServiceLocator;
  * if target entity has a PhysicsComponent.
  */
 public class BossTouchKillComponent extends Component {
+  private static final Logger logger = LoggerFactory.getLogger(BossTouchKillComponent.class);
+
   private short targetLayer;
   private CombatStatsComponent combatStats;
   private HitboxComponent hitboxComponent;
@@ -66,22 +70,31 @@ public class BossTouchKillComponent extends Component {
   private void createBlackHole() {
     EntityService entityService = ServiceLocator.getEntityService();
     if (entityService == null) {
+      // Only VFX so safe to skip
+      logger.warn("EntityService is null; skipping black hole spawn.");
       return;
     }
 
     try {
       final Vector2 pos = entity.getCenterPosition().cpy();
       final float r = 20f;
-
       Entity blackHole = ExplosionFactory.createBlackHole(pos, r);
-        entityService.register(blackHole);
+      entityService.register(blackHole);
 
-        Timer.schedule(new Timer.Task() {
-          @Override public void run() {
-              blackHole.dispose();
+      // Auto-dispose after 5s
+      Timer.schedule(new Timer.Task() {
+        @Override
+        public void run() {
+          try {
+            blackHole.dispose();
+          } catch (Exception e) {
+            logger.warn("[BOSS TOUCH KILL] Dispose failed for blackHole", e);
           }
-        }, 5f);
-    } catch (Exception ignored) {
+        }
+      }, 5f);
+    } catch (Exception e) {
+      // VFX failure should not break gameplay, log and continue
+      logger.warn("[BOSS TOUCH KILL] Failed to create/register blackHole VFX", e);
     }
   }
 }

@@ -40,13 +40,11 @@ public class BossAnimationController extends Component {
         }
 
         // Check if non-looping animations have finished and return to chase
-        if (animator.isFinished()) {
-            // Only transition back to chase for one-shot animations
-            if (currentAnimation.equals("bossShootLaser") ||
-                    currentAnimation.equals("bossTouchKill")) {
+        if (animator.isFinished() &&
+                (currentAnimation.equals("bossShootLaser") ||
+                        currentAnimation.equals("bossTouchKill"))) {
                 Gdx.app.log(BOSS_ANIM_TAG, currentAnimation + " finished, returning to chase");
                 animateChase();
-            }
         }
     }
 
