@@ -9,10 +9,6 @@
     { "type": "tutorial", "subtype": "jump", "x": 6, "y": 5 },
     { "type": "tutorial", "subtype": "double_jump", "x": 11, "y": 16 },
 
-    { "type": "terminal", "id": "entry 1", "x": 2, "y": 4 },
-    { "type": "terminal", "id": "entry 2", "x": 6, "y": 4 },
-    { "type": "terminal", "id": "entry 3", "x": 10, "y": 4 },
-
     { "type": "box", "subtype": "weighted", "x": 4, "y": 4, "tooltip": "This might come in handy..." },
 
     { "type": "death_zone", "x": 12, "y": -10 },
