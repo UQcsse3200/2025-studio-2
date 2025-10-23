@@ -2,6 +2,7 @@ package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
@@ -15,6 +16,7 @@ import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
+import com.csse3200.game.components.tasks.BossChaseTask;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -464,6 +466,7 @@ public final class Spawners {
         // --- Boss ---
         SpawnRegistry.register("boss", a -> {
             Entity boss = EnemyFactory.createBossEnemy(player, new Vector2(a.x*2, a.y*2));
+            boss.getComponent(AITaskComponent.class).addTask(new BossChaseTask(player, new Vector2(26f, 8f)));
 
             BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
             if (spawnComp != null) {

@@ -510,16 +510,20 @@ public class EnemyFactory {
      */
     public static Entity createBossEnemy(Entity target, Vector2 spawnPos) {
         Entity boss = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                .addComponent(new ColliderComponent())
+                .addComponent(new PhysicsComponent())
+                .addComponent(new PhysicsMovementComponent())
+                //.addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
                 .addComponent(new BossAnimationController())
-                .addComponent(new BossAnchorComponent(1.0f, 0f))
-                .addComponent(new BossLaserAttackComponent(target))
-                .addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
+                //.addComponent(new BossAnchorComponent(1.0f, 0f))
+                .addComponent(new BossLaserAttackComponent(target));
+                //.addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
 
+        // Physics
+        boss.getComponent(PhysicsComponent.class).getBody().setGravityScale(0f);
+        boss.getComponent(PhysicsMovementComponent.class).setMaxSpeed(3f);
 
         if (spawnPos != null) boss.addComponent(new SpawnPositionComponent(spawnPos));
 
@@ -534,34 +538,14 @@ public class EnemyFactory {
         animator.addAnimation("shootEffect", 1f, Animation.PlayMode.NORMAL);
         boss.addComponent(animator);
 
-        // Visual size: Magnified to 6x (for rendering)
-        float visualScale = 7f;
-        boss.setScale(visualScale, visualScale);
+        // Render bigger
+        boss.scaleHeight(5f);
+        float bossX = boss.getScale().x;
+        float bossY = boss.getScale().y;
 
-        animator.startAnimation("bossChase");
-
-        // Key modification: manually set collider size (based on size of actual boss content)
-        // Assume that the actual content of the Boss takes up 40%~50% of the original 640×640 canvas (approximately 277×477 pixels)
-        float actualBossWidthInPixels = 277f;
-        float actualBossHeightInPixels = 477f;
-        float canvasSize = 640f;
-
-        // Collider size = (actual content size / canvas size) × visual scaling
-        float colliderWidth = (actualBossWidthInPixels / canvasSize);
-        float colliderHeight = (actualBossHeightInPixels / canvasSize);
-
-        Vector2 centerPos = boss.getCenterPosition();
-        centerPos.y = centerPos.y + 0.1f;
-
-        // Set precise collider dimensions
-        boss.getComponent(ColliderComponent.class).setAsBox(
-                new Vector2(colliderWidth*visualScale, colliderHeight*visualScale),
-                centerPos
-        );
-
+        // Scale hit-box (size of actual boss content)
         boss.getComponent(HitboxComponent.class).setAsBox(
-                new Vector2(colliderWidth*visualScale, colliderHeight*visualScale),
-                centerPos
+                new Vector2(bossX * 0.5f, bossY * 0.75f), boss.getCenterPosition()
         );
 
         animator.startAnimation("bossChase");
