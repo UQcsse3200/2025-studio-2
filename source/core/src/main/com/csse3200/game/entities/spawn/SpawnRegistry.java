@@ -44,4 +44,11 @@ public final class SpawnRegistry {
     public static void unregister(String type) {
         Registry.remove(type);
     }
+
+    /**
+     * Clears all registered spawners.
+     */
+    public static void clear() {
+        Registry.clear();
+    }
 }

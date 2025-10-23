@@ -114,7 +114,7 @@ class GameAreaTest {
 
       // Add an item to player inventory
       gameArea.getPlayer().getComponent(InventoryComponent.class)
-              .addItems(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
+              .addDirect(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
       assertEquals(itemCount,
               gameArea.player.getComponent(InventoryComponent.class).getGrandTotalCount());
 

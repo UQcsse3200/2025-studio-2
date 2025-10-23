@@ -1,10 +1,10 @@
 {
   "name": "The Surface",
   "mapSize": [50, 100],
-  "playerSpawn": [2, 10],
+  "playerSpawn": [2, 4],
   "walls": { "thickness": 0.1 },
   "miniMap": "images/minimap_forest_area.png",
-  "music": "sounds/KindaLikeTycho.mp3",
+  "music": "sounds/LIKEDACIRCUIT.mp3",
 
   "entities": [
     { "type":  "death_zone", "x":  0, "y": -7},
@@ -14,7 +14,6 @@
     { "type": "floor", "subtype": "static_floor", "x": 24, "y": 15, "sx": 13, "sy": 100, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 48, "y": 4, "sx": 1, "sy": 5.5, "centerX": false, "centerY": false },
     { "type": "floor", "subtype": "static_floor", "x": 23, "y": 7, "sx": 0.75, "sy": 4, "centerX": false, "centerY": false },
-
     { "type": "platform", "subtype": "volatile", "x": 0,  "y": 12, "sx": 2, "sy": 0.5, "speed": 0.5, "centerX": false, "centerY": false },
     { "type": "platform", "subtype": "volatile", "x": 10, "y": 18, "sx": 2, "sy": 0.5, "speed": 0.5 },
     { "type": "platform", "subtype": "volatile", "x": 3, "y": 35, "sx": 2, "sy": 0.5, "speed": 0.5 },
@@ -23,6 +22,7 @@
     { "type": "platform", "subtype": "static_platform", "x": 20,  "y": 50, "sx": 4, "sy": 0.5 },
     { "type": "platform", "subtype": "moving", "id": "pressurePlatePlatform", "x": 15.5, "y": 5, "sx": 2, "sy": 0.5, "dy": 0, "dx": -5, "speed": 1.5},
     { "type": "platform", "subtype": "moving", "x": 39, "y": 8, "sx": 3, "sy": 0.5, "dy": 0, "dx": -5.5, "speed": 2, "id": "movingPlatformPressurePlate" },
+    {"type": "platform","subtype": "static_platform","x": -1,"y": 67,"sx": 3.5,"sy": 0.5,"centerX": false,"centerY": false},
 
     { "type": "pressure_plate", "x": 15, "y": 6, "id": "keyPressurePlate", "linked": "pressurePlatePlatform"},
     { "type":  "pressure_plate", "x": 26, "y": 4, "target":  "movingPlatformPressurePlate", "extra": "platform" },
@@ -33,8 +33,8 @@
 
     { "type": "camera", "id": "camera", "x": 23, "y": 25, "rotation": 270, "speed": 25 },
 
-    { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5, "sx": 1, "sy": 2 },
-    { "type": "door", "subtype": "transition", "target":  "BOSS_LEVEL", "id": "key:door", "x": 0, "y": 69, "sx": 1, "sy": 2 },
+    { "type": "door", "subtype": "static", "id": "key:door", "x": 23, "y": 5.5, "sx": 1, "sy": 2 },
+    { "type": "door", "subtype": "transition", "target":  "BOSS_LEVEL", "id": "key:door", "x": 0, "y": 68, "sx": 1, "sy": 2, "centerX": false,"centerY": false },
 
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 1, "y": 30 },
     { "type": "collectable", "subtype": "potion", "target": "health", "x": 14, "y": 52 },
@@ -43,17 +43,23 @@
     { "type": "collectable", "subtype": "key", "id": 1, "target": "door", "x": 1, "y": 15, "extra": "keyPressurePlate" },
     { "type": "collectable", "subtype": "key", "id": 2, "target": "door", "x": 19, "y": 73 },
 
-    { "type":  "upgrade", "subtype": "jetpack", "x": 45, "y": 8, "id": "jetpack", "isVisible":  false},
+    { "type": "laser_detector","id": "detector", "x": 48.5, "y": 11, "rotation": 90, "centerX": false, "centerY": false },
+    { "type":  "collectable", "subtype": "upgrade", "x": 45, "y": 8, "target": "jetpack", "extra": "detector"},
 
     { "type": "laser", "rotation":  -90, "x": 32, "y": 14, "sx": 0.5, "sy": 0.5 },
     { "type": "laser", "rotation":  -136, "x": 47, "y": 14, "sx": 0.5, "sy": 0.5 },
     { "type": "laser", "rotation":  180, "x": 23, "y": 65, "sx": 0.5, "sy": 0.5, "id": "laser" },
 
-    { "type": "laser_detector", "x": 48.5, "y": 11, "rotation": 90, "target": "jetpack", "centerX": false, "centerY": false },
-
     { "type": "button", "direction": "left", "target": "laser", "x": 23, "y": 52, "tooltip": "Press button to turn on/off the super secure laser"},
 
     { "type":  "enemy", "x": 6, "y": 11, "dy": 22, "dx": 19 },
-    { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false}
+    { "type":  "sign_post", "x": 0, "y": 0, "direction": "up", "centerX": false, "centerY": false},
+
+    {"type": "terminal","id": "spam-email","x": 46,"y": 4},
+    {"type": "terminal","id": "final-broadcast","x": 4,"y": 46},
+
+    {"type": "objective","id": "door","x": 2,"y": 0,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack","x": 2,"y": 0,"sx": 2,"sy": 2},
+    {"type": "objective","id": "jetpack_completed","x": 45,"y": 8,"sx": 0.2,"sy": 0.2, "extra": "detector"}
   ]
 }
