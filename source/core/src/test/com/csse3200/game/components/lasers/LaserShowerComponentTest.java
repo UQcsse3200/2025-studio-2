@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(GameExtension.class)
 class LaserShowerComponentTest {
     private LaserShowerComponent makeLaserAt(Vector2 pos, float dirDeg, PhysicsEngine engine) {
-        // swap in physics engine for deterministic raycasts
+        // swap in physics engine for deterministic ray casts
         ServiceLocator.registerPhysicsService(new PhysicsService(engine));
 
         Entity emitter = new Entity();
@@ -63,7 +63,7 @@ class LaserShowerComponentTest {
 
     @Test
     void positionsContainStartAndMaxDistanceEndWhenNothingHit() {
-        // create new fake engine will no hits (meaning all raycasts will default to no hits)
+        // create new fake engine will no hits (meaning all ray casts will default to no hits)
         TestPhysicsEngine engine = TestPhysicsEngine.alwaysMiss();
 
         Vector2 startPos = new Vector2(10f, 4f);
@@ -241,7 +241,7 @@ class LaserShowerComponentTest {
         assertEquals(hit2.y, points.get(2).y, 1e-4);
         // final, travels 25 units left of hit 2
         Vector2 end = hit2.cpy().add(-25f, 0f);
-        assertEquals(end.x, points.get(3).x, 1e-3); // higher offset tolerance set because idk my math is bad...
+        assertEquals(end.x, points.get(3).x, 1e-3); // higher offset tolerance set because IDK my math is bad...
         assertEquals(end.y, points.get(3).y, 1e-3); // actually it's because of after each hit the laser is
                                                          // nudged slightly to avoid rehits
     }
@@ -281,7 +281,6 @@ class LaserShowerComponentTest {
 
         static Result reflectorHit(Vector2 point, Vector2 normal) {
             // build a tiny static body with a fixture with LASER_REFLECTOR bits
-            // why do i need to do this... (i do know its just annoying)
             World w =  new World(new Vector2(0, 0), true);
             BodyDef bd = new BodyDef();
             bd.type = BodyDef.BodyType.StaticBody;

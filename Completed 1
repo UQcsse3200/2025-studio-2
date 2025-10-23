@@ -1,0 +1,33 @@
+[33mbec72269[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mteam_5_enemy[m[33m)[m HEAD@{0}: pull: Fast-forward
+[33m80f1164f[m HEAD@{1}: checkout: moving from laser_drone to team_5_enemy
+[33m8c9e3afc[m[33m ([m[1;31morigin/laser_drone[m[33m, [m[1;32mlaser_drone[m[33m)[m HEAD@{2}: checkout: moving from team-3--levels to laser_drone
+[33m3c68b3b9[m[33m ([m[1;32mteam-3--levels[m[33m)[m HEAD@{3}: checkout: moving from laser_drone to team-3--levels
+[33m8c9e3afc[m[33m ([m[1;31morigin/laser_drone[m[33m, [m[1;32mlaser_drone[m[33m)[m HEAD@{4}: checkout: moving from team-3-boss-level to laser_drone
+[33mb77cf83f[m[33m ([m[1;32mteam-3-boss-level[m[33m)[m HEAD@{5}: pull: Fast-forward
+[33m196768b1[m HEAD@{6}: pull: Fast-forward
+[33m452b263c[m HEAD@{7}: commit: Updated drone generation
+[33mdb059d17[m HEAD@{8}: commit: Fixed generate drone animation bug
+[33mbc1c9b71[m HEAD@{9}: commit: Fixed generate drone animation bug
+[33m2cf7a5cf[m HEAD@{10}: pull: Fast-forward
+[33m1107b510[m HEAD@{11}: checkout: moving from team-3-boss-level to team-3-boss-level
+[33m1107b510[m HEAD@{12}: checkout: moving from team_5_enemy to team-3-boss-level
+[33m80f1164f[m HEAD@{13}: commit: Fixed EnemyFactoryTest boss damage error
+[33mf8afbdb4[m HEAD@{14}: commit: Fixed touch kill damage bug. Fixed Boss generate drone animation hold on time. Closed debug render.
+[33m1107b510[m HEAD@{15}: merge team-3-boss-level: Fast-forward
+[33mc5e8405b[m HEAD@{16}: checkout: moving from team-3-boss-level to team_5_enemy
+[33m1107b510[m HEAD@{17}: commit: Fixed Laser projectile doesn't affect when hit obstacles. Fixed animation stop playing bug.
+[33mda8e38af[m HEAD@{18}: pull: Fast-forward
+[33mce7eb025[m HEAD@{19}: commit: Fixed remaining loading issue, changed the laser attack cooldown to 7.
+[33m35a8f449[m HEAD@{20}: commit: Fixed loading issue
+[33ma7bf3a4c[m HEAD@{21}: commit: Trying to solve the level loading problem
+[33m857b7223[m HEAD@{22}: pull: Merge made by the 'ort' strategy.
+[33mdcefdd97[m HEAD@{23}: commit (merge): Added new animations for boss shoot laser and the laser entity. Updates the old boss animations. Added New projectile component - Laser entity. Created new Boss laser attack component. Updated new functions for PhysicsUtils and ColliderComponent
+[33mdb7ff98c[m HEAD@{24}: pull: Fast-forward
+[33me7c1374a[m HEAD@{25}: pull: Fast-forward
+[33m196c2b46[m HEAD@{26}: pull: Fast-forward
+[33md744966a[m HEAD@{27}: checkout: moving from boss-entity to team-3-boss-level
+[33md5602ecb[m[33m ([m[1;31morigin/boss-entity[m[33m, [m[1;32mboss-entity[m[33m)[m HEAD@{28}: cherry-pick: Updated the BossLaserAttack component rn it can shoot laser and deal damage to player with correct position and animation. Need more updates. Merged team-3-boss-level into this branch.
+[33mf27a55ce[m HEAD@{29}: checkout: moving from 2d69329c70e7f0a90d4ad6342881f66df17495f3 to boss-entity
+[33m2d69329c[m HEAD@{30}: commit (merge): Updated the BossLaserAttack component rn it can shoot laser and deal damage to player with correct position and animation. Need more updates. Merged team-3-boss-level into this branch.
+[33mf27a55ce[m HEAD@{31}: checkout: moving from main to origin/boss-entity
+[33m8776c59b[m[33m ([m[1;33mtag: [m[1;33mlatest[m[33m, [m[1;32mmain[m[33m)[m HEAD@{32}: clone: from https://github.com/UQcsse3200/2025-studio-2.git
