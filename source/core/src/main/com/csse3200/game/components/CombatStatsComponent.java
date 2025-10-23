@@ -24,6 +24,8 @@ public class CombatStatsComponent extends Component {
     private static final long INVULN_FRAMES = 30;
     private long lastHitFrame = -100;
 
+    private boolean isInvulnerable = false;
+
 
 
     public CombatStatsComponent(int health, int baseAttack) {
@@ -45,6 +47,9 @@ public class CombatStatsComponent extends Component {
    * @return is player dead
    */
   public Boolean isDead() {
+      if (isInvulnerable) {
+          return false;
+      }
     return health <= 0;
   }
 
@@ -66,7 +71,7 @@ public class CombatStatsComponent extends Component {
         int oldHealth = this.health;
         this.health = Math.max(0, health);
 
-        if (entity != null) {
+        if (entity != null && !isInvulnerable) {
             entity.getEvents().trigger("updateHealth", this.health);
             if (oldHealth > 0 && this.health == 0) {
                 entity.getEvents().trigger("playerDied");
@@ -136,11 +141,25 @@ public class CombatStatsComponent extends Component {
         if (currentFrame - lastHitFrame > INVULN_FRAMES) {
             setLastAttacker(attacker.entity);
             lastHitFrame = currentFrame;
-            int newHealth = getHealth() - attacker.getBaseAttack();
-            setHealth(newHealth);
+            if (!isInvulnerable) {
+                int newHealth = getHealth() - attacker.getBaseAttack();
+                setHealth(newHealth);
 
-            // Animate hurt
-            entity.getEvents().trigger("hurt");
+
+                if (health > 0) {
+                    entity.getEvents().trigger("hurt");
+                } else {
+                    entity.getEvents().trigger("playerDied");
+                }
+            }
         }
+    }
+
+    public void setIsInvulnerable(boolean status) {
+        isInvulnerable = status;
+    }
+
+    public boolean getIsInvulnerable() {
+        return isInvulnerable;
     }
 }

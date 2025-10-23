@@ -2,6 +2,7 @@ package com.csse3200.game.components;
 
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.components.ColliderComponent;
@@ -102,6 +103,7 @@ public class CodexTerminalComponent extends Component {
 
             // Prevent player from interacting after first interaction
             interactedWith = true;
+            StatsTracker.addCodex();
         }
     }
 }
