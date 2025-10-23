@@ -400,15 +400,34 @@ public class PlayerActions extends Component {
    * @param otherFixture The fixture belonging to the other entity involved in the collision
    */
   void onCollisionStart(Fixture selfFixture, Fixture otherFixture) {
+    // Find which fixture is the foot fixture and which is the theorized obstacle
+    Fixture foot = null;
+    Fixture other = null;
 
-    if ("foot".equals(selfFixture.getUserData()) || "foot".equals(otherFixture.getUserData())) {
-      if (isJumping || isDoubleJump) {
-        Sound interactSound = ServiceLocator.getResourceService().getAsset(
-                "sounds/thudsound.mp3", Sound.class);
-        interactSound.play(UserSettings.get().masterVolume*0.08f);
-      }
-      entity.getEvents().trigger("landed");
+    if ("foot".equals(selfFixture.getUserData())) {
+      foot = selfFixture;
+      other = otherFixture;
     }
+    else if ("foot".equals(otherFixture.getUserData())) {
+      foot = otherFixture;
+      other = selfFixture;
+    }
+    else {
+      // Not a foot collision, ignore
+      return;
+    }
+
+    // Only reset jumps when colliding with solid objects, so ignore collision otherwise
+    if (other.isSensor()) {
+      return;
+    }
+
+    if (isJumping || isDoubleJump) {
+      Sound interactSound = ServiceLocator.getResourceService().getAsset(
+              "sounds/thudsound.mp3", Sound.class);
+      interactSound.play(UserSettings.get().masterVolume*0.08f);
+    }
+    entity.getEvents().trigger("landed");
   }
 
   /**
