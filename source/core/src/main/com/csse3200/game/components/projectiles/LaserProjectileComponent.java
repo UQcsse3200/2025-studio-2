@@ -28,7 +28,7 @@ public class LaserProjectileComponent extends Component {
     private static final Logger logger = LoggerFactory.getLogger(LaserProjectileComponent.class);
 
     private static final float MAX_DISTANCE = 100f; // Max travel distance
-    private static final float HIT_EFFECT_DURATION = 1.0f; // Duration of hit effect
+    private static final float HIT_EFFECT_DURATION = 0.3f; // Duration of hit effect
 
     private final Vector2 direction;
     private final float speed;

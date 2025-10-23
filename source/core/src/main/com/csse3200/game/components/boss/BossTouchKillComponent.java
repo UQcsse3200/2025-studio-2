@@ -48,7 +48,7 @@ public class BossTouchKillComponent extends Component {
   }
 
   private void onCollisionStart(Fixture me, Fixture other) {
-    if (hitPlayer) return; // Only damage once
+    //if (hitPlayer) return; // Only damage once
     if (hitboxComponent.getFixture() != me) return;
     if (!PhysicsLayer.contains(targetLayer, other.getFilterData().categoryBits)) return;
 
@@ -57,14 +57,12 @@ public class BossTouchKillComponent extends Component {
     CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
 
     if (targetStats == null) return;
-    hitPlayer = true;
     entity.getEvents().trigger("touchKillStart");
     createBlackHole();
-    target.setEnabled(false);
 
-    targetStats.hit(combatStats);
-    hitboxComponent.setEnabled(false);
-    target.getEvents().trigger("playerDied");
+    // Bypass invulnerability frames by directly setting health
+    int newHealth = targetStats.getHealth() - combatStats.getBaseAttack();
+    targetStats.setHealth(newHealth);
   }
 
   private void createBlackHole() {
@@ -91,7 +89,7 @@ public class BossTouchKillComponent extends Component {
             logger.warn("[BOSS TOUCH KILL] Dispose failed for blackHole", e);
           }
         }
-      }, 5f);
+      }, 3f);
     } catch (Exception e) {
       // VFX failure should not break gameplay, log and continue
       logger.warn("[BOSS TOUCH KILL] Failed to create/register blackHole VFX", e);

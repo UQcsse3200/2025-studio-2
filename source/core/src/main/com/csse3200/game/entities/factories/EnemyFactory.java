@@ -516,7 +516,7 @@ public class EnemyFactory {
                 .addComponent(new PhysicsComponent())
                 .addComponent(new PhysicsMovementComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
-                .addComponent(new CombatStatsComponent(9999, 100))
+                .addComponent(new CombatStatsComponent(9999, 9999))
                 .addComponent(new AITaskComponent())
                 .addComponent(new BossAnimationController())
                 .addComponent(new BossLaserAttackComponent(target))
