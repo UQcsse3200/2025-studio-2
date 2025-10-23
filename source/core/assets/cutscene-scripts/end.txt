@@ -3,5 +3,5 @@ The {COLOR=RED}drones{CLEARCOLOR} {SHAKE}spiraled{ENDSHAKE} toward the ground, t
 Blinking LEDs across the room flickered one last time before {SHAKE}fizzling{ENDSHAKE} out completely.
 The {COLOR=RED}central AI{CLEARCOLOR}, once suspended above me, {SHAKE}crashed violently{ENDSHAKE} into the floor, hurling debris in every direction.
 A great, deafening silence followed - not even the faintest electrical hum remained.
-In that moment, I knew I had won - {COLOR=YELLOW}{SLOWER}{SHRINK} knew humanity had won.{ENDSHRINK}{SLOWER}{CLEARCOLOR}
+In that moment, I knew I had won - {COLOR=YELLOW}{SLOWER}{SHRINK}I knew humanity had won.{ENDSHRINK}{SLOWER}{CLEARCOLOR}
 No matter how long it takes, no matter how hard it becomes, we will rebuild.
