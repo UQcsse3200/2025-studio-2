@@ -260,10 +260,8 @@ public class BossSpawnerComponent extends Component {
 			try {
 				arc.startAnimation("angry_float");
 			} catch (Exception ignore) {
-				// 如果某个 atlas 没 angry_float，就退回 float
 				arc.startAnimation("float");
 			}
-
 		}
 
 		drone.getEvents().trigger("enemyActivated");

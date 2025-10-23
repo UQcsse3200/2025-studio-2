@@ -284,7 +284,7 @@ public abstract class BaseLevelGameArea extends GameArea {
      * <p> This function is called within {@link MainGameScreen} where it determines what
      * level it is on and the frequency at which to spawn the lasers.</p>
      */
-    public void spawnLaserShower(float x , float y) {
+    public void spawnLaserShower(float x , float y, float delay) {
         if (player == null) return; // safety check
 
         // Spawn lasers behind of the player
@@ -300,7 +300,7 @@ public abstract class BaseLevelGameArea extends GameArea {
                 public void run() {
                     laser.dispose();
                 }
-            }, 5f);
+            }, delay);
         }
 
         // Spawn lasers ahead of the player
@@ -316,13 +316,13 @@ public abstract class BaseLevelGameArea extends GameArea {
                 public void run() {
                     laser.dispose();
                 }
-            }, 5f);
+            }, delay);
         }
     }
 
-    public void laserShowerChecker(float x , float y) {
+    public void laserShowerChecker(float x , float y, float delay) {
         if (!hasLaser) { // Only spawn if no active laser
-            spawnLaserShower(x,y);
+            spawnLaserShower(x,y,delay);
             hasLaser = true; // Mark laser as active
             // Reset the has_laser flag after 5 seconds to allow next spawn
             Timer.schedule(new Timer.Task() {
@@ -330,7 +330,7 @@ public abstract class BaseLevelGameArea extends GameArea {
                 public void run() {
                     hasLaser = false;
                 }
-            },5f);
+            },delay);
         }
     }
 }
