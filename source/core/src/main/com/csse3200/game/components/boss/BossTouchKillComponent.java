@@ -60,6 +60,7 @@ public class BossTouchKillComponent extends Component {
 
     targetStats.hit(combatStats);
     hitboxComponent.setEnabled(false);
+    target.getEvents().trigger("playerDied");
   }
 
   private void createBlackHole() {
