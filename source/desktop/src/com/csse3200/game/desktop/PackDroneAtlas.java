@@ -1,13 +1,17 @@
 package com.csse3200.game.desktop;
 
 import com.badlogic.gdx.tools.texturepacker.TexturePacker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class PackDroneAtlas {
+	static Logger logger = LoggerFactory.getLogger(PackDroneAtlas.class);
 	public static void main(String[] args) {
 		Path root = Paths.get("").toAbsolutePath();
-		System.out.println("Working dir = " + root);
+        logger.info("Working dir = {}", root);
 
 
 		String inputDir  = root.resolve("core/assets/commodore64/raw/drone_chaser").toString(); //newest png pack
@@ -30,10 +34,10 @@ public class PackDroneAtlas {
 		s.stripWhitespaceY = false;
 		s.flattenPaths     = true; // Ignore subdirectory names and write them all to atlas
 		s.scale = new float[]{0.5f}; // scale to 1/2
+
 		// repack
-		// TexturePacker.processIfModified(s, inputDir, outputDir, packName);
 		TexturePacker.process(s, inputDir, outputDir, packName);
 
-		System.out.println("Packed -> " + outputDir + "/" + packName + ".atlas");
+        logger.info("Packed -> {}/{}.atlas", outputDir, packName);
 	}
 }

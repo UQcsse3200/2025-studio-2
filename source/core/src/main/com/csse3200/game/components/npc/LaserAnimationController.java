@@ -7,7 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LaserAnimationController extends Component {
-    private static final Logger logger = LoggerFactory.getLogger(ExplosionAnimationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(LaserAnimationController.class);
 
     private AnimationRenderComponent animator;
     private boolean cleanedUp = false;

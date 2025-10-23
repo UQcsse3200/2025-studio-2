@@ -2,7 +2,6 @@ package com.csse3200.game.components.projectiles;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.CombatStatsComponent;
@@ -37,7 +36,6 @@ public class LaserProjectileComponent extends Component {
     private final Vector2 startPosition;
 
     private boolean hasHit = false;
-    private float distanceTraveled = 0f;
     private PhysicsComponent physicsComponent;
 
     /**
@@ -79,7 +77,7 @@ public class LaserProjectileComponent extends Component {
 
         // Calculate distance traveled
         Vector2 currentPos = entity.getCenterPosition();
-        distanceTraveled = currentPos.dst(startPosition);
+        float distanceTraveled = currentPos.dst(startPosition);
 
         // Dispose if traveled too far
         if (distanceTraveled >= MAX_DISTANCE) {

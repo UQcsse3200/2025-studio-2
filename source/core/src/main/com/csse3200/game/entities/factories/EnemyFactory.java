@@ -8,7 +8,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.components.*;
-import com.csse3200.game.components.boss.BossAnchorComponent;
 import com.csse3200.game.components.boss.BossLaserAttackComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.boss.BossTouchKillComponent;
