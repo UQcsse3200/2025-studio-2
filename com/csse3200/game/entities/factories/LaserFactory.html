@@ -108,9 +108,19 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createLaserEmitter(float)" class="member-name-link">createLaserEmitter</a><wbr>(float&nbsp;dir)</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createLaser(float,com.badlogic.gdx.graphics.Color,com.csse3200.game.components.Component)" class="member-name-link">createLaser</a><wbr>(float&nbsp;dir,
+ com.badlogic.gdx.graphics.Color&nbsp;color,
+ <a href="../../components/Component.html" title="class in com.csse3200.game.components">Component</a>&nbsp;laserBehavior)</code></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a new laser emitter entity which is rotated by <code>dir</code> degrees.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createLaserEmitter(float)" class="member-name-link">createLaserEmitter</a><wbr>(float&nbsp;dir)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createLaserShower(float)" class="member-name-link">createLaserShower</a><wbr>(float&nbsp;dir)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Creates a blue laser shower.</div>
 </div>
 </div>
 </div>
@@ -130,9 +140,11 @@ loadScripts(document, 'script');</script>
 <h2>Method Details</h2>
 <ul class="member-list">
 <li>
-<section class="detail" id="createLaserEmitter(float)">
-<h3>createLaserEmitter</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createLaserEmitter</span><wbr><span class="parameters">(float&nbsp;dir)</span></div>
+<section class="detail" id="createLaser(float,com.badlogic.gdx.graphics.Color,com.csse3200.game.components.Component)">
+<h3>createLaser</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createLaser</span><wbr><span class="parameters">(float&nbsp;dir,
+ com.badlogic.gdx.graphics.Color&nbsp;color,
+ <a href="../../components/Component.html" title="class in com.csse3200.game.components">Component</a>&nbsp;laserBehavior)</span></div>
 <div class="block">Creates a new laser emitter entity which is rotated by <code>dir</code> degrees.
  The laser is able to damage players and also reflect off of colliders with the
  <code>PhysicsLayer.LASER_REFLECTOR</code> layer.</div>
@@ -142,6 +154,19 @@ loadScripts(document, 'script');</script>
 <dt>Returns:</dt>
 <dd>the newly created laser emitter entity</dd>
 </dl>
+</section>
+</li>
+<li>
+<section class="detail" id="createLaserEmitter(float)">
+<h3>createLaserEmitter</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createLaserEmitter</span><wbr><span class="parameters">(float&nbsp;dir)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="createLaserShower(float)">
+<h3>createLaserShower</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createLaserShower</span><wbr><span class="parameters">(float&nbsp;dir)</span></div>
+<div class="block">Creates a blue laser shower.</div>
 </section>
 </li>
 </ul>

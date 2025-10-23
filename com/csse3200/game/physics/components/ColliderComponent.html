@@ -168,9 +168,24 @@ loadScripts(document, 'script');</script>
 <div class="block">Set physics as a box with a given size and local position.</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAsBoxAligned(com.badlogic.gdx.math.Vector2,com.csse3200.game.physics.components.PhysicsComponent.AlignX,com.csse3200.game.physics.components.PhysicsComponent.AlignY)" class="member-name-link">setAsBoxAligned</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;size,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAsBox(com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float)" class="member-name-link">setAsBox</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;size,
+ com.badlogic.gdx.math.Vector2&nbsp;position,
+ float&nbsp;angle)</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Set physics as a box with a given size and local position.</div>
+</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAsBoxAligned(com.badlogic.gdx.math.Vector2,com.csse3200.game.physics.components.PhysicsComponent.AlignX,com.csse3200.game.physics.components.PhysicsComponent.AlignY)" class="member-name-link">setAsBoxAligned</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;size,
  <a href="PhysicsComponent.AlignX.html" title="enum class in com.csse3200.game.physics.components">PhysicsComponent.AlignX</a>&nbsp;alignX,
  <a href="PhysicsComponent.AlignY.html" title="enum class in com.csse3200.game.physics.components">PhysicsComponent.AlignY</a>&nbsp;alignY)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
+<div class="block">Set physics as a box with a given size.</div>
+</div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setAsBoxAligned(com.badlogic.gdx.math.Vector2,com.csse3200.game.physics.components.PhysicsComponent.AlignX,com.csse3200.game.physics.components.PhysicsComponent.AlignY,float)" class="member-name-link">setAsBoxAligned</a><wbr>(com.badlogic.gdx.math.Vector2&nbsp;size,
+ <a href="PhysicsComponent.AlignX.html" title="enum class in com.csse3200.game.physics.components">PhysicsComponent.AlignX</a>&nbsp;alignX,
+ <a href="PhysicsComponent.AlignY.html" title="enum class in com.csse3200.game.physics.components">PhysicsComponent.AlignY</a>&nbsp;alignY,
+ float&nbsp;angle)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Set physics as a box with a given size.</div>
 </div>
@@ -282,10 +297,45 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
+<section class="detail" id="setAsBoxAligned(com.badlogic.gdx.math.Vector2,com.csse3200.game.physics.components.PhysicsComponent.AlignX,com.csse3200.game.physics.components.PhysicsComponent.AlignY,float)">
+<h3>setAsBoxAligned</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></span>&nbsp;<span class="element-name">setAsBoxAligned</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;size,
+ <a href="PhysicsComponent.AlignX.html" title="enum class in com.csse3200.game.physics.components">PhysicsComponent.AlignX</a>&nbsp;alignX,
+ <a href="PhysicsComponent.AlignY.html" title="enum class in com.csse3200.game.physics.components">PhysicsComponent.AlignY</a>&nbsp;alignY,
+ float&nbsp;angle)</span></div>
+<div class="block">Set physics as a box with a given size. Box is aligned based on alignment.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>size</code> - size of the box</dd>
+<dd><code>alignX</code> - how to align x relative to entity</dd>
+<dd><code>alignY</code> - how to align y relative to entity</dd>
+<dd><code>angle</code> - to rotate</dd>
+<dt>Returns:</dt>
+<dd>self</dd>
+</dl>
+</section>
+</li>
+<li>
 <section class="detail" id="setAsBox(com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2)">
 <h3>setAsBox</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></span>&nbsp;<span class="element-name">setAsBox</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;size,
  com.badlogic.gdx.math.Vector2&nbsp;position)</span></div>
+<div class="block">Set physics as a box with a given size and local position. Box is centered around the position.</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>size</code> - size of the box</dd>
+<dd><code>position</code> - position of the box center relative to the entity.</dd>
+<dt>Returns:</dt>
+<dd>self</dd>
+</dl>
+</section>
+</li>
+<li>
+<section class="detail" id="setAsBox(com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float)">
+<h3>setAsBox</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="ColliderComponent.html" title="class in com.csse3200.game.physics.components">ColliderComponent</a></span>&nbsp;<span class="element-name">setAsBox</span><wbr><span class="parameters">(com.badlogic.gdx.math.Vector2&nbsp;size,
+ com.badlogic.gdx.math.Vector2&nbsp;position,
+ float&nbsp;angle)</span></div>
 <div class="block">Set physics as a box with a given size and local position. Box is centered around the position.</div>
 <dl class="notes">
 <dt>Parameters:</dt>
