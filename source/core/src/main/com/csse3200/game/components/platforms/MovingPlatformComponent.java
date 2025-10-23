@@ -23,6 +23,8 @@ public class MovingPlatformComponent extends Component {
     private final Set<Entity> passengers = new HashSet<>();
     private Vector2 lastPos;
 
+    private boolean enabled = true;
+
     public MovingPlatformComponent(Vector2 offset, float speed) {
         this.offset = offset.cpy();
         this.speed = speed;

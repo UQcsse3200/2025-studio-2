@@ -145,13 +145,13 @@ public final class Spawners {
                         Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
                         target.getEvents().trigger("stop");
 
-                        plate.getEvents().addListener("platePressed", () -> {
-                            target.getEvents().trigger("start");
-                        });
+                        plate.getEvents().addListener("platePressed", () ->
+                            target.getEvents().trigger("start")
+                        );
 
-                        plate.getEvents().addListener("plateReleased", () -> {
-                            target.getEvents().trigger("stop");
-                        });
+                        plate.getEvents().addListener("plateReleased", () ->
+                            target.getEvents().trigger("stop")
+                        );
                     }
                 }
             }
