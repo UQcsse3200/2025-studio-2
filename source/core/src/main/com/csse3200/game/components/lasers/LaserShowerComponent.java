@@ -141,8 +141,7 @@ public class LaserShowerComponent extends Component {
         * */
         Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
         if (laserSound != null) {
-            long soundId = laserSound.play(UserSettings.get().masterVolume);
-            fadeOutSound(laserSound , soundId);
+            laserSound.play(UserSettings.get().masterVolume);
         }
 
         positions.clear();

@@ -49,6 +49,10 @@ public class TutorialMenuScreen extends ScreenAdapter {
       "images/drone.atlas"
   };
 
+  private final String[] tutorialMenuSounds = {
+          "sounds/buttonsound.mp3"
+  };
+
   private final GdxGame game;
   private final Renderer renderer;
 
@@ -94,6 +98,7 @@ public class TutorialMenuScreen extends ScreenAdapter {
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(tutorialMenuTextures);
     resourceService.loadTextureAtlases(tutorialMenuAtlases);
+    resourceService.loadSounds(tutorialMenuSounds);
     ServiceLocator.getResourceService().loadAll();
   }
 
@@ -102,6 +107,7 @@ public class TutorialMenuScreen extends ScreenAdapter {
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.unloadAssets(tutorialMenuTextures);
     resourceService.unloadAssets(tutorialMenuAtlases);
+    resourceService.unloadAssets(tutorialMenuSounds);
   }
 
   /**
