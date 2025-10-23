@@ -40,6 +40,7 @@ public class LaserShowerComponent extends Component {
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
     private static final String LASER_SOUND = "sounds/laserShower.mp3";
+    private static final String LASER_OFF_EVENT = "laserOff";
 
 
     private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
@@ -90,7 +91,7 @@ public class LaserShowerComponent extends Component {
             hitLight = createPointLight();
         }
         entity.getEvents().addListener("shootLaser", () -> laserActive = true);
-        entity.getEvents().addListener("laserOff", this::stopLaser);
+        entity.getEvents().addListener(LASER_OFF_EVENT, this::stopLaser);
     }
     /**
      * Stops the laser (clears positions and turns it off).
@@ -101,7 +102,7 @@ public class LaserShowerComponent extends Component {
 
         // Turn off any reflector highlights
         for (Entity e : lastReflectorsHit) {
-            e.getEvents().trigger("laserOff", false);
+            e.getEvents().trigger(LASER_OFF_EVENT , false);
         }
         lastReflectorsHit.clear();
     }
@@ -223,7 +224,7 @@ public class LaserShowerComponent extends Component {
         }
         for (Entity e : lastReflectorsHit) {
             if (!reflectorsHit.contains(e)) {
-                e.getEvents().trigger("laserOff", false);
+                e.getEvents().trigger(LASER_OFF_EVENT , false);
             }
         }
         lastReflectorsHit = reflectorsHit;
