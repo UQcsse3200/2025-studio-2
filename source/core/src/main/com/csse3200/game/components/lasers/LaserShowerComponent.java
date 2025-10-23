@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.utils.Timer;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.lighting.ConeLightComponent;
@@ -42,13 +41,10 @@ public class LaserShowerComponent extends Component {
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
     private static final String LASER_SOUND = "sounds/laserShower.mp3";
-
+    private static final String LASER_OFF_EVENT = "laserOff";
 
     private static final short REBOUND_OCCLUDER = PhysicsLayer.LASER_REFLECTOR;
-    private static final short BLOCKED_OCCLUDER = (short) (
-            PhysicsLayer.OBSTACLE
-            // | PhysicsLayer.DEFAULT
-            );
+    private static final short BLOCKED_OCCLUDER = PhysicsLayer.OBSTACLE;
     private static final short DETECTOR_OCCLUDER = PhysicsLayer.LASER_DETECTOR;
     private static final short PLAYER_OCCLUDER = PhysicsLayer.PLAYER;
     private static final short HIT_MASK = (short) (
@@ -61,8 +57,6 @@ public class LaserShowerComponent extends Component {
     private float dir = 90f;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
-    private static final float FIRE_COOLDOWN = 0f; // seconds between shots
-    private float timeSinceLastShot = 0f;
     private boolean laserActive = false;
 
 
@@ -71,7 +65,7 @@ public class LaserShowerComponent extends Component {
     private Entity lastDetectorHit = null;
 
     /**
-     * defalult constructor
+     * default constructor
      */
     public LaserShowerComponent() {
 
@@ -96,7 +90,7 @@ public class LaserShowerComponent extends Component {
             hitLight = createPointLight();
         }
         entity.getEvents().addListener("shootLaser", () -> laserActive = true);
-        entity.getEvents().addListener("laserOff", this::stopLaser);
+        entity.getEvents().addListener(LASER_OFF_EVENT, this::stopLaser);
     }
     /**
      * Stops the laser (clears positions and turns it off).
@@ -114,34 +108,28 @@ public class LaserShowerComponent extends Component {
 
     @Override
     public void update() {
-        if (timeSinceLastShot > 0) {
-            timeSinceLastShot -= ServiceLocator.getTimeSource().getDeltaTime();
-        }
-
         // Only fire if laser is active AND cooldown expired
-        if (laserActive && timeSinceLastShot <= 0f) {
+        if (laserActive) {
             fireLaser();
-            timeSinceLastShot = FIRE_COOLDOWN; // reset cooldown
         }
     }
 
 
     public void fireLaser() {
         /*
-        * within this a few calculations are done to construct out
-        * list of collisions our laser makes.
-        *
-        * firstly we start by getting the initial position of the laser which
-        * is offset by a set value. then from there we raycast until hitting any collider
-        * within out mask. after it's determined what type of collider layer is hit, if it's
-        * an obstacle than the laser stops. if the collider is a reflector then the angle of
-        * reflection is calculated using the impact angle and the normal vector of the surface
-        * hit. the process is repeated until we run out of rebounds or length.
-        * */
+         * within this a few calculations are done to construct out
+         * list of collisions our laser makes.
+         *
+         * firstly we start by getting the initial position of the laser which
+         * is offset by a set value. then from there we raycast until hitting any collider
+         * within out mask. after it's determined what type of collider layer is hit, if it's
+         * an obstacle than the laser stops. if the collider is a reflector then the angle of
+         * reflection is calculated using the impact angle and the normal vector of the surface
+         * hit. the process is repeated until we run out of rebounds or length.
+         * */
         Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
         if (laserSound != null) {
-            long soundId = laserSound.play(UserSettings.get().masterVolume);
-            fadeOutSound(laserSound , soundId);
+            laserSound.play(UserSettings.get().masterVolume);
         }
 
         positions.clear();
@@ -235,32 +223,11 @@ public class LaserShowerComponent extends Component {
         }
         for (Entity e : lastReflectorsHit) {
             if (!reflectorsHit.contains(e)) {
-                e.getEvents().trigger("laserOff", false);
+                e.getEvents().trigger(LASER_OFF_EVENT , false);
             }
         }
         lastReflectorsHit = reflectorsHit;
     }
-    /**
-     * Gradually fades out the sound over 1 second.
-     * @param sound Sound to fade
-     * @param soundId ID of the playing sound
-     */
-    private void fadeOutSound(Sound sound, long soundId) {
-        final int steps = 10;
-        final float interval = (float) 1.0 / steps;
-
-        for (int i = 0; i < steps; i++) {
-            final float volume = 1.0f - (i / (float) steps);
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    sound.setVolume(soundId, volume);
-                    if (volume <= 0f) sound.stop(soundId);
-                }
-            }, i * interval);
-        }
-    }
-
     /**
      * Creates a point light entity to visualize laser hits.
      * @return point light entity
@@ -270,7 +237,7 @@ public class LaserShowerComponent extends Component {
         ConeLightComponent coneLight = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
                 LightingDefaults.RAYS,
-                Color.RED,
+                Color.BLUE,
                 0.75f,
                 0f,
                 180f
@@ -278,7 +245,7 @@ public class LaserShowerComponent extends Component {
         coneLight.setFollowEntity(false);
         light.addComponent(coneLight);
 
-        TextureRenderComponent texture = new TextureRenderComponent("images/laser-end.png");
+        TextureRenderComponent texture = new TextureRenderComponent("images/LaserShower-end.png");
         texture.setLayer(3);
         light.addComponent(texture);
         light.setScale(0.2f, 0.2f);
@@ -289,7 +256,7 @@ public class LaserShowerComponent extends Component {
     }
     /**
      * Updates the laser hit light position.
-     * @param hit the raycast hit
+     * @param hit the ray cast hit
      */
     private void updateHitLight(RaycastHit hit) {
         if (hitLight == null) return;
@@ -304,7 +271,7 @@ public class LaserShowerComponent extends Component {
     /**
      * A null safe wrapper for getting the category bits from a hit collider.
      *
-     * @param hit the hit collider from a raycast
+     * @param hit the hit collider from a ray cast
      * @return the category bits of the collider
      */
     private static short categoryBitsFromHit(RaycastHit hit) {
@@ -336,7 +303,7 @@ public class LaserShowerComponent extends Component {
      * <p>
      * This code is essentially just taken from the {@code TouchAttackComponent}
      *
-     * @param hit the raycast hit result
+     * @param hit the ray cast hit result
      */
     private void damagePlayer(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;
@@ -380,7 +347,7 @@ public class LaserShowerComponent extends Component {
     }
     /**
      * Triggers a laser detector entity.
-     * @param hit raycast hit
+     * @param hit ray cast hit
      */
     private void triggerDetector(RaycastHit hit) {
         Entity target = ((BodyUserData) hit.fixture.getBody().getUserData()).entity;

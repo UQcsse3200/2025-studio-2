@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.Component;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
@@ -27,7 +29,7 @@ public class LaserFactory {
      * @param dir direction for the initial laser beam to face in degrees
      * @return the newly created laser emitter entity
      */
-    public static Entity createLaserEmitter(float dir) {
+    public static Entity createLaser(float dir,Color color, Component laserBehavior) {
         // setup animations
         TextureAtlas atlas = ServiceLocator.getResourceService().getAsset("images/laser.atlas", TextureAtlas.class);
         AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
@@ -45,7 +47,7 @@ public class LaserFactory {
         ConeLightComponent light = new ConeLightComponent(
                 ServiceLocator.getLightingService().getEngine().getRayHandler(),
                 LightingDefaults.RAYS,
-                Color.RED,
+                color,
                 1f,
                 0f,
                 180f
@@ -53,8 +55,7 @@ public class LaserFactory {
 
         // construct entity
         Entity e = new Entity()
-                //.addComponent(new LaserShowerComponent(dir))
-                .addComponent(new LaserEmitterComponent(dir))
+                .addComponent(laserBehavior)
                 .addComponent(new LaserRenderComponent())
                 .addComponent(new CombatStatsComponent(1, ATTACK_DAMAGE))
                 .addComponent(animator)
@@ -63,5 +64,12 @@ public class LaserFactory {
         // start in "on" state
         animator.startAnimation("laser-on");
         return e;
+    }
+    public static Entity createLaserEmitter(float dir) {
+        return createLaser(dir, Color.RED, new LaserEmitterComponent(dir));
+    }
+    /** Creates a blue laser shower. */
+    public static Entity createLaserShower(float dir) {
+        return createLaser(dir, Color.BLUE, new LaserShowerComponent(dir));
     }
 }
