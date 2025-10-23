@@ -58,7 +58,7 @@ public class CutsceneReaderComponent extends Component {
      */
     private void parseScript(String scriptContents) throws IOException {
         // Split the scriptContents into lines (works on windows and unix systems)
-        String[] scriptLines = scriptContents.split(System.lineSeparator());
+        String[] scriptLines = scriptContents.split("\\r?\\n");
 
         // Throw error if file is empty
         if (scriptLines.length == 0) {

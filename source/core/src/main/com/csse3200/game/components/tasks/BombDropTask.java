@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.ai.tasks.DefaultTask;
 import com.csse3200.game.ai.tasks.PriorityTask;
 import com.csse3200.game.ai.tasks.TaskRunner;
+import com.csse3200.game.components.enemy.BombTrackerComponent;
 import com.csse3200.game.components.lighting.ConeDetectorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.ProjectileFactory;
@@ -158,7 +159,7 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
 
         // Check horizontal alignment (bomber should be relatively above target)
         float horizontalDistance = Math.abs(bomberPos.x - targetPos.x);
-        return horizontalDistance < 2f; // Within 2 units horizontally
+        return horizontalDistance < 1f; // Within 1 unit horizontally
     }
 
     /**
@@ -172,23 +173,25 @@ public class BombDropTask extends DefaultTask implements PriorityTask {
      * Spawn a bomb entity at the bomber's current position
      */
     private void dropBomb() {
-        Vector2 dronePos = owner.getEntity().getPosition().cpy();
-        Vector2 bombSpawnPos = new Vector2(
-                dronePos.x + owner.getEntity().getScale().x / 2,
-                dronePos.y - 0.5f  // Spawn slightly below drone
-        );
+        Vector2 origin = owner.getEntity().getCenterPosition();
+        Vector2 bombSpawnCenter = new Vector2(origin.x, origin.y - 0.5f); // Drop below bomber
 
         Entity bomb = ProjectileFactory.createBomb(
                 owner.getEntity(),
-                bombSpawnPos,
+                bombSpawnCenter,
                 target.getPosition().cpy(),
                 2.0f,  // explosion delay
                 2f,  // explosion radius
-                25     // damage
+                30     // damage
         );
 
         ServiceLocator.getEntityService().register(bomb);
-        logger.debug("Bomb dropped at {} - target detected by cone light", bombSpawnPos);
+        BombTrackerComponent bomberComp = owner.getEntity().getComponent(BombTrackerComponent.class);
+        if (bomberComp != null) {
+            bomberComp.trackBomb(bomb);
+        }
+
+        logger.debug("Bomb dropped at {} - target detected by cone light", bombSpawnCenter);
     }
 
     /**

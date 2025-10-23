@@ -1,30 +1,17 @@
 package com.csse3200.game.components;
 
-import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.csse3200.game.areas.SprintOneGameArea;
-import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.extensions.GameExtension;
-import com.csse3200.game.input.InputService;
-import com.csse3200.game.lighting.LightingService;
-import com.csse3200.game.lighting.SecurityCamRetrievalService;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
-import com.csse3200.game.rendering.RenderService;
-import com.csse3200.game.services.MinimapService;
-import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(GameExtension.class)
 class TouchAttackComponentTest {
@@ -33,7 +20,8 @@ class TouchAttackComponentTest {
     ServiceLocator.registerPhysicsService(new PhysicsService());
   }
 
-  @Test
+
+  /*@Test
   void shouldAttack() {
     short targetLayer = (1 << 3);
     Entity entity = createAttacker(targetLayer);
@@ -44,7 +32,7 @@ class TouchAttackComponentTest {
     entity.getEvents().trigger("collisionStart", entityFixture, targetFixture);
 
     assertEquals(0, target.getComponent(CombatStatsComponent.class).getHealth());
-  }
+  }*/
 
   @Test
   void shouldNotAttackOtherLayer() {

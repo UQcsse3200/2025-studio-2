@@ -30,8 +30,8 @@ import java.util.Map;
  *
  * Texture atlases can be created using: <br>
  * - libgdx texture packer (included in External Libraries/gdx-tools) <br>
- * - gdx-texture-packer-gui (recommended) https://github.com/crashinvaders/gdx-texture-packer-gui <br>
- * - other third-party tools, e.g. https://www.codeandweb.com/texturepacker <br>
+ * - gdx-texture-packer-gui (recommended) <a href="https://github.com/crashinvaders/gdx-texture-packer-gui">...</a> <br>
+ * - other third-party tools, e.g. <a href="https://www.codeandweb.com/texturepacker">...</a> <br>
  */
 public class AnimationRenderComponent extends RenderComponent {
   private static final Logger logger = LoggerFactory.getLogger(AnimationRenderComponent.class);
@@ -42,6 +42,9 @@ public class AnimationRenderComponent extends RenderComponent {
   private String currentAnimationName;
   private float animationPlayTime;
   private boolean isPaused = false;
+  private boolean flipX = false;
+  private float rotation = 0f;
+  private Vector2 origin;
 
   /**
    * Create the component for a given texture atlas.
@@ -65,6 +68,9 @@ public class AnimationRenderComponent extends RenderComponent {
     this.animationPlayTime = other.animationPlayTime;
     this.isPaused = other.isPaused;
     this.currentAnimation = other.currentAnimation;
+    this.flipX = other.flipX;
+    this.rotation = other.rotation;
+    this.origin = other.origin;
   }
 
   /**
@@ -135,6 +141,7 @@ public class AnimationRenderComponent extends RenderComponent {
    */
   public void startAnimation(String name) {
     Animation<TextureRegion> animation = animations.getOrDefault(name, null);
+
     if (animation == null) {
       logger.error(
           "Attempted to play unknown animation {}. Ensure animation is added before playback.",
@@ -170,8 +177,32 @@ public class AnimationRenderComponent extends RenderComponent {
    * @param flip whether to flip the entity horizontally
    */
   public void setFlipX(boolean flip) {
-      Vector2 scale = entity.getScale();
-      entity.setScale(flip ? -Math.abs(scale.x) : Math.abs(scale.x), scale.y);
+      this.flipX = flip;
+  }
+
+  /**
+   * Rotates the animation around the origin which is {@code scale.w / 2f, scale.h / 2f}
+   * by default unless manually overridden with {@code setOrigin()}.
+   *
+   * @param rotation rotation in degrees
+   */
+  public void setRotation(float rotation) {
+    this.rotation = rotation;
+  }
+
+  /**
+   * Sets the origin to rotate around to {@code x, y}. <p>
+   * Overrides the default value of {@code scale.w / 2f, scale.h / 2f}
+   *
+   * @param x local x position in world units
+   * @param y local y position in world units
+   */
+  public void setOrigin(float x, float y) {
+      if (origin == null) {
+          origin = new Vector2(x, y);
+      } else {
+          origin.set(x, y);
+      }
   }
 
   /**
@@ -203,7 +234,17 @@ public class AnimationRenderComponent extends RenderComponent {
     TextureRegion region = currentAnimation.getKeyFrame(animationPlayTime);
     Vector2 pos = entity.getPosition();
     Vector2 scale = entity.getScale();
-    batch.draw(region, pos.x, pos.y, scale.x, scale.y);
+    float w = Math.abs(scale.x);
+    float h = Math.abs(scale.y);
+    float originX = w / 2;
+    float originY = h / 2;
+    if (origin != null) {
+        originX = origin.x;
+        originY = origin.y;
+    }
+    float sx = flipX ? -1f : 1f;
+    float sy = 1f;
+    batch.draw(region, pos.x, pos.y, originX, originY, w, h, sx, sy, rotation);
     if (!isPaused) {
       animationPlayTime += timeSource.getDeltaTime();
     }
@@ -212,7 +253,6 @@ public class AnimationRenderComponent extends RenderComponent {
   @Override
   public void dispose() {
     // Keep the atlas for future using
-    //atlas.dispose();
     super.dispose();
   }
 }

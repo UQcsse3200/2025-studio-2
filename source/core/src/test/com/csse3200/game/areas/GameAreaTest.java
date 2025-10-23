@@ -1,10 +1,6 @@
 package com.csse3200.game.areas;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
-import com.csse3200.game.areas.terrain.TerrainComponent;
+import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.areas.terrain.TerrainFactory;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
@@ -12,12 +8,18 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.services.ServiceLocator;
-import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
+import java.lang.reflect.Field;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.*;
 
 /**
  * Things like textures loading properly are incredibly difficult to test within JUnit test.
@@ -25,6 +27,24 @@ import java.util.List;
  */
 @ExtendWith(GameExtension.class)
 class GameAreaTest {
+  private GameArea gameArea;
+  private EntityService entityService;
+
+  @BeforeEach
+  void setup() {
+    entityService = spy(new EntityService());
+    ServiceLocator.registerEntityService(entityService);
+    ServiceLocator.registerRenderService(new RenderService());
+
+    gameArea = spy(new GameArea() {
+      @Override protected void loadPrerequisites() {}
+      @Override protected void loadEntities() {}
+      @Override protected Entity spawnPlayer() { return new Entity(); }
+      @Override protected Entity spawnPlayer(List<Component> componentList) { return new Entity(); }
+      @Override protected void loadAssets() {}
+    });
+  }
+
   @Test
   void shouldSpawnEntities() {
     TerrainFactory factory = mock(TerrainFactory.class);
@@ -94,7 +114,7 @@ class GameAreaTest {
 
       // Add an item to player inventory
       gameArea.getPlayer().getComponent(InventoryComponent.class)
-              .addItems(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
+              .addDirect(InventoryComponent.Bag.UPGRADES, testItem, itemCount);
       assertEquals(itemCount,
               gameArea.player.getComponent(InventoryComponent.class).getGrandTotalCount());
 
@@ -116,5 +136,29 @@ class GameAreaTest {
               assertEquals(0, inventoryComponent.getGrandTotalCount());
           }
       }
+  }
+
+  @Test
+  void shouldRecordDeathLocation() {
+    assertEquals(0, gameArea.getDeathLocations().size());
+    gameArea.recordDeathLocation(new Vector2(1, 1));
+    assertEquals(1, gameArea.getDeathLocations().size());
+  }
+
+  @Test
+  void shouldSpawnDeathMarkers() {
+    gameArea.recordDeathLocation(new Vector2(1, 1));
+    gameArea.spawnDeathMarkers();
+    verify(gameArea, times(1)).spawnEntity(any(Entity.class));
+  }
+
+  @Test
+  void shouldDisposeMarkerTexture() throws Exception {
+    gameArea.spawnDeathMarkers(); // Create the texture
+    Field textureField = GameArea.class.getDeclaredField("deathMarkerTexture");
+    textureField.setAccessible(true);
+    assertNotEquals(null, textureField.get(gameArea));
+    gameArea.dispose();
+    assertEquals(null, textureField.get(gameArea));
   }
 }

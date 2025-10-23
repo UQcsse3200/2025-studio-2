@@ -1,181 +1,150 @@
 package com.csse3200.game.components;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.components.obstacles.TrapComponent;
-import com.csse3200.game.components.DeathZoneComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.physics.BodyUserData;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.components.npc.DroneAnimationController;
 
 /**
- * Component that destroys drones when they touch traps or death zones.
- * - Plays a "bomb_effect" animation when triggered.
- * - Removes the drone from the EntityService after a short delay.
- * - disposes the drone entity after removal.
- *
+ * Component that handles drone death when touching traps or death zones.
+ * Plays an explosion animation and removes relevant components
+ * instead of disposing the entity directly.
  */
 public class DeathOnTrapComponent extends Component {
-
     private boolean triggered = false;
-    private boolean disposed = false;
     private static final float ANIMATION_DURATION = 0.5f;
+    private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
 
     @Override
     public void create() {
-
-        // Listen for collisions
         entity.getEvents().addListener("collisionStart", this::onCollisionStart);
-
-        // Listen for level reset
         entity.getEvents().addListener("reset", this::onReset);
 
-        // Add explosion animation
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-
-        if (animator != null) {
-            if (!animator.hasAnimation("bomb_effect")) {
-                animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
-            }
+        if (animator != null && !animator.hasAnimation("bomb_effect")) {
+            animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
         }
     }
+    /**
+     * Handles collisions between the drone and other entities.
+     * If the drone collides with a trap or death zone, the explosion sequence is triggered.
+     *
+     * @param me    The fixture of this entity.
+     * @param other The fixture of the colliding entity.
+     */
 
     private void onCollisionStart(Fixture me, Fixture other) {
-
-        if (triggered) {
-            return;
-        }
-
-        if (disposed) {
-            return;
-        }
-
-        if (other == null) {
-            return;
-        }
-
-        if (other.getBody() == null) {
-            return;
-        }
+        if (triggered || other == null || other.getBody() == null) return;
 
         Object userData = other.getBody().getUserData();
+        if (!(userData instanceof BodyUserData bodyData)) return;
 
-        if (!(userData instanceof BodyUserData)) {
-            return;
-        }
-
-        BodyUserData bodyData = (BodyUserData) userData;
         Entity otherEntity = bodyData.entity;
+        if (otherEntity == null) return;
 
-        if (otherEntity == null) {
-            return;
-        }
-
-        TrapComponent trapComp = otherEntity.getComponent(TrapComponent.class);
-        DeathZoneComponent deathZoneComp = otherEntity.getComponent(DeathZoneComponent.class);
+        boolean hitTrap = otherEntity.getComponent(TrapComponent.class) != null;
+        boolean hitDeathZone = otherEntity.getComponent(DeathZoneComponent.class) != null;
         DroneAnimationController droneAnim = entity.getComponent(DroneAnimationController.class);
 
-        if (trapComp != null) {
-            if (droneAnim != null) {
-                triggerDeath();
-            }
-        } else {
-            if (deathZoneComp != null) {
-                if (droneAnim != null) {
-                    triggerDeath();
-                }
-            }
+        if ((hitTrap || hitDeathZone) && droneAnim != null) {
+            explode();
         }
     }
 
-    private void triggerDeath() {
+    /**
+     * Initiates the explosion sequence, disabling physics and collider components,
+     * playing explosion effects, and cleaning up the entity safely after a delay.
+     */
 
-        if (triggered) {
-            return;
-        }
-
-        if (disposed) {
-            return;
-        }
-
+    private void explode() {
+        if (triggered) return;
         triggered = true;
 
         // Disable collider
         ColliderComponent collider = entity.getComponent(ColliderComponent.class);
-
-        if (collider != null) {
-            collider.setEnabled(false);
-        }
+        if (collider != null) collider.setEnabled(false);
 
         // Play explosion animation
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-
-        if (animator != null) {
-            if (animator.hasAnimation("bomb_effect")) {
-                animator.startAnimation("bomb_effect");
-            }
+        if (animator != null && animator.hasAnimation("bomb_effect")) {
+            animator.startAnimation("bomb_effect");
         }
 
-        // Schedule removal after animation
+        // Play sound
+        Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND, Sound.class);
+        if (explosionSound != null) {
+            long soundId = explosionSound.play(UserSettings.get().masterVolume);
+            fadeOutSound(explosionSound, soundId);
+        }
+
+        // Cleanup components after delay
         Timer.schedule(new Timer.Task() {
             @Override
             public void run() {
-
-                if (disposed) {
-                    return;
-                }
-
-                if (entity == null) {
-                    return;
-                }
-
-                // Remove from entity service
-                ServiceLocator.getEntityService().unregister(entity);
-
-                // Destroy physics body if it exists
-                PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-
-                if (physics != null) {
-                    if (physics.getBody() != null) {
-                        if (!physics.getBody().getWorld().isLocked()) {
-                            physics.getBody().getWorld().destroyBody(physics.getBody());
-                        }
+                try {
+                    if (animator != null) {
+                        animator.stopAnimation();
+                        animator.setEnabled(false);
                     }
+
+                    PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
+                    if (physics != null) {
+                        if (physics.getBody() != null) physics.getBody().setActive(false);
+                        //entity.removeComponent(physics);
+                        physics.setEnabled(false);
+                    }
+
+                    // Unregister from entity service
+                    ServiceLocator.getEntityService().unregister(entity);
+
+                    entity.getEvents().trigger("destroy");
+                    //entity.removeComponent(DeathOnTrapComponent.this);
+                    DeathOnTrapComponent.this.setEnabled(false);
+                } catch (Exception e) {
+                    Gdx.app.error("DeathOnTrapComponent", "Error during cleanup: " + e.getMessage());
                 }
-
-                disposed = true;
-
-                // Dispose entity
-                entity.dispose();
             }
         }, ANIMATION_DURATION);
     }
 
+    /**
+     * Gradually fades out the explosion sound over a specified duration.
+     *
+     * @param sound   The sound instance to fade.
+     * @param soundId The specific sound playback ID.
+     */
+
+        private void fadeOutSound(Sound sound, long soundId) {
+        final int steps = 10;
+        final float interval = (float) 0.5 / steps;
+
+        for (int i = 0; i < steps; i++) {
+            final float volume = 1.0f - (i / (float) steps);
+            Timer.schedule(new Timer.Task() {
+                @Override
+                public void run() {
+                    sound.setVolume(soundId, volume);
+                    if (volume <= 0f) sound.stop(soundId);
+                }
+            }, i * interval);
+        }
+    }
+
     private void onReset() {
-
-        if (disposed) {
-            return;
-        }
-
-        if (entity == null) {
-            return;
-        }
-
-        if (triggered) {
-            return;
-        }
-
+        if (!triggered) return;
         triggered = false;
 
         ColliderComponent collider = entity.getComponent(ColliderComponent.class);
-
-        if (collider != null) {
-            collider.setEnabled(true);
-        }
+        if (collider != null) collider.setEnabled(true);
     }
 }

@@ -83,6 +83,44 @@ public class ColliderComponent extends Component {
   }
 
   /**
+   * Set physics as a box with a given size. Box is aligned based on alignment.
+   *
+   * @param size size of the box
+   * @param alignX how to align x relative to entity
+   * @param alignY how to align y relative to entity
+   * @param angle to rotate
+   * @return self
+   */
+  public ColliderComponent setAsBoxAligned(Vector2 size, AlignX alignX, AlignY alignY, float angle) {
+    Vector2 position = new Vector2();
+    switch (alignX) {
+      case LEFT:
+        position.x = size.x / 2;
+        break;
+      case CENTER:
+        position.x = entity.getCenterPosition().x;
+        break;
+      case RIGHT:
+        position.x = entity.getScale().x - (size.x / 2);
+        break;
+    }
+
+    switch (alignY) {
+      case BOTTOM:
+        position.y = size.y / 2;
+        break;
+      case CENTER:
+        position.y = entity.getCenterPosition().y;
+        break;
+      case TOP:
+        position.y = entity.getScale().y - (size.y / 2);
+        break;
+    }
+
+    return setAsBox(size, position, angle);
+  }
+
+  /**
    * Set physics as a box with a given size and local position. Box is centered around the position.
    *
    * @param size size of the box
@@ -92,6 +130,20 @@ public class ColliderComponent extends Component {
   public ColliderComponent setAsBox(Vector2 size, Vector2 position) {
     PolygonShape bbox = new PolygonShape();
     bbox.setAsBox(size.x / 2, size.y / 2, position, 0f);
+    setShape(bbox);
+    return this;
+  }
+
+  /**
+   * Set physics as a box with a given size and local position. Box is centered around the position.
+   *
+   * @param size size of the box
+   * @param position position of the box center relative to the entity.
+   * @return self
+   */
+  public ColliderComponent setAsBox(Vector2 size, Vector2 position,  float angle) {
+    PolygonShape bbox = new PolygonShape();
+    bbox.setAsBox(size.x / 2, size.y / 2, position, angle);
     setShape(bbox);
     return this;
   }
@@ -126,6 +178,10 @@ public class ColliderComponent extends Component {
       fixture.setSensor(isSensor);
     }
     return this;
+  }
+
+  public boolean getIsSensor() {
+    return fixtureDef.isSensor;
   }
 
   /**

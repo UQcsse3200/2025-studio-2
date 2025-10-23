@@ -7,10 +7,12 @@ import java.nio.file.Paths;
 public class PackDroneAtlas {
 	public static void main(String[] args) {
 		Path root = Paths.get("").toAbsolutePath();
+		System.out.println("Working dir = " + root);
 
-		String inputDir  = root.resolve("core/assets/commodore64/raw/drone").toString(); //newest png pack
+
+		String inputDir  = root.resolve("core/assets/commodore64/raw/drone_chaser").toString(); //newest png pack
 		String outputDir = root.resolve("core/assets/images").toString();
-		String packName  = "drone";
+		String packName  = "drone_scout";
 
 		TexturePacker.Settings s = new TexturePacker.Settings();
 		// Automatically crop transparent edges
@@ -24,8 +26,10 @@ public class PackDroneAtlas {
 		s.paddingY         = 2;
 		s.maxWidth         = 2048;
 		s.maxHeight        = 2048;
+		s.stripWhitespaceX = false;
+		s.stripWhitespaceY = false;
 		s.flattenPaths     = true; // Ignore subdirectory names and write them all to atlas
-
+		s.scale = new float[]{0.5f}; // scale to 1/2
 		// repack
 		// TexturePacker.processIfModified(s, inputDir, outputDir, packName);
 		TexturePacker.process(s, inputDir, outputDir, packName);

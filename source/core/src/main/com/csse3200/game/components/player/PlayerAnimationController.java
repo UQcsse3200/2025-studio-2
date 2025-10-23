@@ -1,17 +1,20 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.Game;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.services.GameTime;
-import com.csse3200.game.components.Component;
-import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.badlogic.gdx.utils.Timer;
+import com.csse3200.game.components.Component;
+import com.csse3200.game.files.UserSettings;
+import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.services.GameTime;
+import com.csse3200.game.services.ServiceLocator;
 
 
 public class PlayerAnimationController extends Component {
     AnimationRenderComponent animator;
     PlayerActions actions;
     private GameTime timer = new GameTime();
+    private PlayerActions playerActions;
 
     // ChatGPT Basic model helped with testing the timer 17/09/25
     public java.util.function.BiConsumer<Runnable, Float> scheduleTask = (runnable, delay) -> Timer.schedule(new Timer.Task() {
@@ -25,9 +28,15 @@ public class PlayerAnimationController extends Component {
 
     private int xDirection = 1;
     private long hurtTime = -1000;
-    private float hurtDelay = 0.5f;
+    private float hurtDelay = 0.3f;
     private float dashDelay = 0.3f;
     private float jumpDelay = 0.8f;
+    private float deathDelay = 5.0f;
+
+    public PlayerAnimationController(PlayerActions playerActions) {
+        super();
+        this.playerActions = playerActions;
+    }
 
     @Override
     public void create() {
@@ -37,10 +46,10 @@ public class PlayerAnimationController extends Component {
         entity.getEvents().addListener("jump", this::animateJump);
         entity.getEvents().addListener("walk", this::animateWalk);
         entity.getEvents().addListener("crouch", this::animateCrouching);
-        entity.getEvents().addListener("landed", this::animateStop);
         entity.getEvents().addListener("walkStop", this::animateStop);
         entity.getEvents().addListener("dash", this::animateDash);
         entity.getEvents().addListener("hurt", this::animateHurt);
+        entity.getEvents().addListener("playerDied", this::animateDeath);
     }
 
     public void setAnimator(AnimationRenderComponent animator) {
@@ -78,12 +87,12 @@ public class PlayerAnimationController extends Component {
             setAnimation("JUMP");
 
             // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLE"), jumpDelay);
+            scheduleTask.accept(this::revertAnimation, jumpDelay);
         } else if (xDirection == -1) {
             setAnimation("JUMPLEFT");
 
             // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLELEFT"), jumpDelay);
+            scheduleTask.accept(this::revertAnimation, jumpDelay);
         }
 
     }
@@ -131,7 +140,45 @@ public class PlayerAnimationController extends Component {
     /**
      * setAnimation: to avoid repeated startup of the same animations
      */
+    public void revertAnimation() {
+        if (currentAnimation.equals("DEATH")) {
+            return;
+        }
+        String animationName;
+        boolean stationary = playerActions.getWalkDirection().equals(Vector2.Zero.cpy());
+
+        if (xDirection == 1) { // Facing Right
+            if (actions.getIsCrouching()) {
+                animationName = "CROUCH";
+            } else if (stationary) {
+                animationName = "IDLE";
+            } else {
+                animationName = "RIGHT";
+            }
+        } else { // Facing Left
+            if (actions.getIsCrouching()) {
+                animationName = "CROUCHLEFT";
+            } else if (stationary) {
+                animationName = "IDLELEFT";
+            } else {
+                animationName = "LEFT";
+            }
+        }
+
+        // Don't cancel hurt animation
+        if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
+            animator.startAnimation(animationName);
+            currentAnimation = animationName;
+        }
+    }
+
+    /**
+     * setAnimation: to avoid repeated startup of the same animations
+     */
     public void setAnimation(String animationName) {
+        if (currentAnimation.equals("DEATH") && !animationName.equals("SMOKE")) {
+            return;
+        }
         // Don't cancel hurt animation
         if (timer.getTimeSince(hurtTime) > hurtDelay * 900) {
             animator.startAnimation(animationName);
@@ -143,14 +190,16 @@ public class PlayerAnimationController extends Component {
      * starts the player's dash animation
      */
     public void animateDash() {
-        if (xDirection == 1) {
-            setAnimation("DASH");
-            // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLE"), dashDelay);
-        } else {
-            setAnimation("DASHLEFT");
-            // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLELEFT"), hurtDelay);
+        if (!playerActions.getIsCrouching()) {
+            if (xDirection == 1) {
+                setAnimation("DASH");
+                // After delay stop the dash animation - ChatGPT basic helped with this code 17/09/25
+                scheduleTask.accept(this::revertAnimation, dashDelay);
+            } else {
+                setAnimation("DASHLEFT");
+                // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
+                scheduleTask.accept(this::revertAnimation, hurtDelay);
+            }
         }
     }
 
@@ -158,16 +207,41 @@ public class PlayerAnimationController extends Component {
      * starts the player's hurt animation
      */
     public void animateHurt() {
+        Sound damageSound = ServiceLocator.getResourceService().getAsset(
+                "sounds/damagesound.mp3", Sound.class);
+        damageSound.play(UserSettings.get().masterVolume);
+
         if (xDirection == 1) {
             setAnimation("HURT");
             // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLE"), hurtDelay);
+            scheduleTask.accept(this::revertAnimation, hurtDelay);
         } else {
             setAnimation("HURTLEFT");
             // After delay stop the hurt animation - ChatGPT basic helped with this code 17/09/25
-            scheduleTask.accept(() -> setAnimation("IDLELEFT"), hurtDelay);
+            scheduleTask.accept(this::revertAnimation, hurtDelay);
         }
         hurtTime = timer.getTime();
 
+    }
+
+    /**
+     * starts the player's death animation
+     */
+    public void animateDeath() {
+        setAnimation("DEATH");
+
+        scheduleTask.accept(this::animateSmoke, deathDelay);
+
+    }
+
+    /**
+     * starts the smoke animation
+     */
+    public void animateSmoke() {
+        setAnimation("SMOKE");
+    }
+
+    public void setXDirection(int i) {
+        xDirection = i;
     }
 }

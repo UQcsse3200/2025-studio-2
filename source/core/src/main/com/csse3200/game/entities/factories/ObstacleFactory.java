@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.csse3200.game.components.obstacles.DoorComponent;
+import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsUtils;
@@ -13,7 +15,6 @@ import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
-import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -60,8 +61,7 @@ public class ObstacleFactory {
      * @param keyId the unique key identifier that can unlock this door
      * @return a new door entity bound to {@code keyId}, in the locked state
      */
-  public static Entity createDoor (String keyId, GameArea area) {
-
+    public static Entity createDoor(String keyId, GameArea area, String targetArea, boolean isStatic) {
     Entity door = new Entity();
 
     AnimationRenderComponent animator = new AnimationRenderComponent(
@@ -75,18 +75,24 @@ public class ObstacleFactory {
     animator.addAnimation("door_closing", 0.1f, Animation.PlayMode.NORMAL);
 
     door.addComponent(animator);
-    door.addComponent(new DoorComponent(keyId, area));
+    door.addComponent(new DoorComponent(keyId, area, isStatic, targetArea));
 
     // Physics components
     door.addComponent(new PhysicsComponent());
     door.addComponent(new ColliderComponent());
     door.addComponent(new HitboxComponent().setLayer(PhysicsLayer.OBSTACLE));
+    door.addComponent(new MinimapComponent("images/door_open-map.png"));
 
     // Make sure door starts in closed state
     door.getComponent(PhysicsComponent.class).getBody().setType(BodyDef.BodyType.StaticBody);
 
     return door;
   }
+
+    @Deprecated
+    public static Entity createDoor(String keyId, GameArea area) {
+        return createDoor(keyId, area, "", false);
+    }
 
   private ObstacleFactory() {
     throw new IllegalStateException("Instantiating static util class");

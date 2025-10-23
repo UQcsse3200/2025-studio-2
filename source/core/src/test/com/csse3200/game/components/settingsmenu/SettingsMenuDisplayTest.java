@@ -1,8 +1,5 @@
 package com.csse3200.game.components.settingsmenu;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Graphics.DisplayMode;
@@ -27,6 +24,9 @@ import org.mockito.MockedStatic;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class SettingsMenuDisplayTest {

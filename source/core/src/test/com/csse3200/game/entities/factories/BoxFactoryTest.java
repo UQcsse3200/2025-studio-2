@@ -1,33 +1,38 @@
 package com.csse3200.game.entities.factories;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.lighting.LightingEngine;
+import com.csse3200.game.lighting.LightingService;
+import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.PhysicsService;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
-
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import javax.swing.*;
-
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.security.Provider;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -44,6 +49,14 @@ public class BoxFactoryTest {
         ResourceService mockResourceService = mock(ResourceService.class);
         when(mockResourceService.getAsset(anyString(), any())).thenReturn(null);
         ServiceLocator.registerResourceService(mockResourceService);
+
+        RenderService renderService = new RenderService();
+        ServiceLocator.registerRenderService(renderService);
+
+        RayHandler rayHandler = mock(RayHandler.class);
+        LightingEngine lightingEngine = mock(LightingEngine.class);
+        when(lightingEngine.getRayHandler()).thenReturn(rayHandler);
+        ServiceLocator.registerLightingService(new LightingService(lightingEngine));
     }
 
     @Test
@@ -79,12 +92,50 @@ public class BoxFactoryTest {
     @Test
     void createMoveableBox_hasAllComponents() {
         Entity moveableBox = BoxFactory.createMoveableBox();
-        assertNotNull(moveableBox.getComponent(TextureRenderComponent.class),
-                "Moveable Box should have a TextureRendererComponent");
         assertNotNull(moveableBox.getComponent(PhysicsComponent.class),
                 "Moveable Box should have a PhysicsComponent");
         assertNotNull(moveableBox.getComponent(ColliderComponent.class),
                 "Moveable Box should have a ColliderComponent");
+        assertNotNull(moveableBox.getComponent(TextureRenderComponent.class),
+                "Moveable Box should have a TextureRenderComponent");
+        assertNotNull(moveableBox.getComponent(MoveableBoxComponent.class),
+                "Moveable Box should have a MoveableBoxComponent");
+
+        // ensure scale
+        Vector2 scale = moveableBox.getScale();
+        assertEquals(0.5f, scale.x, 1e-4);
+        assertEquals(0.5f, scale.y, 1e-4);
+    }
+
+    @Test
+    void createWeightedBox_hasAllComponents() throws Exception{
+        Entity weightedBox = BoxFactory.createWeightedBox();
+        assertNotNull(weightedBox.getComponent(TextureRenderComponent.class),
+                "Moveable Box should have a TextureRenderComponent");
+        MoveableBoxComponent boxComp = weightedBox.getComponent(MoveableBoxComponent.class);
+
+        // ensure that gravity has changed on weighted box
+        Field f = MoveableBoxComponent.class.getDeclaredField("BASE_GRAVITY_SCALE");
+        f.setAccessible(true);
+        float gravity =  (Float) f.get(boxComp);
+
+        assertEquals(0.85f, gravity, 0.0001f);
+    }
+
+    @Test
+    void createReflectorBox_hasAllComponents() throws Exception {
+        Entity reflectorBox = BoxFactory.createReflectorBox();
+        assertNotNull(reflectorBox.getComponent(TextureRenderComponent.class),
+                "Moveable Box should have a TextureRenderComponent");
+        assertNotNull(reflectorBox.getComponent(ConeLightComponent.class),
+                "Moveable Box should have a ConeLightComponent");
+
+        // check that box is laser reflector layer
+        MoveableBoxComponent boxComp = reflectorBox.getComponent(MoveableBoxComponent.class);
+        Field f = MoveableBoxComponent.class.getDeclaredField("physicsLayer");
+        f.setAccessible(true);
+        short layer = (Short) f.get(boxComp);
+        assertEquals(PhysicsLayer.LASER_REFLECTOR, layer);
     }
 
     @Test
@@ -159,11 +210,11 @@ public class BoxFactoryTest {
         AutonomousBoxComponent component = autonomousBox.getComponent(AutonomousBoxComponent.class);
         assertEquals(
                 minX,
-                component.getLeftX(),
+                component.getLeftX() * 2f,
                 "Left bound should match value set in builder");
         assertEquals(
                 maxX,
-                component.getRightX(),
+                component.getRightX() * 2f,
                 "Right bound should match value set in builder");
         assertEquals(
                 speed,

@@ -1,18 +1,16 @@
 package com.csse3200.game.services;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.csse3200.game.components.minimap.MinimapDisplay;
 import com.csse3200.game.entities.Entity;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Service to hold the state of tracked entities for the minimap.
@@ -60,6 +58,16 @@ public class MinimapService implements Disposable {
     return textureBottomLeft.cpy();
   }
 
+  public float getPixelsPerWorldUnitX() {
+    float worldWidth = textureTopRight.x - textureBottomLeft.x;
+    return minimapTexture.getWidth() / worldWidth;
+  }
+
+  public float getPixelsPerWorldUnitY() {
+    float worldHeight = textureTopRight.y - textureBottomLeft.y;
+    return minimapTexture.getHeight() / worldHeight;
+  }
+
   /**
    * Sets the minimap display (to which entities are added).
    */
@@ -83,10 +91,10 @@ public class MinimapService implements Disposable {
    * @param marker The image to use for the entity's marker.
    */
   public void trackEntity(Entity entity, Image marker) {
-    if (!trackedEntities.containsKey(entity)) {
-      trackedEntities.put(entity, marker);
+    trackedEntities.computeIfAbsent(entity, e -> {
       minimapDisplay.addMarker(marker);
-    }
+      return marker;
+    });
   }
 
   /**

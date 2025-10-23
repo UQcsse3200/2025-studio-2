@@ -2,26 +2,34 @@ package com.csse3200.game.components.pausemenu;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.minimap.MinimapDisplay;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.inventory.InventoryNavigationComponent;
 import com.csse3200.game.components.player.KeyboardPlayerInputComponent;
+import com.csse3200.game.components.player.LeaderboardEntryDisplay;
+import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.GdxGame;
+import com.csse3200.game.files.FileLoader;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.PauseMenuNavigationComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
-import com.csse3200.game.ui.inventoryscreen.InventoryTab;
-import com.csse3200.game.ui.inventoryscreen.ObjectivesTab;
-import com.csse3200.game.ui.inventoryscreen.SettingsTab;
-import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
+import com.csse3200.game.ui.inventoryscreen.*;
 
 public class PauseMenuDisplay extends UIComponent {
     private final MainGameScreen screen;
@@ -34,10 +42,12 @@ public class PauseMenuDisplay extends UIComponent {
     private final UpgradesTab upgradesTab;
     private final SettingsTab settingsTab = new SettingsTab();
     private final ObjectivesTab objectivesTab;
+    private final CodexTab codexTab;
     private InventoryNavigationComponent navigationComponent;
     private PauseMenuNavigationComponent pauseMenuNavigationComponent;
+    private Sound buttonClickSound;
 
-    public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES}
+    public enum Tab {INVENTORY, UPGRADES, SETTINGS, OBJECTIVES, CODEX}
     private Tab currentTab = Tab.INVENTORY;
 
     public PauseMenuDisplay(MainGameScreen screen, GdxGame game) {
@@ -46,12 +56,24 @@ public class PauseMenuDisplay extends UIComponent {
         this.inventoryTab = new InventoryTab(screen);
         this.upgradesTab = new UpgradesTab(screen);
         this.objectivesTab = new ObjectivesTab(screen);
+        this.codexTab = new CodexTab(this);
         this.game = game;
+    }
+
+
+    /**
+     * @return the current stage in use
+     */
+    public Stage getStage() {
+        return stage;
     }
 
     @Override
     public void create() {
         super.create();
+
+        buttonClickSound = ServiceLocator.getResourceService()
+                .getAsset("sounds/buttonsound.mp3", Sound.class);
 
         // Initialize the inventory navigation component
         navigationComponent = new InventoryNavigationComponent(inventoryTab);
@@ -94,9 +116,17 @@ public class PauseMenuDisplay extends UIComponent {
         bottomButtons = new Table();
         bottomButtons.bottom().padBottom(10);
         addBottomButton("Settings", Tab.SETTINGS);
-        addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
-        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        addBottomButton("Exit to Desktop", () -> {
+            StatsTracker.endSession();
+            Gdx.app.exit();
+        });
+        addBottomButton("Exit to Main Menu", () -> {
+            StatsTracker.endSession();
+            game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+        });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Save level", () ->
+                GdxGame.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.SAVE_PATH, FileLoader.Location.EXTERNAL));
         stack.add(bottomButtons);
 
         rootTable.add(stack).expand().fill();
@@ -107,21 +137,29 @@ public class PauseMenuDisplay extends UIComponent {
 
     // Bottom button helper
     private void addBottomButton(String name, Runnable action) {
-        TextButton button = new TextButton(name, skin);
+        TextButton button = new TextButton(name, skin, "settingsMenu");
+        button.setTransform(true);
+        button.setOrigin(Align.center);
+        HoverEffectHelper.applyHoverEffects(java.util.Collections.singletonList(button));
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 action.run();
             }
         });
         bottomButtons.add(button).padRight(25);
     }
-
+    //bottom button helper for Codex Button
     private void addBottomButton(String name, Tab tab) {
-        TextButton button = new TextButton(name, skin);
+        TextButton button = new TextButton(name, skin, "settingsMenu");
+        button.setTransform(true);
+        button.setOrigin(Align.center);
+        HoverEffectHelper.applyHoverEffects(java.util.Collections.singletonList(button));
         button.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 setTab(tab);
                 screen.reflectPauseTabClick(tab);
             }
@@ -150,8 +188,8 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> Tab.UPGRADES;
             case UPGRADES -> Tab.OBJECTIVES;
             case OBJECTIVES -> Tab.INVENTORY;
-            //case SETTINGS -> Tab.SETTINGS;
-            default -> Tab.SETTINGS;
+            case SETTINGS -> Tab.SETTINGS;
+            case CODEX -> Tab.CODEX;
         };
     }
 
@@ -160,8 +198,8 @@ public class PauseMenuDisplay extends UIComponent {
             case INVENTORY -> Tab.OBJECTIVES;
             case UPGRADES -> Tab.INVENTORY;
             case OBJECTIVES -> Tab.UPGRADES;
-            //case SETTINGS -> Tab.SETTINGS;
-            default -> Tab.SETTINGS;
+            case SETTINGS -> Tab.SETTINGS;
+            case CODEX -> Tab.CODEX;
         };
     }
 
@@ -177,6 +215,7 @@ public class PauseMenuDisplay extends UIComponent {
             case UPGRADES -> upgradesTab.build(skin);
             case OBJECTIVES -> objectivesTab.build(skin);
             case SETTINGS -> settingsTab.build(skin);
+            case CODEX -> codexTab.build(skin);
         };
         // Ensure the returned actor from build() fills the tab content area.
         tabContent.add(ui).expand().fill();
@@ -185,36 +224,51 @@ public class PauseMenuDisplay extends UIComponent {
         if (currentTab != Tab.SETTINGS) {
             addBottomButton("Settings", Tab.SETTINGS);
         }
-        addBottomButton("Exit to Desktop", () -> Gdx.app.exit());
-        addBottomButton("Exit to Main Menu", () -> game.setScreen(GdxGame.ScreenType.MAIN_MENU));
+        if (currentTab != Tab.CODEX) {
+            addBottomButton("Codex", Tab.CODEX);
+        }
+        addBottomButton("Exit to Desktop", () -> {
+            StatsTracker.endSession();
+            Gdx.app.exit();
+        });
+        addBottomButton("Exit to Main Menu", () -> {
+            StatsTracker.endSession();
+            game.setScreen(GdxGame.ScreenType.MAIN_MENU);
+        });
         addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Save level", () ->
+                GdxGame.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.SAVE_PATH, FileLoader.Location.EXTERNAL));
     }
 
     public void setVisible(boolean visible) {
         rootTable.setVisible(visible);
-
+        boolean shouldShowHud = !visible && !LeaderboardEntryDisplay.UIOverlayManager.isOverlayActive();
         Actor minimapActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("minimap");
         if (minimapActor != null && minimapActor.getUserObject() != null && (minimapActor.getUserObject() instanceof MinimapDisplay minimapDisplay)) {
-            minimapDisplay.setVisible(!visible);
+            minimapDisplay.setVisible(shouldShowHud);
         }
         Actor healthActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("health");
         if (healthActor != null) {
-            healthActor.setVisible(!visible);
+            healthActor.setVisible(shouldShowHud);
         }
         Actor staminaActor  = ServiceLocator.getRenderService().getStage().getRoot().findActor("stamina");
         if (healthActor != null) {
-          staminaActor.setVisible(!visible);
+          staminaActor.setVisible(shouldShowHud);
         }
         Actor exitActor =  ServiceLocator.getRenderService().getStage().getRoot().findActor("exit");
         if (exitActor != null) {
-            exitActor.setVisible(!visible);
+            exitActor.setVisible(shouldShowHud);
         }
         Actor titleActor = ServiceLocator.getRenderService().getStage().getRoot().findActor("title");
         if (titleActor != null) {
-            titleActor.setVisible(!visible);
+            titleActor.setVisible(shouldShowHud);
         }
 
         Entity player = screen.getGameArea().getPlayer();
+        updateInputState(visible, player);
+    }
+
+    private void updateInputState(boolean visible, Entity player){
         if (visible) {
             rootTable.toFront();
             player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);
@@ -255,7 +309,9 @@ public class PauseMenuDisplay extends UIComponent {
     }
 
     @Override
-    protected void draw(SpriteBatch batch) {}
+    protected void draw(SpriteBatch batch) {
+        // Handled by the component
+    }
 
     @Override
     public void dispose() {

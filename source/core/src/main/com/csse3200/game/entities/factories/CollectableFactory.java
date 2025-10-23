@@ -4,10 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.csse3200.game.components.collectables.CollectableComponentV2;
-import com.csse3200.game.components.collectables.KeyComponent;
-import com.csse3200.game.components.collectables.ObjectivesComponent;
-import com.csse3200.game.components.collectables.UpgradesComponent;
+import com.csse3200.game.components.collectables.*;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
@@ -21,11 +18,15 @@ import com.csse3200.game.services.CollectableService;
 import com.csse3200.game.services.ServiceLocator;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Factory for creating collectable entities (e.g., keys, coins, potions).
  */
 public class CollectableFactory {
+    private CollectableFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     private static Map<String, CollectablesConfig> cfgs;
 
@@ -37,7 +38,7 @@ public class CollectableFactory {
      * <ul>
      *   <li>A static {@link PhysicsComponent} and {@link ColliderComponent} configured
      *       as a sensor obstacle.</li>
-     *   <li>A {@link CollectableComponentV2} to handle collisions and inventory logic.</li>
+     *   <li>A {@link CollectableComponent} to handle collisions and inventory logic.</li>
      *   <li>Visual representation from either an animated {@link AnimationRenderComponent}
      *       if a sprite atlas is provided, or a {@link TextureRenderComponent} for static
      *       images.</li>
@@ -57,7 +58,7 @@ public class CollectableFactory {
         Entity e = new Entity()
                 .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
                 .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new CollectableComponentV2(itemId));
+                .addComponent(new CollectableComponent(itemId, cfg.sfx));
 
         // add sprites and animations
 
@@ -69,138 +70,61 @@ public class CollectableFactory {
             e.addComponent(anim);
         } else {
             e.addComponent(new TextureRenderComponent(
-                    (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png"));
-            // change scale of non potion collectables
-            e.setScale(0.5f, 0.5f);
-            PhysicsUtils.setScaledCollider(e, 0.5f, 0.5f);
+                    (cfg.sprite != null && !cfg.sprite.isEmpty()) ? cfg.sprite : "images/missing.png")
+            );
+            float sx = cfg.scale != null ? cfg.scale.get(0) : 0.5f;
+            float sy = cfg.scale != null ? cfg.scale.get(1) : 0.5f;
+            e.setScale(sx, sy);
+            PhysicsUtils.setScaledCollider(e, sx, sy);
         }
 
-        // backlight because it looks cool (thanks tristyn)
         // set color based on glowColor in item config
-        Color color = new Color();
-        if (cfg.glowColor != null && !cfg.glowColor.isEmpty()) {
-            color.set(cfg.glowColor.get(0) / 255f, cfg.glowColor.get(1) / 255f, cfg.glowColor.get(2) / 255f, 0.6f);
-        } else {
-            color.set(1f, 1f, 230f/255f, 0.6f);
+
+        if (!Objects.equals(cfg.sprite, "images/missing.png")) {
+            ConeLightComponent cone = getConeLightComponent(cfg);
+            e.addComponent(cone);
         }
-        ConeLightComponent cone = new ConeLightComponent(
-                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+        return e;
+    }
+
+    /**
+     * Creates a {@link ConeLightComponent} for a collectable based on its configuration.
+     * <p>
+     * If the {@link CollectablesConfig#glowColor} is defined, the light color is set
+     * using the provided RGB values (scaled to [0,1]) with a fixed alpha of 0.6.
+     * If no glow color is provided, a default soft yellowish light is used.
+     * </p>
+     *
+     * @param cfg the collectable configuration containing optional glow color settings
+     * @return a configured {@link ConeLightComponent} with radius, direction, and cone angle preset
+     */
+    private static ConeLightComponent getConeLightComponent(CollectablesConfig cfg) {
+        Color color = new Color();
+
+        if (cfg.glowColor != null && !cfg.glowColor.isEmpty()) {
+            color.set(
+                    cfg.glowColor.get(0) / 255f,
+                    cfg.glowColor.get(1) / 255f,
+                    cfg.glowColor.get(2) / 255f,
+                    0.6f
+            );
+        } else {
+            color.set(
+                    1f,
+                    1f,
+                    230f/255f,
+                    0.6f);
+        }
+        return new ConeLightComponent(
+                ServiceLocator
+                        .getLightingService()
+                        .getEngine()
+                        .getRayHandler(),
                 128,
                 color,
                 1.5f,
                 0f,
                 180f
         );
-        e.addComponent(cone);
-
-        return e;
     }
-
-    /**
-     * Builds a collectable key for {@code target}.
-     *
-     * @return a new key entity
-     * @see KeyComponent
-     */
-    public static Entity createKey(String target) {
-        Entity key = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/key.png"))
-                .addComponent(new KeyComponent(target));
-
-        key.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(key, 0.5f, 0.5f);
-
-        return key;
-    }
-
-    /**
-     * Builds a collectable upgrade that enable the dash ability
-     * @return a new upgrade entity
-     * @see UpgradesComponent
-     */
-    public static Entity createDashUpgrade() {
-        Entity dash = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/dash_powerup.png"))
-                .addComponent(new UpgradesComponent("dash"));
-
-        dash.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(dash, 0.5f, 0.5f);
-
-        return dash;
-    }
-
-    /**
-     * Build a new collectable glider upgrade that enables the glide ability
-     *
-     * @return a new upgrade entity
-     * @see UpgradesComponent
-     */
-    public static Entity createGlideUpgrade() {
-        Entity glide = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
-                .addComponent(new UpgradesComponent("glider"));
-
-        glide.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(glide, 0.5f, 0.5f);
-
-        return glide;
-    }
-
-    /**
-     * Builds a new collectable grappler upgrade that enables the grapple ability
-     *
-     * @return a new upgrade entity
-     * @see UpgradesComponent
-     */
-    public static Entity createJetpackUpgrade() {
-        Entity jetpack = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent().setLayer(PhysicsLayer.COLLECTABLE).setSensor(true))
-                .addComponent(new TextureRenderComponent("images/glide_powerup.png"))
-                .addComponent(new UpgradesComponent("jetpack"));
-
-        jetpack.setScale(0.5f, 0.5f);
-        PhysicsUtils.setScaledCollider(jetpack, 0.5f, 0.5f);
-
-        return jetpack;
-    }
-
-    /**
-     * Creates an invisible objective pickup with a large sensor collider.
-     * Default footprint is 2x2 world units (might tweak)
-     *
-     * @param objectiveId id routed through switch in ObjectiveCollectableComponent (e.g., "obj:plans")
-     */
-    public static Entity createObjective(String objectiveId) {
-        return createObjective(objectiveId, 2f, 2f);
-    }
-
-    /**
-     * Creates an invisible objective pickup with a custom sensor size (world units).
-     *
-     * @param objectiveId id routed through switch in ObjectiveCollectableComponent
-     * @param width collider width in world units
-     * @param height collider height in world units
-     */
-    public static Entity createObjective(String objectiveId, float width, float height) {
-        Entity obj = new Entity()
-                .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody))
-                .addComponent(new ColliderComponent()
-                        .setLayer(PhysicsLayer.COLLECTABLE)
-                        .setSensor(true)) // not blocking, overlap only
-                .addComponent(new ObjectivesComponent(objectiveId));
-
-        // Size the sensor using the same pattern as your other collectables
-        obj.setScale(width, height);
-        PhysicsUtils.setScaledCollider(obj, width, height);
-
-        return obj;
-    }
-
 }

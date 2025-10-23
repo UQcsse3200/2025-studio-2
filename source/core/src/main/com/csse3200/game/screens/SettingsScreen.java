@@ -1,6 +1,7 @@
 package com.csse3200.game.screens;
 
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.csse3200.game.GdxGame;
 import com.csse3200.game.components.FPSDisplay;
@@ -8,6 +9,7 @@ import com.csse3200.game.components.settingsmenu.SettingsMenuDisplay;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.RenderFactory;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.InputDecorator;
 import com.csse3200.game.input.InputService;
 import com.csse3200.game.input.SettingsInputComponent;
@@ -16,6 +18,7 @@ import com.csse3200.game.rendering.Renderer;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
+import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +27,9 @@ public class SettingsScreen extends ScreenAdapter {
   private static final Logger logger = LoggerFactory.getLogger(SettingsScreen.class);
   private final String[] settingsMenuTextures = {
       "images/superintelligence_menu_background.png"};
+
+  private static final String BACKGROUND_MUSIC = "sounds/CircuitGoodness.mp3";
+  private static final String[] musics = {BACKGROUND_MUSIC};
 
   private final GdxGame game;
   private final Renderer renderer;
@@ -37,6 +43,7 @@ public class SettingsScreen extends ScreenAdapter {
     ServiceLocator.registerEntityService(new EntityService());
     ServiceLocator.registerRenderService(new RenderService());
     ServiceLocator.registerTimeSource(new GameTime());
+    TerminalService.register();
 
     renderer = RenderFactory.createRenderer();
     renderer.getCamera().getEntity().setPosition(5f, 5f);
@@ -44,6 +51,15 @@ public class SettingsScreen extends ScreenAdapter {
     loadAssets();
 
     createUI();
+
+    playMusic();
+  }
+
+  private void playMusic() {
+    Music music = ServiceLocator.getResourceService().getAsset(BACKGROUND_MUSIC, Music.class);
+    music.setLooping(true);
+    music.setVolume(UserSettings.getMusicVolumeNormalized());
+    music.play();
   }
 
   @Override
@@ -71,6 +87,10 @@ public class SettingsScreen extends ScreenAdapter {
     logger.debug("Loading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.loadTextures(settingsMenuTextures);
+    resourceService.loadSounds(new String[] {
+            "sounds/buttonsound.mp3"
+    });
+    resourceService.loadMusic(musics);
     ServiceLocator.getResourceService().loadAll();
   }
 
@@ -78,6 +98,7 @@ public class SettingsScreen extends ScreenAdapter {
     logger.debug("Unloading assets");
     ResourceService resourceService = ServiceLocator.getResourceService();
     resourceService.unloadAssets(settingsMenuTextures);
+    resourceService.unloadAssets(musics);
   }
 
   /**

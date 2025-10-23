@@ -121,7 +121,10 @@ public class BombPatrolTask extends DefaultTask implements PriorityTask {
         return currentTask == movementTask;
     }
 
-    /** Get the current index pointing to a waypoint. */
+    /**
+     * Get the current index pointing to a waypoint.
+     * @return int current index
+     */
     public int getIndex() {
         return i;
     }

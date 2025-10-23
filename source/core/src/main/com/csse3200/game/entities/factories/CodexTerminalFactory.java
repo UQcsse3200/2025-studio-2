@@ -1,0 +1,75 @@
+package com.csse3200.game.entities.factories;
+
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.csse3200.game.components.CodexTerminalComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.tooltip.TooltipSystem;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.physics.PhysicsLayer;
+import com.csse3200.game.physics.PhysicsUtils;
+import com.csse3200.game.physics.components.ColliderComponent;
+import com.csse3200.game.physics.components.PhysicsComponent;
+import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.services.CodexEntry;
+import com.csse3200.game.services.ServiceLocator;
+
+/**
+ * Factory class for spawning terminals used to unlock codex entries.
+ */
+public class CodexTerminalFactory {
+    /**
+     * Constructor method should always invoke exception - class is practically static.
+     */
+    private CodexTerminalFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
+
+    /**
+     * Creates a new terminal entity with all necessary components attached.
+     * @param codexEntry Reference to the codex entry the terminal stores.
+     * @return The terminal entity created.
+     */
+    public static Entity createTerminal(CodexEntry codexEntry) {
+        Entity terminal = new Entity();
+
+        // Add texture
+        terminal.addComponent(new TextureRenderComponent("images/terminal_on.png").setLayer(0));
+        // Add physics
+        terminal.addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.StaticBody));
+        // Add collider
+        ColliderComponent collider = new ColliderComponent();
+        collider.setLayer(PhysicsLayer.OBSTACLE);
+        collider.setSensor(true);
+        terminal.addComponent(collider);
+
+        if (codexEntry != null) {
+            // Add terminal-specific component
+            terminal.addComponent(new CodexTerminalComponent(codexEntry));
+
+            // Add tooltip
+            terminal.addComponent(new TooltipSystem.TooltipComponent(
+                    "Interact to add '" + codexEntry.getTitle() + "' to codex",
+                    TooltipSystem.TooltipStyle.DEFAULT)
+            );
+        }
+
+        terminal.setScale(0.5f, 0.5f);
+        PhysicsUtils.setScaledCollider(terminal, 3.0f, 3.0f);
+
+        // Enable lighting effect
+        Color coneColor = new Color(0f, 1f, 0f, 0.6f);
+        ConeLightComponent cone = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                128,
+                coneColor,
+                1.5f,
+                0f,
+                180f
+        );
+        terminal.addComponent(cone);
+
+
+        return terminal;
+    }
+}

@@ -1,24 +1,27 @@
-package com.csse3200.game.entities.factories;
+ package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.AutonomousBoxComponent;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.MoveableBoxComponent;
 import com.csse3200.game.components.TouchAttackComponent;
+import com.csse3200.game.components.lighting.ConeLightComponent;
+import com.csse3200.game.components.minimap.MinimapComponent;
+import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.HitboxComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
+import com.csse3200.game.rendering.RenderService;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
-
-import java.security.Provider;
 
 /**
  * Factory class for creating box entities in the game.
@@ -71,8 +74,9 @@ public class BoxFactory {
      * @return A new moveable box Entity
      */
     public static Entity createMoveableBox() {
+        RenderService rs = ServiceLocator.getRenderService();
+        Camera camera = rs.getRenderer() == null ? null : rs.getRenderer().getCamera().getCamera();
         Entity moveableBox = new Entity()
-                .addComponent(new TextureRenderComponent("images/box_blue.png"))
                 .addComponent(new PhysicsComponent()
                         .setBodyType(BodyDef.BodyType.DynamicBody))
                 .addComponent(new ColliderComponent()
@@ -80,10 +84,48 @@ public class BoxFactory {
                         .setDensity(1f)
                         .setRestitution(0.1f)
                         .setFriction(0.8f))
-                .addComponent(new MoveableBoxComponent());
+                .addComponent(new MoveableBoxComponent().setCamera(camera))
+                .addComponent(new TextureRenderComponent("images/cube.png"));
 
         moveableBox.setScale(0.5f, 0.5f);
         return moveableBox;
+    }
+
+    /**
+     * Creates a dynamic box which has a stronger gravity and can press down pressure plates
+     *
+     * @return a new moveable weighted box entity
+     */
+    public static Entity createWeightedBox() {
+        Entity weightedBox = createMoveableBox();
+        weightedBox.getComponent(TextureRenderComponent.class).setTexture("images/heavy-cube.png");
+        weightedBox.getComponent(MoveableBoxComponent.class).setBaseGravityScale(0.85f);
+
+        return weightedBox;
+    }
+
+    /**
+     * Creates a dynamic box which has the ability to reflect laser beams.
+     *
+     * @return a new moveable reflector box
+     */
+    public static Entity createReflectorBox() {
+        Entity reflectorBox = createMoveableBox();
+
+        reflectorBox.getComponent(TextureRenderComponent.class).setTexture("images/mirror-cube-off.png");
+        ConeLightComponent light = new ConeLightComponent(
+                ServiceLocator.getLightingService().getEngine().getRayHandler(),
+                LightingDefaults.RAYS,
+                Color.RED,
+                1f,
+                0f,
+                180f
+        ).setFollowEntity(false);
+        reflectorBox.addComponent(light);
+
+        reflectorBox.getComponent(MoveableBoxComponent.class).setPhysicsLayer(PhysicsLayer.LASER_REFLECTOR);
+
+        return reflectorBox;
     }
 
     /**
@@ -132,8 +174,8 @@ public class BoxFactory {
          * @return the builder for chaining the horizontal movement bounds
          */
         public AutonomousBoxBuilder moveX(float minX, float maxX) {
-            this.minMoveX = minX;
-            this.maxMoveX = maxX;
+            this.minMoveX = minX / 2f;
+            this.maxMoveX = maxX / 2f;
             this.spawnX = (minX + maxX) / 2f;
             return this;
         }
@@ -147,8 +189,8 @@ public class BoxFactory {
          * @return the builder for chaining the vertical movement bounds
          */
         public AutonomousBoxBuilder moveY(float minY, float maxY) {
-            this.minMoveY = minY;
-            this.maxMoveY = maxY;
+            this.minMoveY = minY / 2f;
+            this.maxMoveY = maxY / 2f;
             this.spawnY = (minY + maxY) / 2f;
             return this;
         }
@@ -248,23 +290,35 @@ public class BoxFactory {
          */
         public Entity build() {
             Entity autonomousBox = new Entity();
-                    if (texturePath.endsWith(".atlas")) {
-                        TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
-                        AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
-                        animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
-                        animator.startAnimation("flying_bat");
-                        autonomousBox.addComponent(animator);
-                    } else {
-                        autonomousBox.addComponent(new TextureRenderComponent(texturePath));
-                    }
+            if (texturePath.endsWith(".atlas")) {
+                TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
+                AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
+                animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
+                animator.startAnimation("flying_bat");
+                autonomousBox.addComponent(animator);
+                if (texturePath.contains("flying_bat")) {
+                    boolean isBat = texturePath.endsWith(".atlas") && texturePath.contains("flying_bat");
+                    float mul = isBat ? 1.3f : 1f;
+                    autonomousBox.setScale(scaleX * mul, scaleY * mul);
+                }
+            } else {
+                autonomousBox.addComponent(new TextureRenderComponent(texturePath));
+            }
 
-                    autonomousBox
-                            .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
-                            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
-                            .addComponent(new HitboxComponent())
-                            .addComponent(new CombatStatsComponent(1, damage))
-                            .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
-                            .addComponent(new AutonomousBoxComponent());
+
+
+            autonomousBox
+                    .addComponent(new PhysicsComponent().setBodyType(BodyDef.BodyType.KinematicBody))
+                    .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+                    .addComponent(new HitboxComponent())
+                    .addComponent(new CombatStatsComponent(1, damage))
+                    .addComponent(new TouchAttackComponent(PhysicsLayer.PLAYER, knockback))
+                    .addComponent(new AutonomousBoxComponent());
+
+            autonomousBox.addComponent(new MinimapComponent("images/flying_bat_map.png").setScale(2.5f));
+
+
+
 
             AutonomousBoxComponent autonomousBoxComponent = autonomousBox.getComponent(AutonomousBoxComponent.class);
             autonomousBox.setScale(scaleX, scaleY);
@@ -272,6 +326,7 @@ public class BoxFactory {
             autonomousBoxComponent.setSpeed(speed);
             autonomousBox.getComponent(PhysicsComponent.class).getBody().setTransform(spawnX, spawnY, 0);
             autonomousBox.addComponent(new TooltipSystem.TooltipComponent(tooltipText, tooltipStyle));
+            //
             return autonomousBox;
         }
     }

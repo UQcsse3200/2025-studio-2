@@ -3,14 +3,20 @@ package com.csse3200.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.csse3200.game.components.player.InventoryComponent;
+import com.csse3200.game.entities.Entity;
+import com.csse3200.game.entities.configs.SaveConfig;
+import com.csse3200.game.files.FileLoader;
 import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
-import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.screens.MainMenuScreen;
-import com.csse3200.game.screens.SettingsScreen;
+import com.csse3200.game.screens.*;
+import com.csse3200.game.services.ServiceLocator;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.util.HashMap;
 
 import static com.badlogic.gdx.Gdx.app;
 
@@ -20,6 +26,8 @@ import static com.badlogic.gdx.Gdx.app;
  * machine (See the State Pattern).
  */
 public class GdxGame extends Game {
+  public static final String SAVE_PATH = "configs" + File.separator + "save.json";
+
   private static final Logger logger = LoggerFactory.getLogger(GdxGame.class);
 
   @Override
@@ -47,6 +55,19 @@ public class GdxGame extends Game {
     UserSettings.Settings settings = UserSettings.get();
     UserSettings.initialiseKeybinds();
     UserSettings.applySettings(settings);
+  }
+
+  public static void saveLevel(MainGameScreen.Areas area, Entity player, String path, FileLoader.Location location) {
+    logger.debug("Saving game level");
+
+    SaveConfig saveConfig = new SaveConfig();
+    saveConfig.area = area;
+
+    InventoryComponent inventoryComponent = player.getComponent(InventoryComponent.class);
+    saveConfig.inventory = inventoryComponent.getInventoryCopy();
+    saveConfig.upgrades = inventoryComponent.getUpgradesCopy();
+
+    FileLoader.writeClass(saveConfig, path, location);
   }
 
   /**
@@ -77,13 +98,66 @@ public class GdxGame extends Game {
   private Screen newScreen(ScreenType screenType) {
     return switch (screenType) {
       case MAIN_MENU -> new MainMenuScreen(this);
-      case MAIN_GAME -> new MainGameScreen(this);
+      case MAIN_GAME -> {
+        MainGameScreen screen = new MainGameScreen(this, MainGameScreen.Areas.LEVEL_ONE);
+        //ServiceLocator.registerMainGameScreen(screen);
+        yield screen;
+      }
+      case TUTORIAL -> new TutorialMenuScreen(this);
       case SETTINGS -> new SettingsScreen(this);
+      case STATISTICS -> new StatisticsScreen(this);
+      case LEADERBOARD -> new LeaderboardScreen(this);
+      case LOAD_LEVEL -> {
+        SaveConfig saveConfig = loadSave(SAVE_PATH, FileLoader.Location.EXTERNAL);
+
+        // Load into the correct area, pass the player the old inventory.
+        MainGameScreen game = new MainGameScreen(this, saveConfig.area);
+        //ServiceLocator.registerMainGameScreen(game);
+
+        InventoryComponent inventoryComponent = game.getGameArea().getPlayer().getComponent(InventoryComponent.class);
+        inventoryComponent.setInventory(saveConfig.inventory);
+        inventoryComponent.setUpgrades(saveConfig.upgrades);
+
+        yield game;
+      }
     };
   }
 
+    /**
+     * Return a valid save config
+     *
+     * @param path - save file path
+     * @return valid SaveConfig
+     */
+    public static SaveConfig loadSave(String path, FileLoader.Location location) {
+    SaveConfig save = FileLoader.readClass(SaveConfig.class, path, location);
+    // If the save is null, create a basic one, with default values coming from null checks.
+    if (save == null) {
+      save = new SaveConfig();
+    }
+
+    // Make sure area is valid
+    try {
+      MainGameScreen.Areas.valueOf(save.area.toString());
+    } catch (IllegalArgumentException | NullPointerException e) {
+      // IllegalArgumentException: Level is not in the list, start from level 1
+      // NullPointerException: No level initialized, start from level 1
+      save.area = MainGameScreen.Areas.LEVEL_ONE;
+    }
+
+    // Make sure inventory and upgrades exist
+    if (save.inventory == null) {
+      save.inventory = new HashMap<>();
+    }
+    if (save.upgrades == null) {
+      save.upgrades = new HashMap<>();
+    }
+
+    return save;
+  }
+
   public enum ScreenType {
-    MAIN_MENU, MAIN_GAME, SETTINGS
+    MAIN_MENU, MAIN_GAME, SETTINGS, TUTORIAL, STATISTICS, LOAD_LEVEL, LEADERBOARD
   }
 
   /**

@@ -3,7 +3,6 @@ package com.csse3200.game.rendering;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
@@ -12,7 +11,7 @@ import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.Vector;
+import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -82,6 +81,14 @@ class AnimationRenderComponentTest {
     animator.addAnimation(animName, frameTime);
     animator.startAnimation(animName);
 
+    float w = Math.abs(entity.getScale().x);
+    float h = Math.abs(entity.getScale().y);
+    float originX = w / 2;
+    float originY = h / 2;
+    float sx = 1f;
+    float sy = 1f;
+    float rotation = 0f;
+
     for (int i = 0; i < 5; i++) {
       // Each draw advances 1 frame, check that it matches for each
       animator.draw(batch);
@@ -89,8 +96,11 @@ class AnimationRenderComponentTest {
           regions.get(i),
           entity.getPosition().x,
           entity.getPosition().y,
-          entity.getScale().x,
-          entity.getScale().y
+          originX,
+          originY,
+          w, h,
+          sx, sy,
+          rotation
       );
     }
   }
@@ -140,19 +150,21 @@ class AnimationRenderComponentTest {
   }
 
   @Test
-  void shouldFlipEntityHorizontally() {
+  void shouldFlipEntityHorizontally() throws Exception {
       TextureAtlas atlas = createMockAtlas("test_name", 1);
       AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
 
       Entity mockEntity = mock(Entity.class);
       animator.setEntity(mockEntity);
-      when(mockEntity.getScale()).thenReturn(new Vector2(2f, 3f));
 
       animator.setFlipX(true);
-      verify(mockEntity).setScale(-2f, 3f);
+      Field f = AnimationRenderComponent.class.getDeclaredField("flipX");
+      f.setAccessible(true);
+      boolean flipX = f.getBoolean(animator);
+      assertTrue(flipX);
 
-      when(mockEntity.getScale()).thenReturn(new Vector2(-2f, 3f));
       animator.setFlipX(false);
-      verify(mockEntity).setScale(2f, 3f);
+      flipX = f.getBoolean(animator);
+      assertFalse(flipX);
   }
 }

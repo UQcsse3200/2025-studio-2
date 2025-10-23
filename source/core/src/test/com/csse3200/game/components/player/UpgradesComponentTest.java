@@ -1,120 +1,140 @@
 package com.csse3200.game.components.player;
 
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
-import com.csse3200.game.components.collectables.UpgradesComponent;
-import com.csse3200.game.entities.EntityService;
-import com.csse3200.game.entities.factories.CollectableFactory;
-import com.csse3200.game.entities.factories.PlayerFactoryTest;
-import com.csse3200.game.extensions.GameExtension;
-import com.csse3200.game.rendering.RenderService;
-import com.csse3200.game.services.ServiceLocator;
-import com.csse3200.game.physics.PhysicsService;
+import com.csse3200.game.components.collectables.effects.ItemEffectHandler;
+import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
 import com.csse3200.game.entities.Entity;
-import com.csse3200.game.input.InputComponent;
-import com.csse3200.game.input.InputService;
-import com.csse3200.game.input.InputFactory;
-import com.csse3200.game.services.ResourceService;
+import com.csse3200.game.entities.configs.CollectablesConfig;
+import com.csse3200.game.entities.configs.EffectConfig;
+import com.csse3200.game.services.CollectableService;
+import org.junit.jupiter.api.*;
+import org.mockito.MockedStatic;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(GameExtension.class)
-public class UpgradesComponentTest {
+/**
+ * Verifies upgrade items via the new inventory + effect pipeline (EffectConfig.target).
+ * - Auto-consume upgrades fire effects on pickup and don't stay in inventory.
+ * - Non-auto upgrades are stored in UPGRADES bag and fire on use.
+ * - Effect proven by "upgradeUnlocked" event on the player.
+ */
+class InventoryUpgradesEffectsTest {
 
     private Entity player;
     private InventoryComponent inv;
+    private MockedStatic<CollectableService> svcMock;
+
+    /** Helper to build a CollectablesConfig for an upgrade item. */
+    private static CollectablesConfig upgradeCfg(String itemId, boolean autoConsume, String targetAbility) {
+        CollectablesConfig cfg = new CollectablesConfig();
+        cfg.id = itemId;
+        cfg.name = itemId;
+        cfg.autoConsume = autoConsume;
+        cfg.bag = "upgrades";
+        EffectConfig e = new EffectConfig();
+        e.type = "upgrade";
+        e.target = targetAbility;
+        cfg.effects = List.of(e);
+        return cfg;
+    }
 
     @BeforeEach
-    void setup() {
-        ServiceLocator.registerPhysicsService(new PhysicsService());
+    void setUp() {
+        // Fresh effect registry
+        ItemEffectRegistry.clear();
 
-        InputService inputSvc = mock(InputService.class);
-        InputFactory inputFactory = mock(InputFactory.class);
-        when(inputSvc.getInputFactory()).thenReturn(inputFactory);
-        when(inputFactory.createForPlayer()).thenReturn(mock(InputComponent.class));
-        ServiceLocator.registerInputService(inputSvc);
+        ItemEffectRegistry.register("upgrade", (player, cfg) -> {
+            if (player == null || cfg == null || cfg.target == null || cfg.target.isBlank()) return false;
+            player.getEvents().trigger("upgradeUnlocked", cfg.target.trim());
+            return true;
+        });
 
-        RenderService render = mock(RenderService.class);
-        doNothing().when(render).register(any());
-        doNothing().when(render).unregister(any());
-        ServiceLocator.registerRenderService(render);
+        svcMock = mockStatic(CollectableService.class, withSettings());
+        svcMock.when(() -> CollectableService.get(eq("upgrade:dash")))
+                .thenReturn(upgradeCfg("upgrade:dash",true, "dash"));
+        svcMock.when(() -> CollectableService.get(eq("upgrade:glide")))
+                .thenReturn(upgradeCfg("upgrade:glide",false, "glide"));
+        svcMock.when(() -> CollectableService.get(eq("upgrade:jetpack")))
+                .thenReturn(upgradeCfg("upgrade:jetpack", true, "jetpack"));
+        svcMock.when(() -> CollectableService.get(argThat(id ->
+                !"upgrade:dash".equals(id) &&
+                        !"upgrade:glide".equals(id) &&
+                        !"upgrade:jetpack".equals(id)))).thenReturn(null);
 
-        ResourceService rs = mock(ResourceService.class);
-        when(rs.getAsset(anyString(), eq(Texture.class))).thenReturn(mock(Texture.class));
-        when(rs.getAsset(anyString(), eq(Pixmap.class))).thenReturn(mock(Pixmap.class));
-        doNothing().when(rs).loadTextures(any(String[].class));
-        doNothing().when(rs).loadAll();
-        ServiceLocator.registerResourceService(rs);
-
-        EntityService entityService = mock(EntityService.class);
-        doNothing().when(entityService).register(any());
-        doNothing().when(entityService).unregister(any());
-        ServiceLocator.registerEntityService(entityService);
-
-        player = PlayerFactoryTest.createPlayer();
+        // Minimal player with Inventory only
+        player = new Entity();
+        inv = new InventoryComponent();
+        player.addComponent(inv);
         player.create();
-        inv = player.getComponent(InventoryComponent.class);
-        assertNotNull(inv, "Player should have InventoryComponent");
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (svcMock != null) svcMock.close();
+        ItemEffectRegistry.clear();
     }
 
     @Test
-    void upgradeStartsUncollected() {
-        Entity upgrade = CollectableFactory.createDashUpgrade();
-        upgrade.create();
+    void autoConsumeUpgrade_unlocksOnPickup_andNotStored() {
+        AtomicInteger unlockedCount = new AtomicInteger(0);
+        player.getEvents().addListener("upgradeUnlocked", (String id) -> {
+            assertEquals("dash", id);
+            unlockedCount.incrementAndGet();
+        });
 
-        assertFalse(inv.hasItem(InventoryComponent.Bag.UPGRADES,"dash"), "Inventory should not contain an upgrade initially");
-        UpgradesComponent dash = upgrade.getComponent(UpgradesComponent.class);
-        assertNotNull(dash, "Upgrade entity should have an UpgradeComponent");
-        assertEquals("dash", dash.getUpgradeId(), "UpgradeComponent should store its ID");
+        inv.addItems("upgrade:dash", 1);
+
+        assertEquals(1, unlockedCount.get(), "Effect should fire once on pickup");
+        assertEquals(0, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:dash"),
+                "Auto-consume items should not remain in inventory");
     }
 
     @Test
-    void upgradeCollectMarksAsCollected() {
-        Entity upgrade = CollectableFactory.createJetpackUpgrade();
-        upgrade.create();
-        assertFalse(inv.hasItem(InventoryComponent.Bag.UPGRADES,"grappler"));
+    void nonAutoUpgrade_storedUntilUse_thenUnlocksAndConsumes() {
+        AtomicInteger unlockedCount = new AtomicInteger(0);
+        player.getEvents().addListener("upgradeUnlocked", (String id) -> {
+            assertEquals("glide", id);
+            unlockedCount.incrementAndGet();
+        });
 
-        upgrade.getEvents().trigger("onCollisionStart", player);
+        inv.addItems("upgrade:glide", 1);
 
-        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grappler upgrade");
+        assertEquals(1, unlockedCount.get(), "Effect fires on pickup even for non-auto items");
+
+        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"));
+
+        assertTrue(inv.useItem(InventoryComponent.Bag.UPGRADES, "upgrade:glide"));
     }
 
     @Test
-    void cannotCollectSameUpgradeAgain() {
-        Entity upgrade = CollectableFactory.createGlideUpgrade();
-        upgrade.create();
-        Entity secondUpgrade = CollectableFactory.createGlideUpgrade();
-        secondUpgrade.create();
+    void multipleUpgrades_mixedAutoAndNonAuto_allUnlock() {
+        AtomicInteger unlockedCount = new AtomicInteger(0);
+        player.getEvents().addListener("upgradeUnlocked", (String id) -> unlockedCount.incrementAndGet());
 
-        // Upgrade should not collect twice
-        upgrade.getEvents().trigger("onCollisionStart", player);
-        secondUpgrade.getEvents().trigger("onCollisionStart", player);
+        inv.addItems("upgrade:dash", 1);
+        inv.addItems("upgrade:jetpack", 1);
+        inv.addItems("upgrade:glide", 1);
 
-        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "glider"));
+        assertEquals(3, unlockedCount.get(), "All upgrades unlock on pickup (including non-auto)");
+
+        assertEquals(1, inv.getItemCount(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
+                "Non-auto item should be stored after pickup");
+
+        assertTrue(inv.useItem(InventoryComponent.Bag.UPGRADES, "upgrade:glide"),
+                "Use should succeed when token is present");
     }
 
+
     @Test
-    void canCollectMultipleDifferentUpgrades() {
-        Entity dash = CollectableFactory.createDashUpgrade();
-        Entity glider = CollectableFactory.createGlideUpgrade();
-        Entity jetpack = CollectableFactory.createJetpackUpgrade();
+    void unknownItemId_throwsIllegalArgumentException() {
+        InventoryComponent inv = new InventoryComponent();
 
-        dash.create();
-        glider.create();
-        jetpack.create();
-
-        dash.getEvents().trigger("onCollisionStart", player);
-        glider.getEvents().trigger("onCollisionStart", player);
-        jetpack.getEvents().trigger("onCollisionStart", player);
-
-        assertEquals(3, inv.getTotalCount(InventoryComponent.Bag.UPGRADES));
-        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"dash"), "Inventory should contain the dash upgrade");
-        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"glider"), "Inventory should contain the glide upgrade");
-        assertTrue(inv.hasItem(InventoryComponent.Bag.UPGRADES,"jetpack"), "Inventory should contain the grapple upgrade");
+        assertThrows(IllegalArgumentException.class, () ->
+                inv.addItems(InventoryComponent.Bag.UPGRADES, "upgrade:unknown", 1)
+        );
     }
 }

@@ -1,22 +1,25 @@
 package com.csse3200.game.entities.factories;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.npc.VolatilePlatformAnimationController;
 import com.csse3200.game.components.platforms.ButtonTriggeredPlatformComponent;
 import com.csse3200.game.components.platforms.MovingPlatformComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.lighting.LightingDefaults;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
+import com.csse3200.game.rendering.TiledPlatformComponent;
 import com.csse3200.game.services.ServiceLocator;
 
 /**
@@ -77,14 +80,45 @@ public class PlatformFactory {
    * @return
    */
   public static Entity createButtonTriggeredPlatform(Vector2 offsetWorld, float speed) {
+    ColliderComponent collider = new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE);
+    collider.setFriction(2f);
     Entity platform = new Entity()
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
-        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+        .addComponent(collider)
         .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
     return platform;
+  }
+
+  /**
+   * Creates a static platform that also reflects lasers,
+   * using Tristyn's code from BoxFactory.createReflectorBox.
+   *
+   * @return the platform created
+   */
+  public static Entity createReflectivePlatform() {
+    TextureRegion texture = new TextureRegion(
+            new Texture("images/mirror-cube-off.png"), 0, 0, 16, 16);
+    Entity reflectorPlatform = new Entity()
+            .addComponent(new TiledPlatformComponent(texture, texture, texture))
+            .addComponent(new PhysicsComponent())
+            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.LASER_REFLECTOR));
+
+    reflectorPlatform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);createStaticPlatform();
+
+    ConeLightComponent light = new ConeLightComponent(
+            ServiceLocator.getLightingService().getEngine().getRayHandler(),
+            LightingDefaults.RAYS,
+            Color.RED,
+            1f,
+            0f,
+            180f
+    ).setFollowEntity(false);
+    //reflectorPlatform.addComponent(light);
+
+    return reflectorPlatform;
   }
 
   /**
@@ -114,5 +148,22 @@ public class PlatformFactory {
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
     return platform;
   }
+
+  /**
+   * Creates volatile platform that is linked to a pressure plate. When the pressure plate is pressed, the platform
+   * appears, and when it is released the platform is hidden.
+   *
+   * @return pressure plate platform entity
+   */
+  public static Entity createPressurePlatePlatform() {
+    Entity platform = new Entity()
+            .addComponent(new TextureRenderComponent("images/empty.png"))
+            .addComponent(new PhysicsComponent())
+            .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+            .addComponent(new VolatilePlatformComponent(0f, 0f));
+    platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.StaticBody);
+    return platform;
+  }
+
 
 }

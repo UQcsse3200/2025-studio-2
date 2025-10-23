@@ -17,7 +17,15 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 	dialogDim: {
 		name: white,
 		color: { a: 1, b: 0.2, g: 0.2, r: 0.2 }
-	}
+	},
+    button-hover-cyan: {
+      name: button,
+      color: light_blue
+    },
+    button-hover-grey: {
+      name: button,
+      color: red
+    }
 },
 com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 	default-horizontal: { background: progress-bar, knobBefore: progress-bar-knob }
@@ -40,7 +48,52 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		up: button,
 		down: button-down,
 		checked: button-down
-	}
+	},
+    mainMenu: {
+      font: commodore-64,
+      fontColor: white,
+      downFontColor: grey,
+      up: button,
+      down: button-down,
+      over: button-down,
+      overFontColor: dark_grey
+    }
+    settingsMenu: {
+      font: commodore-64,
+      fontColor: light_grey,
+      downFontColor: dark_grey,
+      up: button,
+      down: button-down,
+      over: button-down,
+      overFontColor: dark_grey
+    }
+    cutsceneNext: {
+      font: commodore-64,
+      fontColor: white,
+      up: button,
+      down: button,
+      over: button-hover-cyan
+    }
+    "tutorialButton": {
+      font: commodore-64,
+      fontColor: light_grey,
+      downFontColor: green,
+      up: button,
+      down: button-down,
+      over: button-down,
+      overFontColor: white
+    }
+    "redButton": {
+      font: commodore-64,
+      fontColor: light_grey,
+      downFontColor: red,
+      up: button,
+      down: button-down,
+      over: button-down,
+      overFontColor: white
+    }
+
+
 },
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: { up: button, down: button-down }

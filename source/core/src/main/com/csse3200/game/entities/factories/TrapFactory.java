@@ -1,6 +1,5 @@
 package com.csse3200.game.entities.factories;
 
-import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.csse3200.game.components.obstacles.TrapComponent;
@@ -15,7 +14,9 @@ import com.csse3200.game.rendering.TextureRenderComponent;
  * <p>Each trap entity type should have a creation method that returns a corresponding entity.
  */
 public class TrapFactory {
-
+    private TrapFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     /**
      * Creates a basic Spike trap with configurable rotation and length of 1 unit.
@@ -63,7 +64,6 @@ public class TrapFactory {
 
         switch (direction) {
             case 0: // Facing up
-                center.x *= 0.7f;
                 center.y *= 0.5f;
                 alignY = PhysicsComponent.AlignY.BOTTOM;
                 break;

@@ -3,7 +3,10 @@ package com.csse3200.game.ui.inventoryscreen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Container;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
@@ -11,7 +14,6 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
-
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,6 +76,11 @@ public class ObjectivesTab implements InventoryTabInterface {
     objectiveTex.put("jetpack", new Texture(Gdx.files.internal("images/objectives/jetpack.png")));
     objectiveTex.put("keycard", new Texture(Gdx.files.internal("images/objectives/keycard.png")));
     objectiveTex.put("tutorial", new Texture(Gdx.files.internal("images/objectives/crouch.png")));
+
+    objectiveTex.put("keycard_completed", new Texture(Gdx.files.internal("images/objectives/keycard_completed.png")));
+    objectiveTex.put("dash_completed", new Texture(Gdx.files.internal("images/objectives/dash_completed.png")));
+    objectiveTex.put("jetpack_completed", new Texture(Gdx.files.internal("images/objectives/jetpack_completed.png")));
+    objectiveTex.put("glider_completed", new Texture(Gdx.files.internal("images/objectives/glider_completed.png")));
   }
 
   /**

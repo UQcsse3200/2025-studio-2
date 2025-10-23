@@ -4,8 +4,8 @@ import box2dLight.ConeLight;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.physics.box2d.Filter;
 import com.csse3200.game.components.Component;
+import com.csse3200.game.components.ComponentPriority;
 import com.csse3200.game.physics.PhysicsLayer;
 import com.csse3200.game.services.ServiceLocator;
 
@@ -23,6 +23,7 @@ public class ConeLightComponent extends Component {
     private float distance;
     private float directionDeg;
     private float coneDegree;
+    private boolean isActive = true;
 
     // Movement/rotation
     private Vector2 velocity = new Vector2(0f, 0f);
@@ -45,6 +46,7 @@ public class ConeLightComponent extends Component {
         this.distance = distance;
         this.directionDeg = directionDeg;
         this.coneDegree = coneDegree;
+        this.prio = ComponentPriority.HIGH;
     }
 
     @Override
@@ -68,6 +70,11 @@ public class ConeLightComponent extends Component {
 
     @Override
     public void update() {
+        if (coneLight == null) return;
+        if (coneLight.isActive() != isActive) {
+            coneLight.setActive(isActive);
+        }
+
         // get the amount of time passed
         float dt = ServiceLocator.getTimeSource().getDeltaTime();
         if (dt <= 0f) dt = 0f;
@@ -152,6 +159,14 @@ public class ConeLightComponent extends Component {
     public ConeLightComponent setSoftnessLength (float softness) {
         if (coneLight != null) coneLight.setSoftnessLength(softness);
         return this;
+    }
+
+    public void setActive(boolean active) {
+        this.isActive = active;
+    }
+
+    public boolean isActive() {
+        return this.isActive;
     }
 
     public ConeLight getLight() {
