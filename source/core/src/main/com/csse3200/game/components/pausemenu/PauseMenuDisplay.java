@@ -289,7 +289,9 @@ public class PauseMenuDisplay extends UIComponent {
                 navigationComponent.disableNavigation();
             }
         } else {
-            player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(true);
+            KeyboardPlayerInputComponent playerInputComponent = player.getComponent(KeyboardPlayerInputComponent.class);
+            playerInputComponent.setEnabled(true);
+            playerInputComponent.resetInputState();
 
             navigationComponent.disableNavigation();
 
