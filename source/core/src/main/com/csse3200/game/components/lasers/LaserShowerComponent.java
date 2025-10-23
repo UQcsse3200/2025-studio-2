@@ -43,19 +43,15 @@ public class LaserShowerComponent extends Component {
     private static final float KNOCKBACK = 10f;
     private static final String LASER_SOUND = "sounds/laserShower.mp3";
 
-
-    private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
-    private static final short blockedOccluder = (short) (
-            PhysicsLayer.OBSTACLE
-            // | PhysicsLayer.DEFAULT
-            );
-    private static final short detectorOccluder = PhysicsLayer.LASER_DETECTOR;
-    private static final short playerOccluder = PhysicsLayer.PLAYER;
-    private static final short hitMask = (short) (
-              reboundOccluder
-            | blockedOccluder
-            | playerOccluder
-            | detectorOccluder);
+    private static final short REBOUND_OCCLUDER = PhysicsLayer.LASER_REFLECTOR;
+    private static final short BLOCKED_OCCLUDER = PhysicsLayer.OBSTACLE;
+    private static final short DETECTOR_OCCLUDER = PhysicsLayer.LASER_DETECTOR;
+    private static final short PLAYER_OCCLUDER = PhysicsLayer.PLAYER;
+    private static final short HIT_MASK = (short) (
+              REBOUND_OCCLUDER
+            | BLOCKED_OCCLUDER
+            | PLAYER_OCCLUDER
+            | DETECTOR_OCCLUDER);
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;
@@ -140,8 +136,7 @@ public class LaserShowerComponent extends Component {
         * */
         Sound laserSound = ServiceLocator.getResourceService().getAsset(LASER_SOUND, Sound.class);
         if (laserSound != null) {
-            long soundId = laserSound.play(UserSettings.get().masterVolume);
-            fadeOutSound(laserSound , soundId);
+            laserSound.play(UserSettings.get().masterVolume);
         }
 
         positions.clear();
@@ -159,7 +154,7 @@ public class LaserShowerComponent extends Component {
             Vector2 end = start.cpy().mulAdd(dirVec, remaining);
 
             RaycastHit hit = new RaycastHit();
-            boolean hitSomething = physicsEngine.raycast(start, end, hitMask, hit);
+            boolean hitSomething = physicsEngine.raycast(start, end, HIT_MASK, hit);
 
             // if no hit on block and rebound laser reaches max dist hitting nothing
             if (!hitSomething) {
@@ -175,9 +170,9 @@ public class LaserShowerComponent extends Component {
 
             // classify reflector or blocker
             short cat = categoryBitsFromHit(hit);
-            boolean isReflector = (cat & reboundOccluder) != 0;
-            boolean isPlayer = (cat & playerOccluder) != 0;
-            boolean isDetector = (cat & detectorOccluder) != 0;
+            boolean isReflector = (cat & REBOUND_OCCLUDER) != 0;
+            boolean isPlayer = (cat & PLAYER_OCCLUDER) != 0;
+            boolean isDetector = (cat & DETECTOR_OCCLUDER) != 0;
 
             if (isReflector) {
                 // reflect r = d -2(d.n) n
@@ -312,7 +307,7 @@ public class LaserShowerComponent extends Component {
             return hit.fixture.getFilterData().categoryBits;
         }
         // fallback to blocker
-        return blockedOccluder;
+        return BLOCKED_OCCLUDER;
     }
 
     /**
@@ -354,8 +349,6 @@ public class LaserShowerComponent extends Component {
             Body targetBody = physics.getBody();
             Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
             float knockbackScale = correctImpulse(direction);
-            //direction.x += direction.y;
-            //direction.y = 0f;
             Vector2 impulse = direction.setLength(KNOCKBACK + knockbackScale);
             targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
         }

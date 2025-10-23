@@ -3,6 +3,7 @@ package com.csse3200.game.components.settingsmenu;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Graphics.Monitor;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -50,6 +51,14 @@ public class SettingsMenuDisplay extends UIComponent {
 
   private Sound buttonClickSound;
 
+  private static final String[] backgroundSongs = {
+          "sounds/gamemusic.mp3",
+          "sounds/CircuitGoodness.mp3",
+          "sounds/KindaLikeTycho.mp3",
+          "sounds/Flow.mp3",
+          "sounds/LIKEDACIRCUIT.mp3",
+          "sounds/Siiiiiiiiiick bounce 1.mp3"
+  };
 
   public SettingsMenuDisplay(GdxGame game) {
     super();
@@ -488,6 +497,24 @@ public class SettingsMenuDisplay extends UIComponent {
     // Set volume
     settings.masterVolume = masterVolumeSlider.getValue();
     settings.musicVolume = musicVolumeSlider.getValue();
+    try {
+      float musicVol = musicVolumeSlider.getValue();
+
+      for (String i : backgroundSongs) {
+        if (!ServiceLocator.getResourceService().containsAsset(i, Music.class)) {
+          continue;
+        }
+
+        Music music = ServiceLocator.getResourceService().getAsset(i, Music.class);
+        if (music != null && music.isPlaying()) {
+          music.setVolume(musicVol);
+        } else {
+          logger.warn("[Audio] Tried to update music volume, but no music is playing.");
+        }
+      }
+    } catch (Exception e) {
+      logger.error("[Audio] Failed to update music volume", e);
+    }
 
     // Save the settings without applying them immediately
     UserSettings.set(settings, false);
