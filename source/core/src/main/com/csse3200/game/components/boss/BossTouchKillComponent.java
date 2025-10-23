@@ -26,6 +26,8 @@ public class BossTouchKillComponent extends Component {
   private CombatStatsComponent combatStats;
   private HitboxComponent hitboxComponent;
 
+  private boolean hitPlayer = false;
+
   /**
    * Create a component which attacks entities on collision, without knockback.
    * @param targetLayer The physics layer of the target's collider.
@@ -42,31 +44,22 @@ public class BossTouchKillComponent extends Component {
   }
 
   private void onCollisionStart(Fixture me, Fixture other) {
-    if (hitboxComponent.getFixture() != me) {
-      // Not triggered by hitbox, ignore
-      return;
-    }
-
-    if (!PhysicsLayer.contains(targetLayer, other.getFilterData().categoryBits)) {
-      // Doesn't match our target layer, ignore
-      return;
-    }
+    if (hitPlayer) return; // Only damage once
+    if (hitboxComponent.getFixture() != me) return;
+    if (!PhysicsLayer.contains(targetLayer, other.getFilterData().categoryBits)) return;
 
     // Try to attack target.
     Entity target = ((BodyUserData) other.getBody().getUserData()).entity;
     CombatStatsComponent targetStats = target.getComponent(CombatStatsComponent.class);
 
+    if (targetStats == null) return;
+    hitPlayer = true;
     entity.getEvents().trigger("touchKillStart");
     createBlackHole();
     target.setEnabled(false);
 
-    if (targetStats != null) {
-      Timer.schedule(new Timer.Task() {
-        @Override public void run() {
-          targetStats.hit(combatStats);
-        }
-      }, 1.5f);
-    }
+    targetStats.hit(combatStats);
+    hitboxComponent.setEnabled(false);
   }
 
   private void createBlackHole() {
@@ -79,19 +72,15 @@ public class BossTouchKillComponent extends Component {
       final Vector2 pos = entity.getCenterPosition().cpy();
       final float r = 20f;
 
-      Entity blackhole = ExplosionFactory.createBlackHole(pos, r);
-      if (blackhole != null) {
-        entityService.register(blackhole);
+      Entity blackHole = ExplosionFactory.createBlackHole(pos, r);
+        entityService.register(blackHole);
 
         Timer.schedule(new Timer.Task() {
           @Override public void run() {
-            if (blackhole != null) {
-              blackhole.dispose();
-            }
+              blackHole.dispose();
           }
         }, 5f);
-      }
-    } catch (Exception e) {
+    } catch (Exception ignored) {
     }
   }
 }
