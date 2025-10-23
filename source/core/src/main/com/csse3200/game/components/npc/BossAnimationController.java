@@ -3,8 +3,11 @@ package com.csse3200.game.components.npc;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ServiceLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BossAnimationController extends Component {
+    Logger logger = LoggerFactory.getLogger(BossAnimationController.class);
     AnimationRenderComponent animator;
     private String currentAnimation = "";
     // Generate the "minimum display time" of the animation（Fine-tune as needed 0.3~0.6）
@@ -42,7 +45,7 @@ public class BossAnimationController extends Component {
         if (animator.isFinished() &&
                 (currentAnimation.equals("bossShootLaser") ||
                         currentAnimation.equals("bossTouchKill"))) {
-                Gdx.app.log(BOSS_ANIM_TAG, currentAnimation + " finished, returning to chase");
+                logger.debug("{} {} finished, returning to chase", BOSS_ANIM_TAG, currentAnimation);
                 animateChase();
         }
     }
@@ -57,7 +60,7 @@ public class BossAnimationController extends Component {
 
     void animateGenerateDrone() {
         setAnimation("bossGenerateDrone");
-        Gdx.app.log(BOSS_ANIM_TAG, "generateDroneStart");
+        logger.debug("{} generateDroneStart", BOSS_ANIM_TAG);
         // Each time you receive "Start Generating", reset the display window
         generateHold = 1f; // If you want it to be more obvious, turn it up, e.g 0.6f
         pendingChase = true; // Set flag to return to chase after hold expires
@@ -82,7 +85,7 @@ public class BossAnimationController extends Component {
         if (!animationName.equals(currentAnimation)) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
-            Gdx.app.log(BOSS_ANIM_TAG, "setAnimation -> " + animationName);
+            logger.debug("{} setAnimation -> {}", BOSS_ANIM_TAG, animationName);
         }
     }
 }

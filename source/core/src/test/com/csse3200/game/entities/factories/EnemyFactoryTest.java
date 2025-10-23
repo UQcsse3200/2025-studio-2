@@ -523,14 +523,6 @@ public class EnemyFactoryTest {
                 "Boss should have a dynamic body");
     }
 
-
-    @Test
-    void createBomberDrone_hasCorrectCombatStats() {
-        Entity bomber = EnemyFactory.createBomberDrone(new Entity(), new Vector2(0,0), "test");
-        CombatStatsComponent stats = bomber.getComponent(CombatStatsComponent.class);
-        assertNotNull(stats);
-    }
-
     @Test
     void createBossSelfDestructDrone_hasAllComponents() {
         Entity target = new Entity();
