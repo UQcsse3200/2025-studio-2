@@ -512,14 +512,12 @@ public class EnemyFactory {
         Entity boss = new Entity()
                 .addComponent(new PhysicsComponent())
                 .addComponent(new PhysicsMovementComponent())
-                //.addComponent(new ColliderComponent())
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.NPC))
                 .addComponent(new CombatStatsComponent(9999, 100))
                 .addComponent(new AITaskComponent())
                 .addComponent(new BossAnimationController())
-                //.addComponent(new BossAnchorComponent(1.0f, 0f))
-                .addComponent(new BossLaserAttackComponent(target));
-                //.addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
+                .addComponent(new BossLaserAttackComponent(target))
+                .addComponent(new BossTouchKillComponent(PhysicsLayer.PLAYER));
 
         // Physics
         boss.getComponent(PhysicsComponent.class).getBody().setGravityScale(0f);
