@@ -23,12 +23,6 @@ public class LaserDetectorComponent extends Component {
 
     private Entity child;
 
-    private static final String[] textures = {"images/laser-detector-off.png", "images/laser-detector-on.png"};
-
-    public LaserDetectorComponent() {
-
-    }
-
     public LaserDetectorComponent registerChild(Entity child) {
         this.child = child;
         return this;

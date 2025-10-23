@@ -8,9 +8,9 @@ import com.csse3200.game.utils.math.Vector2Utils;
 import net.dermetfan.utils.Pair;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
-public class PhysicsTestUtils {
+class PhysicsTestUtils {
   public static Vector2 getBounds(PolygonShape shape) {
     Pair<Vector2, Vector2> corners = getCorners(shape);
     Vector2 min = corners.getKey();
@@ -21,12 +21,13 @@ public class PhysicsTestUtils {
 
   public static Vector2 getRectanglePosition(ColliderComponent collider) {
     Shape shape = collider.getFixture().getShape();
-    assertTrue(shape instanceof PolygonShape);
-    return getRectanglePosition((PolygonShape)shape);
+    assertInstanceOf(PolygonShape.class, shape);
+    return getRectanglePosition((PolygonShape) shape);
   }
 
   /**
    * Returns the bottom left corner of the shape's bounding box
+   *
    * @param shape Shape with fixture
    * @return Bottom left corner position
    */
@@ -37,14 +38,15 @@ public class PhysicsTestUtils {
 
   /**
    * Given an entity, test that it's collider contains a PolygonShape of the given size
+   *
    * @param collider Collider with a fixture
-   * @param scale Required bounding box of the PolygonShape
+   * @param scale    Required bounding box of the PolygonShape
    */
   public static void checkPolygonCollider(ColliderComponent collider, Vector2 scale) {
     Shape shape = collider.getFixture().getShape();
-    assertTrue(shape instanceof PolygonShape);
+    assertInstanceOf(PolygonShape.class, shape);
 
-    Vector2 bounds = PhysicsTestUtils.getBounds((PolygonShape) shape);
+    Vector2 bounds = getBounds((PolygonShape) shape);
     assertEquals(scale, bounds);
   }
 

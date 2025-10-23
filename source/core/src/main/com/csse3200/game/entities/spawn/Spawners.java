@@ -9,8 +9,8 @@ import com.csse3200.game.components.ButtonManagerComponent;
 import com.csse3200.game.components.IdentifierComponent;
 import com.csse3200.game.components.PositionSyncComponent;
 import com.csse3200.game.components.boss.BossSpawnerComponent;
-import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.collectables.CollectableComponent;
+import com.csse3200.game.components.computerterminal.CaptchaResult;
 import com.csse3200.game.components.enemy.ActivationComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
@@ -147,13 +147,13 @@ public final class Spawners {
                         Entity target = ServiceLocator.getEntityService().getEntityById(a.target);
                         target.getEvents().trigger("stop");
 
-                        plate.getEvents().addListener("platePressed", () -> {
-                            target.getEvents().trigger("start");
-                        });
+                        plate.getEvents().addListener("platePressed", () ->
+                            target.getEvents().trigger("start")
+                        );
 
-                        plate.getEvents().addListener("plateReleased", () -> {
-                            target.getEvents().trigger("stop");
-                        });
+                        plate.getEvents().addListener("plateReleased", () ->
+                            target.getEvents().trigger("stop")
+                        );
                     }
                 }
             }

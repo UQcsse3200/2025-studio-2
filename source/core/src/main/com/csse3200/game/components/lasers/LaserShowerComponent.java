@@ -43,8 +43,12 @@ public class LaserShowerComponent extends Component {
     private static final String LASER_SOUND = "sounds/laserShower.mp3";
     private static final String LASER_OFF_EVENT = "laserOff";
 
+
     private static final short REBOUND_OCCLUDER = PhysicsLayer.LASER_REFLECTOR;
-    private static final short BLOCKED_OCCLUDER = PhysicsLayer.OBSTACLE;
+    private static final short BLOCKED_OCCLUDER = (
+            PhysicsLayer.OBSTACLE
+            // | PhysicsLayer.DEFAULT
+            );
     private static final short DETECTOR_OCCLUDER = PhysicsLayer.LASER_DETECTOR;
     private static final short PLAYER_OCCLUDER = PhysicsLayer.PLAYER;
     private static final short HIT_MASK = (short) (
@@ -52,6 +56,7 @@ public class LaserShowerComponent extends Component {
             | BLOCKED_OCCLUDER
             | PLAYER_OCCLUDER
             | DETECTOR_OCCLUDER);
+    private static final String LASER_OFF = "laserOff";
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;

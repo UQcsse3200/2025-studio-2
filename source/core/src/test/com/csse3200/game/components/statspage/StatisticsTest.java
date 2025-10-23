@@ -4,7 +4,6 @@ import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.CombatStatsComponent;
-import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.components.statisticspage.StatsTracker;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.EventHandler;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.MockedStatic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -65,8 +63,8 @@ public class StatisticsTest {
             return levelTwoArea;
         });
 
-        when(mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_ONE)).thenReturn(cutsceneOneArea);
-        when(mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_TWO)).thenReturn(cutsceneTwoArea);
+        when(mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_ONE_CUTSCENE)).thenReturn(cutsceneOneArea);
+        when(mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_TWO_CUTSCENE)).thenReturn(cutsceneTwoArea);
 
         service = AchievementService.get(); // singleton
         service.devReset(); // reset all unlocked achievements
@@ -115,13 +113,13 @@ public class StatisticsTest {
         mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_ONE);
         assertEquals(1, StatsTracker.getLevelsCompleted());
 
-        mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_ONE);
+        mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_ONE_CUTSCENE);
         assertEquals(1, StatsTracker.getLevelsCompleted());
 
         mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_TWO);
         assertEquals(2, StatsTracker.getLevelsCompleted());
 
-        mainGameScreen.getGameArea(MainGameScreen.Areas.CUTSCENE_TWO);
+        mainGameScreen.getGameArea(MainGameScreen.Areas.LEVEL_TWO_CUTSCENE);
         assertEquals(2, StatsTracker.getLevelsCompleted());
     }
 

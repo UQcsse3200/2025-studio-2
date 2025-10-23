@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-public class BossAnimationControllerTest {
+class BossAnimationControllerTest {
     private Entity makeEntityWithDAC() {
         Entity e = new Entity();
         e.addComponent(new BossAnimationController());
@@ -28,17 +28,6 @@ public class BossAnimationControllerTest {
     }
 
     @Test
-    void chaseStart_playsAngryFloat() {
-        Entity e = makeEntityWithDAC();
-        AnimationRenderComponent anim = mock(AnimationRenderComponent.class);
-        e.addComponent(anim);
-        e.create();
-        e.getEvents().trigger("chaseStart");
-        verify(anim, times(1)).startAnimation("bossChase");
-    }
-
-
-    @Test
     void generateDroneStart_playsFloat() {
         // Arrange
         AnimationRenderComponent animator = mock(AnimationRenderComponent.class);
@@ -54,24 +43,28 @@ public class BossAnimationControllerTest {
         verify(animator).startAnimation("bossGenerateDrone");
     }
 
-    @Test
-    void touchKillStart_playsDrop() {
+    private void verifyAnimation(String event, String animation) {
         Entity e = makeEntityWithDAC();
         AnimationRenderComponent anim = mock(AnimationRenderComponent.class);
         e.addComponent(anim);
         e.create();
-        e.getEvents().trigger("touchKillStart");
-        verify(anim, times(1)).startAnimation("bossTouchKill");
+        e.getEvents().trigger(event);
+        verify(anim, times(1)).startAnimation(animation);
+    }
+
+    @Test
+    void chaseStart_playsAngryFloat() {
+      verifyAnimation("chaseStart", "bossChase");
+    }
+
+    @Test
+    void touchKillStart_playsDrop() {
+        verifyAnimation("touchKillStart", "bossTouchKill");
     }
 
     @Test
     void laserShootStart_playsDrop() {
-        Entity e = makeEntityWithDAC();
-        AnimationRenderComponent anim = mock(AnimationRenderComponent.class);
-        e.addComponent(anim);
-        e.create();
-        e.getEvents().trigger("shootLaserStart");
-        verify(anim, times(1)).startAnimation("bossShootLaser");
+        verifyAnimation("shootLaserStart", "bossShootLaser");
     }
 
     @Test

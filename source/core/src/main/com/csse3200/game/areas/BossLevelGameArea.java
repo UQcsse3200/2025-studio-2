@@ -1,6 +1,6 @@
 package com.csse3200.game.areas;
 
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.entities.spawn.SpawnRegistry;
 
 /**
@@ -11,7 +11,7 @@ import com.csse3200.game.entities.spawn.SpawnRegistry;
  * </p>
  */
 public class BossLevelGameArea extends BaseLevelGameArea {
-    public BossLevelGameArea(TerrainFactory tf) { super(tf); }
+    public BossLevelGameArea(GridFactory tf) { super(tf); }
     @Override protected String configPath() { return "levels/boss-level/config.json"; }
     @Override protected String assetsPath() { return "levels/boss-level/assets.json"; }
     @Override protected String parallaxPath() { return "levels/boss-level/parallax.json"; }

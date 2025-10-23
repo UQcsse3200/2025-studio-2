@@ -17,8 +17,6 @@ import com.csse3200.game.ui.UIComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -31,18 +29,12 @@ public class LeaderboardDisplay extends UIComponent {
 
     private static final float Z_INDEX = 2f;
     private Table table;
-    private Table topTable;
-    private Sound buttonClickSound;
-
-    private final LeaderboardComponent leaderboardComponent;
 
     /**
      * Constructor
      */
     public LeaderboardDisplay(GdxGame game) {
-        super();
         this.game = game;
-        this.leaderboardComponent = new LeaderboardComponent();
     }
 
     /**
@@ -66,7 +58,7 @@ public class LeaderboardDisplay extends UIComponent {
         background.setFillParent(true);
         stage.addActor(background);
 
-        buttonClickSound = ServiceLocator.getResourceService()
+        Sound buttonClickSound = ServiceLocator.getResourceService()
                 .getAsset("sounds/buttonsound.mp3", Sound.class);
 
         table = new Table();
@@ -74,23 +66,21 @@ public class LeaderboardDisplay extends UIComponent {
         table.center();
 
         Label title = new Label("Leaderboard", skin, "title");
-        topTable = new Table();
+        Table topTable = new Table();
         topTable.setFillParent(true);
         topTable.top();
-        topTable.add(title).expandX().center().padTop(20f);
+        topTable.add(title).expandX().center().padTop(20.0f);
         stage.addActor(topTable);
 
 
-        ArrayList<Label> names = new ArrayList<>();
-        ArrayList<Label> times = new ArrayList<>();
-        HashMap<String, Long> leaderboardData = leaderboardComponent.readData();
+        Map<String, Long> leaderboardData = LeaderboardComponent.getInstance().getData();
 
         for (Map.Entry<String, Long> entry : leaderboardData.entrySet()) {
             Label name = new Label(entry.getKey() + ":", skin);
-            Label time = new Label(String.valueOf((double) entry.getValue() / 1000) + " (s)", skin);
+            Label time = new Label((double) entry.getValue() / 1000 + " (s)", skin);
 
-            table.add(name).pad(10f).padLeft(50f).right();
-            table.add(time).pad(10f).left().row();
+            table.add(name).pad(10.0f).padLeft(50.0f).right();
+            table.add(time).pad(10.0f).left().row();
         }
 
         TextButton exitBtn = new TextButton("Exit", skin);

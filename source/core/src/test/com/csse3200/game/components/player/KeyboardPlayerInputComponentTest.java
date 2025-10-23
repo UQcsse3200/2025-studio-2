@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(GameExtension.class)
-public class KeyboardPlayerInputComponentTest {
+class KeyboardPlayerInputComponentTest {
 
     @Test
-    public void testInFrontOfLadder() throws Exception {
+    void testInFrontOfLadder() throws Exception {
 
         KeyboardPlayerInputComponent input = new KeyboardPlayerInputComponent();
 
@@ -43,7 +43,7 @@ public class KeyboardPlayerInputComponentTest {
     }
 
     @Test
-    public void testNotInFrontOfLadder_HorizontalError() throws Exception {
+    void testNotInFrontOfLadder_HorizontalError() throws Exception {
         KeyboardPlayerInputComponent input = new KeyboardPlayerInputComponent();
 
         Entity ladder = new Entity();
@@ -69,7 +69,7 @@ public class KeyboardPlayerInputComponentTest {
     }
 
     @Test
-    public void testNotInFrontOfLadder_VerticalError() throws Exception {
+    void testNotInFrontOfLadder_VerticalError() throws Exception {
         KeyboardPlayerInputComponent input = new KeyboardPlayerInputComponent();
 
         Entity ladder = new Entity();
@@ -95,7 +95,7 @@ public class KeyboardPlayerInputComponentTest {
     }
 
     @Test
-    public void testMultipleLadders() throws Exception {
+    void testMultipleLadders() throws Exception {
         KeyboardPlayerInputComponent input = new KeyboardPlayerInputComponent();
 
         Entity ladder1 = new Entity();
@@ -127,7 +127,7 @@ public class KeyboardPlayerInputComponentTest {
     }
 
     @Test
-    public void testNoLadders() throws Exception {
+    void testNoLadders() throws Exception {
         KeyboardPlayerInputComponent input = new KeyboardPlayerInputComponent();
 
         Entity player = new Entity();

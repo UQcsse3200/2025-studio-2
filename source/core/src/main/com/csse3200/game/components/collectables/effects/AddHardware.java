@@ -19,9 +19,6 @@ public class AddHardware implements ItemEffectHandler {
     Vector2[] collected;
     Vector2 currentPos;
 
-    public AddHardware() {}
-
-
     /**
      * Applies the hardware collection effect to the given player.
      *

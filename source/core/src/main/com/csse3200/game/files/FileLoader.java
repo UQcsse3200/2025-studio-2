@@ -88,20 +88,13 @@ public class FileLoader {
   }
 
   private static FileHandle getFileHandle(String filename, Location location) {
-    switch (location) {
-      case CLASSPATH:
-        return Gdx.files.classpath(filename);
-      case INTERNAL:
-        return Gdx.files.internal(filename);
-      case LOCAL:
-        return Gdx.files.local(filename);
-      case EXTERNAL:
-        return Gdx.files.external(filename);
-      case ABSOLUTE:
-        return Gdx.files.absolute(filename);
-      default:
-        return null;
-    }
+    return switch (location) {
+      case CLASSPATH -> Gdx.files.classpath(filename);
+      case INTERNAL -> Gdx.files.internal(filename);
+      case LOCAL -> Gdx.files.local(filename);
+      case EXTERNAL -> Gdx.files.external(filename);
+      case ABSOLUTE -> Gdx.files.absolute(filename);
+    };
   }
 
   public enum Location {

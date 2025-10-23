@@ -91,23 +91,16 @@ public class ObjectivesTab implements InventoryTabInterface {
    */
   @Override
   public Actor build(Skin skin) {
-    PixelPerfectPlacer placer = new PixelPerfectPlacer(bgTex);
+      PixelPerfectPlacer placer = PauseMenuDisplay.makeTabScaffold(
+              screen,
+              bgTex,
+              CLOSE_BUTTON_POS,
+              new java.util.EnumMap<>(Map.of(
+                      PauseMenuDisplay.Tab.INVENTORY,  TAB_INVENTORY,
+                      PauseMenuDisplay.Tab.UPGRADES,   TAB_UPGRADES
+              ))
+      );
 
-    // Invisible close/hide hotspot (same logic as Inventory)
-    Button closeButton = new Button(new Button.ButtonStyle());
-    closeButton.addListener(new ChangeListener() {
-      @Override public void changed(ChangeEvent event, Actor actor) {
-        if (screen != null) {
-          if (screen.isPaused()) screen.togglePaused();
-          screen.togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
-        }
-      }
-    });
-    placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
-
-    // Invisible tab hotspots
-    addTabHotspot(placer, TAB_INVENTORY, PauseMenuDisplay.Tab.INVENTORY);
-    addTabHotspot(placer, TAB_UPGRADES,  PauseMenuDisplay.Tab.UPGRADES);
 
     // Lay out collected objectives vertically
     layoutObjectives(placer);

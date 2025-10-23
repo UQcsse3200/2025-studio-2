@@ -153,7 +153,7 @@ public class BossSpawnerComponent extends Component {
 			Vector2 trigger = spawnTriggers.get(i);
 
 			// Trigger when player X position reaches or exceeds trigger X
-			if (!triggered.get(i) && playerPos.x >= trigger.x) {
+			if (Boolean.FALSE.equals(triggered.get(i)) && playerPos.x >= trigger.x) {
 				triggered.set(i, true);
 				currentTriggerIndex = i;
 				startSpawningPhase();

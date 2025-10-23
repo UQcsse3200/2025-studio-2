@@ -175,6 +175,8 @@ public class CutsceneDisplay extends UIComponent {
 
         // Generate label
         TypingLabel text = new TypingLabel(textBox.text(), skin);
+        text.setWrap(true);
+
         // Add label to text table
         textTable.add(text).expandX().fillX().pad(15f);
 

@@ -7,6 +7,8 @@ import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.physics.components.ColliderComponent;
 import com.csse3200.game.rendering.TextureRenderComponent;
 import com.csse3200.game.services.CodexEntry;
+import com.csse3200.game.services.CodexService;
+import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,6 +61,9 @@ class CodexTerminalComponentTest {
                 .addComponent(coneLightComponent)
                 .addComponent(tooltipComponent);
         terminal.create();
+
+        // Mock a codex service
+        ServiceLocator.registerCodexService(mock(CodexService.class));
     }
 
     @Test

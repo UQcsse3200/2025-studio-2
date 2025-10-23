@@ -1,8 +1,10 @@
 package com.csse3200.game.input;
 
+import com.badlogic.gdx.Input;
+import com.csse3200.game.components.computerterminal.TerminalUiComponent;
 import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.ui.cutscene.CutsceneArea;
+import com.csse3200.game.services.ServiceLocator;
 
 /**
  * A class extending InputComponent handling pause menu related key presses.
@@ -30,7 +32,28 @@ public class PauseInputComponent extends InputComponent {
 
     @Override
     public boolean keyDown(int keycode) {
-        // Check each pause action dynamically
+        // If terminal overlay is open…
+        if (TerminalUiComponent.isOpen()) {
+            // ESC should close the terminal (not toggle pause)
+            if (keycode == Input.Keys.ESCAPE) {
+                var svc = ServiceLocator.getComputerTerminalService();
+                if (svc != null) svc.close();   // safe if null in tests
+                return true; // consumed
+            }
+            // Swallow pause keys so they don’t toggle the pause menu under the terminal
+            if (keycode == Keymap.getActionKeyCode("PauseSettings") ||
+                    keycode == Keymap.getActionKeyCode("PauseInventory") ||
+                    keycode == Keymap.getActionKeyCode("PauseUpgrades")  ||
+                    keycode == Keymap.getActionKeyCode("PauseObjectives")||
+                    keycode == Keymap.getActionKeyCode("PauseCodex")     ||
+                    keycode == Keymap.getActionKeyCode("PauseMap")) {// include tests’ key
+                return true; // consumed by terminal layer
+            }
+            // Let other keys (like 'E') bubble to the terminal component
+            return false;
+        }
+
+        // original pause handling below (unchanged test)
         PauseMenuDisplay.Tab tab = null;
 
         if (keycode == Keymap.getActionKeyCode("PauseSettings"))
@@ -43,11 +66,8 @@ public class PauseInputComponent extends InputComponent {
             tab = PauseMenuDisplay.Tab.OBJECTIVES;
         else if (keycode == Keymap.getActionKeyCode("PauseCodex"))
             tab = PauseMenuDisplay.Tab.CODEX;
-
-
-        if (tab != PauseMenuDisplay.Tab.SETTINGS && gameScreen.getGameArea() instanceof CutsceneArea) {
-            return false;
-        }
+        else if (keycode == Keymap.getActionKeyCode("PauseMap"))
+            tab = PauseMenuDisplay.Tab.INVENTORY; // or whichever tab your Map maps to in UI tests
 
         if (tab != null) {
             if (lastKeycode == keycode || !gameScreen.isPaused()) {
@@ -57,6 +77,7 @@ public class PauseInputComponent extends InputComponent {
             lastKeycode = keycode;
             return true;
         }
-        return false;
+
+        return false; // non-pause key
     }
 }

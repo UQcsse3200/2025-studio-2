@@ -9,6 +9,7 @@ public class StatsData {
     public int levelsCompleted;
     public int deathCount;
     public int achievementsUnlocked;
+    public int lostHardwareCollected;
     public int jumpCount;
     public int codexReads;
 }

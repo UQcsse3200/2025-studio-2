@@ -6,12 +6,12 @@ import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
 class CodexServiceTest {
@@ -58,14 +58,18 @@ class CodexServiceTest {
         setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
         CodexService service = new CodexService();
 
-        // Unlock exactly one entry
-        service.getEntry("test_id_1").setUnlocked();
+        try (MockedStatic<ServiceLocator> mockLocator = mockStatic(ServiceLocator.class)) {
+            mockLocator.when(ServiceLocator::getCodexService).thenReturn(service);
+            // Unlock exactly one entry
+            service.getEntry("test_id_1").setUnlocked();
 
-        // Entries are locked by default. Ensure getEntries() only contains the one unlocked entry
-        List<CodexEntry> result = service.getEntries(true);
+            // Entries are locked by default. Ensure getEntries() only contains the one unlocked entry
+            List<CodexEntry> result = service.getEntries(true);
 
-        assertEquals(1, result.size());
-        assertEquals(result.getFirst(), service.getEntry("test_id_1"));
+            assertEquals(1, result.size());
+            assertEquals(result.getFirst(), service.getEntry("test_id_1"));
+        }
+
     }
 
     @Test
@@ -75,15 +79,18 @@ class CodexServiceTest {
         setupMockFile("test_id_1\nTest Title 1\nTest Content 1\ntest_id_2\nTest Title 2\nTest Content 2");
         CodexService service = new CodexService();
 
-        // Unlock exactly one entry
-        service.getEntry("test_id_1").setUnlocked();
+        try (MockedStatic<ServiceLocator> mockLocator = mockStatic(ServiceLocator.class)) {
+            mockLocator.when(ServiceLocator::getCodexService).thenReturn(service);
+            // Unlock exactly one entry
+            service.getEntry("test_id_1").setUnlocked();
 
-        // Ensure getEntries() returns all entries
-        List<CodexEntry> result = service.getEntries(false);
+            // Ensure getEntries() returns all entries
+            List<CodexEntry> result = service.getEntries(false);
 
-        assertEquals(2, result.size());
-        assertTrue(result.contains(service.getEntry("test_id_1")));
-        assertTrue(result.contains(service.getEntry("test_id_2")));
+            assertEquals(2, result.size());
+            assertTrue(result.contains(service.getEntry("test_id_1")));
+            assertTrue(result.contains(service.getEntry("test_id_2")));
+        }
     }
 
     @Test

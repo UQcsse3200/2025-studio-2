@@ -41,10 +41,6 @@ public class Entity {
   private Vector2 scale = new Vector2(1, 1);
   private Array<Component> createdComponents;
 
-  private boolean resetRequested = false;
-  private boolean safeSpotRequested = false;
-  private Vector2 safeSpotPosition = Vector2.Zero.cpy();
-
   public Entity() {
     id = nextId;
     nextId++;
@@ -301,18 +297,6 @@ public class Entity {
     for (Component component : createdComponents) {
       component.triggerUpdate();
     }
-
-    if (safeSpotRequested) {
-//      System.out.println(this.getPosition());
-      this.setPosition(safeSpotPosition);
-      safeSpotRequested = false;
-//      System.out.println(this.getPosition());
-    }
-
-    if (resetRequested) {
-      getEvents().trigger("reset");
-      resetRequested = false;
-    }
   }
 
   /**
@@ -332,25 +316,6 @@ public class Entity {
    */
   public EventHandler getEvents() {
     return eventHandler;
-  }
-
-  /**
-   * Perform a level reset.
-   */
-  public void requestReset() {
-    resetRequested = true;
-  }
-
-  /**
-   * This is bad. By all means it makes no sense for this function to be here instead of inside TrapComponent, as the
-   * only entity that calls this function is the player.
-   * But since the world state is locked when the TrapComponent hit happens, here we are.
-   * (Potential improvement for sprint 4 I guess)
-   * @param safeSpot - safe spot we want to move the player to.
-   */
-  public void requestMoveToSafeSpot(Vector2 safeSpot) {
-    safeSpotRequested = true;
-    safeSpotPosition = safeSpot;
   }
 
   @Override

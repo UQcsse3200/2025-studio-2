@@ -1,9 +1,11 @@
-package com.csse3200.game.inventory;
+package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -13,7 +15,6 @@ import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.ui.inventoryscreen.InventoryTab;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,9 +26,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for InventoryTab's grid population with per-instance rendering:
@@ -271,6 +271,113 @@ public class InventoryTabTest {
         assertEquals(1, countHighlights(root, fakeHighlight), "One highlight after selection moved via refreshGrid()");
     }
 
+    @Test
+    @DisplayName("getItemAt(index): empty and out-of-range return null; filled returns id")
+    void getItemAtByIndex() {
+        when(inventory.getInventory()).thenReturn(Map.of("key", 3));
+        InventoryTab tab = new InventoryTab(screen);
+        tab.build(null);
+        assertNull(tab.getItemAt(-1));
+        assertNull(tab.getItemAt(999));
+        assertNull(tab.getItemAt(15));
+        assertEquals("key", tab.getItemAt(0));
+        assertEquals("key", tab.getItemAt(1));
+        assertEquals("key", tab.getItemAt(2));
+    }
+
+    @Test
+    @DisplayName("getItemAt(row,col): invalid coords -> null; valid -> id or null")
+    void getItemAtByRowCol() {
+        when(inventory.getInventory()).thenReturn(Map.of("key", 2)); // slots 0,1 filled
+
+        InventoryTab tab = new InventoryTab(screen);
+        tab.build(null);
+
+        // invalid coordinates
+        assertNull(tab.getItemAt(-1, 0));
+        assertNull(tab.getItemAt(0, -1));
+        assertNull(tab.getItemAt(ROWS, 0));
+        assertNull(tab.getItemAt(0, COLS));
+
+        // valid coordinates
+        assertEquals("key", tab.getItemAt(0, 0)); // index 0
+        assertEquals("key", tab.getItemAt(0, 1)); // index 1
+        assertNull(tab.getItemAt(0, 2));          // index 2 empty
+        assertNull(tab.getItemAt(3, 3));          // bottom-right empty
+    }
+
+
+    @Test
+    @DisplayName("getItemDescriptionAt(index): empty slot returns 'Empty Slot'")
+    void getItemDescriptionEmpty() {
+        when(inventory.getInventory()).thenReturn(Collections.emptyMap());
+        InventoryTab tab = new InventoryTab(screen);
+        tab.build(null);
+        assertEquals("Empty Slot\nNo item in this slot", tab.getItemDescriptionAt(0));
+        assertEquals("Empty Slot\nNo item in this slot", tab.getItemDescriptionAt(15));
+    }
+
+    @Test
+    @DisplayName("getItemDescriptionAt(index): filled slot returns non-empty human text")
+    void getItemDescriptionFilled() {
+        when(inventory.getInventory()).thenReturn(Map.of("key", 1));
+
+        InventoryTab tab = new InventoryTab(screen);
+        tab.build(null);
+
+        String desc = tab.getItemDescriptionAt(0);
+        assertNotNull(desc);
+        assertFalse(desc.isBlank());
+        assertNotEquals("Empty Slot", desc);
+    }
+
+    @Test
+    @DisplayName("refreshGrid() repaints after inventory change")
+    void refreshGridRepaints() throws Exception {
+        // start with 1 item
+        when(inventory.getInventory()).thenReturn(Map.of("key", 1));
+
+        InventoryTab tab = new InventoryTab(screen);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
+
+        Actor root = tab.build(null);
+        assertEquals(15, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals( 1, countImagesUsingTexture(root, fakeItemSlot));
+
+        // change to 3 items, then refresh
+        when(inventory.getInventory()).thenReturn(Map.of("key", 3));
+        tab.refreshGrid(); // the method under test
+
+        assertEquals(13, countImagesUsingTexture(root, fakeEmptySlot));
+        assertEquals( 3, countImagesUsingTexture(root, fakeItemSlot));
+    }
+
+
+    @Test
+    @DisplayName("build(): clicking the close button toggles paused")
+    void closeButtonClickTogglesPaused() throws Exception {
+        when(inventory.getInventory()).thenReturn(Map.of("key", 1));
+        when(screen.isPaused()).thenReturn(true);
+
+        InventoryTab tab = new InventoryTab(screen);
+        replacePrivateTextures(tab, fakeBg, fakeEmptySlot, fakeItemSlot, fakeKey);
+
+        Actor root = tab.build(null);
+        assertNotNull(root);
+
+        Actor close = findActorByName(root, "closeButton");
+        if (close == null) {
+            // fallback: first clickable child
+            close = findFirstClickable(root);
+        }
+        assertNotNull(close, "Expected a close button actor (named 'closeButton' or any clickable) in the UI tree");
+
+        simulateClick(close);
+
+        verify(screen, atLeastOnce()).togglePaused();
+        verify(screen, atLeastOnce()).togglePauseMenu(any());
+    }
+
 
     // Helpers
 
@@ -321,10 +428,9 @@ public class InventoryTabTest {
         int count = 0;
         for (Image img : images) {
             Drawable d = img.getDrawable();
-            if (d instanceof TextureRegionDrawable trd) {
-                if (trd.getRegion() != null && trd.getRegion().getTexture() == tex) {
+            if (d instanceof TextureRegionDrawable trd
+                    && trd.getRegion() != null && trd.getRegion().getTexture() == tex) {
                     count++;
-                }
             }
         }
         return count;
@@ -342,6 +448,71 @@ public class InventoryTabTest {
         if (a instanceof Group g) {
             for (Actor c : g.getChildren()) {
                 collectImages(c, out);
+            }
+        }
+    }
+
+    private static Actor findActorByName(Actor root, String name) {
+        if (name.equals(root.getName())) {
+            return root;
+        }
+        if (root instanceof Group g) {
+            for (Actor c : g.getChildren()) {
+                Actor found = findActorByName(c, name);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Actor findFirstClickable(Actor root) {
+        if (!root.getListeners().isEmpty()) return root;
+        if (root instanceof Group g) {
+            for (Actor c : g.getChildren()) {
+                Actor found = findFirstClickable(c);
+                if (found != null) return found;
+            }
+        }
+        return null;
+    }
+
+    // Simulate a left-click that respects InputListener semantics:
+    // only dispatch touchUp if touchDown was handled (returned true).
+    private static void simulateClick(Actor actor) {
+        // Choose an in-bounds local point (fallback to 0.5 if size is 0)
+        float localX = actor.getWidth()  > 0 ? actor.getWidth()  * 0.5f : 0.5f;
+        float localY = actor.getHeight() > 0 ? actor.getHeight() * 0.5f : 0.5f;
+
+        // Build events
+        InputEvent down = new InputEvent();
+        down.setType(InputEvent.Type.touchDown);
+        down.setListenerActor(actor); // <-- critical for ClickListener.isOver(...)
+        down.setTarget(actor);
+        down.setPointer(0);
+        down.setButton(0);
+        down.setStageX(localX);
+        down.setStageY(localY);
+
+        InputEvent up = new InputEvent();
+        up.setType(InputEvent.Type.touchUp);
+        up.setListenerActor(actor);
+        up.setTarget(actor);
+        up.setPointer(0);
+        up.setButton(0);
+        up.setStageX(localX);
+        up.setStageY(localY);
+
+        // Iterate the listeners
+        com.badlogic.gdx.utils.DelayedRemovalArray<com.badlogic.gdx.scenes.scene2d.EventListener> listeners = actor.getListeners();
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            var l = listeners.get(i);
+            if (l instanceof InputListener il) {
+                boolean handled = il.touchDown(down, localX, localY, 0, 0);
+                if (handled) {
+                    il.touchUp(up, localX, localY, 0, 0);
+                }
             }
         }
     }

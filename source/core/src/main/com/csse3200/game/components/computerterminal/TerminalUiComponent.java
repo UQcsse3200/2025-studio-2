@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -69,7 +69,6 @@ public class TerminalUiComponent extends UIComponent {
     private final Random rng = new Random();
 
     // Stage and textures.
-    private Stage stage;
     private Texture bgTex, blueTex;
 
     // Root container that centers and scales the PixelPerfectPlacer.
@@ -116,10 +115,8 @@ public class TerminalUiComponent extends UIComponent {
     @Override
     public void create() {
         super.create();
-        RenderService renderService = ServiceLocator.getRenderService();
         ResourceService resources = ServiceLocator.getResourceService();
 
-        this.stage   = renderService.getStage();
         this.bgTex   = resources.getAsset(BG_TEXTURE, Texture.class);
         this.blueTex = resources.getAsset(BLUE_TEXTURE, Texture.class);
 
@@ -134,16 +131,53 @@ public class TerminalUiComponent extends UIComponent {
         });
 
         // Allow closing with E or ESC when overlay has keyboard focus
+        // Allow closing with E when overlay has keyboard focus
         root.addListener(new ClickListener() {
             @Override public boolean keyDown(InputEvent event, int keycode) {
                 if (!visible) return false;
-                if (keycode == Input.Keys.E || keycode == Input.Keys.ESCAPE) {
+                if (keycode == Input.Keys.E) {
                     close();
-                    return true;
+                    return true;      // consumed by terminal
                 }
-                return false;
+                return false;       // others are handled by the capture listener below
             }
         });
+
+        stage.addCaptureListener(new InputListener() {
+            public boolean sink(InputEvent event, int keycode) {
+                if (!visible) return false;
+
+                // Let E bubble to the root listener above (so it can close the terminal)
+                if (keycode == Input.Keys.E || keycode == Input.Keys.ESCAPE) {
+                    return false;  // do not consume
+                }
+
+                // Swallow everything else: ESC, Q, etc. so pause/HUD never see them
+                event.stop();
+                return true;     // consumed
+            }
+
+            @Override public boolean keyDown(InputEvent event, int keycode) {
+                return sink(event, keycode);
+            }
+
+            @Override public boolean keyUp(InputEvent event, int keycode) {
+                return sink(event, keycode);
+            }
+        });
+    }
+
+    public static boolean isOpen() {
+        try {
+            RenderService rs = ServiceLocator.getRenderService();
+            if (rs == null) return false;
+            var stage = rs.getStage();
+            if (stage == null) return false;
+            Actor a = stage.getRoot().findActor("terminalRoot");
+            return a != null && a.isVisible();
+        } catch (Exception ignored) {
+            return false;
+        }
     }
 
     /**
@@ -237,6 +271,7 @@ public class TerminalUiComponent extends UIComponent {
         centered.size(canvasW, canvasH);
         centered.align(Align.center);
         centered.setFillParent(true);
+        centered.setName("terminalRoot");
         return centered;
     }
 
@@ -267,7 +302,10 @@ public class TerminalUiComponent extends UIComponent {
     private void buildGridFromSpritesheet(SpritesheetSpec spec) {
         ResourceService res = ServiceLocator.getResourceService();
         Texture tex = res.getAsset(spec.texturePath(), Texture.class);
-        if (tex == null) { errorLabel.setText("Missing spritesheet: " + spec.texturePath()); return; }
+        if (tex == null) {
+            errorLabel.setText("Missing spritesheet: " + spec.texturePath());
+        return;
+        }
 
         int rows = spec.rows(), cols = spec.cols();
         int tileW = tex.getWidth() / cols;
@@ -392,8 +430,12 @@ public class TerminalUiComponent extends UIComponent {
      * @param terminal the terminal entity initiating the open
      */
     private void openFromTerminal(Entity terminal) {
-        if (visible) return;
-        if (!screen.isPaused()) screen.togglePaused();
+        if (visible) {
+            return;
+        }
+        if (!screen.isPaused()) {
+            screen.togglePaused();
+        }
 
         verified = false;
         currentTerminal = terminal;
@@ -426,5 +468,8 @@ public class TerminalUiComponent extends UIComponent {
     }
 
     @Override protected void draw(com.badlogic.gdx.graphics.g2d.SpriteBatch batch) { }
-    @Override public void dispose() { if (root != null) root.remove(); super.dispose(); }
+    @Override public void dispose() {
+        if (root != null) root.remove();
+        super.dispose();
+    }
 }

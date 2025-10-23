@@ -1,7 +1,6 @@
 package com.csse3200.game.components.obstacles;
 
 import com.csse3200.game.areas.GameArea;
-import com.csse3200.game.components.obstacles.Door.DoorComponent;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.CollectablesConfig;
@@ -18,7 +17,8 @@ import org.mockito.MockedStatic;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 

@@ -1,4 +1,4 @@
-package com.csse3200.game.components.obstacles.Door;
+package com.csse3200.game.components.obstacles;
 
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.Component;
@@ -121,10 +121,7 @@ public class DoorComponent extends Component {
      * Player exits door collider.
      */
     private void onCollisionEnd(Entity other) {
-        if (other == null) return;
-
-        HitboxComponent cc = other.getComponent(HitboxComponent.class);
-        if (cc == null || cc.getLayer() != PhysicsLayer.PLAYER) return;
+        // Nothing to do.
     }
 
     /**

@@ -142,7 +142,6 @@ public class BoxFactory {
      * each bound.
      */
     public static class AutonomousBoxBuilder {
-
         // Default box movement
         private float minMoveX = 0f;
         private float maxMoveX = 0f;
@@ -164,6 +163,8 @@ public class BoxFactory {
         // Tooltip
         private String tooltipText = "";
         private TooltipSystem.TooltipStyle tooltipStyle = TooltipSystem.TooltipStyle.WARNING;
+
+        private static final String FLYING_BAT = "flying_bat";
 
         /**
          * Sets the horizontal movement bounds for the box.
@@ -293,11 +294,11 @@ public class BoxFactory {
             if (texturePath.endsWith(".atlas")) {
                 TextureAtlas atlas = ServiceLocator.getResourceService().getAsset(texturePath, TextureAtlas.class);
                 AnimationRenderComponent animator = new AnimationRenderComponent(atlas);
-                animator.addAnimation("flying_bat", 0.1f, Animation.PlayMode.LOOP);
-                animator.startAnimation("flying_bat");
+                animator.addAnimation(FLYING_BAT, 0.1f, Animation.PlayMode.LOOP);
+                animator.startAnimation(FLYING_BAT);
                 autonomousBox.addComponent(animator);
-                if (texturePath.contains("flying_bat")) {
-                    boolean isBat = texturePath.endsWith(".atlas") && texturePath.contains("flying_bat");
+                if (texturePath.contains(FLYING_BAT)) {
+                    boolean isBat = texturePath.endsWith(".atlas") && texturePath.contains(FLYING_BAT);
                     float mul = isBat ? 1.3f : 1f;
                     autonomousBox.setScale(scaleX * mul, scaleY * mul);
                 }
