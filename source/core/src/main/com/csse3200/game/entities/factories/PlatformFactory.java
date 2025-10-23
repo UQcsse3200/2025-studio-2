@@ -86,7 +86,7 @@ public class PlatformFactory {
     Entity platform = new Entity()
         .addComponent(new TiledPlatformComponent(leftEdge, middleTile, rightEdge))
         .addComponent(new PhysicsComponent())
-        .addComponent(new ColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
+        .addComponent(collider)
         .addComponent(new ButtonTriggeredPlatformComponent(offsetWorld, speed));
 
     platform.getComponent(PhysicsComponent.class).setBodyType(BodyType.KinematicBody);
