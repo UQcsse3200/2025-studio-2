@@ -13,8 +13,9 @@ import com.csse3200.game.entities.Entity;
  */
 public class BossChaseTask extends DefaultTask implements PriorityTask {
     private final Entity player;
-    private Vector2 stopPoint; // (stopX, stopY) in world coordinates
+    private final Vector2 stopPoint; // (stopX, stopY) in world coordinates
     private Vector2 currentTarget;
+    private static final Vector2 OFFSET = new Vector2(-3f, -2); // Need offset since boss is scaled
 
     private MovementTask movementTask;
     private boolean chasing = true; // true: chase player, false: go to stop point
@@ -58,7 +59,7 @@ public class BossChaseTask extends DefaultTask implements PriorityTask {
 
         // Check player's position
         chasing = player.getPosition().x < stopPoint.x;
-        currentTarget = chasing ? player.getPosition() : stopPoint;
+        currentTarget = chasing ? player.getPosition().add(OFFSET) : stopPoint;
 
         movementTask = new MovementTask(currentTarget);
         movementTask.create(owner);
@@ -77,17 +78,23 @@ public class BossChaseTask extends DefaultTask implements PriorityTask {
 
         chasing = player.getPosition().x < stopPoint.x;
         if (!chasing && hasReachedStopPoint()) {
+            movementTask.stop();
             deactivate();
             return;
         }
 
-        currentTarget = chasing ? player.getPosition() : stopPoint;
-        movementTask.setTarget(currentTarget);
-
-        if (movementTask.getStatus() != Status.ACTIVE) {
-            movementTask.start();
+        Vector2 desired = chasing ? player.getPosition().add(OFFSET) : stopPoint;
+        if (desired.dst2(currentTarget) > 0.5f) {
+            currentTarget = desired;
+            movementTask.setTarget(currentTarget);
+            if (movementTask.getStatus() != Status.ACTIVE) {
+                movementTask.start();
+            }
         }
-        movementTask.update();
+
+        if (movementTask.getStatus() != Status.FINISHED) {
+            movementTask.update();
+        }
     }
 
     /**
@@ -116,7 +123,7 @@ public class BossChaseTask extends DefaultTask implements PriorityTask {
      * @return true if boss is within range of the stop point, otherwise false.
      */
     private boolean hasReachedStopPoint() {
-        Vector2 pos = owner.getEntity().getCenterPosition();
+        Vector2 pos = owner.getEntity().getPosition();
         return pos.dst2(stopPoint) <= 0.5f;
     }
 

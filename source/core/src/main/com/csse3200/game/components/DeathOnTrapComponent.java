@@ -24,6 +24,7 @@ public class DeathOnTrapComponent extends Component {
     private boolean triggered = false;
     private static final float ANIMATION_DURATION = 0.5f;
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
+    private static final String BOMB_EFFECT_ANIMATION = "bomb_effect";
 
     @Override
     public void create() {
@@ -31,8 +32,8 @@ public class DeathOnTrapComponent extends Component {
         entity.getEvents().addListener("reset", this::onReset);
 
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null && !animator.hasAnimation("bomb_effect")) {
-            animator.addAnimation("bomb_effect", 0.05f, Animation.PlayMode.NORMAL);
+        if (animator != null && !animator.hasAnimation(BOMB_EFFECT_ANIMATION)) {
+            animator.addAnimation(BOMB_EFFECT_ANIMATION, 0.05f, Animation.PlayMode.NORMAL);
         }
     }
     /**
@@ -76,8 +77,8 @@ public class DeathOnTrapComponent extends Component {
 
         // Play explosion animation
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null && animator.hasAnimation("bomb_effect")) {
-            animator.startAnimation("bomb_effect");
+        if (animator != null && animator.hasAnimation(BOMB_EFFECT_ANIMATION)) {
+            animator.startAnimation(BOMB_EFFECT_ANIMATION);
         }
 
         // Play sound
@@ -100,7 +101,6 @@ public class DeathOnTrapComponent extends Component {
                     PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
                     if (physics != null) {
                         if (physics.getBody() != null) physics.getBody().setActive(false);
-                        //entity.removeComponent(physics);
                         physics.setEnabled(false);
                     }
 
@@ -108,7 +108,6 @@ public class DeathOnTrapComponent extends Component {
                     ServiceLocator.getEntityService().unregister(entity);
 
                     entity.getEvents().trigger("destroy");
-                    //entity.removeComponent(DeathOnTrapComponent.this);
                     DeathOnTrapComponent.this.setEnabled(false);
                 } catch (Exception e) {
                     Gdx.app.error("DeathOnTrapComponent", "Error during cleanup: " + e.getMessage());

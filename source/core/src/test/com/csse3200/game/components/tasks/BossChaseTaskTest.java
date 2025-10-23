@@ -124,8 +124,9 @@ class BossChaseTaskTest {
         boss.update();
 
         Vector2 target = bossChase.getCurrentTarget();
-        assertEquals(player.getPosition().x, target.x);
-        assertEquals(player.getPosition().y, target.y);
+        // Account for offset value
+        assertEquals(player.getPosition().x - 3f, target.x);
+        assertEquals(player.getPosition().y -2f, target.y);
     }
 
     @Test

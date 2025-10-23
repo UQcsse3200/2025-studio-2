@@ -10,6 +10,7 @@ import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.SelfDestructComponent;
 import com.csse3200.game.components.boss.BossAnchorComponent;
+import com.csse3200.game.components.boss.BossSpawnerComponent;
 import com.csse3200.game.components.boss.BossTouchKillComponent;
 import com.csse3200.game.components.enemy.PatrolRouteComponent;
 import com.csse3200.game.components.enemy.SpawnPositionComponent;
@@ -554,8 +555,8 @@ public class EnemyFactoryTest {
         Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
         assertNotNull(boss.getComponent(PhysicsComponent.class),
                 "Boss should have a physics component");
-        assertNotNull(boss.getComponent(ColliderComponent.class),
-                "Boss should have a collider component");
+        assertNotNull(boss.getComponent(PhysicsMovementComponent.class),
+                "Boss should have a physics movement component");
         assertNotNull(boss.getComponent(AITaskComponent.class),
                 "Boss should have an AI task component");
         assertNotNull(boss.getComponent(AnimationRenderComponent.class),
@@ -572,8 +573,8 @@ public class EnemyFactoryTest {
         Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
         PhysicsComponent phys = boss.getComponent(PhysicsComponent.class);
         assertNotNull(phys, "Boss should have PhysicsComponent");
-        assertEquals(BodyDef.BodyType.KinematicBody, phys.getBody().getType(),
-                "Boss should have a kinematic body");
+        assertEquals(BodyDef.BodyType.DynamicBody, phys.getBody().getType(),
+                "Boss should have a dynamic body");
     }
 
 
@@ -672,7 +673,7 @@ public class EnemyFactoryTest {
     void boss_hasAllSpecificComponents() {
         Entity boss = EnemyFactory.createBossEnemy(new Entity(), new Vector2(0, 0));
 
-        assertNotNull(boss.getComponent(BossAnchorComponent.class), "Should have boss anchor component");
+        assertNotNull(boss.getComponent(BossSpawnerComponent.class), "Should have boss spawner component");
         assertNotNull(boss.getComponent(BossTouchKillComponent.class), "Should have boss touch kill component");
         assertNotNull(boss.getComponent(BossAnimationController.class), "Should have boss animation controller");
 
