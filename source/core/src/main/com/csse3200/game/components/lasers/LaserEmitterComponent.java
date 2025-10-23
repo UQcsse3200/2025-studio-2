@@ -326,8 +326,6 @@ public class LaserEmitterComponent extends Component {
             Body targetBody = physics.getBody();
             Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
             float knockbackScale = correctImpulse(direction);
-            //direction.x += direction.y;
-            //direction.y = 0f;
             Vector2 impulse = direction.setLength(KNOCKBACK + knockbackScale);
             targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
         }

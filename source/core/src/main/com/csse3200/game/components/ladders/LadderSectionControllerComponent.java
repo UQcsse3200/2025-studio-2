@@ -22,7 +22,7 @@ public class LadderSectionControllerComponent extends Component {
     private float stepTimer = 0f;
 
     private Sound ladderSfx;
-    private int lastMoveDir = 0; // -1 retracting, 0 idle, +1 extending;
+    private int lastMoveDir = 0; // -1 is retracting, 0 is idle, +1 is extending
     private boolean playedOnExtend = false;
     private boolean playedOnRetract = false;
 

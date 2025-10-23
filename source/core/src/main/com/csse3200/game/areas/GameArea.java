@@ -247,7 +247,6 @@ public abstract class GameArea implements Disposable {
    */
   public List<Component> getComponents() {
     List<Component> resetComponents = new ArrayList<>();
-//    resetComponents.add(new CombatStatsComponent(combatStats));
     resetComponents.add(new InventoryComponent(inventory));
     return resetComponents;
   }
@@ -259,7 +258,6 @@ public abstract class GameArea implements Disposable {
    */
   public void saveComponents(CombatStatsComponent combatStats,
                                      InventoryComponent inventory) {
-//    this.combatStats = new CombatStatsComponent(combatStats);
     this.inventory = new InventoryComponent(inventory);
   }
 

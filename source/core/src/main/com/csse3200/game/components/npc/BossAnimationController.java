@@ -42,7 +42,6 @@ public class BossAnimationController extends Component {
     }
 
     private void onDroneSpawned() {
-        // Gdx.app.log(BOSS_ANIM, "droneSpawned");
         if (generateHold > 0f) {
             // Still in the animation display period: Don't switch yet,
             // wait until the display period is over before returning to the cruise
@@ -63,7 +62,6 @@ public class BossAnimationController extends Component {
 
     void animateGenerateDrone() {
         setAnimation("bossGenerateDrone");
-        // Gdx.app.log(BOSS_ANIM, "generateDroneStart");
         // Each time you receive "Start Generating", reset the display window
         generateHold = 0.8f; // If you want it to be more obvious, turn it up, e.g 0.6f
         pendingChase = false; // A new round of generation, clean up the previous round of suspension
@@ -88,6 +86,5 @@ public class BossAnimationController extends Component {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
         }
-        // Gdx.app.log(BOSS_ANIM, "setAnimation -> " + animationName);
     }
 }

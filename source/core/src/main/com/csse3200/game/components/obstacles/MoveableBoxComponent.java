@@ -227,7 +227,6 @@ public class MoveableBoxComponent extends Component {
             }
 
             body.setAngularVelocity(0f);
-            //body.setLinearVelocity(0f, 0f);
 
             resetPos(body);
 
@@ -236,7 +235,6 @@ public class MoveableBoxComponent extends Component {
             body.setFixedRotation(savedFixedRotation);
             body.setBullet(savedBullet);
             body.setLinearDamping(BASE_LINEAR_DAMPING);
-            //boxPhysics.getBody().setTransform(boxPhysics.getBody().getPosition(), 0);
         }
         toggleFilter();
     }
@@ -418,7 +416,6 @@ public class MoveableBoxComponent extends Component {
         float currentAng = body.getAngle();
         float deltaAng = MathUtils.atan2(MathUtils.sin(targetAngle - currentAng),
                                          MathUtils.cos(targetAngle - currentAng));
-        //float angVel = 10f * deltaAng - 2f * body.getAngularVelocity();
         float angVel = (Math.abs(deltaAng) < 1e-2f) ? 0f : deltaAng * 10f;
         angVel = MathUtils.clamp(angVel, -MAX_ANG_SPEED, MAX_ANG_SPEED);
 

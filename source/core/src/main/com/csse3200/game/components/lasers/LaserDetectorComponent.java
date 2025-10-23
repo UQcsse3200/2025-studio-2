@@ -83,7 +83,7 @@ public class LaserDetectorComponent extends Component {
         if (detecting == this.detecting) return;
 
         // idk if this looks better with or without but its here if its wanted
-        //texture.setTexture(textures[detecting ? 1 : 0]);
+        //texture.setTexture(textures[detecting ? 1 : 0])
         light.setActive(detecting);
         entity.getEvents().trigger(detecting ? "detectingStart" : "detectingEnd");
         this.detecting = detecting;
