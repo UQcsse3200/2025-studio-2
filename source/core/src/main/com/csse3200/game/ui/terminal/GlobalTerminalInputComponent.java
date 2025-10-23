@@ -28,7 +28,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
       modifierHeld = true;
     }
     handleFocusChange(keycode);
-    return false;
+    return terminal.isOpen();
   }
 
   @Override
@@ -37,7 +37,7 @@ public class GlobalTerminalInputComponent extends InputComponent {
       modifierHeld = false;
     }
     handleFocusChange(keycode);
-    return false;
+    return terminal.isOpen();
   }
 
   private void handleFocusChange(int keycode) {
