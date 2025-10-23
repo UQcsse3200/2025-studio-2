@@ -39,21 +39,21 @@ public class LaserEmitterComponent extends Component {
     private static final float MAX_DISTANCE = 50f;
     private static final float KNOCKBACK = 10f;
 
-    private static final short REBOUND_OCCLUDER = PhysicsLayer.LASER_REFLECTOR;
-    private static final short BLOCKED_OCCLUDER = (
+    private static final short reboundOccluder = PhysicsLayer.LASER_REFLECTOR;
+    private static final short blockedOccluder = (short) (
             PhysicsLayer.OBSTACLE
             // | PhysicsLayer.DEFAULT
-            );
-    private static final short DETECTOR_OCCLUDER = PhysicsLayer.LASER_DETECTOR;
-    private static final short PLAYER_OCCLUDER = PhysicsLayer.PLAYER;
-    private static final short HIT_MASK = (short) (
-              REBOUND_OCCLUDER
-            | BLOCKED_OCCLUDER
-            | PLAYER_OCCLUDER
-            | DETECTOR_OCCLUDER);
+    );
+    private static final short detectorOccluder = PhysicsLayer.LASER_DETECTOR;
+    private static final short playerOccluder = PhysicsLayer.PLAYER;
+    private static final short hitMask = (short) (
+            reboundOccluder
+                    | blockedOccluder
+                    | playerOccluder
+                    | detectorOccluder);
 
     private final List<Vector2> positions = new ArrayList<>();
-    private float dir;
+    private float dir = 90f;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 
@@ -64,14 +64,19 @@ public class LaserEmitterComponent extends Component {
     private AnimationRenderComponent animator;
     private ConeLightComponent emitterLight;
 
+    private boolean enabled = true;
     private boolean lastEnabled = true;
 
     public LaserEmitterComponent() {
-        this(90.0f);
+
     }
 
     public LaserEmitterComponent(float dir) {
         this.dir = dir;
+    }
+
+    private void setEnable(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public boolean getEnable() {
@@ -92,23 +97,23 @@ public class LaserEmitterComponent extends Component {
             hitLight = createPointLight();
         }
 
-        entity.getEvents().addListener("enable", () -> setEnabled(true));
-        entity.getEvents().addListener("disable", () -> setEnabled(false));
+        entity.getEvents().addListener("enable", () -> setEnable(true));
+        entity.getEvents().addListener("disable", () -> setEnable(false));
     }
 
     @Override
     public void update() {
         /*
-        * within this update a few calculations are done to construct out
-        * list of collisions our laser makes.
-        *
-        * firstly we start by getting the initial position of the laser which
-        * is offset by a set value. then from there we raycast until hitting any collider
-        * within out mask. after it's determined what type of collider layer is hit, if it's
-        * an obstacle than the laser stops. if the collider is a reflector then the angle of
-        * reflection is calculated using the impact angle and the normal vector of the surface
-        * hit. the process is repeated until we run out of rebounds or length.
-        * */
+         * within this update a few calculations are done to construct out
+         * list of collisions our laser makes.
+         *
+         * firstly we start by getting the initial position of the laser which
+         * is offset by a set value. then from there we raycast until hitting any collider
+         * within out mask. after it's determined what type of collider layer is hit, if it's
+         * an obstacle than the laser stops. if the collider is a reflector then the angle of
+         * reflection is calculated using the impact angle and the normal vector of the surface
+         * hit. the process is repeated until we run out of rebounds or length.
+         * */
         if (lastEnabled !=  enabled) {
             setLightVisibility(enabled);
             setAnimation(enabled);
@@ -133,7 +138,7 @@ public class LaserEmitterComponent extends Component {
             Vector2 end = start.cpy().mulAdd(dirVec, remaining);
 
             RaycastHit hit = new RaycastHit();
-            boolean hitSomething = physicsEngine.raycast(start, end, HIT_MASK, hit);
+            boolean hitSomething = physicsEngine.raycast(start, end, hitMask, hit);
 
             // if no hit on block and rebound laser reaches max dist hitting nothing
             if (!hitSomething) {
@@ -152,9 +157,9 @@ public class LaserEmitterComponent extends Component {
 
             // classify reflector or blocker
             short cat = categoryBitsFromHit(hit);
-            boolean isReflector = (cat & REBOUND_OCCLUDER) != 0;
-            boolean isPlayer = (cat & PLAYER_OCCLUDER) != 0;
-            boolean isDetector = (cat & DETECTOR_OCCLUDER) != 0;
+            boolean isReflector = (cat & reboundOccluder) != 0;
+            boolean isPlayer = (cat & playerOccluder) != 0;
+            boolean isDetector = (cat & detectorOccluder) != 0;
 
             if (isReflector) {
                 // reflect r = d -2(d.n) n
@@ -279,7 +284,7 @@ public class LaserEmitterComponent extends Component {
             return hit.fixture.getFilterData().categoryBits;
         }
         // fallback to blocker
-        return BLOCKED_OCCLUDER;
+        return blockedOccluder;
     }
 
     /**
@@ -321,7 +326,6 @@ public class LaserEmitterComponent extends Component {
             Body targetBody = physics.getBody();
             Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
             float knockbackScale = correctImpulse(direction);
-
             Vector2 impulse = direction.setLength(KNOCKBACK + knockbackScale);
             targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
         }
