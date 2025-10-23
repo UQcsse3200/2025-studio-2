@@ -151,7 +151,7 @@ loadScripts(document, 'script');</script>
 <section class="method-summary" id="method-summary">
 <h2>Method Summary</h2>
 <div id="method-summary-table">
-<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
+<div class="table-tabs" role="tablist" aria-orientation="horizontal"><button id="method-summary-table-tab0" role="tab" aria-selected="true" aria-controls="method-summary-table.tabpanel" tabindex="0" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table', 3)" class="active-table-tab">All Methods</button><button id="method-summary-table-tab1" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab1', 3)" class="table-tab">Static Methods</button><button id="method-summary-table-tab2" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab2', 3)" class="table-tab">Instance Methods</button><button id="method-summary-table-tab4" role="tab" aria-selected="false" aria-controls="method-summary-table.tabpanel" tabindex="-1" onkeydown="switchTab(event)" onclick="show('method-summary-table', 'method-summary-table-tab4', 3)" class="table-tab">Concrete Methods</button></div>
 <div id="method-summary-table.tabpanel" role="tabpanel" aria-labelledby="method-summary-table-tab0">
 <div class="summary-table three-column-summary">
 <div class="table-header col-first">Modifier and Type</div>
@@ -187,12 +187,21 @@ loadScripts(document, 'script');</script>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>com.badlogic.gdx.scenes.scene2d.Stage</code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getStage()" class="member-name-link">getStage</a>()</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTab(com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab)" class="member-name-link">setTab</a><wbr>(<a href="PauseMenuDisplay.Tab.html" title="enum class in com.csse3200.game.components.pausemenu">PauseMenuDisplay.Tab</a>&nbsp;tab)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../../ui/PixelPerfectPlacer.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer</a></code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#makeTabScaffold(com.csse3200.game.screens.MainGameScreen,com.badlogic.gdx.graphics.Texture,com.csse3200.game.ui.PixelPerfectPlacer.Rect,java.util.Map)" class="member-name-link">makeTabScaffold</a><wbr>(<a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;screen,
+ com.badlogic.gdx.graphics.Texture&nbsp;bgTex,
+ <a href="../../ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a>&nbsp;closeRect,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="PauseMenuDisplay.Tab.html" title="enum class in com.csse3200.game.components.pausemenu">PauseMenuDisplay.Tab</a>,<wbr><a href="../../ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a>&gt;&nbsp;tabRects)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Builds a PixelPerfectPlacer with:
+ - a named "closeButton" that unpauses (if paused) and hides the pause UI</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setVisible(boolean)" class="member-name-link">setVisible</a><wbr>(boolean&nbsp;visible)</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setTab(com.csse3200.game.components.pausemenu.PauseMenuDisplay.Tab)" class="member-name-link">setTab</a><wbr>(<a href="PauseMenuDisplay.Tab.html" title="enum class in com.csse3200.game.components.pausemenu">PauseMenuDisplay.Tab</a>&nbsp;tab)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#setVisible(boolean)" class="member-name-link">setVisible</a><wbr>(boolean&nbsp;visible)</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -297,6 +306,24 @@ loadScripts(document, 'script');</script>
 <section class="detail" id="setVisible(boolean)">
 <h3>setVisible</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">setVisible</span><wbr><span class="parameters">(boolean&nbsp;visible)</span></div>
+</section>
+</li>
+<li>
+<section class="detail" id="makeTabScaffold(com.csse3200.game.screens.MainGameScreen,com.badlogic.gdx.graphics.Texture,com.csse3200.game.ui.PixelPerfectPlacer.Rect,java.util.Map)">
+<h3>makeTabScaffold</h3>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../../ui/PixelPerfectPlacer.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer</a></span>&nbsp;<span class="element-name">makeTabScaffold</span><wbr><span class="parameters">(<a href="../../screens/MainGameScreen.html" title="class in com.csse3200.game.screens">MainGameScreen</a>&nbsp;screen,
+ com.badlogic.gdx.graphics.Texture&nbsp;bgTex,
+ <a href="../../ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a>&nbsp;closeRect,
+ <a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="PauseMenuDisplay.Tab.html" title="enum class in com.csse3200.game.components.pausemenu">PauseMenuDisplay.Tab</a>,<wbr><a href="../../ui/PixelPerfectPlacer.Rect.html" title="class in com.csse3200.game.ui">PixelPerfectPlacer.Rect</a>&gt;&nbsp;tabRects)</span></div>
+<div class="block">Builds a PixelPerfectPlacer with:
+ - a named "closeButton" that unpauses (if paused) and hides the pause UI</div>
+<dl class="notes">
+<dt>Parameters:</dt>
+<dd><code>screen</code> - the owning MainGameScreen</dd>
+<dd><code>bgTex</code> - background image for the placer</dd>
+<dd><code>closeRect</code> - pixel rect for the close hotspot</dd>
+<dd><code>tabRects</code> - map of tab -&gt; pixel rect for tab hotspots</dd>
+</dl>
 </section>
 </li>
 <li>

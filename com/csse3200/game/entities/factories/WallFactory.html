@@ -113,12 +113,10 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-second">Method</div>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTiledWall(float,float,int,int,float)" class="member-name-link">createTiledWall</a><wbr>(float&nbsp;x,
- float&nbsp;y,
- int&nbsp;tilesX,
- int&nbsp;tilesY,
- float&nbsp;tileWorldSize)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">&nbsp;</div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createTiledWall()" class="member-name-link">createTiledWall</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
+<div class="block">Create a vertical wall at world position (x, y) with given size (width, height).</div>
+</div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createWall(float,float,float,float,java.lang.String)" class="member-name-link">createWall</a><wbr>(float&nbsp;x,
  float&nbsp;y,
@@ -168,13 +166,15 @@ loadScripts(document, 'script');</script>
 </section>
 </li>
 <li>
-<section class="detail" id="createTiledWall(float,float,int,int,float)">
+<section class="detail" id="createTiledWall()">
 <h3>createTiledWall</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createTiledWall</span><wbr><span class="parameters">(float&nbsp;x,
- float&nbsp;y,
- int&nbsp;tilesX,
- int&nbsp;tilesY,
- float&nbsp;tileWorldSize)</span></div>
+<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createTiledWall</span>()</div>
+<div class="block">Create a vertical wall at world position (x, y) with given size (width, height).
+ Texture is scaled to fit the specified size.</div>
+<dl class="notes">
+<dt>Returns:</dt>
+<dd>Configured wall entity</dd>
+</dl>
 </section>
 </li>
 </ul>

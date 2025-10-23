@@ -142,6 +142,12 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 <div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Returns an entry held by the service using the key (or id) of the entry.</div>
 </div>
+<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>int</code></div>
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#getUnlockedCount()" class="member-name-link">getUnlockedCount</a>()</code></div>
+<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
+<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>void</code></div>
+<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#incUnlockCount()" class="member-name-link">incUnlockCount</a>()</code></div>
+<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">&nbsp;</div>
 </div>
 </div>
 </div>
@@ -188,10 +194,24 @@ implements com.badlogic.gdx.utils.Disposable</span></div>
 </section>
 </li>
 <li>
+<section class="detail" id="incUnlockCount()">
+<h3>incUnlockCount</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">void</span>&nbsp;<span class="element-name">incUnlockCount</span>()</div>
+</section>
+</li>
+<li>
+<section class="detail" id="getUnlockedCount()">
+<h3>getUnlockedCount</h3>
+<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">int</span>&nbsp;<span class="element-name">getUnlockedCount</span>()</div>
+</section>
+</li>
+<li>
 <section class="detail" id="getEntries(boolean)">
 <h3>getEntries</h3>
 <div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/List.html" title="class or interface in java.util" class="external-link">List</a>&lt;<a href="CodexEntry.html" title="class in com.csse3200.game.services">CodexEntry</a>&gt;</span>&nbsp;<span class="element-name">getEntries</span><wbr><span class="parameters">(boolean&nbsp;unlockedOnly)</span></div>
-<div class="block">Returns all unlocked entries currently stored by the service as an array list.</div>
+<div class="block">Returns all unlocked entries currently stored by the service as an array list. This
+ list is sorted by the collection order of entries (new entries collected appear at end
+ of list).</div>
 <dl class="notes">
 <dt>Parameters:</dt>
 <dd><code>unlockedOnly</code> - Flag for filtering any codex entries which have not been unlocked.</dd>

@@ -23,7 +23,6 @@ com.csse3200.game.components.mainmenu
 com.csse3200.game.components.minimap
 com.csse3200.game.components.npc
 com.csse3200.game.components.obstacles
-com.csse3200.game.components.obstacles.Door
 com.csse3200.game.components.pausemenu
 com.csse3200.game.components.platforms
 com.csse3200.game.components.player
