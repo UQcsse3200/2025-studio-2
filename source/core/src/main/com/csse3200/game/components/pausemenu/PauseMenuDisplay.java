@@ -354,13 +354,6 @@ public class PauseMenuDisplay extends UIComponent {
         return placer;
     }
 
-    private static boolean isTerminalOpen() {
-        var stage = ServiceLocator.getRenderService().getStage();
-        if (stage == null) return false;
-        Actor a = stage.getRoot().findActor("terminalRoot");
-        return a != null && a.isVisible();
-    }
-
     /**
      * Refreshes the inventory grid to update selection highlighting
      */
