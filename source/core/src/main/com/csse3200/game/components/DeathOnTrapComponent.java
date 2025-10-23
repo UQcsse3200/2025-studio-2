@@ -24,7 +24,7 @@ public class DeathOnTrapComponent extends Component {
     private boolean triggered = false;
     private static final float ANIMATION_DURATION = 0.5f;
     private static final String EXPLOSION_SOUND = "sounds/explosion.mp3";
-    private static final String BOMB_EFFECT = "bomb_effect";
+    private static final String BOMB_EFFECT_ANIMATION = "bomb_effect";
 
     @Override
     public void create() {
@@ -32,8 +32,8 @@ public class DeathOnTrapComponent extends Component {
         entity.getEvents().addListener("reset", this::onReset);
 
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null && !animator.hasAnimation(BOMB_EFFECT)) {
-            animator.addAnimation(BOMB_EFFECT, 0.05f, Animation.PlayMode.NORMAL);
+        if (animator != null && !animator.hasAnimation(BOMB_EFFECT_ANIMATION)) {
+            animator.addAnimation(BOMB_EFFECT_ANIMATION, 0.05f, Animation.PlayMode.NORMAL);
         }
     }
     /**
@@ -77,15 +77,15 @@ public class DeathOnTrapComponent extends Component {
 
         // Play explosion animation
         AnimationRenderComponent animator = entity.getComponent(AnimationRenderComponent.class);
-        if (animator != null && animator.hasAnimation(BOMB_EFFECT)) {
-            animator.startAnimation(BOMB_EFFECT);
+        if (animator != null && animator.hasAnimation(BOMB_EFFECT_ANIMATION)) {
+            animator.startAnimation(BOMB_EFFECT_ANIMATION);
         }
 
         // Play sound
         Sound explosionSound = ServiceLocator.getResourceService().getAsset(EXPLOSION_SOUND, Sound.class);
         if (explosionSound != null) {
             long soundId = explosionSound.play(UserSettings.get().masterVolume);
-            fadeOutSound(explosionSound, soundId, 0.5f);
+            fadeOutSound(explosionSound, soundId);
         }
 
         // Cleanup components after delay
@@ -95,20 +95,20 @@ public class DeathOnTrapComponent extends Component {
                 try {
                     if (animator != null) {
                         animator.stopAnimation();
-                        entity.removeComponent(animator);
+                        animator.setEnabled(false);
                     }
 
                     PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
                     if (physics != null) {
                         if (physics.getBody() != null) physics.getBody().setActive(false);
-                        entity.removeComponent(physics);
+                        physics.setEnabled(false);
                     }
 
-                    // 🔥 Unregister from entity service (so it's fully gone)
+                    // Unregister from entity service
                     ServiceLocator.getEntityService().unregister(entity);
 
                     entity.getEvents().trigger("destroy");
-                    entity.removeComponent(DeathOnTrapComponent.this);
+                    DeathOnTrapComponent.this.setEnabled(false);
                 } catch (Exception e) {
                     Gdx.app.error("DeathOnTrapComponent", "Error during cleanup: " + e.getMessage());
                 }
@@ -119,14 +119,13 @@ public class DeathOnTrapComponent extends Component {
     /**
      * Gradually fades out the explosion sound over a specified duration.
      *
-     * @param sound    The sound instance to fade.
-     * @param soundId  The specific sound playback ID.
-     * @param duration The total fade-out duration in seconds.
+     * @param sound   The sound instance to fade.
+     * @param soundId The specific sound playback ID.
      */
 
-        private void fadeOutSound(Sound sound, long soundId, float duration) {
+        private void fadeOutSound(Sound sound, long soundId) {
         final int steps = 10;
-        final float interval = duration / steps;
+        final float interval = (float) 0.5 / steps;
 
         for (int i = 0; i < steps; i++) {
             final float volume = 1.0f - (i / (float) steps);

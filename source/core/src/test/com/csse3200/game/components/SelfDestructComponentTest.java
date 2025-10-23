@@ -6,6 +6,7 @@ import com.csse3200.game.components.npc.DroneAnimationController;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.events.EventHandler;
 import com.csse3200.game.extensions.GameExtension;
+import com.csse3200.game.physics.components.PhysicsComponent;
 import com.csse3200.game.rendering.AnimationRenderComponent;
 import com.csse3200.game.services.ResourceService;
 import com.csse3200.game.services.ServiceLocator;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(GameExtension.class)
 @ExtendWith(MockitoExtension.class)
 class SelfDestructComponentTest {
+
     private Entity player;
     private SelfDestructComponent selfDestruct;
     private AnimationRenderComponent animator;
@@ -36,6 +38,7 @@ class SelfDestructComponentTest {
         player = mock(Entity.class);
 
         animator = mock(AnimationRenderComponent.class);
+        PhysicsComponent physics = mock(PhysicsComponent.class);
         sound = mock(Sound.class);
         playerStats = mock(CombatStatsComponent.class);
 

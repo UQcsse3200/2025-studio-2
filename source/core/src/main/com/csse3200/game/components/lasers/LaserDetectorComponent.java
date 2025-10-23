@@ -15,6 +15,7 @@ import com.csse3200.game.services.ServiceLocator;
  * the event trigger from the {@code LaserShowerComponent}.
  */
 public class LaserDetectorComponent extends Component {
+
     private ConeLightComponent light;
 
     private boolean detecting = false;
@@ -73,8 +74,6 @@ public class LaserDetectorComponent extends Component {
     private void updateDetection(boolean detecting) {
         if (detecting == this.detecting) return;
 
-        // idk if this looks better with or without but its here if its wanted
-        //texture.setTexture(textures[detecting ? 1 : 0]);
         light.setActive(detecting);
         entity.getEvents().trigger(detecting ? "detectingStart" : "detectingEnd");
         this.detecting = detecting;

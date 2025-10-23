@@ -26,6 +26,7 @@
     "images/bomb.png",
     "images/cube.png",
     "images/laser-end.png",
+    "images/LaserShower-end.png",
     "images/camera-body.png",
     "images/camera-lens.png",
     "images/glide_powerup.png",
@@ -80,7 +81,10 @@
     "images/health-potion.atlas",
     "images/boss.atlas",
     "images/drone.atlas",
-    "images/animated-monitors.atlas"
+    "images/animated-monitors.atlas",
+    "images/drone_scout.atlas",
+    "images/drone_brutal.atlas",
+    "images/drone_chaser.atlas"
   ],
   "sounds": [
     "sounds/Impact4.ogg",

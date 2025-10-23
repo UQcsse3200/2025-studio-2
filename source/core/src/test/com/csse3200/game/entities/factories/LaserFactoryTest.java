@@ -3,6 +3,8 @@ package com.csse3200.game.entities.factories;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.csse3200.game.components.CombatStatsComponent;
+import com.csse3200.game.components.lasers.LaserEmitterComponent;
+import com.csse3200.game.components.lasers.LaserShowerComponent;
 import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.lighting.LightingEngine;
@@ -17,7 +19,7 @@ import com.csse3200.game.services.ServiceLocator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -38,9 +40,11 @@ class LaserFactoryTest {
         GameTime time = mock(GameTime.class);
         ServiceLocator.registerTimeSource(time);
 
+        // Register RenderService
         RenderService renderService = new RenderService();
         ServiceLocator.registerRenderService(renderService);
 
+        // Mock LightingService
         RayHandler rayHandler = mock(RayHandler.class);
         LightingEngine lightingEngine = mock(LightingEngine.class);
         when(lightingEngine.getRayHandler()).thenReturn(rayHandler);
@@ -54,7 +58,19 @@ class LaserFactoryTest {
         assertNotNull(e.getComponent(AnimationRenderComponent.class));
         assertNotNull(e.getComponent(ConeLightComponent.class));
         assertNotNull(e.getComponent(CombatStatsComponent.class));
-        //assertNotNull(e.getComponent(LaserShowerComponent.class));
+        assertNotNull(e.getComponent(LaserEmitterComponent.class));
         assertNotNull(e.getComponent(LaserRenderComponent.class));
+    }
+    @Test
+    void createLaserShower_hasAllComponents() {
+        // Create a laser shower entity
+        Entity e = LaserFactory.createLaserShower(90f);
+
+        // Verify entity has all required components
+        assertNotNull(e.getComponent(AnimationRenderComponent.class)); // Animation visuals
+        assertNotNull(e.getComponent(ConeLightComponent.class));  // Lighting cone
+        assertNotNull(e.getComponent(CombatStatsComponent.class));  // Health/damage stats
+        assertNotNull(e.getComponent(LaserShowerComponent.class)); // Laser shower behavior
+        assertNotNull(e.getComponent(LaserRenderComponent.class)); // Laser visuals
     }
 }
