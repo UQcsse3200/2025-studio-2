@@ -101,7 +101,6 @@ public class DeathOnTrapComponent extends Component {
                     PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
                     if (physics != null) {
                         if (physics.getBody() != null) physics.getBody().setActive(false);
-                        //entity.removeComponent(physics);
                         physics.setEnabled(false);
                     }
 
@@ -109,7 +108,6 @@ public class DeathOnTrapComponent extends Component {
                     ServiceLocator.getEntityService().unregister(entity);
 
                     entity.getEvents().trigger("destroy");
-                    //entity.removeComponent(DeathOnTrapComponent.this);
                     DeathOnTrapComponent.this.setEnabled(false);
                 } catch (Exception e) {
                     Gdx.app.error("DeathOnTrapComponent", "Error during cleanup: " + e.getMessage());

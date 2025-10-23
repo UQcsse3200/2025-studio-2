@@ -36,12 +36,7 @@ public class BossSpawnerComponent extends Component {
 	// Track spawned drones for cleanup
 	private final List<Entity> spawnedDrones = new ArrayList<>();
 
-	// Maximum drones - fixed at 3
-	//private static final int MAX_DRONES = 3;
-	//private int totalDronesSpawned = 0;
 
-	// Track if we've transitioned to chase after max drones
-	//private boolean hasCompletedSpawning = false;
 	/** phase config */
 	public static class PhaseConfig {
 		public final EnemyFactory.DroneVariant variant; // atlas and speed
@@ -267,7 +262,6 @@ public class BossSpawnerComponent extends Component {
 			} catch (Exception ignore) {
 				arc.startAnimation("float");
 			}
-			//arc.scaleEntity();
 		}
 
 		drone.getEvents().trigger("enemyActivated");

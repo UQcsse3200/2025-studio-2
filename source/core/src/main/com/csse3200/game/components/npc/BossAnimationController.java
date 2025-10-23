@@ -3,7 +3,6 @@ package com.csse3200.game.components.npc;
 import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.rendering.AnimationRenderComponent;
-import com.csse3200.game.entities.Entity;
 import com.csse3200.game.services.ServiceLocator;
 
 public class BossAnimationController extends Component {
@@ -13,6 +12,7 @@ public class BossAnimationController extends Component {
     private float generateHold = 0f;
     // If the generation has just finished, but is still in the "display window", suspend and return to the chase
     private boolean pendingChase = false;
+    private static final String BOSS_ANIM_TAG = "BossAnim";
 
     @Override
     public void create() {
@@ -44,7 +44,7 @@ public class BossAnimationController extends Component {
             // Only transition back to chase for one-shot animations
             if (currentAnimation.equals("bossShootLaser") ||
                     currentAnimation.equals("bossTouchKill")) {
-                Gdx.app.log("BossAnim", currentAnimation + " finished, returning to chase");
+                Gdx.app.log(BOSS_ANIM_TAG, currentAnimation + " finished, returning to chase");
                 animateChase();
             }
         }
@@ -60,7 +60,7 @@ public class BossAnimationController extends Component {
 
     void animateGenerateDrone() {
         setAnimation("bossGenerateDrone");
-        Gdx.app.log("BossAnim", "generateDroneStart");
+        Gdx.app.log(BOSS_ANIM_TAG, "generateDroneStart");
         // Each time you receive "Start Generating", reset the display window
         generateHold = 1f; // If you want it to be more obvious, turn it up, e.g 0.6f
         pendingChase = true; // Set flag to return to chase after hold expires
@@ -85,7 +85,7 @@ public class BossAnimationController extends Component {
         if (!animationName.equals(currentAnimation)) {
             animator.startAnimation(animationName);
             currentAnimation = animationName;
-            Gdx.app.log("BossAnim", "setAnimation -> " + animationName);
+            Gdx.app.log(BOSS_ANIM_TAG, "setAnimation -> " + animationName);
         }
     }
 }

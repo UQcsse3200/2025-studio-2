@@ -422,58 +422,6 @@ public class EnemyFactoryTest {
         assertEquals(List.of("patrolStart", "patrolEnd", "chaseStart"), eventLog);
     }
 
-    /*@Test
-    void patrolDrone_chaseToCooldownFlow() {
-        Entity target = createEntityWithPosition(new Vector2(100, 100));
-        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-
-        Entity drone = EnemyFactory.createPatrollingDrone(target, route);
-        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
-
-        List<String> eventLog = new ArrayList<>();
-        drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
-        drone.getEvents().addListener("chaseEnd", () -> eventLog.add("chaseEnd"));
-        drone.getEvents().addListener("cooldownStart", () -> eventLog.add("cooldownStart"));
-
-        ai.update(); // Patrolling
-        drone.getEvents().trigger("enemyActivated");
-        ai.update(); // Chasing
-
-        when(gameTime.getTime()).thenReturn(3100L); // After chase grace period, should end
-        ai.update(); // Cooldown
-
-        assertEquals(List.of("chaseStart", "chaseEnd", "cooldownStart"), eventLog);
-    }*/
-
-    /*@Test
-    void patrolDrone_cooldownToChaseFlow() {
-        Entity target = createEntityWithPosition(new Vector2(100, 100));
-        Vector2[] route = {new Vector2(0, 0), new Vector2(1, 0)};
-
-        Entity drone = EnemyFactory.createPatrollingDrone(target, route);
-        AITaskComponent ai = drone.getComponent(AITaskComponent.class);
-
-        List<String> eventLog = new ArrayList<>();
-        drone.getEvents().addListener("cooldownStart", () -> eventLog.add("cooldownStart"));
-        drone.getEvents().addListener("cooldownEnd", () -> eventLog.add("cooldownEnd"));
-        drone.getEvents().addListener("chaseStart", () -> eventLog.add("chaseStart"));
-        drone.getEvents().addListener("patrolStart", () -> eventLog.add("patrolStart"));
-
-        drone.getEvents().trigger("enemyActivated");
-        ai.update(); // Chasing
-
-        when(gameTime.getTime()).thenReturn(3100L); // Finish chase
-        ai.update(); // Cooldown
-
-        // Advance cooldown (but not finished)
-        when(gameTime.getTime()).thenReturn(4000L);
-        ai.update(); // Still in cooldown
-
-        drone.getEvents().trigger("enemyActivated");
-        ai.update(); // Chasing
-
-        assertEquals(List.of("chaseStart", "cooldownStart", "cooldownEnd", "chaseStart"), eventLog);
-    }*/
 
     @Test
     void SelfDestructDrone_hasALlRequiredComponents() {

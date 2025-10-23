@@ -109,6 +109,7 @@ public class BossLaserAttackComponent extends Component {
      * Enables or disables laser attacks
      * @param enabled Whether laser attacks should be enabled
      */
+    @Override
     public void setEnabled(boolean enabled) {
         this.canAttack = enabled;
         if (!enabled) {
