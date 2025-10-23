@@ -18,6 +18,7 @@ public class StaminaComponent extends Component {
     private int attackStaminaCost;
     private float regenDelaySeconds;
     private float regenDelayTimer = 0f;
+    private int dashStaminaCost = 25; // default; tunable via config
 
     private boolean sprinting = false;
     private boolean exhausted = false;
@@ -47,6 +48,11 @@ public class StaminaComponent extends Component {
         entity.getEvents().addListener("sprintStart", () -> setSprinting(true));
         entity.getEvents().addListener("sprintStop", () -> setSprinting(false));
     }
+    public StaminaComponent setDashStaminaCost(int cost) {
+        this.dashStaminaCost = Math.max(0, cost);
+        return this; // optional fluent style
+    }
+
 
     public void update(float dt) {
         if (dt <= 0f) return;
@@ -115,6 +121,19 @@ public class StaminaComponent extends Component {
         }
         return false;
     }
+    public boolean canDash() {
+        return !exhausted && currentStamina >= dashStaminaCost;
+    }
+
+    public boolean tryConsumeForDash() {
+        if (canDash()) {
+            changeStamina(-dashStaminaCost);
+            regenDelayTimer = regenDelaySeconds; // brief pause before regen
+            return true;
+        }
+        return false;
+    }
+
 
     public void setSprinting(boolean sprinting) {
         this.sprinting = sprinting;
@@ -132,8 +151,11 @@ public class StaminaComponent extends Component {
 
     public static StaminaComponent fromConfig(Object cfg) {
         if (cfg == null) {
-            return new StaminaComponent(100f, 10f, 25f, 20, 1.0f);
+            StaminaComponent sc = new StaminaComponent(100f, 10f, 25f, 20, 1.0f);
+            sc.setDashStaminaCost(25);
+            return sc;
         }
+
         try {
             Class<?> c = cfg.getClass();
 
@@ -145,6 +167,9 @@ public class StaminaComponent extends Component {
                     new String[]{"getSprintDrainPerSecond", "getSprintDrain", "sprintDrainPerSecond", "sprintDrain"});
             Integer attackCost = readIntFromConfig(c, cfg,
                     new String[]{"getAttackStaminaCost", "getStaminaDrain", "attackStaminaCost", "staminaDrain"});
+            Integer dashCost = readIntFromConfig(c, cfg,
+                    new String[]{"getDashStaminaCost", "dashStaminaCost", "dashCost"});
+
             Float regenDelay = readFloatFromConfig(c, cfg,
                     new String[]{"getStaminaRegenDelay", "staminaRegenDelay", "regenDelaySeconds", "regenDelay"});
 
@@ -153,10 +178,18 @@ public class StaminaComponent extends Component {
             float drainF = (sprintDrain != null) ? sprintDrain : 25f;
             int costI = (attackCost != null) ? attackCost : 20;
             float delayF = (regenDelay != null) ? regenDelay : 1.0f;
+            int dashCostI = (dashCost != null) ? dashCost : 25;
 
-            return new StaminaComponent(maxF, regenF, drainF, costI, delayF);
+
+            StaminaComponent sc = new StaminaComponent(maxF, regenF, drainF, costI, delayF);
+            sc.setDashStaminaCost(dashCostI);   // <-- apply config
+            return sc;
+
         } catch (Exception e) {
-            return new StaminaComponent(100f, 10f, 25f, 20, 1.0f);
+            StaminaComponent sc = new StaminaComponent(100f, 10f, 25f, 20, 1.0f);
+            sc.setDashStaminaCost(25);          // <-- default
+            return sc;
+
         }
     }
 

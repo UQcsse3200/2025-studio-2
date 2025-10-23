@@ -65,6 +65,9 @@
     "images/platform-long-map.png",
     "images/wall-map-1.png",
     "images/wall-map-2.png",
+    "images/glide_powerup.png",
+    "images/dash_powerup.png",
+    "images/jetpack_powerup.png",
     "images/platform-map.png",
     "images/platform-short-map.png"
   ],
