@@ -41,7 +41,7 @@ public class ExplosionFactory {
                 .getAsset("images/boss.atlas", TextureAtlas.class);
 
         if (bossAtlas == null) {
-            throw new RuntimeException("boss.atlas not loaded");
+            throw new RuntimeException("drone.atlas not loaded");
         }
 
         AnimationRenderComponent animator = new AnimationRenderComponent(bossAtlas);

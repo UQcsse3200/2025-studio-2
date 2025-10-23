@@ -1,713 +1,2217 @@
-
 boss.png
-size: 2048, 1024
+size: 16384, 8192
 format: RGBA8888
 filter: Nearest, Nearest
 repeat: none
 default
   rotate: false
-  xy: 288, 717
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 5001, 3472
+  size: 277, 477
+  orig: 640, 640
+  offset: 179, 84
   index: 0
 bossChase
   rotate: false
-  xy: 288, 717
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 4666, 3083
+  size: 272, 482
+  orig: 640, 640
+  offset: 184, 79
+  index: 20
+bossChase
+  rotate: false
+  xy: 4661, 2599
+  size: 277, 482
+  orig: 640, 640
+  offset: 179, 79
+  index: 39
+bossChase
+  rotate: false
+  xy: 5001, 3472
+  size: 277, 477
+  orig: 640, 640
+  offset: 179, 84
   index: 0
 bossChase
   rotate: false
-  xy: 288, 717
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 1
+  xy: 3948, 1982
+  size: 262, 482
+  orig: 640, 640
+  offset: 189, 79
+  index: 26
 bossChase
   rotate: false
-  xy: 288, 717
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 2
-bossChase
-  rotate: false
-  xy: 1, 521
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 5185, 2110
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
   index: 3
 bossChase
   rotate: false
-  xy: 1, 521
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 5073, 1137
+  size: 267, 482
+  orig: 640, 640
+  offset: 184, 79
+  index: 31
+bossChase
+  rotate: false
+  xy: 5283, 1626
+  size: 272, 482
+  orig: 640, 640
+  offset: 184, 79
+  index: 36
+bossChase
+  rotate: false
+  xy: 4042, 66
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 1
+bossChase
+  rotate: false
+  xy: 4794, 184
+  size: 277, 477
+  orig: 640, 640
+  offset: 179, 84
+  index: 40
+bossChase
+  rotate: false
+  xy: 9743, 6294
+  size: 272, 477
+  orig: 640, 640
+  offset: 179, 84
+  index: 2
+bossChase
+  rotate: false
+  xy: 10326, 6299
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
   index: 4
 bossChase
   rotate: false
-  xy: 1, 521
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 5
-bossChase
-  rotate: false
-  xy: 418, 717
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 6
-bossChase
-  rotate: false
-  xy: 1, 391
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 11434, 7257
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
   index: 7
 bossChase
   rotate: false
-  xy: 1, 391
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 12002, 7262
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
   index: 8
 bossChase
   rotate: false
-  xy: 1, 391
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 9
-bossGenerateDrone
-  rotate: false
-  xy: 131, 521
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 0
-bossGenerateDrone
-  rotate: false
-  xy: 1, 261
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 1
-bossGenerateDrone
-  rotate: false
-  xy: 1, 261
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 17
-bossGenerateDrone
-  rotate: false
-  xy: 131, 391
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 2
-bossGenerateDrone
-  rotate: false
-  xy: 131, 391
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 15410, 7252
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
   index: 16
-bossGenerateDrone
+bossChase
   rotate: false
-  xy: 1, 131
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 3
-bossGenerateDrone
+  xy: 15684, 7252
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 30
+bossChase
   rotate: false
-  xy: 131, 261
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 4
-bossGenerateDrone
+  xy: 15958, 7252
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 35
+bossChase
   rotate: false
-  xy: 1, 1
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 10470, 6778
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
   index: 5
-bossGenerateDrone
+bossChase
   rotate: false
-  xy: 1, 1
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 14
-bossGenerateDrone
+  xy: 10739, 6778
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 37
+bossChase
   rotate: false
-  xy: 131, 131
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 10595, 6299
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 38
+bossChase
+  rotate: false
+  xy: 11013, 6778
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 41
+bossChase
+  rotate: false
+  xy: 10869, 6299
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 42
+bossChase
+  rotate: false
+  xy: 11287, 6778
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 43
+bossChase
+  rotate: false
+  xy: 11143, 6299
+  size: 272, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 44
+bossChase
+  rotate: false
+  xy: 11561, 6778
+  size: 267, 477
+  orig: 640, 640
+  offset: 189, 84
+  index: 11
+bossChase
+  rotate: false
+  xy: 11830, 6783
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 17
+bossChase
+  rotate: false
+  xy: 12099, 6783
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 18
+bossChase
+  rotate: false
+  xy: 12368, 6883
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 19
+bossChase
+  rotate: false
+  xy: 12637, 6873
+  size: 272, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 47
+bossChase
+  rotate: false
+  xy: 12911, 6873
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
   index: 6
-bossGenerateDrone
+bossChase
   rotate: false
-  xy: 131, 131
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 13
-bossGenerateDrone
-  rotate: false
-  xy: 131, 1
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 7
-bossGenerateDrone
-  rotate: false
-  xy: 575, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 8
-bossGenerateDrone
-  rotate: false
-  xy: 705, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 13180, 6873
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
   index: 9
-bossGenerateDrone
+bossChase
   rotate: false
-  xy: 835, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 13449, 6873
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 12
+bossChase
+  rotate: false
+  xy: 13718, 6873
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 13
+bossChase
+  rotate: false
+  xy: 13987, 6873
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 15
+bossChase
+  rotate: false
+  xy: 11691, 6299
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 21
+bossChase
+  rotate: false
+  xy: 11960, 6304
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 22
+bossChase
+  rotate: false
+  xy: 12229, 6304
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 23
+bossChase
+  rotate: false
+  xy: 14256, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 24
+bossChase
+  rotate: false
+  xy: 14525, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 27
+bossChase
+  rotate: false
+  xy: 14794, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 28
+bossChase
+  rotate: false
+  xy: 15063, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 29
+bossChase
+  rotate: false
+  xy: 15332, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 32
+bossChase
+  rotate: false
+  xy: 15601, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 33
+bossChase
+  rotate: false
+  xy: 15870, 6773
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 34
+bossChase
+  rotate: false
+  xy: 8309, 5820
+  size: 262, 477
+  orig: 640, 640
+  offset: 189, 84
+  index: 25
+bossChase
+  rotate: false
+  xy: 8573, 5825
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 48
+bossChase
+  rotate: false
+  xy: 8190, 5346
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 45
+bossChase
+  rotate: false
+  xy: 8459, 5346
+  size: 262, 472
+  orig: 640, 640
+  offset: 189, 84
   index: 10
+bossChase
+  rotate: false
+  xy: 8723, 5346
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 49
+bossChase
+  rotate: false
+  xy: 8842, 5825
+  size: 267, 477
+  orig: 640, 640
+  offset: 184, 84
+  index: 54
+bossChase
+  rotate: false
+  xy: 9111, 5915
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 46
+bossChase
+  rotate: false
+  xy: 9380, 5915
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 51
+bossChase
+  rotate: false
+  xy: 8992, 5351
+  size: 262, 472
+  orig: 640, 640
+  offset: 189, 84
+  index: 14
+bossChase
+  rotate: false
+  xy: 9256, 5441
+  size: 267, 472
+  orig: 640, 640
+  offset: 184, 84
+  index: 55
+bossChase
+  rotate: false
+  xy: 9525, 5441
+  size: 262, 472
+  orig: 640, 640
+  offset: 189, 84
+  index: 50
+bossChase
+  rotate: false
+  xy: 12498, 6399
+  size: 262, 472
+  orig: 640, 640
+  offset: 189, 84
+  index: 52
+bossChase
+  rotate: false
+  xy: 12762, 6399
+  size: 262, 472
+  orig: 640, 640
+  offset: 189, 84
+  index: 53
 bossGenerateDrone
   rotate: false
-  xy: 965, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 4447, 5584
+  size: 543, 386
+  orig: 640, 640
+  offset: 18, 101
+  index: 34
+bossGenerateDrone
+  rotate: false
+  xy: 4431, 5196
+  size: 543, 386
+  orig: 640, 640
+  offset: 18, 101
+  index: 35
+bossGenerateDrone
+  rotate: false
+  xy: 4431, 5196
+  size: 543, 386
+  orig: 640, 640
+  offset: 18, 101
+  index: 48
+bossGenerateDrone
+  rotate: false
+  xy: 4367, 4800
+  size: 543, 394
+  orig: 640, 640
+  offset: 18, 92
+  index: 36
+bossGenerateDrone
+  rotate: false
+  xy: 3794, 4446
+  size: 543, 394
+  orig: 640, 640
+  offset: 18, 91
+  index: 37
+bossGenerateDrone
+  rotate: false
+  xy: 3794, 4446
+  size: 543, 394
+  orig: 640, 640
+  offset: 18, 91
+  index: 47
+bossGenerateDrone
+  rotate: false
+  xy: 4339, 4400
+  size: 543, 398
+  orig: 640, 640
+  offset: 18, 87
+  index: 38
+bossGenerateDrone
+  rotate: false
+  xy: 3721, 4042
+  size: 543, 402
+  orig: 640, 640
+  offset: 18, 83
+  index: 39
+bossGenerateDrone
+  rotate: false
+  xy: 3695, 3658
+  size: 539, 382
+  orig: 640, 640
+  offset: 18, 107
+  index: 30
+bossGenerateDrone
+  rotate: false
+  xy: 4236, 3567
+  size: 539, 382
+  orig: 640, 640
+  offset: 18, 106
+  index: 32
+bossGenerateDrone
+  rotate: false
+  xy: 4236, 3567
+  size: 539, 382
+  orig: 640, 640
+  offset: 18, 106
+  index: 49
+bossGenerateDrone
+  rotate: false
+  xy: 1849, 2936
+  size: 539, 382
+  orig: 640, 640
+  offset: 18, 105
+  index: 33
+bossGenerateDrone
+  rotate: false
+  xy: 2390, 2740
+  size: 537, 382
+  orig: 640, 640
+  offset: 16, 108
+  index: 28
+bossGenerateDrone
+  rotate: false
+  xy: 3049, 3367
+  size: 537, 402
+  orig: 640, 640
+  offset: 24, 83
+  index: 40
+bossGenerateDrone
+  rotate: false
+  xy: 3044, 2963
+  size: 537, 402
+  orig: 640, 640
+  offset: 24, 83
+  index: 41
+bossGenerateDrone
+  rotate: false
+  xy: 3588, 3254
+  size: 537, 402
+  orig: 640, 640
+  offset: 24, 82
+  index: 42
+bossGenerateDrone
+  rotate: false
+  xy: 3588, 3254
+  size: 537, 402
+  orig: 640, 640
+  offset: 24, 82
+  index: 46
+bossGenerateDrone
+  rotate: false
+  xy: 3583, 2850
+  size: 537, 402
+  orig: 640, 640
+  offset: 24, 81
+  index: 43
+bossGenerateDrone
+  rotate: false
+  xy: 3467, 2466
+  size: 535, 382
+  orig: 640, 640
+  offset: 18, 107
+  index: 29
+bossGenerateDrone
+  rotate: false
+  xy: 3467, 2466
+  size: 535, 382
+  orig: 640, 640
+  offset: 18, 107
+  index: 50
+bossGenerateDrone
+  rotate: false
+  xy: 1285, 2753
+  size: 534, 382
+  orig: 640, 640
+  offset: 23, 106
+  index: 31
+bossGenerateDrone
+  rotate: false
+  xy: 1227, 2349
+  size: 533, 402
+  orig: 640, 640
+  offset: 24, 83
+  index: 44
+bossGenerateDrone
+  rotate: false
+  xy: 1821, 2528
+  size: 533, 406
+  orig: 640, 640
+  offset: 24, 79
+  index: 45
+bossGenerateDrone
+  rotate: false
+  xy: 2356, 2356
+  size: 532, 382
+  orig: 640, 640
+  offset: 17, 108
+  index: 27
+bossGenerateDrone
+  rotate: false
+  xy: 2830, 1641
+  size: 526, 382
+  orig: 640, 640
+  offset: 19, 109
+  index: 25
+bossGenerateDrone
+  rotate: false
+  xy: 2830, 1641
+  size: 526, 382
+  orig: 640, 640
+  offset: 19, 109
+  index: 51
+bossGenerateDrone
+  rotate: false
+  xy: 5751, 7277
+  size: 523, 382
+  orig: 640, 640
+  offset: 22, 108
+  index: 26
+bossGenerateDrone
+  rotate: false
+  xy: 565, 115
+  size: 487, 382
+  orig: 640, 640
+  offset: 50, 109
+  index: 24
+bossGenerateDrone
+  rotate: false
+  xy: 4777, 3567
+  size: 222, 382
+  orig: 640, 640
+  offset: 195, 107
+  index: 0
+bossGenerateDrone
+  rotate: false
+  xy: 4777, 3567
+  size: 222, 382
+  orig: 640, 640
+  offset: 195, 107
+  index: 62
+bossGenerateDrone
+  rotate: false
+  xy: 4940, 2584
+  size: 484, 382
+  orig: 640, 640
+  offset: 41, 109
+  index: 22
+bossGenerateDrone
+  rotate: false
+  xy: 4940, 2584
+  size: 484, 382
+  orig: 640, 640
+  offset: 41, 109
+  index: 52
+bossGenerateDrone
+  rotate: false
+  xy: 2130, 974
+  size: 488, 382
+  orig: 640, 640
+  offset: 45, 109
+  index: 23
+bossGenerateDrone
+  rotate: false
+  xy: 6276, 7277
+  size: 459, 382
+  orig: 640, 640
+  offset: 46, 110
+  index: 20
+bossGenerateDrone
+  rotate: false
+  xy: 6050, 5411
+  size: 466, 382
+  orig: 640, 640
+  offset: 51, 110
+  index: 21
+bossGenerateDrone
+  rotate: false
+  xy: 5726, 5266
+  size: 322, 382
+  orig: 640, 640
+  offset: 99, 108
   index: 11
 bossGenerateDrone
   rotate: false
-  xy: 1095, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6050, 4568
+  size: 446, 382
+  orig: 640, 640
+  offset: 51, 111
+  index: 19
+bossGenerateDrone
+  rotate: false
+  xy: 8884, 6389
+  size: 434, 382
+  orig: 640, 640
+  offset: 46, 111
+  index: 18
+bossGenerateDrone
+  rotate: false
+  xy: 8884, 6389
+  size: 434, 382
+  orig: 640, 640
+  offset: 46, 111
+  index: 53
+bossGenerateDrone
+  rotate: false
+  xy: 9320, 6389
+  size: 421, 382
+  orig: 640, 640
+  offset: 44, 111
+  index: 17
+bossGenerateDrone
+  rotate: false
+  xy: 7794, 5436
+  size: 394, 382
+  orig: 640, 640
+  offset: 55, 111
+  index: 16
+bossGenerateDrone
+  rotate: false
+  xy: 7794, 5436
+  size: 394, 382
+  orig: 640, 640
+  offset: 55, 111
+  index: 54
+bossGenerateDrone
+  rotate: false
+  xy: 12271, 7362
+  size: 379, 382
+  orig: 640, 640
+  offset: 58, 110
+  index: 15
+bossGenerateDrone
+  rotate: false
+  xy: 12271, 7362
+  size: 379, 382
+  orig: 640, 640
+  offset: 58, 110
+  index: 55
+bossGenerateDrone
+  rotate: false
+  xy: 12652, 7347
+  size: 368, 382
+  orig: 640, 640
+  offset: 57, 110
+  index: 14
+bossGenerateDrone
+  rotate: false
+  xy: 13022, 7347
+  size: 338, 382
+  orig: 640, 640
+  offset: 83, 108
   index: 12
 bossGenerateDrone
   rotate: false
-  xy: 1225, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 15
-bossShootLaser
+  xy: 13022, 7347
+  size: 338, 382
+  orig: 640, 640
+  offset: 83, 108
+  index: 56
+bossGenerateDrone
   rotate: false
-  xy: 1355, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 0
-bossShootLaser
+  xy: 13362, 7347
+  size: 334, 382
+  orig: 640, 640
+  offset: 83, 108
+  index: 13
+bossGenerateDrone
   rotate: false
-  xy: 1355, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 30
-bossShootLaser
+  xy: 13698, 7347
+  size: 306, 382
+  orig: 640, 640
+  offset: 115, 107
+  index: 10
+bossGenerateDrone
   rotate: false
-  xy: 1485, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 13698, 7347
+  size: 306, 382
+  orig: 640, 640
+  offset: 115, 107
+  index: 57
+bossGenerateDrone
+  rotate: false
+  xy: 14006, 7347
+  size: 286, 382
+  orig: 640, 640
+  offset: 131, 105
+  index: 9
+bossGenerateDrone
+  rotate: false
+  xy: 13026, 6489
+  size: 266, 382
+  orig: 640, 640
+  offset: 151, 102
+  index: 8
+bossGenerateDrone
+  rotate: false
+  xy: 13294, 6489
+  size: 246, 382
+  orig: 640, 640
+  offset: 171, 104
+  index: 7
+bossGenerateDrone
+  rotate: false
+  xy: 13294, 6489
+  size: 246, 382
+  orig: 640, 640
+  offset: 171, 104
+  index: 58
+bossGenerateDrone
+  rotate: false
+  xy: 13542, 6489
+  size: 234, 382
+  orig: 640, 640
+  offset: 183, 107
+  index: 6
+bossGenerateDrone
+  rotate: false
+  xy: 13542, 6489
+  size: 234, 382
+  orig: 640, 640
+  offset: 183, 107
+  index: 59
+bossGenerateDrone
+  rotate: false
+  xy: 13778, 6489
+  size: 226, 382
+  orig: 640, 640
+  offset: 191, 108
+  index: 3
+bossGenerateDrone
+  rotate: false
+  xy: 14006, 6489
+  size: 226, 382
+  orig: 640, 640
+  offset: 191, 110
+  index: 4
+bossGenerateDrone
+  rotate: false
+  xy: 14006, 6489
+  size: 226, 382
+  orig: 640, 640
+  offset: 191, 110
+  index: 60
+bossGenerateDrone
+  rotate: false
+  xy: 14234, 6389
+  size: 226, 382
+  orig: 640, 640
+  offset: 187, 108
+  index: 5
+bossGenerateDrone
+  rotate: false
+  xy: 14462, 6389
+  size: 222, 382
+  orig: 640, 640
+  offset: 195, 107
   index: 1
+bossGenerateDrone
+  rotate: false
+  xy: 14686, 6389
+  size: 222, 382
+  orig: 640, 640
+  offset: 195, 108
+  index: 2
+bossGenerateDrone
+  rotate: false
+  xy: 14686, 6389
+  size: 222, 382
+  orig: 640, 640
+  offset: 195, 108
+  index: 61
 bossShootLaser
   rotate: false
-  xy: 1485, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6869, 7731
+  size: 586, 457
+  orig: 640, 640
+  offset: 54, 84
+  index: 46
+bossShootLaser
+  rotate: false
+  xy: 7457, 7731
+  size: 586, 457
+  orig: 640, 640
+  offset: 54, 84
+  index: 50
+bossShootLaser
+  rotate: false
+  xy: 8045, 7731
+  size: 586, 457
+  orig: 640, 640
+  offset: 54, 84
+  index: 53
+bossShootLaser
+  rotate: false
+  xy: 8633, 7731
+  size: 586, 457
+  orig: 640, 640
+  offset: 54, 84
+  index: 59
+bossShootLaser
+  rotate: false
+  xy: 9221, 7731
+  size: 586, 457
+  orig: 640, 640
+  offset: 54, 84
+  index: 60
+bossShootLaser
+  rotate: false
+  xy: 9221, 7731
+  size: 586, 457
+  orig: 640, 640
+  offset: 54, 84
+  index: 62
+bossShootLaser
+  rotate: false
+  xy: 9809, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 44
+bossShootLaser
+  rotate: false
+  xy: 10392, 7736
+  size: 586, 452
+  orig: 640, 640
+  offset: 54, 89
+  index: 49
+bossShootLaser
+  rotate: false
+  xy: 10980, 7736
+  size: 581, 452
+  orig: 640, 640
+  offset: 59, 89
+  index: 45
+bossShootLaser
+  rotate: false
+  xy: 11563, 7741
+  size: 586, 447
+  orig: 640, 640
+  offset: 54, 94
+  index: 48
+bossShootLaser
+  rotate: false
+  xy: 12151, 7746
+  size: 586, 442
+  orig: 640, 640
+  offset: 54, 99
+  index: 47
+bossShootLaser
+  rotate: false
+  xy: 12739, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 51
+bossShootLaser
+  rotate: false
+  xy: 13322, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 52
+bossShootLaser
+  rotate: false
+  xy: 13905, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 54
+bossShootLaser
+  rotate: false
+  xy: 14488, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 55
+bossShootLaser
+  rotate: false
+  xy: 14488, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 64
+bossShootLaser
+  rotate: false
+  xy: 15071, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 56
+bossShootLaser
+  rotate: false
+  xy: 15654, 7731
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 57
+bossShootLaser
+  rotate: false
+  xy: 4495, 5972
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 58
+bossShootLaser
+  rotate: false
+  xy: 4495, 5972
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 63
+bossShootLaser
+  rotate: false
+  xy: 3211, 4684
+  size: 581, 457
+  orig: 640, 640
+  offset: 59, 84
+  index: 61
+bossShootLaser
+  rotate: false
+  xy: 3853, 5326
+  size: 576, 457
+  orig: 640, 640
+  offset: 64, 84
+  index: 43
+bossShootLaser
+  rotate: false
+  xy: 2569, 4037
+  size: 571, 457
+  orig: 640, 640
+  offset: 69, 84
+  index: 42
+bossShootLaser
+  rotate: false
+  xy: 2569, 4037
+  size: 571, 457
+  orig: 640, 640
+  offset: 69, 84
+  index: 65
+bossShootLaser
+  rotate: false
+  xy: 2481, 3583
+  size: 566, 452
+  orig: 640, 640
+  offset: 74, 89
+  index: 41
+bossShootLaser
+  rotate: false
+  xy: 2481, 3124
+  size: 561, 457
+  orig: 640, 640
+  offset: 79, 84
+  index: 40
+bossShootLaser
+  rotate: false
+  xy: 2481, 3124
+  size: 561, 457
+  orig: 640, 640
+  offset: 79, 84
+  index: 66
+bossShootLaser
+  rotate: false
+  xy: 3168, 4225
+  size: 551, 457
+  orig: 640, 640
+  offset: 89, 84
+  index: 38
+bossShootLaser
+  rotate: false
+  xy: 3142, 3771
+  size: 551, 452
+  orig: 640, 640
+  offset: 89, 89
+  index: 39
+bossShootLaser
+  rotate: false
+  xy: 4266, 3951
+  size: 541, 447
+  orig: 640, 640
+  offset: 99, 94
+  index: 37
+bossShootLaser
+  rotate: false
+  xy: 4266, 3951
+  size: 541, 447
+  orig: 640, 640
+  offset: 99, 94
+  index: 67
+bossShootLaser
+  rotate: false
+  xy: 2929, 2514
+  size: 536, 447
+  orig: 640, 640
+  offset: 104, 94
+  index: 36
+bossShootLaser
+  rotate: false
+  xy: 3358, 1528
+  size: 526, 452
+  orig: 640, 640
+  offset: 114, 89
+  index: 35
+bossShootLaser
+  rotate: false
+  xy: 3358, 1528
+  size: 526, 452
+  orig: 640, 640
+  offset: 114, 89
+  index: 68
+bossShootLaser
+  rotate: false
+  xy: 1167, 1890
+  size: 521, 457
+  orig: 640, 640
+  offset: 119, 84
+  index: 34
+bossShootLaser
+  rotate: false
+  xy: 1124, 1431
+  size: 511, 457
+  orig: 640, 640
+  offset: 129, 84
+  index: 33
+bossShootLaser
+  rotate: false
+  xy: 1089, 967
+  size: 506, 462
+  orig: 640, 640
+  offset: 134, 79
+  index: 32
+bossShootLaser
+  rotate: false
+  xy: 1054, 14
+  size: 501, 462
+  orig: 640, 640
+  offset: 139, 79
+  index: 31
+bossShootLaser
+  rotate: false
+  xy: 5263, 7112
+  size: 486, 467
+  orig: 640, 640
+  offset: 154, 74
   index: 29
 bossShootLaser
   rotate: false
-  xy: 1615, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 2
+  xy: 1637, 1086
+  size: 491, 462
+  orig: 640, 640
+  offset: 149, 79
+  index: 30
 bossShootLaser
   rotate: false
-  xy: 1615, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 5572, 5650
+  size: 476, 482
+  orig: 640, 640
+  offset: 164, 49
+  index: 20
+bossShootLaser
+  rotate: false
+  xy: 6518, 5326
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 3
+bossShootLaser
+  rotate: false
+  xy: 4589, 663
+  size: 481, 467
+  orig: 640, 640
+  offset: 159, 69
   index: 28
 bossShootLaser
   rotate: false
-  xy: 1745, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 3
-bossShootLaser
-  rotate: false
-  xy: 1875, 815
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6514, 4847
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 4
 bossShootLaser
   rotate: false
-  xy: 548, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6514, 4847
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 5
 bossShootLaser
   rotate: false
-  xy: 678, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6514, 4847
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 71
+bossShootLaser
+  rotate: false
+  xy: 6514, 4847
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 72
+bossShootLaser
+  rotate: false
+  xy: 6992, 4842
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 6
 bossShootLaser
   rotate: false
-  xy: 808, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6498, 4368
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 7
 bossShootLaser
   rotate: false
-  xy: 938, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6976, 4363
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 8
 bossShootLaser
   rotate: false
-  xy: 1068, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 4316, 184
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 9
 bossShootLaser
   rotate: false
-  xy: 1198, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 7610, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 10
 bossShootLaser
   rotate: false
-  xy: 1328, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 8088, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 11
 bossShootLaser
   rotate: false
-  xy: 1458, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 8566, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 12
 bossShootLaser
   rotate: false
-  xy: 1588, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 9044, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 13
 bossShootLaser
   rotate: false
-  xy: 1718, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 9044, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 70
+bossShootLaser
+  rotate: false
+  xy: 9522, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 14
 bossShootLaser
   rotate: false
-  xy: 1848, 685
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 10000, 7252
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 15
 bossShootLaser
   rotate: false
-  xy: 288, 587
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 10478, 7257
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 16
 bossShootLaser
   rotate: false
-  xy: 418, 587
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 10956, 7257
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 17
 bossShootLaser
   rotate: false
-  xy: 261, 457
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 7213, 6823
+  size: 387, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 2
+bossShootLaser
+  rotate: false
+  xy: 7602, 6773
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 18
 bossShootLaser
   rotate: false
-  xy: 261, 327
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 8080, 6773
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 19
 bossShootLaser
   rotate: false
-  xy: 391, 457
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 20
-bossShootLaser
-  rotate: false
-  xy: 261, 197
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 8558, 6773
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 21
 bossShootLaser
   rotate: false
-  xy: 391, 327
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 9036, 6773
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 54
   index: 22
 bossShootLaser
   rotate: false
-  xy: 261, 67
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 23
-bossShootLaser
-  rotate: false
-  xy: 391, 197
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 24
-bossShootLaser
-  rotate: false
-  xy: 391, 67
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 9514, 6773
+  size: 476, 477
+  orig: 640, 640
+  offset: 164, 59
   index: 25
 bossShootLaser
   rotate: false
-  xy: 548, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 9992, 6778
+  size: 476, 472
+  orig: 640, 640
+  offset: 164, 59
+  index: 23
+bossShootLaser
+  rotate: false
+  xy: 7459, 6299
+  size: 476, 472
+  orig: 640, 640
+  offset: 164, 59
+  index: 24
+bossShootLaser
+  rotate: false
+  xy: 7937, 6299
+  size: 476, 472
+  orig: 640, 640
+  offset: 164, 64
   index: 26
 bossShootLaser
   rotate: false
-  xy: 678, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 7477, 5830
+  size: 476, 467
+  orig: 640, 640
+  offset: 164, 69
+  index: 27
+bossShootLaser
+  rotate: false
+  xy: 7477, 5830
+  size: 476, 467
+  orig: 640, 640
+  offset: 164, 69
+  index: 69
+bossShootLaser
+  rotate: false
+  xy: 7485, 5351
+  size: 307, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 1
+bossShootLaser
+  rotate: false
+  xy: 14294, 7252
+  size: 277, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 0
+bossShootLaser
+  rotate: false
+  xy: 14294, 7252
+  size: 277, 477
+  orig: 640, 640
+  offset: 164, 54
+  index: 73
+bossTouchKill
+  rotate: false
+  xy: 2569, 4496
+  size: 597, 482
+  orig: 680, 680
+  offset: 4, 69
+  index: 59
+bossTouchKill
+  rotate: false
+  xy: 3211, 5143
+  size: 601, 477
+  orig: 680, 680
+  offset: 0, 74
+  index: 51
+bossTouchKill
+  rotate: false
+  xy: 3853, 5785
+  size: 592, 477
+  orig: 680, 680
+  offset: 9, 74
+  index: 58
+bossTouchKill
+  rotate: false
+  xy: 4495, 6431
+  size: 582, 482
+  orig: 680, 680
+  offset: 19, 69
+  index: 50
+bossTouchKill
+  rotate: false
+  xy: 1, 1339
+  size: 577, 482
+  orig: 680, 680
+  offset: 24, 69
+  index: 57
+bossTouchKill
+  rotate: false
+  xy: 6290, 7711
+  size: 577, 477
+  orig: 680, 680
+  offset: 19, 74
+  index: 52
+bossTouchKill
+  rotate: false
+  xy: 1, 855
+  size: 562, 482
+  orig: 680, 680
+  offset: 44, 69
+  index: 49
+bossTouchKill
+  rotate: false
+  xy: 1, 371
+  size: 562, 482
+  orig: 680, 680
+  offset: 39, 69
+  index: 56
+bossTouchKill
+  rotate: false
+  xy: 1927, 3320
+  size: 552, 477
+  orig: 680, 680
+  offset: 39, 74
+  index: 53
+bossTouchKill
+  rotate: false
+  xy: 3814, 4842
+  size: 551, 482
+  orig: 680, 680
+  offset: 0, 69
+  index: 60
+bossTouchKill
+  rotate: false
+  xy: 4127, 3083
+  size: 537, 482
+  orig: 680, 680
+  offset: 79, 69
+  index: 48
+bossTouchKill
+  rotate: false
+  xy: 4122, 2599
+  size: 537, 482
+  orig: 680, 680
+  offset: 54, 69
+  index: 55
+bossTouchKill
+  rotate: false
+  xy: 1762, 2039
+  size: 532, 487
+  orig: 680, 680
+  offset: 129, 64
+  index: 40
+bossTouchKill
+  rotate: false
+  xy: 2890, 2025
+  size: 527, 487
+  orig: 680, 680
+  offset: 114, 64
+  index: 41
+bossTouchKill
+  rotate: false
+  xy: 3419, 1982
+  size: 527, 482
+  orig: 680, 680
+  offset: 59, 69
+  index: 54
+bossTouchKill
+  rotate: false
+  xy: 643, 2001
+  size: 522, 482
+  orig: 680, 680
+  offset: 94, 69
+  index: 47
+bossTouchKill
+  rotate: false
+  xy: 605, 1512
+  size: 517, 487
+  orig: 680, 680
+  offset: 109, 64
+  index: 42
+bossTouchKill
+  rotate: false
+  xy: 565, 499
+  size: 487, 507
+  orig: 680, 680
+  offset: 184, 44
+  index: 13
+bossTouchKill
+  rotate: false
+  xy: 1054, 478
+  size: 502, 487
+  orig: 680, 680
+  offset: 164, 64
+  index: 39
+bossTouchKill
+  rotate: false
+  xy: 1690, 1550
+  size: 502, 487
+  orig: 680, 680
+  offset: 114, 64
+  index: 43
+bossTouchKill
+  rotate: false
+  xy: 2194, 1358
+  size: 502, 482
+  orig: 680, 680
+  offset: 114, 69
+  index: 46
+bossTouchKill
+  rotate: false
+  xy: 3197, 1039
+  size: 492, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 21
+bossTouchKill
+  rotate: false
+  xy: 3691, 1034
+  size: 412, 492
+  orig: 680, 680
+  offset: 184, 59
+  index: 9
+bossTouchKill
+  rotate: false
+  xy: 5751, 6788
+  size: 492, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 26
+bossTouchKill
+  rotate: false
+  xy: 4940, 2968
+  size: 482, 502
+  orig: 680, 680
+  offset: 184, 49
+  index: 14
+bossTouchKill
+  rotate: false
+  xy: 5133, 6623
+  size: 492, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 29
+bossTouchKill
+  rotate: false
+  xy: 5079, 6134
+  size: 492, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 35
+bossTouchKill
+  rotate: false
+  xy: 2620, 653
+  size: 487, 492
+  orig: 680, 680
+  offset: 184, 59
+  index: 12
+bossTouchKill
+  rotate: false
+  xy: 3109, 550
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 19
+bossTouchKill
+  rotate: false
+  xy: 3598, 545
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 20
+bossTouchKill
+  rotate: false
+  xy: 1597, 597
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 22
+bossTouchKill
+  rotate: false
+  xy: 2086, 485
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 24
+bossTouchKill
+  rotate: false
+  xy: 2575, 164
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
   index: 27
 bossTouchKill
   rotate: false
-  xy: 808, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 0
+  xy: 3064, 61
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 28
 bossTouchKill
   rotate: false
-  xy: 938, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 1
+  xy: 3553, 61
+  size: 487, 482
+  orig: 680, 680
+  offset: 184, 69
+  index: 32
 bossTouchKill
   rotate: false
-  xy: 1068, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 2
+  xy: 1558, 108
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 33
 bossTouchKill
   rotate: false
-  xy: 1198, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 3
+  xy: 2047, 1
+  size: 482, 482
+  orig: 680, 680
+  offset: 124, 69
+  index: 45
 bossTouchKill
   rotate: false
-  xy: 1328, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 4
-bossTouchKill
-  rotate: false
-  xy: 1458, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 5
-bossTouchKill
-  rotate: false
-  xy: 1588, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 6
-bossTouchKill
-  rotate: false
-  xy: 1718, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 7
-bossTouchKill
-  rotate: false
-  xy: 1848, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 8
-bossTouchKill
-  rotate: false
-  xy: 1848, 555
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 9
-bossTouchKill
-  rotate: false
-  xy: 521, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 5573, 6134
+  size: 432, 487
+  orig: 680, 680
+  offset: 184, 64
   index: 10
 bossTouchKill
   rotate: false
-  xy: 521, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 11
-bossTouchKill
-  rotate: false
-  xy: 651, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 12
-bossTouchKill
-  rotate: false
-  xy: 521, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 13
-shootEffect
-  rotate: false
-  xy: 1, 847
-  size: 285, 96
-  orig: 285, 96
-  offset: 0, 0
-  index: 0
-shootEffect
-  rotate: false
-  xy: 1, 749
-  size: 285, 96
-  orig: 285, 96
-  offset: 0, 0
-  index: 1
-shootEffect
-  rotate: false
-  xy: 288, 847
-  size: 285, 96
-  orig: 285, 96
-  offset: 0, 0
-  index: 2
-shootEffect
-  rotate: false
-  xy: 1, 651
-  size: 285, 96
-  orig: 285, 96
-  offset: 0, 0
-  index: 3
-touchKillEffect
-  rotate: false
-  xy: 651, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 0
-touchKillEffect
-  rotate: false
-  xy: 781, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 1
-touchKillEffect
-  rotate: false
-  xy: 651, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 2
-touchKillEffect
-  rotate: false
-  xy: 781, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 3
-touchKillEffect
-  rotate: false
-  xy: 911, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 4
-touchKillEffect
-  rotate: false
-  xy: 781, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 5
-touchKillEffect
-  rotate: false
-  xy: 911, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 6
-touchKillEffect
-  rotate: false
-  xy: 1041, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 7
-touchKillEffect
-  rotate: false
-  xy: 911, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 8
-touchKillEffect
-  rotate: false
-  xy: 1041, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 9
-touchKillEffect
-  rotate: false
-  xy: 1171, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 10
-touchKillEffect
-  rotate: false
-  xy: 1041, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 11
-touchKillEffect
-  rotate: false
-  xy: 1171, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 12
-touchKillEffect
-  rotate: false
-  xy: 1301, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 13
-touchKillEffect
-  rotate: false
-  xy: 1171, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 14
-touchKillEffect
-  rotate: false
-  xy: 1301, 295
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6007, 6289
+  size: 482, 497
+  orig: 680, 680
+  offset: 184, 54
   index: 15
-touchKillEffect
+bossTouchKill
   rotate: false
-  xy: 1431, 425
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
-  index: 16
-touchKillEffect
+  xy: 6050, 5795
+  size: 457, 492
+  orig: 680, 680
+  offset: 184, 59
+  index: 11
+bossTouchKill
   rotate: false
-  xy: 1301, 165
-  size: 128, 128
-  orig: 128, 128
-  offset: 0, 0
+  xy: 6245, 6788
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
   index: 17
+bossTouchKill
+  rotate: false
+  xy: 6491, 6294
+  size: 482, 492
+  orig: 680, 680
+  offset: 184, 59
+  index: 16
+bossTouchKill
+  rotate: false
+  xy: 6509, 5805
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 18
+bossTouchKill
+  rotate: false
+  xy: 6729, 6788
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 23
+bossTouchKill
+  rotate: false
+  xy: 6975, 6299
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 25
+bossTouchKill
+  rotate: false
+  xy: 6993, 5810
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 31
+bossTouchKill
+  rotate: false
+  xy: 6996, 5321
+  size: 487, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 34
+bossTouchKill
+  rotate: false
+  xy: 4212, 2110
+  size: 487, 487
+  orig: 680, 680
+  offset: 119, 64
+  index: 44
+bossTouchKill
+  rotate: false
+  xy: 4335, 1621
+  size: 462, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 30
+bossTouchKill
+  rotate: false
+  xy: 4799, 1621
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 36
+bossTouchKill
+  rotate: false
+  xy: 4105, 1049
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 37
+bossTouchKill
+  rotate: false
+  xy: 4589, 1132
+  size: 482, 487
+  orig: 680, 680
+  offset: 184, 64
+  index: 38
+bossTouchKill
+  rotate: false
+  xy: 5342, 1142
+  size: 382, 482
+  orig: 680, 680
+  offset: 184, 69
+  index: 8
+bossTouchKill
+  rotate: false
+  xy: 5726, 4787
+  size: 322, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 6
+bossTouchKill
+  rotate: false
+  xy: 7955, 5820
+  size: 352, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 7
+bossTouchKill
+  rotate: false
+  xy: 10017, 6299
+  size: 307, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 5
+bossTouchKill
+  rotate: false
+  xy: 11708, 7262
+  size: 292, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 4
+bossTouchKill
+  rotate: false
+  xy: 14573, 7252
+  size: 277, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 1
+bossTouchKill
+  rotate: false
+  xy: 14852, 7252
+  size: 277, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 2
+bossTouchKill
+  rotate: false
+  xy: 15131, 7252
+  size: 277, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 3
+bossTouchKill
+  rotate: false
+  xy: 11417, 6299
+  size: 272, 477
+  orig: 680, 680
+  offset: 184, 74
+  index: 0
 touchKillEffect
   rotate: false
-  xy: 1431, 295
-  size: 128, 128
-  orig: 128, 128
+  xy: 1, 7548
+  size: 640, 640
+  orig: 640, 640
   offset: 0, 0
   index: 18
 touchKillEffect
   rotate: false
-  xy: 1561, 425
-  size: 128, 128
-  orig: 128, 128
+  xy: 1, 6906
+  size: 640, 640
+  orig: 640, 640
   offset: 0, 0
   index: 19
 touchKillEffect
   rotate: false
-  xy: 1431, 165
-  size: 128, 128
-  orig: 128, 128
+  xy: 643, 7548
+  size: 640, 640
+  orig: 640, 640
   offset: 0, 0
   index: 20
 touchKillEffect
   rotate: false
-  xy: 1561, 295
-  size: 128, 128
-  orig: 128, 128
+  xy: 1, 6264
+  size: 640, 640
+  orig: 640, 640
   offset: 0, 0
   index: 21
 touchKillEffect
   rotate: false
-  xy: 1691, 425
-  size: 128, 128
-  orig: 128, 128
+  xy: 643, 6906
+  size: 640, 640
+  orig: 640, 640
   offset: 0, 0
   index: 22
+touchKillEffect
+  rotate: false
+  xy: 1285, 7548
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 23
+touchKillEffect
+  rotate: false
+  xy: 1, 5622
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 24
+touchKillEffect
+  rotate: false
+  xy: 643, 6264
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 25
+touchKillEffect
+  rotate: false
+  xy: 1285, 6906
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 26
+touchKillEffect
+  rotate: false
+  xy: 1927, 7548
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 27
+touchKillEffect
+  rotate: false
+  xy: 1, 4980
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 28
+touchKillEffect
+  rotate: false
+  xy: 643, 5622
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 29
+touchKillEffect
+  rotate: false
+  xy: 1285, 6264
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 30
+touchKillEffect
+  rotate: false
+  xy: 1927, 6906
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 31
+touchKillEffect
+  rotate: false
+  xy: 2569, 7548
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 32
+touchKillEffect
+  rotate: false
+  xy: 1, 4338
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 33
+touchKillEffect
+  rotate: false
+  xy: 643, 4980
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 34
+touchKillEffect
+  rotate: false
+  xy: 1285, 5622
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 35
+touchKillEffect
+  rotate: false
+  xy: 1927, 6264
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 36
+touchKillEffect
+  rotate: false
+  xy: 2569, 6906
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 37
+touchKillEffect
+  rotate: false
+  xy: 3211, 7548
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 38
+touchKillEffect
+  rotate: false
+  xy: 1, 3696
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 39
+touchKillEffect
+  rotate: false
+  xy: 643, 4338
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 40
+touchKillEffect
+  rotate: false
+  xy: 1285, 4980
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 41
+touchKillEffect
+  rotate: false
+  xy: 1927, 5622
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 42
+touchKillEffect
+  rotate: false
+  xy: 2569, 6264
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 43
+touchKillEffect
+  rotate: false
+  xy: 3211, 6906
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 44
+touchKillEffect
+  rotate: false
+  xy: 3853, 7548
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 45
+touchKillEffect
+  rotate: false
+  xy: 1, 3054
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 46
+touchKillEffect
+  rotate: false
+  xy: 643, 3696
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 47
+touchKillEffect
+  rotate: false
+  xy: 1285, 4338
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 48
+touchKillEffect
+  rotate: false
+  xy: 1927, 4980
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 49
+touchKillEffect
+  rotate: false
+  xy: 2569, 5622
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 50
+touchKillEffect
+  rotate: false
+  xy: 3211, 6264
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 51
+touchKillEffect
+  rotate: false
+  xy: 3853, 6906
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 52
+touchKillEffect
+  rotate: false
+  xy: 4495, 7548
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 53
+touchKillEffect
+  rotate: false
+  xy: 1, 2412
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 54
+touchKillEffect
+  rotate: false
+  xy: 643, 3054
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 55
+touchKillEffect
+  rotate: false
+  xy: 1285, 3696
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 56
+touchKillEffect
+  rotate: false
+  xy: 1927, 4338
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 57
+touchKillEffect
+  rotate: false
+  xy: 2569, 4980
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 58
+touchKillEffect
+  rotate: false
+  xy: 3211, 5622
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 59
+touchKillEffect
+  rotate: false
+  xy: 3853, 6264
+  size: 640, 640
+  orig: 640, 640
+  offset: 0, 0
+  index: 60
+touchKillEffect
+  rotate: false
+  xy: 4495, 6915
+  size: 636, 631
+  orig: 640, 640
+  offset: 4, 0
+  index: 17
+touchKillEffect
+  rotate: false
+  xy: 5137, 7581
+  size: 612, 607
+  orig: 640, 640
+  offset: 19, 14
+  index: 16
+touchKillEffect
+  rotate: false
+  xy: 1, 1823
+  size: 602, 587
+  orig: 640, 640
+  offset: 24, 24
+  index: 15
+touchKillEffect
+  rotate: false
+  xy: 643, 2485
+  size: 582, 567
+  orig: 640, 640
+  offset: 34, 34
+  index: 14
+touchKillEffect
+  rotate: false
+  xy: 1285, 3137
+  size: 562, 557
+  orig: 640, 640
+  offset: 44, 39
+  index: 13
+touchKillEffect
+  rotate: false
+  xy: 1927, 3799
+  size: 552, 537
+  orig: 640, 640
+  offset: 49, 49
+  index: 12
+touchKillEffect
+  rotate: false
+  xy: 5751, 7661
+  size: 537, 527
+  orig: 640, 640
+  offset: 54, 54
+  index: 11
+touchKillEffect
+  rotate: false
+  xy: 2296, 1842
+  size: 532, 512
+  orig: 640, 640
+  offset: 59, 64
+  index: 10
+touchKillEffect
+  rotate: false
+  xy: 580, 1008
+  size: 507, 502
+  orig: 640, 640
+  offset: 69, 69
+  index: 9
+touchKillEffect
+  rotate: false
+  xy: 2698, 1147
+  size: 497, 492
+  orig: 640, 640
+  offset: 74, 74
+  index: 8
+touchKillEffect
+  rotate: false
+  xy: 4809, 3951
+  size: 452, 447
+  orig: 640, 640
+  offset: 99, 94
+  index: 3
+touchKillEffect
+  rotate: false
+  xy: 5078, 5650
+  size: 492, 482
+  orig: 640, 640
+  offset: 79, 79
+  index: 7
+touchKillEffect
+  rotate: false
+  xy: 3886, 1538
+  size: 447, 442
+  orig: 640, 640
+  offset: 104, 94
+  index: 2
+touchKillEffect
+  rotate: false
+  xy: 4701, 2110
+  size: 482, 472
+  orig: 640, 640
+  offset: 84, 84
+  index: 6
+touchKillEffect
+  rotate: false
+  xy: 6050, 4952
+  size: 462, 457
+  orig: 640, 640
+  offset: 94, 89
+  index: 4
+touchKillEffect
+  rotate: false
+  xy: 6737, 7282
+  size: 432, 427
+  orig: 640, 640
+  offset: 109, 104
+  index: 0
+touchKillEffect
+  rotate: false
+  xy: 7171, 7302
+  size: 437, 427
+  orig: 640, 640
+  offset: 109, 104
+  index: 1
+touchKillEffect
+  rotate: false
+  xy: 8415, 6304
+  size: 467, 467
+  orig: 640, 640
+  offset: 89, 84
+  index: 5
