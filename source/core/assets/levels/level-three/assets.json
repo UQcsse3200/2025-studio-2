@@ -106,7 +106,7 @@
     "images/wall-map-1.png",
     "images/wall-map-2.png",
     "images/platform-map.png",
-    "images/platform-short-map.png",
+    "images/platform-short-map.png"
   ],
   "atlases": [
       "images/PLAYER.atlas",

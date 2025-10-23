@@ -124,7 +124,11 @@ public class PauseMenuDisplay extends UIComponent {
             StatsTracker.endSession();
             game.setScreen(GdxGame.ScreenType.MAIN_MENU);
         });
-        addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Restart", () -> {
+          ((MainGameScreen)game.getScreen()).reset();
+          screen.togglePaused();
+          screen.togglePauseMenu(null);
+        });
         addBottomButton("Save level", () ->
                 GdxGame.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.SAVE_PATH, FileLoader.Location.EXTERNAL));
         stack.add(bottomButtons);
@@ -235,7 +239,11 @@ public class PauseMenuDisplay extends UIComponent {
             StatsTracker.endSession();
             game.setScreen(GdxGame.ScreenType.MAIN_MENU);
         });
-        addBottomButton("Restart", () -> game.setScreen(GdxGame.ScreenType.MAIN_GAME));
+        addBottomButton("Restart", () -> {
+          ((MainGameScreen)game.getScreen()).reset();
+          screen.togglePaused();
+          screen.togglePauseMenu(null);
+        });
         addBottomButton("Save level", () ->
                 GdxGame.saveLevel(screen.getAreaEnum(), screen.getGameArea().getPlayer(), GdxGame.SAVE_PATH, FileLoader.Location.EXTERNAL));
     }
