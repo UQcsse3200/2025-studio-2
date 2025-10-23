@@ -25,6 +25,15 @@ public class PhysicsUtils {
                     boundingBox, alignX, alignY);
   }
 
+  public static void setScaledCollider(Entity entity, float scaleX, float scaleY,
+                                       PhysicsComponent.AlignX alignX, PhysicsComponent.AlignY alignY, float angle) {
+    Vector2 boundingBox = entity.getScale().cpy().scl(scaleX, scaleY);
+    entity
+            .getComponent(ColliderComponent.class)
+            .setAsBoxAligned(
+                    boundingBox, alignX, alignY, angle);
+  }
+
   private PhysicsUtils() {
     throw new IllegalStateException("Instantiating static util class");
   }
