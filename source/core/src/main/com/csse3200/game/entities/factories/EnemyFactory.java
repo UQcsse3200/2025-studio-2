@@ -450,7 +450,7 @@ public class EnemyFactory {
         switch (variant) {
             case SCOUT:
                 atlasPath = "images/drone_scout.atlas";   //  SCOUT
-                speed = 1f;
+                speed = 1.5f;
                 bombFD  = 0.1f;
                 break;
             case BRUTAL:
@@ -461,7 +461,7 @@ public class EnemyFactory {
             case CHASER:
             default:
                 atlasPath = "images/drone_chaser.atlas";  // CHASER
-                speed = 2f;
+                speed = 2.1f;
                 bombFD  = 0.1f;
                 break;
         }
