@@ -42,10 +42,10 @@ public class ConeLightPanningTaskComponent extends Component {
     private Vector2 uBodyX;
     private Vector2 lensNeutralCenter;
 
-    private static final float bodyW = 1f;
-    private static final float bodyH = 22f / 28f;
-    private static final float lensW = 9f / 28f * bodyW;
-    private static final float lensH = 9f / 22f * bodyH;
+    private static final float BODY_W = 1f;
+    private static final float BODY_H = 22f / 28f;
+    private static final float LENS_W = 9f / 28f * BODY_W;
+    private static final float LENS_H = 9f / 22f * BODY_H;
 
     public ConeLightPanningTaskComponent(float degreeStart, float degreeEnd, float angularVelocity) {
         // just to make calculations easier, normalise all values
@@ -87,7 +87,7 @@ public class ConeLightPanningTaskComponent extends Component {
         uBodyX = new Vector2(1f, 0f).rotateDeg(rotation);
 
         // use the centered position as the neutral centre
-        lensNeutralCenter = lensInitPos.cpy().add(lensW / 2f, lensH / 2f);
+        lensNeutralCenter = lensInitPos.cpy().add(LENS_W / 2f, LENS_H / 2f);
 
         this.coneComp = cameraLens.getComponent(ConeLightComponent.class);
         if (coneComp == null) {
@@ -106,7 +106,7 @@ public class ConeLightPanningTaskComponent extends Component {
     }
 
     private void centreLens() {
-        cameraLens.setScale(lensW, lensH);
+        cameraLens.setScale(LENS_W, LENS_H);
 
         float anchorX = 0.5f;
         float anchorY = 0.3f;
@@ -118,15 +118,15 @@ public class ConeLightPanningTaskComponent extends Component {
         if (tex != null) {
             rotDeg = (float) tex.getRotation();
         }
-        Vector2 bodyCenter = new Vector2(p.x + bodyW / 2f, p.y + bodyH / 2f);
+        Vector2 bodyCenter = new Vector2(p.x + BODY_W / 2f, p.y + BODY_H / 2f);
         Vector2 localFromCenter = new Vector2(
-                (anchorX - 0.5f) * bodyW,
-                (anchorY - 0.5f) * bodyH
+                (anchorX - 0.5f) * BODY_W,
+                (anchorY - 0.5f) * BODY_H
         );
         localFromCenter.rotateDeg(rotDeg);
         Vector2 center = bodyCenter.cpy().add(localFromCenter);
 
-        cameraLens.setPosition(center.x - lensW / 2f, center.y - lensH / 2f);
+        cameraLens.setPosition(center.x - LENS_W / 2f, center.y - LENS_H / 2f);
     }
 
     @Override
@@ -197,7 +197,7 @@ public class ConeLightPanningTaskComponent extends Component {
 
         // project along local x
         Vector2 center = lensNeutralCenter.cpy().add(uBodyX.cpy().scl(slideAmount));
-        cameraLens.setPosition(center.x - lensW / 2f, center.y - lensH / 2f);
+        cameraLens.setPosition(center.x - LENS_W / 2f, center.y - LENS_H / 2f);
         // remember tracking state
         tracking = detected;
     }
