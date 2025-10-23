@@ -5,6 +5,12 @@ import com.csse3200.game.components.ladders.LadderComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import org.junit.jupiter.api.Test;
+import com.csse3200.game.entities.EntityService;
+import com.csse3200.game.services.ServiceLocator;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
+import com.csse3200.game.input.Keymap;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.lang.reflect.Method;
@@ -67,6 +73,54 @@ class KeyboardPlayerInputComponentTest {
         assertFalse(result);
         assertFalse(input.getOnLadder());
     }
+    @Test
+    void glideDoesNotFireWithoutInventory() {
+        if (ServiceLocator.getEntityService() == null) {
+            ServiceLocator.registerEntityService(new EntityService());
+        }
+
+        Entity player = new Entity();
+        var input = new KeyboardPlayerInputComponent();
+
+        // bind component without creating the entity (avoids InputService etc.)
+        input.setEntity(player);
+
+        // register player so findLadders() can iterate safely
+        ServiceLocator.getEntityService().register(player);
+
+        AtomicInteger glideCalls = new AtomicInteger(0);
+        player.getEvents().addListener("glide", (Boolean b) -> glideCalls.incrementAndGet());
+
+        int glideKey = Keymap.getActionKeyCode("Glide");
+        input.keyDown(glideKey);
+        input.keyUp(glideKey);
+
+        assertEquals(0, glideCalls.get());
+    }
+
+
+    @Test
+    void dashDoesNotFireWithoutInventory() {
+        if (ServiceLocator.getEntityService() == null) {
+            ServiceLocator.registerEntityService(new EntityService());
+        }
+
+        Entity player = new Entity();
+        var input = new KeyboardPlayerInputComponent();
+
+        // bind component without full create()
+        input.setEntity(player);
+        ServiceLocator.getEntityService().register(player);
+
+        AtomicBoolean fired = new AtomicBoolean(false);
+        player.getEvents().addListener("dash", () -> fired.set(true));
+
+        int dashKey = Keymap.getActionKeyCode("PlayerDash");
+        input.keyDown(dashKey);
+
+        assertFalse(fired.get(), "Dash must not fire without the 'dash' upgrade");
+    }
+
 
     @Test
     void testNotInFrontOfLadder_VerticalError() throws Exception {
