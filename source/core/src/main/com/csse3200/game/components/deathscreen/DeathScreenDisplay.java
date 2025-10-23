@@ -75,7 +75,6 @@ public class DeathScreenDisplay extends UIComponent {
             for (String line : fileContent.lines().toList()) {
               line = line.trim();
               if (line.isEmpty() || line.startsWith("#")) continue;
-              // System.out.println("Prodessing: " + line);
               if (line.endsWith(":")) {
                 causeName = line.substring(0, line.length() - 1);
                 continue;

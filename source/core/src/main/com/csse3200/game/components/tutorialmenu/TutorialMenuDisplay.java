@@ -1,6 +1,7 @@
 package com.csse3200.game.components.tutorialmenu;
 
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
@@ -21,6 +22,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.csse3200.game.GdxGame;
+import com.csse3200.game.files.UserSettings;
 import com.csse3200.game.input.Keymap;
 import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.services.ServiceLocator;
@@ -41,6 +43,7 @@ public class TutorialMenuDisplay extends UIComponent {
   private TextButton basicsBtn;
   private TextButton itemsBtn;
   private TextButton mechanicsBtn;
+  private Sound buttonClickSound;
 
   public TutorialMenuDisplay(GdxGame game) {
     this.game = game;
@@ -59,6 +62,9 @@ public class TutorialMenuDisplay extends UIComponent {
             .getAsset("images/superintelligence_menu_background.png", Texture.class));
     background.setFillParent(true);
     stage.addActor(background);
+
+    buttonClickSound = ServiceLocator.getResourceService()
+            .getAsset("sounds/buttonsound.mp3", Sound.class);
 
     // Main layout container
     Table rootTable = new Table();
@@ -175,6 +181,7 @@ public class TutorialMenuDisplay extends UIComponent {
 
           @Override
           public void clicked(InputEvent event, float x, float y) {
+              buttonClickSound.play(UserSettings.get().masterVolume);
               logger.debug("Back button clicked");
               game.setScreen(GdxGame.ScreenType.MAIN_MENU);
           }
@@ -286,6 +293,7 @@ public class TutorialMenuDisplay extends UIComponent {
         practiceBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 logger.debug("Practice Level button clicked");
                 launchPracticeLevel(MainGameScreen.Areas.TUTORIAL);
             }
@@ -378,6 +386,7 @@ public class TutorialMenuDisplay extends UIComponent {
 
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                buttonClickSound.play(UserSettings.get().masterVolume);
                 if (onClick != null) onClick.run();
             }
         });
