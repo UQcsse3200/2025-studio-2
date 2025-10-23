@@ -68,7 +68,7 @@ public final class PlayerFactory {
                 .addComponent(new PhysicsComponent())
                 .addComponent(new StandingColliderComponent())
                 .addComponent(new CrouchingColliderComponent())
-                .addComponent(new FootColliderComponent())
+                .addComponent(new FootColliderComponent().setLayer(PhysicsLayer.OBSTACLE))
                 .addComponent(new ColliderComponent()) // Interactions
                 .addComponent(new HitboxComponent().setLayer(PhysicsLayer.PLAYER))
                 .addComponent(playerActions)

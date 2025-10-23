@@ -44,6 +44,8 @@ import com.csse3200.game.ui.cutscene.CutsceneArea;
 import com.csse3200.game.ui.terminal.TerminalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.csse3200.game.achievements.AchievementService;
+
 
 import java.util.Set;
 
@@ -212,6 +214,10 @@ public class MainGameScreen extends ScreenAdapter {
           if (name != null && !name.isEmpty()) {
               LeaderboardComponent.getInstance().updateLeaderboard(getGameAreaName() + name, completionTime);
           }
+          int levelNum = currentLevelNumber();
+          if (levelNum > 0) {
+              AchievementService.get().onLevelCompleted(levelNum);
+          }
 
           // Restore HUD and unpause
           showHUD();
@@ -231,6 +237,13 @@ public class MainGameScreen extends ScreenAdapter {
           }
       });
   }
+    private int currentLevelNumber() {
+        return switch (gameAreaEnum) {
+            case LEVEL_ONE -> 1;
+            case LEVEL_TWO -> 2;
+            default -> -1; // not a numbered level
+        };
+    }
 
     /**
      * Parses a string into a valid Areas enum value.

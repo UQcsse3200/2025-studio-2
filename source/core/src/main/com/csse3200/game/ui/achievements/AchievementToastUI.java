@@ -9,10 +9,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.csse3200.game.achievements.AchievementId;
 import com.csse3200.game.achievements.AchievementService;
@@ -23,28 +25,24 @@ public class AchievementToastUI extends Component implements AchievementService.
     private Stage stage;
     private Skin skin;
 
+    // --- trophy asset (lazy-loaded) ---
+    private Texture trophyTex;
+    private Drawable trophyDrawable;
     private static final String TOAST_BG = "toast-bg";
+
 
     @Override
     public void create() {
-        // Register to receive achievement events
         AchievementService.get().addListener(this);
-
-        // Try immediately, but also re-try next frame if stage/skin aren't ready yet.
         initStageAndSkin();
         Gdx.app.postRunnable(this::initStageAndSkin);
     }
 
     private void initStageAndSkin() {
         if (stage == null) {
-            try {
-                stage = ServiceLocator.getRenderService().getStage();
-            } catch (Exception ignored) {
-              // Ignore
-            }
+            try { stage = ServiceLocator.getRenderService().getStage(); } catch (Exception ignored) {}
         }
         if (skin == null) {
-            // Adjust to your real skin path if you have one. It’s fine if this fails – we fall back.
             try {
                 skin = new Skin(Gdx.files.internal("uiskin.json"));
             } catch (Exception ignored) {
@@ -55,67 +53,87 @@ public class AchievementToastUI extends Component implements AchievementService.
 
     private Skin createFallbackSkin() {
         Skin s = new Skin();
-        BitmapFont font = new BitmapFont(); // default font
+        BitmapFont font = new BitmapFont();
         s.add("default-font", font, BitmapFont.class);
         s.add("default", new Label.LabelStyle(font, Color.WHITE));
 
-        // simple rounded-ish dark background
         Pixmap pm = new Pixmap(4, 4, Format.RGBA8888);
         pm.setColor(0, 0, 0, 0.75f);
         pm.fill();
         Texture tex = new Texture(pm);
         pm.dispose();
-        Drawable bg = new TextureRegionDrawable(new TextureRegion(tex));
-        s.add(TOAST_BG, bg, Drawable.class);
-
+        s.add("toast-bg", new TextureRegionDrawable(new TextureRegion(tex)), Drawable.class);
         return s;
+    }
+
+    private void ensureTrophyLoaded() {
+        if (trophyDrawable != null) return;
+        try {
+            trophyTex = new Texture(Gdx.files.internal("images/achievements/trophy.png"));
+            trophyDrawable = new TextureRegionDrawable(new TextureRegion(trophyTex));
+        } catch (Exception e) {
+            Gdx.app.error("AchvToast", "Failed to load trophy icon", e);
+        }
     }
 
     @Override
     public void onUnlocked(AchievementId id, String title, String desc) {
-        // Make sure we’re on the GL thread and stage/skin are ready
         Gdx.app.postRunnable(() -> {
             initStageAndSkin();
             if (stage == null || skin == null) {
                 Gdx.app.log("Achv", "ToastUI: stage/skin not ready, skip toast");
                 return;
             }
-            showToast("🏅 " + title, desc);
+            showToast(id, "🏅 " + title, desc);
         });
     }
 
-    private void showToast(String title, String desc) {
-        // Build toast content
+    private void showToast(AchievementId id, String title, String desc) {
+        // Outer container
         Table toast = new Table(skin);
         if (skin.has(TOAST_BG, Drawable.class)) {
             toast.setBackground(skin.getDrawable(TOAST_BG));
         }
 
+        toast.pad(10f).defaults().left().padBottom(4f);
+
+        // Optional left icon (only for sprint/adrenaline)
+        if (id == AchievementId.ADRENALINE_RUSH) {
+            ensureTrophyLoaded();
+            if (trophyDrawable != null) {
+                Image icon = new Image(trophyDrawable);
+                toast.add(icon).size(100, 100).padRight(10f).top();
+            }
+        }
+
+        // Right text column
+        Table text = new Table(skin);
         Label titleLbl = new Label(title, skin);
         titleLbl.setColor(Color.GOLD);
         Label descLbl = new Label(desc, skin);
         descLbl.setWrap(true);
 
-        toast.pad(10f).defaults().left().padBottom(4f);
-        toast.add(titleLbl).row();
-        toast.add(descLbl).width(Math.min(420f, stage.getViewport().getWorldWidth() * 0.6f)).row();
+        text.add(titleLbl).left().row();
+        text.add(descLbl)
+                .width(Math.min(420f, stage.getViewport().getWorldWidth() * 0.6f))
+                .left();
 
+        toast.add(text).left().row();
         toast.pack();
 
-        // Place top-right with 20px margin
+        // Top-right placement
         float margin = 20f;
         float x = stage.getViewport().getWorldWidth() - toast.getWidth() - margin;
         float y = stage.getViewport().getWorldHeight() - toast.getHeight() - margin;
         toast.setPosition(x, y);
 
-        // Start invisible, then animate
+        // Fade in → delay → fade out (same timings)
         toast.getColor().a = 0f;
         stage.addActor(toast);
-        toast.setZIndex(Integer.MAX_VALUE); // ensure on top
-
+        toast.setZIndex(Integer.MAX_VALUE);
         toast.addAction(Actions.sequence(
                 Actions.fadeIn(0.25f),
-                Actions.delay(2.0f),
+                Actions.delay(4.0f),
                 Actions.fadeOut(0.25f),
                 Actions.removeActor()
         ));
@@ -124,6 +142,12 @@ public class AchievementToastUI extends Component implements AchievementService.
     @Override
     public void dispose() {
         AchievementService.get().removeListener(this);
+        if (trophyTex != null) {
+            trophyTex.dispose();
+            trophyTex = null;
+            trophyDrawable = null;
+        }
     }
 }
+
 
