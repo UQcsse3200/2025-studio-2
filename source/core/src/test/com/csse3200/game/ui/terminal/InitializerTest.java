@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.player.InventoryComponent;
-import com.csse3200.game.components.player.PlayerActions;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.EntityService;
 import com.csse3200.game.entities.factories.CollectableFactory;
@@ -35,7 +34,6 @@ class InitializerTest {
   private PhysicsComponent physicsComponent;
   private GameArea mockGameArea;
   private MainGameScreen mainGameScreen;
-  private PlayerActions playerActions;
 
   private TestConsole console;
 
@@ -55,7 +53,7 @@ class InitializerTest {
     @Override
     public boolean hasNext() { return false; }
     @Override
-    public void close() {}
+    public void close() {/* Nothing to cleanup at close */}
 
     public String getOutput() {
       return output.toString();
@@ -83,6 +81,7 @@ class InitializerTest {
     }
 
     player = mock(Entity.class);
+    player.create();
     inv = mock(InventoryComponent.class);
     cb = mock(CombatStatsComponent.class);
     mockEntityService = mock(EntityService.class);
@@ -324,16 +323,6 @@ class InitializerTest {
     Object result = shell.eval("getGameArea();");
 
     assertEquals(mockGameArea, result);
-  }
-
-  @Test
-  void testFlyCommand() {
-
-  }
-
-  @Test
-  void testTeleportCommand() {
-
   }
 
   @AfterEach

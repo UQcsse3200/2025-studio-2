@@ -1,6 +1,5 @@
 package com.csse3200.game.components.npc;
 
-import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.rendering.AnimationRenderComponent;

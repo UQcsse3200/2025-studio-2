@@ -14,6 +14,10 @@ public class CodexEntry {
      */
     private final String title;
     /**
+     * Number representing how many other entries had been unlocked before this one.
+     */
+    private int unlockedIndex;
+    /**
      * Flag determining if codex entry has been unlocked.
      */
     private boolean unlocked = false;
@@ -25,6 +29,7 @@ public class CodexEntry {
     public CodexEntry(String title, String text) {
         this.text = text;
         this.title = title;
+        this.unlockedIndex = -1; // -1 implies no unlock
     }
 
     /**
@@ -32,7 +37,16 @@ public class CodexEntry {
      */
     public void setUnlocked() {
         unlocked = true;
+
+        // Update service unlock count & set unlock index
+        unlockedIndex = ServiceLocator.getCodexService().getUnlockedCount();
+        ServiceLocator.getCodexService().incUnlockCount();
+
         Gdx.app.log("CodexEntry", "Unlocked '" + title + "'");
+    }
+
+    public int getUnlockedIndex() {
+        return unlockedIndex;
     }
 
     /**

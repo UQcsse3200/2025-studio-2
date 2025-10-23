@@ -7,43 +7,29 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
-import com.csse3200.game.components.LeaderboardComponent;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
+
 import java.util.Arrays;
 
 public class LeaderboardEntryDisplay extends UIComponent {
     private Table rootTable;
-
-    private Label promptLabel;
-    TextField nameField;
+  TextField nameField;
     TextButton confirmButton;
     TextButton skipButton;
-    private boolean completed = false;
+    private boolean completed;
 
-    private long completionTime;
-    private int health;
-    private float stamina;
-    private LeaderboardComponent leaderboard;
+    private final long completionTime;
     private String enteredName; // null if skipped or empty
     Label errorLabel;
-    // Overlay manager for global UI coordination
-    public static final class UIOverlayManager {
-        private static boolean overlayActive = false;
-        private UIOverlayManager() {
-            // Prevent instantiation
-            throw new IllegalStateException("Utility class");
-        }
-        public static boolean isOverlayActive() { return overlayActive; }
-        public static void setOverlayActive(boolean active) { overlayActive = active; }
-    }
 
-    public LeaderboardEntryDisplay(long completionTime, int health, float stamina) {
+    private static boolean overlayActive = false;
+    public static boolean isOverlayActive() { return overlayActive; }
+    public static void setOverlayActive(boolean active) { overlayActive = active; }
+
+    public LeaderboardEntryDisplay(long completionTime) {
         this.completionTime = completionTime;
-        this.health = health;
-        this.stamina = stamina;
-        this.leaderboard = new LeaderboardComponent();
     }
 
     public String getEnteredName() {
@@ -75,7 +61,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         contentTable.center();
 
         // Prompt
-        promptLabel = new Label("You finished in " + formatTime(completionTime) + "! Enter your name:", skin, "large");
+        Label promptLabel = new Label("You finished in " + formatTime(completionTime) + "! Enter your name:", skin, "large");
 
         //Error Label if user leaves the field empty and press 'Confirm'
         errorLabel = new Label("", skin, "default");
@@ -103,17 +89,11 @@ public class LeaderboardEntryDisplay extends UIComponent {
             public void changed(ChangeEvent event, Actor actor) {
                 if (completed) return;
                 enteredName = nameField.getText().trim();
-
-                if (enteredName == null || enteredName.isEmpty()) {
+                if (enteredName.isEmpty()) {
                     errorLabel.setText("Name cannot be empty!");
                     errorLabel.setVisible(true);
                     return; // don’t close yet
                 }
-
-                completed = true;
-                leaderboard.updateLeaderboard(enteredName, completionTime);
-                System.out.println("Saved stats for " + enteredName +
-                        " | Health: " + health + " | Stamina: " + stamina);
                 closeAndContinue();
             }
         });
@@ -145,7 +125,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         // Hide other UI + block input while leaderboard is active
         hideOtherUIElements();
         TooltipSystem.TooltipManager.setSuppressed(true);
-        UIOverlayManager.setOverlayActive(true);
+        setOverlayActive(true);
         blockAllInput();
     }
 
@@ -157,7 +137,7 @@ public class LeaderboardEntryDisplay extends UIComponent {
         showOtherUIElements();
         TooltipSystem.TooltipManager.setSuppressed(false);
         unblockAllInput();
-        UIOverlayManager.setOverlayActive(false);
+        setOverlayActive(false);
 
         dispose();
         entity.getEvents().trigger("leaderboardEntryComplete");

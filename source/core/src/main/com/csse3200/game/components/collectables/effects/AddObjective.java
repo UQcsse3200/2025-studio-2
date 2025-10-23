@@ -1,6 +1,5 @@
 package com.csse3200.game.components.collectables.effects;
 
-import com.badlogic.gdx.Gdx;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.configs.EffectConfig;

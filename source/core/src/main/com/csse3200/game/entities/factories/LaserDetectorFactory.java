@@ -19,6 +19,9 @@ import com.csse3200.game.services.ServiceLocator;
  * an event when the state is changed.
  */
 public class LaserDetectorFactory {
+    private LaserDetectorFactory() {
+        throw new IllegalStateException("Instantiating static util class");
+    }
 
     /**
      * Creates a new laser detector entity facing upright (unrotated)

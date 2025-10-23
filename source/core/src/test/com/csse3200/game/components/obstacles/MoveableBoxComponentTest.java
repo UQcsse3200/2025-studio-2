@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(GameExtension.class)
-public class MoveableBoxComponentTest {
+class MoveableBoxComponentTest {
 
     private Entity box;
     private MoveableBoxComponent boxComponent;
@@ -80,9 +80,9 @@ public class MoveableBoxComponentTest {
         Filter filter = box.getComponent(ColliderComponent.class).getFixture().getFilterData();
 
         assertEquals(PhysicsLayer.OBSTACLE, filter.categoryBits);
-        assertTrue((filter.maskBits & PhysicsLayer.PLAYER) != 0);
-        assertTrue((filter.maskBits & PhysicsLayer.NPC) != 0);
-        assertTrue((filter.maskBits & PhysicsLayer.LASER_REFLECTOR) != 0);
+        assertNotEquals(0, filter.maskBits & PhysicsLayer.PLAYER);
+        assertNotEquals(0, filter.maskBits & PhysicsLayer.NPC);
+        assertNotEquals(0, filter.maskBits & PhysicsLayer.LASER_REFLECTOR);
     }
 
     @Test

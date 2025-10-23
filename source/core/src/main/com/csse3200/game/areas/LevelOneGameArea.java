@@ -1,6 +1,6 @@
 package com.csse3200.game.areas;
 
-import com.csse3200.game.areas.terrain.TerrainFactory;
+import com.csse3200.game.areas.terrain.GridFactory;
 import com.csse3200.game.entities.spawn.SpawnRegistry;
 
 /**
@@ -12,7 +12,7 @@ import com.csse3200.game.entities.spawn.SpawnRegistry;
  */
 public final class LevelOneGameArea extends BaseLevelGameArea {
 
-    public LevelOneGameArea(TerrainFactory tf) { super(tf); }
+    public LevelOneGameArea(GridFactory tf) { super(tf); }
 
     @Override protected String configPath() { return "levels/level-one/config.json"; }
     @Override protected String assetsPath() { return "levels/level-one/assets.json"; }

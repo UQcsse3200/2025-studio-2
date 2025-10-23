@@ -84,9 +84,7 @@ public class ConeLightComponent extends Component {
             // apply angular velocity to the direction degree (d = v * t)
             directionDeg += angularVelocityDeg * dt;
             // sets the new direction
-            if (coneLight != null) {
-                coneLight.setDirection(directionDeg);
-            }
+            coneLight.setDirection(directionDeg);
         }
 
         // kinematic motion
@@ -99,10 +97,8 @@ public class ConeLightComponent extends Component {
         }
 
         // keep light synced to entity position if following
-        if (followEntity && coneLight != null) {
-            Vector2 c = entity.getCenterPosition();
-            coneLight.setPosition(c.x, c.y);
-        }
+        Vector2 c = entity.getCenterPosition();
+        coneLight.setPosition(c.x, c.y);
     }
 
     @Override

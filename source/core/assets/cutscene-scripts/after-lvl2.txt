@@ -1,0 +1,5 @@
+#cutscene-bgs/facility_sky.png
+As I continue my ascent through the facility, the presence of {COLOR=RED}cybernetic life{CLEARCOLOR} becomes increasingly evident{SLOWER}... and hostile.{NORMAL}
+This {COLOR=RED}hellscape{CLEARCOLOR} grows more treacherous with every step, its paths twisting upward in unnerving, vertical corridors.
+Despite the mounting obstacles, there's no turning back now.
+I never imagined I'd make it this far, but I can feel it - I'm drawing closer to the {COLOR=RED}central AI's{CLEARCOLOR} domain.

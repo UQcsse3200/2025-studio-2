@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class BossAnchorComponentTest {
+class BossAnchorComponentTest {
     private CameraComponent camComp;
     private OrthographicCamera cam;
 

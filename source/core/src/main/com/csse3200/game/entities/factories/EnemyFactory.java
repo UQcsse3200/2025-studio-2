@@ -49,6 +49,10 @@ public class EnemyFactory {
     // Light colors for bomber
     private static final Color BOMBER_IDLE_COLOR = new Color(0.5f, 0.5f, 1f, 0.8f);  // Blue-ish
     private static final Color BOMBER_ALERT_COLOR = new Color(1f, 0.3f, 0.3f, 1f);   // Red
+    private static final String FLOAT = "float";
+    private static final String ENEMY_ACTIVATED = "enemyActivated";
+    private static final String DRONE_ATLAS = "images/drone.atlas";
+    private static final String ANGRY_FLOAT = "angry_float";
 
     /**
      * Creates a drone enemy that starts idle. When activated by a security camera, starts chasing its target.
@@ -64,9 +68,9 @@ public class EnemyFactory {
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
-        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+                        ServiceLocator.getResourceService().getAsset(DRONE_ATLAS, TextureAtlas.class));
+        animator.addAnimation(ANGRY_FLOAT, 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation(FLOAT, 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
 
 
@@ -82,7 +86,7 @@ public class EnemyFactory {
         CooldownTask cooldownTask = new CooldownTask(3f);
 
         // ENEMY ACTIVATION
-        drone.getEvents().addListener("enemyActivated", () -> {
+        drone.getEvents().addListener(ENEMY_ACTIVATED, () -> {
             chaseTask.activate(); // Priority 10
             cooldownTask.activate(); // Priority 5, so chase > cooldown
         });
@@ -93,7 +97,7 @@ public class EnemyFactory {
 
         AnimationRenderComponent arc = drone.getComponent(AnimationRenderComponent.class);
         arc.scaleEntity();
-        arc.startAnimation("float");
+        arc.startAnimation(FLOAT);
 
         return drone;
     }
@@ -132,7 +136,7 @@ public class EnemyFactory {
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+                        ServiceLocator.getResourceService().getAsset(DRONE_ATLAS, TextureAtlas.class));
         animator.addAnimation("bidle", 0.15f, Animation.PlayMode.LOOP);
         animator.addAnimation("bscan", 0.15f, Animation.PlayMode.LOOP);
         animator.addAnimation("drop", 0.1f, Animation.PlayMode.LOOP);
@@ -268,7 +272,7 @@ public class EnemyFactory {
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+                        ServiceLocator.getResourceService().getAsset(DRONE_ATLAS, TextureAtlas.class));
         // Only add the drop animation
         animator.addAnimation("drop", 0.2f, Animation.PlayMode.LOOP);
 
@@ -309,10 +313,10 @@ public class EnemyFactory {
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas",TextureAtlas.class));
+                        ServiceLocator.getResourceService().getAsset(DRONE_ATLAS,TextureAtlas.class));
 
-        animator.addAnimation("angry_float",0.1f,Animation.PlayMode.NORMAL);
-        animator.addAnimation("float",0.1f,Animation.PlayMode.NORMAL);
+        animator.addAnimation(ANGRY_FLOAT,0.1f,Animation.PlayMode.NORMAL);
+        animator.addAnimation(FLOAT,0.1f,Animation.PlayMode.NORMAL);
         animator.addAnimation("bomb_effect",0.08f,Animation.PlayMode.NORMAL);
         animator.addAnimation("teleport", 0.05f, Animation.PlayMode.LOOP);
 
@@ -331,7 +335,7 @@ public class EnemyFactory {
             ChaseTask chaseTask = new ChaseTask(target,10f,2f);
             CooldownTask cooldownTask = new CooldownTask(3f);
 
-            drone.getEvents().addListener("enemyActivated", () -> {
+            drone.getEvents().addListener(ENEMY_ACTIVATED, () -> {
                 chaseTask.activate(); // Priority 10
                 cooldownTask.activate(); // Priority 5, so chase > cooldown
             });
@@ -341,13 +345,13 @@ public class EnemyFactory {
                     .addTask(cooldownTask);
 
             // Switch to float anim after teleport
-            drone.getEvents().addListener("teleportFinish", () -> {
-                drone.getEvents().trigger("wanderStart");
-            });
+            drone.getEvents().addListener("teleportFinish", () ->
+                drone.getEvents().trigger("wanderStart")
+            );
         }
 
         animator.scaleEntity();
-        animator.startAnimation("float");
+        animator.startAnimation(FLOAT);
         return drone;
     }
 
@@ -368,10 +372,10 @@ public class EnemyFactory {
 
         AnimationRenderComponent animator =
                 new AnimationRenderComponent(
-                        ServiceLocator.getResourceService().getAsset("images/drone.atlas", TextureAtlas.class));
+                        ServiceLocator.getResourceService().getAsset(DRONE_ATLAS, TextureAtlas.class));
 
-        animator.addAnimation("angry_float", 0.1f, Animation.PlayMode.LOOP);
-        animator.addAnimation("float", 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation(ANGRY_FLOAT, 0.1f, Animation.PlayMode.LOOP);
+        animator.addAnimation(FLOAT, 0.1f, Animation.PlayMode.LOOP);
         animator.addAnimation("bomb_effect", 0.08f, Animation.PlayMode.NORMAL);
 
         drone
@@ -396,11 +400,11 @@ public class EnemyFactory {
             aiComponent.addTask(chaseTask);
 
             // Start in permanent chase mode
-            drone.getEvents().trigger("enemyActivated");
+            drone.getEvents().trigger(ENEMY_ACTIVATED);
         }
 
         animator.scaleEntity();
-        animator.startAnimation("angry_float"); // Permanent chase animation
+        animator.startAnimation(ANGRY_FLOAT); // Permanent chase animation
 
         // Set position directly
         if (spawnPos != null) {

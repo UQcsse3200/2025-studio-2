@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Disposable;
-import com.csse3200.game.areas.terrain.TerrainComponent;
+import com.csse3200.game.areas.terrain.GridComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.collectables.effects.ItemEffectRegistry;
@@ -27,14 +27,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents an area in the game, such as a level, indoor area, etc. An area has a terrain and
- * other entities to spawn on that terrain.
+ * Represents an area in the game, such as a level, indoor area, etc. An area has a grid and
+ * other entities to spawn on that grid.
  *
  * <p>Support for enabling/disabling game areas could be added by making this a Component instead.
  */
 public abstract class GameArea implements Disposable {
   private static final Logger logger = LoggerFactory.getLogger(GameArea.class);
-  protected TerrainComponent terrain;
+  protected GridComponent grid;
   protected GridPoint2 tileBounds;
   protected List<Entity> areaEntities;
   protected ArrayList<Vector2> deathLocations = new ArrayList<>();
@@ -47,7 +47,7 @@ public abstract class GameArea implements Disposable {
   }
 
   public GridPoint2 getMapBounds() {
-    return terrain.getMapBounds(0);
+    return grid.getMapBounds();
   }
 
   public void trigger(String eventName) {
@@ -99,18 +99,8 @@ public abstract class GameArea implements Disposable {
    *
    * @return the list of death locations.
    */
-  public ArrayList<Vector2> getDeathLocations() {
+  public List<Vector2> getDeathLocations() {
     return deathLocations;
-  }
-
-  /**
-   * Sets the list of death locations.
-   * This must be called only once because it spawns entities that are not cleaned up if this is set again.
-   *
-   */
-  public void setDeathLocations(ArrayList<Vector2> deathLocations) {
-    assert(this.deathLocations.size() == 0);
-    this.deathLocations = deathLocations;
   }
 
   /**
@@ -133,7 +123,7 @@ public abstract class GameArea implements Disposable {
     for (Vector2 location : deathLocations) spawnDeathMarker(location);
   }
 
-  /** Create the game area, including terrain, static entities (trees), dynamic entities (player) */
+  /** Create the game area, including grid, static entities (trees), dynamic entities (player) */
   public void create() {
     PhysicsEngine engine = ServiceLocator.getPhysicsService().getPhysics();
     engine.getWorld().setContactListener(new ObjectContactListener());
@@ -141,7 +131,7 @@ public abstract class GameArea implements Disposable {
     ItemEffectRegistry.registerDefaults();
     loadAssets();
 
-    // Terrain must be loaded first in order to spawn entities
+    // grid must be loaded first in order to spawn entities
     loadPrerequisites();
 
     // player must be spawned before enemies as they require a player to target
@@ -163,7 +153,7 @@ public abstract class GameArea implements Disposable {
     engine.getWorld().setContactListener(new ObjectContactListener());
     loadAssets();
 
-    // Terrain must be loaded first in order to spawn entities
+    // grid must be loaded first in order to spawn entities
     loadPrerequisites();
 
     // Save the old player's combat stats and inventory
@@ -213,7 +203,7 @@ public abstract class GameArea implements Disposable {
   }
 
   /**
-   * Loads prerequisites for each area. Music, sounds, terrain etc
+   * Loads prerequisites for each area. Music, sounds, grid etc
    */
   protected abstract void loadPrerequisites();
 
@@ -290,10 +280,16 @@ public abstract class GameArea implements Disposable {
   protected void spawnEntity(Entity entity) {
     areaEntities.add(entity);
     ServiceLocator.getEntityService().register(entity);
+
+    // Set grid reference if this entity has a GridComponent
+    GridComponent gridComponent = entity.getComponent(GridComponent.class);
+    if (gridComponent != null) {
+      this.grid = gridComponent;
+    }
   }
 
   /**
-   * Spawn entity on a given tile. Requires the terrain to be set first.
+   * Spawn entity on a given tile. Requires the grid to be set first.
    *
    * @param entity Entity (not yet registered)
    * @param tilePos tile position to spawn at
@@ -302,8 +298,8 @@ public abstract class GameArea implements Disposable {
    */
   protected void spawnEntityAt(
       Entity entity, GridPoint2 tilePos, boolean centerX, boolean centerY) {
-    Vector2 worldPos = terrain.tileToWorldPosition(tilePos);
-    float tileSize = terrain.getTileSize();
+    Vector2 worldPos = grid.tileToWorldPosition(tilePos);
+    float tileSize = grid.getTileSize();
 
     if (centerX) {
       worldPos.x += (tileSize / 2) - entity.getCenterPosition().x;
@@ -322,8 +318,8 @@ public abstract class GameArea implements Disposable {
    * @param minimapTexture the texture to use as minimap background
    */
   protected void createMinimap(Texture minimapTexture) {
-    float tileSize = terrain.getTileSize();
-    GridPoint2 bounds = terrain.getMapBounds(0);
+    float tileSize = grid.getTileSize();
+    GridPoint2 bounds = grid.getMapBounds();
     Vector2 worldSize = new Vector2(bounds.x * tileSize, bounds.y * tileSize);
 
     MinimapService minimapService = new MinimapService(minimapTexture, worldSize, new Vector2());

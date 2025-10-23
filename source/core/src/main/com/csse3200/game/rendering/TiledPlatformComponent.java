@@ -31,24 +31,24 @@ public class TiledPlatformComponent extends RenderComponent {
     this.middleTile = middleTile;
     this.rightEdge = rightEdge;
 
-    final int w = leftEdge.getRegionWidth();
-    final int h = leftEdge.getRegionHeight();
-    this.tileAspectRatio = ((float) w) / ((float) h);
+    int w = leftEdge.getRegionWidth();
+    int h = leftEdge.getRegionHeight();
+    tileAspectRatio = ((float) w) / h;
 
     assert(w == middleTile.getRegionWidth() && h == middleTile.getRegionHeight());
     assert(w == rightEdge.getRegionWidth() && h == rightEdge.getRegionHeight());
 
-    this.leftEdgeHalf = new TextureRegion(leftEdge, 0, 0, w / 2, h);
-    this.rightEdgeHalf = new TextureRegion(rightEdge, w / 2, 0, w / 2, h);
+    leftEdgeHalf = new TextureRegion(leftEdge, 0, 0, w / 2, h);
+    rightEdgeHalf = new TextureRegion(rightEdge, w / 2, 0, w / 2, h);
   }
 
   @Override
   protected void draw(SpriteBatch batch) {
-    final Vector2 position = entity.getPosition();
-    final Vector2 scale = entity.getScale();
-    final float tileHeightWorld = scale.y;
-    final float tileWidthWorld = tileHeightWorld * tileAspectRatio;
-    final int totalTilesToDraw = MathUtils.ceil(scale.x / tileWidthWorld);
+    Vector2 position = entity.getPosition();
+    Vector2 scale = entity.getScale();
+    float tileHeightWorld = scale.y;
+    float tileWidthWorld = tileHeightWorld * tileAspectRatio;
+    int totalTilesToDraw = MathUtils.ceil(scale.x / tileWidthWorld);
 
     if (totalTilesToDraw == 0) return;
 
@@ -60,8 +60,8 @@ public class TiledPlatformComponent extends RenderComponent {
     }
 
     // Normal tiling
-    final float stretchedTileWidth = scale.x / totalTilesToDraw;
-    final int numMiddleTiles = totalTilesToDraw - 2;
+    float stretchedTileWidth = scale.x / totalTilesToDraw;
+    int numMiddleTiles = totalTilesToDraw - 2;
 
     float currentX = position.x;
     batch.draw(leftEdge, currentX, position.y, stretchedTileWidth, tileHeightWorld);

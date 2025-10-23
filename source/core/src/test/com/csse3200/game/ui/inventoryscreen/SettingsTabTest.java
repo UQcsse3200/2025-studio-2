@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(GameExtension.class)
 @ExtendWith(MockitoExtension.class)
-public class SettingsTabTest {
+class SettingsTabTest {
 
   @Test
   void shouldCreateSettingsTab() {

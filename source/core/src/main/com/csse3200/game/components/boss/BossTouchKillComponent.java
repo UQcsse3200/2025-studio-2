@@ -92,6 +92,7 @@ public class BossTouchKillComponent extends Component {
         }, 5f);
       }
     } catch (Exception e) {
+      // Ignored
     }
   }
 }

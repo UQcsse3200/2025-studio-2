@@ -43,8 +43,12 @@ public class LaserShowerComponent extends Component {
     private static final float KNOCKBACK = 10f;
     private static final String LASER_SOUND = "sounds/laserShower.mp3";
 
+
     private static final short REBOUND_OCCLUDER = PhysicsLayer.LASER_REFLECTOR;
-    private static final short BLOCKED_OCCLUDER = PhysicsLayer.OBSTACLE;
+    private static final short BLOCKED_OCCLUDER = (
+            PhysicsLayer.OBSTACLE
+            // | PhysicsLayer.DEFAULT
+            );
     private static final short DETECTOR_OCCLUDER = PhysicsLayer.LASER_DETECTOR;
     private static final short PLAYER_OCCLUDER = PhysicsLayer.PLAYER;
     private static final short HIT_MASK = (short) (
@@ -52,6 +56,7 @@ public class LaserShowerComponent extends Component {
             | BLOCKED_OCCLUDER
             | PLAYER_OCCLUDER
             | DETECTOR_OCCLUDER);
+    private static final String LASER_OFF = "laserOff";
 
     private final List<Vector2> positions = new ArrayList<>();
     private float dir = 90f;
@@ -92,7 +97,7 @@ public class LaserShowerComponent extends Component {
             hitLight = createPointLight();
         }
         entity.getEvents().addListener("shootLaser", () -> laserActive = true);
-        entity.getEvents().addListener("laserOff", this::stopLaser);
+        entity.getEvents().addListener(LASER_OFF, this::stopLaser);
     }
     /**
      * Stops the laser (clears positions and turns it off).
@@ -103,7 +108,7 @@ public class LaserShowerComponent extends Component {
 
         // Turn off any reflector highlights
         for (Entity e : lastReflectorsHit) {
-            e.getEvents().trigger("laserOff", false);
+            e.getEvents().trigger(LASER_OFF, false);
         }
         lastReflectorsHit.clear();
     }
@@ -230,7 +235,7 @@ public class LaserShowerComponent extends Component {
         }
         for (Entity e : lastReflectorsHit) {
             if (!reflectorsHit.contains(e)) {
-                e.getEvents().trigger("laserOff", false);
+                e.getEvents().trigger(LASER_OFF, false);
             }
         }
         lastReflectorsHit = reflectorsHit;

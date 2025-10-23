@@ -1,18 +1,20 @@
-package com.csse3200.game.inventory;
+package com.csse3200.game.ui.inventoryscreen;
 
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.csse3200.game.areas.GameArea;
+import com.csse3200.game.components.pausemenu.PauseMenuDisplay;
 import com.csse3200.game.components.player.InventoryComponent;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.extensions.GameExtension;
 import com.csse3200.game.screens.MainGameScreen;
-import com.csse3200.game.ui.inventoryscreen.UpgradesTab;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests for UpgradesTab layering logic:
@@ -48,6 +51,8 @@ public class UpgradesTabTest {
     private Texture texPlayer;
     private Texture texJetpack;
     private Texture texGlider;
+    private Texture texDash;
+
 
     @BeforeEach
     void setup() {
@@ -61,13 +66,14 @@ public class UpgradesTabTest {
         texPlayer  = makeTinyTex();
         texJetpack = makeTinyTex();
         texGlider  = makeTinyTex();
+        texDash = makeTinyTex();
 
 
     }
 
     @AfterEach
     void tearDown() {
-        for (Texture t : List.of(fakeBg, texPlayer, texJetpack, texGlider)) {
+        for (Texture t : List.of(fakeBg, texPlayer, texJetpack, texGlider, texDash)) {
             if (t != null) t.dispose();
         }
     }
@@ -78,7 +84,7 @@ public class UpgradesTabTest {
         when(inventory.getUpgrades()).thenReturn(Map.of());
 
         UpgradesTab tab = new UpgradesTab(screen);
-        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
 
         Actor root = tab.build(/*skin*/ null);
 
@@ -93,7 +99,7 @@ public class UpgradesTabTest {
         when(inventory.getUpgrades()).thenReturn(Map.of("jetpack", 1));
 
         UpgradesTab tab = new UpgradesTab(screen);
-        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
 
         Actor root = tab.build(null);
 
@@ -108,7 +114,7 @@ public class UpgradesTabTest {
         when(inventory.getUpgrades()).thenReturn(Map.of("glider", 2)); // count>0 still one image
 
         UpgradesTab tab = new UpgradesTab(screen);
-        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
 
         Actor root = tab.build(null);
 
@@ -123,7 +129,7 @@ public class UpgradesTabTest {
         when(inventory.getUpgrades()).thenReturn(Map.of("jetpack", 1, "glider", 1));
 
         UpgradesTab tab = new UpgradesTab(screen);
-        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
 
         Actor root = tab.build(null);
 
@@ -138,7 +144,7 @@ public class UpgradesTabTest {
         when(inventory.getUpgrades()).thenReturn(Map.of("hoverboots", 3));
 
         UpgradesTab tab = new UpgradesTab(screen);
-        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
 
         Actor root = tab.build(null);
 
@@ -153,7 +159,7 @@ public class UpgradesTabTest {
         when(player.getComponent(InventoryComponent.class)).thenReturn(null);
 
         UpgradesTab tab = new UpgradesTab(screen);
-        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
 
         Actor root = tab.build(null);
 
@@ -161,6 +167,97 @@ public class UpgradesTabTest {
         assertEquals(0, countImagesUsing(root, texJetpack));
         assertEquals(0, countImagesUsing(root, texGlider));
     }
+
+    @Test
+    @DisplayName("Dash present: dash overlay is rendered")
+    void dash_rendersOverlay() throws Exception {
+        when(inventory.getUpgrades()).thenReturn(Map.of("dash", 1));
+
+        UpgradesTab tab = new UpgradesTab(screen);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
+
+        Actor root = tab.build(null);
+
+        assertEquals(1, countImagesUsing(root, texPlayer), "player always renders");
+        assertEquals(1, countImagesUsing(root, texDash),   "dash overlay renders once");
+        assertEquals(0, countImagesUsing(root, texJetpack));
+        assertEquals(0, countImagesUsing(root, texGlider));
+    }
+
+    @Test
+    @DisplayName("Close button: when paused, unpauses and hides pause UI")
+    void closeButton_unpausesAndHides() throws Exception {
+        when(inventory.getUpgrades()).thenReturn(Map.of()); // no overlays needed
+        when(screen.isPaused()).thenReturn(true);           // exercise unpause path
+
+        UpgradesTab tab = new UpgradesTab(screen);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
+
+        Actor root = tab.build(null);
+        Actor close = findByName(root, "closeButton");
+        assertNotNull(close, "named closeButton should exist");
+
+        simulateClick(close);
+
+        // unpause + hide via INVENTORY tab
+        verify(screen, atLeastOnce()).togglePaused();
+        verify(screen, atLeastOnce()).togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
+    }
+
+    @Test
+    @DisplayName("Close button: when not paused, does not togglePaused, but hides pause UI")
+    void closeButton_whenNotPaused_onlyHides() throws Exception {
+        when(inventory.getUpgrades()).thenReturn(Map.of());
+        when(screen.isPaused()).thenReturn(false); // exercise else branch
+
+        UpgradesTab tab = new UpgradesTab(screen);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
+
+        Actor root = tab.build(null);
+        Actor close = findByName(root, "closeButton");
+        assertNotNull(close);
+
+        simulateClick(close);
+
+        verify(screen, never()).togglePaused();
+        verify(screen, atLeastOnce()).togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
+    }
+
+    @Test
+    @DisplayName("Tab hotspot: clicking INVENTORY calls togglePauseMenu(INVENTORY)")
+    void tabHotspot_inventory_switches() throws Exception {
+        when(inventory.getUpgrades()).thenReturn(Map.of());
+
+        UpgradesTab tab = new UpgradesTab(screen);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
+
+        Actor root = tab.build(null);
+        Actor invBtn = findByName(root, "tab:INVENTORY");
+        assertNotNull(invBtn, "inventory tab hotspot should be present");
+
+        simulateClick(invBtn);
+
+        verify(screen, atLeastOnce()).togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
+    }
+
+    @Test
+    @DisplayName("Tab hotspot: clicking OBJECTIVES calls togglePauseMenu(OBJECTIVES)")
+    void tabHotspot_objectives_switches() throws Exception {
+        when(inventory.getUpgrades()).thenReturn(Map.of());
+
+        UpgradesTab tab = new UpgradesTab(screen);
+        replacePrivateTextures(tab, fakeBg, texPlayer, texJetpack, texGlider, texDash);
+
+        Actor root = tab.build(null);
+        Actor objBtn = findByName(root, "tab:OBJECTIVES");
+        assertNotNull(objBtn, "objectives tab hotspot should be present");
+
+        simulateClick(objBtn);
+
+        verify(screen, atLeastOnce()).togglePauseMenu(PauseMenuDisplay.Tab.OBJECTIVES);
+    }
+
+
 
     // helpers
 
@@ -173,11 +270,13 @@ public class UpgradesTabTest {
         return t;
     }
 
-    private static void replacePrivateTextures(UpgradesTab tab, Texture bg, Texture player, Texture jetpack, Texture glider) throws Exception {
+    private static void replacePrivateTextures(UpgradesTab tab, Texture bg, Texture player,
+                                               Texture jetpack, Texture glider, Texture dash) throws Exception {
         setPrivate(tab, "bgTex", bg);
         setPrivate(tab, "playerTex", player);
         setPrivate(tab, "packTex", jetpack);
         setPrivate(tab, "gliderTex", glider);
+        setPrivate(tab, "dashTex", dash);
     }
 
     private static void setPrivate(Object target, String field, Object value) throws Exception {
@@ -203,5 +302,53 @@ public class UpgradesTabTest {
     private static void collectImages(Actor a, ImageConsumer consumer) {
         if (a instanceof Image img) consumer.accept(img);
         if (a instanceof Group g) for (Actor c : g.getChildren()) collectImages(c, consumer);
+    }
+
+
+    private static void simulateClick(Actor actor) {
+        // use center-ish point; some actors might be size 0 in tests so pick 0.5 fallback
+        float localX = actor.getWidth()  > 0 ? actor.getWidth()  * 0.5f : 0.5f;
+        float localY = actor.getHeight() > 0 ? actor.getHeight() * 0.5f : 0.5f;
+
+        InputEvent down = new InputEvent();
+        down.setType(InputEvent.Type.touchDown);
+        down.setListenerActor(actor);
+        down.setTarget(actor);
+        down.setPointer(0);
+        down.setButton(0);
+        down.setStageX(localX);
+        down.setStageY(localY);
+
+        InputEvent up = new InputEvent();
+        up.setType(InputEvent.Type.touchUp);
+        up.setListenerActor(actor);
+        up.setTarget(actor);
+        up.setPointer(0);
+        up.setButton(0);
+        up.setStageX(localX);
+        up.setStageY(localY);
+
+        var listeners = actor.getListeners(); // DelayedRemovalArray<EventListener>
+        for (int i = 0, n = listeners.size; i < n; i++) {
+            var l = listeners.get(i);
+            if (l instanceof InputListener il) {
+                boolean handled = il.touchDown(down, localX, localY, 0, 0);
+                if (handled) {
+                    il.touchUp(up, localX, localY, 0, 0);
+                }
+            }
+        }
+    }
+
+    // small finder by name (closeButton, tab:INVENTORY, tab:OBJECTIVES)
+    private static Actor findByName(Actor a, String name) {
+        if (name.equals(a.getName())) return a;
+        if (a instanceof Group g) {
+            for (Actor c : g.getChildren()) {
+                Actor hit = findByName(c, name);
+                if (hit != null) return hit;
+            }
+        }
+        return null;
     }
 }

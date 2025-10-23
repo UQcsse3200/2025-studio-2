@@ -71,7 +71,6 @@ public class BossSpawnerComponent extends Component {
 			return;
 		}
 
-
 		checkSpawnTriggers();
 		updateSpawning();
 
@@ -89,7 +88,7 @@ public class BossSpawnerComponent extends Component {
 			Vector2 trigger = spawnTriggers.get(i);
 
 			// Trigger when player X position reaches or exceeds trigger X
-			if (!triggered.get(i) && playerPos.x >= trigger.x) {
+			if (Boolean.FALSE.equals(triggered.get(i)) && playerPos.x >= trigger.x) {
 				triggered.set(i, true);
 				currentTriggerIndex = i;
 				startSpawningPhase();
@@ -123,7 +122,7 @@ public class BossSpawnerComponent extends Component {
 		}
 
 		// Check if we should spawn a drone
-		if (currentTriggerIndex < spawnTriggers.size() && triggered.get(currentTriggerIndex)) {
+		if (currentTriggerIndex < spawnTriggers.size() && Boolean.TRUE.equals(triggered.get(currentTriggerIndex))) {
 			//generate animations before real spawn
 			if (windup <= 0f) {
 				windup = 2.8f; // Pre-swing duration：0.5~0.8

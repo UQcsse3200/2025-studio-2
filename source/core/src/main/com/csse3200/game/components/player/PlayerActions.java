@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.csse3200.game.components.CameraComponent;
 import com.csse3200.game.components.CombatStatsComponent;
 import com.csse3200.game.components.Component;
 import com.csse3200.game.components.StaminaComponent;
@@ -22,7 +21,7 @@ import com.csse3200.game.services.ServiceLocator;
  */
 public class PlayerActions extends Component {
   private static final float MAX_ACCELERATION = 70f;
-  private static Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
+  private static final Vector2 WALK_SPEED = new Vector2(7f, 7f); // Metres
   private static final Vector2 ADRENALINE_SPEED = WALK_SPEED.cpy().scl(3);
   private static final Vector2 CROUCH_SPEED = WALK_SPEED.cpy().scl(0.3F);
   private static final float SPRINT_MULT = 2.3f;
@@ -32,9 +31,10 @@ public class PlayerActions extends Component {
 
   private static final int FUEL_CAPACITY = 100;
 
+  private Vector2 walkSpeed = WALK_SPEED.cpy(); // Metres
+
   private PhysicsComponent physicsComponent;
   private StaminaComponent stamina;
-  private CameraComponent cameraComponent;
   private Vector2 walkDirection = Vector2.Zero.cpy();
 
   private boolean moving = false;
@@ -67,7 +67,6 @@ public class PlayerActions extends Component {
   public void create() {
     physicsComponent = entity.getComponent(PhysicsComponent.class);
     combatStatsComponent = entity.getComponent(CombatStatsComponent.class);
-    cameraComponent = entity.getComponent(CameraComponent.class);
     stamina = entity.getComponent(StaminaComponent.class);
     walkSound.loop(UserSettings.get().masterVolume);
     walkSound.pause();
@@ -164,7 +163,7 @@ public class PlayerActions extends Component {
     } else if (crouching) {
       desiredVelocity = walkDirection.cpy().scl(CROUCH_SPEED);
     } else {
-      desiredVelocity = walkDirection.cpy().scl(WALK_SPEED);
+      desiredVelocity = walkDirection.cpy().scl(walkSpeed);
     }
     desiredVelocity.scl(mult);
 
@@ -202,12 +201,6 @@ public class PlayerActions extends Component {
 
     Vector2 impulse = new Vector2(deltaV * body.getMass(), impulseY);
     body.applyLinearImpulse(new Vector2(impulse.x, impulseY), body.getWorldCenter(), true);
-
-
-    /*Vector2 impulse =
-            new Vector2((desiredVelocity.x - velocity.x), 0).scl(body.getMass());
-    body.applyLinearImpulse(impulse, body.getWorldCenter(), true);*/
-
   }
 
   /**
@@ -465,7 +458,9 @@ public class PlayerActions extends Component {
     return hasDashed;
   }
 
-  public int getJetpackFuel(){return jetpackFuel;};
+  public int getJetpackFuel() {
+    return jetpackFuel;
+  }
 
   public boolean getIsJetpackOn() {return isJetpackOn;}
 
@@ -483,8 +478,8 @@ public class PlayerActions extends Component {
     }
   }
 
-  public static void setWalkSpeed(int x, int y) {
-      WALK_SPEED = new Vector2((float)x, (float)y);
+  public void setWalkSpeed(int x, int y) {
+      walkSpeed = new Vector2(x, y);
   }
 
   private void gravityOff() {

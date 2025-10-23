@@ -22,9 +22,6 @@ import static org.mockito.Mockito.mock;
 
 @ExtendWith(GameExtension.class)
 class PressurePlateFactoryTest {
-    private ResourceService mockResourceService;
-    private PhysicsService mockPhysicsService;
-
     @BeforeEach
     void setUp() {
         ServiceLocator.clear();

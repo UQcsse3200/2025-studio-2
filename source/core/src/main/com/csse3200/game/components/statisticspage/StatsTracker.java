@@ -15,6 +15,7 @@ public class StatsTracker {
     private static int levelsCompleted;
     private static int deathCount;
     private static int achievementsUnlocked;
+    private static int lostHardwareCollected;
     private static int jumpCount;
     private static int codexReads;
 
@@ -144,6 +145,13 @@ public class StatsTracker {
     }
 
     /**
+     * Retrieve lost hardware counter
+     */
+    public static int getLostHardwareCollected() {
+        return lostHardwareCollected;
+    }
+
+    /**
      * Retrieve jump counter
      */
     public static int getJumpCount() {
@@ -157,6 +165,7 @@ public class StatsTracker {
         return codexReads;
     }
 
+
     /**
      * Save stats to JSON
      */
@@ -167,6 +176,7 @@ public class StatsTracker {
         data.levelsCompleted = levelsCompleted;
         data.deathCount = deathCount;
         data.achievementsUnlocked = achievementsUnlocked;
+        data.lostHardwareCollected = lostHardwareCollected;
         data.jumpCount = jumpCount;
         data.codexReads = codexReads;
 
@@ -185,6 +195,7 @@ public class StatsTracker {
             levelsCompleted = data.levelsCompleted;
             deathCount = data.deathCount;
             achievementsUnlocked = data.achievementsUnlocked;
+            lostHardwareCollected = data.lostHardwareCollected;
             jumpCount = data.jumpCount;
             codexReads = data.codexReads;
         } else {

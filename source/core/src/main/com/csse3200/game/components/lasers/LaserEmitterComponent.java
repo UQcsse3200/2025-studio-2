@@ -40,7 +40,7 @@ public class LaserEmitterComponent extends Component {
     private static final float KNOCKBACK = 10f;
 
     private static final short REBOUND_OCCLUDER = PhysicsLayer.LASER_REFLECTOR;
-    private static final short BLOCKED_OCCLUDER = (short) (
+    private static final short BLOCKED_OCCLUDER = (
             PhysicsLayer.OBSTACLE
             // | PhysicsLayer.DEFAULT
             );
@@ -53,7 +53,7 @@ public class LaserEmitterComponent extends Component {
             | DETECTOR_OCCLUDER);
 
     private final List<Vector2> positions = new ArrayList<>();
-    private float dir = 90f;
+    private float dir;
     private PhysicsEngine physicsEngine;
     private CombatStatsComponent combatStats;
 
@@ -64,19 +64,14 @@ public class LaserEmitterComponent extends Component {
     private AnimationRenderComponent animator;
     private ConeLightComponent emitterLight;
 
-    private boolean enabled = true;
     private boolean lastEnabled = true;
 
     public LaserEmitterComponent() {
-
+        this(90.0f);
     }
 
     public LaserEmitterComponent(float dir) {
         this.dir = dir;
-    }
-
-    private void setEnable(boolean enabled) {
-        this.enabled = enabled;
     }
 
     public boolean getEnable() {
@@ -97,8 +92,8 @@ public class LaserEmitterComponent extends Component {
             hitLight = createPointLight();
         }
 
-        entity.getEvents().addListener("enable", () -> setEnable(true));
-        entity.getEvents().addListener("disable", () -> setEnable(false));
+        entity.getEvents().addListener("enable", () -> setEnabled(true));
+        entity.getEvents().addListener("disable", () -> setEnabled(false));
     }
 
     @Override
@@ -326,6 +321,7 @@ public class LaserEmitterComponent extends Component {
             Body targetBody = physics.getBody();
             Vector2 direction = target.getCenterPosition().cpy().sub(hit.point).nor();
             float knockbackScale = correctImpulse(direction);
+
             Vector2 impulse = direction.setLength(KNOCKBACK + knockbackScale);
             targetBody.applyLinearImpulse(impulse, targetBody.getWorldCenter(), true);
         }

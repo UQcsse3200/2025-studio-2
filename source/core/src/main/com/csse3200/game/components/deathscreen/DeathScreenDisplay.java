@@ -33,12 +33,13 @@ import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.UIComponent;
 import com.github.tommyettinger.textra.TypingLabel;
 import com.github.tommyettinger.textra.TypingListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.logging.Logger;
 
 /**
  * A UI component for displaying the death screen overlay when the player dies.
@@ -46,14 +47,14 @@ import java.util.logging.Logger;
  * When visible, blocks all other input including pause menu and stops background music.
  */
 public class DeathScreenDisplay extends UIComponent {
-    static final Logger logger = Logger.getLogger(DeathScreenDisplay.class.getName());
+    static final Logger logger = LoggerFactory.getLogger(DeathScreenDisplay.class);
     private Table rootTable;
     private final GdxGame game;
     private Texture blackTexture;
     private InputComponent inputBlocker;
     private TypingLabel typewriterLabel;
     private Table buttonsTable;
-    private HashMap<String, ArrayList<String>> deathPrompts = new HashMap<>();
+    private final HashMap<String, ArrayList<String>> deathPrompts = new HashMap<>();
     private final Random random = new Random();
     private Container<TypingLabel> typewriterContainer;
     private final MainGameScreen screen;
@@ -77,20 +78,17 @@ public class DeathScreenDisplay extends UIComponent {
               if (line.isEmpty() || line.startsWith("#")) continue;
               if (line.endsWith(":")) {
                 causeName = line.substring(0, line.length() - 1);
-                continue;
-              }
-              String finalLine = line;
-              deathPrompts.compute(causeName, (k, v) -> {
-                  if (v == null) v = new ArrayList<>();
+              } else {
+                String finalLine = line;
+                deathPrompts.compute(causeName, (k, v) -> {
+                  if (null == v) v = new ArrayList<>();
                   v.add(finalLine);
                   return v;
-              });
+                });
+              }
             }
-        } catch (Exception e) {
-            throw e;
-            // Fallback to default message if file can't be read
         } finally {
-            final ArrayList<String> defaults = deathPrompts.getOrDefault("", new  ArrayList<>());
+            ArrayList<String> defaults = deathPrompts.getOrDefault("", new  ArrayList<>());
             if (defaults.isEmpty()) defaults.add("Your journey ends here...");
         }
     }
@@ -117,7 +115,7 @@ public class DeathScreenDisplay extends UIComponent {
             deathCause = attacker.toString();
           }
         }
-        logger.info("Death Cause: " + deathCause);
+        logger.info("Death Cause: {}", deathCause);
 
         if (random.nextFloat() < 0.1) {
           deathCause = "";
@@ -211,10 +209,8 @@ public class DeathScreenDisplay extends UIComponent {
             @Override
             public void event(String event) {
                 // When typing finishes, start button fade-in
-                if ("{ENDCOLOR}".equals(event) || event.equals("{END}")) {
-                    if (buttonsTable != null) {
-                        buttonsTable.addAction(Actions.fadeIn(1f));
-                    }
+                if (("{ENDCOLOR}".equals(event) || event.equals("{END}")) && buttonsTable != null) {
+                    buttonsTable.addAction(Actions.fadeIn(1f));
                 }
             }
 

@@ -14,6 +14,7 @@ import com.csse3200.game.screens.MainGameScreen;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.PixelPerfectPlacer.Rect;
 
+import java.util.EnumMap;
 import java.util.Map;
 
 
@@ -159,25 +160,12 @@ public class InventoryTab implements InventoryTabInterface {
    */
   @Override
   public Actor build(Skin skin) {
-    PixelPerfectPlacer placer = new PixelPerfectPlacer(bgTex);
+    Map<PauseMenuDisplay.Tab, Rect> tabs = new EnumMap<>(PauseMenuDisplay.Tab.class);
+    tabs.put(PauseMenuDisplay.Tab.UPGRADES,  TAB_UPGRADES);
+    tabs.put(PauseMenuDisplay.Tab.OBJECTIVES, TAB_OBJECTIVE);
 
-    Button closeButton = new Button(new Button.ButtonStyle());
-    closeButton.addListener(new ChangeListener() {
-      @Override
-      public void changed(ChangeEvent event, Actor actor) {
-        if (screen != null) {
-          if (screen.isPaused()) {
-            screen.togglePaused(); // unpause
-          }
-          // Update pause menu visibility to reflect paused=false (this hides it)
-          screen.togglePauseMenu(PauseMenuDisplay.Tab.INVENTORY);
-        } else {
-          // No screen available: do nothing (or log)
-          Gdx.app.log("InventoryTab", "MainGameScreen was null; close ignored.");
-        }
-      }
-    });
-    placer.addOverlay(closeButton, CLOSE_BUTTON_POS);
+    PixelPerfectPlacer placer = PauseMenuDisplay.makeTabScaffold(
+              screen, bgTex, CLOSE_BUTTON_POS, tabs);
 
     Table gridTable = new Table();
     this.currentGridTable = gridTable; // Store reference for refreshing
