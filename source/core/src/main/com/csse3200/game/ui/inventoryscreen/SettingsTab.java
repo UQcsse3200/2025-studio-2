@@ -186,10 +186,6 @@ public class SettingsTab implements InventoryTabInterface {
             public void changed(ChangeEvent event, Actor actor) {
                 float value = musicVolumeSlider.getValue();
                 musicVolumeValue.setText(String.format(PERCENTAGE_FORMAT_LITERAL, value * 100));
-
-                //  Apply live change
-//                updateCurrentMusicVolume();
-//                logger.info("[UI] Music slider moved -> {} ({}%)", value, (int)(value * 100));
             }
         });
     }
