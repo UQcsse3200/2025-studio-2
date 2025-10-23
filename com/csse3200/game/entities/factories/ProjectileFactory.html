@@ -118,20 +118,11 @@ loadScripts(document, 'script');</script>
 <div class="block">Creates a bomb entity that falls from source position toward target</div>
 </div>
 <div class="col-first odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createLaserProjectile(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,int)" class="member-name-link">createLaserProjectile</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;source,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPos,
+<div class="col-second odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createProjectile(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,float,int)" class="member-name-link">createProjectile</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;source,
  com.badlogic.gdx.math.Vector2&nbsp;direction,
  float&nbsp;speed,
  int&nbsp;damage)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
-<div class="block">Creates a laser pulse projectile entity</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code>static <a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4"><code><a href="#createProjectile(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,float,int)" class="member-name-link">createProjectile</a><wbr>(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;source,
- com.badlogic.gdx.math.Vector2&nbsp;direction,
- float&nbsp;speed,
- int&nbsp;damage)</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab1 method-summary-table-tab4">
 <div class="block">Creates a simple projectile (for potential future use)</div>
 </div>
 </div>
@@ -171,27 +162,6 @@ loadScripts(document, 'script');</script>
 <dd><code>damage</code> - Damage the bomb will deal</dd>
 <dt>Returns:</dt>
 <dd>Bomb entity</dd>
-</dl>
-</section>
-</li>
-<li>
-<section class="detail" id="createLaserProjectile(com.csse3200.game.entities.Entity,com.badlogic.gdx.math.Vector2,com.badlogic.gdx.math.Vector2,float,int)">
-<h3>createLaserProjectile</h3>
-<div class="member-signature"><span class="modifiers">public static</span>&nbsp;<span class="return-type"><a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a></span>&nbsp;<span class="element-name">createLaserProjectile</span><wbr><span class="parameters">(<a href="../Entity.html" title="class in com.csse3200.game.entities">Entity</a>&nbsp;source,
- com.badlogic.gdx.math.Vector2&nbsp;spawnPos,
- com.badlogic.gdx.math.Vector2&nbsp;direction,
- float&nbsp;speed,
- int&nbsp;damage)</span></div>
-<div class="block">Creates a laser pulse projectile entity</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>source</code> - The entity that created the projectile (boss)</dd>
-<dd><code>spawnPos</code> - Position where projectile spawns (CENTER position)</dd>
-<dd><code>direction</code> - Direction the projectile should travel (normalized)</dd>
-<dd><code>speed</code> - Speed of the projectile</dd>
-<dd><code>damage</code> - Damage the projectile deals</dd>
-<dt>Returns:</dt>
-<dd>Laser projectile entity</dd>
 </dl>
 </section>
 </li>

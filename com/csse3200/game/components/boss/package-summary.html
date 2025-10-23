@@ -90,25 +90,9 @@ loadScripts(document, 'script');</script>
 <div class="table-header col-last">Description</div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="BossAnchorComponent.html" title="class in com.csse3200.game.components.boss">BossAnchorComponent</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">&nbsp;</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BossLaserAttackComponent.html" title="class in com.csse3200.game.components.boss">BossLaserAttackComponent</a></div>
+<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BossSpawnerComponent.html" title="class in com.csse3200.game.components.boss">BossSpawnerComponent</a></div>
 <div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">BossLaserAttackComponent handles the boss's laser pulse attack:
- - Finds player position
- - Triggers bossShootLaser animation
- - Creates and shoots laser pulse projectile with shootEffect animation
- - Handles hit detection and damage through the projectile entity
- - Uses touchKillEffect as hit effect when player is damaged</div>
-</div>
-<div class="col-first even-row-color class-summary class-summary-tab2"><a href="BossSpawnerComponent.html" title="class in com.csse3200.game.components.boss">BossSpawnerComponent</a></div>
-<div class="col-last even-row-color class-summary class-summary-tab2">
-<div class="block">Boss three-stage drone spawning component:
- * - Phase transitions based on the player's position as a trigger point;
- * - Each phase is configurable: drone variant, spawn interval, concurrency limit, total spawns, and pre-swing duration;
- * - Phase completion condition: Full spawns AND active count on the field is 0 -&gt; switch back to pursuit animation/behavior.</div>
-</div>
-<div class="col-first odd-row-color class-summary class-summary-tab2"><a href="BossSpawnerComponent.PhaseConfig.html" title="class in com.csse3200.game.components.boss">BossSpawnerComponent.PhaseConfig</a></div>
-<div class="col-last odd-row-color class-summary class-summary-tab2">
-<div class="block">phase config</div>
+<div class="block">Component for boss enemy to spawn self-destruct drones based on player position triggers</div>
 </div>
 <div class="col-first even-row-color class-summary class-summary-tab2"><a href="BossTouchKillComponent.html" title="class in com.csse3200.game.components.boss">BossTouchKillComponent</a></div>
 <div class="col-last even-row-color class-summary class-summary-tab2">
