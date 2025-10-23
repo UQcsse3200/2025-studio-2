@@ -429,7 +429,7 @@ public class MainGameScreen extends ScreenAdapter {
                     Vector2 currentPlayerPos = player.getPosition().cpy();
                     if (currentPlayerPos.x < 62f) { // skip laser when player is beyond x = 61
                         laserTimer += delta;
-                        if (laserTimer >= 4f) {
+                        if (laserTimer >= 40f) {
                             bossLevel.spawnLaserShower(playerPos.x, playerPos.y);// spawn lasers
                             laserTimer = 0f; // reset timer
                         }
