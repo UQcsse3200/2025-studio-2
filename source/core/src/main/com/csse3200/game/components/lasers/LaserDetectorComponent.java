@@ -16,6 +16,8 @@ import com.csse3200.game.services.ServiceLocator;
  */
 public class LaserDetectorComponent extends Component {
 
+    private PhysicsComponent physics;
+    private TextureRenderComponent texture;
     private ConeLightComponent light;
 
     private boolean detecting = false;
@@ -36,8 +38,8 @@ public class LaserDetectorComponent extends Component {
 
     @Override
     public void create() {
-        PhysicsComponent physics = entity.getComponent(PhysicsComponent.class);
-        TextureRenderComponent texture = entity.getComponent(TextureRenderComponent.class);
+        physics = entity.getComponent(PhysicsComponent.class);
+        texture = entity.getComponent(TextureRenderComponent.class);
         light = entity.getComponent(ConeLightComponent.class);
 
         if (texture == null || light == null || physics == null) {
@@ -80,6 +82,8 @@ public class LaserDetectorComponent extends Component {
     private void updateDetection(boolean detecting) {
         if (detecting == this.detecting) return;
 
+        // idk if this looks better with or without but its here if its wanted
+        //texture.setTexture(textures[detecting ? 1 : 0]);
         light.setActive(detecting);
         entity.getEvents().trigger(detecting ? "detectingStart" : "detectingEnd");
         this.detecting = detecting;

@@ -60,8 +60,6 @@ public abstract class BaseLevelGameArea extends GameArea {
     protected final GridPoint2 PLAYER_SPAWN = new GridPoint2();
     protected float WALL_THICKNESS;
 
-    boolean hasLaser = false;
-
     /**
      * Create a new base level area.
      *
@@ -284,14 +282,17 @@ public abstract class BaseLevelGameArea extends GameArea {
      * <p> This function is called within {@link MainGameScreen} where it determines what
      * level it is on and the frequency at which to spawn the lasers.</p>
      */
-    public void spawnLaserShower(float x , float y, float delay) {
+    public void spawnLaserShower() {
         if (player == null) return; // safety check
 
-        // Spawn lasers behind of the player
-        for (int i = 0; i <= 5; i++) {
-            Entity laser = LaserFactory.createLaserShower(-90f); // Create another downward laser
-            float xBehind = x - ((i + 1) * 7.5f); // offset left
-            spawnEntityAt(laser, new GridPoint2(Math.round(xBehind+10f), Math.round(y+15f)), true, true);
+        final float Y = player.getPosition().y + 20f; // spawn above player
+        final float X = player.getPosition().x;
+
+        // Spawn 3 lasers to the left
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X - ((i + 1) * 7.5f); // offset left
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
             // Remove laser after 5 seconds
@@ -300,37 +301,22 @@ public abstract class BaseLevelGameArea extends GameArea {
                 public void run() {
                     laser.dispose();
                 }
-            }, delay);
+            }, 5f);
         }
 
-        // Spawn lasers ahead of the player
-        for (int i = 0; i <= 5; i++) {
-            Entity laser = LaserFactory.createLaserShower(-90f); // Create another downward laser
-            float xAhead = x + ((i + 1) * 7.5f); // offset right
-            spawnEntityAt(laser, new GridPoint2(Math.round(xAhead+10f), Math.round(y+15f)), true, true);
+        // Spawn 3 lasers to the right
+        for (int i = 0; i <= 2; i++) {
+            Entity laser = LaserFactory.createLaserEmitter(-90f);
+            float x = X + ((i + 1) * 7.5f); // offset right
+            spawnEntityAt(laser, new GridPoint2(Math.round(x), Math.round(Y)), true, true);
             laser.getEvents().trigger("shootLaser");
 
-            // Schedule disposal after 5 seconds
             Timer.schedule(new Timer.Task() {
                 @Override
                 public void run() {
                     laser.dispose();
                 }
-            }, delay);
-        }
-    }
-
-    public void laserShowerChecker(float x , float y, float delay) {
-        if (!hasLaser) { // Only spawn if no active laser
-            spawnLaserShower(x,y,delay);
-            hasLaser = true; // Mark laser as active
-            // Reset the has_laser flag after 5 seconds to allow next spawn
-            Timer.schedule(new Timer.Task() {
-                @Override
-                public void run() {
-                    hasLaser = false;
-                }
-            },delay);
+            }, 5f);
         }
     }
 }

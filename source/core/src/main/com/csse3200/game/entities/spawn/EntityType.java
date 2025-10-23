@@ -18,7 +18,6 @@ public enum EntityType {
     WALL,
     LASER_DETECTOR,
     ENEMY,
-    BOSS,
     TERMINAL,
     TUTORIAL,
     OBJECTIVE,
