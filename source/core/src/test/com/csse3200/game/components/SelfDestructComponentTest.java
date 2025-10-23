@@ -16,9 +16,11 @@ import static org.mockito.Mockito.*;
 
 class SelfDestructComponentTest {
 
+    private Entity drone;
     private Entity player;
     private SelfDestructComponent selfDestruct;
     private AnimationRenderComponent animator;
+    private PhysicsComponent physics;
     private Sound sound;
     private CombatStatsComponent playerStats;
 
@@ -26,11 +28,11 @@ class SelfDestructComponentTest {
     void setUp() {
         ServiceLocator.clear();
 
-        Entity drone = mock(Entity.class);
+        drone = mock(Entity.class);
         player = mock(Entity.class);
 
         animator = mock(AnimationRenderComponent.class);
-        PhysicsComponent physics = mock(PhysicsComponent.class);
+        physics = mock(PhysicsComponent.class);
         sound = mock(Sound.class);
         playerStats = mock(CombatStatsComponent.class);
 

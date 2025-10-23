@@ -1,8 +1,8 @@
 package com.csse3200.game.entities.spawn;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.GridPoint2;
 import com.badlogic.gdx.math.Vector2;
-import com.csse3200.game.ai.tasks.AITaskComponent;
 import com.csse3200.game.areas.GameArea;
 import com.csse3200.game.components.ButtonComponent;
 import com.csse3200.game.components.ButtonManagerComponent;
@@ -16,7 +16,6 @@ import com.csse3200.game.components.lighting.ConeLightComponent;
 import com.csse3200.game.components.minimap.MinimapComponent;
 import com.csse3200.game.components.obstacles.MoveableBoxComponent;
 import com.csse3200.game.components.platforms.VolatilePlatformComponent;
-import com.csse3200.game.components.tasks.BossChaseTask;
 import com.csse3200.game.components.tooltip.TooltipSystem;
 import com.csse3200.game.entities.Entity;
 import com.csse3200.game.entities.factories.*;
@@ -27,6 +26,7 @@ import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -353,7 +353,7 @@ public final class Spawners {
             EntitySubtype subtype = EntitySubtype.fromString(a.subtype);
 
             Entity enemy = switch (subtype) {
-                case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute);
+                case AUTO_BOMBER -> EnemyFactory.createAutoBomberDrone(player, patrolRoute, a.id);
                 case SELF_DESTRUCT -> EnemyFactory.createSelfDestructionDrone(
                         player,
                         new Vector2((float) a.x / 2, (float) a.y / 2)
@@ -466,15 +466,14 @@ public final class Spawners {
         // --- Boss ---
         SpawnRegistry.register("boss", a -> {
             Entity boss = EnemyFactory.createBossEnemy(player, new Vector2(a.x*2, a.y*2));
-            boss.getComponent(AITaskComponent.class).addTask(new BossChaseTask(player, new Vector2(26f, 8f)));
 
             BossSpawnerComponent spawnComp = boss.getComponent(BossSpawnerComponent.class);
             if (spawnComp != null) {
                 spawnComp.resetTriggers();
 
-                spawnComp.addSpawnTrigger(new Vector2(5f, 0f));
-                spawnComp.addSpawnTrigger(new Vector2(5f, 0f));
-                spawnComp.addSpawnTrigger(new Vector2(23f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(20f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(40f, 0f));
+                spawnComp.addSpawnTrigger(new Vector2(60f, 0f));
 
             }
 

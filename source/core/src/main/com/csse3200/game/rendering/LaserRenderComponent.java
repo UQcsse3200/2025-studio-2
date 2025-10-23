@@ -10,19 +10,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.csse3200.game.components.lasers.LaserEmitterComponent;
 import com.csse3200.game.components.lasers.LaserShowerComponent;
-import com.csse3200.game.entities.Entity;
 
 import java.util.List;
 
-/**
- * Renders laser beams for both LaserEmitter and LaserShower entities.
- * Supports glow effects and core beam rendering.
- */
 public class LaserRenderComponent extends RenderComponent {
     private Texture pixelTex;
     private TextureRegion pixel;
-    private Color color;
-    private Color glowColor;
+    private final Color color = new Color(1f, 0f, 0f, 1f);
+    private final Color glowColor = new Color(1f, 0.32f, 0.32f, 1f);
 
     private static final float THICKNESS  = 0.05f; // core beam thickness
     private static final int   GLOW_STEPS = 4;     // glow smoothness
@@ -35,24 +30,9 @@ public class LaserRenderComponent extends RenderComponent {
     @Override
     public void create() {
         super.create();
-        // Get laser components from the entity
         showerEmitter = entity.getComponent(LaserShowerComponent.class);
         mainEmitter = entity.getComponent(LaserEmitterComponent.class);
 
-        // Assign colors based on laser type
-        if (showerEmitter != null) {
-            // Blue laser shower
-            color = new Color(0.05f, 0.35f, 0.6f, 1.0f);      // Core beam (A darker, deeper Cyan)
-            glowColor = new Color(0.15f, 0.5f, 0.8f, 1.0f);   // Glow
-        } else if (mainEmitter != null) {
-            // Red laser emitter
-            color = new Color(1f, 0f, 0f, 1f);
-            glowColor = new Color(1f, 0.32f, 0.32f, 1f);
-        } else {
-            // Default fallback (white)
-            color = new Color(1f, 1f, 1f, 1f);
-            glowColor = new Color(1f, 1f, 1f, 0.5f);
-        }
         // make 1x1 pixel
         Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
         pm.setColor(1, 1, 1, 1);
@@ -67,8 +47,6 @@ public class LaserRenderComponent extends RenderComponent {
     protected void draw(SpriteBatch batch) {
         if (mainEmitter != null && !mainEmitter.getEnable()) return;
         List<Vector2> pts = null;
-
-        // Get laser path points from the appropriate component
         if (mainEmitter != null) {
             pts = mainEmitter.getPositions();
         } else if (showerEmitter != null) {
@@ -77,15 +55,14 @@ public class LaserRenderComponent extends RenderComponent {
 
         if (pts == null || pts.size() < 2) return;
 
-        // Draw each segment of the laser
         for (int i = 0; i < pts.size() - 1; i++) {
             Vector2 a =  pts.get(i);
             Vector2 b =  pts.get(i + 1);
 
             float dx = b.x - a.x;
             float dy = b.y - a.y;
-            float len = (float) Math.hypot(dx, dy);// Length of segment
-            if (len < 1e-4f) continue; // Skip very short segments
+            float len = (float) Math.hypot(dx, dy);
+            if (len < 1e-4f) continue;
 
             float angleDeg = MathUtils.atan2(dy, dx) * MathUtils.radiansToDegrees;
 
@@ -128,14 +105,6 @@ public class LaserRenderComponent extends RenderComponent {
         // reset batch color
         batch.setColor(1f, 1f, 1f, 1f);
     }
-    // Accessors for color and glow
-    public Color getColor() { return color; }
-    public Color getGlowColor() { return glowColor; }
-    @Override
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
 
     @Override
     public void dispose() {
