@@ -14,8 +14,76 @@ import java.util.Map;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.badlogic.gdx.Files;
+import com.badlogic.gdx.files.FileHandle;
+
+import org.junit.AfterClass;
+
+import java.io.File;
+
+
 /** Pure logic tests for AchievementService – no Scene2D, no real assets. */
 public class AchievementServiceBasicTest {
+    // === Test-only Gdx.files shim so StatsTracker/FileLoader can write safely ===
+
+
+    // --- Minimal Gdx.files stub for unit tests (no real LibGDX backend) ---
+    private static Files prevFiles;
+
+    /** Install a fake Files so code that calls Gdx.files.external()/local()/absolute() won’t NPE. */
+    @BeforeClass
+    public static void installGdxFilesStub() {
+        prevFiles = Gdx.files;
+        Gdx.files = new Files() {
+            private final File root = new File("build/test-tmp");
+
+            private File ensure(String path) {
+                File out = new File(root, path);
+                File parent = out.getParentFile();
+                if (parent != null) parent.mkdirs();
+                return out;
+            }
+
+            // ==== required by Files interface (gdx 1.13.x) ====
+            @Override
+            public FileHandle getFileHandle(String path, FileType type) {
+                switch (type) {
+                    case External: return external(path);
+                    case Local:    return local(path);
+                    case Absolute: return absolute(path);
+                    case Internal: return internal(path);
+                    case Classpath:return classpath(path);
+                    default:       throw new UnsupportedOperationException("Unknown type " + type);
+                }
+            }
+
+            @Override public FileHandle external(String path) { return new FileHandle(ensure(path)); }
+            @Override public FileHandle local(String path)    { return new FileHandle(ensure(path)); }
+            @Override public FileHandle absolute(String path) { return new FileHandle(new File(path)); }
+
+            // We don’t use these in this test; keep them explicit so failures are obvious if called.
+            @Override public FileHandle classpath(String path) { throw new UnsupportedOperationException("classpath() not supported in tests"); }
+            @Override public FileHandle internal(String path)  { throw new UnsupportedOperationException("internal() not supported in tests"); }
+
+            @Override public String  getExternalStoragePath()     { return root.getAbsolutePath(); }
+            @Override public boolean isExternalStorageAvailable() { return true; }
+            @Override public String  getLocalStoragePath()        { return root.getAbsolutePath(); }
+            @Override public boolean isLocalStorageAvailable()    { return true; }
+        };
+    }
+
+    /** Restore the original Files after the suite. */
+    @AfterClass
+    public static void restoreGdxFiles() {
+        Gdx.files = prevFiles;
+    }
+
+
+    /** Minimal FileHandle that wraps a java.io.File (constructor in FileHandle is protected). */
+    private static class TestFileHandle extends FileHandle {
+        public TestFileHandle(File file) { super(file); }
+    }
+
 
     // Minimal in-memory Preferences so Gdx.app.getPreferences() has something to return.
     static class FakePreferences implements Preferences {
