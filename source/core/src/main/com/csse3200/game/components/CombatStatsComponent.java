@@ -33,13 +33,13 @@ public class CombatStatsComponent extends Component {
         setBaseAttack(baseAttack);
     }
 
-  // Copy constructor
-  public CombatStatsComponent(CombatStatsComponent other) {
-    this.health = other.health;
-    this.baseAttack = other.baseAttack;
-    this.lastHitFrame = other.lastHitFrame;
-    this.lastAttacker = null;
-  }
+    // Copy constructor
+    public CombatStatsComponent(CombatStatsComponent other) {
+        this.health = other.health;
+        this.baseAttack = other.baseAttack;
+        this.lastHitFrame = other.lastHitFrame;
+        this.lastAttacker = null;
+    }
 
   /**
    * Returns true if the entity's has 0 health, otherwise false.
@@ -47,10 +47,8 @@ public class CombatStatsComponent extends Component {
    * @return is player dead
    */
   public Boolean isDead() {
-      if (isInvulnerable) {
-          return false;
-      }
-    return health <= 0;
+      if (isInvulnerable) return false;
+      return health <= 0;
   }
 
   /**
@@ -59,7 +57,7 @@ public class CombatStatsComponent extends Component {
    * @return entity's health
    */
   public int getHealth() {
-    return health;
+    return isInvulnerable? 1: health;
   }
 
   /**
@@ -68,6 +66,7 @@ public class CombatStatsComponent extends Component {
    * @param health health
    */
     public void setHealth(int health) {
+        if (isInvulnerable) return;
         int oldHealth = this.health;
         this.health = Math.max(0, health);
 
