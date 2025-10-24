@@ -29,6 +29,7 @@ import com.csse3200.game.ui.HoverEffectHelper;
 import com.csse3200.game.ui.PixelPerfectPlacer;
 import com.csse3200.game.ui.UIComponent;
 import com.csse3200.game.ui.inventoryscreen.*;
+import com.csse3200.game.ui.terminal.TerminalService;
 
 import java.util.Map;
 
@@ -278,6 +279,8 @@ public class PauseMenuDisplay extends UIComponent {
     }
 
     private void updateInputState(boolean visible, Entity player){
+        if (TerminalService.getTerminal().isOpen()) return;
+
         if (visible) {
             rootTable.toFront();
             player.getComponent(KeyboardPlayerInputComponent.class).setEnabled(false);

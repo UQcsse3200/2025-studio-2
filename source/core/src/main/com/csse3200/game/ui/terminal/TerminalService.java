@@ -1,10 +1,14 @@
 package com.csse3200.game.ui.terminal;
 
+import com.badlogic.gdx.Gdx;
 import com.csse3200.game.entities.Entity;
+import com.csse3200.game.input.InputService;
 import com.csse3200.game.services.GameTime;
 import com.csse3200.game.services.ServiceLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.rmi.ServerError;
 
 /**
  * A Static class that manages the game's global debug terminal.
@@ -27,6 +31,7 @@ public class TerminalService {
    **/
   public static void register() {
     logger.debug("Creating global terminal UI entity");
+
     Entity entity = new Entity()
         .addComponent(terminalComponent)
         .addComponent(new GlobalTerminalInputComponent())
@@ -46,6 +51,10 @@ public class TerminalService {
    */
   public static TerminalDisplay getTerminalDisplay() {
     return terminalDisplay;
+  }
+
+  public static Terminal getTerminal() {
+    return terminalComponent;
   }
 
   /**
@@ -84,7 +93,7 @@ public class TerminalService {
    * Execute the given command in the terminal
    */
   public static void executeCurrentCommand() {
-    final String command = terminalDisplay.getInput();
+    String command = terminalDisplay.getInput();
     print("> " + String.join("  \n", command.split("\n")) + "\n");
     try {
       Object result = shell.eval(command);
